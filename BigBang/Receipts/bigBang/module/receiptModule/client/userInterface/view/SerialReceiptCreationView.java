@@ -17,9 +17,6 @@ import bigBang.module.receiptModule.shared.ReceiptPolicyWrapper;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -145,15 +142,6 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 		toolbar.setEnabled(false);
 		form.setReadOnly(true);
 
-		receiptPanel.addFocusHandler(new FocusHandler() {
-			
-			@Override
-			public void onFocus(FocusEvent event) {
-				event.preventDefault();
-				form.restoreFocus();
-			}
-		});
-		
 		wrapper.add(right);
 	}
 
@@ -195,8 +183,8 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public void setReceiptNumber(String id){
-		form.setReceiptNumber(id);
+	public void setReceiptNumber(String id, boolean keepCursorPos){
+		form.setReceiptNumber(id, keepCursorPos);
 	}
 
 	@Override
@@ -294,9 +282,9 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public void setPolicyNumber(String policyNumber) {
+	public void setPolicyNumber(String policyNumber, boolean keepCursorPos) {
 		
-		form.setPolicyNumber(policyNumber);
+		form.setPolicyNumber(policyNumber, keepCursorPos);
 		
 	}
 

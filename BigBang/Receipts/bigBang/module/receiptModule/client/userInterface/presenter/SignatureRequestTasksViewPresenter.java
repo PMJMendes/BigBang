@@ -7,10 +7,12 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.SignatureRequestBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasOperationPermissions;
@@ -35,6 +37,7 @@ public class SignatureRequestTasksViewPresenter implements ViewPresenter, HasOpe
 	
 	public static interface Display {
 		HasValue<SignatureRequest> getForm();
+		HasValue<Receipt> getReceiptForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		
 		HasWidgets getOverlayViewContainer();
@@ -77,7 +80,7 @@ public class SignatureRequestTasksViewPresenter implements ViewPresenter, HasOpe
 		clearView();
 		
 		String requestId = parameterHolder.getParameter("id");
-		showSubCasualty(requestId);
+		showSignatureRequest(requestId);
 	}
 	
 	protected void bind(){
@@ -126,13 +129,26 @@ public class SignatureRequestTasksViewPresenter implements ViewPresenter, HasOpe
 		}
 	}
 	
-	protected void showSubCasualty(String requestId) {
+	protected void showSignatureRequest(String requestId) {
 		broker.getRequest(requestId, new ResponseHandler<SignatureRequest>() {
 
 			@Override
 			public void onResponse(SignatureRequest response) {
 				view.getForm().setValue(response);
-			}
+				ReceiptDataBroker receiptBroker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
+				receiptBroker.getReceipt(response.receiptId, new ResponseHandler<Receipt>() {
+					
+					@Override
+					public void onResponse(Receipt response) {
+						view.getReceiptForm().setValue(response);
+					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						return;
+					}
+				});
+			};
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {

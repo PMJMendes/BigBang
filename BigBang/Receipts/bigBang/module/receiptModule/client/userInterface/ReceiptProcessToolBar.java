@@ -31,6 +31,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	protected MenuItem receivePhysicalReceipt;
 	protected MenuItem associateWithDebitNote;
 	protected MenuItem enterPayment;
+	protected MenuItem returnPayment;
 	protected MenuItem lackOfPaymentFlag;
 	protected MenuItem unnecessaryDASFlag;
 
@@ -69,6 +70,14 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, enterPayment);
+		returnPayment = new MenuItem("Devolver Pagamento", new Command() {
+
+			@Override
+			public void execute() {
+				onReturnPayment();
+			}
+		});
+		addItem(SUB_MENU.EXECUTE, returnPayment);
 		returnToAgency = new MenuItem("Devolução à Seguradora", new Command() {
 
 			@Override
@@ -272,6 +281,8 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	public abstract void onLackOfPaymentFlag();
 
 	public abstract void onEnterPayment();
+	
+	public abstract void onReturnPayment();
 
 	public abstract void onAssociateWithDebitNote();
 
@@ -360,7 +371,11 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	}
 
 	public void allowSetNotPaid(boolean hasPermission) {
-			this.lackOfPaymentFlag.setEnabled(hasPermission);
+		this.lackOfPaymentFlag.setEnabled(hasPermission);
+	}
+	
+	public void allowReturnPayment(boolean hasPermission) {
+		this.returnPayment.setEnabled(hasPermission);
 	}
 
 }

@@ -46,7 +46,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		MARK_FOR_PAYMENT,
 		SEND_RECEIPT,
 		INSURER_ACCOUNTING, AGENT_ACCOUNTING,
-		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY, REQUEST_DAS, NOT_PAYED_INDICATION
+		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY, REQUEST_DAS, NOT_PAYED_INDICATION,
+		RETURN_PAYMENT
 	}
 
 	public interface Display {
@@ -76,6 +77,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowCreateSignatureRequest(boolean hasPermission);
 		void allowSetDASDesnecessary(boolean hasPermission);
 		void allowSetNotPaid(boolean hasPermission);
+		void allowReturnPayment(boolean hasPermission);
 		//Children Lists
 		//TODO
 
@@ -216,6 +218,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case NOT_PAYED_INDICATION:
 					notPayedIndication();
 					break;
+				case RETURN_PAYMENT:
+					returnPayment();
+					break;
 				}
 
 			}
@@ -285,6 +290,23 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 			}
 		});
 		
+	}
+	
+	protected void returnPayment(){
+		receiptBroker.returnPayment(receiptId, new ResponseHandler<Receipt>() {
+			
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Devolução de Pagamento criada com Sucesso."), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível defazer o pagamento do Recibo."), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();				
+			}
+		});
 	}
 
 	protected void requestDas() {
@@ -449,6 +471,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowSetDASDesnecessary(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SET_DAS_NOT_NECESSARY));
 				view.allowRequestDAS(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_DAS_REQUEST));
 				view.allowSetNotPaid(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.NOT_PAID_INDICATION));
+				view.allowReturnPayment(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RETURN_PAYMENT));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

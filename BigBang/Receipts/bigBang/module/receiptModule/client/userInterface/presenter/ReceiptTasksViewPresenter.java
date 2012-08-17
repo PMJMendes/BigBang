@@ -2,6 +2,7 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -10,6 +11,7 @@ import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -25,6 +27,7 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.shared.DocuShareItem;
 
 public class ReceiptTasksViewPresenter implements ViewPresenter,
 		HasOperationPermissions {
@@ -37,6 +40,11 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 	public static interface Display {
 		HasEditableValue<Receipt> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
+		
+		void clearImages();
+		
+		Button getPrevImageButton();
+		Button getNextImageButton();
 		
 		HasWidgets getOverlayViewContainer();
 		void showOverlayViewContainer(boolean show);
@@ -138,6 +146,7 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 	protected void clearView(){
 		view.getForm().setValue(null);
 		view.getForm().setReadOnly(true);
+		view.clearImages();
 		view.clearAllowedPermissions();
 		overlayController.onParameters(new HasParameters());
 	}
@@ -170,6 +179,20 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
+			}
+		});
+		broker.getReceiptImageItem(receiptId, new ResponseHandler<ImageItem>() {
+			
+			@Override
+			public void onResponse(ImageItem response) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 	}

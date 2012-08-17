@@ -1,7 +1,12 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -13,6 +18,8 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ImageHandlerPanel;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 
@@ -21,15 +28,18 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 	protected ReceiptForm form;
 	protected ReceiptTasksOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> handler;
+	protected ImageHandlerPanel imagePanel;
+
+	protected Button prevButton, nextButton;
 	
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
-	
+
 	public ReceiptTasksView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
-		
+
 		toolbar = new ReceiptTasksOperationsToolbar() {
 
 			@Override
@@ -58,16 +68,43 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 			}
 		};
 		wrapper.add(toolbar);
-		
+
 		form = new ReceiptForm();
 		form.setReadOnly(true);
 		form.setSize("100%", "100%");
-		wrapper.add(form);
-		wrapper.setCellHeight(form, "100%");
-		
+
+		VerticalPanel imageWrapper = new VerticalPanel();
+		imageWrapper.setSize("100%", "100%");
+
+		ListHeader imageHeader = new ListHeader("Imagem Original");
+		nextButton = new Button("Próxima");
+		prevButton = new Button("Anterior");
+
+		HorizontalPanel buttonWrapper = new HorizontalPanel();
+		buttonWrapper.add(prevButton);
+		buttonWrapper.add(nextButton);
+		buttonWrapper.setSpacing(5);
+		imageHeader.setRightWidget(buttonWrapper);
+
+		imageWrapper.add(imageHeader);
+
+		imagePanel = new ImageHandlerPanel();
+		imagePanel.setSize("100%", "100%");
+		imageWrapper.add(imagePanel);
+		imageWrapper.setCellHeight(imagePanel, "100%");
+
+		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
+		formWrapper.setSize("100%", "100%");
+
+		formWrapper.addWest(form, 650);
+		formWrapper.add(imageWrapper);
+
+		wrapper.add(formWrapper);
+		wrapper.setCellHeight(formWrapper, "100%");
+
 		this.overlayContainer = new SimplePanel();
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
@@ -93,7 +130,7 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 	public void allowCreateDASRequest(boolean allow) {
 		toolbar.allowCreateDASRequest(allow);
 	}
-	
+
 	@Override
 	public void allowMarkDASUnnecessary(boolean allow) {
 		toolbar.allowMarkDASUnnecessary(allow);
@@ -103,7 +140,7 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 	public HasWidgets getOverlayViewContainer() {
 		return this.overlayContainer;
 	}
-	
+
 	@Override
 	public void showOverlayViewContainer(boolean show) {
 		if(show && this.popupPanel == null){
@@ -131,13 +168,30 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 	@Override
 	public void allowValidate(boolean b) {
 		toolbar.allowValidate(b);
-		
+
 	}
 
 	@Override
 	public void allowSetForReturn(boolean b) {
 		toolbar.allowSetForReturn(b);
-		
+
+	}
+
+	@Override
+	public void clearImages() {
+		this.imagePanel.setImage(null);
+	}
+
+	@Override
+	public Button getPrevImageButton() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Button getNextImageButton() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -199,6 +199,12 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 				// TODO Auto-generated method stub
 
 			}
+			
+			@Override
+			public void onReturnPayment() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.RETURN_PAYMENT));
+			}
+			
 		};
 		formWrapper.add(operationsToolbar);
 		formWrapper.setCellHeight(operationsToolbar, "21px");
@@ -383,6 +389,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowSetNotPaid(boolean hasPermission) {
 		operationsToolbar.allowSetNotPaid(hasPermission);
+	}
+	
+	@Override
+	public void allowReturnPayment(boolean hasPermission) {
+		operationsToolbar.allowReturnPayment(hasPermission);
 	}
 
 }

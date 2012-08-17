@@ -8,11 +8,14 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.SignatureRequestForm;
 import bigBang.module.receiptModule.client.userInterface.SignatureRequestTasksOperationsToolbar;
 
@@ -21,6 +24,7 @@ public class SignatureRequestTasksView extends View implements SignatureRequestT
 	protected SignatureRequestForm form;
 	protected SignatureRequestTasksOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> handler;
+	protected ReceiptForm receiptForm;
 	
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
@@ -52,8 +56,16 @@ public class SignatureRequestTasksView extends View implements SignatureRequestT
 		form = new SignatureRequestForm();
 		form.setReadOnly(true);
 		form.setSize("100%", "100%");
-		wrapper.add(form);
-		wrapper.setCellHeight(form, "100%");
+		wrapper.add(form.getNonScrollableContent());
+		
+		wrapper.add(new ListHeader("Recibo"));
+		
+		this.receiptForm = new ReceiptForm();
+		this.receiptForm.setReadOnly(true);
+		this.receiptForm.setSize("100%", "100%");
+		wrapper.add(this.receiptForm);
+		
+		wrapper.setCellHeight(this.receiptForm, "100%");
 		
 		this.overlayContainer = new SimplePanel();
 	}
@@ -121,5 +133,11 @@ public class SignatureRequestTasksView extends View implements SignatureRequestT
 			}
 		}
 	}
+	
+	@Override
+	public HasValue<Receipt> getReceiptForm() {
+		return this.receiptForm;
+	}
+
 
 }

@@ -88,7 +88,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 		void enableNewReceipt(boolean enable);
 
-		void setReceiptNumber(String id);
+		void setReceiptNumber(String id, boolean keepCursorPos);
 
 		void hideMarkAsEnable(boolean b);
 
@@ -114,7 +114,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 		void clearPolicy();
 
-		void setPolicyNumber(String policyNumber);
+		void setPolicyNumber(String policyNumber, boolean keepCursorPos);
 
 		void enableMarkReceipt(boolean b);
 
@@ -279,7 +279,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			receiptPolicyWrapper = new ReceiptPolicyWrapper();
 			String tempPolicy = view.getPolicyNumber();
 			view.clearPolicy();
-			view.setPolicyNumber(tempPolicy);
+			view.setPolicyNumber(tempPolicy, true);
 			editingPolicy = false;
 		}
 	}
@@ -291,7 +291,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			receiptPolicyWrapper = new ReceiptPolicyWrapper();
 			String tempReceipt = view.getReceiptNumber();
 			view.clear();
-			view.setReceiptNumber(tempReceipt);
+			view.setReceiptNumber(tempReceipt, true);
 			editing = false;
 		}
 	}
@@ -301,7 +301,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		receiptPolicyWrapper.receipt = null;
 		String tempReceiptNumber = view.getReceiptNumber();
 		view.clear();
-		view.setReceiptNumber(tempReceiptNumber);
+		view.setReceiptNumber(tempReceiptNumber, false);
 		view.enableNewReceipt(true);
 		view.enablePolicy(true);
 		view.setFocusOnPolicy();
@@ -339,7 +339,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		if(receiptId.length() == 0){return;}
 
 		view.clear();
-		view.setReceiptNumber(receiptId); 
+		view.setReceiptNumber(receiptId, true); 
 
 		receiptBroker.getReceiptsWithNumber(receiptId, new ResponseHandler<Collection<ReceiptStub>>() {
 
@@ -473,7 +473,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		final String policyNumber = view.getPolicyNumber();
 		view.clearPolicy();
 		view.enableMarkReceipt(false);
-		view.setPolicyNumber(policyNumber);
+		view.setPolicyNumber(policyNumber, true);
 
 		policyBroker.getInsurancePoliciesWithNumber(policyNumber, new ResponseHandler<Collection<InsurancePolicyStub>>() {
 

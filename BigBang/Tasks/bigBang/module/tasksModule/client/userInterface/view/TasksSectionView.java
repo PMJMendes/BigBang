@@ -49,7 +49,6 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 		tasksListWrapper.setWidget(searchPanel);
 
 		splitPanel.addWest(tasksListWrapper, LIST_WIDTH);
-		splitPanel.setWidgetMinSize(tasksListWrapper, LIST_WIDTH);
 
 		VerticalPanel contentWrapper = new VerticalPanel();
 		contentWrapper.setSize("100%", "100%");

@@ -12,4 +12,6 @@ public class DocuShareItem
 	public String desc;
 	public String fileName;
 	public String mimeType;
+	
+	public int numberOfParts = 1;
 }

@@ -6,12 +6,14 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SignatureRequest;
+import bigBang.library.shared.DocuShareItem;
 
 public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 
@@ -83,5 +85,10 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 	
 	public void indicateNotPaid(String receiptId, 
 			ResponseHandler<Receipt> handler);
+
+	public void getReceiptImageItem(String receiptId,
+			ResponseHandler<ImageItem> responseHandler);
+	
+	public void returnPayment(String receiptIdm, ResponseHandler<Receipt> handler);
 	
 }

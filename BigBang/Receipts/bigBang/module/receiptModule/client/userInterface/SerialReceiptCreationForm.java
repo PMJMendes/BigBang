@@ -16,8 +16,6 @@ import bigBang.module.receiptModule.shared.ReceiptPolicyWrapper;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -58,12 +56,14 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	protected NumericTextBoxFormField bonusMalusValue;
 
 	protected FormField<?> lastFocusedField;
+
+	protected int receiptNumberCursorPos, policyNumberCursorPos;
 	
 	Button verifyReceiptNumber;
 	Button verifyPolicyNumber;
 	private Button markAsInvalid;
 	private Button newReceiptButton;
-	
+
 	public SerialReceiptCreationForm(){
 
 		addSection("Número do recibo");
@@ -75,6 +75,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
+				receiptNumberCursorPos = receiptNumber.getNativeField().getCursorPos();
 				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER){
 					onClickVerifyReceiptNumber();
 				}
@@ -122,6 +123,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
+				policyNumberCursorPos = policyNumber.getNativeField().getCursorPos();
 				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER){
 					onClickVerifyPolicyNumber();
 				}
@@ -210,7 +212,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		bonusMalusOption.setEmptyValueString("Nenhum");
 		bonusMalusOption.addItem("Bonus", "Bonus");
 		bonusMalusOption.addItem("Malus", "Malus");
-		
+
 		bonusMalusValue = new NumericTextBoxFormField("Valor", true);
 		bonusMalusValue.setFieldWidth("100px");
 		bonusMalusValue.setUnitsLabel("€");
@@ -226,7 +228,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		addFormField(commission, true);
 		addFormField(retro, true);
 		addFormField(fat, false);
-		
+
 		addFormField(bonusMalusOption, true);
 		addFormField(bonusMalusValue, true);
 
@@ -261,20 +263,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 				bonusMalusValue.setValue(null);
 			}
 		});
-		
-		FocusHandler focusHandler = new FocusHandler() {
-			
-			@Override
-			public void onFocus(FocusEvent event) {
-				
-			}
-		};
-		
-		
-		
-		
-		
-		
+
 		type.setMandatory(true);
 		totalPremium.setMandatory(true);
 	}
@@ -417,8 +406,13 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	}
 
-	public void setReceiptNumber(String id) {
-		receiptNumber.setValue(id);
+	public void setReceiptNumber(String id, boolean keepCursorPos) {
+		if(keepCursorPos){
+			receiptNumber.setValue(id);
+			receiptNumber.getNativeField().setCursorPos(receiptNumberCursorPos);
+		}else{
+			receiptNumber.setValue(id);
+		}
 	}
 
 	public void hideMarkAsEnable(boolean b) {
@@ -453,8 +447,13 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	}
 
-	public void setPolicyNumber(String policyNumber2) {
-		policyNumber.setValue(policyNumber2);
+	public void setPolicyNumber(String policyNumber2, boolean keepCursorPos) {
+		if(keepCursorPos){
+			policyNumber.setValue(policyNumber2);
+			policyNumber.getNativeField().setCursorPos(policyNumberCursorPos);
+		}else{
+			policyNumber.setValue(policyNumber2);
+		}
 	}
 
 	public String getPolicyNumber() {
@@ -474,10 +473,6 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	public void showLabel(boolean b) {
 		policyNumberProblem.setVisible(b);
-	}
-	
-	public void restoreFocus(){
-		this.lastFocusedField.focus();
 	}
 
 }

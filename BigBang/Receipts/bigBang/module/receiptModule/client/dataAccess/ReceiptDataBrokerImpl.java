@@ -16,6 +16,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.PaymentInfo;
@@ -158,7 +159,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
-	
+
 	@Override
 	public void updateAndValidateReceipt(final Receipt receipt,
 			final ResponseHandler<Receipt> handler) {
@@ -872,7 +873,47 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				super.onResponseFailure(caught);
 			}
 		});
-		
+
+	}
+
+	@Override
+	public void returnPayment(String receiptId,
+			final ResponseHandler<Receipt> handler) {
+		service.returnPayment(receiptId, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						"Could not return payment"
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void getReceiptImageItem(String receiptId,
+			final ResponseHandler<ImageItem> responseHandler) {
+		service.getItemAsImage(receiptId, 0, new BigBangAsyncCallback<ImageItem>() {
+
+			@Override
+			public void onResponseSuccess(ImageItem result) {
+				responseHandler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+					"Cannot get the receipt image"
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 }
 

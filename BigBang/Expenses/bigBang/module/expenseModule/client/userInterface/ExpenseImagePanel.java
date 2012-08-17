@@ -1,5 +1,6 @@
 package bigBang.module.expenseModule.client.userInterface;
 
+import bigBang.definitions.shared.ImageItem;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
@@ -106,11 +107,11 @@ public class ExpenseImagePanel extends View {
 		panel.showLoading(true);
 		navigationPanel.navigateTo(panel);
 
-		service.getItemAsImage(fileDesc, new BigBangAsyncCallback<String>() {
+		service.getItemAsImage(fileDesc, 0, new BigBangAsyncCallback<ImageItem>() {
 
 			@Override
-			public void onResponseSuccess(String result) {
-				panel.setImage(GWT.getModuleBaseURL() + FileService.GET_PREFIX + result);
+			public void onResponseSuccess(ImageItem result) {
+				panel.setImage(GWT.getModuleBaseURL() + FileService.GET_PREFIX + result.imageId);
 				panel.showLoading(false);
 			}
 
