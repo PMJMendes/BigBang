@@ -1,5 +1,6 @@
 package bigbang.tests.client;
 
+import bigBang.definitions.shared.ImageItem;
 import bigBang.library.interfaces.FileService;
 
 import com.google.gwt.core.client.GWT;
@@ -20,21 +21,21 @@ public class TestSpecialGetAsImage
 
 	private static void DoStep1()
 	{
-		AsyncCallback<String> callback = new AsyncCallback<String> ()
+		AsyncCallback<ImageItem> callback = new AsyncCallback<ImageItem> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(String result)
+			public void onSuccess(ImageItem result)
 			{
-				tmpString = result;
-				DoStep2(result);
+				tmpString = result.imageId;
+				DoStep2(tmpString);
 			}
 		};
 
-		Services.docuShareService.getItemAsImage("Document-455161", callback);
+		Services.docuShareService.getItemAsImage("Document-455161", 0, callback);
 	}
 
 	private static void DoStep2(String fileStr)
