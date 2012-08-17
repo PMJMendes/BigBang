@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Operations.SubPolicy;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -11,6 +12,7 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -73,20 +75,27 @@ public class CreateReceipt
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		IProcess lobjMe;
+		SubPolicy lobjSubP;
 		Receipt lobjAux;
 		IScript lobjScript;
 		IProcess lobjProc; 
-		SubPolicy lobjSubP;
 		Client lobjClient;
 		ExternForceShortCircuit lopEFSC;
 		int i;
 
 		try
 		{
+			lobjMe = GetProcess();
+			lobjSubP = (SubPolicy)lobjMe.GetData();
+
+			if ( (lobjSubP.getAt(4) != null) && (((Timestamp)lobjSubP.getAt(4)).compareTo(mobjData.mdtMaturity) < 0) )
+				throw new BigBangJewelException("Erro: Não pode criar recibos com data de vencimento superior à data de fim da apólice.");
+
 			if ( mobjData.midManager == null )
-				mobjData.midManager = GetProcess().GetManagerID();
+				mobjData.midManager = lobjMe.GetManagerID();
 			if ( mobjData.midMediator == null )
-				mobjData.midMediator = (UUID)GetProcess().GetData().getAt(11);
+				mobjData.midMediator = (UUID)lobjMe.GetParent().GetData().getAt(11);
 
 			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
@@ -103,7 +112,7 @@ public class CreateReceipt
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Receipt);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(),
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), lobjMe.getKey(),
 					GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
@@ -111,7 +120,6 @@ public class CreateReceipt
 			mobjData.midProcess = lobjProc.getKey();
 			mobjData.mobjPrevValues = null;
 
-			lobjSubP = (SubPolicy)GetProcess().GetData();
 			lobjClient = Client.GetInstance(lobjSubP.getNameSpace(), (UUID)lobjSubP.getAt(2));
 
 			if ( "(Directo)".equals(lobjAux.getMediator().getLabel()) )

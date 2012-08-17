@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -11,10 +12,12 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -75,6 +78,8 @@ public class CreateReceipt
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		IProcess lobjMe;
+		Policy lobjPolicy;
 		Receipt lobjAux;
 		IScript lobjScript;
 		IProcess lobjProc; 
@@ -85,10 +90,16 @@ public class CreateReceipt
 
 		try
 		{
+			lobjMe = GetProcess();
+			lobjPolicy = (Policy)lobjMe.GetData();
+
+			if ( (lobjPolicy.getAt(9) != null) && (((Timestamp)lobjPolicy.getAt(9)).compareTo(mobjData.mdtMaturity) < 0) )
+				throw new BigBangJewelException("Erro: Não pode criar recibos com data de vencimento superior à data de fim da apólice.");
+
 			if ( mobjData.midManager == null )
-				mobjData.midManager = GetProcess().GetManagerID();
+				mobjData.midManager = lobjMe.GetManagerID();
 			if ( mobjData.midMediator == null )
-				mobjData.midMediator = (UUID)GetProcess().GetData().getAt(11);
+				mobjData.midMediator = (UUID)lobjPolicy.getAt(11);
 
 			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
@@ -105,7 +116,7 @@ public class CreateReceipt
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Receipt);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(),
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), lobjMe.getKey(),
 					GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
@@ -130,7 +141,7 @@ public class CreateReceipt
 			TriggerOp(lopTIOC, pdb);
 		}
 
-		lobjClient = (Client)GetProcess().GetParent().GetData();
+		lobjClient = (Client)lobjMe.GetParent().GetData();
 		if ( Constants.ProfID_Simple.equals((UUID)lobjClient.getAt(9)) )
 		{
 			lopEFSC = new ExternForceShortCircuit(lobjProc.getKey());
