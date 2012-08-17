@@ -1,5 +1,10 @@
 package bigBang.module.receiptModule.server;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -8,10 +13,16 @@ import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
@@ -19,6 +30,7 @@ import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
@@ -30,6 +42,7 @@ import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
+import bigBang.library.server.FileServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -43,6 +56,7 @@ import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
@@ -364,6 +378,108 @@ public class ReceiptServiceImpl
         }
 
 		return larrResult.toArray(new SearchResult[larrResult.size()]);
+	}
+
+	public ImageItem getItemAsImage(String pstrItem, int pageNumber)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		Document[] larrDocs;
+		int i;
+		FileXfer lobjFile;
+		ByteArrayInputStream lstreamInput;
+		PDDocument lobjDocument;
+		ImageItem lobjResult;
+		PDPage lobjPage;
+		int llngRot;
+		BufferedImage lobjImage;
+		AffineTransform lobjXForm;
+		AffineTransformOp lobjOp;
+		ByteArrayOutputStream lstreamOutput;
+		byte[] larrBuffer;
+		UUID lidKey;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(pstrItem));
+			larrDocs = lobjReceipt.GetCurrentDocs();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lstreamInput = null;
+		for ( i = 0; i < larrDocs.length; i++ )
+		{
+			if ( Constants.DocID_ReceiptScan.equals(larrDocs[i].getAt(3)) )
+			{
+				if ( larrDocs[i].getAt(5) == null )
+					return null;
+		    	if ( larrDocs[i].getAt(5) instanceof FileXfer )
+		    		lobjFile = (FileXfer)larrDocs[i].getAt(5);
+		    	else
+		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(5));
+		    	lstreamInput = new ByteArrayInputStream(lobjFile.getData());
+		    	break;
+			}
+		}
+
+		if ( lstreamInput == null )
+			return null;
+
+		try
+		{
+			lobjDocument = PDDocument.load(lstreamInput);
+
+			try
+			{
+				lobjResult = new ImageItem();
+				lobjResult.pageCount = lobjDocument.getDocumentCatalog().getAllPages().size();
+
+				lobjPage = (PDPage)lobjDocument.getDocumentCatalog().getAllPages().get(pageNumber);
+				llngRot = lobjPage.findRotation();
+
+				lobjImage = lobjPage.convertToImage(BufferedImage.TYPE_INT_ARGB, 200);
+			}
+			catch (Throwable e1)
+			{
+				try { lobjDocument.close(); } catch (Throwable e2) {}
+				throw e1;
+			}
+			lobjDocument.close();
+
+			if ( llngRot != 0 )
+			{
+				lobjXForm = new AffineTransform();
+				lobjXForm.translate(0.5*lobjImage.getHeight(), 0.5*lobjImage.getWidth());
+				lobjXForm.quadrantRotate(llngRot/90);
+				lobjXForm.translate(-0.5*lobjImage.getWidth(), -0.5*lobjImage.getHeight());
+				lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				lobjImage = lobjOp.filter(lobjImage, null);
+			}
+
+			lstreamOutput = new ByteArrayOutputStream();
+			ImageIO.write(lobjImage, "png", lstreamOutput);
+//			ImageIO.write(lobjImage, "jpg", lstreamOutput);
+			larrBuffer = lstreamOutput.toByteArray();
+			lstreamInput = new ByteArrayInputStream(larrBuffer);
+			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
+//			lobjFile = new FileXfer(larrBuffer.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lidKey = UUID.randomUUID();
+		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
+		lobjResult.imageId = lidKey.toString();
+		return null;
 	}
 
 	public Receipt editReceipt(Receipt receipt)

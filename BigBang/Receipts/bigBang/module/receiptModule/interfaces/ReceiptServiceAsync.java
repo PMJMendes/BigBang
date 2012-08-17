@@ -7,12 +7,13 @@ import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.interfaces.ExactItemSubServiceAsync;
+import bigBang.library.interfaces.ImageSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ReceiptServiceAsync
-	extends SearchServiceAsync, ExactItemSubServiceAsync
+	extends SearchServiceAsync, ExactItemSubServiceAsync, ImageSubServiceAsync
 {
 	void getReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void editReceipt(Receipt receipt, AsyncCallback<Receipt> callback);

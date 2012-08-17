@@ -21,6 +21,7 @@ import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
@@ -153,6 +154,15 @@ public class ExpenseServiceImpl
 			throw new SessionExpiredException();
 
 		return sGetExpense(UUID.fromString(expenseId));
+	}
+
+	public ImageItem getItemAsImage(String pstrItem, int pageNumber)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		throw new BigBangException("Erro: Funcionalidade não implementada.");
 	}
 
 	public Expense editExpense(Expense expense)

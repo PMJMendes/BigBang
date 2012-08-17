@@ -1,16 +1,18 @@
 package bigBang.module.expenseModule.interfaces;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.library.interfaces.ImageSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
-public interface ExpenseServiceAsync extends SearchServiceAsync
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public interface ExpenseServiceAsync
+	extends SearchServiceAsync, ImageSubServiceAsync
 {
 	void getExpense(String expenseId, AsyncCallback<Expense> callback);
 	void editExpense(Expense expense, AsyncCallback<Expense> callback);

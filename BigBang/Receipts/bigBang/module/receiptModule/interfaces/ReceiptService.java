@@ -7,6 +7,7 @@ import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.interfaces.ExactItemSubService;
+import bigBang.library.interfaces.ImageSubService;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -16,7 +17,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("ReceiptService")
 public interface ReceiptService
-	extends SearchService, ExactItemSubService
+	extends SearchService, ExactItemSubService, ImageSubService
 {
 	/**
 	 * Utility class for simplifying access to the instance of async service.
