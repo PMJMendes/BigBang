@@ -63,6 +63,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.MediatorAccounting;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.NotPayedIndication;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReturnPayment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SendPayment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SendReceipt;
@@ -993,6 +994,41 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopSR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Receipt returnPayment(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		ReturnPayment lopRP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRP = new ReturnPayment(lobjReceipt.GetProcessID());
+		lopRP.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
+		lopRP.mbUseSets = false;
+
+		try
+		{
+			lopRP.Execute();
 		}
 		catch (Throwable e)
 		{

@@ -77,7 +77,6 @@ public class ReceiveReply
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
-//		Item lobjItem;
 		ExternReceiveDAS lopERD;
 
 		larrItems = new Hashtable<UUID, AgendaItem>();
@@ -112,9 +111,6 @@ public class ReceiveReply
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
-
-//		if ( mobjMessage.mobjDocOps != null )
-//			mobjMessage.mobjDocOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
 
 		lopERD = new ExternReceiveDAS(GetProcess().GetParent().getKey());
 		lopERD.midDASRequestProcess = GetProcess().getKey();

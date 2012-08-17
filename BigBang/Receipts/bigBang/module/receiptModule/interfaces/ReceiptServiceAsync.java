@@ -31,6 +31,7 @@ public interface ReceiptServiceAsync
 	void createSignatureRequest(SignatureRequest request, AsyncCallback<Receipt> callback);
 	void sendPayment(String receiptId, AsyncCallback<Receipt> callback);
 	void sendReceipt(String receiptId, AsyncCallback<Receipt> callback);
+	void returnPayment(String receiptId, AsyncCallback<Receipt> callback);
 	void insurerAccouting(String receiptId, AsyncCallback<Receipt> callback);
 	void mediatorAccounting(String receiptId, AsyncCallback<Receipt> callback);
 	void returnToInsurer(String receiptId, AsyncCallback<Receipt> callback);

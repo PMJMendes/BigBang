@@ -16,6 +16,8 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.DASRequest;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternCancelDAS;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternUndoCancelDAS;
 
 public class CancelRequest
 	extends UndoableOperation
@@ -57,6 +59,7 @@ public class CancelRequest
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
+		ExternCancelDAS lopECD;
 
 		try
 		{
@@ -101,6 +104,10 @@ public class CancelRequest
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
+		lopECD = new ExternCancelDAS(GetProcess().GetParent().getKey());
+		lopECD.midDASRequestProcess = GetProcess().getKey();
+		TriggerOp(lopECD, pdb);
+
 		GetProcess().Stop(pdb);
 	}
 
@@ -117,12 +124,15 @@ public class CancelRequest
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		ExternUndoCancelDAS lopEUCD;
 		DASRequest lobjRequest;
 		Timestamp ldtAux;
 //		RequestAddress[] larrAddresses;
 //		int i;
 //		UUID lidUser;
 		AgendaItem lobjNewItem;
+
+		GetProcess().Restart(pdb);
 
 		try
 		{
@@ -157,7 +167,9 @@ public class CancelRequest
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		GetProcess().Restart(pdb);
+		lopEUCD = new ExternUndoCancelDAS(GetProcess().GetParent().getKey());
+		lopEUCD.midDASRequestProcess = GetProcess().getKey();
+		TriggerOp(lopEUCD, pdb);
 	}
 
 	public UndoSet[] GetSets()

@@ -56,6 +56,7 @@ public interface ReceiptService
 	public Receipt sendPayment(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt sendReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt returnPayment(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt insurerAccouting(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt mediatorAccounting(String receiptId) throws SessionExpiredException, BigBangException;
