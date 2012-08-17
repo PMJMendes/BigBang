@@ -388,16 +388,17 @@ public class Receipt
     public ILog getPaymentLog()
     	throws BigBangJewelException
     {
-    	UUID lidOp;
+    	ILog lobjLog;
 
-    	if ( isReverseCircuit() )
-    		lidOp = Constants.OPID_Receipt_SendPayment;
-    	else
-    		lidOp = Constants.OPID_Receipt_Payment;
+    	lobjLog = null;
 
     	try
     	{
-			return getProcess().GetLiveLog(lidOp);
+        	if ( isReverseCircuit() )
+        		lobjLog = getProcess().GetLiveLog(Constants.OPID_Receipt_SendPayment);
+        	
+        	if ( lobjLog == null )
+        		lobjLog = getProcess().GetLiveLog(Constants.OPID_Receipt_Payment);
 		}
     	catch (BigBangJewelException e)
     	{
@@ -407,6 +408,8 @@ public class Receipt
     	{
     		throw new BigBangJewelException(e.getMessage(), e);
 		}
+
+    	return lobjLog;
     }
 
     public boolean doCalcRetrocession()
