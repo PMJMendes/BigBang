@@ -34,6 +34,7 @@ import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.Rectangle;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SignatureRequest;
@@ -651,6 +652,12 @@ public class ReceiptServiceImpl
 		}
 
 		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public bigBang.definitions.shared.Document cropRectangle(String receiptId, Rectangle rect)
+		throws SessionExpiredException, BigBangException
+	{
+		return null;
 	}
 
 	public Receipt setForReturn(Receipt.ReturnMessage message)

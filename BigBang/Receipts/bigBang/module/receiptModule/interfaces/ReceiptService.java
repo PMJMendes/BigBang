@@ -3,8 +3,10 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.Rectangle;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.interfaces.ExactItemSubService;
 import bigBang.library.interfaces.ImageSubService;
@@ -41,6 +43,7 @@ public interface ReceiptService
 	public Receipt editAndValidateReceipt(Receipt receipt) throws SessionExpiredException, BigBangException;
 	
 	public Receipt validateReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+	public Document cropRectangle(String receiptId, Rectangle rect) throws SessionExpiredException, BigBangException;
 	public Receipt setForReturn(Receipt.ReturnMessage message) throws SessionExpiredException, BigBangException;
 
 	public Receipt createPaymentNotice(String receiptId) throws SessionExpiredException, BigBangException;

@@ -3,8 +3,10 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.Rectangle;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.interfaces.ExactItemSubServiceAsync;
 import bigBang.library.interfaces.ImageSubServiceAsync;
@@ -21,6 +23,7 @@ public interface ReceiptServiceAsync
 	void receiveImage(String receiptId, DocuShareHandle source, AsyncCallback<Receipt> callback);
 	void transferToPolicy(String receiptId, String newPolicyId, AsyncCallback<Receipt> callback);
 	void validateReceipt(String receiptId, AsyncCallback<Receipt> callback);
+	void cropRectangle(String receiptId, Rectangle rect, AsyncCallback<Document> callback);
 	void setForReturn(Receipt.ReturnMessage message, AsyncCallback<Receipt> callback);
 	void createPaymentNotice(String receiptId, AsyncCallback<Receipt> callback);
 	void markPayed(Receipt.PaymentInfo info, AsyncCallback<Receipt> callback);
