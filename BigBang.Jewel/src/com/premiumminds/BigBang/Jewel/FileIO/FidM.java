@@ -39,13 +39,14 @@ public class FidM
 	    public static final int MATURITYDATE =  5;
 	    public static final int ENDDATE      =  6;
 	    public static final int LIMITDATE    =  7;
-	    public static final int ISSUEDATE    =  8;
-	    public static final int VALUE        = 11;
-	    public static final int COMMISSION1  = 12;
-	    public static final int COMMISSION2  = 13;
-	    public static final int COMMISSION3  = 14;
-	    public static final int TYPE1        = 15;
-	    public static final int TYPE2        = 17;
+	    public static final int ISSUEDATE    =  9;
+	    public static final int COMMERCIAL   = 11;
+	    public static final int VALUE        = 12;
+	    public static final int COMMISSION1  = 13;
+	    public static final int COMMISSION2  = 14;
+	    public static final int COMMISSION3  = 15;
+	    public static final int TYPE1        = 16;
+	    public static final int TYPE2        = 18;
 	}
 
 	public static class StatusCodes
@@ -154,6 +155,7 @@ public class FidM
 		Timestamp ldtEnd;
 		Timestamp ldtLimit;
 		Timestamp ldtIssue;
+		BigDecimal ldblCommercial;
 		BigDecimal ldblValue;
 		BigDecimal ldblCommission;
 		CreateReceipt lopCR;
@@ -200,6 +202,7 @@ public class FidM
 			ldtEnd = BuildDate(parrData[Fields.ENDDATE].getData());
 			ldtLimit = BuildDate(parrData[Fields.LIMITDATE].getData());
 			ldtIssue = BuildDate(parrData[Fields.ISSUEDATE].getData());
+			ldblCommercial = BuildDecimal(parrData[Fields.COMMERCIAL].getData());
 			ldblValue = BuildDecimal(parrData[Fields.VALUE].getData());
 			ldblCommission = BuildDecimal(parrData[Fields.COMMISSION1].getData()).
 					add(BuildDecimal(parrData[Fields.COMMISSION2].getData())).
@@ -211,7 +214,7 @@ public class FidM
 			lopCR.mobjData.mstrNumber = lstrReceipt;
 			lopCR.mobjData.midType = lidType;
 			lopCR.mobjData.mdblTotal = ldblValue;
-			lopCR.mobjData.mdblCommercial = null;
+			lopCR.mobjData.mdblCommercial = ldblCommercial;
 			lopCR.mobjData.mdblCommissions = ldblCommission;
 			lopCR.mobjData.mdblRetrocessions = null;
 			lopCR.mobjData.mdblFAT = null;
