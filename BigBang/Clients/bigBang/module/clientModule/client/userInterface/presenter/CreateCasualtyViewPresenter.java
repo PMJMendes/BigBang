@@ -131,7 +131,7 @@ public class CreateCasualtyViewPresenter implements ViewPresenter {
 			
 			@Override
 			public void onResponse(Casualty response) {
-				onSaveSuccess();
+				onSaveSuccess(response.id);
 			}
 			
 			@Override
@@ -147,10 +147,13 @@ public class CreateCasualtyViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
-	protected void onSaveSuccess(){
+	protected void onSaveSuccess(String casualtyId){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Sinistro foi Criado com Sucesso"), TYPE.TRAY_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.popFromStackParameter("display");
+		NavigationHistoryItem item = new NavigationHistoryItem();
+		item.setParameter("section", "casualty");
+		item.setStackParameter("display");
+		item.pushIntoStackParameter("display", "search");
+		item.setParameter("casualtyid", casualtyId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
