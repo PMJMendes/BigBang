@@ -7,6 +7,8 @@ public class ImageItem
 {
 	private static final long serialVersionUID = 1L;
 
+	public String id;
+	public int pageNumber;
 	public String imageId;
 	public Integer pageCount;
 }
