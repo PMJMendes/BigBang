@@ -105,7 +105,7 @@ public class SendPayment
 					midSetDocument = lobjSetClient.getKey();
 				}
 
-				lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), null);
+				lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjSetReceipt.setAt(0, midSetDocument);
 				lobjSetReceipt.setAt(1, null);
 				lobjSetReceipt.SaveToDb(pdb);

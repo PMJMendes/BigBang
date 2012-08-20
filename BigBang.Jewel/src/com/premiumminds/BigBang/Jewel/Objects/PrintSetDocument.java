@@ -1,9 +1,13 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
@@ -66,4 +70,75 @@ public class PrintSetDocument
 
 		return new FileXfer((byte[])lobjFile);
 	}
+
+    public PrintSetDetail[] getCurrentDetails()
+    	throws BigBangJewelException
+    {
+		ArrayList<PrintSetDetail> larrAux;
+		IEntity lrefDetails;
+        MasterDB ldb;
+        ResultSet lrsDetails;
+
+		larrAux = new ArrayList<PrintSetDetail>();
+
+		try
+		{
+			lrefDetails = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PrintSetDetail)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDetails = lrefDetails.SelectByMembers(ldb, new int[] {PrintSetDetail.I.DOCUMENT},
+					new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsDetails.next() )
+				larrAux.add(PrintSetDetail.GetInstance(getNameSpace(), lrsDetails));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsDetails.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsDetails.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDetails.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new PrintSetDetail[larrAux.size()]);
+    }
 }

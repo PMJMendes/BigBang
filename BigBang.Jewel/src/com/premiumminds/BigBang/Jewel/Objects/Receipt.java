@@ -488,6 +488,33 @@ public class Receipt
 		}
     }
 
+    public FileXfer getStamped()
+    	throws BigBangJewelException
+    {
+		Document[] larrDocs;
+		int i;
+		FileXfer lobjFile;
+
+		larrDocs = GetCurrentDocs();
+
+		lobjFile = null;
+		for ( i = 0; i < larrDocs.length; i++ )
+		{
+			if ( Constants.DocID_StampedReceipt.equals(larrDocs[i].getAt(3)) )
+			{
+				if ( larrDocs[i].getAt(5) == null )
+					return null;
+		    	if ( larrDocs[i].getAt(5) instanceof FileXfer )
+		    		lobjFile = (FileXfer)larrDocs[i].getAt(5);
+		    	else
+		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(5));
+		    	break;
+			}
+		}
+
+		return lobjFile;
+    }
+
     private BigDecimal internalCalcRetrocession()
     	throws BigBangJewelException
     {

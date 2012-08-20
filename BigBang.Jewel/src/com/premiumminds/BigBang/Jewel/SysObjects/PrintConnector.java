@@ -1,10 +1,17 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 
+import javax.imageio.ImageIO;
 import javax.print.PrintService;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -19,11 +26,37 @@ import Jewel.Engine.SysObjects.FileXfer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
+import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
 import com.sun.star.text.XTextDocument;
 
 public class PrintConnector
 {
+	private static class InnerPrintable
+		implements Printable
+	{
+		BufferedImage mimg;
+
+		public InnerPrintable(BufferedImage pimg)
+		{
+			mimg = pimg;
+		}
+
+		public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+			throws PrinterException
+		{
+			Graphics2D lrefGraphics;
+
+			if ( pageIndex > 0 )
+				return Printable.NO_SUCH_PAGE;
+
+			lrefGraphics = (Graphics2D) graphics;
+            lrefGraphics.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
+            lrefGraphics.drawImage(mimg, 0, 0, (int) pageFormat.getWidth(), (int) pageFormat.getHeight(), null);
+			return Printable.PAGE_EXISTS;
+		}
+	}
+
 	public static void printODT(FileXfer pobjFile)
 		throws BigBangJewelException
 	{
@@ -109,6 +142,26 @@ public class PrintConnector
 		}
 	}
 
+	public static void printPNG(FileXfer pobjFile)
+		throws BigBangJewelException
+	{
+		ByteArrayInputStream lstream;
+		BufferedImage limg;
+
+		lstream = new ByteArrayInputStream(pobjFile.getData());
+
+		try
+		{
+			limg = ImageIO.read(lstream);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		finalPrint(limg);
+	}
+
 	public static void printFile(FileXfer pobjFile)
 		throws BigBangJewelException
 	{
@@ -120,12 +173,29 @@ public class PrintConnector
 
 		if ( "application/pdf".equals(pobjFile.getContentType()) )
 			printPDF(pobjFile);
+
+		if ( "image/png".equals(pobjFile.getContentType()) )
+			printPNG(pobjFile);
+	}
+
+	public static void printSetDetail(PrintSetDetail pobjDetail)
+		throws BigBangJewelException
+	{
+		if ( pobjDetail.getFile() != null )
+			printFile(pobjDetail.getFile());
 	}
 
 	public static void printSetDocument(PrintSetDocument pobjDoc)
 		throws BigBangJewelException
 	{
+		PrintSetDetail[] larrDetails;
+		int i;
+
 		printFile(pobjDoc.getFile());
+
+		larrDetails = pobjDoc.getCurrentDetails();
+		for ( i = 0; i < larrDetails.length; i++ )
+			printSetDetail(larrDetails[i]);
 	}
 
 	public static void printSet(PrintSet pobjSet)
@@ -173,7 +243,41 @@ public class PrintConnector
 	private static void finalPrint(PDDocument pdoc)
 		throws BigBangJewelException
 	{
-		StringBuffer lstrBuff;
+		PrinterJob lrefPJob;
+
+		try
+		{
+			lrefPJob = getPrinter();
+
+			pdoc.silentPrint(lrefPJob);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static void finalPrint(final BufferedImage pimg)
+		throws BigBangJewelException
+	{
+		PrinterJob lrefPJob;
+
+		lrefPJob = getPrinter();
+		lrefPJob.setPrintable(new InnerPrintable(pimg));
+
+		try
+		{
+			lrefPJob.print();
+		}
+		catch (PrinterException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static PrinterJob getPrinter()
+		throws BigBangJewelException
+	{
 		String lstrPrinter;
 		PrinterJob lrefPJob;
 		PrintService[] larrServices;
@@ -189,11 +293,8 @@ public class PrintConnector
 			larrServices = PrinterJob.lookupPrintServices(); //JMMM: Chamada duplicada para ver se funciona à segunda
 
 			b = false;
-			lstrBuff = new StringBuffer();
-			lstrBuff.append("(").append(lstrPrinter).append("):").append(larrServices.length);
 			for ( i = 0; i < larrServices.length; i++ )
 			{
-				lstrBuff.append(":").append(larrServices[i].getName());
 				if ( larrServices[i].getName().indexOf(lstrPrinter) != -1)
 				{
 					lrefPJob.setPrintService(larrServices[i]);
@@ -201,9 +302,6 @@ public class PrintConnector
 					break;
 				}
 			}
-
-			if ( b )
-				pdoc.silentPrint(lrefPJob);
 		}
 		catch (Throwable e)
 		{
@@ -211,6 +309,8 @@ public class PrintConnector
 		}
 
 		if ( !b )
-			throw new BigBangJewelException(lstrBuff.toString()/*"Impressora definida (" + lstrPrinter + ") não encontrada."*/);
+			throw new BigBangJewelException("Impressora definida (" + lstrPrinter + ") não encontrada.");
+		
+		return lrefPJob;
 	}
 }

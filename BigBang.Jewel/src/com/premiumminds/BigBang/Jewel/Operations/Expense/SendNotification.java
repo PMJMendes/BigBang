@@ -105,7 +105,7 @@ public class SendNotification
 					midSetDocument = lobjSetCompany.getKey();
 				}
 
-				lobjSetExpense = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), null);
+				lobjSetExpense = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjSetExpense.setAt(0, midSetDocument);
 				lobjSetExpense.setAt(1, null);
 				lobjSetExpense.SaveToDb(pdb);

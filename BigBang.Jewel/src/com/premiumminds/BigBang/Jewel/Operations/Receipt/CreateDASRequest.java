@@ -151,7 +151,7 @@ public class CreateDASRequest
 			lobjSetClient.SaveToDb(pdb);
 			lidSetDocument = lobjSetClient.getKey();
 
-			lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), null);
+			lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjSetReceipt.setAt(0, lidSetDocument);
 			lobjSetReceipt.setAt(1, null);
 			lobjSetReceipt.SaveToDb(pdb);

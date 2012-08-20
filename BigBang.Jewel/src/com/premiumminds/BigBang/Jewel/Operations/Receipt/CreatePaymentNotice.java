@@ -16,6 +16,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.PaymentNoticeReport;
 
@@ -71,6 +72,7 @@ public class CreatePaymentNotice
 		PrintSet lobjSet;
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
+		FileXfer lobjStamped;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midClient = GetProcess().GetParent().GetParent().GetDataKey();
@@ -105,9 +107,11 @@ public class CreatePaymentNotice
 					midSetDocument = lobjSetClient.getKey();
 				}
 
-				lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), null);
+				lobjStamped = ((Receipt)GetProcess().GetData()).getStamped();
+
+				lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjSetReceipt.setAt(0, midSetDocument);
-				lobjSetReceipt.setAt(1, null);
+				lobjSetReceipt.setAt(1, (lobjStamped == null ? null : lobjStamped.GetVarData()));
 				lobjSetReceipt.SaveToDb(pdb);
 				midSetDetail = lobjSetReceipt.getKey();
 			}
