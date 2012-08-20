@@ -18,8 +18,8 @@ import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
-import com.premiumminds.BigBang.Jewel.SysObjects.NumberConv;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBase;
+import com.premiumminds.BigBang.Jewel.SysObjects.TextConverter;
 
 public class DebitNoteReport
 	extends ReportBase
@@ -82,7 +82,7 @@ public class DebitNoteReport
 		larrParams.put("Address2", (lobjClient.getAt(3) == null ? "" : (String)lobjClient.getAt(3)));
 		larrParams.put("ZipCode", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(0)));
 		larrParams.put("ZipLocal", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(1)));
-		larrParams.put("Text", NumberConv.getAsEuroText(mdblValue.doubleValue()));
+		larrParams.put("Text", TextConverter.fromCurrency(mdblValue.doubleValue()));
 		larrParams.put("Date", mdtDate.toString().substring(0, 10));
 
 		return Generate(larrParams, null);

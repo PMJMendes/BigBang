@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
@@ -7,11 +8,13 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import org.apache.ecs.GenericElement;
+import org.apache.pdfbox.pdmodel.PDDocument;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Petri.Interfaces.ILog;
 import Jewel.Petri.Interfaces.IProcess;
@@ -70,6 +73,18 @@ public class Receipt
 	    {
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public static GenericElement[] printImportReport(String[] parrParams)
+		throws BigBangJewelException
+	{
+		FileImportSession lobjSession;
+
+		if ( (parrParams == null) || (parrParams.length < 2) )
+			throw new BigBangJewelException("Erro: Número de parâmetros inválido.");
+
+		lobjSession = FileImportSession.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(parrParams[1]));
+		return lobjSession.printReport(parrParams);
 	}
 
     private IProcess lrefProcess;
@@ -434,6 +449,45 @@ public class Receipt
 		return true;
     }
 
+    public PDDocument getOriginal()
+    	throws BigBangJewelException
+    {
+		Document[] larrDocs;
+		int i;
+		FileXfer lobjFile;
+		ByteArrayInputStream lstreamInput;
+
+		larrDocs = GetCurrentDocs();
+
+		lstreamInput = null;
+		for ( i = 0; i < larrDocs.length; i++ )
+		{
+			if ( Constants.DocID_ReceiptScan.equals(larrDocs[i].getAt(3)) )
+			{
+				if ( larrDocs[i].getAt(5) == null )
+					return null;
+		    	if ( larrDocs[i].getAt(5) instanceof FileXfer )
+		    		lobjFile = (FileXfer)larrDocs[i].getAt(5);
+		    	else
+		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(5));
+		    	lstreamInput = new ByteArrayInputStream(lobjFile.getData());
+		    	break;
+			}
+		}
+
+		if ( lstreamInput == null )
+			return null;
+
+		try
+		{
+			return PDDocument.load(lstreamInput);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+    }
+
     private BigDecimal internalCalcRetrocession()
     	throws BigBangJewelException
     {
@@ -514,16 +568,4 @@ public class Receipt
 
 		return ldblPercent.abs().multiply(ldblBase).divide(new BigDecimal(100.00)).setScale(2, RoundingMode.HALF_UP);
     }
-
-	public static GenericElement[] printImportReport(String[] parrParams)
-		throws BigBangJewelException
-	{
-		FileImportSession lobjSession;
-
-		if ( (parrParams == null) || (parrParams.length < 2) )
-			throw new BigBangJewelException("Erro: Número de parâmetros inválido.");
-
-		lobjSession = FileImportSession.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(parrParams[1]));
-		return lobjSession.printReport(parrParams);
-	}
 }

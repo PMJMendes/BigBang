@@ -1,7 +1,5 @@
 package bigBang.module.receiptModule.server;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +14,6 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
@@ -53,11 +50,11 @@ import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
-import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
@@ -85,6 +82,8 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.SendReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SetReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ValidateReceipt;
+import com.premiumminds.BigBang.Jewel.SysObjects.ImageHelper;
+import com.premiumminds.BigBang.Jewel.SysObjects.PDFHelper;
 
 public class ReceiptServiceImpl
 	extends SearchServiceBase
@@ -385,17 +384,11 @@ public class ReceiptServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		Document[] larrDocs;
-		int i;
 		FileXfer lobjFile;
 		ByteArrayInputStream lstreamInput;
 		PDDocument lobjDocument;
 		ImageItem lobjResult;
-		PDPage lobjPage;
-		int llngRot;
 		BufferedImage lobjImage;
-		AffineTransform lobjXForm;
-		AffineTransformOp lobjOp;
 		ByteArrayOutputStream lstreamOutput;
 		byte[] larrBuffer;
 		UUID lidKey;
@@ -406,62 +399,32 @@ public class ReceiptServiceImpl
 		try
 		{
 			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(pstrItem));
-			larrDocs = lobjReceipt.GetCurrentDocs();
+			lobjDocument = lobjReceipt.getOriginal();
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lstreamInput = null;
-		for ( i = 0; i < larrDocs.length; i++ )
-		{
-			if ( Constants.DocID_ReceiptScan.equals(larrDocs[i].getAt(3)) )
-			{
-				if ( larrDocs[i].getAt(5) == null )
-					return null;
-		    	if ( larrDocs[i].getAt(5) instanceof FileXfer )
-		    		lobjFile = (FileXfer)larrDocs[i].getAt(5);
-		    	else
-		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(5));
-		    	lstreamInput = new ByteArrayInputStream(lobjFile.getData());
-		    	break;
-			}
-		}
-
-		if ( lstreamInput == null )
+		if ( lobjDocument == null )
 			return null;
+
 
 		try
 		{
-			lobjDocument = PDDocument.load(lstreamInput);
+			lobjResult = new ImageItem();
+			lobjResult.pageCount = PDFHelper.getPageCount(lobjDocument);
+			lobjImage = PDFHelper.getPage(lobjDocument, pageNumber);
+		}
+		catch (Throwable e)
+		{
+			try { lobjDocument.close(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
 
-			try
-			{
-				lobjResult = new ImageItem();
-				lobjResult.pageCount = lobjDocument.getDocumentCatalog().getAllPages().size();
-
-				lobjPage = (PDPage)lobjDocument.getDocumentCatalog().getAllPages().get(pageNumber);
-				llngRot = lobjPage.findRotation();
-
-				lobjImage = lobjPage.convertToImage(BufferedImage.TYPE_INT_ARGB, 200);
-			}
-			catch (Throwable e1)
-			{
-				try { lobjDocument.close(); } catch (Throwable e2) {}
-				throw e1;
-			}
+		try
+		{
 			lobjDocument.close();
-
-			if ( llngRot != 0 )
-			{
-				lobjXForm = new AffineTransform();
-				lobjXForm.translate(0.5*lobjImage.getHeight(), 0.5*lobjImage.getWidth());
-				lobjXForm.quadrantRotate(llngRot/90);
-				lobjXForm.translate(-0.5*lobjImage.getWidth(), -0.5*lobjImage.getHeight());
-				lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-				lobjImage = lobjOp.filter(lobjImage, null);
-			}
 
 			lstreamOutput = new ByteArrayOutputStream();
 			ImageIO.write(lobjImage, "png", lstreamOutput);
@@ -470,7 +433,6 @@ public class ReceiptServiceImpl
 			lstreamInput = new ByteArrayInputStream(larrBuffer);
 			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
 //			lobjFile = new FileXfer(larrBuffer.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
-
 		}
 		catch (Throwable e)
 		{
@@ -480,7 +442,7 @@ public class ReceiptServiceImpl
 		lidKey = UUID.randomUUID();
 		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
 		lobjResult.imageId = lidKey.toString();
-		return null;
+		return lobjResult;
 	}
 
 	public Receipt editReceipt(Receipt receipt)
@@ -657,7 +619,59 @@ public class ReceiptServiceImpl
 	public bigBang.definitions.shared.Document cropRectangle(String receiptId, Rectangle rect)
 		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		BufferedImage lobjImg;
+		ByteArrayOutputStream lstreamOutput;
+		byte[] larrBuffer;
+		ByteArrayInputStream lstreamInput;
+		FileXfer lobjFile;
+		ManageData lopMRD;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receiptId));
+
+			lobjImg = ImageHelper.cropAndStamp(PDFHelper.getPage(lobjReceipt.getOriginal(), 0),
+					rect.x1, rect.y1, rect.x2-rect.x1, rect.y2-rect.y1);
+
+			lstreamOutput = new ByteArrayOutputStream();
+			ImageIO.write(lobjImg, "png", lstreamOutput);
+			larrBuffer = lstreamOutput.toByteArray();
+			lstreamInput = new ByteArrayInputStream(larrBuffer);
+			lobjFile = new FileXfer(larrBuffer.length, "image/png", "tratado.png", lstreamInput);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopMRD = new ManageData(lobjReceipt.GetProcessID());
+		lopMRD.mobjData = null;
+		lopMRD.mobjContactOps = null;
+		lopMRD.mobjDocOps = new DocOps();
+		lopMRD.mobjDocOps.marrDelete = null;
+		lopMRD.mobjDocOps.marrModify = null;
+		lopMRD.mobjDocOps.marrCreate = new DocumentData[] {new DocumentData()};
+		lopMRD.mobjDocOps.marrCreate[0].mstrName = "Tratado";
+		lopMRD.mobjDocOps.marrCreate[0].midOwnerType = Constants.ObjID_Receipt;
+		lopMRD.mobjDocOps.marrCreate[0].midOwnerId = lobjReceipt.getKey();
+		lopMRD.mobjDocOps.marrCreate[0].midDocType = Constants.DocID_StampedReceipt;
+		lopMRD.mobjDocOps.marrCreate[0].mstrText = null;
+		lopMRD.mobjDocOps.marrCreate[0].mobjFile = lobjFile.GetVarData();
+
+		try
+		{
+			lopMRD.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return DocumentServiceImpl.sGetDocument(lopMRD.mobjDocOps.marrCreate[0].mid);
 	}
 
 	public Receipt setForReturn(Receipt.ReturnMessage message)
