@@ -2,7 +2,6 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -27,7 +26,6 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.DocuShareItem;
 
 public class ReceiptTasksViewPresenter implements ViewPresenter,
 		HasOperationPermissions {
@@ -40,12 +38,9 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 	public static interface Display {
 		HasEditableValue<Receipt> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
+		void handleImageItem(ImageItem item);
 		
 		void clearImages();
-		
-		Button getPrevImageButton();
-		Button getNextImageButton();
-		
 		HasWidgets getOverlayViewContainer();
 		void showOverlayViewContainer(boolean show);
 		void allowCreateDASRequest(boolean allow);
@@ -185,14 +180,12 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 			
 			@Override
 			public void onResponse(ImageItem response) {
-				// TODO Auto-generated method stub
-				
+				view.handleImageItem(response);
 			}
 			
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
-				
+				return;
 			}
 		});
 	}

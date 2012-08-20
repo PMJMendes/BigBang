@@ -1,8 +1,15 @@
 package bigBang.library.client.userInterface;
 
+import bigBang.definitions.shared.ImageItem;
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.interfaces.FileService;
+import bigBang.library.interfaces.ImageSubServiceAsync;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -17,10 +24,10 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -28,35 +35,67 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ImageHandlerPanel extends View implements Focusable {
+public class ImageHandlerPanel extends View {
 
 	protected final double STEP_SCALE = 0.1;
-	
-	protected FocusPanel focusPanel;
+
 	protected ScrollPanel viewport;
 	protected AbsolutePanel cover;
+	protected Button nextButton, prevButton;
+	protected Widget toolbar;
+
 	protected Image image;
-	
+
+	protected ImageSubServiceAsync imageService;
+	protected ImageItem currentImageItem;
+
 	protected boolean dragMode;
 	protected int dragX;
 	protected int dragY;
 
 	public ImageHandlerPanel(){
-		focusPanel = new FocusPanel();
-		initWidget(focusPanel);
-		focusPanel.setSize("100%", "100%");
-		
-		AbsolutePanel wrapper = new AbsolutePanel();
-		focusPanel.add(wrapper);
+		VerticalPanel mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
+		mainWrapper.setSize("100%", "100%");
 
-		wrapper.setSize("100%", "100");
-		
+		ListHeader toolbar = new ListHeader();
+		this.toolbar = toolbar;
+		mainWrapper.add(toolbar);
+
+		HorizontalPanel buttonWrapper = new HorizontalPanel();
+		buttonWrapper.setSpacing(5);
+
+		this.nextButton = new Button("Próxima", new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				showNextPage();
+			}
+		});
+		this.prevButton = new Button("Anterior", new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				showPrevPage();
+			}
+		});
+		buttonWrapper.add(prevButton);
+		buttonWrapper.add(nextButton);
+
+		toolbar.setRightWidget(buttonWrapper);
+
+		AbsolutePanel wrapper = new AbsolutePanel();
+		mainWrapper.add(wrapper);
+		mainWrapper.setCellHeight(wrapper, "100%");
+
+		wrapper.setSize("100%", "100%");
+
 		image = new Image();
 		viewport = new ScrollPanel();
 		viewport.setSize("100%", "100%");
 		viewport.getElement().getStyle().setBackgroundColor("#000");
 		wrapper.add(viewport, 0, 0);
-		
+
 		cover = new AbsolutePanel();
 		cover.setSize("100%", "100%");
 		wrapper.add(cover, 0, 0);
@@ -66,19 +105,19 @@ public class ImageHandlerPanel extends View implements Focusable {
 		imageWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		imageWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		imageWrapper.add(image);
-		
+
 		viewport.add(imageWrapper);
 		dragMode = false;
 
 		image.addLoadHandler(new LoadHandler() {
-			
+
 			@Override
 			public void onLoad(LoadEvent event) {
 				showLoading(false);
 			}
 		});
 		image.addMouseWheelHandler(new MouseWheelHandler() {
-			
+
 			@Override
 			public void onMouseWheel(MouseWheelEvent event) {
 				event.preventDefault();
@@ -91,14 +130,14 @@ public class ImageHandlerPanel extends View implements Focusable {
 			}
 		});
 		image.addDragStartHandler(new DragStartHandler() {
-			
+
 			@Override
 			public void onDragStart(DragStartEvent event) {
 				event.preventDefault();
 			}
 		});
 		image.addMouseDownHandler(new MouseDownHandler() {
-			
+
 			@Override
 			public void onMouseDown(MouseDownEvent event) {
 				dragMode = true;
@@ -109,7 +148,7 @@ public class ImageHandlerPanel extends View implements Focusable {
 		Widget rootWidget = RootPanel.get().asWidget();
 		DOM.sinkEvents(rootWidget.getElement(), Event.MOUSEEVENTS);
 		DOM.setEventListener(rootWidget.getElement(), new EventListener() {
-			
+
 			@Override
 			public void onBrowserEvent(Event event) {
 				if(event.getTypeInt() == Event.ONMOUSEUP) {
@@ -120,7 +159,7 @@ public class ImageHandlerPanel extends View implements Focusable {
 			}
 		});
 		image.addMouseMoveHandler(new MouseMoveHandler() {
-			
+
 			@Override
 			public void onMouseMove(MouseMoveEvent event) {
 				if(dragMode){
@@ -132,29 +171,34 @@ public class ImageHandlerPanel extends View implements Focusable {
 		});
 		image.getElement().getStyle().setCursor(Cursor.MOVE);
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
 	}
 
-	public void setImage(String url){
+	protected void setImage(String url){
 		image.setSize("", "");
-		showLoading(true);
-		image.setUrl(url);
-		image.addLoadHandler(new LoadHandler() {
-			
-			@Override
-			public void onLoad(LoadEvent event) {
-				fitToViewport();
-			}
-		});
+		
+		if(url == null) {
+			image.setUrl("");
+		}else{
+			showLoading(true);
+			image.setUrl(GWT.getModuleBaseURL() + FileService.GET_PREFIX + url);
+			image.addLoadHandler(new LoadHandler() {
+
+				@Override
+				public void onLoad(LoadEvent event) {
+					fitToViewport();
+				}
+			});
+		}
 	}
-	
+
 	public void fitToViewport(){
 		int imageWidth = image.getOffsetWidth();
 		int imageHeight = image.getOffsetHeight();
-		
+
 		if(imageWidth > imageHeight){
 			fitToViewportWidth();
 		}else{
@@ -165,8 +209,8 @@ public class ImageHandlerPanel extends View implements Focusable {
 	protected void fitToViewportHeight(){
 		double imageWidth = image.getOffsetWidth();
 		double imageHeight = image.getOffsetHeight();
-		
-		if(imageWidth == 0 || imageHeight == 0){
+
+		if(imageWidth <= 0 || imageHeight <= 0){
 			return;
 		}
 		double ratio = (double)(imageWidth / imageHeight);
@@ -183,7 +227,7 @@ public class ImageHandlerPanel extends View implements Focusable {
 		if(imageWidth == 0 || imageHeight == 0){
 			return;
 		}
-		
+
 		double ratio = (double)(imageHeight / imageWidth);
 
 		int viewportWidth = this.getViewportWidth();
@@ -191,11 +235,11 @@ public class ImageHandlerPanel extends View implements Focusable {
 		image.setWidth((int)viewportWidth + "px");
 		image.setHeight((int)viewportWidth * ratio + "px");
 	}
-	
+
 	public void centerViewport(){
 		centerViewport(image.getOffsetWidth() / 2, image.getOffsetHeight() / 2);
 	}
-	
+
 	public void centerViewport(int x, int y){
 		int offsetX = getViewportWidth();
 		int offsetY = getViewportHeight();
@@ -214,7 +258,7 @@ public class ImageHandlerPanel extends View implements Focusable {
 		viewport.setHorizontalScrollPosition(offsetX);
 		viewport.setVerticalScrollPosition(offsetY);
 	}
-	
+
 	public void zoom(double scale){
 		int viewportCenterX = this.viewport.getAbsoluteLeft() - this.image.getAbsoluteLeft() + (this.getViewportWidth() / 2);
 		int viewportCenterY = this.viewport.getAbsoluteTop() - this.image.getAbsoluteTop() + (this.getViewportHeight() / 2);
@@ -242,13 +286,13 @@ public class ImageHandlerPanel extends View implements Focusable {
 			this.cover.clear();
 			VerticalPanel wrapper = new VerticalPanel();
 			wrapper.setSize("100%", "100%");
-			
+
 			wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 			wrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			
+
 			Label loadingLabel = new Label("A carregar imagem...");
 			loadingLabel.getElement().getStyle().setColor("#FFF");
-			
+
 			wrapper.add(loadingLabel);
 			this.cover.add(wrapper);			
 		}else{
@@ -256,51 +300,91 @@ public class ImageHandlerPanel extends View implements Focusable {
 		}
 		this.cover.setVisible(show);
 	}
-	
+
 	protected void scrollRelative(int x, int y){
 		int newScrollX = viewport.getHorizontalScrollPosition() - x;
 		int newScrollY = viewport.getVerticalScrollPosition() - y;
-		
+
 		if(newScrollX < 0){
 			newScrollX = 0;
 		}
 		if(newScrollY < 0){
 			newScrollY = 0;
 		}
-		
+
 		viewport.setHorizontalScrollPosition(newScrollX);
 		viewport.setVerticalScrollPosition(newScrollY);
 	}
-	
+
 	protected int getViewportHeight(){
 		return this.viewport.getOffsetHeight() - 20;
 	}
-	
+
 	protected int getViewportWidth(){
 		return this.viewport.getOffsetWidth() - 20;
 	}
-	
+
 	public Image getImage(){
 		return image;
 	}
 
-	@Override
-	public int getTabIndex() {
-		return this.focusPanel.getTabIndex();
+	public void handleImageItem(ImageItem item) {
+		this.currentImageItem = item;
+		setImage(item == null ? null : item.imageId);
+		formatButtons();
 	}
 
-	@Override
-	public void setAccessKey(char key) {
-		this.focusPanel.setAccessKey(key);
+	public void setImageService(ImageSubServiceAsync instance) {
+		this.imageService = instance;
 	}
 
-	@Override
-	public void setFocus(boolean focused) {
-		this.focusPanel.setFocus(focused);
+	protected void formatButtons(){
+		hideToolbar();
+		if(this.currentImageItem != null && this.currentImageItem.pageCount > 1) {
+			showToolbar();
+			this.nextButton.setEnabled(this.currentImageItem.pageNumber < this.currentImageItem.pageCount);
+			this.prevButton.setEnabled(this.currentImageItem.pageNumber >= 0);
+		}
 	}
 
-	@Override
-	public void setTabIndex(int index) {
-		this.focusPanel.setTabIndex(index);
+	protected void showToolbar(){
+		this.toolbar.setVisible(true);
 	}
+
+	protected void hideToolbar(){
+		this.toolbar.setVisible(false);
+	}
+
+	protected void showNextPage(){
+		imageService.getItemAsImage(currentImageItem.id, this.currentImageItem.pageNumber + 1, new BigBangAsyncCallback<ImageItem>() {
+
+			@Override
+			public void onResponseSuccess(ImageItem result) {
+				handleImageItem(result);
+				formatButtons();
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	protected void showPrevPage(){
+		imageService.getItemAsImage(currentImageItem.id, this.currentImageItem.pageNumber - 1, new BigBangAsyncCallback<ImageItem>() {
+
+			@Override
+			public void onResponseSuccess(ImageItem result) {
+				handleImageItem(result);
+				formatButtons();
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
 }

@@ -13,7 +13,6 @@ import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SignatureRequest;
-import bigBang.library.shared.DocuShareItem;
 
 public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 

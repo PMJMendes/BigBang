@@ -114,6 +114,7 @@ public class ReceiptImagePanel extends View implements HasAllFocusHandlers {
 
 	protected void goToFile(String fileDesc){
 		final ImageHandlerPanel panel = new ImageHandlerPanel();
+		panel.setImageService(DocuShareService.Util.getInstance());
 		panel.setSize("100%", "100%");
 		panel.showLoading(true);
 		navigationPanel.navigateTo(panel);
@@ -122,7 +123,7 @@ public class ReceiptImagePanel extends View implements HasAllFocusHandlers {
 
 			@Override
 			public void onResponseSuccess(ImageItem result) {
-				panel.setImage(GWT.getModuleBaseURL() + FileService.GET_PREFIX + result.imageId);
+				panel.handleImageItem(result);
 				panel.showLoading(false);
 			}
 
