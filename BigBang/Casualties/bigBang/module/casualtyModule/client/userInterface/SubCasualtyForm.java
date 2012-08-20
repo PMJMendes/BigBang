@@ -198,7 +198,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 					policyReference.setValue(null, true);
 					subPolicyReference.setValue(null, true);
 				}
-
+				setReference(referenceType.getValue(), referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue());
 				updateItemSections();
 			}
 		};
@@ -265,15 +265,18 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 			number.setValue(info.number);
 			
-			if(info.insuredObjectId == null && info.insuredObjectName != null){
+			referenceType.setValue(info.referenceTypeId, true);
+			
+			setReference(info.referenceTypeId, info.referenceId);
+			
+			if(info.insuredObjectName != null){
+				belongsToPolicy.setValue("false", true);
 				insuredObjectName.setValue(info.insuredObjectName);
-				belongsToPolicy.setValue("false");
 			}else{
+				belongsToPolicy.setValue("true", true);
 				insuredObject.setValue(info.insuredObjectId);
-				belongsToPolicy.setValue("true");
 			}
 			
-			referenceType.setValue(info.referenceTypeId, true);
 			if(info.referenceTypeId == null) {
 				referenceType.setValue(null, true);
 				policyReference.setValue(null);
@@ -346,7 +349,6 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 			setSubCasualtyItems(info.items);
 		}
-		setReference(referenceType.getValue(), info.referenceId);
 		addLastFields();
 	}
 
