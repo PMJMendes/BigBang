@@ -175,6 +175,7 @@ public class BigBang_Tests
 //		TestReceiptReceiveImage.DoTest();
 //		TestReceiptDebitNote.DoTest();
 //		TestReceiptValidate.DoTest();
+//		TestReceiptCrop.DoTest();
 //		TestReceiptSetReturn.DoTest();
 //		TestReceiptCreatePaymentNotice.DoTest();
 //		TestReceiptPayment.DoTest();
