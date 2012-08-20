@@ -413,6 +413,8 @@ public class ReceiptServiceImpl
 		try
 		{
 			lobjResult = new ImageItem();
+			lobjResult.id = pstrItem;
+			lobjResult.pageNumber = pageNumber;
 			lobjResult.pageCount = PDFHelper.getPageCount(lobjDocument);
 			lobjImage = PDFHelper.getPage(lobjDocument, pageNumber);
 		}

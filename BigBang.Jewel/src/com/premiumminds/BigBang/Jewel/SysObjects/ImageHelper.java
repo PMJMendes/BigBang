@@ -31,6 +31,10 @@ public class ImageHelper
 				pobjInput.getColorModel().isAlphaPremultiplied(), null);
 
 		lobjGraphics = lobjOutput.createGraphics();
+		lobjGraphics.clearRect(0, 0, pobjInput.getWidth(), pobjInput.getHeight());
+
+		lobjGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+		lobjGraphics.drawImage(pobjInput, 0, 0, null);
 
 		lobjGraphics.setBackground(Color.WHITE);
 		lobjGraphics.clearRect(plngX, plngY, plngW, plngH);

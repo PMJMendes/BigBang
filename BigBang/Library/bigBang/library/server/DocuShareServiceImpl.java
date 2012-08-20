@@ -102,6 +102,8 @@ public class DocuShareServiceImpl
 			throw new SessionExpiredException();
 
 		lobjResult = new ImageItem();
+		lobjResult.id = pstrItem;
+		lobjResult.pageNumber = pageNumber;
 
 		try
 		{
