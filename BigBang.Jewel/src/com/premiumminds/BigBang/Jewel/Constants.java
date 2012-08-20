@@ -614,6 +614,7 @@ public class Constants
 	public static final UUID TID_InsurerAccounting   = UUID.fromString("501A9331-3FAB-478F-A682-A0270124E6B3");
 	public static final UUID TID_MediatorAccounting  = UUID.fromString("E9A0F1C0-AE70-49AD-887E-A0990128BB1E");
 	public static final UUID TID_PaymentReturnLetter = UUID.fromString("F8717681-DBC3-4186-B039-A0B0010A0B6D");
+	public static final UUID TID_Stamp               = UUID.fromString("BE3106A1-9C31-40D3-ACC2-A0B300D3E585");
 
 	// Contact Types
 	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
