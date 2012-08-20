@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -22,7 +23,7 @@ public class ImageHelper
 		BufferedImage lobjOutput;
 		Graphics2D lobjGraphics;
 		Template lobjStamp;
-		byte[] larrFile;
+		FileXfer lobjFile;
 		ByteArrayInputStream lstreamInput;
 		BufferedImage lobjStampImg;
 
@@ -31,6 +32,7 @@ public class ImageHelper
 
 		lobjGraphics = lobjOutput.createGraphics();
 
+		lobjGraphics.setBackground(Color.WHITE);
 		lobjGraphics.clearRect(plngX, plngY, plngW, plngH);
 
 		lobjStamp = Template.GetInstance(Engine.getCurrentNameSpace(), Constants.TID_Stamp);
@@ -38,10 +40,10 @@ public class ImageHelper
 		if ( lobjStamp.getAt(1) != null )
 		{
 			if ( lobjStamp.getAt(1) instanceof FileXfer )
-				larrFile = ((FileXfer)lobjStamp.getAt(1)).getData();
+				lobjFile = (FileXfer)lobjStamp.getAt(1);
 			else
-				larrFile = (byte[])lobjStamp.getAt(1);
-			lstreamInput = new ByteArrayInputStream(larrFile);
+				lobjFile = new FileXfer((byte[])lobjStamp.getAt(1));
+			lstreamInput = new ByteArrayInputStream(lobjFile.getData());
 			try
 			{
 				lobjStampImg = ImageIO.read(lstreamInput);
@@ -51,7 +53,7 @@ public class ImageHelper
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
-			lobjGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0));
+			lobjGraphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 			lobjGraphics.drawImage(lobjStampImg, (pobjInput.getWidth() - lobjStampImg.getWidth())/2,
 					(pobjInput.getHeight() - lobjStampImg.getHeight())/2, null);
 		}
