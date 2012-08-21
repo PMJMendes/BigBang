@@ -35,6 +35,7 @@ public class Constants
 	public static final UUID ObjID_Company                  = UUID.fromString("7B203DCA-FFAC-46B2-B849-9EBC009DB127");
 	public static final UUID ObjID_Mediator                 = UUID.fromString("8A33B9DD-001A-401F-AA7E-9EBB00E9D24F");
 	public static final UUID ObjID_MediatorDeal             = UUID.fromString("2EAECB2F-ADCE-4E9B-B8B0-A09700BCB82A");
+	public static final UUID ObjID_MediatorException        = UUID.fromString("98438D18-5BEC-41FD-A4B3-A0B400CD3A75");
 	public static final UUID ObjID_Contact                  = UUID.fromString("2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C");
 	public static final UUID ObjID_ContactInfo              = UUID.fromString("069434F6-8EE7-4DFE-96C9-9EC401014608");
 	public static final UUID ObjID_Document                 = UUID.fromString("794F44DB-191A-4E17-9217-9ECC012A8AC2");

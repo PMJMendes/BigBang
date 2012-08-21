@@ -23,8 +23,10 @@ import bigBang.module.generalSystemModule.interfaces.MediatorService;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.MediatorData;
 import com.premiumminds.BigBang.Jewel.Data.MediatorDealData;
+import com.premiumminds.BigBang.Jewel.Data.MediatorExceptionData;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.MediatorDeal;
+import com.premiumminds.BigBang.Jewel.Objects.MediatorException;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
@@ -49,6 +51,7 @@ public class MediatorServiceImpl
 		ObjectBase lobjProfile, lobjZipCode;
 		Mediator lobjTmp;
 		MediatorDeal[] larrDeals;
+		MediatorException[] larrExceptions;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
@@ -117,6 +120,21 @@ public class MediatorServiceImpl
 	        		for ( i = 0; i < larrDeals.length; i++ )
 	        			lobjTmp.dealPercents.put(((UUID)larrDeals[i].getAt(MediatorDeal.I.SUBLINE)).toString(),
 	        					((BigDecimal)larrDeals[i].getAt(MediatorDeal.I.PERCENT)).doubleValue());
+
+	        	larrExceptions = lobjAux.GetCurrentExceptions();
+	        	if ( larrExceptions != null )
+	        	{
+	        		lobjTmp.exceptions = new Mediator.MediatorException[larrExceptions.length];
+	        		for ( i = 0; i < larrExceptions.length; i++ )
+	        		{
+	        			lobjTmp.exceptions[i] = new Mediator.MediatorException();
+	        			lobjTmp.exceptions[i].clientId = (larrExceptions[i].getAt(MediatorException.I.CLIENT) == null ? null :
+	        					((UUID)larrExceptions[i].getAt(MediatorException.I.CLIENT)).toString());
+	        			lobjTmp.exceptions[i].policyId = (larrExceptions[i].getAt(MediatorException.I.POLICY) == null ? null :
+        					((UUID)larrExceptions[i].getAt(MediatorException.I.POLICY)).toString());
+	        			lobjTmp.exceptions[i].percent = ((BigDecimal)larrDeals[i].getAt(MediatorDeal.I.PERCENT)).doubleValue();
+	        		}
+	        	}
 
 	        	larrAux.add(lobjTmp);
 	        }
@@ -209,6 +227,22 @@ public class MediatorServiceImpl
 			}
 			else
 				lopMM.marrCreate[0].mobjMainValues.marrDeals = null;
+
+			if ( (mediator.exceptions != null ) && (mediator.exceptions.length > 0) )
+			{
+				lopMM.marrCreate[0].mobjMainValues.marrExceptions = new MediatorExceptionData[mediator.exceptions.length];
+				for ( i = 0; i < mediator.exceptions.length; i++ )
+				{
+					lopMM.marrCreate[0].mobjMainValues.marrExceptions[i] = new MediatorExceptionData();
+					lopMM.marrCreate[0].mobjMainValues.marrExceptions[i].midClient = ( mediator.exceptions[i].clientId == null ? null :
+							UUID.fromString(mediator.exceptions[i].clientId) );
+					lopMM.marrCreate[0].mobjMainValues.marrExceptions[i].midPolicy = ( mediator.exceptions[i].policyId == null ? null :
+						UUID.fromString(mediator.exceptions[i].policyId) );
+					lopMM.marrCreate[0].mobjMainValues.marrExceptions[i].mdblPercent = new BigDecimal(mediator.exceptions[i].percent);
+				}
+			}
+			else
+				lopMM.marrCreate[0].mobjMainValues.marrExceptions = null;
 
 			if ( (mediator.contacts != null) && (mediator.contacts.length > 0) )
 			{
@@ -306,6 +340,22 @@ public class MediatorServiceImpl
 			}
 			else
 				lopMM.marrModify[0].mobjMainValues.marrDeals = null;
+
+			if ( (mediator.exceptions != null ) && (mediator.exceptions.length > 0) )
+			{
+				lopMM.marrModify[0].mobjMainValues.marrExceptions = new MediatorExceptionData[mediator.exceptions.length];
+				for ( i = 0; i < mediator.exceptions.length; i++ )
+				{
+					lopMM.marrModify[0].mobjMainValues.marrExceptions[i] = new MediatorExceptionData();
+					lopMM.marrModify[0].mobjMainValues.marrExceptions[i].midClient = ( mediator.exceptions[i].clientId == null ? null :
+							UUID.fromString(mediator.exceptions[i].clientId) );
+					lopMM.marrModify[0].mobjMainValues.marrExceptions[i].midPolicy = ( mediator.exceptions[i].policyId == null ? null :
+						UUID.fromString(mediator.exceptions[i].policyId) );
+					lopMM.marrModify[0].mobjMainValues.marrExceptions[i].mdblPercent = new BigDecimal(mediator.exceptions[i].percent);
+				}
+			}
+			else
+				lopMM.marrModify[0].mobjMainValues.marrExceptions = null;
 
 			lopMM.marrCreate = null;
 			lopMM.marrDelete = null;

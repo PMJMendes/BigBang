@@ -299,6 +299,77 @@ public class Mediator
 		return larrAux.toArray(new MediatorDeal[larrAux.size()]);
     }
 
+    public MediatorException[] GetCurrentExceptions()
+        throws BigBangJewelException
+    {
+		ArrayList<MediatorException> larrAux;
+		IEntity lrefExceptions;
+        MasterDB ldb;
+        ResultSet lrsExceptions;
+
+		larrAux = new ArrayList<MediatorException>();
+
+		try
+		{
+			lrefExceptions = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MediatorException)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsExceptions = lrefExceptions.SelectByMembers(ldb, new int[] {MediatorException.I.MEDIATOR},
+					new java.lang.Object[] {getKey()}, null);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsExceptions.next() )
+				larrAux.add(MediatorException.GetInstance(getNameSpace(), lrsExceptions));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsExceptions.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsExceptions.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsExceptions.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new MediatorException[larrAux.size()]);
+    }
+
     public UUID getProfile()
     {
     	return (UUID)getAt(I.PROFILE);

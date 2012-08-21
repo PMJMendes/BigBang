@@ -17,10 +17,12 @@ import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.MediatorData;
 import com.premiumminds.BigBang.Jewel.Data.MediatorDealData;
+import com.premiumminds.BigBang.Jewel.Data.MediatorExceptionData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.MediatorDeal;
+import com.premiumminds.BigBang.Jewel.Objects.MediatorException;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -38,6 +40,9 @@ public class ManageMediators
 		public MediatorDealData[] marrDataCreate;
 		public MediatorDealData[] marrDataModify;
 		public MediatorDealData[] marrDataDelete;
+		public MediatorExceptionData[] marrExcCreate;
+		public MediatorExceptionData[] marrExcModify;
+		public MediatorExceptionData[] marrExcDelete;
 		public ContactOps mobjContactOps;
 		public DocOps mobjDocOps;
 	}
@@ -478,7 +483,6 @@ public class ManageMediators
 		throws BigBangJewelException
 	{
 		Mediator lobjAux;
-		int i;
 
 		try
 		{
@@ -486,21 +490,11 @@ public class ManageMediators
 			pobjData.mobjMainValues.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 
-			pobjData.marrDataModify = null;
-			pobjData.marrDataDelete = null;
-			if ( (pobjData.mobjMainValues.marrDeals == null) || (pobjData.mobjMainValues.marrDeals.length == 0) )
-				pobjData.marrDataCreate = null;
-			else
-			{
-				pobjData.marrDataCreate = new MediatorDealData[pobjData.mobjMainValues.marrDeals.length];
-
-				for ( i = 0; i < pobjData.marrDataCreate.length; i++ )
-				{
-					pobjData.marrDataCreate[i] = pobjData.mobjMainValues.marrDeals[i];
-					pobjData.marrDataCreate[i].midMediator = lobjAux.getKey();
-				}
-			}
+			BuildDataOps(pobjData, new MediatorDeal[0], lobjAux.getKey());
 			RunDataOps(pdb, pobjData);
+
+			BuildExceptionOps(pobjData, new MediatorException[0], lobjAux.getKey());
+			RunExceptionOps(pdb, pobjData);
 
 			if ( pobjData.mobjContactOps != null )
 				pobjData.mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
@@ -521,13 +515,6 @@ public class ManageMediators
 		throws BigBangJewelException
 	{
 		Mediator lobjAux;
-		MediatorDeal[] larrCurrent;
-		HashMap<UUID, MediatorDealData> larrDeals;
-		ArrayList<MediatorDealData> larrCreate;
-		ArrayList<MediatorDealData> larrModify;
-		ArrayList<MediatorDealData> larrDelete;
-		MediatorDealData lobjData;
-		int i;
 
 		try
 		{
@@ -540,75 +527,11 @@ public class ManageMediators
 			pobjData.mobjMainValues.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 
-			larrCurrent = lobjAux.GetCurrentDeals();
-			if ( pobjData.mobjMainValues.marrDeals == null )
-			{
-				pobjData.marrDataCreate = null;
-				pobjData.marrDataModify = null;
-				if ( (larrCurrent == null) || (larrCurrent.length == 0) )
-					pobjData.marrDataDelete = null;
-				else
-				{
-					pobjData.marrDataDelete = new MediatorDealData[larrCurrent.length];
-					for ( i = 0; i < larrCurrent.length; i++ )
-					{
-						pobjData.marrDataDelete[i] = new MediatorDealData();
-						pobjData.marrDataDelete[i].mid = larrCurrent[i].getKey();
-					}
-				}
-			}
-			else
-			{
-				larrDeals = new HashMap<UUID, MediatorDealData>();
-				larrCreate = new ArrayList<MediatorDealData>();
-				larrModify = new ArrayList<MediatorDealData>();
-				larrDelete = new ArrayList<MediatorDealData>();
-
-				for ( i = 0; i < larrCurrent.length; i++ )
-				{
-					lobjData = new MediatorDealData();
-					lobjData.FromObject(larrCurrent[i]);
-					larrDeals.put(lobjData.midSubLine, lobjData);
-				}
-
-				for ( i = 0; i < pobjData.mobjMainValues.marrDeals.length; i++ )
-				{
-					lobjData = larrDeals.get(pobjData.mobjMainValues.marrDeals[i].midSubLine);
-
-					if ( lobjData == null )
-					{
-						pobjData.mobjMainValues.marrDeals[i].midMediator = lobjAux.getKey();
-						larrCreate.add(pobjData.mobjMainValues.marrDeals[i]);
-					}
-					else
-					{
-						if ( !lobjData.mdblPercent.equals(pobjData.mobjMainValues.marrDeals[i].mdblPercent) )
-							larrModify.add(pobjData.mobjMainValues.marrDeals[i]);
-						larrDeals.put(pobjData.mobjMainValues.marrDeals[i].midSubLine, null);
-					}
-				}
-
-				for ( UUID lid: larrDeals.keySet() )
-				{
-					lobjData = larrDeals.get(lid);
-					if ( lobjData != null )
-						larrDelete.add(lobjData);
-				}
-
-				if ( larrCreate.size() == 0 )
-					pobjData.marrDataCreate = null;
-				else
-					pobjData.marrDataCreate = larrCreate.toArray(new MediatorDealData[larrCreate.size()]);
-				if ( larrModify.size() == 0 )
-					pobjData.marrDataModify = null;
-				else
-					pobjData.marrDataModify = larrModify.toArray(new MediatorDealData[larrModify.size()]);
-				if ( larrDelete.size() == 0 )
-					pobjData.marrDataDelete = null;
-				else
-					pobjData.marrDataDelete = larrDelete.toArray(new MediatorDealData[larrDelete.size()]);
-			}
+			BuildDataOps(pobjData, lobjAux.GetCurrentDeals(), lobjAux.getKey());
 			RunDataOps(pdb, pobjData);
+
+			BuildExceptionOps(pobjData, lobjAux.GetCurrentExceptions(), lobjAux.getKey());
+			RunExceptionOps(pdb, pobjData);
 		}
 		catch (Throwable e)
 		{
@@ -620,7 +543,6 @@ public class ManageMediators
 		throws BigBangJewelException
 	{
 		Mediator lobjAux;
-		MediatorDeal[] larrDeals;
 		Contact[] larrContacts;
 		Document[] larrDocs;
 		int i;
@@ -630,21 +552,13 @@ public class ManageMediators
 			lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), pobjData.mobjMainValues.mid);
 			pobjData.mobjMainValues.FromObject(lobjAux);
 
-			pobjData.marrDataCreate = null;
-			pobjData.marrDataModify = null;
-			larrDeals = lobjAux.GetCurrentDeals();
-			if ( (larrDeals == null) || (larrDeals.length == 0) )
-				pobjData.marrDataDelete = null;
-			else
-			{
-				pobjData.marrDataDelete = new MediatorDealData[larrDeals.length];
-				for ( i = 0; i < larrDeals.length; i++ )
-				{
-					pobjData.marrDataDelete[i] = new MediatorDealData();
-					pobjData.marrDataDelete[i].mid = larrDeals[i].getKey();
-				}
-			}
+			pobjData.mobjMainValues.marrDeals = null;
+			BuildDataOps(pobjData, lobjAux.GetCurrentDeals(), lobjAux.getKey());
 			RunDataOps(pdb, pobjData);
+
+			pobjData.mobjMainValues.marrExceptions = null;
+			BuildExceptionOps(pobjData, lobjAux.GetCurrentExceptions(), lobjAux.getKey());
+			RunExceptionOps(pdb, pobjData);
 
 			larrContacts = lobjAux.GetCurrentContacts();
 			if ( (larrContacts == null) || (larrContacts.length == 0) )
@@ -697,6 +611,7 @@ public class ManageMediators
 				pobjData.mobjDocOps.UndoSubOp(pdb, null);
 
 			UndoDataOps(pdb, pobjData);
+			UndoExceptionOps(pdb, pobjData);
 
 			Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_Mediator)).Delete(pdb, pobjData.mobjMainValues.mid);
@@ -719,6 +634,7 @@ public class ManageMediators
 			lobjAux.SaveToDb(pdb);
 
 			UndoDataOps(pdb, pobjData);
+			UndoExceptionOps(pdb, pobjData);
 		}
 		catch (Throwable e)
 		{
@@ -743,6 +659,11 @@ public class ManageMediators
 					pobjData.marrDataDelete[i].midMediator = lobjAux.getKey();
 			UndoDataOps(pdb, pobjData);
 
+			if ( pobjData.marrExcDelete != null )
+				for ( i = 0; i < pobjData.marrExcDelete.length; i++ )
+					pobjData.marrExcDelete[i].midMediator = lobjAux.getKey();
+			UndoExceptionOps(pdb, pobjData);
+
 			if ( pobjData.mobjContactOps != null )
 				pobjData.mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
 
@@ -752,6 +673,167 @@ public class ManageMediators
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void BuildDataOps(MediatorOpData pobjData, MediatorDeal[] parrCurrent, UUID pidMediator)
+	{
+		HashMap<UUID, MediatorDealData> larrDeals;
+		ArrayList<MediatorDealData> larrCreate;
+		ArrayList<MediatorDealData> larrModify;
+		ArrayList<MediatorDealData> larrDelete;
+		MediatorDealData lobjData;
+		int i;
+
+		if ( pobjData.mobjMainValues.marrDeals == null )
+		{
+			pobjData.marrDataCreate = null;
+			pobjData.marrDataModify = null;
+			if ( (parrCurrent == null) || (parrCurrent.length == 0) )
+				pobjData.marrDataDelete = null;
+			else
+			{
+				pobjData.marrDataDelete = new MediatorDealData[parrCurrent.length];
+				for ( i = 0; i < parrCurrent.length; i++ )
+				{
+					pobjData.marrDataDelete[i] = new MediatorDealData();
+					pobjData.marrDataDelete[i].mid = parrCurrent[i].getKey();
+				}
+			}
+		}
+		else
+		{
+			larrDeals = new HashMap<UUID, MediatorDealData>();
+			larrCreate = new ArrayList<MediatorDealData>();
+			larrModify = new ArrayList<MediatorDealData>();
+			larrDelete = new ArrayList<MediatorDealData>();
+
+			for ( i = 0; i < parrCurrent.length; i++ )
+			{
+				lobjData = new MediatorDealData();
+				lobjData.FromObject(parrCurrent[i]);
+				larrDeals.put(lobjData.midSubLine, lobjData);
+			}
+
+			for ( i = 0; i < pobjData.mobjMainValues.marrDeals.length; i++ )
+			{
+				lobjData = larrDeals.get(pobjData.mobjMainValues.marrDeals[i].midSubLine);
+
+				if ( lobjData == null )
+				{
+					pobjData.mobjMainValues.marrDeals[i].midMediator = pidMediator;
+					larrCreate.add(pobjData.mobjMainValues.marrDeals[i]);
+				}
+				else
+				{
+					if ( !lobjData.mdblPercent.equals(pobjData.mobjMainValues.marrDeals[i].mdblPercent) )
+						larrModify.add(pobjData.mobjMainValues.marrDeals[i]);
+					larrDeals.put(pobjData.mobjMainValues.marrDeals[i].midSubLine, null);
+				}
+			}
+
+			for ( UUID lid: larrDeals.keySet() )
+			{
+				lobjData = larrDeals.get(lid);
+				if ( lobjData != null )
+					larrDelete.add(lobjData);
+			}
+
+			if ( larrCreate.size() == 0 )
+				pobjData.marrDataCreate = null;
+			else
+				pobjData.marrDataCreate = larrCreate.toArray(new MediatorDealData[larrCreate.size()]);
+			if ( larrModify.size() == 0 )
+				pobjData.marrDataModify = null;
+			else
+				pobjData.marrDataModify = larrModify.toArray(new MediatorDealData[larrModify.size()]);
+			if ( larrDelete.size() == 0 )
+				pobjData.marrDataDelete = null;
+			else
+				pobjData.marrDataDelete = larrDelete.toArray(new MediatorDealData[larrDelete.size()]);
+		}
+	}
+
+	private void BuildExceptionOps(MediatorOpData pobjData, MediatorException[] parrCurrent, UUID pidMediator)
+	{
+		HashMap<UUID, MediatorExceptionData> larrExceptions;
+		ArrayList<MediatorExceptionData> larrCreate;
+		ArrayList<MediatorExceptionData> larrModify;
+		ArrayList<MediatorExceptionData> larrDelete;
+		MediatorExceptionData lobjData;
+		UUID lidAux;
+		int i;
+
+		if ( pobjData.mobjMainValues.marrExceptions == null )
+		{
+			pobjData.marrExcCreate = null;
+			pobjData.marrExcModify = null;
+			if ( (parrCurrent == null) || (parrCurrent.length == 0) )
+				pobjData.marrExcDelete = null;
+			else
+			{
+				pobjData.marrExcDelete = new MediatorExceptionData[parrCurrent.length];
+				for ( i = 0; i < parrCurrent.length; i++ )
+				{
+					pobjData.marrExcDelete[i] = new MediatorExceptionData();
+					pobjData.marrExcDelete[i].mid = parrCurrent[i].getKey();
+				}
+			}
+		}
+		else
+		{
+			larrExceptions = new HashMap<UUID, MediatorExceptionData>();
+			larrCreate = new ArrayList<MediatorExceptionData>();
+			larrModify = new ArrayList<MediatorExceptionData>();
+			larrDelete = new ArrayList<MediatorExceptionData>();
+
+			for ( i = 0; i < parrCurrent.length; i++ )
+			{
+				lobjData = new MediatorExceptionData();
+				lobjData.FromObject(parrCurrent[i]);
+				larrExceptions.put( (lobjData.midClient == null ? lobjData.midPolicy : lobjData.midClient), lobjData);
+			}
+
+			for ( i = 0; i < pobjData.mobjMainValues.marrExceptions.length; i++ )
+			{
+				lidAux = (pobjData.mobjMainValues.marrExceptions[i].midClient == null ?
+						pobjData.mobjMainValues.marrExceptions[i].midPolicy :
+						pobjData.mobjMainValues.marrExceptions[i].midClient);
+
+				lobjData = larrExceptions.get(lidAux);
+
+				if ( lobjData == null )
+				{
+					pobjData.mobjMainValues.marrExceptions[i].midMediator = pidMediator;
+					larrCreate.add(pobjData.mobjMainValues.marrExceptions[i]);
+				}
+				else
+				{
+					if ( !lobjData.mdblPercent.equals(pobjData.mobjMainValues.marrExceptions[i].mdblPercent) )
+						larrModify.add(pobjData.mobjMainValues.marrExceptions[i]);
+					larrExceptions.put(lidAux, null);
+				}
+			}
+
+			for ( UUID lid: larrExceptions.keySet() )
+			{
+				lobjData = larrExceptions.get(lid);
+				if ( lobjData != null )
+					larrDelete.add(lobjData);
+			}
+
+			if ( larrCreate.size() == 0 )
+				pobjData.marrExcCreate = null;
+			else
+				pobjData.marrExcCreate = larrCreate.toArray(new MediatorExceptionData[larrCreate.size()]);
+			if ( larrModify.size() == 0 )
+				pobjData.marrExcModify = null;
+			else
+				pobjData.marrExcModify = larrModify.toArray(new MediatorExceptionData[larrModify.size()]);
+			if ( larrDelete.size() == 0 )
+				pobjData.marrExcDelete = null;
+			else
+				pobjData.marrExcDelete = larrDelete.toArray(new MediatorExceptionData[larrDelete.size()]);
 		}
 	}
 
@@ -773,6 +855,24 @@ public class ManageMediators
 				DeleteDeal(pdb, pobjData.marrDataDelete[i]);
 	}
 
+	private void RunExceptionOps(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		int i;
+
+		if ( pobjData.marrExcCreate != null )
+			for ( i = 0; i < pobjData.marrExcCreate.length; i++ )
+				CreateException(pdb, pobjData.marrExcCreate[i]);
+
+		if ( pobjData.marrExcModify != null )
+			for ( i = 0; i < pobjData.marrExcModify.length; i++ )
+				ModifyException(pdb, pobjData.marrExcModify[i]);
+
+		if ( pobjData.marrExcDelete != null )
+			for ( i = 0; i < pobjData.marrExcDelete.length; i++ )
+				DeleteException(pdb, pobjData.marrExcDelete[i]);
+	}
+
 	private void UndoDataOps(SQLServer pdb, MediatorOpData pobjData)
 		throws BigBangJewelException
 	{
@@ -791,6 +891,24 @@ public class ManageMediators
 				UndoDeleteDeal(pdb, pobjData.marrDataDelete[i]);
 	}
 
+	private void UndoExceptionOps(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		int i;
+
+		if ( pobjData.marrExcCreate != null )
+			for ( i = 0; i < pobjData.marrExcCreate.length; i++ )
+				UndoCreateException(pdb, pobjData.marrExcCreate[i]);
+
+		if ( pobjData.marrExcModify != null )
+			for ( i = 0; i < pobjData.marrExcModify.length; i++ )
+				UndoModifyException(pdb, pobjData.marrExcModify[i]);
+
+		if ( pobjData.marrExcDelete != null )
+			for ( i = 0; i < pobjData.marrExcDelete.length; i++ )
+				UndoDeleteException(pdb, pobjData.marrExcDelete[i]);
+	}
+
 	private void CreateDeal(SQLServer pdb, MediatorDealData pobjData)
 		throws BigBangJewelException
 	{
@@ -799,6 +917,25 @@ public class ManageMediators
 		try
 		{
 			lobjAux = MediatorDeal.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			pobjData.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+			pobjData.mid = lobjAux.getKey();
+			pobjData.mobjPrevValues = null;
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void CreateException(SQLServer pdb, MediatorExceptionData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorException lobjAux;
+
+		try
+		{
+			lobjAux = MediatorException.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			pobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 			pobjData.mid = lobjAux.getKey();
@@ -830,6 +967,26 @@ public class ManageMediators
 		}
 	}
 
+	private void ModifyException(SQLServer pdb, MediatorExceptionData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorException lobjAux;
+
+		try
+		{
+			lobjAux = MediatorException.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+			pobjData.mobjPrevValues = new MediatorExceptionData();
+			pobjData.mobjPrevValues.FromObject(lobjAux);
+			pobjData.mobjPrevValues.mobjPrevValues = null;
+			pobjData.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
 	private void DeleteDeal(SQLServer pdb, MediatorDealData pobjData)
 		throws BigBangJewelException
 	{
@@ -838,6 +995,24 @@ public class ManageMediators
 		try
 		{
 			lobjAux = MediatorDeal.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+			pobjData.FromObject(lobjAux);
+			pobjData.mobjPrevValues = null;
+			lobjAux.getDefinition().Delete(pdb, pobjData.mid);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void DeleteException(SQLServer pdb, MediatorExceptionData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorException lobjAux;
+
+		try
+		{
+			lobjAux = MediatorException.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 			pobjData.FromObject(lobjAux);
 			pobjData.mobjPrevValues = null;
 			lobjAux.getDefinition().Delete(pdb, pobjData.mid);
@@ -862,6 +1037,20 @@ public class ManageMediators
 		}
 	}
 
+	private void UndoCreateException(SQLServer pdb, MediatorExceptionData pobjData)
+		throws BigBangJewelException
+	{
+		try
+		{
+			Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_MediatorException)).Delete(pdb, pobjData.mid);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
 	private void UndoModifyDeal(SQLServer pdb, MediatorDealData pobjData)
 		throws BigBangJewelException
 	{
@@ -879,6 +1068,23 @@ public class ManageMediators
 		}
 	}
 
+	private void UndoModifyException(SQLServer pdb, MediatorExceptionData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorException lobjAux;
+
+		try
+		{
+			lobjAux = MediatorException.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+			pobjData.mobjPrevValues.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
 	private void UndoDeleteDeal(SQLServer pdb, MediatorDealData pobjData)
 		throws BigBangJewelException
 	{
@@ -887,6 +1093,23 @@ public class ManageMediators
 		try
 		{
 			lobjAux = MediatorDeal.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			pobjData.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoDeleteException(SQLServer pdb, MediatorExceptionData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorException lobjAux;
+
+		try
+		{
+			lobjAux = MediatorException.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			pobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 		}

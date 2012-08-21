@@ -7,6 +7,16 @@ import java.util.Map;
 public class Mediator
 	implements Serializable
 {
+	public static class MediatorException
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String clientId;
+		public String policyId;
+		public Double percent;
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	public String id;
@@ -19,6 +29,7 @@ public class Mediator
 	public boolean hasRetention; // Novo!
 	public Address address;
 	public Map<String, Double> dealPercents;
+	public MediatorException[] exceptions;
 	public Contact[] contacts;
 	public Document[] documents;
 
@@ -26,6 +37,7 @@ public class Mediator
 	{
 		comissionProfile = new CommissionProfile();
 		dealPercents = new HashMap<String, Double>();
+		exceptions = new MediatorException[0];
 		contacts = new Contact[0];
 		documents = new Document[0];
 	}
@@ -41,6 +53,7 @@ public class Mediator
 		this.basePercent = original.basePercent;
 		this.address = original.address;
 		this.dealPercents = original.dealPercents;
+		this.exceptions = original.exceptions;
 		this.contacts = original.contacts;
 		this.documents = original.documents;
 	}

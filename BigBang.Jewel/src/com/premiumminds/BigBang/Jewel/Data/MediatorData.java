@@ -30,6 +30,7 @@ public class MediatorData
 	public String mstrCalcClass;
 	public Boolean mbHasRetention;
 	public MediatorDealData[] marrDeals;
+	public MediatorExceptionData[] marrExceptions;
 
 	public MediatorData mobjPrevValues;
 
