@@ -116,7 +116,7 @@ public class InsurerAccountingDetail
 
 		lobjSubLine = getReceipt().getAbsolutePolicy().GetSubLine();
 
-		if ( lobjSubLine.getIsLife() )
+		if ( !lobjSubLine.getIsLife() )
 			return new BigDecimal(0.0);
 
 		return getCommissions();
