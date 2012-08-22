@@ -473,34 +473,52 @@ public class ReceiptServiceImpl
 		return sGetReceipt(UUID.fromString(receipt.id));
 	}
 
-	@Override
-	public Receipt editAndValidateReceipt(Receipt receipt)
-			throws SessionExpiredException, BigBangException {
+	public Receipt editAndValidateReceipt(Receipt receipt, Rectangle rect)
+			throws SessionExpiredException, BigBangException
+	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		BufferedImage lobjImg;
+		ByteArrayOutputStream lstreamOutput;
+		byte[] larrBuffer;
+		ByteArrayInputStream lstreamInput;
+		FileXfer lobjFile;
 		ValidateReceipt lopVR;
-		ManageData lopMRD;
-		ReceiptData receiptData;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			//Edition
-			lopMRD = new ManageData(UUID.fromString(receipt.processId));
-			receiptData = toServerData(receipt);
-			lopMRD.mobjData = receiptData;
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receipt.id));
 
-			lopMRD.mobjContactOps = null;
-			lopMRD.mobjDocOps = null;
-			
-			lopMRD.Execute();
-			
-			//Validation
-			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(receipt.id));
 			lopVR = new ValidateReceipt(lobjReceipt.GetProcessID());
-			
+			lopVR.mobjData = toServerData(receipt);
+
+			if ( rect == null )
+				lopVR.mobjDocOps = null;
+			else
+			{
+				lobjImg = ImageHelper.cropAndStamp(PDFHelper.getPage(lobjReceipt.getOriginal(), 0),
+						rect.x1, rect.y1, rect.x2-rect.x1, rect.y2-rect.y1);
+
+				lstreamOutput = new ByteArrayOutputStream();
+				ImageIO.write(lobjImg, "png", lstreamOutput);
+				larrBuffer = lstreamOutput.toByteArray();
+				lstreamInput = new ByteArrayInputStream(larrBuffer);
+				lobjFile = new FileXfer(larrBuffer.length, "image/png", "tratado.png", lstreamInput);
+
+				lopVR.mobjDocOps = new DocOps();
+				lopVR.mobjDocOps.marrDelete = null;
+				lopVR.mobjDocOps.marrModify = null;
+				lopVR.mobjDocOps.marrCreate = new DocumentData[] {new DocumentData()};
+				lopVR.mobjDocOps.marrCreate[0].mstrName = "Tratado";
+				lopVR.mobjDocOps.marrCreate[0].midOwnerType = Constants.ObjID_Receipt;
+				lopVR.mobjDocOps.marrCreate[0].midOwnerId = lobjReceipt.getKey();
+				lopVR.mobjDocOps.marrCreate[0].midDocType = Constants.DocID_StampedReceipt;
+				lopVR.mobjDocOps.marrCreate[0].mstrText = null;
+				lopVR.mobjDocOps.marrCreate[0].mobjFile = lobjFile.GetVarData();
+			}
+
 			lopVR.Execute();
 		}
 		catch (Throwable e)
@@ -596,8 +614,7 @@ public class ReceiptServiceImpl
 
 		try
 		{
-			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(receiptId));
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receiptId));
 		}
 		catch (Throwable e)
 		{
@@ -605,6 +622,8 @@ public class ReceiptServiceImpl
 		}
 
 		lopVR = new ValidateReceipt(lobjReceipt.GetProcessID());
+		lopVR.mobjData = null;
+		lopVR.mobjDocOps = null;
 
 		try
 		{
@@ -616,64 +635,6 @@ public class ReceiptServiceImpl
 		}
 
 		return sGetReceipt(lobjReceipt.getKey());
-	}
-
-	public bigBang.definitions.shared.Document cropRectangle(String receiptId, Rectangle rect)
-		throws SessionExpiredException, BigBangException
-	{
-		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		BufferedImage lobjImg;
-		ByteArrayOutputStream lstreamOutput;
-		byte[] larrBuffer;
-		ByteArrayInputStream lstreamInput;
-		FileXfer lobjFile;
-		ManageData lopMRD;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receiptId));
-
-			lobjImg = ImageHelper.cropAndStamp(PDFHelper.getPage(lobjReceipt.getOriginal(), 0),
-					rect.x1, rect.y1, rect.x2-rect.x1, rect.y2-rect.y1);
-
-			lstreamOutput = new ByteArrayOutputStream();
-			ImageIO.write(lobjImg, "png", lstreamOutput);
-			larrBuffer = lstreamOutput.toByteArray();
-			lstreamInput = new ByteArrayInputStream(larrBuffer);
-			lobjFile = new FileXfer(larrBuffer.length, "image/png", "tratado.png", lstreamInput);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lopMRD = new ManageData(lobjReceipt.GetProcessID());
-		lopMRD.mobjData = null;
-		lopMRD.mobjContactOps = null;
-		lopMRD.mobjDocOps = new DocOps();
-		lopMRD.mobjDocOps.marrDelete = null;
-		lopMRD.mobjDocOps.marrModify = null;
-		lopMRD.mobjDocOps.marrCreate = new DocumentData[] {new DocumentData()};
-		lopMRD.mobjDocOps.marrCreate[0].mstrName = "Tratado";
-		lopMRD.mobjDocOps.marrCreate[0].midOwnerType = Constants.ObjID_Receipt;
-		lopMRD.mobjDocOps.marrCreate[0].midOwnerId = lobjReceipt.getKey();
-		lopMRD.mobjDocOps.marrCreate[0].midDocType = Constants.DocID_StampedReceipt;
-		lopMRD.mobjDocOps.marrCreate[0].mstrText = null;
-		lopMRD.mobjDocOps.marrCreate[0].mobjFile = lobjFile.GetVarData();
-
-		try
-		{
-			lopMRD.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return DocumentServiceImpl.sGetDocument(lopMRD.mobjDocOps.marrCreate[0].mid);
 	}
 
 	public Receipt setForReturn(Receipt.ReturnMessage message)

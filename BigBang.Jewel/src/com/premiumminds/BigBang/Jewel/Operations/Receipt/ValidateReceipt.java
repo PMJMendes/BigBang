@@ -15,13 +15,18 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
 public class ValidateReceipt
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
+	public ReceiptData mobjData;
+	public DocOps mobjDocOps;
 	private UUID midReceipt;
 	private UUID midPrevManager;
 	private Timestamp mdtPrevLimit;
@@ -43,7 +48,22 @@ public class ValidateReceipt
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "O recibo foi validado após conferência manual.";
+		StringBuilder lstrBuilder;
+
+		lstrBuilder = new StringBuilder();
+		lstrBuilder.append("O recibo foi validado após conferência manual.").append(pstrLineBreak);
+
+		if ( mobjData != null )
+		{
+			lstrBuilder.append("Novos dados do recibo:");
+			lstrBuilder.append(pstrLineBreak);
+			mobjData.Describe(lstrBuilder, pstrLineBreak);
+		}
+
+		if ( mobjDocOps != null )
+			mobjDocOps.LongDesc(lstrBuilder, pstrLineBreak);
+
+		return lstrBuilder.toString();
 	}
 
 	public UUID GetExternalProcess()
@@ -51,9 +71,11 @@ public class ValidateReceipt
 		return null;
 	}
 
-	protected void Run(SQLServer pdb) throws JewelPetriException
+	protected void Run(SQLServer pdb)
+		throws JewelPetriException
 	{
 		IProcess lobjProc;
+		Receipt lobjAux;
 		Hashtable<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
@@ -65,6 +87,29 @@ public class ValidateReceipt
 		midPrevManager = lobjProc.GetManagerID();
 
 		lobjProc.SetManagerID(Engine.getCurrentUser(), pdb);
+
+		if ( mobjData != null )
+		{
+			lobjAux = (Receipt)lobjProc.GetData();
+
+			mobjData.mobjPrevValues = new ReceiptData();
+			mobjData.mobjPrevValues.FromObject(lobjAux);
+
+			mobjData.midManager = midPrevManager;
+
+			try
+			{
+				mobjData.ToObject(lobjAux);
+				lobjAux.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
+
+		if ( mobjDocOps != null )
+			mobjDocOps.RunSubOp(pdb, midReceipt);
 
 		mdtPrevLimit = null;
 		larrItems = new Hashtable<UUID, AgendaItem>();
@@ -99,20 +144,68 @@ public class ValidateReceipt
 
 	public String UndoDesc(String pstrLineBreak)
 	{
-		return "A validação será retirada.";
+		StringBuilder lstrBuilder;
+
+		lstrBuilder = new StringBuilder();
+		lstrBuilder.append("A validação será retirada.").append(pstrLineBreak);
+
+		if ( mobjData != null )
+		{
+			lstrBuilder.append("Os dados anteriores serão repostos:");
+			lstrBuilder.append(pstrLineBreak);
+			mobjData.mobjPrevValues.Describe(lstrBuilder, pstrLineBreak);
+		}
+
+		if ( mobjDocOps != null )
+			mobjDocOps.UndoDesc(lstrBuilder, pstrLineBreak);
+
+		return lstrBuilder.toString();
 	}
 
 	public String UndoLongDesc(String pstrLineBreak)
 	{
-		return "A validação foi retirada.";
+		StringBuilder lstrBuilder;
+
+		lstrBuilder = new StringBuilder();
+		lstrBuilder.append("A validação foi retirada.").append(pstrLineBreak);
+
+		if ( mobjData != null )
+		{
+			lstrBuilder.append("Os dados anteriores foram repostos:");
+			lstrBuilder.append(pstrLineBreak);
+			mobjData.mobjPrevValues.Describe(lstrBuilder, pstrLineBreak);
+		}
+
+		if ( mobjDocOps != null )
+			mobjDocOps.UndoLongDesc(lstrBuilder, pstrLineBreak);
+
+		return lstrBuilder.toString();
 	}
 
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Receipt lobjAux;
 		IProcess lobjProc;
 		AgendaItem lobjItem;
 		Timestamp ldtNow;
+
+		if ( mobjData != null )
+		{
+			try
+			{
+				lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+				mobjData.mobjPrevValues.ToObject(lobjAux);
+				lobjAux.SaveToDb(pdb);
+	    	}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
+
+		if ( mobjDocOps != null )
+			mobjDocOps.UndoSubOp(pdb, midReceipt);
 
 		lobjProc = GetProcess();
 

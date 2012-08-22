@@ -163,7 +163,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	@Override
 	public void updateAndValidateReceipt(final Receipt receipt,
 			final ResponseHandler<Receipt> handler) {
-		this.service.editAndValidateReceipt(receipt, new BigBangAsyncCallback<Receipt>() {
+		this.service.editAndValidateReceipt(receipt, null, new BigBangAsyncCallback<Receipt>() { //TODO Implementar o rectângulo
 
 			@Override
 			public void onResponseSuccess(Receipt result) {
