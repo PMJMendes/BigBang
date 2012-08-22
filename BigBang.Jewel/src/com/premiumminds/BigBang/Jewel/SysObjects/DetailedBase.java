@@ -94,6 +94,17 @@ public abstract class DetailedBase
 	{
 		StringBuilder lstrBuilder;
 		String lstrErrors;
+		int i;
+
+		marrCoverageDefs = mobjPolicy.GetSubLine().GetCurrentCoverages();
+		marrFieldDefs = new Tax[marrCoverageDefs.length][];
+		for ( i = 0; i < marrCoverageDefs.length; i++ )
+			marrFieldDefs[i] = marrCoverageDefs[i].GetCurrentTaxes();
+
+		marrCoverages = mobjPolicy.GetCurrentCoverages();
+		marrObjects = mobjPolicy.GetCurrentObjects();
+		marrExercises = mobjPolicy.GetCurrentExercises();
+		marrValues = mobjPolicy.GetCurrentValues();
 
 		lstrBuilder = new StringBuilder();
 		InnerDefaultValidate(lstrBuilder, mobjPolicy);
@@ -175,7 +186,7 @@ public abstract class DetailedBase
 		}
 
 		if ( pobjPolicy.getLabel().charAt(0) == '-' )
-			pstrBuilder.append("O número de apólice é provisório.");
+			pstrBuilder.append("O número de apólice é provisório.\n");
 
 		larrTrueCoverages = new Hashtable<UUID, UUID>();
 		for ( i = 0; i < larrCoverages.length; i++ )
@@ -208,14 +219,14 @@ public abstract class DetailedBase
 				}
 			}
 			else
-				CheckFormat(pstrBuilder, larrValues[i]);
+				CheckFormat(pstrBuilder, larrValues[i], true);
 		}
 	}
 
-	protected static void CheckFormat(StringBuilder pstrBuilder, PolicyValue pobjValue)
+	protected static boolean CheckFormat(StringBuilder pstrBuilder, PolicyValue pobjValue, boolean pbVerbose)
 	{
 		if ( Constants.FieldID_Text.equals(pobjValue.GetTax().GetFieldType()) )
-			return;
+			return true;
 
 		if ( Constants.FieldID_Number.equals(pobjValue.GetTax().GetFieldType()) )
 		{
@@ -225,15 +236,28 @@ public abstract class DetailedBase
 			}
 			catch (NumberFormatException e)
 			{
-				AppendTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Número, e está incorrectamente preenchido.\n");
+				if ( pbVerbose )
+				{
+					AppendTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Número, e está incorrectamente preenchido.\n");
+				}
+				return false;
 			}
+			return true;
 		}
 
 		if ( Constants.FieldID_Boolean.equals(pobjValue.GetTax().GetFieldType()) )
 		{
 			if ( !("1".equals(pobjValue.GetValue())) && !("0".equals(pobjValue.GetValue())) )
-				pstrBuilder.append("é do tipo Sim ou Não, e está incorrectamente preenchido.\n");
+			{
+				if ( pbVerbose )
+				{
+					AppendTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Sim ou Não, e está incorrectamente preenchido.\n");
+				}
+				return false;
+			}
+			return true;
 		}
 
 		if ( Constants.FieldID_Date.equals(pobjValue.GetTax().GetFieldType()) )
@@ -244,9 +268,14 @@ public abstract class DetailedBase
 			}
 			catch (IllegalArgumentException e)
 			{
-				AppendTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Data, e está incorrectamente preenchido.\n");
+				if ( pbVerbose )
+				{
+					AppendTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Data, e está incorrectamente preenchido.\n");
+				}
+				return false;
 			}
+			return true;
 		}
 
 		if ( Constants.FieldID_List.equals(pobjValue.GetTax().GetFieldType()) )
@@ -257,9 +286,14 @@ public abstract class DetailedBase
 			}
 			catch (IllegalArgumentException e)
 			{
-				AppendTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Lista, e está incorrectamente preenchido.\n");
+				if ( pbVerbose )
+				{
+					AppendTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Lista, e está incorrectamente preenchido.\n");
+				}
+				return false;
 			}
+			return true;
 		}
 
 		if ( Constants.FieldID_Reference.equals(pobjValue.GetTax().GetFieldType()) )
@@ -270,10 +304,17 @@ public abstract class DetailedBase
 			}
 			catch (IllegalArgumentException e)
 			{
-				AppendTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Referência, e está incorrectamente preenchido.\n");
+				if ( pbVerbose )
+				{
+					AppendTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Referência, e está incorrectamente preenchido.\n");
+				}
+				return false;
 			}
+			return true;
 		}
+
+		return true;
 	}
 
 	protected static void AppendTag(StringBuilder pstrBuilder, PolicyValue pobjValue)
@@ -406,14 +447,14 @@ public abstract class DetailedBase
 				}
 			}
 			else
-				CheckSubFormat(pstrBuilder, larrValues[i]);
+				CheckSubFormat(pstrBuilder, larrValues[i], true);
 		}
 	}
 
-	protected static void CheckSubFormat(StringBuilder pstrBuilder, SubPolicyValue pobjValue)
+	protected static boolean CheckSubFormat(StringBuilder pstrBuilder, SubPolicyValue pobjValue, boolean pbVerbose)
 	{
 		if ( Constants.FieldID_Text.equals(pobjValue.GetTax().GetFieldType()) )
-			return;
+			return true;
 
 		if ( Constants.FieldID_Number.equals(pobjValue.GetTax().GetFieldType()) )
 		{
@@ -423,15 +464,28 @@ public abstract class DetailedBase
 			}
 			catch (NumberFormatException e)
 			{
-				AppendSubTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Número, e está incorrectamente preenchido.\n");
+				if ( pbVerbose )
+				{
+					AppendSubTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Número, e está incorrectamente preenchido.\n");
+				}
+				return false;
 			}
+			return true;
 		}
 
 		if ( Constants.FieldID_Boolean.equals(pobjValue.GetTax().GetFieldType()) )
 		{
 			if ( !("1".equals(pobjValue.GetValue())) && !("0".equals(pobjValue.GetValue())) )
-				pstrBuilder.append("é do tipo Sim ou Não, e está incorrectamente preenchido.\n");
+			{
+				if ( pbVerbose )
+				{
+					AppendSubTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Sim ou Não, e está incorrectamente preenchido.\n");
+				}
+				return false;
+			}
+			return true;
 		}
 
 		if ( Constants.FieldID_Date.equals(pobjValue.GetTax().GetFieldType()) )
@@ -442,9 +496,14 @@ public abstract class DetailedBase
 			}
 			catch (IllegalArgumentException e)
 			{
-				AppendSubTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Data, e está incorrectamente preenchido.\n");
+				if ( pbVerbose )
+				{
+					AppendSubTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Data, e está incorrectamente preenchido.\n");
+				}
+				return false;
 			}
+			return true;
 		}
 
 		if ( Constants.FieldID_List.equals(pobjValue.GetTax().GetFieldType()) )
@@ -455,9 +514,14 @@ public abstract class DetailedBase
 			}
 			catch (IllegalArgumentException e)
 			{
-				AppendSubTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Lista, e está incorrectamente preenchido.\n");
+				if ( pbVerbose )
+				{
+					AppendSubTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Lista, e está incorrectamente preenchido.\n");
+				}
+				return false;
 			}
+			return true;
 		}
 
 		if ( Constants.FieldID_Reference.equals(pobjValue.GetTax().GetFieldType()) )
@@ -468,10 +532,17 @@ public abstract class DetailedBase
 			}
 			catch (IllegalArgumentException e)
 			{
-				AppendSubTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Referência, e está incorrectamente preenchido.\n");
+				if ( pbVerbose )
+				{
+					AppendSubTag(pstrBuilder, pobjValue);
+					pstrBuilder.append("é do tipo Referência, e está incorrectamente preenchido.\n");
+				}
+				return false;
 			}
+			return true;
 		}
+
+		return true;
 	}
 
 	protected static void AppendSubTag(StringBuilder pstrBuilder, SubPolicyValue pobjValue)
@@ -555,6 +626,7 @@ public abstract class DetailedBase
 	}
 
 	protected UUID FindCoverageID(String pstrCoverageTag)
+		throws BigBangJewelException
 	{
 		int i;
 
@@ -564,10 +636,11 @@ public abstract class DetailedBase
 				return marrCoverageDefs[i].getKey();
 		}
 
-		return null;
+		throw new BigBangJewelException("Erro: Tag de cobertura não encontrada.");
 	}
 
 	protected UUID FindFieldID(String pstrCoverageTag, String pstrFieldTag)
+		throws BigBangJewelException
 	{
 		int i, j;
 
@@ -580,9 +653,11 @@ public abstract class DetailedBase
 					if ( pstrFieldTag.equals(marrFieldDefs[i][j].GetTag()) )
 						return marrFieldDefs[i][j].getKey();
 				}
+
+				throw new BigBangJewelException("Erro: Tag de campo não encontrada.");
 			}
 		}
 
-		return null;
+		throw new BigBangJewelException("Erro: Tag de cobertura não encontrada.");
 	}
 }
