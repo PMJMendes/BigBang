@@ -1,6 +1,5 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Tax;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.CheckBoxFormField;
@@ -143,7 +142,8 @@ public class TaxForm extends FormView<Tax> {
 			((RadioButtonFormField)defaultValue).addOption("", "Não definido");
 			((RadioButtonFormField)defaultValue).setValue(newDefaultValue);
 		}else if(fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ListType)){
-			defaultValue = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldValues+"/"+BigBangConstants.EntityIds.TAX, "Valor por defeito");
+			String fieldId = this.value == null ? "" : this.value.id == null ? "" : this.value.id;
+			defaultValue = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldValues+"/"+fieldId, "Valor por defeito");
 			((ExpandableListBoxFormField)defaultValue).setValue(newDefaultValue);
 		}else if(fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.NumericType)){
 			defaultValue = new TextBoxFormField("Valor por defeito");
