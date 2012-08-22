@@ -24,6 +24,6 @@ public class TestPolicyValidate
 			}
 		};
 
-		Services.insurancePolicyService.validatePolicy("01B7B31C-0EFF-4A93-84EE-A02000F26B1F", callback);
+		Services.insurancePolicyService.validatePolicy("1F6B5AE6-0CD1-49F1-AD8A-A0A3017EE18E", callback);
 	}
 }
