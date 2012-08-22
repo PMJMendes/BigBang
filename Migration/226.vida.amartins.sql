@@ -579,6 +579,18 @@ select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUE
 where 'Decrescente' not in
 (select ItemValue from amartins.tblPolicyValueItems where FKTaxAsSubList='C3563291-7658-4B53-BF5F-9F9601751EBB');
 
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Uma Cabeça' ItemValue, 'DF8C62FF-FEB9-4950-805D-A09E00ECA51A' FKTaxAsSubList
+where 'Uma Cabeça' not in
+(select ItemValue from amartins.tblPolicyValueItems where FKTaxAsSubList='DF8C62FF-FEB9-4950-805D-A09E00ECA51A');
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Duas Cabeças' ItemValue, 'DF8C62FF-FEB9-4950-805D-A09E00ECA51A' FKTaxAsSubList
+where 'Duas Cabeças' not in
+(select ItemValue from amartins.tblPolicyValueItems where FKTaxAsSubList='DF8C62FF-FEB9-4950-805D-A09E00ECA51A');
+
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 NULL Value, p.PK FKPolicy, 'C3563291-7658-4B53-BF5F-9F9601751EBB' FKField, NULL FKObject, NULL FKExercise
