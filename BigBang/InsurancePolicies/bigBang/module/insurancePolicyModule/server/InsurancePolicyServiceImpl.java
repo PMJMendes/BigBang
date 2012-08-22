@@ -2410,6 +2410,12 @@ public class InsurancePolicyServiceImpl
 				lobjData.marrExercises = new PolicyExerciseData[marrExercises.size()];
 				for ( i = 0; i < marrExercises.size(); i++ )
 				{
+					if ( mbIsNew )
+					{
+						if ( marrExercises.get(i).mdtStart == null )
+							marrExercises.get(i).mdtStart = mobjPolicy.mdtBeginDate;
+					}
+
 					lobjData.marrExercises[i] = new PolicyExerciseData();
 					lobjData.marrExercises[i].Clone(marrExercises.get(i));
 					if ( marrExercises.get(i).mbDeleted )
