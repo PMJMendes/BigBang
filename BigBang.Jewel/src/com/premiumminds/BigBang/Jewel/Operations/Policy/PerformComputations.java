@@ -66,6 +66,9 @@ public class PerformComputations
 				throw new PolicyCalculationException("Esta modalidade nao tem cálculos detalhados para efectuar.");
 
 			mstrReport = lobjCalc.DoCalc(pdb);
+
+			if ( mstrReport == null )
+				throw new PolicyCalculationException("Esta modalidade nao tem cálculos detalhados para efectuar.");
 		}
 		catch (PolicyCalculationException e)
 		{

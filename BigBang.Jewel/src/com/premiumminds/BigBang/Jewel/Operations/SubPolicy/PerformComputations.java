@@ -66,6 +66,9 @@ public class PerformComputations
 				throw new PolicyCalculationException("Esta modalidade nao tem cálculos detalhados para efectuar em apólices adesão.");
 
 			mstrReport = lobjCalc.DoSubCalc(pdb);
+
+			if ( mstrReport == null )
+				throw new PolicyCalculationException("Esta modalidade nao tem cálculos detalhados para efectuar em apólices adesão.");
 		}
 		catch (PolicyCalculationException e)
 		{

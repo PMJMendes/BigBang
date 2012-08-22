@@ -90,12 +90,12 @@ public class Vida_Risco_GrupoAberta
 	protected String InnerDoCalc(SQLServer pdb)
 		throws BigBangJewelException, PolicyCalculationException
 	{
-		return "Não houve alterações.";
+		return null;
 	}
 
 	protected String InnerDoSubCalc(SQLServer pdb)
 		throws BigBangJewelException, PolicyCalculationException
 	{
-		return "Não houve alterações.";
+		return null;
 	}
 }
