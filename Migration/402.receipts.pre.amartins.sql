@@ -1,12 +1,17 @@
 insert into amartins.tblBBReceipts (PK, ReceiptNumber, FKReceiptType, FKProcess, TotalPremium, CommercialPremium, Commissions, Retrocessions, FATValue, IssueDate, MaturityDate,
 EndDate, DueDate, FKMediator, ReceiptNotes, ReceiptDescription, ReturnText, MigrationID)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-r.recibo ReceiptNumber, t.PK FKReceiptType, NULL FKProcess, r.valorrec TotalPremium, NULL CommercialPremium, r.valorcom Commissions, isnull(r.valm, 0) Retrocessions, r.valc FATValue,
+r.recibo ReceiptNumber, t.PK FKReceiptType, NULL FKProcess, r.valorrec TotalPremium,
+round(((r.valorrec - isnull(g.despesas, 0) - isnull(r.valc, 0))/case isnull(isnull(g.percem, h.percem), 0) when 0 then 1 else isnull(isnull(g.percem, h.percem), 0) end), 2) CommercialPremium,
+r.valorcom Commissions, r.valm Retrocessions, r.valc FATValue,
 NULL IssueDate, r.datavenc MaturityDate, r.datavencate EndDate, r.datalimite DueDate, NULL FKMediator, substring(r.observ, 1, 250) ReceiptNotes, r.designacao ReceiptDescription,
 r.motivo ReturnText, r.MigrationID MigrationID
 from amartins..empresa.recibo r
 inner join bigbang.tblReceiptTypes t on t.TypeIndicator collate database_default = r.tiporec collate database_default
 inner join amartins..empresa.apolice s on s.cliente=r.cliente and s.apolice=r.apolice and s.comseg=r.comseg and s.ramo=r.ramo
+inner join amartins..empresa.cliente c on c.cliente=s.cliente
+inner join amartins..empresa.ramos h on h.ramo=r.ramo
+left outer join amartins..empresa.comissagentes g on g.fkagente=isnull(s.mediapol, c.mediacli) and g.fkramo=r.ramo
 where (r.datarec>'2010-12-31' or r.datavenc>'2010-12-31')
 and (s.MigrationID in (select MigrationID from amartins.tblBBPolicies) or s.MigrationID in (select MigrationID from amartins.tblBBSubPolicies));
 
