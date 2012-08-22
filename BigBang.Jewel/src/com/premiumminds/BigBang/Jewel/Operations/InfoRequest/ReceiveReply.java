@@ -52,14 +52,11 @@ public class ReceiveReply
 
 		lstrResult = new StringBuilder("A resposta ao pedido foi a seguinte:");
 
+		if ( mbFromEmail )
+			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrSubject);
+
 		if ( mobjMessage.mstrBody != null )
 			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrBody);
-
-		if ( mbFromEmail )
-		{
-			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrSubject);
-			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrBody);
-		}
 
 		if ( mobjMessage.mobjDocOps != null )
 			mobjMessage.mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
