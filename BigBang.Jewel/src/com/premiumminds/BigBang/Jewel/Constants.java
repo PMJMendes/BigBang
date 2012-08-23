@@ -618,6 +618,7 @@ public class Constants
 	public static final UUID TID_Stamp               = UUID.fromString("BE3106A1-9C31-40D3-ACC2-A0B300D3E585");
 
 	// Contact Types
+	public static final UUID CtTypeID_General       = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");
 	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
 
 	// Contact Info Types

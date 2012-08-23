@@ -13,6 +13,13 @@ import Jewel.Engine.SysObjects.ObjectBase;
 public class ContactInfo
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int OWNER = 0;
+		public static int TYPE  = 1;
+		public static int VALUE = 2;
+	}
+
     public static ContactInfo GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{

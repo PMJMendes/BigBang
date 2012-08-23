@@ -55,6 +55,7 @@ public class ExternRequestServiceImpl
 		lobjResult.subject = (String)lobjRequest.getAt(1);
 		lobjResult.message.notes = lobjRequest.getText();
 		lobjResult.originalFrom = (String)lobjRequest.getAt(3);
+		lobjResult.fromInfoId = ( lobjRequest.getAt(5) == null ? null : ((UUID)lobjRequest.getAt(5)).toString() );
 		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(4)).getTime() -
 				(new Timestamp(new java.util.Date().getTime())).getTime()) / 86400000L);
 

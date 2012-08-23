@@ -18,6 +18,18 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class Contact
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int NAME        = 0;
+		public static int OWNERTYPE   = 1;
+		public static int OWNER       = 2;
+		public static int ADDRESS1    = 3;
+		public static int ADDRESS2    = 4;
+		public static int ZIPCODE     = 5;
+		public static int TYPE        = 6;
+		public static int MIGRATIONID = 7;
+	}
+
     public static Contact GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{

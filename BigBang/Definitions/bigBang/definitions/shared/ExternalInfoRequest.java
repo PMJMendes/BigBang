@@ -56,6 +56,7 @@ public class ExternalInfoRequest
 	public IncomingMessage message;
 	public Integer replylimit;
 	public String originalFrom;
+	public String fromInfoId;
 
 	public ExternalInfoRequest()
 	{
