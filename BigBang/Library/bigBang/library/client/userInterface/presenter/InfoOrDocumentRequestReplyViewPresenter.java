@@ -98,7 +98,7 @@ public class InfoOrDocumentRequestReplyViewPresenter implements ViewPresenter {
 	}
 	
 	private void onSave(){
-		service.receiveResponse(view.getForm().getValue(), new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+		service.receiveResponse(view.getForm().getInfo(), new BigBangAsyncCallback<InfoOrDocumentRequest>() {
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
