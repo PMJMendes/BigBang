@@ -100,7 +100,7 @@ public class PaymentNoticeReport
 			larrTables[i] = new String[9];
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][1] = lobjReceipt.getLabel();
-			larrTables[i][2] = lobjPolicy.GetSubLine().getLine().getLabel();
+			larrTables[i][2] = lobjPolicy.GetSubLine().getDescription();
 			larrTables[i][3] = (String)lobjPolicy.GetCompany().getAt(1);
 			larrTables[i][4] = (lobjReceipt.getAt(9) == null ? "" : ((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
 			larrTables[i][5] = (lobjReceipt.getAt(10) == null ? "" : ((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
