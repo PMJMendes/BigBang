@@ -54,6 +54,8 @@ public class GenericFormField extends FormField<String> {
 			break;
 		case BOOLEAN:
 			myField = new RadioButtonFormField();
+			((RadioButtonFormField)myField).addOption("1", "Sim");
+			((RadioButtonFormField)myField).addOption("0", "Não");
 			break;
 		}
 		
@@ -165,6 +167,8 @@ public class GenericFormField extends FormField<String> {
 			return (String) myField.getValue();
 		case DATE:
 			return ((DatePickerFormField) myField).getStringValue();
+		case BOOLEAN:
+			return (String) myField.getValue();
 		}
 		return null;
 	}
@@ -193,6 +197,9 @@ public class GenericFormField extends FormField<String> {
 			break;
 		case DATE:
 			((DatePickerFormField)myField).setValue(value);
+			break;
+		case BOOLEAN:
+			((FormField<String>)myField).setValue(value);
 			break;
 		}
 	}

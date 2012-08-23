@@ -40,9 +40,9 @@ public class ImageHandlerPanel extends View {
 	protected final double STEP_SCALE = 0.1;
 
 	protected ScrollPanel viewport;
-	protected AbsolutePanel cover;
+	protected AbsolutePanel wrapper, cover;
 	protected Button nextButton, prevButton;
-	protected Widget toolbar;
+	protected ListHeader toolbar;
 
 	protected Image image;
 
@@ -84,7 +84,7 @@ public class ImageHandlerPanel extends View {
 
 		toolbar.setRightWidget(buttonWrapper);
 
-		AbsolutePanel wrapper = new AbsolutePanel();
+		wrapper = new AbsolutePanel();
 		mainWrapper.add(wrapper);
 		mainWrapper.setCellHeight(wrapper, "100%");
 
@@ -170,6 +170,7 @@ public class ImageHandlerPanel extends View {
 			}
 		});
 		image.getElement().getStyle().setCursor(Cursor.MOVE);
+		disableTextSelection(true);
 	}
 
 	@Override
@@ -179,7 +180,7 @@ public class ImageHandlerPanel extends View {
 
 	protected void setImage(String url){
 		image.setSize("", "");
-		
+
 		if(url == null) {
 			image.setUrl("");
 		}else{
@@ -332,6 +333,7 @@ public class ImageHandlerPanel extends View {
 		this.currentImageItem = item;
 		setImage(item == null ? null : item.imageId);
 		formatButtons();
+		updateHeader();
 	}
 
 	public void setImageService(ImageSubServiceAsync instance) {
@@ -342,8 +344,8 @@ public class ImageHandlerPanel extends View {
 		hideToolbar();
 		if(this.currentImageItem != null && this.currentImageItem.pageCount > 1) {
 			showToolbar();
-			this.nextButton.setEnabled(this.currentImageItem.pageNumber < this.currentImageItem.pageCount);
-			this.prevButton.setEnabled(this.currentImageItem.pageNumber >= 0);
+			this.nextButton.setEnabled(this.currentImageItem.pageNumber < (this.currentImageItem.pageCount - 1));
+			this.prevButton.setEnabled(this.currentImageItem.pageNumber > 0);
 		}
 	}
 
@@ -385,6 +387,14 @@ public class ImageHandlerPanel extends View {
 				super.onResponseFailure(caught);
 			}
 		});
+	}
+
+	protected void updateHeader(){
+		if(this.currentImageItem == null) {
+			this.toolbar.setText("");
+		}else{
+			this.toolbar.setText("Página " + (this.currentImageItem.pageNumber + 1) + " de " + this.currentImageItem.pageCount);
+		}
 	}
 
 }

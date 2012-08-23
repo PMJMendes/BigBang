@@ -9,6 +9,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.ExternalInfoRequest.Outgoing;
+import bigBang.definitions.shared.OutgoingMessage;
 import bigBang.definitions.shared.User;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -114,13 +115,19 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 		ExternRequestService.Util.getInstance().getRequest(ownerId, new BigBangAsyncCallback<ExternalInfoRequest>() {
 
 			@Override
-			public void onResponseSuccess(ExternalInfoRequest result) {
+			public void onResponseSuccess(final ExternalInfoRequest externalRequestResult) {
 				ContactsServiceAsync contactsService = ContactsService.Util.getInstance();
-				contactsService.getFlatEmails(result.parentDataObjectId, new BigBangAsyncCallback<Contact[]>() {
+				contactsService.getFlatEmails(externalRequestResult.parentDataObjectId, new BigBangAsyncCallback<Contact[]>() {
 
 					@Override
 					public void onResponseSuccess(Contact[] result) {
 						view.setAvailableContacts(result);
+						Outgoing request  = view.getForm().getInfo();
+						OutgoingMessage message = request == null ? null : request.message;
+						if(message != null) {
+							message.toContactInfoId = externalRequestResult.fromInfoId;
+							view.getForm().setInfo(request);
+						}
 					}
 				});
 			}

@@ -93,6 +93,7 @@ public class SubCasualtyTasksViewPresenter implements ViewPresenter, HasOperatio
 					break;
 				case REJECT_CLOSE:
 					onRejectClose();
+					break;
 				case GO_TO_PROCESS:
 					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.SUB_CASUALTY, view.getForm().getValue().id);
 					break;

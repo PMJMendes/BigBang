@@ -73,7 +73,10 @@ public class TextAreaFormField extends FormField<String> {
 		wrapper.add(textAndMandatory);
 		wrapper.add(errorMessageLabel);
 
+		setMaxCharacters(250, null);
+
 		setFieldWidth("400px");
+		setFieldHeight("100px");
 	}
 
 	@Override
@@ -88,7 +91,7 @@ public class TextAreaFormField extends FormField<String> {
 			break;
 		}
 		}
-		
+
 	}
 
 	@Override
@@ -114,7 +117,7 @@ public class TextAreaFormField extends FormField<String> {
 		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readOnly && this.isMandatory());
-		
+
 	}
 
 	public void setFieldHeight(String height){
@@ -198,7 +201,9 @@ public class TextAreaFormField extends FormField<String> {
 		if(charsRemaining < 0)
 			charsRemaining = 0;
 
-		remainCharsNum.setText("" + charsRemaining);
+		if(remainCharsNum != null) {
+			remainCharsNum.setText("" + charsRemaining);
+		}
 
 		if (charsRemaining <= 0){
 			((TextArea)this.field).setText(((TextArea)this.field).getText().substring(0, max));
@@ -208,12 +213,12 @@ public class TextAreaFormField extends FormField<String> {
 	public TextArea getNativeField(){
 		return (TextArea)this.field;
 	}
-	
+
 	@Override
 	public void setEditable(boolean editable) {
 		super.setEditable(editable);
 	}
-	
+
 	@Override
 	public void focus() {
 		((TextArea)this.field).getElement().focus();

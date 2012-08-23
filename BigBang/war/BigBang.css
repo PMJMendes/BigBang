@@ -341,7 +341,7 @@ li.token-input-input-token-facebook {
 }
 
 .formDisclosureSectionHeader :hover{
-	background: url("images/formSectionTitleBackgroundHover.png") repeat-x;
+	background: #688aa2;
 }
 
 .invalidFormField {
@@ -409,7 +409,7 @@ li.token-input-input-token-facebook {
 }
 
 .listItem {
-	background-color: #f6f6f6;
+	background-color: aliceBlue; //#f6f6f6;
 	border-bottom: 1px solid #e0e0e0;
 }
 

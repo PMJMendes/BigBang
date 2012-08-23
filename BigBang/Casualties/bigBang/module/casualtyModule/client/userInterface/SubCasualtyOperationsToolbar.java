@@ -55,7 +55,7 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		});
 		addItem(SUB_MENU.ADMIN, delete);
 		
-		internalInfoRequest = new MenuItem("Criação de Pedido de Informação à Seguradora", new Command() {
+		internalInfoRequest = new MenuItem("Criação de Pedido de Informação", new Command() {
 			
 			@Override
 			public void execute() {
@@ -64,7 +64,7 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		});
 		addItem(SUB_MENU.REQUESTS, internalInfoRequest);
 		
-		externalInfoRequesT = new MenuItem("Criação de Pedido de Informação Externo da Seguradora", new Command() {
+		externalInfoRequesT = new MenuItem("Criação de Pedido de Informação Externo", new Command() {
 			
 			@Override
 			public void execute() {

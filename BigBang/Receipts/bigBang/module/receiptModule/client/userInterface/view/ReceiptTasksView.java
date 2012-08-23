@@ -9,6 +9,7 @@ import bigBang.library.client.userInterface.ImageHandlerPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.ReceiptImageHandlerPanel;
 import bigBang.module.receiptModule.client.userInterface.ReceiptTasksOperationsToolbar;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter.Action;
@@ -68,7 +69,7 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 		form.setReadOnly(true);
 		form.setSize("100%", "100%");
 
-		imagePanel = new ImageHandlerPanel();
+		imagePanel = new ReceiptImageHandlerPanel();
 		imagePanel.setSize("100%", "100%");
 		imagePanel.setImageService(ReceiptService.Util.getInstance());
 

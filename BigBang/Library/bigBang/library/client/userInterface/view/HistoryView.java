@@ -16,7 +16,6 @@ import bigBang.library.client.userInterface.presenter.HistoryViewPresenter.Actio
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -45,15 +44,6 @@ public class HistoryView extends View implements HistoryViewPresenter.Display {
 		wrapper.setSize("100%", "100%");
 
 		this.list = new HistorySearchPanel();
-		this.list.addAttachHandler(new AttachEvent.Handler() {
-			
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()){
-					list.doSearch();
-				}
-			}
-		});
 		wrapper.addWest(list, LIST_WIDTH);
 
 		this.form = new HistoryItemForm();
