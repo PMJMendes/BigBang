@@ -22,9 +22,9 @@ public class UserForm extends FormView<User> {
 	private PasswordTextBoxFormField password;
 	private ExpandableListBoxFormField costCenter;
 	private ListBoxFormField printers;
-	
+
 	private boolean printersInitialized = false;
-	
+
 	public UserForm(){
 		super();
 		addSection("Informação Geral");
@@ -35,10 +35,10 @@ public class UserForm extends FormView<User> {
 		role = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER_PROFILE, "Perfil", new UserFormValidator.UserProfileValidator());
 		costCenter = new ExpandableListBoxFormField(BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
 		printers = new ListBoxFormField("Impressora pré-definida");
-		
+
 		role.allowEdition(false);
 		costCenter.allowEdition(false);		
-		
+
 		addFormField(name);
 		addFormField(username);
 		addFormField(password);
@@ -48,12 +48,12 @@ public class UserForm extends FormView<User> {
 		addFormField(printers);
 
 		showPasswordField(false);
-		
+
 		clearInfo();
-		
+
 		setReadOnly(true);
 	}
-	
+
 	public void setUserProfiles(UserProfile[] profiles){
 		this.role.clearValues();
 		if(profiles != null){
@@ -63,7 +63,7 @@ public class UserForm extends FormView<User> {
 		}
 		this.role.clear();
 	}
-	
+
 	public void setCostCenters(CostCenter[] costCenters) {
 		this.costCenter.clearValues();
 		if(costCenters != null){
@@ -77,7 +77,7 @@ public class UserForm extends FormView<User> {
 	public void showPasswordField(boolean show){
 		this.password.setVisible(show);
 	}
-	
+
 	public void addRoleItem(String item, String value) {
 		if(!role.hasItem(item, value))
 			role.addItem(item, value);
@@ -114,51 +114,50 @@ public class UserForm extends FormView<User> {
 			name.clear();
 		else
 			this.name.setValue(user.name);
-		
+
 		if(user.username == null)
 			username.clear();
 		else
 			this.username.setValue(user.username);
-		
+
 		if(user.password == null)
 			password.clear();
 		else
 			this.password.setValue(user.password);
-		
+
 		if(user.email == null)
 			email.clear();
 		else
 			this.email.setValue(user.email);
-		
+
 		if(user.profile == null)
 			this.role.clear();
 		else
 			this.role.setValue(user.profile.id);
-		
+
 		if(user.costCenterId == null)
 			costCenter.clear();
 		else
 			this.costCenter.setValue(user.costCenterId);
-		
+
 		if(user.defaultPrinter == null)
 			this.printers.clear();
-		else {
-			if(printersInitialized){
-				this.printers.setValue(user.defaultPrinter);
-			}else{
-				PrintService.Util.getInstance().getAvailablePrinterNames(new BigBangAsyncCallback<String[]>() {
 
-					@Override
-					public void onResponseSuccess(String[] result) {
-						for(String printer : result) {
-							printers.addItem(printer, printer);
-						}
-						printers.setValue(user.defaultPrinter);
-						printersInitialized = true;
+		if(printersInitialized){
+			this.printers.setValue(user.defaultPrinter);
+		}else{
+			PrintService.Util.getInstance().getAvailablePrinterNames(new BigBangAsyncCallback<String[]>() {
+
+				@Override
+				public void onResponseSuccess(String[] result) {
+					for(String printer : result) {
+						printers.addItem(printer, printer);
 					}
-				});
-			}
+					printers.setValue(user.defaultPrinter);
+					printersInitialized = true;
+				}
+			});
 		}
 	}
-	
+
 }
