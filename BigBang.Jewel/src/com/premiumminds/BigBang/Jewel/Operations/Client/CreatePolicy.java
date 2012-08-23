@@ -154,6 +154,11 @@ public class CreatePolicy
 			{
 				for ( i = 0; i < mobjData.marrObjects.length; i++ )
 				{
+					if ( (mobjData.marrObjects[i].mdtInclusion != null) && (mobjData.marrObjects[i].mdtExclusion != null) &&
+							(mobjData.marrObjects[i].mdtInclusion.compareTo(mobjData.marrObjects[i].mdtExclusion) > 0) )
+						throw new BigBangJewelException("Erro: Data de exclusão não pode ser maior que a data de inclusão (" +
+								mobjData.marrObjects[i].mstrName + ").");
+
 					mobjData.marrObjects[i].midOwner = mobjData.mid;
 					lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrObjects[i].ToObject(lobjObject);

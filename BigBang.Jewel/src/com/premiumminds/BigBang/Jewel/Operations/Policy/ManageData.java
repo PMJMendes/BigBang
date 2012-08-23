@@ -8,6 +8,7 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoInsurerData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
@@ -275,8 +276,15 @@ public class ManageData
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
 							//Aqui não há código. Ver mais abaixo.
+							continue;
 						}
-						else if ( mobjData.marrObjects[i].mbNew )
+
+						if ( (mobjData.marrObjects[i].mdtInclusion != null) && (mobjData.marrObjects[i].mdtExclusion != null) &&
+								(mobjData.marrObjects[i].mdtInclusion.compareTo(mobjData.marrObjects[i].mdtExclusion) > 0) )
+							throw new BigBangJewelException("Erro: Data de exclusão não pode ser maior que a data de inclusão (" +
+									mobjData.marrObjects[i].mstrName + ").");
+
+						if ( mobjData.marrObjects[i].mbNew )
 						{
 							mobjData.marrObjects[i].midOwner = mobjData.mid;
 							lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
