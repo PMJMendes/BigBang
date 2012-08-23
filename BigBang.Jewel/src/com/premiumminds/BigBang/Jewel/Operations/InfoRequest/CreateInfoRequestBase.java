@@ -8,6 +8,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
@@ -48,12 +49,68 @@ public abstract class CreateInfoRequestBase
 	public String LongDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrBuffer;
+		ContactInfo lobjInfo;
+		User lobjUser;
+		int i;
 
 		lstrBuffer = new StringBuilder();
 
 		lstrBuffer.append("Foi enviado o seguinte pedido:").append(pstrLineBreak);
 		lstrBuffer.append(mobjMessage.mstrSubject).append(pstrLineBreak);
 		lstrBuffer.append(mobjMessage.mstrBody).append(pstrLineBreak).append(pstrLineBreak);
+
+		if ( (mobjMessage.marrContactInfos != null) && (mobjMessage.marrContactInfos.length > 0) )
+		{
+			lstrBuffer.append("A mensagem foi enviada para os seguintes destinatários:").append(pstrLineBreak);
+			for ( i = 0; i < mobjMessage.marrContactInfos.length; i++ )
+			{
+				try
+				{
+					lobjInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(), mobjMessage.marrContactInfos[i]);
+					lstrBuffer.append(" - ").append(lobjInfo.getOwner().getLabel()).append(pstrLineBreak);
+				}
+				catch (Throwable e)
+				{
+					lstrBuffer.append(" - (Erro a obter o nome do contacto.)").append(pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (mobjMessage.marrUsers != null) && (mobjMessage.marrUsers.length > 0) )
+		{
+			lstrBuffer.append("O processo foi partilhado com os seguintes utilizadores:").append(pstrLineBreak);
+			for ( i = 0; i < mobjMessage.marrUsers.length; i++ )
+			{
+				try
+				{
+					lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), mobjMessage.marrUsers[i]);
+					lstrBuffer.append(" - ").append(lobjUser.getDisplayName()).append(pstrLineBreak);
+				}
+				catch (Throwable e)
+				{
+					lstrBuffer.append(" - (Erro a obter o nome do utilizador.)").append(pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (mobjMessage.marrCCs != null) && (mobjMessage.marrCCs.length > 0) )
+		{
+			lstrBuffer.append("A mensagem foi enviada para os seguintes CCs:").append(pstrLineBreak);
+			for ( i = 0; i < mobjMessage.marrCCs.length; i++ )
+			{
+				lstrBuffer.append(" - ").append(mobjMessage.marrCCs[i]).append(pstrLineBreak);
+			}
+		}
+
+		if ( (mobjMessage.marrBCCs != null) && (mobjMessage.marrBCCs.length > 0) )
+		{
+			lstrBuffer.append("A mensagem foi enviada para os seguintes BCCs:").append(pstrLineBreak);
+			for ( i = 0; i < mobjMessage.marrBCCs.length; i++ )
+			{
+				lstrBuffer.append(" - ").append(mobjMessage.marrBCCs[i]).append(pstrLineBreak);
+			}
+		}
+
 		lstrBuffer.append("Prazo limite de resposta: ").append(mlngDays).append(" dias.").append(pstrLineBreak);
 
 		return lstrBuffer.toString();

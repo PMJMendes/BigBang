@@ -16,6 +16,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
@@ -50,6 +51,9 @@ public class CancelNegotiation
 	public String LongDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrBuilder;
+		ContactInfo lobjInfo;
+		User lobjUser;
+		int i;
 
 		lstrBuilder = new StringBuilder();
 
@@ -61,8 +65,62 @@ public class CancelNegotiation
 			lstrBuilder.append("sem adjudicação.");
 
 		if ( mbSendNotification )
+		{
 			lstrBuilder.append(pstrLineBreak).append("A seguradora foi notificada com a seguinte mensagem:").append(pstrLineBreak).
 					append(mobjMessage.mstrBody);
+
+			if ( (mobjMessage.marrContactInfos != null) && (mobjMessage.marrContactInfos.length > 0) )
+			{
+				lstrBuilder.append("A mensagem foi enviada para os seguintes destinatários:").append(pstrLineBreak);
+				for ( i = 0; i < mobjMessage.marrContactInfos.length; i++ )
+				{
+					try
+					{
+						lobjInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(), mobjMessage.marrContactInfos[i]);
+						lstrBuilder.append(" - ").append(lobjInfo.getOwner().getLabel()).append(pstrLineBreak);
+					}
+					catch (Throwable e)
+					{
+						lstrBuilder.append(" - (Erro a obter o nome do contacto.)").append(pstrLineBreak);
+					}
+				}
+			}
+
+			if ( (mobjMessage.marrUsers != null) && (mobjMessage.marrUsers.length > 0) )
+			{
+				lstrBuilder.append("O processo foi partilhado com os seguintes utilizadores:").append(pstrLineBreak);
+				for ( i = 0; i < mobjMessage.marrUsers.length; i++ )
+				{
+					try
+					{
+						lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), mobjMessage.marrUsers[i]);
+						lstrBuilder.append(" - ").append(lobjUser.getDisplayName()).append(pstrLineBreak);
+					}
+					catch (Throwable e)
+					{
+						lstrBuilder.append(" - (Erro a obter o nome do utilizador.)").append(pstrLineBreak);
+					}
+				}
+			}
+
+			if ( (mobjMessage.marrCCs != null) && (mobjMessage.marrCCs.length > 0) )
+			{
+				lstrBuilder.append("A mensagem foi enviada para os seguintes CCs:").append(pstrLineBreak);
+				for ( i = 0; i < mobjMessage.marrCCs.length; i++ )
+				{
+					lstrBuilder.append(" - ").append(mobjMessage.marrCCs[i]).append(pstrLineBreak);
+				}
+			}
+
+			if ( (mobjMessage.marrBCCs != null) && (mobjMessage.marrBCCs.length > 0) )
+			{
+				lstrBuilder.append("A mensagem foi enviada para os seguintes BCCs:").append(pstrLineBreak);
+				for ( i = 0; i < mobjMessage.marrBCCs.length; i++ )
+				{
+					lstrBuilder.append(" - ").append(mobjMessage.marrBCCs[i]).append(pstrLineBreak);
+				}
+			}
+		}
 
 		return lstrBuilder.toString();
 	}
