@@ -5,9 +5,9 @@ from amartins..empresa.sinistros s
 where (s.ordem>=20110000 or s.datasinistro>'2010-12-31' or s.dataparticipacao>'2010-12-31' or s.datafecho>'2010-12-31' or s.estado='A' or s.estado is NULL)
 and s.cliente in (select MigrationID from amartins.tblBBClients)
 
-insert into amartins.tblBBSubCasualties (PK, SCNumber, FKProcess, FKPolicy, FKSubPolicy, ExternProcess, Description, Notes, BHasJudicial)
+insert into amartins.tblBBSubCasualties (PK, SCNumber, FKProcess, FKPolicy, FKSubPolicy, ExternProcess, Description, Notes, BHasJudicial, GenericObject)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.ordem+0.1 SCNumber, NULL FKProcess, p.PK FKPolicy, z.PK FKSubPolicy, NULL ExternProcess, NULL Description, NULL Notes, 0 BHasJudicial
+s.ordem+0.1 SCNumber, NULL FKProcess, p.PK FKPolicy, z.PK FKSubPolicy, NULL ExternProcess, NULL Description, substring(s.obsint, 1, 250) Notes, 0 BHasJudicial, s.sinistrado
 from amartins..empresa.sinistros s
 inner join amartins..empresa.apolice a on a.cliente=s.cliente and a.apolice=s.apolice and a.ramo=s.ramo and a.comseg=s.comseg
 left outer join amartins.tblBBPolicies p on p.MigrationID=a.MigrationID
@@ -25,7 +25,7 @@ from amartins.tblBBCasualties c
 inner join amartins..empresa.sinistros s on s.ordem=c.CNumber
 inner join amartins.tblBBClients k on k.MigrationID=s.cliente,
 bigbang.tblUsers u
-where u.Username='sandrav';
+where u.Username='avieira';
 
 update amartins.tblBBCasualties set FKProcess=p.PK
 from amartins.tblBBCasualties c inner join amartins.tblPNProcesses p on p.FKData=c.PK;
