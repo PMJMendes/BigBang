@@ -40,22 +40,19 @@ public class MediatorAccountingDetail
 	public TD[] buildRow()
 		throws BigBangJewelException
 	{
-		Receipt lobjReceipt;
 		TD[] larrAux;
 		TD[] larrCells;
 		int i;
-
-		lobjReceipt = getReceipt();
 
 		larrAux = super.buildRow();
 		i = larrAux.length;
 
 		larrCells = Arrays.copyOf(larrAux, i + 2);
 
-		larrCells[i] = ReportBuilder.buildCell(lobjReceipt.getAt(Receipt.I.COMMISSIONS), TypeDefGUIDs.T_Decimal);
+		larrCells[i] = ReportBuilder.buildCell(getCommission(), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[i], true, true);
 
-		larrCells[i + 1] = ReportBuilder.buildCell(lobjReceipt.getAt(Receipt.I.RETROCESSIONS), TypeDefGUIDs.T_Decimal);
+		larrCells[i + 1] = ReportBuilder.buildCell(getRetrocession(), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[i + 1], true, true);
 
 		return larrCells;

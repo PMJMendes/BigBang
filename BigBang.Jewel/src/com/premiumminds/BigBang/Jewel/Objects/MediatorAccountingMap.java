@@ -135,6 +135,7 @@ public class MediatorAccountingMap
 		throws BigBangJewelException
 	{
 		BigDecimal ldblTotal;
+		BigDecimal ldblRetro;
 		int i;
 
 		ldblTotal = new BigDecimal(0.0);
@@ -142,7 +143,9 @@ public class MediatorAccountingMap
 		getDetails();
 		for ( i = 0; i < marrDetails.length; i++ )
 		{
-			ldblTotal = ldblTotal.add(((MediatorAccountingDetail)marrDetails[i]).getRetrocession());
+			ldblRetro = ((MediatorAccountingDetail)marrDetails[i]).getRetrocession();
+			if ( ldblRetro != null )
+				ldblTotal = ldblTotal.add(ldblRetro);
 		}
 
 		TR[] larrRows;

@@ -369,6 +369,9 @@ public class ReportServiceImpl
 		int i;
 		Report lobjResult;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		try
 		{
 			lobjReport = ReportDef.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(itemId));
