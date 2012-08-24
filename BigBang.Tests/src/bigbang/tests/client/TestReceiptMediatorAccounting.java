@@ -24,7 +24,6 @@ public class TestReceiptMediatorAccounting
 			}
 		};
 
-		Services.receiptService.massMediatorAccounting(new String[] {"6E2B850B-877D-4D8A-9D72-A02101388CE1",
-				"E33B3E31-38B0-4898-9773-A0210138BCEC", "B585A918-FD63-4E07-931B-A0210138DAAC"}, callback);
+		Services.receiptService.massMediatorAccounting(new String[] {"F980F3EE-C954-4214-9CA0-A0B600B23188"}, callback);
 	}
 }

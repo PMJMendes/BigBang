@@ -26,6 +26,6 @@ public class TestReportGetTransactionSet
 			}
 		};
 
-		Services.reportService.generateTransactionSetReport("2FF04A44-2D5A-4686-B8B6-A0320126ABA5", "02F38D0D-6601-4E09-B706-A0AF01308722", callback);
+		Services.reportService.generateTransactionSetReport("B39C1B5A-BD1D-4C70-B998-A09900FBA339", "73B92412-4DEF-4CF4-88DA-A0B700B8A828", callback);
 	}
 }
