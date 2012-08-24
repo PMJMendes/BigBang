@@ -74,15 +74,15 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
-		
 	}
+
 	@Override
 	public void go(HasWidgets container) {
 		bind();
 		container.clear();
 		container.add(this.view.asWidget());
-		
 	}
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
@@ -110,7 +110,6 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 				onUserLacksPermission();
 			}
 		});
-		
 	}
 	
 	private void checkUserPermission(final ResponseHandler<Boolean> responseHandler) {
@@ -213,7 +212,6 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 						
 						@Override
 						public void onResponse(Receipt response) {
-							selectable.setSelected(true, true);
 							view.getReceiptForm().setValue(response);
 						}
 						

@@ -36,16 +36,6 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class MassSendReceiptViewPresenter implements ViewPresenter{
 
-	private Display view;
-	private boolean bound = false;
-	protected ReceiptDataBroker broker;
-
-	public MassSendReceiptViewPresenter(Display view){
-		setView((UIObject) view);
-		broker = (ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
-	}
-
-
 	public interface Display{
 
 		void addReceiptToSendList(ReceiptStub value);
@@ -76,10 +66,18 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 
 	}
 
+	private Display view;
+	private boolean bound = false;
+	protected ReceiptDataBroker broker;
+
+	public MassSendReceiptViewPresenter(Display view){
+		setView((UIObject) view);
+		broker = (ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
+	}
+	
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
-
 	}
 
 	@Override
@@ -87,7 +85,6 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 		bind();
 		container.clear();
 		container.add(this.view.asWidget());
-
 	}
 
 	private void bind() {
