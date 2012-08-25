@@ -378,6 +378,7 @@ inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
 where p.FKSubLine='68ED97FA-B9F8-40F7-B470-9EE90118B2DB';
 
 set language portuguese;
+declare @atctr int;
 set @atctr = 1;
 while @atctr < 13
 begin

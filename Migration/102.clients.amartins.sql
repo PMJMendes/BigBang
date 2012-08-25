@@ -122,9 +122,11 @@ from amartins..empresa.agente a
 left outer join bigbang.tblPostalCodes c on c.PostalCode=CAST(a.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
 where a.NUMINSTI=0 or a.NUMCONTR=0;
 
-insert into amartins.tblMediators (PK, MediatorName, FiscalNumber, FKProfile, Address1, FKZipCode, MigrationID)
+insert into amartins.tblMediators (PK, MediatorName, FiscalNumber, FKProfile, Address1, FKZipCode, MigrationID,
+FixedPercent, CalcClass, BHasRetention)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-a.NOME MediatorName, a.NUMCONTR FiscalNulber, 'C7236BA7-73AD-40ED-B6DC-9EFC013691C8' FKProfile, a.MORADA Address1, c.PK FKZipCode, a.AGENTE MigrationID
+a.NOME MediatorName, a.NUMCONTR FiscalNulber, 'C7236BA7-73AD-40ED-B6DC-9EFC013691C8' FKProfile, a.MORADA Address1, c.PK FKZipCode,
+a.AGENTE MigrationID, NULL, NULL, 0
 from amartins..empresa.agente a
 left outer join bigbang.tblPostalCodes c on c.PostalCode=CAST(a.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
 where a.NUMINSTI!=0 and (a.NUMCONTR is null or a.NUMCONTR!=0);
