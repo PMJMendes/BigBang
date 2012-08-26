@@ -39,7 +39,7 @@ public class AutoProcessSubs
 		b = false;
 		for ( i = 0; i < larrSubs.length; i++ )
 		{
-//			if ( larrSubs[i].IsRunning() || !larrSubs[i].GetScript().IsTopLevel() || (larrSubs[i].GetDataKey() != null) )
+			if ( larrSubs[i].IsRunning() || !larrSubs[i].GetScript().IsTopLevel() || (larrSubs[i].GetDataKey() != null) )
 			{
 				b = true;
 				break;
