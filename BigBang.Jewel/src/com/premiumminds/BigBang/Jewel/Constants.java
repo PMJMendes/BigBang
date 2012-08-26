@@ -641,7 +641,6 @@ public class Constants
 	public static final UUID DocID_InsurerReceipt         = UUID.fromString("CF2849F7-7967-4CCD-8731-A09400D4310C");
 	public static final UUID DocID_MediatorPayment        = UUID.fromString("F6663F27-83B8-40DE-AB00-A0990123C856");
 	public static final UUID DocID_PaymentReturnLetter    = UUID.fromString("73C2A8D9-C1A9-4E4C-ACC6-A0B0010A59F7");
-	public static final UUID DocID_StampedReceipt         = UUID.fromString("A855B1D5-B9D1-4F70-83A8-A0B300E10A25");
 
 	// Report Types
 	public static final UUID RTypeID_Parameter   = UUID.fromString("EFF85260-CB13-4599-8EFD-A032010C4AED");

@@ -500,7 +500,7 @@ public class Receipt
 		lobjFile = null;
 		for ( i = 0; i < larrDocs.length; i++ )
 		{
-			if ( Constants.DocID_StampedReceipt.equals(larrDocs[i].getAt(3)) )
+			if ( Constants.DocID_CutReceiptImage.equals(larrDocs[i].getAt(3)) )
 			{
 				if ( larrDocs[i].getAt(5) == null )
 					return null;

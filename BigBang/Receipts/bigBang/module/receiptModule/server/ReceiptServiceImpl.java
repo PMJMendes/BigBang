@@ -514,7 +514,7 @@ public class ReceiptServiceImpl
 				lopVR.mobjDocOps.marrCreate[0].mstrName = "Tratado";
 				lopVR.mobjDocOps.marrCreate[0].midOwnerType = Constants.ObjID_Receipt;
 				lopVR.mobjDocOps.marrCreate[0].midOwnerId = lobjReceipt.getKey();
-				lopVR.mobjDocOps.marrCreate[0].midDocType = Constants.DocID_StampedReceipt;
+				lopVR.mobjDocOps.marrCreate[0].midDocType = Constants.DocID_CutReceiptImage;
 				lopVR.mobjDocOps.marrCreate[0].mstrText = null;
 				lopVR.mobjDocOps.marrCreate[0].mobjFile = lobjFile.GetVarData();
 			}
