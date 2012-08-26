@@ -3,6 +3,7 @@ package bigBang.library.client.userInterface;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -39,7 +40,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 				@Override
 				public void onKeyPress(KeyPressEvent event) {					
 
-					if(!Character.isDigit((char)event.getUnicodeCharCode())){
+					if(!Character.isDigit((char)event.getUnicodeCharCode()) && event.getCharCode() != KeyCodes.KEY_ENTER){
 						if(event.getUnicodeCharCode() == '-' && !field.getValue().contains("-") && field.getCursorPos() == 0){
 							return;
 						}

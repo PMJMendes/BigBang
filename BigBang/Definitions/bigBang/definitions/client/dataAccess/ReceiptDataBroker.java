@@ -12,6 +12,7 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.Rectangle;
 import bigBang.definitions.shared.SignatureRequest;
 
 public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
@@ -20,7 +21,7 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 
 	public void updateReceipt(Receipt receipt, ResponseHandler<Receipt> handler);
 	
-	public void updateAndValidateReceipt(Receipt receipt, ResponseHandler<Receipt> handler);
+	public void updateAndValidateReceipt(Receipt receipt, Rectangle imageCut, ResponseHandler<Receipt> handler);
 
 	public void removeReceipt(String id, ResponseHandler<String> handler);
 

@@ -37,9 +37,9 @@ public class TasksModule implements Module {
 
 			@Override
 			public void onLoginSuccess(LoginSuccessEvent event) {
-				if(!notificationsManager.isRunning()){
-					notificationsManager.run();
-				}
+//				if(!notificationsManager.isRunning()){
+//					notificationsManager.run();
+//				}
 			}
 		});
 		EventBus.getInstance().addHandler(LogoutEvent.TYPE, new LogoutEventHandler(){

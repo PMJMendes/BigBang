@@ -176,7 +176,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		result.comissions = commission.getValue();
 		result.retrocessions = retro.getValue();
 		result.FATValue = fat.getValue();
-		result.isMalus = bonusMalusOption.getValue() != null && bonusMalusOption.getValue().equalsIgnoreCase("Malus");
+		result.isMalus = bonusMalusOption.getValue() == null ? null : bonusMalusOption.getValue().equalsIgnoreCase("Malus");
 		result.bonusMalus = bonusMalusValue.getValue();
 		result.issueDate = issueDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(issueDate.getValue());
 		result.maturityDate = coverageStart.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(coverageStart.getValue());

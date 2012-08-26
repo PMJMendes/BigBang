@@ -19,6 +19,7 @@ public class SerialMarkForPaymentViewPresenter extends
 	public static interface Display extends MarkForPaymentViewPresenter.Display {
 		HasValueSelectables<ReceiptStub> getList();
 		void removeFromList(ValueSelectable<ReceiptStub> entry);
+		void clearSearchField();
 	}
 	
 	public SerialMarkForPaymentViewPresenter(Display view) {
@@ -68,6 +69,7 @@ public class SerialMarkForPaymentViewPresenter extends
 				getView().removeFromList(selectable);
 			}
 		}
+		getView().clearSearchField();
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A cobrança do Recibo foi efectuada com Sucesso"), TYPE.TRAY_NOTIFICATION));
 	}
 

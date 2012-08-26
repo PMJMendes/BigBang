@@ -50,6 +50,9 @@ public class ImageHandlerPanel extends View {
 	protected ImageItem currentImageItem;
 
 	protected boolean dragMode;
+	
+	protected int originalImageWidth, originalImageHeight;
+	
 	protected int dragX;
 	protected int dragY;
 
@@ -190,6 +193,8 @@ public class ImageHandlerPanel extends View {
 
 				@Override
 				public void onLoad(LoadEvent event) {
+					originalImageWidth = image.getOffsetWidth();
+					originalImageHeight = image.getOffsetHeight();
 					fitToViewport();
 				}
 			});
@@ -342,7 +347,7 @@ public class ImageHandlerPanel extends View {
 
 	protected void formatButtons(){
 		hideToolbar();
-		if(this.currentImageItem != null && this.currentImageItem.pageCount > 1) {
+		if(this.currentImageItem != null && this.currentImageItem.pageCount > 0) {
 			showToolbar();
 			this.nextButton.setEnabled(this.currentImageItem.pageNumber < (this.currentImageItem.pageCount - 1));
 			this.prevButton.setEnabled(this.currentImageItem.pageNumber > 0);

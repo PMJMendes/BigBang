@@ -22,6 +22,7 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.Rectangle;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.definitions.shared.SortOrder;
@@ -162,8 +163,8 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 	@Override
 	public void updateAndValidateReceipt(final Receipt receipt,
-			final ResponseHandler<Receipt> handler) {
-		this.service.editAndValidateReceipt(receipt, null, new BigBangAsyncCallback<Receipt>() { //TODO Implementar o rectângulo
+			Rectangle imageCut, final ResponseHandler<Receipt> handler) {
+		this.service.editAndValidateReceipt(receipt, imageCut, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
 			public void onResponseSuccess(Receipt result) {

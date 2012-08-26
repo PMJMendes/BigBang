@@ -12,6 +12,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.Rectangle;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasOperationPermissions;
@@ -28,42 +29,44 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class ReceiptTasksViewPresenter implements ViewPresenter,
-		HasOperationPermissions {
+HasOperationPermissions {
 
 	public static enum Action {
 		CREATE_DAS_REQUEST,
 		MARK_DAS_UNNECESSARY, VALIDATE, SET_FOR_RETURN, GO_TO_PROCESS
 	}
-	
+
 	public static interface Display {
 		HasEditableValue<Receipt> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void handleImageItem(ImageItem item);
+		Rectangle getImageSelection();
+		void showCropOption(boolean show);
 		
 		void clearImages();
 		HasWidgets getOverlayViewContainer();
 		void showOverlayViewContainer(boolean show);
 		void allowCreateDASRequest(boolean allow);
 		void allowMarkDASUnnecessary(boolean allow);
-		
+
 		//PERMISSIONS
 		void clearAllowedPermissions();
-		
+
 		Widget asWidget();
 		void allowValidate(boolean b);
 		void allowSetForReturn(boolean b);
 	}
-	
+
 	protected boolean bound = false;
 	protected ReceiptDataBroker broker;
 	protected Display view;
 	protected ViewPresenterController overlayController;
-	
+
 	public ReceiptTasksViewPresenter(Display view){
 		setView((UIObject) view);
 		this.broker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -80,16 +83,16 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
-		
+
 		String receiptId = parameterHolder.getParameter("id");
 		showReceipt(receiptId);
 	}
-	
+
 	protected void bind(){
 		if(bound) {return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch (action.getAction()) {
@@ -112,23 +115,27 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
-	
+
 	protected void onValidate() {
-		broker.updateAndValidateReceipt(view.getForm().getInfo(), new ResponseHandler<Receipt>() {
-			
-			@Override
-			public void onResponse(Receipt response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo guardado e validado com sucesso."), TYPE.TRAY_NOTIFICATION));
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar/validar o recibo"), TYPE.ALERT_NOTIFICATION));
-			}
-		});
+		if(view.getImageSelection() == null) {
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recorte o talão na imagem do Recibo para realizar esta operação"), TYPE.INFO_NOTIFICATION));
+		}else{		
+			broker.updateAndValidateReceipt(view.getForm().getInfo(), view.getImageSelection(), new ResponseHandler<Receipt>() {
+
+				@Override
+				public void onResponse(Receipt response) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo guardado e validado com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar/validar o recibo"), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
 	}
 
 	protected void onSetForReturn() {
@@ -152,53 +159,57 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 		for(String opid : operationIds) {
 			if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.CREATE_DAS_REQUEST)) {
 				view.allowCreateDASRequest(true);
+				view.showCropOption(false);
 			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.SET_DAS_NOT_NECESSARY)) {
 				view.allowMarkDASUnnecessary(true);
+				view.showCropOption(false);
 			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.VALIDATE)){
 				view.allowValidate(true);
 				view.getForm().setReadOnly(false);
+				view.showCropOption(true);
 			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.SET_FOR_RETURN)){
 				view.allowSetForReturn(true);
+				view.showCropOption(false);
 			}
 		}
 	}
-	
+
 	protected void showReceipt(String receiptId) {
 		broker.getReceipt(receiptId, new ResponseHandler<Receipt>() {
-			
+
 			@Override
 			public void onResponse(Receipt response) {
 				view.getForm().setValue(response);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
 			}
 		});
 		broker.getReceiptImageItem(receiptId, new ResponseHandler<ImageItem>() {
-			
+
 			@Override
 			public void onResponse(ImageItem response) {
 				view.handleImageItem(response);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
 			}
 		});
 	}
-	
+
 	//OPERATION ACTIONS
-	
+
 	protected void onCreateDASRequest(){
 		HasParameters parameters = new HasParameters();
 		parameters.setParameter("receiptid", view.getForm().getValue().id);
 		parameters.setParameter("show", "createdasrequest");
 		this.overlayController.onParameters(parameters);
 	}
-	
+
 	protected void onMarkDASUnnecessary(){
 		broker.setDASNotNecessary(view.getForm().getValue().id, new ResponseHandler<Receipt>() {
 
@@ -213,8 +224,8 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 			}
 		});
 	}
-	
-	
+
+
 	protected void initController(){
 		this.overlayController = new ViewPresenterController(view.getOverlayViewContainer()) {
 
@@ -226,7 +237,7 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 				if(show.isEmpty()){
 					view.showOverlayViewContainer(false);
 
-				//OVERLAY VIEWS
+					//OVERLAY VIEWS
 				}else if(show.equalsIgnoreCase("createdasrequest")){
 					present("CREATE_DAS_REQUEST", parameters);
 					view.showOverlayViewContainer(true);

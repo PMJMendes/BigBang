@@ -299,6 +299,10 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		return this.textBoxFilter.getText();
 	}
 	
+	public void clearFreeTextField(){
+		this.textBoxFilter.setValue("");
+	}
+	
 	@Override
 	public ListEntry<T> remove(int index) {
 		ListEntry<T> result = super.remove(index);

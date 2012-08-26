@@ -2,10 +2,10 @@ package bigBang.module.receiptModule.client.userInterface.view;
 
 import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.Rectangle;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ImageHandlerPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
@@ -26,7 +26,7 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 	protected ReceiptForm form;
 	protected ReceiptTasksOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> handler;
-	protected ImageHandlerPanel imagePanel;
+	protected ReceiptImageHandlerPanel imagePanel;
 
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
@@ -169,4 +169,14 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 		this.imagePanel.handleImageItem(item);
 	}
 
+	@Override
+	public Rectangle getImageSelection() {
+		return this.imagePanel.getSelection();
+	}
+	
+	@Override
+	public void showCropOption(boolean show){
+		this.imagePanel.showCutOption(show);
+	}
+	
 }

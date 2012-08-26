@@ -138,4 +138,9 @@ public class SerialMarkForPaymentView extends View implements SerialMarkForPayme
 	public void removeFromList(ValueSelectable<ReceiptStub> entry) {
 		searchPanel.remove(entry);
 	}
+	
+	@Override
+	public void clearSearchField(){
+		this.searchPanel.clearFreeTextField();
+	}
 }

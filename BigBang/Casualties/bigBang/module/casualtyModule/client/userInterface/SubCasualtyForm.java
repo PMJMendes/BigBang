@@ -182,13 +182,11 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 		notesSection = new FormViewSection("Notas");
 		notesSection.addFormField(notes);
-		notes.setFieldWidth("600px");
-		notes.setFieldHeight("250px");
+		notes.setFieldHeight("100px");
 
 		internalNotesSection = new FormViewSection("Notas Internas");
 		internalNotesSection.addFormField(internalNotes);
-		internalNotes.setFieldWidth("600px");
-		internalNotes.setFieldHeight("250px");
+		internalNotes.setFieldHeight("400px");
 
 		ValueChangeHandler<String> changeHandler = new ValueChangeHandler<String>() {
 
