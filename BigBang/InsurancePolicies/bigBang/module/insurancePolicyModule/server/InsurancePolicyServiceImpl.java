@@ -4118,7 +4118,8 @@ public class InsurancePolicyServiceImpl
 	{
 		InsurancePolicySearchParameter lParam;
 		String lstrAux;
-		IEntity lrefClients, lrefObjects;
+//		IEntity lrefClients;
+		IEntity lrefObjects;
 
 		if ( !(pParam instanceof InsurancePolicySearchParameter) )
 			return false;
@@ -4128,36 +4129,39 @@ public class InsurancePolicyServiceImpl
 		{
 			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
 			pstrBuffer.append(" AND ([:Number] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:Client:Name] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR CAST([:Client:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%'")
 					.append(" OR [:SubLine:Name] LIKE N'%").append(lstrAux).append("%'")
 					.append(" OR [:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%'")
-					.append(" OR [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%'")
-					.append(" OR [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE [:Name] LIKE N'%").append(lstrAux).append("%'")
-					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%'))");
+					.append(" OR [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%')");
+//					.append(" OR [:Process:Parent] IN (SELECT [:Process] FROM (");
+//			try
+//			{
+//				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+//				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//        		throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxClients] WHERE [:Name] LIKE N'%").append(lstrAux).append("%'")
+//					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%'))");
 		}
 
 		if ( lParam.ownerId != null )
 		{
-			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+			pstrBuffer.append(" AND [:Client] = '").append(lParam.ownerId).append("'");
+//			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
+//			try
+//			{
+//				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+//				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//        		throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
 		}
 
 		if ( lParam.subLineId != null )
