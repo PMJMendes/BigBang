@@ -830,6 +830,9 @@ public class SubPolicyServiceImpl
 				lobjExtraField.value = marrValues.get(i).mstrValue;
 				lobjExtraField.order = marrValues.get(i).mrefField.mlngColIndex;
 				lobjExtraField.coverageId = marrValues.get(i).mrefCoverage.midCoverage.toString();
+				lobjExtraField.coverageName = marrValues.get(i).mrefCoverage.mstrLabel;
+				lobjExtraField.mandatory = marrValues.get(i).mrefCoverage.mbMandatory;
+				lobjExtraField.covorder = marrValues.get(i).mrefCoverage.mlngOrder;
 				larrExtraFields.add(lobjExtraField);
 			}
 			pobjResult.extraData = larrExtraFields.toArray(new SubPolicy.ExtraField[larrExtraFields.size()]);
@@ -872,19 +875,31 @@ public class SubPolicyServiceImpl
 			{
 				public int compare(SubPolicy.ExtraField o1, SubPolicy.ExtraField o2)
 				{
-					if ( o1.order == o2.order )
+					if ( o1.coverageId.equals(o2.coverageId) )
 					{
-						if ( o1.type == o2.type )
+						if ( o1.order == o2.order )
 						{
-							if ( o1.refersToId == o1.refersToId )
-								return o1.fieldName.compareTo(o2.fieldName);
-							return o1.refersToId.compareTo(o2.refersToId);
+							if ( o1.type == o2.type )
+							{
+								if ( o1.refersToId == o1.refersToId )
+									return o1.fieldName.compareTo(o2.fieldName);
+								return o1.refersToId.compareTo(o2.refersToId);
+							}
+							return o1.type.compareTo(o2.type);
 						}
-						return o1.type.compareTo(o2.type);
+						if ( (o1.order < 0) || (o2.order < 0) )
+							return o2.order - o1.order;
+						return o1.order - o2.order;
 					}
-					if ( (o1.order < 0) || (o2.order < 0) )
-						return o2.order - o1.order;
-					return o1.order - o2.order;
+					if ( o1.mandatory == o2.mandatory )
+					{
+						if ( o1.covorder == o2.covorder )
+							return o1.coverageName.compareTo(o2.coverageName);
+						return o1.covorder - o2.covorder;
+					}
+					if ( o1.mandatory )
+						return -1;
+					return 1;
 				}
 			});
 		}
@@ -2348,6 +2363,9 @@ public class SubPolicyServiceImpl
 				lobjExtra.unitsLabel = (String)lobjTax.getAt(3);
 				lobjExtra.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
 				lobjExtra.coverageId = lobjTax.GetCoverage().getKey().toString();
+				lobjExtra.coverageName = lobjTax.GetCoverage().getLabel();
+				lobjExtra.mandatory = lobjTax.GetCoverage().IsMandatory();
+				lobjExtra.covorder = lobjTax.GetCoverage().GetOrder();
 				lobjExtra.value = larrLocalValues[i].getLabel();
 				lobjExtra.order = (Integer)lobjTax.getAt(8);
 				larrOutExtras.add(lobjExtra);
@@ -2466,6 +2484,9 @@ public class SubPolicyServiceImpl
 					lobjExtra.unitsLabel = (String)larrTaxes[j].getAt(3);
 					lobjExtra.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
 					lobjExtra.coverageId = larrTaxes[j].GetCoverage().getKey().toString();
+					lobjExtra.coverageName = larrTaxes[j].GetCoverage().getLabel();
+					lobjExtra.mandatory = larrTaxes[j].GetCoverage().IsMandatory();
+					lobjExtra.covorder = larrTaxes[j].GetCoverage().GetOrder();
 					lobjExtra.value = (String)larrTaxes[j].getAt(4);
 					lobjExtra.order = (Integer)larrTaxes[j].getAt(8);
 					larrOutExtras.add(lobjExtra);
@@ -2552,19 +2573,31 @@ public class SubPolicyServiceImpl
 		{
 			public int compare(SubPolicy.ExtraField o1, SubPolicy.ExtraField o2)
 			{
-				if ( o1.order == o2.order )
+				if ( o1.coverageId.equals(o2.coverageId) )
 				{
-					if ( o1.type == o2.type )
+					if ( o1.order == o2.order )
 					{
-						if ( o1.refersToId == o1.refersToId )
-							return o1.fieldName.compareTo(o2.fieldName);
-						return o1.refersToId.compareTo(o2.refersToId);
+						if ( o1.type == o2.type )
+						{
+							if ( o1.refersToId == o1.refersToId )
+								return o1.fieldName.compareTo(o2.fieldName);
+							return o1.refersToId.compareTo(o2.refersToId);
+						}
+						return o1.type.compareTo(o2.type);
 					}
-					return o1.type.compareTo(o2.type);
+					if ( (o1.order < 0) || (o2.order < 0) )
+						return o2.order - o1.order;
+					return o1.order - o2.order;
 				}
-				if ( (o1.order < 0) || (o2.order < 0) )
-					return o2.order - o1.order;
-				return o1.order - o2.order;
+				if ( o1.mandatory == o2.mandatory )
+				{
+					if ( o1.covorder == o2.covorder )
+						return o1.coverageName.compareTo(o2.coverageName);
+					return o1.covorder - o2.covorder;
+				}
+				if ( o1.mandatory )
+					return -1;
+				return 1;
 			}
 		});
 

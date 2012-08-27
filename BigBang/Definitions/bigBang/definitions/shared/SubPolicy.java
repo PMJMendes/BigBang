@@ -88,6 +88,9 @@ public class SubPolicy
 		private static final long serialVersionUID = 1L;
 
 		public String coverageId;
+		public String coverageName; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
+		public boolean mandatory; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
+		public int covorder; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
 	}
 
 	public String managerId;

@@ -695,6 +695,9 @@ public class QuoteRequestServiceImpl
 					lobjExtraField.value = marrSubLines.get(i).marrValues.get(j).mstrValue;
 					lobjExtraField.order = marrSubLines.get(i).marrValues.get(j).mrefField.mlngColIndex;
 					lobjExtraField.coverageId = marrSubLines.get(i).marrValues.get(j).mrefCoverage.midCoverage.toString();
+					lobjExtraField.coverageName = marrSubLines.get(i).marrValues.get(j).mrefCoverage.mstrLabel;
+					lobjExtraField.mandatory = marrSubLines.get(i).marrValues.get(j).mrefCoverage.mbMandatory;
+					lobjExtraField.covorder = marrSubLines.get(i).marrValues.get(j).mrefCoverage.mlngOrder;
 					larrExtraFields.add(lobjExtraField);
 				}
 				lobjSubLine.extraData = larrExtraFields.toArray(new QuoteRequest.ExtraField[larrExtraFields.size()]);
@@ -737,19 +740,31 @@ public class QuoteRequestServiceImpl
 				{
 					public int compare(QuoteRequest.ExtraField o1, QuoteRequest.ExtraField o2)
 					{
-						if ( o1.order == o2.order )
+						if ( o1.coverageId.equals(o2.coverageId) )
 						{
-							if ( o1.type == o2.type )
+							if ( o1.order == o2.order )
 							{
-								if ( o1.refersToId == o1.refersToId )
-									return o1.fieldName.compareTo(o2.fieldName);
-								return o1.refersToId.compareTo(o2.refersToId);
+								if ( o1.type == o2.type )
+								{
+									if ( o1.refersToId == o1.refersToId )
+										return o1.fieldName.compareTo(o2.fieldName);
+									return o1.refersToId.compareTo(o2.refersToId);
+								}
+								return o1.type.compareTo(o2.type);
 							}
-							return o1.type.compareTo(o2.type);
+							if ( (o1.order < 0) || (o2.order < 0) )
+								return o2.order - o1.order;
+							return o1.order - o2.order;
 						}
-						if ( (o1.order < 0) || (o2.order < 0) )
-							return o2.order - o1.order;
-						return o1.order - o2.order;
+						if ( o1.mandatory == o2.mandatory )
+						{
+							if ( o1.covorder == o2.covorder )
+								return o1.coverageName.compareTo(o2.coverageName);
+							return o1.covorder - o2.covorder;
+						}
+						if ( o1.mandatory )
+							return -1;
+						return 1;
 					}
 				});
 
@@ -996,6 +1011,9 @@ public class QuoteRequestServiceImpl
 				lobjExtraField.value = marrSubLines.get(plngSubLine).marrValues.get(i).mstrValue;
 				lobjExtraField.order = marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.mlngColIndex;
 				lobjExtraField.coverageId = marrSubLines.get(plngSubLine).marrValues.get(i).mrefCoverage.midCoverage.toString();
+				lobjExtraField.coverageName = marrSubLines.get(plngSubLine).marrValues.get(i).mrefCoverage.mstrLabel;
+				lobjExtraField.mandatory = marrSubLines.get(plngSubLine).marrValues.get(i).mrefCoverage.mbMandatory;
+				lobjExtraField.covorder = marrSubLines.get(plngSubLine).marrValues.get(i).mrefCoverage.mlngOrder;
 				larrExtraFields.add(lobjExtraField);
 			}
 			pobjResult.extraData = larrExtraFields.toArray(new QuoteRequest.ExtraField[larrExtraFields.size()]);
@@ -1038,22 +1056,33 @@ public class QuoteRequestServiceImpl
 			{
 				public int compare(QuoteRequest.ExtraField o1, QuoteRequest.ExtraField o2)
 				{
-					if ( o1.order == o2.order )
+					if ( o1.coverageId.equals(o2.coverageId) )
 					{
-						if ( o1.type == o2.type )
+						if ( o1.order == o2.order )
 						{
-							if ( o1.refersToId == o1.refersToId )
-								return o1.fieldName.compareTo(o2.fieldName);
-							return o1.refersToId.compareTo(o2.refersToId);
+							if ( o1.type == o2.type )
+							{
+								if ( o1.refersToId == o1.refersToId )
+									return o1.fieldName.compareTo(o2.fieldName);
+								return o1.refersToId.compareTo(o2.refersToId);
+							}
+							return o1.type.compareTo(o2.type);
 						}
-						return o1.type.compareTo(o2.type);
+						if ( (o1.order < 0) || (o2.order < 0) )
+							return o2.order - o1.order;
+						return o1.order - o2.order;
 					}
-					if ( (o1.order < 0) || (o2.order < 0) )
-						return o2.order - o1.order;
-					return o1.order - o2.order;
+					if ( o1.mandatory == o2.mandatory )
+					{
+						if ( o1.covorder == o2.covorder )
+							return o1.coverageName.compareTo(o2.coverageName);
+						return o1.covorder - o2.covorder;
+					}
+					if ( o1.mandatory )
+						return -1;
+					return 1;
 				}
 			});
-
 		}
 
 		public void WriteObject(QuoteRequestObject pobjResult, int plngObject)
@@ -2094,6 +2123,9 @@ public class QuoteRequestServiceImpl
 					lobjExtra.unitsLabel = (String)lobjTax.getAt(3);
 					lobjExtra.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
 					lobjExtra.coverageId = lobjTax.GetCoverage().getKey().toString();
+					lobjExtra.coverageName = lobjTax.GetCoverage().getLabel();
+					lobjExtra.mandatory = lobjTax.GetCoverage().IsMandatory();
+					lobjExtra.covorder = lobjTax.GetCoverage().GetOrder();
 					lobjExtra.value = larrLocalValues[j].getLabel();
 					lobjExtra.order = (Integer)lobjTax.getAt(8);
 					larrOutExtras.add(lobjExtra);
@@ -2215,6 +2247,9 @@ public class QuoteRequestServiceImpl
 						lobjExtra.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjExtra.refersToId = ( larrTaxes[k].getAt(7) == null ? null : ((UUID)larrTaxes[k].getAt(7)).toString() );
 						lobjExtra.coverageId = larrTaxes[k].GetCoverage().getKey().toString();
+						lobjExtra.coverageName = larrTaxes[k].GetCoverage().getLabel();
+						lobjExtra.mandatory = larrTaxes[k].GetCoverage().IsMandatory();
+						lobjExtra.covorder = larrTaxes[k].GetCoverage().GetOrder();
 						lobjExtra.value = (String)larrTaxes[k].getAt(4);
 						lobjExtra.order = (Integer)larrTaxes[k].getAt(8);
 						larrOutExtras.add(lobjExtra);
@@ -2301,19 +2336,31 @@ public class QuoteRequestServiceImpl
 			{
 				public int compare(QuoteRequest.ExtraField o1, QuoteRequest.ExtraField o2)
 				{
-					if ( o1.order == o2.order )
+					if ( o1.coverageId.equals(o2.coverageId) )
 					{
-						if ( o1.type == o2.type )
+						if ( o1.order == o2.order )
 						{
-							if ( o1.refersToId == o1.refersToId )
-								return o1.fieldName.compareTo(o2.fieldName);
-							return o1.refersToId.compareTo(o2.refersToId);
+							if ( o1.type == o2.type )
+							{
+								if ( o1.refersToId == o1.refersToId )
+									return o1.fieldName.compareTo(o2.fieldName);
+								return o1.refersToId.compareTo(o2.refersToId);
+							}
+							return o1.type.compareTo(o2.type);
 						}
-						return o1.type.compareTo(o2.type);
+						if ( (o1.order < 0) || (o2.order < 0) )
+							return o2.order - o1.order;
+						return o1.order - o2.order;
 					}
-					if ( (o1.order < 0) || (o2.order < 0) )
-						return o2.order - o1.order;
-					return o1.order - o2.order;
+					if ( o1.mandatory == o2.mandatory )
+					{
+						if ( o1.covorder == o2.covorder )
+							return o1.coverageName.compareTo(o2.coverageName);
+						return o1.covorder - o2.covorder;
+					}
+					if ( o1.mandatory )
+						return -1;
+					return 1;
 				}
 			});
 
