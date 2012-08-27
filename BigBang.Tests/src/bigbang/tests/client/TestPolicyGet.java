@@ -51,10 +51,11 @@ public class TestPolicyGet
 		};
 
 		parameter = new InsurancePolicySearchParameter();
-		parameter.insuredObject = "31-54-QT";
+		parameter.freeText = "12982";
+//		parameter.insuredObject = "31-54-QT";
 		sorts = new InsurancePolicySortParameter();
 		sorts.field = InsurancePolicySortParameter.SortableField.RELEVANCE;
-		sorts.order = SortOrder.ASC;
+		sorts.order = SortOrder.DESC;
 
 		Services.insurancePolicyService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 50, callback);
 	}
