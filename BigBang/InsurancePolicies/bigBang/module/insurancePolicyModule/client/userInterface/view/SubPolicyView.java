@@ -24,8 +24,11 @@ import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyOperat
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -142,6 +145,13 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		policyForm.setSize("100%", "100%");
 
 		ListHeader policyFormHeader = new ListHeader("Apólice Principal");
+		policyFormHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.BACK));
+			}
+		}));
 		policyFormHeader.setHeight("30px");
 		policyFormWrapper.add(policyFormHeader);
 		policyFormWrapper.add(policyForm);

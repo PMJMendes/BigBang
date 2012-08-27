@@ -168,5 +168,6 @@ public class TextBoxFormField extends FormField<String> {
 	@Override
 	public void focus() {
 		((TextBox)field).setFocus(true);
+		((TextBox)field).selectAll();
 	}
 }

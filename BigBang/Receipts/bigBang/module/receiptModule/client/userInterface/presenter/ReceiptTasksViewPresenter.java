@@ -156,22 +156,22 @@ HasOperationPermissions {
 	@Override
 	public void setPermittedOperations(String[] operationIds) {
 		view.clearAllowedPermissions();
+		boolean hasValidatePermission = false;
 		for(String opid : operationIds) {
 			if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.CREATE_DAS_REQUEST)) {
 				view.allowCreateDASRequest(true);
-				view.showCropOption(false);
 			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.SET_DAS_NOT_NECESSARY)) {
 				view.allowMarkDASUnnecessary(true);
-				view.showCropOption(false);
 			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.VALIDATE)){
 				view.allowValidate(true);
 				view.getForm().setReadOnly(false);
 				view.showCropOption(true);
+				hasValidatePermission = true;
 			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.SET_FOR_RETURN)){
 				view.allowSetForReturn(true);
-				view.showCropOption(false);
 			}
 		}
+		view.showCropOption(hasValidatePermission);
 	}
 
 	protected void showReceipt(String receiptId) {

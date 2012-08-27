@@ -47,7 +47,8 @@ public class SubPolicyInsuredObjectViewPresenter implements ViewPresenter {
 		EDIT,
 		SAVE,
 		CANCEL_EDIT,
-		DELETE
+		DELETE,
+		BACK
 	}
 
 	protected Display view;
@@ -114,6 +115,9 @@ public class SubPolicyInsuredObjectViewPresenter implements ViewPresenter {
 					break;
 				case DELETE:
 					onDelete();
+					break;
+				case BACK:
+					onBack();
 					break;
 				}
 			}
@@ -365,6 +369,13 @@ public class SubPolicyInsuredObjectViewPresenter implements ViewPresenter {
 		});
 	}
 
+	private void onBack() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.popFromStackParameter("display");
+		item.removeParameter("objectid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
 	private void onSaveObjectSucces(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Unidade de Risco guardada no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

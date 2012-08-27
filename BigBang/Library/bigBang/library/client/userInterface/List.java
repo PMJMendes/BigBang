@@ -18,9 +18,11 @@ import bigBang.library.client.event.SelectedStateChangedEvent;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.view.View;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -40,6 +42,7 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -777,13 +780,21 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				wrapper.setSize("100%", "100%");
 				wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 				wrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-				wrapper.add(new Label("A Carregar..."));
+				wrapper.getElement().getStyle().setBackgroundColor("#000");
+				wrapper.getElement().getStyle().setOpacity(0.5);
+				
+				Resources resources = GWT.create(Resources.class);
+				Image image = new Image(resources.loading());
+				image.setPixelSize(31, 31);
+				wrapper.add(image);
+
 				this.loadingWidget = wrapper;
 				this.scrollPanelWrapper.add(this.loadingWidget, 0, 0);
 			}
 		}else{
 			if(this.loadingWidget != null) {
 				this.loadingWidget.removeFromParent();
+				this.loadingWidget = null;
 			}
 		}
 	}

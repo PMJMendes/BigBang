@@ -176,11 +176,11 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 			int destX, int destY) {
 		Rectangle result = new Rectangle();
 
-		double scale = originalImageWidth / image.getOffsetWidth();
-		result.x1 = (int)(originX * scale);
-		result.x2 = (int)(destX * scale);
-		result.y1 = (int)(originY * scale);
-		result.y2 = (int)(destY * scale);
+		double scale = originalImageHeight / image.getOffsetHeight();
+		result.x1 = (int)(((double)originX) * scale);
+		result.x2 = (int)(((double)destX) * scale);
+		result.y1 = (int)(((double)originY) * scale);
+		result.y2 = (int)(((double)destY) * scale);
 		return result;
 	}
 

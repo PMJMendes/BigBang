@@ -47,7 +47,8 @@ public class ExerciseViewPresenter implements ViewPresenter{
 		EDIT,
 		SAVE,
 		CANCEL_EDIT,
-		DELETE
+		DELETE,
+		BACK
 	}
 
 	protected Display view;
@@ -113,6 +114,9 @@ public class ExerciseViewPresenter implements ViewPresenter{
 					break;
 				case DELETE:
 					onDelete();
+					break;
+				case BACK:
+					onBack();
 					break;
 				}
 			}
@@ -408,6 +412,13 @@ public class ExerciseViewPresenter implements ViewPresenter{
 		});
 	}
 
+	private void onBack(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.popFromStackParameter("display");
+		item.removeParameter("exerciseid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
 	private void onSaveExerciseSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Exercício guardado no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

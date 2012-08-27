@@ -21,6 +21,7 @@ public class UserForm extends FormView<User> {
 	private ExpandableListBoxFormField role;
 	private PasswordTextBoxFormField password;
 	private ExpandableListBoxFormField costCenter;
+	private ExpandableListBoxFormField delegate;
 	private ListBoxFormField printers;
 
 	private boolean printersInitialized = false;
@@ -34,6 +35,7 @@ public class UserForm extends FormView<User> {
 		email = new TextBoxFormField("E-mail");
 		role = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER_PROFILE, "Perfil", new UserFormValidator.UserProfileValidator());
 		costCenter = new ExpandableListBoxFormField(BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
+		delegate = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Delegado");
 		printers = new ListBoxFormField("Impressora pré-definida");
 
 		role.allowEdition(false);
@@ -45,6 +47,7 @@ public class UserForm extends FormView<User> {
 		addFormField(email);
 		addFormField(role);
 		addFormField(costCenter);
+		addFormField(delegate);
 		addFormField(printers);
 
 		showPasswordField(false);
@@ -100,6 +103,7 @@ public class UserForm extends FormView<User> {
 		info.profile.id = this.role.getValue();
 		info.profile.name = this.role.getSelectedItemText();
 		info.costCenterId = this.costCenter.getValue();
+		info.delegateId = this.delegate.getValue();
 		info.defaultPrinter = this.printers.getValue();
 		return info;
 	}
@@ -140,6 +144,11 @@ public class UserForm extends FormView<User> {
 		else
 			this.costCenter.setValue(user.costCenterId);
 
+		if(user.delegateId == null)
+			delegate.clear();
+		else
+			this.delegate.setValue(user.delegateId);
+		
 		if(user.defaultPrinter == null)
 			this.printers.clear();
 

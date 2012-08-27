@@ -1,5 +1,8 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -43,6 +46,14 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 		ListHeader insurancePolicyFormHeader = new ListHeader("Apólice");
 		insurancePolicyFormHeader.setHeight("30px");
 		insurancePolicyFormWrapper.add(insurancePolicyFormHeader);
+		
+		insurancePolicyFormHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExerciseViewPresenter.Action>(Action.BACK));
+			}
+		}));
 		
 		policyForm.setSize("100%", "100%");
 		policyForm.setReadOnly(true);

@@ -160,8 +160,11 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 	}
 
 	protected static enum Filters{
+		INSURER,
+		MANAGER,
 		EXPENSE_DATE_FROM,
 		EXPENSE_DATE_TO,
+		INSURED_OBJECT
 	}
 
 	protected int dataVersion;
@@ -180,9 +183,11 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 		sortOptions.put(ExpenseSortParameter.SortableField.DATE, "Data da Despesa");
 
 		filtersPanel = new FiltersPanel(sortOptions);
+		filtersPanel.addTypifiedListField(Filters.INSURER, BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
+		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor");
 		filtersPanel.addDateField(Filters.EXPENSE_DATE_FROM, "De");
 		filtersPanel.addDateField(Filters.EXPENSE_DATE_TO, "Até");
-
+		filtersPanel.addTextField(Filters.INSURED_OBJECT, "Unidade de Risco");
 
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 
@@ -215,6 +220,9 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 		p.dateFrom = dateFrom == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(dateFrom);
 		Date dateTo = (Date) filtersPanel.getFilterValue(Filters.EXPENSE_DATE_TO);
 		p.dateTo = dateTo == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(dateTo);
+		p.insurerId = (String) filtersPanel.getFilterValue(Filters.INSURER);
+		p.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
+		p.insuredObject = (String) filtersPanel.getFilterValue(Filters.INSURED_OBJECT);
 	
 		parameters[0] = p;
 		

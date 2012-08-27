@@ -186,6 +186,7 @@ public class ImageHandlerPanel extends View {
 
 		if(url == null) {
 			image.setUrl("");
+			originalImageHeight = originalImageWidth = -1;
 		}else{
 			showLoading(true);
 			image.setUrl(GWT.getModuleBaseURL() + FileService.GET_PREFIX + url);
@@ -193,8 +194,8 @@ public class ImageHandlerPanel extends View {
 
 				@Override
 				public void onLoad(LoadEvent event) {
-					originalImageWidth = image.getOffsetWidth();
-					originalImageHeight = image.getOffsetHeight();
+					originalImageWidth = image.getWidth();
+					originalImageHeight = image.getHeight();
 					fitToViewport();
 				}
 			});

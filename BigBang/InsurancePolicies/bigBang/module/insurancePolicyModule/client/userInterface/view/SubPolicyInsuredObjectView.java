@@ -1,5 +1,8 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -34,6 +37,14 @@ public class SubPolicyInsuredObjectView extends View implements SubPolicyInsured
 		ListHeader subPolicyHeader = new ListHeader("Apólice Adesão");
 		subPolicyHeader.setHeight("30px");
 		subPolicyWrapper.add(subPolicyHeader);
+		
+		subPolicyHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyInsuredObjectViewPresenter.Action>(Action.BACK));
+			}
+		}));
 		
 		subPolicyForm = new SubPolicyForm();
 		subPolicyForm.setReadOnly(true);

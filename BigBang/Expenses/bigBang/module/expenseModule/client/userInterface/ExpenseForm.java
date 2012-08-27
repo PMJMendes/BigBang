@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -25,6 +27,7 @@ import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
+import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
@@ -40,7 +43,6 @@ public class ExpenseForm extends FormView<Expense>{
 	private TextAreaFormField notes;
 	private NavigationFormField client;
 	private DatePickerFormField expenseDate;
-	private ExpandableListBoxFormField insuredObjectId;
 	private ExpandableListBoxFormField coverageId;
 	private NumericTextBoxFormField value;
 	private TextBoxFormField isOpen;
@@ -48,6 +50,9 @@ public class ExpenseForm extends FormView<Expense>{
 	private TextBoxFormField number;
 	private boolean initialized;
 	private boolean tempIsManual;
+	protected ExpandableListBoxFormField insuredObject;
+	protected RadioButtonFormField belongsToPolicy;
+	protected TextBoxFormField insuredObjectName; 
 
 	public ExpenseForm() {
 
@@ -68,14 +73,21 @@ public class ExpenseForm extends FormView<Expense>{
 		client = new NavigationFormField("Cliente"); 
 		expenseDate = new DatePickerFormField("Data");
 		expenseDate.setMandatory(true);
-		insuredObjectId = new ExpandableListBoxFormField("Unidade de Risco");
-		insuredObjectId.setMandatory(true);
 		value = new NumericTextBoxFormField("Valor", true);
 		value.setMandatory(true);
 		value.setFieldWidth("175px");
 		value.setUnitsLabel("€");
 		isOpen = new TextBoxFormField("Estado");
 		isOpen.setFieldWidth("175px");
+		
+		insuredObject = new ExpandableListBoxFormField("Unidade de Risco");
+		insuredObject.setWidth("250px");
+		insuredObject.setFieldWidth("231px");
+		insuredObjectName = new TextBoxFormField("Unidade de Risco");
+		insuredObjectName.setFieldWidth("250px");
+		belongsToPolicy = new RadioButtonFormField(true);
+		belongsToPolicy.addOption("true", "Presente na apólice");
+		belongsToPolicy.addOption("false", "Outra");
 
 		coverageId = new ExpandableListBoxFormField("Cobertura");
 		coverageId.setMandatory(true);
@@ -87,17 +99,37 @@ public class ExpenseForm extends FormView<Expense>{
 		addFormFieldGroup(new FormField<?>[]{
 				number,
 				isOpen,
-		}, true);
-
-		addFormFieldGroup(new FormField<?>[]{
 				manager,
-				insuredObjectId,
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
 				coverageId,
 				expenseDate,	
+		}, true);
+
+		addFormFieldGroup(new FormField<?>[]{
+				
 		}, false);
+		
+		addFormField(insuredObject, true);
+		addFormField(insuredObjectName, true);
+		addFormField(belongsToPolicy, false);
+		
+		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(event.getValue().equalsIgnoreCase("true")){
+					insuredObject.setVisible(true);
+					insuredObjectName.setVisible(false);
+				}else{
+					insuredObject.setVisible(false);
+					insuredObjectName.setVisible(true);
+				}
+				insuredObjectName.setValue(null);
+				insuredObject.setValue(null);
+			}
+		});
 
 		HorizontalPanel settlementPanel = new HorizontalPanel();
 		VerticalPanel settlementVerticalPanel = new VerticalPanel();
@@ -145,10 +177,11 @@ public class ExpenseForm extends FormView<Expense>{
 		newExpense.settlement = settlement.getValue();
 		newExpense.notes = notes.getValue();
 		newExpense.expenseDate = expenseDate.getStringValue();
-		newExpense.insuredObjectId = insuredObjectId.getValue();
 		newExpense.value = value.getValue();
 		newExpense.isManual = tempIsManual;
 		newExpense.coverageId = coverageId.getValue();
+		newExpense.insuredObjectId = insuredObject.getValue();
+		newExpense.insuredObjectName = insuredObjectName.getValue();
 		return newExpense;
 
 	}
@@ -179,7 +212,6 @@ public class ExpenseForm extends FormView<Expense>{
 		
 		expenseDate.setValue(info.expenseDate);
 
-
 		NavigationHistoryItem referenceItem = new NavigationHistoryItem();
 		referenceItem.setParameter("section", "insurancePolicy");
 		referenceItem.setStackParameter("display");
@@ -193,7 +225,7 @@ public class ExpenseForm extends FormView<Expense>{
 				: BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS +"/"+info.referenceId;
 
 
-		insuredObjectId.setListId(listId, new ResponseHandler<Void>() {
+		insuredObject.setListId(listId, new ResponseHandler<Void>() {
 			@Override
 			public void onResponse(Void response) {
 				return;
@@ -206,8 +238,8 @@ public class ExpenseForm extends FormView<Expense>{
 		});
 
 		listId = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
-				BigBangConstants.TypifiedListIds.POLICY_COVERAGE+"/"+info.referenceId 
-				: BigBangConstants.TypifiedListIds.SUB_POLICY_COVERAGE +"/"+info.referenceId;
+				BigBangConstants.TypifiedListIds.POLICY_COVERAGE+"/"+info.referenceSubLineId
+				: BigBangConstants.TypifiedListIds.SUB_POLICY_COVERAGE +"/"+info.referenceSubLineId;
 		
 		BigBangTypifiedListBroker listBroker = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
 				PolicyTypifiedListBroker.Util.getInstance() : SubPolicyTypifiedListBroker.Util.getInstance();
@@ -228,6 +260,14 @@ public class ExpenseForm extends FormView<Expense>{
 		settlement.setValue(info.settlement);
 		isOpen.setValue(info.isOpen ? "Aberta" : "Fechada");
 		value.setValue(info.value);
+		
+		if(info.insuredObjectName != null){
+			belongsToPolicy.setValue("false", true);
+			insuredObjectName.setValue(info.insuredObjectName);
+		}else{
+			belongsToPolicy.setValue("true", true);
+			insuredObject.setValue(info.insuredObjectId);
+		}
 	}
 
 	private void setManualSettlement(boolean isManual) {

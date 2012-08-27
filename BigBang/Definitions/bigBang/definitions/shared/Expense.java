@@ -32,4 +32,5 @@ public class Expense
 	public Double settlement; //Em €
 	public boolean isManual;
 	public String notes;
+	public String referenceSubLineId; //TODO usar para obter a lista de coberturas
 }

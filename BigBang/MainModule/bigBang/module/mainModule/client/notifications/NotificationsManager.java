@@ -76,7 +76,7 @@ public class NotificationsManager {
 							MessageBox.alert(notification.getCaption(), notification.getContent());
 							break;
 						case TRAY_NOTIFICATION:
-							showTrayNotification(event.getNotification());
+							showInfoTrayNotification(event.getNotification());
 							break;
 						case INFO_TRAY_NOTIFICATION:
 							showInfoTrayNotification(event.getNotification());

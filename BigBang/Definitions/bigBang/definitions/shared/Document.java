@@ -20,6 +20,7 @@ public class Document
 	public String fileStorageId;
 	public DocuShareHandle source;
 	public DocInfo[] parameters;
+	public String modificationDate; //TODO preencher com a data de modificaçao do documento
 
 	public Document()
 	{

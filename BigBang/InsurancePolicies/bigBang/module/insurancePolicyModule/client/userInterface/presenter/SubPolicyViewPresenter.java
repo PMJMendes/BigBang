@@ -46,7 +46,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubPolicyViewPresenter implements ViewPresenter {
 
 	public static enum Action {
-		EDIT, CANCEL_EDIT, SAVE, INCLUDE_INSURED_OBJECT, CREATE_INSURED_OBJECT, INCLUDE_INSURED_OBJECT_FROM_CLIENT, CREATE_INSURED_OBJECT_FROM_CLIENT, EXCLUDE_INSURED_OBJECT, PERFORM_CALCULATIONS, VALIDATE, TRANSFER_TO_POLICY, CREATE_INFO_OR_DOCUMENT_REQUEST, CREATE_RECEIPT, VOID, DELETE, CREATE_EXPENSE
+		EDIT, CANCEL_EDIT, SAVE, INCLUDE_INSURED_OBJECT, CREATE_INSURED_OBJECT, INCLUDE_INSURED_OBJECT_FROM_CLIENT, CREATE_INSURED_OBJECT_FROM_CLIENT, EXCLUDE_INSURED_OBJECT, PERFORM_CALCULATIONS, VALIDATE, TRANSFER_TO_POLICY, CREATE_INFO_OR_DOCUMENT_REQUEST, CREATE_RECEIPT, VOID, DELETE, CREATE_EXPENSE, BACK
 	}
 
 	public static interface Display {
@@ -222,6 +222,9 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					break;
 				case CREATE_EXPENSE:
 					onCreateExpense();
+					break;
+				case BACK:
+					onBack();
 					break;
 				}
 			}
@@ -931,6 +934,14 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
+	private void onBack(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
+		item.removeParameter("subpolicyid");
+		item.popFromStackParameter("display");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
 	private void onGetParentFailed() {
 		EventBus.getInstance().fireEvent(
 				new NewNotificationEvent(new Notification("",

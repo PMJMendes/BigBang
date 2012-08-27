@@ -36,7 +36,7 @@ public class SubPolicyExerciseViewPresenter implements ViewPresenter {
 		Widget asWidget();
 		HasClickHandlers getBackButton();
 	}
-
+	
 	protected Display view;
 	protected boolean bound = false;
 	private SubPolicyExerciseDataBroker broker;

@@ -34,7 +34,7 @@ public class SubPolicyExerciseView extends View implements SubPolicyExerciseView
 		ListHeader insurancePolicyFormHeader = new ListHeader("Apólice Adesão");
 		back = new Button("Voltar");
 		
-		insurancePolicyFormHeader.setRightWidget(back);
+		insurancePolicyFormHeader.setLeftWidget(back);
 		
 		insurancePolicyFormHeader.setHeight("30px");
 		insurancePolicyFormWrapper.add(insurancePolicyFormHeader);

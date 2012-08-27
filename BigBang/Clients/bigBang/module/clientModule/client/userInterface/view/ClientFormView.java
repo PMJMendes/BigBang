@@ -323,6 +323,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	public void setForCreate(){
 		this.clientManager.setEditable(true);
 		this.clientManager.setReadOnly(false);
+		this.name.getNativeField().selectAll();
 	}
 
 	public void setForEdit(){
@@ -356,14 +357,6 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	@Override
 	public void removeClient(String clientId) {
 		this.setValue(null);
-	}
-
-	@Override
-	public void setReadOnly(boolean readOnly) {
-		super.setReadOnly(readOnly);
-		if(!readOnly){
-			this.name.focus();
-		}
 	}
 
 }

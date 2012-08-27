@@ -1,5 +1,8 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -33,6 +36,13 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 				
 		ListHeader insurancePolicyFormHeader = new ListHeader("Apólice");
 		insurancePolicyFormHeader.setHeight("30px");
+		insurancePolicyFormHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuredObjectViewPresenter.Action>(Action.BACK));
+			}
+		}));
 		insurancePolicyFormWrapper.add(insurancePolicyFormHeader);
 		
 		insurancePolicyForm = new InsurancePolicyForm() {

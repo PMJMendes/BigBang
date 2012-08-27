@@ -15,6 +15,7 @@ public class User
 	public UserProfile profile;
 	public String costCenterId;
 	public String email;
+	public String delegateId; //TODO USE
 	public String defaultPrinter;
 
 	public User() {};

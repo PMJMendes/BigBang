@@ -197,13 +197,16 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 						SearchPanel.this.numberOfResults = result.getTotalResultsCount();
 						onResults(result.getResults());
 						updateFooterText();
+						showLoading(false);
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
 						onGenericError();
+						showLoading(false);
 					}
 				};
+				showLoading(true);
 				if(this.operationId == null){
 					this.broker.search(parameters, sorts, this.pageSize, handler);
 				}else{
@@ -224,13 +227,16 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 						SearchPanel.this.numberOfResults = result.getTotalResultsCount();
 						onResults(result.getResults());
 						updateFooterText();
+						showLoading(false);
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
 						onGenericError();
+						showLoading(false);
 					}
 				};
+				showLoading(true);
 				if(this.operationId == null){
 					this.broker.search(parameters, sorts, this.pageSize, handler);
 				}else{
@@ -269,12 +275,14 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 				onResults(result.getResults());
 				updateFooterText();
 				requestedNextPage = false;
+				showLoading(false);
 			}
 			
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				requestedNextPage = false;
 				onGenericError();
+				showLoading(false);
 			}
 		});
 	}
@@ -328,6 +336,10 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		if (((this.getScrollable().getMaximumVerticalScrollPosition() - this.getScrollable()
 				.getVerticalScrollPosition()) < 300) && !SearchPanel.this.requestedNextPage) {
 			SearchPanel.this.fetchNextPage();
+		}
+		if(this.getScrollable().getVerticalScrollPosition() == this.getScrollable().getMaximumVerticalScrollPosition()
+				&& requestedNextPage) {
+			showLoading(true);
 		}
 	}
 	

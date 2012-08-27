@@ -10,4 +10,7 @@ public class ExpenseSearchParameter
 	public String ownerId;
 	public String dateFrom;
 	public String dateTo;
+	public String managerId;
+	public String insurerId;
+	public String insuredObject;
 }

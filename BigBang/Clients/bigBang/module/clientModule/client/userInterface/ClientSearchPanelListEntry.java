@@ -18,7 +18,7 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 	
 	public ClientSearchPanelListEntry(ClientStub client) {
 		super(client);
-		this.setHeight("65px");
+		this.setHeight("75px");
 		this.setSelected(isSelected(), false);
 	}
 
