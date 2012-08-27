@@ -13,6 +13,7 @@ public class Document
 	public String ownerId;
 	public String docTypeId;
 	public String docTypeLabel;
+	public String creationDate; //TODO preencher com a data de criação do documento
 	public String text;
 	public boolean hasFile;
 	public String mimeType;
@@ -20,7 +21,6 @@ public class Document
 	public String fileStorageId;
 	public DocuShareHandle source;
 	public DocInfo[] parameters;
-	public String modificationDate; //TODO preencher com a data de modificaçao do documento
 
 	public Document()
 	{

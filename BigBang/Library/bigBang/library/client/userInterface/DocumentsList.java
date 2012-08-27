@@ -44,7 +44,7 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 		public <I extends Object> void setInfo(I info) {
 			Document c = (Document) info;
 			this.setTitle(c.name);
-			this.setText(c.docTypeLabel + " (" + c.modificationDate + ")");
+			this.setText(c.docTypeLabel + " (" + c.creationDate + ")");
 		};
 	}
 
