@@ -20,11 +20,13 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 	protected Label clientLabel;
 	protected Label dateLabel;
 	protected Image openImage;
+	protected Label category;
+	protected Label insuredObject;
 	protected boolean initialized;
 
 	public CasualtySearchPanelListEntry(CasualtyStub value) {
 		super(value);
-		setHeight("50px");
+		setHeight("65px");
 	}
 
 	@Override
@@ -35,9 +37,17 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 			numberLabel.setWordWrap(false);
 			dateLabel = getFormatedLabel();
 			clientLabel = getFormatedLabel();
+			insuredObject = getFormatedLabel();
+			category = getFormatedLabel();
 			this.clientLabel.getElement().getStyle().setFontSize(10, Unit.PX);
 			clientLabel.getElement().getStyle().setProperty("whiteSpace", "");
 			clientLabel.setHeight("1.2em");
+			category.getElement().getStyle().setFontSize(10, Unit.PX);
+			category.getElement().getStyle().setProperty("whitespace", "");
+			category.setHeight("1.2em");
+			insuredObject.getElement().getStyle().setFontSize(10, Unit.PX);
+			insuredObject.getElement().getStyle().setProperty("whitespace", "");
+			insuredObject.setHeight("1.2em");
 			HorizontalPanel leftContainer = new HorizontalPanel();
 			leftContainer.setSize("100%", "100%");
 			
@@ -46,6 +56,8 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 			container.add(numberLabel);
 			container.setCellHeight(numberLabel, "100%");
 			container.setCellVerticalAlignment(numberLabel, HasVerticalAlignment.ALIGN_TOP);
+			container.add(category);
+			container.add(insuredObject);
 			container.add(clientLabel);
 			setWidget(container);
 
@@ -78,7 +90,10 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 		this.clientLabel.setText((c.clientNumber == null ? "" : "Cliente #" + c.clientNumber + " - ") +
 				(c.clientName == null ? "" : c.clientName));
 		this.clientLabel.setTitle("Cliente");
-
+		
+		insuredObject.setText(c.insuredObject);
+		category.setText(c.policyCategory);
+		
 		Resources r = GWT.create(Resources.class);
 		
 		openImage.setResource(c.isOpen ? r.activeCasualtyIcon() : r.inactiveCasualtyIcon());
@@ -99,9 +114,13 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 		if(selected){
 			this.dateLabel.getElement().getStyle().setColor("white");
 			this.clientLabel.getElement().getStyle().setColor("white");
+			insuredObject.getElement().getStyle().setColor("white");
+			category.getElement().getStyle().setColor("white");
 		}else{
 			this.dateLabel.getElement().getStyle().setColor("#0066FF");
 			this.clientLabel.getElement().getStyle().setColor("#0066FF");
+			category.getElement().getStyle().setColor("gray");
+			insuredObject.getElement().getStyle().setColor("gray");
 		}
 	}
 

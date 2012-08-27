@@ -38,9 +38,11 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	 * An entry in the search panel
 	 */
 	public static class Entry extends ListEntry<InsurancePolicyStub>{
+		
 		protected Label numberLabel;
 		protected Label clientLabel;
 		protected Label lineLabel;
+		protected Label insuredObjectLabel;
 		protected Image statusIcon;
 
 		public Entry(InsurancePolicyStub policy){
@@ -62,12 +64,17 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 					clientLabel.setHeight("1.2em");
 					lineLabel = getFormatedLabel();
 					lineLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+					insuredObjectLabel = getFormatedLabel();
+					insuredObjectLabel.getElement().getStyle().setFontSize(10, Unit.PX);
+					insuredObjectLabel.getElement().getStyle().setProperty("whiteSpace", "");
+					insuredObjectLabel.setHeight("1.2em");
 					VerticalPanel container = new VerticalPanel();
 					container.setSize("100%", "100%");
 
 					container.add(numberLabel);
 					container.add(lineLabel);
 					container.add(clientLabel);
+					container.add(insuredObjectLabel);
 
 					setWidget(container);
 
@@ -82,6 +89,8 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 						" / "+(value.lineName == null ? "-" : value.lineName)+" / "+(value.subLineName == null ? "-" : value.subLineName));
 				lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 
+				insuredObjectLabel.setText(value.insuredObject);
+				
 				Resources resources = GWT.create(Resources.class);
 				if(value.statusIcon == null) {
 					statusIcon.setResource(resources.provisionalPolicyIcon());
@@ -121,8 +130,10 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 			if(this.clientLabel == null) {return;}
 			if(selected){
 				this.clientLabel.getElement().getStyle().setColor("white");
+				this.insuredObjectLabel.getElement().getStyle().setColor("white");
 			}else{
 				this.clientLabel.getElement().getStyle().setColor("gray");
+				this.insuredObjectLabel.getElement().getStyle().setColor("gray");
 			}
 		}
 	}

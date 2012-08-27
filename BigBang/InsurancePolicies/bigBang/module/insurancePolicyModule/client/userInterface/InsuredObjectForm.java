@@ -274,7 +274,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.equipmentSection = new FormViewSection("Objecto ou Equipamento");
 		this.equipmentMakeAndModel = new TextBoxFormField("Marca e Modelo");
 		this.equipmentDescription = new TextAreaFormField("Descrição");
-		this.equipmentFirstRegistryDate = new DatePickerFormField("Data do Primeiro Registo");
+		this.equipmentFirstRegistryDate = new DatePickerFormField("Data da Primeira Matrícula");
 		this.equipmentManufactureYear = new TextBoxFormField("Ano de Fabrico");
 		this.equipmentManufactureYear.setFieldWidth("100px");
 		this.equipmentClientInternalId = new TextBoxFormField("Identificação no Cliente");
