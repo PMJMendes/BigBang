@@ -8,7 +8,7 @@ public class CasualtyCloseForm extends FormView<String> {
 	protected TextAreaFormField reason;
 	
 	public CasualtyCloseForm(){
-		reason = new TextAreaFormField();
+		reason = new TextAreaFormField("Motivo");
 		addSection("Encerramento");
 		addFormField(reason);
 	}

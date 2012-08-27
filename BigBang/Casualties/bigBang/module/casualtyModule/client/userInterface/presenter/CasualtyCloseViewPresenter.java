@@ -142,6 +142,7 @@ public class CasualtyCloseViewPresenter implements ViewPresenter {
 
 	protected void onCancel() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

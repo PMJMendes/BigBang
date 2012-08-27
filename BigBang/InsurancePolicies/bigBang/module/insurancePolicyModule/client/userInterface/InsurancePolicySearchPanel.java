@@ -146,7 +146,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		MEDIATOR,
 		MANAGER,
 		INSURED_OBJECT,
-		CASE_STUDY
+		CASE_STUDY, CLIENT_POLICIES
 	}
 	protected FiltersPanel filtersPanel;
 
@@ -154,11 +154,15 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	protected Map<String, InsurancePolicyStub> policiesToUpdate;
 	protected Map<String, Void> policiesToRemove;
 
+	private String ownerId;
+
 	public InsurancePolicySearchPanel() {
 		super(((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY)).getSearchBroker());
+		
+		
 		policiesToUpdate = new HashMap<String, InsurancePolicyStub>();
 		policiesToRemove = new HashMap<String, Void>();
-
+				
 		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
 		sortOptions.put(InsurancePolicySortParameter.SortableField.RELEVANCE, "Relevância");
 		sortOptions.put(InsurancePolicySortParameter.SortableField.NUMBER, "Número");
@@ -167,6 +171,8 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		sortOptions.put(InsurancePolicySortParameter.SortableField.CLIENT_NAME, "Nome de Cliente");
 
 		filtersPanel = new FiltersPanel(sortOptions);
+		filtersPanel.addCheckBoxField(Filters.CLIENT_POLICIES, "Incluir apenas apólices do cliente");
+		filtersPanel.setFilterVisible(Filters.CLIENT_POLICIES, false);
 		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor de Apólice");
 		filtersPanel.addTypifiedListField(Filters.INSURANCE_AGENCY, BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 		filtersPanel.addTypifiedListField(Filters.MEDIATOR, BigBangConstants.EntityIds.MEDIATOR, "Mediador");
@@ -176,6 +182,9 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		filtersPanel.addTextField(Filters.INSURED_OBJECT, "Unidade de Risco");
 		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
 
+		InsurancePolicyBroker broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		broker.registerClient(this);
+		
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 
 			@Override
@@ -187,8 +196,6 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		filtersContainer.clear();
 		filtersContainer.add(filtersPanel);
 
-		InsurancePolicyBroker broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-		broker.registerClient(this);
 	}
 
 	@Override
@@ -197,7 +204,6 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 			this.broker.disposeSearch(this.workspaceId);
 			this.workspaceId = null;
 		}
-
 		this.policiesToRemove.clear();
 		this.policiesToUpdate.clear();
 
@@ -212,7 +218,13 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		parameter.insuredObject = (String) filtersPanel.getFilterValue(Filters.INSURED_OBJECT);
 		boolean caseStudy = (Boolean) filtersPanel.getFilterValue(Filters.CASE_STUDY);
 		parameter.caseStudy = caseStudy ? true : null;
+		if((Boolean)filtersPanel.getFilterValue(Filters.CLIENT_POLICIES) == false || !filtersPanel.isFilterVisible(Filters.CLIENT_POLICIES)){
+			parameter.ownerId = null;
+		}else{
+			parameter.ownerId = ownerId;
+		}
 
+		
 		SearchParameter[] parameters = new SearchParameter[]{
 				parameter
 		};
@@ -309,9 +321,15 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	}
 
 	public void setOwner(String ownerId) {
-		InsurancePolicySearchParameter parameter = new InsurancePolicySearchParameter();
 		
+		if(ownerId != null){
+			this.ownerId = ownerId;
+		}
+		
+		InsurancePolicySearchParameter parameter = new InsurancePolicySearchParameter();
 		parameter.ownerId = ownerId;
+		filtersPanel.setFilterVisible(Filters.CLIENT_POLICIES, true);
+		filtersPanel.setFilterValue(Filters.CLIENT_POLICIES, ownerId != null);
 		
 		SearchParameter[] parameters = new SearchParameter[]{parameter};
 		

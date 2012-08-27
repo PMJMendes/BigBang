@@ -76,10 +76,10 @@ public class InsurancePolicySelectionView extends View implements InsurancePolic
 		VerticalPanel listWrapper = new VerticalPanel();
 		listWrapper.setSize("100%", "100%");
 		listWrapper.add(new ListHeader("Lista de Apólices"));
+		list.setWidth("360px");
 		listWrapper.add(list);
-		listWrapper.setCellHeight(list, "100%");
-		
-		wrapper.addWest(listWrapper, 300);
+		listWrapper.setCellHeight(list, "100%");		
+		wrapper.addWest(listWrapper, 360);
 		wrapper.add(formWrapper);
 	}
 

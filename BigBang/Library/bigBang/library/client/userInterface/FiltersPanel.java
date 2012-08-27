@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.SortOrder;
+import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.view.View;
 
 public class FiltersPanel extends View {
@@ -202,6 +203,19 @@ public class FiltersPanel extends View {
 		for(HasValue<?> v : this.filters.values()){
 			v.setValue(null, true);
 		}
+	}
+
+	public void setFilterVisible(Enum<?> id, boolean b) {
+		FormField<?> field =  (FormField<?>) this.filters.get(id);
+		
+		field.setVisible(b);
+		
+	}
+
+	public boolean isFilterVisible(Enum<?> id) {
+		FormField<?> field =  (FormField<?>) this.filters.get(id);
+		
+		return field.isVisible();
 	}
 
 }

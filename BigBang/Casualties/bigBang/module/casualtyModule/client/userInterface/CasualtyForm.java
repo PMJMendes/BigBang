@@ -21,29 +21,29 @@ public class CasualtyForm extends FormView<Casualty> {
 	protected TextBoxFormField status;
 	protected CheckBoxFormField caseStudy;
 	protected TextAreaFormField notes;
-	
+
 	public CasualtyForm(){
 		number = new TextBoxFormField("Número de Processo");
 		number.setEditable(false);
 		client = new NavigationFormField("Cliente");
 		client.setEditable(false);
-		date = new DatePickerFormField("Data");
+		date = new DatePickerFormField("Data do Sinistro");
 		date.setMandatory(true);
 		description = new TextAreaFormField();
 		description.setFieldWidth("600px");
 		description.setFieldHeight("250px");
-		
+
 		notes = new TextAreaFormField();
 		notes.setFieldWidth("600px");
 		notes.setFieldHeight("250px");
-		
+
 		caseStudy = new CheckBoxFormField("Case Study");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Sinistro");
 		manager.allowEdition(false);
 		status = new TextBoxFormField("Estado");
 		status.setEditable(false);
 		status.setFieldWidth("175px");
-		
+
 		addSection("Informação Geral");
 		addFormField(client);
 		addFormField(number);
@@ -51,21 +51,21 @@ public class CasualtyForm extends FormView<Casualty> {
 		addFormField(manager, true);
 		addFormField(date, true);
 		addFormField(caseStudy);
-		
+
 		addSection("Descrição");
 		addFormField(description);
-		
+
 		addSection("Notas Internas");
 		addFormField(notes);
-		
+
 		setForEdit();
 	}
-	
+
 	public void setForCreate(){
 		manager.setEditable(true);
 		manager.setReadOnly(isReadOnly());
 	}
-	
+
 	public void setForEdit(){
 		manager.setEditable(false);
 		manager.setReadOnly(isReadOnly());
@@ -74,7 +74,7 @@ public class CasualtyForm extends FormView<Casualty> {
 	@Override
 	public Casualty getInfo() {
 		Casualty result = value;
-		
+
 		if(result != null) {
 			result.processNumber = number.getValue();
 			result.caseStudy = caseStudy.getValue();
@@ -83,7 +83,7 @@ public class CasualtyForm extends FormView<Casualty> {
 			result.internalNotes = notes.getValue();
 			result.managerId = manager.getValue();
 		}
-		
+
 		return result;
 	}
 
@@ -93,7 +93,7 @@ public class CasualtyForm extends FormView<Casualty> {
 			setInfo(new Casualty());
 		}else{
 			number.setValue(info.processNumber);
-		
+
 			NavigationHistoryItem item = new NavigationHistoryItem();
 			item.setParameter("section", "client");
 			item.setStackParameter("display");
@@ -101,13 +101,15 @@ public class CasualtyForm extends FormView<Casualty> {
 			item.setParameter("clientid", info.clientId);
 			client.setValue(item);
 			client.setValueName("#" + info.clientNumber + " - " + info.clientName);
-			
+
 			date.setValue(info.casualtyDate);
 			notes.setValue(info.internalNotes);
 			description.setValue(info.description);
 			caseStudy.setValue(info.caseStudy);
 			manager.setValue(info.managerId);
-			status.setValue(info.isOpen ? "Aberto" : "Fechado");
+			if(info.id != null){
+				status.setValue(info.isOpen ? "Aberto" : "Fechado");
+			}
 		}
 	}
 
