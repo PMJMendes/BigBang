@@ -37,6 +37,7 @@ public class ManageUsers
 		public String mstrEmail;
 		public UUID midCostCenter;
 		public String mstrDefaultPrinter;
+		public UUID midDelegate;
 		public UserData mobjPrevValues;
 	}
 
@@ -185,6 +186,7 @@ public class ManageUsers
 					lobjAuxOuter.setAt(1, marrCreate[i].mstrEmail);
 					lobjAuxOuter.setAt(2, marrCreate[i].midCostCenter);
 					lobjAuxOuter.setAt(4, marrCreate[i].mstrDefaultPrinter);
+					lobjAuxOuter.setAt(5, marrCreate[i].midDelegate);
 					lobjAuxOuter.SaveToDb(pdb);
 
 					marrCreate[i].mid = lobjAuxBase.getKey();
@@ -223,6 +225,7 @@ public class ManageUsers
 					marrModify[i].mobjPrevValues.mstrEmail = (String)lobjAuxOuter.getAt(1);
 					marrModify[i].mobjPrevValues.midCostCenter = (UUID)lobjAuxOuter.getAt(2);
 					marrModify[i].mobjPrevValues.mstrDefaultPrinter = (String)lobjAuxOuter.getAt(4);
+					marrModify[i].mobjPrevValues.midDelegate = (UUID)lobjAuxOuter.getAt(5);
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 
 					lobjAuxBase.setAt(0, marrModify[i].mstrFullName);
@@ -234,6 +237,7 @@ public class ManageUsers
 					lobjAuxOuter.setAt(1, marrModify[i].mstrEmail);
 					lobjAuxOuter.setAt(2, marrModify[i].midCostCenter);
 					lobjAuxOuter.setAt(4, marrModify[i].mstrDefaultPrinter);
+					lobjAuxOuter.setAt(5, marrModify[i].midDelegate);
 					lobjAuxOuter.SaveToDb(pdb);
 				}
 			}
@@ -264,6 +268,7 @@ public class ManageUsers
 					marrDelete[i].mstrEmail = (String)lobjAuxOuter.getAt(1);
 					marrDelete[i].midCostCenter = (UUID)lobjAuxOuter.getAt(2);
 					marrDelete[i].mstrDefaultPrinter = (String)lobjAuxOuter.getAt(4);
+					marrDelete[i].midDelegate = (UUID)lobjAuxOuter.getAt(5);
 					marrDelete[i].mobjPrevValues = null;
 
 					lrefDecorations.Delete(pdb, lobjAuxOuter.getKey());
@@ -473,6 +478,8 @@ public class ManageUsers
 
 					lobjAuxOuter.setAt(1, marrModify[i].mobjPrevValues.mstrEmail);
 					lobjAuxOuter.setAt(2, marrModify[i].mobjPrevValues.midCostCenter);
+					lobjAuxOuter.setAt(4, marrModify[i].mobjPrevValues.mstrDefaultPrinter);
+					lobjAuxOuter.setAt(5, marrModify[i].mobjPrevValues.midDelegate);
 					lobjAuxOuter.SaveToDb(pdb);
 				}
 			}
@@ -496,6 +503,8 @@ public class ManageUsers
 					lobjAuxOuter.setAt(0, lobjAuxBase.getKey());
 					lobjAuxOuter.setAt(1, marrDelete[i].mstrEmail);
 					lobjAuxOuter.setAt(2, marrDelete[i].midCostCenter);
+					lobjAuxOuter.setAt(4, marrDelete[i].mstrDefaultPrinter);
+					lobjAuxOuter.setAt(5, marrDelete[i].midDelegate);
 					lobjAuxOuter.SaveToDb(pdb);
 				}
 			}
@@ -542,6 +551,7 @@ public class ManageUsers
 	{
 		ObjectBase lobjProfile;
 		CostCenter lobjCostCenter;
+		User lobjUser;
 
 		pstrString.append("Nome: ");
 		pstrString.append(pobjData.mstrFullName);
@@ -582,6 +592,22 @@ public class ManageUsers
 		pstrString.append(pstrLineBreak);
 		pstrString.append("Impressora pré-definida: ");
 		pstrString.append(pobjData.mstrDefaultPrinter);
+
+		if ( pobjData.midDelegate != null )
+		{
+			pstrString.append(pstrLineBreak);
+			pstrString.append("Utilizador Delegado: ");
+
+			try
+			{
+				lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), pobjData.midDelegate);
+				pstrString.append((String)lobjUser.getDisplayName());
+			}
+			catch (Throwable e)
+			{
+				pstrString.append("(Erro a obter o utilizador delegado.)");
+			}
+		}
 		
 		pstrString.append(pstrLineBreak);
 	}

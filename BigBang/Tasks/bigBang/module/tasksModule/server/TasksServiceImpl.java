@@ -317,13 +317,25 @@ public class TasksServiceImpl
 		throws BigBangException
 	{
 		TaskSearchParameter lParam;
+		IEntity lrefDecos;
 		IEntity lrefProcs;
 
 		if ( !(pParam instanceof TaskSearchParameter) )
 			return false;
 		lParam = (TaskSearchParameter)pParam;
 
-		pstrBuffer.append(" AND [:User] = '").append(Engine.getCurrentUser().toString()).append("'");
+		pstrBuffer.append(" AND ([:User] = '").append(Engine.getCurrentUser().toString()).append("'");
+		pstrBuffer.append(" OR [:User] IN (SELECT [:Surrogate] FROM (");
+		try
+		{
+			lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
+			pstrBuffer.append(lrefDecos.SQLForSelectSingle());
+		}
+		catch (Throwable e)
+		{
+    		throw new BigBangException(e.getMessage(), e);
+		}
+		pstrBuffer.append(") [AuxDel] WHERE [:User] = '").append(Engine.getCurrentUser().toString()).append("'))");
 
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
 		{
@@ -345,7 +357,8 @@ public class TasksServiceImpl
 	    		throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [Aux3])");
-		} else if ( lParam.processId != null )
+		}
+		else if ( lParam.processId != null )
 		{
 			pstrBuffer.append(" AND [PK] IN (SELECT [:Item] FROM (");
 			try

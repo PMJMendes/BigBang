@@ -139,6 +139,7 @@ public class CostCenterServiceImpl
 					lobjTmpUser.profile.name = lobjUser.getBaseUser().getProfile().getLabel();
 					lobjTmpUser.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
 					lobjTmpUser.email = (String)lobjUser.getAt(1);
+					lobjTmpUser.delegateId = ( lobjUser.getAt(5) == null ? null : ((UUID)lobjUser.getAt(5)).toString() );
 					larrAuxUsers.add(lobjTmpUser);
 				}
 			}
@@ -225,6 +226,7 @@ public class CostCenterServiceImpl
 	        	lobjTmp.profile.name = lobjUserDeco.getBaseUser().getProfile().getLabel();
 	        	lobjTmp.costCenterId = ((UUID)lobjUserDeco.getAt(2)).toString();
 	        	lobjTmp.email = (String)lobjUserDeco.getAt(1);
+	        	lobjTmp.delegateId = ( lobjUserDeco.getAt(5) == null ? null : ((UUID)lobjUserDeco.getAt(5)).toString() );
 	        	larrAux.add(lobjTmp);
 	        }
         }
@@ -367,6 +369,7 @@ public class CostCenterServiceImpl
 				lobjTmpUser.profile.name = lobjUser.getBaseUser().getProfile().getLabel();
 				lobjTmpUser.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
 				lobjTmpUser.email = (String)lobjUser.getAt(1);
+				lobjTmpUser.delegateId = ( lobjUser.getAt(5) == null ? null : ((UUID)lobjUser.getAt(5)).toString() );
 				larrAuxUsers.add(lobjTmpUser);
 			}
 		}
