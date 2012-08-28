@@ -23,6 +23,8 @@ import bigBang.library.shared.ExchangeItemStub;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
@@ -86,6 +88,14 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 				wrapper.add(bottom);
 				wrapper.add(docName);
 				wrapper.add(docType);
+
+				docName.getNativeField().addKeyDownHandler(new KeyDownHandler() {
+
+					@Override
+					public void onKeyDown(KeyDownEvent event) {
+						event.stopPropagation();
+					}
+				});
 
 
 
