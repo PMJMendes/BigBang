@@ -141,6 +141,7 @@ public class ExpenseServiceImpl
 		lobjResult.settlement = ( lobjExpense.getAt(8) == null ? null : ((BigDecimal)lobjExpense.getAt(8)).doubleValue() );
 		lobjResult.isManual = (Boolean)lobjExpense.getAt(9);
 		lobjResult.notes = (String)lobjExpense.getAt(10);
+		lobjResult.referenceSubLineId = (lobjSubLine == null ? null : lobjSubLine.getKey().toString());
 
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
 
