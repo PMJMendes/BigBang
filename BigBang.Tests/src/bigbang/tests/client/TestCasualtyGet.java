@@ -50,8 +50,7 @@ public class TestCasualtyGet
 		};
 
 		parameter = new CasualtySearchParameter();
-		parameter.freeText = "4580423742";
-		parameter.includeClosed = true;
+		parameter.includeClosed = false;
 		sorts = new CasualtySortParameter();
 		sorts.field = CasualtySortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
