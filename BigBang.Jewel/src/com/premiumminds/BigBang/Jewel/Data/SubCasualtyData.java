@@ -32,6 +32,7 @@ public class SubCasualtyData
 	public UUID midPolicyObject;
 	public UUID midSubPolicyObject;
 	public String mstrGenericObject;
+	public UUID midCasualty;
 
 	public OutgoingMessageData mobjNotification;
 	public Timestamp mdtLimitDate;
@@ -60,6 +61,7 @@ public class SubCasualtyData
 		midPolicyObject    = (UUID)      pobjSource.getAt(SubCasualty.I.POLICYOBJECT);
 		midSubPolicyObject = (UUID)      pobjSource.getAt(SubCasualty.I.SUBPOLICYOBJECT);
 		mstrGenericObject  = (String)    pobjSource.getAt(SubCasualty.I.GENERICOBJECT);
+		midCasualty        = (UUID)      pobjSource.getAt(SubCasualty.I.CASUALTY);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -80,6 +82,7 @@ public class SubCasualtyData
 			pobjDest.setAt(SubCasualty.I.POLICYOBJECT,    midPolicyObject);
 			pobjDest.setAt(SubCasualty.I.SUBPOLICYOBJECT, midSubPolicyObject);
 			pobjDest.setAt(SubCasualty.I.GENERICOBJECT,   mstrGenericObject);
+			pobjDest.setAt(SubCasualty.I.CASUALTY,        midCasualty);
 		}
 		catch (Throwable e)
 		{

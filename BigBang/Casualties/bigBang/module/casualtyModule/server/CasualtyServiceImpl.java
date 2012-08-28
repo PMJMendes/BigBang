@@ -235,6 +235,7 @@ public class CasualtyServiceImpl
 		lopCSC.mobjData.midSubPolicyObject = ( subCasualty.insuredObjectId == null ? null :
 				(lbPolicy ? null : UUID.fromString(subCasualty.insuredObjectId)) );
 		lopCSC.mobjData.mstrGenericObject = subCasualty.insuredObjectName;
+		lopCSC.mobjData.midCasualty = lobjCasualty.getKey();
 
 		if ( subCasualty.items != null )
 		{
@@ -585,7 +586,14 @@ public class CasualtyServiceImpl
 		IProcess lobjProcess;
 		CasualtyStub lobjResult;
 		Client lobjClient;
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSub;
+		String lstrCat;
+		String lstrObj;
 
+		lobjProcess = null;
+		lobjClient = null;
+		lstrCat = null;
+		lstrObj = null;
 		try
 		{
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
@@ -595,13 +603,16 @@ public class CasualtyServiceImpl
 			}
 			catch (Throwable e)
 			{
-				lobjClient = null;
+			}
+			lobjSub = ((com.premiumminds.BigBang.Jewel.Objects.Casualty)lobjProcess.GetData()).GetFirstSubCasualty();
+			if ( lobjSub != null )
+			{
+				lstrCat = lobjSub.GetSubLine().getLabel();
+				lstrObj = lobjSub.GetObjectName();
 			}
 		}
 		catch (Throwable e)
 		{
-			lobjProcess = null;
-			lobjClient = null;
 		}
 
 		lobjResult = new CasualtyStub();
@@ -614,6 +625,8 @@ public class CasualtyServiceImpl
 		lobjResult.casualtyDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		lobjResult.caseStudy = (Boolean)parrValues[3];
 		lobjResult.isOpen = lobjProcess.IsRunning();
+		lobjResult.policyCategory = lstrCat;
+		lobjResult.insuredObject = lstrObj;
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
 	}

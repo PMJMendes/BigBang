@@ -4,15 +4,16 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.ProcessData;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 
 public class SubCasualty
 	extends ProcessData
@@ -36,6 +37,7 @@ public class SubCasualty
 		public static int POLICYOBJECT    = 14;
 		public static int SUBPOLICYOBJECT = 15;
 		public static int GENERICOBJECT   = 16;
+		public static int CASUALTY        = 17;
 	}
 
     public static SubCasualty GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -77,6 +79,44 @@ public class SubCasualty
 	public void SetProcessID(UUID pidProcess)
 	{
 		internalSetAt(I.PROCESS, pidProcess);
+	}
+
+	public SubLine GetSubLine()
+		throws BigBangJewelException
+	{
+		if ( getAt(2) != null )
+			return Policy.GetInstance(getNameSpace(), (UUID)getAt(2)).GetSubLine();
+		
+		if ( getAt(3) != null )
+		{
+			try
+			{
+				return ((Policy)PNProcess.GetInstance(getNameSpace(), SubPolicy.GetInstance(getNameSpace(), (UUID)getAt(3)).GetProcessID()).
+						GetParent().GetData()).GetSubLine();
+			}
+			catch (BigBangJewelException e)
+			{
+				throw e;
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+		
+		return null;
+	}
+
+	public String GetObjectName()
+		throws BigBangJewelException
+	{
+		if ( getAt(14) != null )
+			return PolicyObject.GetInstance(getNameSpace(), (UUID)getAt(14)).getLabel();
+		
+		if ( getAt(15) != null )
+			return SubPolicyObject.GetInstance(getNameSpace(), (UUID)getAt(15)).getLabel();
+		
+		return (String)getAt(16);
 	}
 
     public Contact[] GetCurrentContacts()

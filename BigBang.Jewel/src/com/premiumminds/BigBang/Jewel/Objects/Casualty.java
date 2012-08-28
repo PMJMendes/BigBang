@@ -58,6 +58,76 @@ public class Casualty
 		internalSetAt(1, pidProcess);
 	}
 
+    public SubCasualty GetFirstSubCasualty()
+    	throws BigBangJewelException
+    {
+		SubCasualty lobjAux;
+		IEntity lrefSubs;
+        MasterDB ldb;
+        ResultSet lrsSubs;
+
+		lobjAux = null;
+
+		try
+		{
+			lrefSubs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsSubs = lrefSubs.SelectByMembers(ldb, new int[] {SubCasualty.I.CASUALTY}, new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			if ( lrsSubs.next() )
+				lobjAux = SubCasualty.GetInstance(getNameSpace(), lrsSubs);
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsSubs.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsSubs.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsSubs.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lobjAux;
+    }
+
     public Contact[] GetCurrentContacts()
     	throws BigBangJewelException
     {

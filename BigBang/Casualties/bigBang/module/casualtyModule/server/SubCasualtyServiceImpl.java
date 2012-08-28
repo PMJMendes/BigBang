@@ -189,6 +189,7 @@ public class SubCasualtyServiceImpl
 		lopMD.mobjData.midSubPolicyObject = ( subCasualty.insuredObjectId == null ? null :
 				(lbPolicy ? null : UUID.fromString(subCasualty.insuredObjectId)) );
 		lopMD.mobjData.mstrGenericObject = subCasualty.insuredObjectName;
+		lopMD.mobjData.midCasualty = (UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.CASUALTY);
 
 		if ( subCasualty.items != null )
 		{

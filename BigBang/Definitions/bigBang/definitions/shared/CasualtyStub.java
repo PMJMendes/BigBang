@@ -10,8 +10,8 @@ public class CasualtyStub
 	public String clientNumber;
 	public String clientName;
 	public String casualtyDate;
-	public String policyCategory = "CATEGORIA";
-	public String insuredObject = "UNIDADE DE RISCO";
+	public String policyCategory;
+	public String insuredObject;
 	public boolean caseStudy;
 	public boolean isOpen;
 }
