@@ -189,10 +189,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 					selectNext(false);
 					event.preventDefault();
 					break;
-//				case 32:
-//					toggleCheckCurrentEntry();
-//					event.preventDefault();
-//					break;
+				case 32:
+					toggleCheckCurrentEntry();
+					event.preventDefault();
+					break;
 				}
 			}
 		});

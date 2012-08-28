@@ -2,6 +2,8 @@ package bigBang.library.client.userInterface;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.ui.Button;
 
 import bigBang.definitions.shared.BigBangConstants;
@@ -48,6 +50,15 @@ public class ContactForm extends FormView<Contact> {
 			infoValue = new TextBoxFormField();
 			infoValue.setFieldWidth("205px");
 			infoValue.setWidth("205px");
+			
+			infoValue.getNativeField().addKeyDownHandler(new KeyDownHandler() {
+
+				@Override
+				public void onKeyDown(KeyDownEvent event) {
+					event.stopPropagation();
+				}
+			});
+
 
 			type.setValue(contactinfo.typeId);
 			infoValue.setValue(contactinfo.value);

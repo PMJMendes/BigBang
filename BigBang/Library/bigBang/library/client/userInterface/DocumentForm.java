@@ -17,6 +17,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -75,6 +77,22 @@ public abstract class DocumentForm extends FormView<Document>{
 				@Override
 				public void onClick(ClickEvent event) {
 					onRemoveListEntry(DocumentDetailEntry.this);
+				}
+			});
+
+			info.getNativeField().addKeyDownHandler(new KeyDownHandler() {
+
+				@Override
+				public void onKeyDown(KeyDownEvent event) {
+					event.stopPropagation();
+				}
+			});
+
+			infoValue.getNativeField().addKeyDownHandler(new KeyDownHandler() {
+
+				@Override
+				public void onKeyDown(KeyDownEvent event) {
+					event.stopPropagation();
 				}
 			});
 

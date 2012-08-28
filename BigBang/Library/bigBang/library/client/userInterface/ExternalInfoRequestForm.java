@@ -12,9 +12,14 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 
 	public ExternalInfoRequestForm() {
 
+		
+		requestSubject.setMandatory(true);
+		replyLimit.setMandatory(true);
+		
 		addSection("Detalhes do Pedido de Informação Externo");
 		addFormField(requestSubject);
 		addFormField(replyLimit);
+		
 		messageFormField.setReadOnly(false);
 		addFormField(messageFormField);
 		replyLimit.setFieldWidth("50px");
@@ -26,7 +31,9 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 
 		ExternalInfoRequest request = value;
 		request.message = messageFormField.getValue();
-		request.replylimit = replyLimit.getValue().intValue();
+		if(replyLimit.getValue() != null){
+			request.replylimit = replyLimit.getValue().intValue();
+		}
 
 		request.subject = requestSubject.getValue();
 
