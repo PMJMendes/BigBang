@@ -42,6 +42,7 @@ import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.DeleteSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.MarkForClosing;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.RejectClosing;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.SendNotification;
 
 public class SubCasualtyServiceImpl
 	extends SearchServiceBase
@@ -233,6 +234,39 @@ public class SubCasualtyServiceImpl
 		}
 
 		return sGetSubCasualty(lopMD.mobjData.mid);
+	}
+
+	public SubCasualty sendNotification(String subCasualtyId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		SendNotification lopSN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		lopSN = new SendNotification(lobjSubCasualty.GetProcessID());
+
+		try
+		{
+			lopSN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		return sGetSubCasualty(lobjSubCasualty.getKey());
 	}
 
 	public InfoOrDocumentRequest createInfoRequest(InfoOrDocumentRequest request)

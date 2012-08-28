@@ -29,6 +29,8 @@ public interface SubCasualtyService extends SearchService {
 
 	public SubCasualty editSubCasualty(SubCasualty subCasualty) throws SessionExpiredException, BigBangException;
 
+	public SubCasualty sendNotification(String subCasualtyId) throws SessionExpiredException, BigBangException;
+
 	public InfoOrDocumentRequest createInfoRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request) throws SessionExpiredException, BigBangException;
 

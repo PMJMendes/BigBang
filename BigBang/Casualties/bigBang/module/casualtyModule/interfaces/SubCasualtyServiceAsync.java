@@ -12,6 +12,7 @@ public interface SubCasualtyServiceAsync
 {
 	void getSubCasualty(String subCasualtyId, AsyncCallback<SubCasualty> callback);
 	void editSubCasualty(SubCasualty subCasualty, AsyncCallback<SubCasualty> callback);
+	void sendNotification(String subCasualtyId, AsyncCallback<SubCasualty> callback);
 	void createInfoRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createExternalRequest(ExternalInfoRequest request, AsyncCallback<ExternalInfoRequest> callback);
 	void markForClosing(String subCasualtyId, String revisorId, AsyncCallback<SubCasualty> callback);
