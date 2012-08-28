@@ -5,10 +5,11 @@ from credegs..empresa.sinistros s
 where (s.ordem>=20110000 or s.datasinistro>'2010-12-31' or s.dataparticipacao>'2010-12-31' or s.datafecho>'2010-12-31' or s.estado='A' or s.estado is NULL)
 and s.cliente in (select MigrationID from credite_egs.tblBBClients)
 
-insert into credite_egs.tblBBSubCasualties (PK, SCNumber, FKProcess, FKPolicy, FKSubPolicy, ExternProcess, Description, Notes, BHasJudicial, GenericObject)
+insert into credite_egs.tblBBSubCasualties (PK, SCNumber, FKProcess, FKPolicy, FKSubPolicy, ExternProcess, Description, Notes, BHasJudicial, GenericObject, FKCasualty)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.ordem+0.1 SCNumber, NULL FKProcess, p.PK FKPolicy, z.PK FKSubPolicy, NULL ExternProcess, NULL Description, substring(s.obsint, 1, 250) Notes, 0 BHasJudicial, s.sinistrado
+s.ordem+0.1 SCNumber, NULL FKProcess, p.PK FKPolicy, z.PK FKSubPolicy, NULL ExternProcess, NULL Description, substring(s.obsint, 1, 250) Notes, 0 BHasJudicial, s.sinistrado, c.PK
 from credegs..empresa.sinistros s
+inner join credite_egs.tblBBCasualties c on c.CNumber=s.ordem
 inner join credegs..empresa.apolice a on a.cliente=s.cliente and a.apolice=s.apolice and a.ramo=s.ramo and a.comseg=s.comseg
 left outer join credite_egs.tblBBPolicies p on p.MigrationID=a.MigrationID
 left outer join credite_egs.tblBBSubPolicies z on z.MigrationID=a.MigrationID
@@ -35,7 +36,7 @@ select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUE
 '80B7A9BC-8710-4063-A99E-A02E01220F4E' FKScript, s.PK FKData, k.FKManager FKManager,
 k.PK FKParent, 0 IsRunning
 from credite_egs.tblBBSubCasualties s
-inner join credite_egs.tblBBCasualties c on c.CNumber + '.1' = s.SCNumber
+inner join credite_egs.tblBBCasualties c on c.PK = s.FKCasualty
 inner join credite_egs.tblpnprocesses k on k.pk=c.fkprocess;
 
 update credite_egs.tblBBSubCasualties set FKProcess=p.PK
