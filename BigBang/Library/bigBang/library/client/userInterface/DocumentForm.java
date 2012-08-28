@@ -45,7 +45,7 @@ public abstract class DocumentForm extends FormView<Document>{
 
 	public class DocumentDetailEntry extends ListEntry<DocInfo>{
 
-		private TextBoxFormField  info;
+		private TextBoxFormField info;
 		private TextBoxFormField infoValue;
 		private Button remove;
 		public DocumentDetailEntry(DocInfo docInfo) {
