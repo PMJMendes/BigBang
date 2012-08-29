@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
@@ -56,6 +57,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Expense.DeleteExpense;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.NotifyClient;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ReceiveAcceptance;
+import com.premiumminds.BigBang.Jewel.Operations.Expense.ReceiveReception;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ReceiveReturn;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ReturnToClient;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.SendNotification;
@@ -668,6 +670,89 @@ public class ExpenseServiceImpl
 	public void massReceiveReception(String[] expenseIds, DocuShareHandle source)
 		throws SessionExpiredException, BigBangException
 	{
+		MasterDB ldb;
+		DocOps lobjDocOps;
+		DSBridgeData lobjImage;
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		ReceiveReception lopRR;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lobjDocOps = null;
+		lobjImage = null;
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.BeginTrans();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		for ( i = 0; i < expenseIds.length; i++ )
+		{
+			if ( (lobjDocOps == null) && (source != null) )
+			{
+				lobjImage = new DSBridgeData();
+				lobjImage.mstrDSHandle = source.handle;
+				lobjImage.mstrDSLoc = source.locationHandle;
+				lobjImage.mstrDSTitle = null;
+				lobjImage.mbDelete = true;
+			}
+
+			try
+			{
+				lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(expenseIds[i]));
+
+				lopRR = new ReceiveReception(lobjExpense.GetProcessID());
+				lopRR.mobjImage = lobjImage;
+				lopRR.mobjDocOps = lobjDocOps;
+
+				lopRR.Execute();
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Rollback(); } catch (Throwable e1) {}
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			lobjDocOps = lopRR.mobjDocOps;
+			lobjImage = null;
+		}
+
+		try
+		{
+			ldb.Commit();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	public void massNotifyClient(String[] expenseIds)

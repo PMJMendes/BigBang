@@ -478,6 +478,8 @@ public class Constants
 	public static final UUID OPID_Expense_UndoCloseProcess               = UUID.fromString("BB8902A3-C9BF-4D10-97E1-A03800C61F7B");
 	public static final UUID OPID_Expense_DeleteExpense                  = UUID.fromString("B8A25252-7CC5-4468-9BDE-A03800C6480C");
 	public static final UUID OPID_Expense_ExternResumeExpense            = UUID.fromString("6BEB3E92-8942-4C4C-BFBE-A03800C67760");
+	public static final UUID OPID_Expense_ReceiveReception               = UUID.fromString("DDEB0BD3-10F8-4EB7-87C9-A0BC01249AC9");
+	public static final UUID OPID_Expense_UndoReceiveReception           = UUID.fromString("70A02BF0-CDC3-4D87-9139-A0BC0124D0D1");
 
 	// Manager Transfer Operations
 	public static final UUID OPID_MgrXFer_ExecXFer                       = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");
@@ -641,6 +643,7 @@ public class Constants
 	public static final UUID DocID_InsurerReceipt         = UUID.fromString("CF2849F7-7967-4CCD-8731-A09400D4310C");
 	public static final UUID DocID_MediatorPayment        = UUID.fromString("F6663F27-83B8-40DE-AB00-A0990123C856");
 	public static final UUID DocID_PaymentReturnLetter    = UUID.fromString("73C2A8D9-C1A9-4E4C-ACC6-A0B0010A59F7");
+	public static final UUID DocID_HealthExpenseDoc       = UUID.fromString("25469CCB-BF12-44D1-86D3-A0BC01319C41");
 
 	// Report Types
 	public static final UUID RTypeID_Parameter   = UUID.fromString("EFF85260-CB13-4599-8EFD-A032010C4AED");
