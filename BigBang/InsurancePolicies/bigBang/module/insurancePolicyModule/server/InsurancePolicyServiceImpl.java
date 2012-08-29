@@ -4004,6 +4004,7 @@ public class InsurancePolicyServiceImpl
 		lopCE.mobjData.midSubPolicyObject = null;
 		lopCE.mobjData.midPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
 		lopCE.mobjData.midSubPolicyCoverage = null;
+		lopCE.mobjData.mstrGenericObject = (expense.insuredObjectId == null ? expense.insuredObjectName : null);
 		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value+"");
 		lopCE.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
 		lopCE.mobjData.mbIsManual = expense.isManual;

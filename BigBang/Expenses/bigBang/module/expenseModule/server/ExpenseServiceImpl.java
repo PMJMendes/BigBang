@@ -129,7 +129,7 @@ public class ExpenseServiceImpl
 		lobjResult.referenceNumber = ( lobjParent == null ? null : lobjParent.getLabel() );
 		lobjResult.expenseDate = ((Timestamp)lobjExpense.getAt(2)).toString().substring(0, 10);
 		lobjResult.insuredObjectId = ( lobjInsured == null ? null : lobjInsured.getKey().toString() );
-		lobjResult.insuredObjectName = ( lobjInsured == null ? null : lobjInsured.getLabel() );
+		lobjResult.insuredObjectName = ( lobjInsured == null ? (String)lobjExpense.getAt(12) : lobjInsured.getLabel() );
 		lobjResult.coverageId = ( lobjPolCov == null ? null : lobjPolCov.getKey().toString() );
 		lobjResult.coverageName = ( lobjCoverage == null ? null : lobjCoverage.getLabel() );
 		lobjResult.value = ((BigDecimal)lobjExpense.getAt(7)).doubleValue();
@@ -205,6 +205,7 @@ public class ExpenseServiceImpl
 			lopMD.mobjData.midPolicyCoverage = null;
 			lopMD.mobjData.midSubPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
 		}
+		lopMD.mobjData.mstrGenericObject = (expense.insuredObjectId == null ? expense.insuredObjectName : null);
 		lopMD.mobjData.mdblDamages = (expense.value == null ? null : new BigDecimal(expense.value+""));
 		lopMD.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement+""));
 		lopMD.mobjData.mbIsManual = expense.isManual;
@@ -515,9 +516,10 @@ public class ExpenseServiceImpl
 		lobjData.mstrNumber = null;
 		lobjData.mdtDate = Timestamp.valueOf(expense.expenseDate + " 00:00:00.0");
 		lobjData.midPolicyObject = (expense.insuredObjectId == null ? null : UUID.fromString(expense.insuredObjectId));
-		lobjData.midSubPolicyObject = null;
+		lobjData.midSubPolicyObject = (expense.insuredObjectId == null ? null : UUID.fromString(expense.insuredObjectId));
 		lobjData.midPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
-		lobjData.midSubPolicyCoverage = null;
+		lobjData.midSubPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
+		lobjData.mstrGenericObject = (expense.insuredObjectId == null ? expense.insuredObjectName : null);
 		lobjData.mdblDamages = new BigDecimal(expense.value+"");
 		lobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
 		lobjData.mbIsManual = expense.isManual;
@@ -543,6 +545,8 @@ public class ExpenseServiceImpl
 			{
 				lobjParent = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(expense.referenceId));
 				lopPCE = new com.premiumminds.BigBang.Jewel.Operations.Policy.CreateExpense(lobjParent.GetProcessID());
+				lobjData.midSubPolicyObject = null;
+				lobjData.midSubPolicyCoverage = null;
 				lopPCE.mobjData = lobjData;
 				lopPCE.mobjImage = lobjImage;
 				lopPCE.mobjContactOps = null;
@@ -553,6 +557,8 @@ public class ExpenseServiceImpl
 			{
 				lobjParent = SubPolicy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(expense.referenceId));
 				lopSPCE = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateExpense(lobjParent.GetProcessID());
+				lobjData.midPolicyObject = null;
+				lobjData.midPolicyCoverage = null;
 				lopSPCE.mobjData = lobjData;
 				lopSPCE.mobjImage = lobjImage;
 				lopSPCE.mobjContactOps = null;
@@ -823,7 +829,7 @@ public class ExpenseServiceImpl
 	protected String[] getColumns()
 	{
 		return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Policy Object]", "[:Sub Policy Object]", "[:Policy Coverage]",
-				"[:Sub Policy Coverage]", "[:Damages]"};
+				"[:Sub Policy Coverage]", "[:Damages]", "[:Generic Object]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -1008,6 +1014,51 @@ public class ExpenseServiceImpl
 			pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10)).append("'");
 		}
 
+		if ( lParam.managerId != null )
+		{
+			pstrBuffer.append(" AND [:Process:Manager] = '").append(lParam.managerId).append("'");
+		}
+
+		if ( lParam.insurerId != null )
+		{
+			pstrBuffer.append(" AND (([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Company] = '").append(lParam.insurerId).append("'))");
+			pstrBuffer.append(" OR ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSPols] WHERE ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSMPols] WHERE [:Company] = '").append(lParam.insurerId).append("')))))");
+		}
+
+		if ( lParam.insuredObject != null )
+		{
+		}
+
 		return true;
 	}
 
@@ -1114,7 +1165,7 @@ public class ExpenseServiceImpl
 		lobjResult.referenceNumber = ( lobjParent == null ? null : lobjParent.getLabel() );
 		lobjResult.expenseDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		lobjResult.insuredObjectId = ( lobjInsured == null ? null : lobjInsured.getKey().toString() );
-		lobjResult.insuredObjectName = ( lobjInsured == null ? null : lobjInsured.getLabel() );
+		lobjResult.insuredObjectName = ( lobjInsured == null ? (String)parrValues[7] : lobjInsured.getLabel() );
 		lobjResult.coverageId = ( lobjPolCov == null ? null : lobjPolCov.getKey().toString() );
 		lobjResult.coverageName = ( lobjCoverage == null ? null : lobjCoverage.getLabel() );
 		lobjResult.value = ((BigDecimal)parrValues[7]).doubleValue();

@@ -3336,6 +3336,7 @@ public class SubPolicyServiceImpl
 		lopCE.mobjData.midSubPolicyObject = (expense.insuredObjectId == null ? null : UUID.fromString(expense.insuredObjectId));
 		lopCE.mobjData.midPolicyCoverage = null;
 		lopCE.mobjData.midSubPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
+		lopCE.mobjData.mstrGenericObject = (expense.insuredObjectId == null ? expense.insuredObjectName : null);
 		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value+"");
 		lopCE.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement+""));
 		lopCE.mobjData.mbIsManual = expense.isManual;

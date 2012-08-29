@@ -31,6 +31,7 @@ public class Expense
 		public static int MANUAL             =  9;
 		public static int NOTES              = 10;
 		public static int REJECTION          = 11;
+		public static int GENERICOBJECT      = 12;
 	}
 
     public static Expense GetInstance(UUID pidNameSpace, UUID pidKey)

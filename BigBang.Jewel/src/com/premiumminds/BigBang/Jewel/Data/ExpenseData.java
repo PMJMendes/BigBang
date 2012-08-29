@@ -32,6 +32,7 @@ public class ExpenseData
 	public boolean mbIsManual;
 	public String mstrNotes;
 	public String mstrRejection;
+	public String mstrGenericObject;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -54,6 +55,7 @@ public class ExpenseData
 		mbIsManual           =    (Boolean) pobjSource.getAt(Expense.I.MANUAL);
 		mstrNotes            =     (String) pobjSource.getAt(Expense.I.NOTES);
 		mstrRejection        =     (String) pobjSource.getAt(Expense.I.REJECTION);
+		mstrGenericObject    =     (String) pobjSource.getAt(Expense.I.GENERICOBJECT);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -61,18 +63,19 @@ public class ExpenseData
 	{
 		try
 		{
-			pobjDest.setAt(Expense.I.NUMBER,             mstrNumber);
-			pobjDest.setAt(Expense.I.PROCESS,            midProcess);
-			pobjDest.setAt(Expense.I.DATE,               mdtDate);
-			pobjDest.setAt(Expense.I.POLICYOBJECT,       midPolicyObject);
-			pobjDest.setAt(Expense.I.SUBPOLICYOBJECT,    midSubPolicyObject);
-			pobjDest.setAt(Expense.I.POLICYCOVERAGE,     midPolicyCoverage);
+			pobjDest.setAt(Expense.I.NUMBER,            mstrNumber);
+			pobjDest.setAt(Expense.I.PROCESS,           midProcess);
+			pobjDest.setAt(Expense.I.DATE,              mdtDate);
+			pobjDest.setAt(Expense.I.POLICYOBJECT,      midPolicyObject);
+			pobjDest.setAt(Expense.I.SUBPOLICYOBJECT,   midSubPolicyObject);
+			pobjDest.setAt(Expense.I.POLICYCOVERAGE,    midPolicyCoverage);
 			pobjDest.setAt(Expense.I.SUBPOLICYCOVERAGE, midSubPolicyCoverage);
-			pobjDest.setAt(Expense.I.DAMAGES,            mdblDamages);
-			pobjDest.setAt(Expense.I.SETTLEMENT,         mdblSettlement);
-			pobjDest.setAt(Expense.I.MANUAL,             mbIsManual);
-			pobjDest.setAt(Expense.I.NOTES,              mstrNotes);
-			pobjDest.setAt(Expense.I.REJECTION,          mstrRejection);
+			pobjDest.setAt(Expense.I.DAMAGES,           mdblDamages);
+			pobjDest.setAt(Expense.I.SETTLEMENT,        mdblSettlement);
+			pobjDest.setAt(Expense.I.MANUAL,            mbIsManual);
+			pobjDest.setAt(Expense.I.NOTES,             mstrNotes);
+			pobjDest.setAt(Expense.I.REJECTION,         mstrRejection);
+			pobjDest.setAt(Expense.I.GENERICOBJECT,     mstrGenericObject);
 		}
 		catch (Throwable e)
 		{
@@ -121,6 +124,13 @@ public class ExpenseData
 			{
 				pstrBuilder.append("(Erro a obter o nome do objecto seguro.)");
 			}
+			pstrBuilder.append(pstrLineBreak);
+		}
+
+		if ( mstrGenericObject != null )
+		{
+			pstrBuilder.append("Objecto seguro: ");
+			pstrBuilder.append(mstrGenericObject);
 			pstrBuilder.append(pstrLineBreak);
 		}
 
