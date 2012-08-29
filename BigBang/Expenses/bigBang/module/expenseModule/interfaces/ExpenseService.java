@@ -47,6 +47,7 @@ public interface ExpenseService
 
 	public Expense serialCreateExpense(Expense expense, DocuShareHandle source) throws SessionExpiredException, BigBangException;
 	public void massSendNotification(String[] expenseIds) throws SessionExpiredException, BigBangException;
+	public void massReceiveReception(String[] expenseIds, DocuShareHandle source) throws SessionExpiredException, BigBangException;
 	public void massNotifyClient(String[] expenseIds) throws SessionExpiredException, BigBangException;
 	public void massReturnToClient(String[] expenseIds) throws SessionExpiredException, BigBangException;
 }

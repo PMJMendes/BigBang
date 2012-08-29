@@ -26,6 +26,7 @@ public interface ExpenseServiceAsync
 	void deleteExpense(String expenseId, String reason, AsyncCallback<Void> callback);
 	void serialCreateExpense(Expense expense, DocuShareHandle source, AsyncCallback<Expense> callback);
 	void massSendNotification(String[] expenseIds, AsyncCallback<Void> callback);
+	void massReceiveReception(String[] expenseIds, DocuShareHandle source, AsyncCallback<Void> callback);
 	void massNotifyClient(String[] expenseIds, AsyncCallback<Void> callback);
 	void massReturnToClient(String[] expenseIds, AsyncCallback<Void> callback);
 }

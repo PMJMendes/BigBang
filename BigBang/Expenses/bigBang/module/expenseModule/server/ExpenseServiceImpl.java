@@ -665,6 +665,11 @@ public class ExpenseServiceImpl
 		}
 	}
 
+	public void massReceiveReception(String[] expenseIds, DocuShareHandle source)
+		throws SessionExpiredException, BigBangException
+	{
+	}
+
 	public void massNotifyClient(String[] expenseIds)
 		throws SessionExpiredException, BigBangException
 	{
