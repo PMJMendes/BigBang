@@ -727,7 +727,10 @@ public class ManageMediators
 				else
 				{
 					if ( !lobjData.mdblPercent.equals(pobjData.mobjMainValues.marrDeals[i].mdblPercent) )
+					{
+						pobjData.mobjMainValues.marrDeals[i].midMediator = pidMediator;
 						larrModify.add(pobjData.mobjMainValues.marrDeals[i]);
+					}
 					larrDeals.put(pobjData.mobjMainValues.marrDeals[i].midSubLine, null);
 				}
 			}
@@ -810,7 +813,10 @@ public class ManageMediators
 				else
 				{
 					if ( !lobjData.mdblPercent.equals(pobjData.mobjMainValues.marrExceptions[i].mdblPercent) )
+					{
+						pobjData.mobjMainValues.marrExceptions[i].midMediator = pidMediator;
 						larrModify.add(pobjData.mobjMainValues.marrExceptions[i]);
+					}
 					larrExceptions.put(lidAux, null);
 				}
 			}
