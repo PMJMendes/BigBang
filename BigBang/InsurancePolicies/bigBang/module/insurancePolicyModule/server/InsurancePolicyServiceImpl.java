@@ -793,6 +793,18 @@ public class InsurancePolicyServiceImpl
 					lobjResult.categoryName = lobjSubLine.getLine().getCategory().getLabel();
 					lobjResult.lineName = lobjSubLine.getLine().getLabel();
 					lobjResult.subLineName = lobjSubLine.getLabel();
+					switch ( marrObjects.size() )
+					{
+					case 0:
+						lobjResult.insuredObject = "<Sem unidades de risco.>";
+						break;
+					case 1:
+						lobjResult.insuredObject = marrObjects.get(0).mstrName;
+						break;
+					default:
+						lobjResult.insuredObject = "<Várias unidades de risco.>";
+						break;
+					}
 				}
 				catch (Throwable e)
 				{
@@ -2653,6 +2665,7 @@ public class InsurancePolicyServiceImpl
 		ArrayList<InsurancePolicy.Coverage.Variability> larrVariability;
 		InsurancePolicy.Coverage.Variability lobjVariability;
 		InsurancePolicy.TableSection lobjSection;
+		String lstrObject;
 		int i, j;
 
 		try
@@ -2673,6 +2686,7 @@ public class InsurancePolicyServiceImpl
 			larrLocalValues = lobjPolicy.GetCurrentKeyedValues(null, null);
 			larrLocalCoverages = lobjPolicy.GetCurrentCoverages();
 			larrCoverages = lobjSubLine.GetCurrentCoverages();
+			lstrObject = lobjPolicy.GetObjectFootprint();
 		}
 		catch (Throwable e)
 		{
@@ -2692,6 +2706,7 @@ public class InsurancePolicyServiceImpl
 		lobjResult.lineName = lobjLine.getLabel();
 		lobjResult.subLineId = lobjSubLine.getKey().toString();
 		lobjResult.subLineName = lobjSubLine.getLabel();
+		lobjResult.insuredObject = lstrObject;
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.insuranceAgencyId = ((UUID)lobjPolicy.getAt(2)).toString();
 		lobjResult.startDate = (lobjPolicy.getAt(4) == null ? null :
@@ -3125,6 +3140,7 @@ public class InsurancePolicyServiceImpl
             	lobjStub.lineName = lobjLine.getLabel();
             	lobjStub.subLineId = lobjSubLine.getKey().toString();
             	lobjStub.subLineName = lobjSubLine.getLabel();
+        		lobjStub.insuredObject = lobjPolicy.GetObjectFootprint();
             	lobjStub.caseStudy = (Boolean)lobjPolicy.getAt(12);
             	lobjStub.statusId = lobjStatus.getKey().toString();
             	lobjStub.statusText = lobjStatus.getLabel();
@@ -4335,7 +4351,17 @@ public class InsurancePolicyServiceImpl
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
+		String lstrObject;
 		InsurancePolicyStub lobjResult;
+
+		lstrObject = "(Erro a obter as unidades de risco)";
+		try
+		{
+			lstrObject = Policy.GetInstance(Engine.getCurrentNameSpace(), pid).GetObjectFootprint();
+		}
+		catch (Throwable e)
+		{
+		}
 
 		lobjResult = new InsurancePolicyStub();
 
@@ -4351,6 +4377,7 @@ public class InsurancePolicyServiceImpl
 		lobjResult.lineName = (String)parrValues[5];
 		lobjResult.subLineId = parrValues[6].toString();
 		lobjResult.subLineName = (String)parrValues[7];
+		lobjResult.insuredObject = lstrObject;
 		lobjResult.caseStudy = (Boolean)parrValues[8];
 		lobjResult.statusId = ((UUID)parrValues[9]).toString();
 		lobjResult.statusText = (String)parrValues[10];

@@ -413,7 +413,12 @@ public class TransferManagerServiceImpl
 		Line lobjLine;
 		Category lobjCategory;
 		ObjectBase lobjStatus;
+		String lstrObject;
 
+		lstrObject = "(Erro a obter as unidades de risco)";
+		lobjProcess = null;
+		lobjAuxClient = null;
+		lobjAuxClient = null;
 		try
 		{
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pobjPolicy.GetProcessID());
@@ -423,13 +428,11 @@ public class TransferManagerServiceImpl
 			}
 			catch (Throwable e)
 			{
-				lobjAuxClient = null;
 			}
+			lstrObject = pobjPolicy.GetObjectFootprint();
 		}
 		catch (Throwable e)
 		{
-			lobjProcess = null;
-			lobjAuxClient = null;
 		}
 
 		lobjSubLine = pobjPolicy.GetSubLine();
@@ -459,6 +462,7 @@ public class TransferManagerServiceImpl
 		lobjResult.lineName = lobjLine.getLabel();
 		lobjResult.subLineId = lobjSubLine.getKey().toString();
 		lobjResult.subLineName = lobjSubLine.getLabel();
+		lobjResult.insuredObject = lstrObject;
 		lobjResult.caseStudy = (Boolean)pobjPolicy.getAt(12);
 		lobjResult.statusId = ((UUID)pobjPolicy.getAt(13)).toString();
 		lobjResult.statusText = (lobjStatus == null ? "(Erro a obter o estado.)" : lobjStatus.getLabel());
@@ -489,7 +493,14 @@ public class TransferManagerServiceImpl
 		IProcess lobjProcess;
 		Client lobjAuxClient;
 		CasualtyStub lobjResult;
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSub;
+		String lstrCat;
+		String lstrObj;
 
+		lobjProcess = null;
+		lobjAuxClient = null;
+		lstrCat = null;
+		lstrObj = null;
 		try
 		{
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pobjCasualty.GetProcessID());
@@ -499,13 +510,16 @@ public class TransferManagerServiceImpl
 			}
 			catch (Throwable e)
 			{
-				lobjAuxClient = null;
+			}
+			lobjSub = ((com.premiumminds.BigBang.Jewel.Objects.Casualty)lobjProcess.GetData()).GetFirstSubCasualty();
+			if ( lobjSub != null )
+			{
+				lstrCat = lobjSub.GetSubLine().getLabel();
+				lstrObj = lobjSub.GetObjectName();
 			}
 		}
 		catch (Throwable e)
 		{
-			lobjProcess = null;
-			lobjAuxClient = null;
 		}
 
 		lobjResult = new CasualtyStub();
@@ -518,6 +532,8 @@ public class TransferManagerServiceImpl
 		lobjResult.casualtyDate = ((Timestamp)pobjCasualty.getAt(2)).toString().substring(0, 10);
 		lobjResult.caseStudy = (Boolean)pobjCasualty.getAt(5);
 		lobjResult.isOpen = lobjProcess.IsRunning();
+		lobjResult.policyCategory = lstrCat;
+		lobjResult.insuredObject = lstrObj;
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 
 		return lobjResult;

@@ -21,7 +21,7 @@ public class InsurancePolicyStub
 	public String lineName;
 	public String subLineId;
 	public String subLineName;
-	public String insuredObject = "UNIDADE DE RISCO";
+	public String insuredObject;
 	public boolean caseStudy;
 	public String statusId;
 	public String statusText;

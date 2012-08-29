@@ -81,6 +81,86 @@ public class Policy
 		internalSetAt(1, pidProcess);
 	}
 
+    public String GetObjectFootprint()
+    	throws BigBangJewelException
+    {
+		IEntity lrefObjects;
+        MasterDB ldb;
+        ResultSet lrsObjects;
+        String lstrResult;
+        boolean b;
+
+		try
+		{
+			lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyObject)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {Constants.FKPolicy_In_Object},
+					new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		lstrResult = "<Sem unidades de risco.>";
+		b = false;
+		try
+		{
+			while ( lrsObjects.next() )
+			{
+				if ( b )
+				{
+					lstrResult = "<Várias unidades de risco.>";
+					break;
+				}
+				lstrResult = PolicyObject.GetInstance(getNameSpace(), lrsObjects).getLabel();
+				b = true;
+			}
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsObjects.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsObjects.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsObjects.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lstrResult;
+    }
+
     public Contact[] GetCurrentContacts()
     	throws BigBangJewelException
     {
