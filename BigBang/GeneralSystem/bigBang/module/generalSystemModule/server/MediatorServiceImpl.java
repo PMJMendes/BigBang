@@ -132,7 +132,7 @@ public class MediatorServiceImpl
 	        					((UUID)larrExceptions[i].getAt(MediatorException.I.CLIENT)).toString());
 	        			lobjTmp.exceptions[i].policyId = (larrExceptions[i].getAt(MediatorException.I.POLICY) == null ? null :
         					((UUID)larrExceptions[i].getAt(MediatorException.I.POLICY)).toString());
-	        			lobjTmp.exceptions[i].percent = ((BigDecimal)larrDeals[i].getAt(MediatorDeal.I.PERCENT)).doubleValue();
+	        			lobjTmp.exceptions[i].percent = ((BigDecimal)larrExceptions[i].getAt(MediatorException.I.PERCENTAGE)).doubleValue();
 	        		}
 	        	}
 
