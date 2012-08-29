@@ -841,6 +841,8 @@ public class ExpenseServiceImpl
 		IEntity lrefObjects;
 		IEntity lrefCoverages;
 		IEntity lrefClients;
+		IEntity lrefPolObjects;
+		IEntity lrefSubPolObjects;
         Calendar ldtAux;
 
 		if ( !(pParam instanceof ExpenseSearchParameter) )
@@ -1057,6 +1059,30 @@ public class ExpenseServiceImpl
 
 		if ( lParam.insuredObject != null )
 		{
+			lstrAux = lParam.insuredObject.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Generic Object] LIKE '%").append(lstrAux).append("%'")
+					.append(" OR [:Policy Object] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefPolObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyObject));
+				pstrBuffer.append(lrefPolObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPolObjects] WHERE [:Name] LIKE '%").append(lstrAux).append("%')")
+					.append(" OR [:Sub Policy Object] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefSubPolObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject));
+				pstrBuffer.append(lrefSubPolObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubPolObjects] WHERE [:Name] LIKE '%").append(lstrAux).append("%'))");
 		}
 
 		return true;

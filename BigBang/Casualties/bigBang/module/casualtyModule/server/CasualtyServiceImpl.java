@@ -373,7 +373,12 @@ public class CasualtyServiceImpl
 	{
 		CasualtySearchParameter lParam;
 		String lstrAux;
-		IEntity lrefClients, lrefSubCasualties, lrefPolicies, lrefSubPolicies, lrefPolObjects, lrefSubPolObjects;
+		IEntity lrefClients;
+		IEntity lrefSubCasualties;
+		IEntity lrefPolicies;
+		IEntity lrefSubPolicies;
+		IEntity lrefPolObjects;
+		IEntity lrefSubPolObjects;
         Calendar ldtAux;
 
 		if ( !(pParam instanceof CasualtySearchParameter) )
