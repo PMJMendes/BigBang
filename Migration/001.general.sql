@@ -28,7 +28,7 @@ insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('CECC8014-20
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C5BE51A9-7E0F-4970-962A-9EFC0135E9E1', N'Angariação');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('071CE678-956B-4D41-94DE-9EFC013688B5', N'Especial');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C7236BA7-73AD-40ED-B6DC-9EFC013691C8', N'Negociado');
-insert into bigbang.tblDocTypes (PK, DocType) values ('5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A', N'Carta de Condução');
+insert into bigbang.tblDocTypes (PK, DocType) values ('5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A', N'Documento Pessoal');
 insert into bigbang.tblDocTypes (PK, DocType) values ('785739A7-648C-4B51-9610-9FF10128C5CE', N'Nota de Débito');
 insert into bigbang.tblDocTypes (PK, DocType) values ('041C081D-518F-4890-BEBF-A014011EFC8D', N'Recibo Digitalizado');
 insert into bigbang.tblDocTypes (PK, DocType) values ('1D69CC65-7BE8-493C-858E-A02100D78299', N'Aviso de Cobrança');
@@ -45,6 +45,7 @@ insert into bigbang.tblDocTypes (PK, DocType) values ('CF2849F7-7967-4CCD-8731-A
 insert into bigbang.tblDocTypes (PK, DocType) values ('F6663F27-83B8-40DE-AB00-A0990123C856', N'Relatório de Retrocessão');
 insert into bigbang.tblDocTypes (PK, DocType) values ('DD17A31E-CF99-40B1-8529-A0A100D41EC1', N'Despesa Digitalizada');
 insert into bigbang.tblDocTypes (PK, DocType) values ('73C2A8D9-C1A9-4E4C-ACC6-A0B0010A59F7', N'Carta de Devolução de Pagamento');
+insert into bigbang.tblDocTypes (PK, DocType) values ('25469CCB-BF12-44D1-86D3-A0BC01319C41', N'Docs de Despesas de Saúde');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('9ED463DB-ABC5-46EE-82A7-9F0300C6D631', N'Casado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BFB58864-4B91-4078-AF9F-9F0300C6E52D', N'Divorciado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BE742798-9D7F-4B23-BFBA-9F0300C6CFA5', N'Solteiro');
