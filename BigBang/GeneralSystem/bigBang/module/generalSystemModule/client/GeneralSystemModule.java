@@ -4,13 +4,20 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.ExpandableSelectionManagementPanelInstantiator;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.event.LoginSuccessEventHandler;
 import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
+import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
+import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
+import bigBang.module.clientModule.client.userInterface.view.ClientSelectionView;
 import bigBang.module.generalSystemModule.client.dataAccess.ClientGroupBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.CostCenterBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.CoverageBrokerImpl;
@@ -128,11 +135,35 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
+
+		//EXPANDABLE PANELS
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.INSURANCE_POLICY, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				InsurancePolicySelectionView view = (InsurancePolicySelectionView) GWT.create(InsurancePolicySelectionView.class);
+				InsurancePolicySelectionViewPresenter presenter = new InsurancePolicySelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		//EXPANDABLE PANELS
+				MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.CLIENT, new ExpandableSelectionManagementPanelInstantiator() {
+					
+					@Override
+					public ExpandableSelectionFormFieldPanel getInstance() {
+						ClientSelectionView view = (ClientSelectionView) GWT.create(ClientSelectionView.class);
+						ClientSelectionViewPresenter presenter = new ClientSelectionViewPresenter(view);
+						presenter.go();
+						return presenter;
+					}
+				});
 	}
 
 	protected void initializeProcess(){
 		EventBus.getInstance().addHandler(LoginSuccessEvent.TYPE, new LoginSuccessEventHandler() {
-			
+
 			@Override
 			public void onLoginSuccess(LoginSuccessEvent event) {
 				GeneralSystemService.Util.getInstance().getGeneralSystem(new BigBangAsyncCallback<GeneralSystem>() {
@@ -146,7 +177,7 @@ public class GeneralSystemModule implements Module {
 			}
 		});
 	}
-	
+
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker<?>[]{

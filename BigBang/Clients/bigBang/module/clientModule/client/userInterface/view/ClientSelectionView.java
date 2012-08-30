@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.client.userInterface.view;
+package bigBang.module.clientModule.client.userInterface.view;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -17,18 +17,17 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
-import bigBang.module.clientModule.client.userInterface.view.ClientFormView;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyClientSelectionViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyClientSelectionViewPresenter.Action;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter.Action;
 
-public class SubPolicyClientSelectionView extends View implements SubPolicyClientSelectionViewPresenter.Display {
+public class ClientSelectionView extends View implements ClientSelectionViewPresenter.Display {
 
 	private ClientSearchPanel list;
 	private ClientFormView form;
-	private ActionInvokedEventHandler<SubPolicyClientSelectionViewPresenter.Action> handler;
+	private ActionInvokedEventHandler<ClientSelectionViewPresenter.Action> handler;
 	private Button confirmButton, cancelButton;
 
-	public SubPolicyClientSelectionView(){
+	public ClientSelectionView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
@@ -40,14 +39,14 @@ public class SubPolicyClientSelectionView extends View implements SubPolicyClien
 
 			@Override
 			public void onClick(ClickEvent event) {
-				handler.onActionInvoked(new ActionInvokedEvent<SubPolicyClientSelectionViewPresenter.Action>(Action.CONFIRM));
+				handler.onActionInvoked(new ActionInvokedEvent<ClientSelectionViewPresenter.Action>(Action.CONFIRM));
 			}
 		});
 		cancelButton = new Button("Cancelar", new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				handler.onActionInvoked(new ActionInvokedEvent<SubPolicyClientSelectionViewPresenter.Action>(Action.CANCEL));
+				handler.onActionInvoked(new ActionInvokedEvent<ClientSelectionViewPresenter.Action>(Action.CANCEL));
 			}
 		});
 
@@ -59,7 +58,7 @@ public class SubPolicyClientSelectionView extends View implements SubPolicyClien
 		buttonsWrapper.add(confirmButton);
 		buttonsWrapper.add(cancelButton);
 		
-		ListHeader header = new ListHeader("Cliente Aderente");
+		ListHeader header = new ListHeader("Cliente");
 		header.setRightWidget(buttonsWrapper);
 
 		form = new ClientFormView();
@@ -106,5 +105,4 @@ public class SubPolicyClientSelectionView extends View implements SubPolicyClien
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.handler = handler;
 	}
-
 }

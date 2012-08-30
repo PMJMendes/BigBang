@@ -29,8 +29,8 @@ import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyClientSelectionViewPresenter;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
 import com.google.gwt.dom.client.Style.Overflow;
@@ -192,7 +192,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		number.setFieldWidth("175px");
 		
 		ExpandableSelectionFormFieldPanel clientSelectionPanel = (ExpandableSelectionFormFieldPanel) ViewPresenterFactory.getInstance().getViewPresenter("INSURANCE_POLICY_SUB_POLICY_CLIENT_SELECTION");
-		((SubPolicyClientSelectionViewPresenter)clientSelectionPanel).go();
+		((ClientSelectionViewPresenter)clientSelectionPanel).go();
 		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", clientSelectionPanel); //TODO
 		client.setFieldWidth("547px");
 		manager = new TextBoxFormField("Gestor de Apólice Adesão");

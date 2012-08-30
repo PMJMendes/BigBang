@@ -19,7 +19,7 @@ public class MutableSelectionFormFieldFactory {
 		ExpandableSelectionFormFieldPanel panel = null;
 		String name = parameters == null ? "" : parameters.getParameter("name");
 
-		if(listId != null && presenters.containsKey(listId)) {
+		if(listId != null && presenters.containsKey(listId.toLowerCase())) {
 			panel = presenters.get(listId.toLowerCase()).getInstance();
 			panel.setParameters(parameters);
 			return new ExpandableSelectionFormField(listId, name, panel);

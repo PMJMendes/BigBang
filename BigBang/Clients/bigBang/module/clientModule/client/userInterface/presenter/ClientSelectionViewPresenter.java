@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
+package bigBang.module.clientModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
@@ -27,7 +27,7 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class SubPolicyClientSelectionViewPresenter extends ExpandableSelectionFormFieldPanel implements ViewPresenter {
+public class ClientSelectionViewPresenter extends ExpandableSelectionFormFieldPanel implements ViewPresenter {
 
 	public static enum Action {
 		CONFIRM,
@@ -48,7 +48,7 @@ public class SubPolicyClientSelectionViewPresenter extends ExpandableSelectionFo
 	private boolean bound = false;
 	private ClientProcessBroker clientBroker;
 
-	public SubPolicyClientSelectionViewPresenter(Display view){
+	public ClientSelectionViewPresenter(Display view){
 		clientBroker = (ClientProcessBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CLIENT);
 		setView((UIObject)view);		
 	}
@@ -122,7 +122,7 @@ public class SubPolicyClientSelectionViewPresenter extends ExpandableSelectionFo
 			}
 		});
 
-		view.registerActionHandler(new ActionInvokedEventHandler<SubPolicyClientSelectionViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<ClientSelectionViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
@@ -166,7 +166,7 @@ public class SubPolicyClientSelectionViewPresenter extends ExpandableSelectionFo
 			public void onResponse(Client response) {
 				view.getForm().setValue(response);
 				if(fireEvents) {
-					ValueChangeEvent.fire(SubPolicyClientSelectionViewPresenter.this, response.id);
+					ValueChangeEvent.fire(ClientSelectionViewPresenter.this, response.id);
 				}
 			}
 

@@ -11,6 +11,8 @@ import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
+import bigBang.module.clientModule.client.userInterface.view.ClientSelectionView;
 import bigBang.module.insurancePolicyModule.client.dataAccess.ExerciseDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsurancePolicyProcessBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsuranceSubPolicyBrokerImpl;
@@ -36,7 +38,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Insur
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuredObjectViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.NegotiationViewExternalInfoRequestViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyClientInfoOrDocumentRequestViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyClientSelectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyCreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyDeleteViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyExerciseViewPresenter;
@@ -65,7 +66,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuranceS
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuredObjectView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.NegotiationViewExternalInfoRequestView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyClientInfoOrDocumentRequestView;
-import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyClientSelectionView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyCreateReceiptView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyDeleteView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyExerciseView;
@@ -233,8 +233,8 @@ public class InsurancePolicyModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				SubPolicyClientSelectionView view = (SubPolicyClientSelectionView) GWT.create(SubPolicyClientSelectionView.class);
-				ViewPresenter presenter = new SubPolicyClientSelectionViewPresenter(view);
+				ClientSelectionView view = (ClientSelectionView) GWT.create(ClientSelectionView.class);
+				ViewPresenter presenter = new ClientSelectionViewPresenter(view);
 				return presenter;
 			}
 		});
