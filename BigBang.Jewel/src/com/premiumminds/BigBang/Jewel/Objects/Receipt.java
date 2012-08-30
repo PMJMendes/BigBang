@@ -400,6 +400,12 @@ public class Receipt
     	return Mediator.GetInstance(getNameSpace(), (UUID)getAt(12));
     }
 
+    public UUID getProfile()
+    	throws BigBangJewelException
+    {
+    	return getAbsolutePolicy().getProfile();
+    }
+
     public ILog getPaymentLog()
     	throws BigBangJewelException
     {

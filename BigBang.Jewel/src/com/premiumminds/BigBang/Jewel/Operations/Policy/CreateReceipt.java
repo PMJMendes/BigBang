@@ -16,12 +16,12 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
-import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternBlockDirectRetrocession;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternBlockEndProcessSend;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceReverse;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceShortCircuit;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerImageOnCreate;
@@ -84,8 +84,7 @@ public class CreateReceipt
 		IScript lobjScript;
 		IProcess lobjProc; 
 		TriggerImageOnCreate lopTIOC;
-		ExternForceShortCircuit lopEFSC;
-		Client lobjClient;
+		UUID lidProfile;
 		int i;
 
 		try
@@ -128,6 +127,8 @@ public class CreateReceipt
 				TriggerOp(new ExternBlockDirectRetrocession(lobjProc.getKey()), pdb);
 			else if ( lobjAux.doCalcRetrocession() )
 				lobjAux.SaveToDb(pdb);
+
+			lidProfile = lobjAux.getProfile();
 		}
 		catch (Throwable e)
 		{
@@ -141,14 +142,21 @@ public class CreateReceipt
 			TriggerOp(lopTIOC, pdb);
 		}
 
-		lobjClient = (Client)lobjMe.GetParent().GetData();
-		if ( Constants.ProfID_Simple.equals((UUID)lobjClient.getAt(9)) )
+		if ( Constants.ProfID_Simple.equals(lidProfile) )
 		{
-			lopEFSC = new ExternForceShortCircuit(lobjProc.getKey());
-			TriggerOp(lopEFSC, pdb);
+			TriggerOp(new ExternForceShortCircuit(lobjProc.getKey()), pdb);
+		}
+
+		if ( Constants.ProfID_External.equals(lidProfile) )
+		{
+			TriggerOp(new ExternForceShortCircuit(lobjProc.getKey()), pdb);
+			TriggerOp(new ExternBlockEndProcessSend(lobjProc.getKey()), pdb);
 		}
 
 		if ( lobjAux.isReverseCircuit() )
+		{
 			TriggerOp(new ExternForceReverse(lobjProc.getKey()), pdb);
+			TriggerOp(new ExternBlockEndProcessSend(lobjProc.getKey()), pdb);
+		}
 	}
 }

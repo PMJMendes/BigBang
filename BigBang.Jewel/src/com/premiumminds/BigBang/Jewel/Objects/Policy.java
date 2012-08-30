@@ -782,6 +782,15 @@ public class Policy
     	return Mediator.GetInstance(getNameSpace(), (UUID)getAt(11));
     }
 
+    public UUID getProfile()
+    	throws BigBangJewelException
+    {
+    	if ( getAt(19) == null )
+    		return GetClient().getProfile();
+
+    	return (UUID)getAt(19);
+    }
+
     public BigDecimal getPercentOverride()
     {
     	return (BigDecimal)getAt(18);

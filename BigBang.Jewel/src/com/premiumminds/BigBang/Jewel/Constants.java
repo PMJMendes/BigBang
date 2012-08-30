@@ -402,6 +402,7 @@ public class Constants
 	public static final UUID OPID_Receipt_ExternCancelDAS                = UUID.fromString("26694A3F-5251-471B-B238-A0B000FB198D");
 	public static final UUID OPID_Receipt_ExternUndoCancelDAS            = UUID.fromString("2D1A2394-6401-44F8-85C6-A0B000FB4AF9");
 	public static final UUID OPID_Receipt_ReturnPayment                  = UUID.fromString("C0451D21-BE44-47D7-9745-A0B000FB7C49");
+	public static final UUID OPID_Receipt_ExternBlockEndProcessSend      = UUID.fromString("11397F84-2A3B-4365-9F1D-A0BD01205EE0");
 
 	//Casualty Operations
 	public static final UUID OPID_Casualty_AutoProcessVents              = UUID.fromString("4DB7EF2A-DB71-4BF4-810B-A02E00FA9F94");
@@ -545,9 +546,10 @@ public class Constants
 	public static final UUID TypeID_Other      = UUID.fromString("4098CF7A-B5EE-4C3F-973F-9EE600C961AA");
 
 	// Client Profiles
-	public static final UUID ProfID_Normal = UUID.fromString("9F871430-9BBC-449F-B125-9EE600BE5A9A");
-	public static final UUID ProfID_VIP    = UUID.fromString("63114D11-6087-4EFE-9A7E-9EE600BE52DA");
-	public static final UUID ProfID_Simple = UUID.fromString("51ED12A4-95A9-44B0-928D-A01500DC83EB");
+	public static final UUID ProfID_Normal   = UUID.fromString("9F871430-9BBC-449F-B125-9EE600BE5A9A");
+	public static final UUID ProfID_VIP      = UUID.fromString("63114D11-6087-4EFE-9A7E-9EE600BE52DA");
+	public static final UUID ProfID_Simple   = UUID.fromString("51ED12A4-95A9-44B0-928D-A01500DC83EB");
+	public static final UUID ProfID_External = UUID.fromString("8641B5C6-CABE-4260-AD70-A0A2010A028F"); 
 
 	// Object Types
 	public static final UUID ObjTypeID_Person    = UUID.fromString("EDD94689-EFED-4B50-AA6E-9F9501402700");

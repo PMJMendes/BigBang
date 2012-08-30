@@ -208,4 +208,10 @@ public class Client
     {
     	return Mediator.GetInstance(getNameSpace(), (UUID)getAt(8));
     }
+
+    public UUID getProfile()
+    	throws BigBangJewelException
+    {
+    	return (UUID)getAt(9);
+    }
 }
