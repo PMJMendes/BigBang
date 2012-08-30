@@ -926,19 +926,18 @@ public class SubPolicyServiceImpl
 				llngCoverages++;
 			}
 
-			llngColumns = 0;
+			llngColumns = -1;
 			for ( i = 0; i < marrCoverages.size(); i++ )
 			{
 				if ( marrCoverages.get(i).mbIsHeader )
 					continue;
 				for ( j = 0; j < marrCoverages.get(i).marrFields.length; j++ )
 				{
-					if ( marrCoverages.get(i).marrFields[j].mlngColIndex < 0 )
-						continue;
-					llngColumns++;
+					if ( marrCoverages.get(i).marrFields[j].mlngColIndex > llngColumns )
+						llngColumns = marrCoverages.get(i).marrFields[j].mlngColIndex;
 				}
-				break;
 			}
+			llngColumns++;
 
 			if ( llngCoverages * llngColumns == 0 )
 				pobjResult.data = new SubPolicy.TableSection.TableField[0];

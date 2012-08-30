@@ -807,19 +807,18 @@ public class QuoteRequestServiceImpl
 				llngCoverages++;
 			}
 
-			llngColumns = 0;
+			llngColumns = -1;
 			for ( i = 0; i < lobjSubLine.marrCoverages.size(); i++ )
 			{
 				if ( lobjSubLine.marrCoverages.get(i).mbIsHeader )
 					continue;
 				for ( j = 0; j < lobjSubLine.marrCoverages.get(i).marrFields.length; j++ )
 				{
-					if ( lobjSubLine.marrCoverages.get(i).marrFields[j].mlngColIndex < 0 )
-						continue;
-					llngColumns++;
+					if ( lobjSubLine.marrCoverages.get(i).marrFields[j].mlngColIndex > llngColumns )
+						llngColumns = lobjSubLine.marrCoverages.get(i).marrFields[j].mlngColIndex;
 				}
-				break;
 			}
+			llngColumns++;
 
 			if ( llngCoverages * llngColumns == 0 )
 				pobjResult.data = new QuoteRequest.TableSection.TableField[0];
