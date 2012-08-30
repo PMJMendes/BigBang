@@ -2,6 +2,7 @@ package bigBang.library.server;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -53,6 +54,8 @@ public class DocumentServiceImpl
 			larrResult[i].midOwnerType = UUID.fromString(parrDocuments[i].ownerTypeId);
 			larrResult[i].midOwnerId = UUID.fromString(parrDocuments[i].ownerId);
 			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
+			larrResult[i].mdtRefDate = (parrDocuments[i].creationDate == null ? null :
+					Timestamp.valueOf(parrDocuments[i].creationDate + " 00:00:00.0"));
 
 			if ( parrDocuments[i].source != null )
 			{
@@ -338,6 +341,7 @@ public class DocumentServiceImpl
 		lobjAux.ownerId = ((UUID)pobjDocument.getAt(2)).toString();
 		lobjAux.docTypeId = lobjType.getKey().toString();
 		lobjAux.docTypeLabel = lobjType.getLabel();
+		lobjAux.creationDate = (pobjDocument.getAt(6) == null ? null : ((Timestamp)pobjDocument.getAt(6)).toString().substring(0, 10));
 		lobjAux.text = (String)pobjDocument.getAt(4);
 		if ( pbForList )
 		{

@@ -13,7 +13,7 @@ public class Document
 	public String ownerId;
 	public String docTypeId;
 	public String docTypeLabel;
-	public String creationDate; //TODO preencher com a data de criação do documento
+	public String creationDate;
 	public String text;
 	public boolean hasFile;
 	public String mimeType;

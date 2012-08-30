@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -348,6 +349,8 @@ public class DocOps
 
 		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 		pobjData.midOwnerId = pidOwner;
+		if ( pobjData.mdtRefDate == null )
+			pobjData.mdtRefDate = new Timestamp(new java.util.Date().getTime());
 		pobjData.ToObject(lobjAux);
 		try
 		{
@@ -436,6 +439,8 @@ public class DocOps
 			}
 		}
 
+		if ( pobjData.mdtRefDate == null )
+			pobjData.mdtRefDate = new Timestamp(new java.util.Date().getTime());
 		pobjData.ToObject(lobjAux);
 		try
 		{
