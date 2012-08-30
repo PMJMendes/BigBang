@@ -102,6 +102,12 @@ public class CreateReceipt
 
 			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
+			if ( lobjAux.isReverseCircuit() )
+			{
+				lobjAux.setAt(4, null);
+				lobjAux.setAt(5, null);
+				lobjAux.setAt(6, null);
+			}
 			for ( i = 3; i < 8; i++ )
 				if ( lobjAux.getAt(i) != null )
 					lobjAux.setAt(i, ((BigDecimal)lobjAux.getAt(i)).abs());
