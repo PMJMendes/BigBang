@@ -48,7 +48,7 @@ where p.FKSubLine='264279D9-A946-4209-AE35-9EE90118F78B';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, null) Value,
+isnull(case s.vcapital when 0 then null else cast(s.vcapital as nvarchar(250)) end, null) Value,
 p.PK FKPolicy, '6DD51C81-C07B-41CC-8376-9FE200B9570A' FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -116,7 +116,7 @@ where p.FKSubLine='3DD40BED-A453-453F-8F0D-9EE90118EFAB';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, null) Value,
+isnull(case s.vcapital when 0 then null else cast(s.vcapital as nvarchar(250)) end, null) Value,
 p.PK FKPolicy, 'C00C25DE-0127-467A-AD92-9F9601496529' FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -260,7 +260,7 @@ where p.FKSubLine='3C85B935-B33E-4C86-AD0C-9EE90118E58F';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, null) Value,
+isnull(case s.vcapital when 0 then null else cast(s.vcapital as nvarchar(250)) end, null) Value,
 p.PK FKPolicy, '92BB55A6-ECB1-485B-BA01-9FE200BDA884' FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -560,7 +560,7 @@ where p.FKSubLine='7A545EC7-36AC-4228-9D36-9EE90119060F';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, null) Value,
+isnull(case s.vcapital when 0 then null else cast(s.vcapital as nvarchar(250)) end, null) Value,
 p.PK FKPolicy, '06E3329B-A0D6-4A48-9140-9F96014A1518' FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -1115,7 +1115,7 @@ where p.FKSubLine='8572FE00-D359-437A-8359-9EE901194A05';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, null) Value,
+isnull(case s.vcapital when 0 then null else cast(s.vcapital as nvarchar(250)) end, null) Value,
 p.PK FKPolicy, '766D67E6-8785-48CA-AEA0-9FE200BFC011' FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -1130,7 +1130,7 @@ where p.FKSubLine='8572FE00-D359-437A-8359-9EE901194A05';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(cast(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as float) as nvarchar(250)), null) Value,
+isnull(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, 2-ISNULL(s.pertaxa, 2)) end as nvarchar(250)), null) Value,
 p.PK FKPolicy, '6B9B4E2A-07C2-400A-ADEC-9F96014EDF9B' FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -1273,7 +1273,7 @@ where p.FKSubLine='12D8E75F-2C36-4359-ABD7-9EE901194453';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, null) Value,
+isnull(case s.vcapital when 0 then null else cast(s.vcapital as nvarchar(250)) end, null) Value,
 p.PK FKPolicy, '54DBBC29-6DB2-44D9-9A24-9F96014F3407' FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
