@@ -56,6 +56,9 @@ Este código assume bué coisas:
 
 		lobjTemplate = Template.GetInstance(Engine.getCurrentNameSpace(), GetTemplateID());
 		lobjFile = lobjTemplate.getFile();
+		
+		if ( "application/msword".equals(lobjFile.getContentType()) )
+			return GenerateAsDoc(lobjFile, parrContents, parrTables);
 
 		if ( "application/vnd.oasis.opendocument.text".equals(lobjFile.getContentType()) )
 			return GenerateAsODT(lobjFile, parrContents, parrTables);
@@ -66,7 +69,7 @@ Este código assume bué coisas:
 		throw new BigBangJewelException("Unrecognized template format.");
 	}
 
-	private FileXfer GenerateAsODT(FileXfer lobjFile, HashMap<String, String> parrContents, String[][][] parrTables)
+	private FileXfer GenerateAsDoc(FileXfer lobjFile, HashMap<String, String> parrContents, String[][][] parrTables)
 		throws BigBangJewelException
 	{
 		XTextDocument lobjDoc;
@@ -125,8 +128,71 @@ Este código assume bué coisas:
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		return OOConnector.getDocFromOODoc(lobjDoc, lobjFile.getFileName());
+		
+	}
+
+	private FileXfer GenerateAsODT(FileXfer lobjFile, HashMap<String, String> parrContents, String[][][] parrTables)
+		throws BigBangJewelException
+	{
+		XTextDocument lobjDoc;
+		XIndexAccess larrTables;
+		XTextTable lobjTable;
+		XTableRows larrRows;
+		XCellRange larrCells;
+		XCell lobjCell;
+		XText lobjText;
+		XReplaceable lobjReplacer;
+		XReplaceDescriptor lobjDescriptor;
+		int i, j, k;
+
+		lobjDoc = OOConnector.getODTFromBytes(lobjFile.getData());
+		try
+		{
+			if ( parrTables != null )
+			{
+				larrTables = UnoRuntime.queryInterface(XIndexAccess.class,
+						UnoRuntime.queryInterface(XTextTablesSupplier.class, lobjDoc).getTextTables());
+	
+				for ( i = 0; (i < parrTables.length) && (i < larrTables.getCount()); i++ )
+				{
+					lobjTable = UnoRuntime.queryInterface(XTextTable.class, larrTables.getByIndex(i));
+					larrRows = lobjTable.getRows();
+					if ( parrTables[i].length >= larrRows.getCount() )
+						larrRows.insertByIndex(larrRows.getCount(), parrTables[i].length - larrRows.getCount() + 1);
+					larrCells = UnoRuntime.queryInterface(XCellRange.class, lobjTable);
+					for ( j = 0; j < parrTables[i].length; j++ )
+					{
+						for ( k = 0; k < parrTables[i][j].length; k++ )
+						{
+							lobjCell = larrCells.getCellByPosition(k, j + 1);
+							lobjText = UnoRuntime.queryInterface(XText.class, lobjCell);
+							lobjText.setString(parrTables[i][j][k]);
+						}
+					}
+				}
+			}
+
+			if ( parrContents != null )
+			{
+				lobjReplacer = UnoRuntime.queryInterface(XReplaceable.class, lobjDoc);
+				lobjDescriptor = lobjReplacer.createReplaceDescriptor();
+
+				for ( String lstrKey : parrContents.keySet() )
+				{
+					lobjDescriptor.setSearchString("{{" + lstrKey + "}}");
+					lobjDescriptor.setReplaceString(parrContents.get(lstrKey));
+					lobjReplacer.replaceAll(lobjDescriptor);
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
 //		return OOConnector.getFileFromDoc(lobjDoc, lobjFile.getFileName());
-		return OOConnector.getPDFFromDoc(lobjDoc, lobjFile.getFileName());
+		return OOConnector.getPDFFromOODoc(lobjDoc, lobjFile.getFileName());
 	}
 
 	private FileXfer GenerateAsDocX(FileXfer pobjFile, HashMap<String, String> parrContents, String[][][] parrTables)

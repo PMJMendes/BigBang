@@ -57,6 +57,26 @@ public class PrintConnector
 		}
 	}
 
+	public static void printDoc(FileXfer pobjFile)
+		throws BigBangJewelException
+	{
+		XTextDocument lobjDoc;
+		FileXfer lobjPDFFile;
+		PDDocument lobjPDF;
+
+		try
+		{
+			lobjDoc = OOConnector.getDocFromBytes(pobjFile.getData());
+			lobjPDFFile = OOConnector.getPDFFromOODoc(lobjDoc, pobjFile.getFileName());
+			lobjPDF = PDDocument.load(new ByteArrayInputStream(lobjPDFFile.getData()));
+			finalPrint(lobjPDF);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
 	public static void printODT(FileXfer pobjFile)
 		throws BigBangJewelException
 	{
@@ -74,8 +94,8 @@ public class PrintConnector
 
 		try
 		{
-			lobjDoc = OOConnector.getDocFromBytes(pobjFile.getData());
-			lobjPDFFile = OOConnector.getPDFFromDoc(lobjDoc, pobjFile.getFileName());
+			lobjDoc = OOConnector.getODTFromBytes(pobjFile.getData());
+			lobjPDFFile = OOConnector.getPDFFromOODoc(lobjDoc, pobjFile.getFileName());
 			lobjPDF = PDDocument.load(new ByteArrayInputStream(lobjPDFFile.getData()));
 			finalPrint(lobjPDF);
 
@@ -165,6 +185,9 @@ public class PrintConnector
 	public static void printFile(FileXfer pobjFile)
 		throws BigBangJewelException
 	{
+		if ( "application/msword".equals(pobjFile.getContentType()) )
+			printDoc(pobjFile);
+
 		if ( "application/vnd.oasis.opendocument.text".equals(pobjFile.getContentType()) )
 			printODT(pobjFile);
 

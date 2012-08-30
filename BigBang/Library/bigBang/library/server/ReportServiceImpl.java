@@ -42,6 +42,9 @@ public class ReportServiceImpl
         MasterDB ldb;
         ResultSet lrsObjects;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		larrAux = new ArrayList<ReportItem>();
 
 		try
@@ -136,6 +139,9 @@ public class ReportServiceImpl
         MasterDB ldb;
         ResultSet lrsObjects;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		larrAux = new ArrayList<PrintSet>();
 
 		try
@@ -203,6 +209,9 @@ public class ReportServiceImpl
 		IEntity lrefTransactions;
         MasterDB ldb;
         ResultSet lrsObjects;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		larrAux = new ArrayList<TransactionSet>();
 
