@@ -8,6 +8,7 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.IncomingMessage;
 import bigBang.definitions.shared.ExternalInfoRequest.Closing;
 import bigBang.definitions.shared.ExternalInfoRequest.Incoming;
 import bigBang.definitions.shared.ExternalInfoRequest.Outgoing;
@@ -54,6 +55,7 @@ public class ExternRequestServiceImpl
 		lobjResult.parentDataTypeId = lobjScript.GetDataType().toString();
 		lobjResult.subject = (String)lobjRequest.getAt(1);
 		lobjResult.message.notes = lobjRequest.getText();
+		lobjResult.message.kind = ( lobjRequest.getAt(5) == null ? IncomingMessage.Kind.NOTE : IncomingMessage.Kind.EMAIL );
 		lobjResult.originalFrom = (String)lobjRequest.getAt(3);
 		lobjResult.fromInfoId = ( lobjRequest.getAt(5) == null ? null : ((UUID)lobjRequest.getAt(5)).toString() );
 		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(4)).getTime() -
