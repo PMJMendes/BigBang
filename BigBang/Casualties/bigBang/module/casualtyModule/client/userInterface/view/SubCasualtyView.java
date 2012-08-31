@@ -112,6 +112,11 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 			protected void onInsurerInfoRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.INFO_OR_DOCUMENT_REQUEST));
 			}
+
+			@Override
+			protected void onMarkNotificationSent() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.MARK_NOTIFICATION_SENT));
+			}
 		};
 		formWrapper.add(this.toolbar);
 
@@ -182,6 +187,11 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	@Override
 	public void allowRejectClose(boolean allow){
 		this.toolbar.allowRejectClose(allow);
+	}
+	
+	@Override
+	public void allowMarkNotificationSent(boolean allow){
+		toolbar.allowMarkNotificationSent(allow);
 	}
 
 	@Override

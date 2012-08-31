@@ -1,5 +1,6 @@
 package bigBang.module.casualtyModule.client.userInterface;
 
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
@@ -10,12 +11,14 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 	protected MenuItem delete, markForClosing, close, rejectClose;
 	protected MenuItem internalInfoRequest;
 	protected MenuItem externalInfoRequesT;
+	protected MenuItem markNotificationSent;
 
 	public SubCasualtyOperationsToolbar(){
 		hideAll();
 		showItem(SUB_MENU.EDIT, true);
 		showItem(SUB_MENU.REQUESTS, true);
 		showItem(SUB_MENU.ADMIN, true);
+		showItem(SUB_MENU.EXECUTE, true);
 
 		markForClosing = new MenuItem("Marcar para Encerramento", new Command() {
 
@@ -72,7 +75,19 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 			}
 		});
 		addItem(SUB_MENU.REQUESTS, externalInfoRequesT);
+		
+		markNotificationSent = new MenuItem("Marcar Participação Enviada", new Command() {
+			
+			@Override
+			public void execute() {
+				onMarkNotificationSent();
+			}
+		});
+		
+		addItem(SUB_MENU.EXECUTE, markNotificationSent);
 	}
+
+	protected abstract void onMarkNotificationSent();
 
 	protected abstract void onInsurerInfoRequest();
 	
@@ -112,6 +127,10 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 
 	public void allowInsurerInfoRequest(boolean hasPermission) {
 		externalInfoRequesT.setEnabled(hasPermission);
+	}
+	
+	public void allowMarkNotificationSent(boolean hasPermission){
+		markNotificationSent.setEnabled(hasPermission);
 	}
 
 }

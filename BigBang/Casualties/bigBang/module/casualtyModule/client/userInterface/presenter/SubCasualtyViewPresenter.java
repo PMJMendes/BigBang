@@ -45,7 +45,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		MARK_FOR_CLOSING,
 		CLOSE,
 		REJECT_CLOSE,
-		DELETE, INFO_OR_DOCUMENT_REQUEST, EXTERNAL_REQUEST
+		DELETE, INFO_OR_DOCUMENT_REQUEST, EXTERNAL_REQUEST, MARK_NOTIFICATION_SENT
 	}
 
 	public static interface Display {
@@ -55,7 +55,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
-		
+
 		//PERMISSIONS
 		void clearAllowedPermissions();
 		void setSaveModeEnabled(boolean enabled);
@@ -64,7 +64,8 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		void allowMarkForClosing(boolean allow);
 		void allowClose(boolean allow);
 		void allowRejectClose(boolean allow);
-
+		void allowMarkNotificationSent(boolean allow);
+		
 		Widget asWidget();
 		void allowInfoOrDocumentRequest(boolean hasPermission);
 		void allowInsurerInfoRequest(boolean hasPermission);
@@ -154,6 +155,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 				case INFO_OR_DOCUMENT_REQUEST:
 					onInfoOrDocumentRequest();
 					break;
+				case MARK_NOTIFICATION_SENT:
+					markNotificationSent(view.getForm().getInfo().id);
+					break;
 				}
 			}
 		});
@@ -185,6 +189,31 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		view.getDocumentsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+	}
+
+	protected void markNotificationSent(String subCasualtyId) {
+		
+		broker.markNotificationSent(subCasualtyId, new ResponseHandler<SubCasualty>(){
+			@Override
+			public void onResponse(SubCasualty response) {
+				onMarkNotificationSentSuccess();
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onMarkNotificationSentFailed();
+			}
+		});
+	}
+
+	protected void onMarkNotificationSentFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Falhou envio da participação"), TYPE.TRAY_NOTIFICATION));
+		
+	}
+
+	protected void onMarkNotificationSentSuccess() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Participação enviada"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();		
 	}
 
 	protected void showDocument(String id) {
@@ -241,7 +270,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 						view.allowMarkForClosing(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.MARK_CLOSE_SUB_CASUALTY));
 						view.allowClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CLOSE_SUB_CASUALTY));
 						view.allowRejectClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY));
-						
+						view.allowMarkNotificationSent(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.MARK_NOTIFICATION_SENT));
 						view.getForm().setReadOnly(true);
 					}
 
@@ -327,7 +356,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 
 	protected void onCancel(){
 		SubCasualty subCasualty = view.getForm().getValue();
-		
+
 		if(subCasualty.id == null) {
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 			item.removeParameter("subcasualtyid");
@@ -340,7 +369,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 
 	protected void onDelete(){
 		SubCasualty subCasualty = view.getForm().getValue();
-		
+
 		if(subCasualty.id == null) {
 			onCancel();
 		}else{
@@ -355,7 +384,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		item.setParameter("show", "subcasualtymarkforclosing");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onClose(){
 		broker.closeSubCasualty(view.getForm().getValue().id, new ResponseHandler<Void>() {
 
@@ -370,13 +399,13 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	protected void onRejectClosing(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "subcasualtyrejectclose");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void showSubProcess(BigBangProcess process){
 		String type = process.dataTypeId;
 
@@ -417,11 +446,11 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		item.setParameter("subcasualtyid", subCasualty.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onCreateSubCasualtyFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Guardar o Sub-Sinistro"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	protected void onGetSubCasualtyFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o Sub-Sinistro"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -429,12 +458,12 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onCloseSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Sub-Sinistro Encerrado com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
-	
+
 	protected void onCloseFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Encerrar o Sub-Sinistro"), TYPE.ALERT_NOTIFICATION));
 	}

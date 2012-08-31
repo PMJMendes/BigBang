@@ -246,8 +246,13 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 					result.id = getFinalMapping(result.id);
 					incrementDataVersion();
 					for(DataBrokerClient<Exercise> client : clients) {
-						((ExerciseDataBrokerClient)client).updateExercise(result);
-						((ExerciseDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+						if(client instanceof SubPolicyExerciseDataBrokerClient){
+							//DO NOTHING
+						}
+						else{
+							((ExerciseDataBrokerClient)client).updateExercise(result);
+							((ExerciseDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+						}
 					}
 					handler.onResponse(result);
 				}

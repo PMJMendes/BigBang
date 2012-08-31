@@ -313,4 +313,31 @@ implements SubCasualtyDataBroker{
 
 	}
 
+	@Override
+	public void markNotificationSent(String subCasualtyId,
+			final ResponseHandler<SubCasualty> responseHandler) {
+service.sendNotification(subCasualtyId, new BigBangAsyncCallback<SubCasualty>() {
+
+	@Override
+	public void onResponseSuccess(SubCasualty result) {
+		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.MARK_NOTIFICATION_SENT, result.id));
+		responseHandler.onResponse(result);
+		
+	}
+	
+	@Override
+	public void onResponseFailure(Throwable caught) {
+		responseHandler.onError(new String[]{
+				new String("Could not send notification")	
+		});
+		super.onResponseFailure(caught);
+	}
+	
+	
+
+	
+	
+});		
+	}
+
 }

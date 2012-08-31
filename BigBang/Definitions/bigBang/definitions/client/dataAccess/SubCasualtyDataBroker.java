@@ -32,5 +32,8 @@ public interface SubCasualtyDataBroker extends DataBrokerInterface<SubCasualty> 
 	public void closeSubCasualty(String subCasualtyId, ResponseHandler<Void> handler);
 	
 	public void rejectCloseSubCasualty(String subCasualtyId, String reason, ResponseHandler<Void> handler);
+
+	public void markNotificationSent(String subCasualtyId,
+			ResponseHandler<SubCasualty> responseHandler);
 	
 }
