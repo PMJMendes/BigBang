@@ -2301,7 +2301,6 @@ public class ReceiptServiceImpl
 					lobjPolicy = (Policy)lobjProcess.GetParent().GetParent().GetData();
 					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
 				}
-				lobjCompany = lobjPolicy.GetCompany();
 				try
 				{
 					lobjSubLine = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubLine),
@@ -2332,6 +2331,7 @@ public class ReceiptServiceImpl
 					lobjLine = null;
 					lobjCategory = null;
 				}
+				lobjCompany = lobjPolicy.GetCompany();
 			}
 			catch (Throwable e)
 			{

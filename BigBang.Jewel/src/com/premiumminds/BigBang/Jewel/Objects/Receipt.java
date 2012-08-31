@@ -23,6 +23,8 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPayment;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingPayment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MediatorBase;
 
 public class Receipt
@@ -73,6 +75,18 @@ public class Receipt
 	    {
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public static GenericElement[] printReportPendingPayment(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return ReceiptPendingPayment.doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportHistoryPayment(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return ReceiptHistoryPayment.doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)
@@ -341,6 +355,30 @@ public class Receipt
     	{
     		throw new BigBangJewelException(e.getMessage(), e);
 		}
+    }
+
+    public SubPolicy getSubPolicy()
+    	throws BigBangJewelException
+    {
+    	IProcess lobjProcess;
+
+    	try
+    	{
+			lobjProcess = getProcess().GetParent();
+
+	    	if ( Constants.ProcID_SubPolicy.equals(lobjProcess.GetScriptID()) )
+	    		return (SubPolicy)lobjProcess.GetData();
+		}
+    	catch (BigBangJewelException e)
+    	{
+    		throw e;
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	return null;
     }
 
     public Policy getDirectPolicy()
