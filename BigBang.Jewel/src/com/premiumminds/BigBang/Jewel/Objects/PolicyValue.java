@@ -7,6 +7,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
@@ -71,6 +72,20 @@ public class PolicyValue
 	public String GetValue()
 	{
 		return (String)getAt(0);
+	}
+
+	public void SetValue(String lstrValue, SQLServer pdb)
+		throws BigBangJewelException
+	{
+		try
+		{
+			setAt(0, lstrValue);
+			SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	public UUID GetObjectID()
