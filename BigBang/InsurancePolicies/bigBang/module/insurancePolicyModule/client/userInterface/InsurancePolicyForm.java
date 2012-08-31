@@ -44,7 +44,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected ExpandableListBoxFormField duration;
 	protected ExpandableListBoxFormField fractioning;
 	protected NumericTextBoxFormField premium;
-	protected NumericTextBoxFormField agentPercentage;
 	protected ExpandableListBoxFormField operationalProfile;
 	
 	protected FormViewSection coInsurersSection;
@@ -88,8 +87,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		premium = new NumericTextBoxFormField("Prémio Comercial Anual", true);
 		premium.setFieldWidth("175px");
 		premium.setUnitsLabel("€");
-		agentPercentage = new NumericTextBoxFormField("Comissão", false);
-		agentPercentage.setUnitsLabel("%");
 		operationalProfile = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OPERATIONAL_PROFILES, "Perfil Operational");
 		operationalProfile.setEmptyValueString("O mesmo do Cliente");
 		caseStudy = new CheckBoxFormField("Case Study");
@@ -131,7 +128,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		//CO-INSURANCE
 
 		FormField<?>[] group4 = new FormField<?>[]{
-				agentPercentage,
 				coInsurance,
 				caseStudy
 		};
@@ -285,7 +281,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			result.durationId = duration.getValue();
 			result.fractioningId = fractioning.getValue();
 			result.premium = premium.getValue();
-			result.agentPercentage = agentPercentage.getValue();
 			result.caseStudy = caseStudy.getValue();
 			result.operationalProfileId = operationalProfile.getValue();
 			result.notes = notes.getValue();
@@ -340,7 +335,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 			this.fractioning.setValue(info.fractioningId);
 			this.premium.setValue(info.premium);
-			this.agentPercentage.setValue(info.agentPercentage);
 
 			if(info.clientId != null) {
 				ClientProcessBroker clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));

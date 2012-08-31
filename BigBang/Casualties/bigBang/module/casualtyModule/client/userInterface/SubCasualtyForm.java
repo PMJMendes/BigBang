@@ -340,7 +340,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				});
 			}
 			insurerProcessNumber.setValue(info.insurerProcessNumber);
-			status.setValue(info.isOpen ? "Aberto" : "Fechado");
+			if(info.id != null){
+				status.setValue(info.isOpen ? "Aberto" : "Fechado");
+			}			
 			hasJudicial.setValue(info.hasJudicial);
 			notes.setValue(info.text);
 			internalNotes.setValue(info.internalNotes);
