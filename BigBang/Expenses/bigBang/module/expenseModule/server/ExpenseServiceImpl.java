@@ -1281,7 +1281,7 @@ public class ExpenseServiceImpl
 		lobjResult.referenceNumber = ( lobjParent == null ? null : lobjParent.getLabel() );
 		lobjResult.expenseDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		lobjResult.insuredObjectId = ( lobjInsured == null ? null : lobjInsured.getKey().toString() );
-		lobjResult.insuredObjectName = ( lobjInsured == null ? (String)parrValues[7] : lobjInsured.getLabel() );
+		lobjResult.insuredObjectName = ( lobjInsured == null ? (String)parrValues[8] : lobjInsured.getLabel() );
 		lobjResult.coverageId = ( lobjPolCov == null ? null : lobjPolCov.getKey().toString() );
 		lobjResult.coverageName = ( lobjCoverage == null ? null : lobjCoverage.getLabel() );
 		lobjResult.value = ((BigDecimal)parrValues[7]).doubleValue();
