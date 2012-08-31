@@ -2735,7 +2735,7 @@ public class InsurancePolicyServiceImpl
 			break;
 		}
 		lobjResult.premium = (lobjPolicy.getAt(14) == null ? null : ((BigDecimal)lobjPolicy.getAt(14)).doubleValue());
-		lobjResult.operationalProfileId = (lobjPolicy.getAt(19) == null ? null : ((UUID)lobjPolicy.getAt(19)).toString());
+		lobjResult.operationalProfileId = (lobjPolicy.getAt(18) == null ? null : ((UUID)lobjPolicy.getAt(18)).toString());
 		lobjResult.docushare = (String)lobjPolicy.getAt(15);
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
 

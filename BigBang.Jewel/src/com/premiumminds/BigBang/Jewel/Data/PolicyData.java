@@ -94,7 +94,7 @@ public class PolicyData
 		mstrDocuShare = (String)pobjSource.getAt(15);
 //		unusedMigrationID = (Integer)pobjSource.getAt(16);
 		midClient = (UUID)pobjSource.getAt(17);
-		midProfile = (UUID)pobjSource.getAt(19);
+		midProfile = (UUID)pobjSource.getAt(18);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -120,7 +120,7 @@ public class PolicyData
 //			pobjDest.setAt(15, mstrDocuShare); JMMM: Nunca gravar por cima disto
 //			pobjDest.setAt(16, unusedMigrationID); JMMM: Isto não é usado pela aplicação
 			pobjDest.setAt(17, midClient);
-			pobjDest.setAt(19, midProfile);
+			pobjDest.setAt(18, midProfile);
 		}
 		catch (Throwable e)
 		{

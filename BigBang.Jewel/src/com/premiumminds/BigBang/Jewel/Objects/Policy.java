@@ -785,10 +785,10 @@ public class Policy
     public UUID getProfile()
     	throws BigBangJewelException
     {
-    	if ( getAt(19) == null )
+    	if ( getAt(18) == null )
     		return GetClient().getProfile();
 
-    	return (UUID)getAt(19);
+    	return (UUID)getAt(18);
     }
 
     public BigDecimal getPercentOverride()

@@ -290,7 +290,7 @@ public class Receipt
     	IProcess lobjProcess;
     	Client lobjClient;
 
-    	lidProfile = (UUID)getAbsolutePolicy().getAt(19);
+    	lidProfile = (UUID)getAbsolutePolicy().getProfile();
 
     	if ( lidProfile == null )
     	{

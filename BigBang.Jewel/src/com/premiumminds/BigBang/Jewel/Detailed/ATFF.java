@@ -73,7 +73,7 @@ public class ATFF
 		if ( lstrAux == null )
 			ldblProv = null;
 		else
-			ldblProv = new BigDecimal(lstrAux);
+			ldblProv = new BigDecimal(lstrAux.replaceAll("\\.", "").replaceAll(",", "."));
 
 		larrMonths = new BigDecimal[12];
 
@@ -89,7 +89,7 @@ public class ATFF
 				if ( llngLast >= 0 )
 					throw new PolicyCalculationException("Erro: O mês " + llngLast + " não está preenchido.");
 
-				larrMonths[i] = new BigDecimal(lstrAux);
+				larrMonths[i] = new BigDecimal(lstrAux.replaceAll("\\.", "").replaceAll(",", "."));
 				ldblTotal = ldblTotal.add(larrMonths[i]);
 				llngNum++;
 			}
@@ -116,7 +116,7 @@ public class ATFF
 		lstrBuilder.append("). Total calculado: ");
 
 		ldblTotal = ldblTotal.multiply(ldblBCalc).divide(new BigDecimal(llngNum)).setScale(2, RoundingMode.HALF_UP);
-		lstrAux = String.format("%,.2f", (ldblTotal));
+		lstrAux = String.format("%,.2f", (ldblTotal)).replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",");
 		marrValues[llngResult].SetValue(lstrAux, pdb);
 		lstrBuilder.append(lstrAux);
 		lstrBuilder.append("€. ");
@@ -128,8 +128,8 @@ public class ATFF
 		}
 		else
 		{
-			ldblTotal = ldblProv.subtract(ldblTotal);
-			lstrAux = String.format("%,.2f", (ldblTotal));
+			ldblTotal = ldblTotal.subtract(ldblProv);
+			lstrAux = String.format("%,.2f", (ldblTotal)).replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",");
 			lstrBuilder.append("Desvio calculado: ");
 			lstrBuilder.append(lstrAux);
 			lstrBuilder.append("€.");
