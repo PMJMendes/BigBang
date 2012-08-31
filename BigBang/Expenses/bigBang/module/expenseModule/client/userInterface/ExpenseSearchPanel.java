@@ -52,7 +52,7 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 
 		public Entry(ExpenseStub value) {
 			super(value);
-			setHeight("55px");
+			setHeight("60px");
 			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 
@@ -80,6 +80,7 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 					container.add(numberLabel);
 					container.add(clientLabel);
 					container.add(policyCoverageLabel);
+					container.add(objectLabel);
 
 					setWidget(container);
 
@@ -90,7 +91,7 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 					valuesContainer.add(dateLabel);
 					valuesContainer.setCellVerticalAlignment(dateLabel, HasVerticalAlignment.ALIGN_TOP);
 					valueLabel = getFormatedLabel();
-					valuesContainer.setHeight("45px");
+					valuesContainer.setHeight("50px");
 					valuesContainer.add(valueLabel);
 					valuesContainer.setCellVerticalAlignment(valueLabel, HasVerticalAlignment.ALIGN_BOTTOM);
 					valuesContainer.setCellHorizontalAlignment(valueLabel, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -100,10 +101,9 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 					statusIcon.setTitle(value.isOpen ? "Aberta" : "Fechada");
 					VerticalPanel statusContainer = new VerticalPanel();
 					statusContainer.add(statusIcon);
-					statusContainer.setHeight("45px");
+					statusContainer.setHeight("50px");
 					
 					statusContainer.setCellVerticalAlignment(statusIcon, HasVerticalAlignment.ALIGN_MIDDLE);
-					rightWrapper.add(valuesContainer);
 					rightWrapper.add(valuesContainer);
 					rightWrapper.add(statusContainer);
 					setRightWidget(rightWrapper);
@@ -146,9 +146,9 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 				}
 				else{
 					dateLabel.getElement().getStyle().setColor("#0066FF");
-					objectLabel.getElement().getStyle().setColor("#0066FF");
-					policyCoverageLabel.getElement().getStyle().setColor("gray");
-					clientLabel.getElement().getStyle().setColor("gray");
+					objectLabel.getElement().getStyle().setColor("gray");
+					policyCoverageLabel.getElement().getStyle().setColor("#0066FF");
+					clientLabel.getElement().getStyle().setColor("black");
 					valueLabel.getElement().getStyle().setColor("black");
 					numberLabel.getElement().getStyle().setColor("black");
 				}
