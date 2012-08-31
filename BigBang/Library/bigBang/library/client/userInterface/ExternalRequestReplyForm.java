@@ -30,7 +30,8 @@ public class ExternalRequestReplyForm extends FormView<Outgoing> {
 		Outgoing result = getValue();
 		if(result != null) {
 			result.isFinal = isFinal.getValue();
-			result.replylimit = replyLimit.getValue().intValue();
+			if(result.replylimit != null)
+				result.replylimit = replyLimit.getValue().intValue();
 			result.message = message.getValue();
 		}
 		return result;

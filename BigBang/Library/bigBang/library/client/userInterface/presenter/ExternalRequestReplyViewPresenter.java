@@ -122,10 +122,11 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 					@Override
 					public void onResponseSuccess(Contact[] result) {
 						view.setAvailableContacts(result);
-						Outgoing request  = view.getForm().getInfo();
+						Outgoing request  = view.getForm().getInfo(); 
 						OutgoingMessage message = request == null ? null : request.message;
 						if(message != null) {
 							message.toContactInfoId = externalRequestResult.fromInfoId;
+							request.message = message;
 							view.getForm().setInfo(request);
 						}
 					}
