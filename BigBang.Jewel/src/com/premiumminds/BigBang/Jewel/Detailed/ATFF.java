@@ -108,7 +108,7 @@ public class ATFF
 		}
 
 		lstrBuilder = new StringBuilder();
-		
+
 		lstrBuilder.append("Cálculos efectuados para o exercício de ");
 		lstrBuilder.append(marrExercises[marrExercises.length - 1].getLabel());
 		lstrBuilder.append(": (N. de meses: ");
