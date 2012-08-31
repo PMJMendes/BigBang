@@ -32,7 +32,7 @@ public class Vida_Risco_Individual
 
 		if ( marrObjects == null )
 		{
-			pstrBuilder.append("Esta modalidade de apólice obriga a ter objectos seguros, consoante o indicado no campo 'Nº de Cabeças'.\n");
+			pstrBuilder.append("Esta modalidade de apólice obriga a ter unidades de risco, consoante o indicado no campo 'Nº de Cabeças'.\n");
 			return;
 		}
 
@@ -59,10 +59,10 @@ public class Vida_Risco_Individual
 		}
 
 		if ( "Uma Cabeça".equals(lobjAux.getLabel()) && (marrObjects.length != 1) )
-			pstrBuilder.append("Esta modalidade de apólice obriga a ter um objecto seguro, de acordo com o indicado no campo 'Nº de Cabeças'.\n");
+			pstrBuilder.append("Esta modalidade de apólice obriga a ter uma unidade de risco, de acordo com o indicado no campo 'Nº de Cabeças'.\n");
 
 		if ( "Duas Cabeças".equals(lobjAux.getLabel()) && (marrObjects.length != 2) )
-			pstrBuilder.append("Esta modalidade de apólice obriga a ter dois objectos seguros, de acordo com o indicado no campo 'Nº de Cabeças'.\n");
+			pstrBuilder.append("Esta modalidade de apólice obriga a ter duas unidades de risco, de acordo com o indicado no campo 'Nº de Cabeças'.\n");
 	}
 
 	protected void InnerSubValidate(StringBuilder pstrBuilder, String pstrLineBreak)
