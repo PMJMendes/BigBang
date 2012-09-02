@@ -39,9 +39,9 @@ public class ReceiptListingsBase
 		{
 			ldblTotal = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM) == null ? new BigDecimal(0) :
 					(BigDecimal)parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM)));
-			ldblTotalCom = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.COMMISSIONS) == null ? new BigDecimal(0) :
+			ldblTotalCom = ldblTotalCom.add((parrReceipts[i].getAt(Receipt.I.COMMISSIONS) == null ? new BigDecimal(0) :
 					(BigDecimal)parrReceipts[i].getAt(Receipt.I.COMMISSIONS)));
-			ldblTotalRetro = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.RETROCESSIONS) == null ? new BigDecimal(0) :
+			ldblTotalRetro = ldblTotalRetro.add((parrReceipts[i].getAt(Receipt.I.RETROCESSIONS) == null ? new BigDecimal(0) :
 					(BigDecimal)parrReceipts[i].getAt(Receipt.I.RETROCESSIONS)));
 		}
 
@@ -96,9 +96,9 @@ public class ReceiptListingsBase
 		{
 			ldblTotal = ldblTotal.add((parrReceipts.get(i).getAt(Receipt.I.TOTALPREMIUM) == null ? new BigDecimal(0) :
 					(BigDecimal)parrReceipts.get(i).getAt(Receipt.I.TOTALPREMIUM)));
-			ldblTotalCom = ldblTotal.add((parrReceipts.get(i).getAt(Receipt.I.COMMISSIONS) == null ? new BigDecimal(0) :
+			ldblTotalCom = ldblTotalCom.add((parrReceipts.get(i).getAt(Receipt.I.COMMISSIONS) == null ? new BigDecimal(0) :
 					(BigDecimal)parrReceipts.get(i).getAt(Receipt.I.COMMISSIONS)));
-			ldblTotalRetro = ldblTotal.add((parrReceipts.get(i).getAt(Receipt.I.RETROCESSIONS) == null ? new BigDecimal(0) :
+			ldblTotalRetro = ldblTotalRetro.add((parrReceipts.get(i).getAt(Receipt.I.RETROCESSIONS) == null ? new BigDecimal(0) :
 					(BigDecimal)parrReceipts.get(i).getAt(Receipt.I.RETROCESSIONS)));
 		}
 
