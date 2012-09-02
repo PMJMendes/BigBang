@@ -214,9 +214,11 @@ ViewPresenter {
 					onCancelEdit();
 					break;
 				case SAVE:
-					InsurancePolicy info = view.getForm().getInfo();
-					view.getForm().setReadOnly(true);
-					savePolicy(info);
+					if(view.getForm().validate()) {
+						InsurancePolicy info = view.getForm().getInfo();
+						view.getForm().setReadOnly(true);
+						savePolicy(info);
+					}
 					break;
 				case DELETE:
 					delete();

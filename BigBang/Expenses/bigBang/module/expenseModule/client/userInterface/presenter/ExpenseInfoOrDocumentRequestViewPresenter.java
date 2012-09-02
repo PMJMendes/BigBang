@@ -22,12 +22,12 @@ import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewP
 public class ExpenseInfoOrDocumentRequestViewPresenter extends InfoOrDocumentRequestViewPresenter<Expense>{
 
 	private ExpenseDataBroker broker;
-	
+
 	public ExpenseInfoOrDocumentRequestViewPresenter(Display<Expense> view) {
 		super(view);
 		broker = (ExpenseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE);
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder){
 		parameterHolder.setParameter("ownertypeid", BigBangConstants.EntityIds.EXPENSE);
@@ -46,12 +46,12 @@ public class ExpenseInfoOrDocumentRequestViewPresenter extends InfoOrDocumentReq
 	@Override
 	protected void showOwner(String ownerId, String ownerTypeId) {
 		broker.getExpense(ownerId, new ResponseHandler<Expense>() {
-			
+
 			@Override
 			public void onResponse(Expense response) {
 				view.getOwnerForm().setValue(response);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onGetOwnerFailed();
@@ -63,41 +63,41 @@ public class ExpenseInfoOrDocumentRequestViewPresenter extends InfoOrDocumentReq
 	protected void checkOwnerPermissions(String ownerId, String ownerTypeId,
 			final ResponseHandler<Boolean> handler) {
 		broker.getExpense(ownerId, new ResponseHandler<Expense>() {
-			
+
 			@Override
 			public void onResponse(Expense response) {
 				handler.onResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.CREATE_INFO_REQUEST));
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onUserLacksPermission();
 			}
 		});
-		
+
 	}
 
 	@Override
 	protected void onSend() {
-		InfoOrDocumentRequest request = view.getForm().getInfo();
-		broker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
+		if(view.getForm().validate()) {
+			InfoOrDocumentRequest request = view.getForm().getInfo();
+			broker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
 
-			@Override
-			public void onResponse(InfoOrDocumentRequest response) {
-				view.getForm().setValue(response);
-				onSendRequestSuccess();
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.popFromStackParameter("display");
-				NavigationHistoryManager.getInstance().go(item);
-			}
+				@Override
+				public void onResponse(InfoOrDocumentRequest response) {
+					view.getForm().setValue(response);
+					onSendRequestSuccess();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.popFromStackParameter("display");
+					NavigationHistoryManager.getInstance().go(item);
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onSendRequestFailed();
-			}
-		});
-		
-		
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSendRequestFailed();
+				}
+			});
+		}
 	}
 
 	@Override
@@ -142,7 +142,7 @@ public class ExpenseInfoOrDocumentRequestViewPresenter extends InfoOrDocumentReq
 		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
-	
+
+
 
 }

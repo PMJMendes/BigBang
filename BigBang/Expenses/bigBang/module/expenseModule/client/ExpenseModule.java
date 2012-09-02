@@ -16,6 +16,7 @@ import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectio
 import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipateToInsurerViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassReturnToClientViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ProofReceptionViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.SerialExpenseCreationViewPresenter;
@@ -30,6 +31,7 @@ import bigBang.module.expenseModule.client.userInterface.view.ExpenseSectionView
 import bigBang.module.expenseModule.client.userInterface.view.MassNotifyResultsClientView;
 import bigBang.module.expenseModule.client.userInterface.view.MassParticipateToInsurerView;
 import bigBang.module.expenseModule.client.userInterface.view.MassReturnToClientView;
+import bigBang.module.expenseModule.client.userInterface.view.ProofReceptionView;
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveAcceptanceView;
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveReturnView;
 import bigBang.module.expenseModule.client.userInterface.view.SerialExpenseCreationView;
@@ -174,6 +176,15 @@ public class ExpenseModule implements Module {
 			public ViewPresenter getInstance() {
 				ViewExternalInfoRequestView view = (ViewExternalInfoRequestView) GWT.create(ViewExternalInfoRequestView.class);
 				ViewPresenter presenter = new ViewExternalInfoRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("PROOF_RECEPTION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ProofReceptionView view = (ProofReceptionView) GWT.create(ProofReceptionView.class);
+				ViewPresenter presenter = new ProofReceptionViewPresenter(view);
 				return presenter;
 			}
 		});

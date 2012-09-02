@@ -22,7 +22,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	protected boolean editable = true;
 	protected Label label;
 	protected Label unitsLabel;
-	
+
 	protected HandlerRegistration handlerRegistration;
 
 	@Override
@@ -45,7 +45,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		super.onAttach();
 		getElement().getStyle().setMargin(5, Unit.PX);
 	}
-	
+
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<T> handler) {
 		handlerRegistration = addHandler(handler, ValueChangeEvent.getType());
@@ -74,7 +74,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	public void setFieldWidth(String width) {
 		((Widget)this.field).setWidth(width);
 	}
-	
+
 	public abstract void clear();
 
 	public abstract void setReadOnly(boolean readonly);
@@ -92,16 +92,14 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	}
 
 	public void setInvalid(boolean invalid){
-		if(field != null){
-			if(invalid)
-				((Widget)field).addStyleName("invalidFormField");
-			else
-				((Widget)field).removeStyleName("invalidFormField");
-		}
-		FieldValidator<?> validator = this.validator;
-		String message =  validator == null ? null : validator.getErrorMessage();
-		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
-		this.errorMessageLabel.setVisible(invalid);
+		if(invalid)
+			this.addStyleName("invalidFormField");
+		else
+			this.removeStyleName("invalidFormField");
+		//		FieldValidator<?> validator = this.validator; TODO
+		//		String message =  validator == null ? null : validator.getErrorMessage();
+		//		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
+		//		this.errorMessageLabel.setVisible(invalid);
 	}
 
 	public String getErrorMessage(){
@@ -127,11 +125,11 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 			}
 		});
 	}
-	
+
 	public boolean isMandatory(){
 		return this.validator == null ? false : this.validator.isMandatory();
 	}
-	
+
 	/**
 	 * Sets whether or not this field can be edited at all by the user
 	 * @param editable if true, the field can be edited
@@ -142,23 +140,23 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		}
 		this.editable = editable;
 	}
-	
+
 	public void showLabel(boolean show) {
 		this.label.setVisible(show);
 		if(!show){
 		}
 	}
-	
+
 	public void setUnitsLabel(String label){
 		unitsLabel.setText(label);
 	}
-	
+
 	public void setLabelText(String labelText){
 		this.label.setText(labelText);
 	}
-	
+
 	public abstract void focus();
-	
+
 	public abstract void setLabelWidth(String width);
-	
+
 }

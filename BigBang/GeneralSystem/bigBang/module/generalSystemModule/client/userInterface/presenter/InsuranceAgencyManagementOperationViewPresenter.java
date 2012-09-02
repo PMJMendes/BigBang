@@ -74,7 +74,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 	protected boolean bound = false;
 	protected Display view;
 	protected InsuranceAgencyBroker insuranceAgencyBroker;
-	
+
 	public InsuranceAgencyManagementOperationViewPresenter(View view){
 		this.insuranceAgencyBroker = ((InsuranceAgencyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY));
 		this.setView(view);
@@ -92,7 +92,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 		container.add(this.view.asWidget());
 		setup();
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		String agencyId = parameterHolder.getParameter("companyid");
@@ -101,7 +101,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 		if(inInsuranceAgencyCreation()){
 			clearNewInsuranceAgency();
 		}
-		
+
 		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageCompanies);
 		view.allowCreate(hasPermissions);
 		view.allowEdit(hasPermissions);
@@ -157,12 +157,14 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
-					InsuranceAgency info = view.getForm().getInfo();
-					view.getForm().setReadOnly(true);
-					if(info.id.equalsIgnoreCase("new"))
-						createInsuranceAgency(info);
-					else
-						saveInsuranceAgency(info);
+					if(view.getForm().validate()) {
+						InsuranceAgency info = view.getForm().getInfo();
+						view.getForm().setReadOnly(true);
+						if(info.id.equalsIgnoreCase("new"))
+							createInsuranceAgency(info);
+						else
+							saveInsuranceAgency(info);
+					}
 					break;
 				case CANCEL_EDIT:
 					if(inInsuranceAgencyCreation()){
@@ -179,7 +181,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 				}
 			}
 		});
-		
+
 		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -220,7 +222,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
@@ -256,7 +258,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 			view.getList().clearSelection();
 			view.prepareNewInsuranceAgency(agency);
 			view.getForm().setValue(agency);
-	
+
 			view.allowDelete(hasPermissions);
 			view.allowEdit(hasPermissions);
 			view.setSaveModeEnabled(hasPermissions);
@@ -385,19 +387,19 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 	private void onRefresh(){
 		insuranceAgencyBroker.requireDataRefresh();
 		insuranceAgencyBroker.getInsuranceAgencies(new ResponseHandler<InsuranceAgency[]>() {
-			
+
 			@Override
 			public void onResponse(InsuranceAgency[] response) {
 				return;
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
 			}
 		});
 	}
-	
+
 	private void onGetInsuranceAgencyFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a seguradora seleccionada"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

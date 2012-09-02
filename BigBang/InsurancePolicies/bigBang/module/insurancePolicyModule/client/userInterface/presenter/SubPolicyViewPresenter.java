@@ -151,17 +151,15 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		String parentPolicyId = parameterHolder.getParameter("policyid");
 		parentPolicyId = parentPolicyId == null ? new String() : parentPolicyId;
 
-		if (parentPolicyId.isEmpty()) {
-			onGetParentFailed();
-		} else if (subPolicyId.isEmpty()) {
+		if (subPolicyId.isEmpty()) {
 			onGetSubPolicyFailed();
 		} else if (subPolicyId.equalsIgnoreCase("new")) {
 			clearView();
 			showCreateSubPolicy(parentPolicyId);
 		} else if (this.subPolicyBroker.isTemp(subPolicyId)) {
-			showScratchPadSubPolicy(parentPolicyId, subPolicyId);
+			showScratchPadSubPolicy(subPolicyId);
 		} else {
-			showSubPolicy(parentPolicyId, subPolicyId);
+			showSubPolicy(subPolicyId);
 		}
 	}
 
@@ -384,16 +382,17 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		});
 	}
 
-	protected void showSubPolicy(String parentPolicyId, String subPolicyId) {
-		this.showParentPolicy(parentPolicyId);
+	protected void showSubPolicy(String subPolicyId) {
 		if (this.subPolicyBroker.isTemp(subPolicyId)) {
-			showScratchPadSubPolicy(parentPolicyId, subPolicyId);
+			showScratchPadSubPolicy(subPolicyId);
 		} else {
 			this.subPolicyBroker.getSubPolicy(subPolicyId,
 					new ResponseHandler<SubPolicy>() {
 
 				@Override
 				public void onResponse(SubPolicy response) {
+					showParentPolicy(response.mainPolicyId);
+
 					view.clearAllowedPermissions();
 
 					view.allowDelete(PermissionChecker
@@ -450,15 +449,14 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		}
 	}
 
-	protected void showScratchPadSubPolicy(String parentPolicyId,
-			String subPolicyId) {
+	protected void showScratchPadSubPolicy(String subPolicyId) {
 		if (subPolicyBroker.isTemp(subPolicyId)) {
-			this.showParentPolicy(parentPolicyId);
 			this.subPolicyBroker.getSubPolicy(subPolicyId,
 					new ResponseHandler<SubPolicy>() {
 
 				@Override
 				public void onResponse(SubPolicy response) {
+					showParentPolicy(response.mainPolicyId);
 					view.clearAllowedPermissions();
 
 					view.allowEdit(true);
@@ -470,7 +468,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					view.allowCreateInsuredObject(true);
 
 					view.getForm().setReadOnly(false);
-					
+
 					view.getForm().setValue(response);
 				}
 
@@ -480,7 +478,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 				}
 			});
 		} else {
-			showSubPolicy(parentPolicyId, subPolicyId);
+			showSubPolicy(subPolicyId);
 		}
 	}
 
@@ -508,57 +506,59 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSave() {
-		final SubPolicy subPolicy = view.getForm().getInfo();
+		if(view.getForm().validate()) {
+			final SubPolicy subPolicy = view.getForm().getInfo();
 
-		if (subPolicyBroker.isTemp(subPolicy.id)) {
-			saveWorkState(new ResponseHandler<Void>() {
+			if (subPolicyBroker.isTemp(subPolicy.id)) {
+				saveWorkState(new ResponseHandler<Void>() {
 
-				@Override
-				public void onResponse(Void response) {
-					subPolicyBroker.commitSubPolicy(subPolicy,
-							new ResponseHandler<SubPolicy>() {
+					@Override
+					public void onResponse(Void response) {
+						subPolicyBroker.commitSubPolicy(subPolicy,
+								new ResponseHandler<SubPolicy>() {
 
-						@Override
-						public void onResponse(SubPolicy response) {
-							onSaveSubPolicySuccess();
-							NavigationHistoryItem item = NavigationHistoryManager
-									.getInstance().getCurrentState();
-							item.setParameter("subpolicyid",
-									response.id);
-							NavigationHistoryManager.getInstance().go(
-									item);
-						}
+							@Override
+							public void onResponse(SubPolicy response) {
+								onSaveSubPolicySuccess();
+								NavigationHistoryItem item = NavigationHistoryManager
+										.getInstance().getCurrentState();
+								item.setParameter("subpolicyid",
+										response.id);
+								NavigationHistoryManager.getInstance().go(
+										item);
+							}
 
-						@Override
-						public void onError(
-								Collection<ResponseError> errors) {
-							onSaveSubPolicyError();
-						}
-					});
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onSaveSubPolicyError();
-				}
-			});
-		} else {
-			makeTemp(subPolicy, new ResponseHandler<Void>() {
-
-				@Override
-				public void onResponse(Void response) {
-					if (subPolicyBroker.isTemp(subPolicy.id)) {
-						onSave();
-					} else {
-						onError(new String[] {});
+							@Override
+							public void onError(
+									Collection<ResponseError> errors) {
+								onSaveSubPolicyError();
+							}
+						});
 					}
-				}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onGetSubPolicyFailed();
-				}
-			});
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onSaveSubPolicyError();
+					}
+				});
+			} else {
+				makeTemp(subPolicy, new ResponseHandler<Void>() {
+
+					@Override
+					public void onResponse(Void response) {
+						if (subPolicyBroker.isTemp(subPolicy.id)) {
+							onSave();
+						} else {
+							onError(new String[] {});
+						}
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onGetSubPolicyFailed();
+					}
+				});
+			}
 		}
 	}
 
@@ -941,7 +941,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onGetParentFailed() {
 		EventBus.getInstance().fireEvent(
 				new NewNotificationEvent(new Notification("",

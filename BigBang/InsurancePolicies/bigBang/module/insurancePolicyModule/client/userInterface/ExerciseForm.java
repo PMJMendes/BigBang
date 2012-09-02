@@ -157,6 +157,7 @@ public class ExerciseForm extends FormView<Exercise> {
 		//COMMON SECTION
 		commonSection = new FormViewSection("Informação Geral");
 		label = new TextBoxFormField("Identificação");
+		label.setMandatory(true);
 		label.setFieldWidth("300px");
 		startDate = new DatePickerFormField("Data de Início");
 		endDate = new DatePickerFormField("Data de Fim");

@@ -179,7 +179,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					break;
 				}
 				case SAVE:{
-					createUpdateDocument(view.getForm().getInfo());
+					if(view.getForm().validate()) {
+						createUpdateDocument(view.getForm().getInfo());
+					}
 					break;
 				}
 				case DELETE:{
@@ -229,8 +231,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				public void onResponseSuccess(String result) {
 					Window.open(GWT.getModuleBaseURL() + "bbfile?fileref=" + result , null, null);
 				}
-			
-			
+
+
 			});
 		}
 
@@ -266,7 +268,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 				@Override
 				public void onResponse(Document response) {
-					
+
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 					navig.removeParameter("documentid");
 					navig.removeParameter("ownertypeid");
@@ -286,7 +288,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		else
 		{
 			broker.updateDocument(temp, new ResponseHandler<Document>() {
-				
+
 				@Override
 				public void onResponse(Document response) {
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
@@ -296,86 +298,86 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					navig.removeParameter("show");
 					NavigationHistoryManager.getInstance().go(navig);
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o documento."), TYPE.ALERT_NOTIFICATION));
-					
+
 				}
 			});
 		}
 
 	}
 
-private void cancelChanges(){
+	private void cancelChanges(){
 
-	if(newDocument){
+		if(newDocument){
+			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+			navig.removeParameter("documentid");
+			navig.removeParameter("ownertypeid");
+			navig.removeParameter("show");
+			NavigationHistoryManager.getInstance().go(navig);
+			return;
+		}
+
+		NavigationHistoryManager.getInstance().reload();
+
+	}
+
+	@Override
+	public void setDataVersionNumber(String dataElementId, int number) {
+
+		versionNumber = number;
+
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+
+		return versionNumber;	
+	}
+
+	@Override
+	public int getDocumentsDataVersionNumber(String ownerId) {
+
+		return versionNumber;
+	}
+
+	@Override
+	public void setDocumentsDataVersionNumber(String ownerId, int number) {
+
+		versionNumber = number;
+
+	}
+
+	@Override
+	public void setDocuments(String ownerId, java.util.List<Document> documents) {
+
+		return;
+
+	}
+
+	@Override
+	public void removeDocument(String ownerId, Document document) {
+
 		NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 		navig.removeParameter("documentid");
 		navig.removeParameter("ownertypeid");
 		navig.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(navig);
-		return;
+
 	}
 
-	NavigationHistoryManager.getInstance().reload();
+	@Override
+	public void addDocument(String ownerId, Document document) {
 
-}
+	}
 
-@Override
-public void setDataVersionNumber(String dataElementId, int number) {
+	@Override
+	public void updateDocument(String ownerId, Document document) {
 
-	versionNumber = number;
-
-}
-
-@Override
-public int getDataVersion(String dataElementId) {
-
-	return versionNumber;	
-}
-
-@Override
-public int getDocumentsDataVersionNumber(String ownerId) {
-
-	return versionNumber;
-}
-
-@Override
-public void setDocumentsDataVersionNumber(String ownerId, int number) {
-
-	versionNumber = number;
-
-}
-
-@Override
-public void setDocuments(String ownerId, java.util.List<Document> documents) {
-
-	return;
-
-}
-
-@Override
-public void removeDocument(String ownerId, Document document) {
-
-	NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-	navig.removeParameter("documentid");
-	navig.removeParameter("ownertypeid");
-	navig.removeParameter("show");
-	NavigationHistoryManager.getInstance().go(navig);
-
-}
-
-@Override
-public void addDocument(String ownerId, Document document) {
-
-}
-
-@Override
-public void updateDocument(String ownerId, Document document) {
-
-	return;
-}
+		return;
+	}
 
 
 }

@@ -31,12 +31,12 @@ public class InsurancePolicyManagerTransferViewPresenter implements ViewPresente
 		TRANSFER,
 		CANCEL
 	} 
-	
+
 	public static interface Display {
 		HasEditableValue<String> getForm();
-		
+
 		void allowTransfer(boolean allow);
-		
+
 		void registerEventHandler(ActionInvokedEventHandler<Action> action);
 		Widget asWidget();
 	}
@@ -45,12 +45,12 @@ public class InsurancePolicyManagerTransferViewPresenter implements ViewPresente
 	private InsurancePolicyBroker broker;
 	private boolean bound =  false;
 	private String currentPolicyId;
-	
+
 	public InsurancePolicyManagerTransferViewPresenter(Display view){
 		this.broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		setView((UIObject)view);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
@@ -67,24 +67,26 @@ public class InsurancePolicyManagerTransferViewPresenter implements ViewPresente
 	public void setParameters(HasParameters parameterHolder) {
 		this.currentPolicyId = parameterHolder.getParameter("policyid");
 		this.currentPolicyId = this.currentPolicyId == null ? new String() : this.currentPolicyId;
-		
+
 		if(this.currentPolicyId.isEmpty()){
 			clearView();
 		}else{
 			showManagerTransfer(this.currentPolicyId);
 		}
 	}
-	
+
 	private void bind(){
 		if(bound){return;}
-		
+
 		view.registerEventHandler(new ActionInvokedEventHandler<InsurancePolicyManagerTransferViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case TRANSFER:
-					transferClient(InsurancePolicyManagerTransferViewPresenter.this.currentPolicyId, view.getForm().getInfo());
+					if(view.getForm().validate()) {
+						transferClient(InsurancePolicyManagerTransferViewPresenter.this.currentPolicyId, view.getForm().getInfo());
+					}
 					break;
 				case CANCEL:
 					onManagerTransferCancelled();
@@ -92,20 +94,20 @@ public class InsurancePolicyManagerTransferViewPresenter implements ViewPresente
 				}
 			}
 		});
-		
+
 		//APPLICATION-WIDE EVENTS
-		
+
 		bound = true;
 	}
-	
+
 	private void clearView(){
 		view.allowTransfer(false);
 		view.getForm().setValue(null);
 	}
-	
+
 	private void showManagerTransfer(String policyId){
 		broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
-			
+
 			@Override
 			public void onResponse(InsurancePolicy response) {
 				//TODO check permissions FJVC
@@ -113,14 +115,14 @@ public class InsurancePolicyManagerTransferViewPresenter implements ViewPresente
 				view.getForm().setReadOnly(false);
 				view.allowTransfer(true);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onGetClientFailed();
 			}
 		});
 	}
-	
+
 	private void transferClient(String policyId, String newManagerId){
 		this.broker.createManagerTransfer(new String[]{policyId}, newManagerId, new ResponseHandler<Void>() {
 
@@ -135,7 +137,7 @@ public class InsurancePolicyManagerTransferViewPresenter implements ViewPresente
 			}
 		});
 	}
-	
+
 	private void onManagerTransferSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Transferência de Gestor criada com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -149,11 +151,11 @@ public class InsurancePolicyManagerTransferViewPresenter implements ViewPresente
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	} 
-	
+
 	private void onManagerTransferFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível criar a Transferência de Gestor"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	private void onManagerTransferCancelled(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");

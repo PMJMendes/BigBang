@@ -122,18 +122,20 @@ public class SubCasualtyDeleteViewPresenter implements ViewPresenter {
 				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY)){
 					onDeleteFailed();
 				}else{
-					broker.deleteSubCasualty(response.id, view.getForm().getInfo(), new ResponseHandler<Void>() {
+					if(view.getForm().validate()) {
+						broker.deleteSubCasualty(response.id, view.getForm().getInfo(), new ResponseHandler<Void>() {
 
-						@Override
-						public void onResponse(Void response) {
-							onDeleteSuccess();
-						}
+							@Override
+							public void onResponse(Void response) {
+								onDeleteSuccess();
+							}
 
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onDeleteFailed();
-						}
-					});
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								onDeleteFailed();
+							}
+						});
+					}
 				}
 			}
 

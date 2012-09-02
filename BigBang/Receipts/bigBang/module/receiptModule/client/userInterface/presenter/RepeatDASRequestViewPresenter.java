@@ -69,14 +69,14 @@ public class RepeatDASRequestViewPresenter implements ViewPresenter{
 		request.id = parameterHolder.getParameter("dasrequestid");
 		view.getForm().setValue(request);
 	}
-	
+
 	public void bind(){
 		if(bound){
 			return;
 		}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<RepeatDASRequestViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -92,22 +92,23 @@ public class RepeatDASRequestViewPresenter implements ViewPresenter{
 	}
 
 	protected void onRepeatDASRequest() {
-		broker.repeatRequest(view.getForm().getInfo(), new ResponseHandler<DASRequest>() {
+		if(view.getForm().validate()) {
+			broker.repeatRequest(view.getForm().getInfo(), new ResponseHandler<DASRequest>() {
 
-			@Override
-			public void onResponse(DASRequest response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Repetição do Pedido de Declaração de Ausência de Sinistro enviada."), TYPE.TRAY_NOTIFICATION));
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				NavigationHistoryManager.getInstance().go(item);
-			}
+				@Override
+				public void onResponse(DASRequest response) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Repetição do Pedido de Declaração de Ausência de Sinistro enviada."), TYPE.TRAY_NOTIFICATION));
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(item);
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido de Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
-			}
-		});
-		
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido de Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
 	}
 
 	protected void onCancel() {

@@ -502,54 +502,55 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	}
 
 	protected void onSave() {
+		if(view.getForm().validate()) {
+			ReceiptPolicyWrapper toSend = view.getForm().getInfo();
+			final DocuShareHandle handle = new DocuShareHandle();
 
-		ReceiptPolicyWrapper toSend = view.getForm().getInfo();
-		final DocuShareHandle handle = new DocuShareHandle();
+			if(hasReceiptFile){
+				handle.handle = view.getSelectedDocuShareItem().handle;
+			}
 
-		if(hasReceiptFile){
-			handle.handle = view.getSelectedDocuShareItem().handle;
-		}
+			if(toSend.receipt.id == null){
+				receiptBroker.serialCreateReceipt(toSend.receipt, handle.handle != null ? handle : null, new ResponseHandler<Receipt>() {
 
-		if(toSend.receipt.id == null){
-			receiptBroker.serialCreateReceipt(toSend.receipt, handle.handle != null ? handle : null, new ResponseHandler<Receipt>() {
-
-				@Override
-				public void onResponse(Receipt response) {
-					editing = false;
-					editingPolicy = false;
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo criado com sucesso."), TYPE.TRAY_NOTIFICATION));
-					if(hasReceiptFile){
-						view.removeDocuShareItem(handle);
-						view.panelNavigateBack();
-						receiptPolicyWrapper = new ReceiptPolicyWrapper();
+					@Override
+					public void onResponse(Receipt response) {
+						editing = false;
+						editingPolicy = false;
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+						if(hasReceiptFile){
+							view.removeDocuShareItem(handle);
+							view.panelNavigateBack();
+							receiptPolicyWrapper = new ReceiptPolicyWrapper();
+						}
+						view.clear();
 					}
-					view.clear();
-				}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o recibo."), TYPE.ALERT_NOTIFICATION));				
-				}
-			});
-		}else{
-			receiptBroker.receiveImage(toSend.receipt.id, handle.handle != null ? handle : null, new ResponseHandler<Receipt>() {
-
-				@Override
-				public void onResponse(Receipt response) {
-					editing = false;
-					editingPolicy = false;
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
-					view.clear();
-					if(hasReceiptFile){
-						view.removeDocuShareItem(handle);
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o recibo."), TYPE.ALERT_NOTIFICATION));				
 					}
-				}
+				});
+			}else{
+				receiptBroker.receiveImage(toSend.receipt.id, handle.handle != null ? handle : null, new ResponseHandler<Receipt>() {
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o recibo."), TYPE.ALERT_NOTIFICATION));				
-				}
-			});
+					@Override
+					public void onResponse(Receipt response) {
+						editing = false;
+						editingPolicy = false;
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
+						view.clear();
+						if(hasReceiptFile){
+							view.removeDocuShareItem(handle);
+						}
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o recibo."), TYPE.ALERT_NOTIFICATION));				
+					}
+				});
+			}
 		}
 	}
 

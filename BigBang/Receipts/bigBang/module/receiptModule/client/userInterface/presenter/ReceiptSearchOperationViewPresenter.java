@@ -124,7 +124,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		receiptId = parameterHolder.getParameter("receiptid");
-		
+
 		if(receiptId == null || receiptId.isEmpty()) {
 			clearView();
 		}else{
@@ -282,25 +282,25 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo marcado como não pago."), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível marcar o recibo como não pago."), TYPE.ALERT_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();				
 			}
 		});
-		
+
 	}
-	
+
 	protected void returnPayment(){
 		receiptBroker.returnPayment(receiptId, new ResponseHandler<Receipt>() {
-			
+
 			@Override
 			public void onResponse(Receipt response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Devolução de Pagamento criada com Sucesso."), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível defazer o pagamento do Recibo."), TYPE.ALERT_NOTIFICATION));
@@ -317,20 +317,20 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void setDasNotNecessary() {
 		receiptBroker.setDASNotNecessary(receiptId, new ResponseHandler<Receipt>() {
-			
+
 			@Override
 			public void onResponse(Receipt response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Indicação de DAS desnecessária efectuada."), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível indicar DAS como desnecessária"), TYPE.ALERT_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();				
 			}
 		});
-		
+
 	}
 
 	protected void onCreateSignatureRequest() {
@@ -497,20 +497,22 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSave() {
-		Receipt receipt = view.getForm().getInfo();
+		if(view.getForm().validate()) {
+			Receipt receipt = view.getForm().getInfo();
 
-		this.receiptBroker.updateReceipt(receipt, new ResponseHandler<Receipt>() {
+			this.receiptBroker.updateReceipt(receipt, new ResponseHandler<Receipt>() {
 
-			@Override
-			public void onResponse(Receipt response) {
-				onSaveSuccess();
-			}
+				@Override
+				public void onResponse(Receipt response) {
+					onSaveSuccess();
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onSaveFailed();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSaveFailed();
+				}
+			});
+		}
 	}
 
 	protected void deleteReceipt(){
@@ -672,7 +674,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 			item.pushIntoStackParameter("display", "signaturerequest");
 			item.setParameter("signaturerequestid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
-			
+
 		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.DAS_REQUEST)){
 			item.pushIntoStackParameter("display", "dasrequest");
 			item.setParameter("dasrequestid", process.dataId);

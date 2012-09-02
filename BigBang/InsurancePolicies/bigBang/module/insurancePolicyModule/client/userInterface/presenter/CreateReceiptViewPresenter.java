@@ -38,7 +38,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 		HasValue<InsurancePolicy> getParentForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
-		
+
 		Widget asWidget();
 	}
 
@@ -125,23 +125,25 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 				onFailure();
 			}
 		});
-		
+
 	}
 
 	protected void onSave(){
-		Receipt receipt = view.getForm().getInfo();
-		broker.createReceipt(receipt.policyId, receipt, new ResponseHandler<Receipt>() {
+		if(view.getForm().validate()) {
+			Receipt receipt = view.getForm().getInfo();
+			broker.createReceipt(receipt.policyId, receipt, new ResponseHandler<Receipt>() {
 
-			@Override
-			public void onResponse(Receipt response) {
-				onCreateReceiptSuccess();
-			}
+				@Override
+				public void onResponse(Receipt response) {
+					onCreateReceiptSuccess();
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onCreateReceiptFailed();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onCreateReceiptFailed();
+				}
+			});
+		}
 	}
 
 	protected void onCancel(){

@@ -209,17 +209,21 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		boolean hasErrors = false;
 		for(FormViewSection s : sections){
 			//s.clearErrorMessages();
-			boolean sectionHasErrors = false;
-			for(FormField<?> f : s.getFields()){
-				boolean fieldHasErrors = !f.validate();
-				hasErrors = !fieldHasErrors ? hasErrors : true;
-				sectionHasErrors = !fieldHasErrors ? sectionHasErrors : true;
-				if(fieldHasErrors)
-					f.validate();//s.addErrorMessage(f.getErrorMessage());
+			for(FormField<?> f : s.getFields()){ //TODO
+//				boolean fieldHasErrors = !f.validate();
+//				hasErrors = !fieldHasErrors ? hasErrors : true;
+//				sectionHasErrors = !fieldHasErrors ? sectionHasErrors : true;
+//				if(fieldHasErrors)
+//					f.validate();//s.addErrorMessage(f.getErrorMessage());
+				
+				boolean fieldHasErrors = f.getValue() == null && f.isMandatory();
+				f.setInvalid(showErrors && fieldHasErrors);
+				hasErrors |= fieldHasErrors;
 			}
 			//s.showErrorMessages(sectionHasErrors && showErrors);
 		}
-		return !hasErrors;
+//		return !hasErrors;
+		return true; //TODO
 	}
 
 	public void addFormField(FormField<?> field) {
@@ -328,6 +332,8 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
+		
+		validate(false);
 	}
 
 	public Widget getContentPanel(){

@@ -94,22 +94,23 @@ public class CancelSignatureRequestViewPresenter implements ViewPresenter{
 	}
 
 	protected void onCancelSignatureRequest() {
-		broker.cancelRequest(view.getForm().getInfo(), new ResponseHandler<Void>() {
+		if(view.getForm().validate()) {
+			broker.cancelRequest(view.getForm().getInfo(), new ResponseHandler<Void>() {
 
-			@Override
-			public void onResponse(Void response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				NavigationHistoryManager.getInstance().go(item);
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de Assinatura cancelado com sucesso."), TYPE.TRAY_NOTIFICATION));
-			}
+				@Override
+				public void onResponse(Void response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de Assinatura cancelado com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
-			}
-		});
-
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
 	}
 
 	protected void onCancel() {

@@ -103,8 +103,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case SAVE:
-					InsuredObject value = view.getInsuredObjectForm().getInfo();
-					saveObject(value);
+					if(view.getInsuredObjectForm().validate()) {
+						InsuredObject value = view.getInsuredObjectForm().getInfo();
+						saveObject(value);
+					}
 					break;
 				case EDIT:
 					onEdit();
@@ -419,7 +421,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 		item.removeParameter("objectid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onSaveObjectSucces(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Unidade de Risco guardada no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

@@ -27,26 +27,26 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class ReceiptReturnViewPresenter implements ViewPresenter{
-	
+
 	public enum Action{
 		CONFIRM,
 		CANCEL
 	}
-	
+
 	public interface Display{
-		
+
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		HasEditableValue<ReturnMessage> getForm();
 		Widget asWidget();
-		
-		
+
+
 	}
-	
+
 	private boolean bound = false;
 	private ReceiptDataBroker broker;
 	private Display view;
 	private String receiptId;
-	
+
 	public ReceiptReturnViewPresenter(Display view){
 		broker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 		setView((UIObject) view);
@@ -55,7 +55,7 @@ public class ReceiptReturnViewPresenter implements ViewPresenter{
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
-		
+
 	}
 
 	@Override
@@ -67,12 +67,12 @@ public class ReceiptReturnViewPresenter implements ViewPresenter{
 
 	private void bind() {
 		if(bound){return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<ReceiptReturnViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
-				
+
 				switch(action.getAction()){
 				case CONFIRM:
 					onConfirm();
@@ -83,9 +83,9 @@ public class ReceiptReturnViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		bound = true;
-		
+
 	}
 
 	protected void onCancel() {
@@ -95,21 +95,22 @@ public class ReceiptReturnViewPresenter implements ViewPresenter{
 	}
 
 	protected void onConfirm() {
-		ReturnMessage message = view.getForm().getInfo();
-		
-		broker.setForReturn(message, new ResponseHandler<Receipt>() {
-			
-			@Override
-			public void onResponse(Receipt response) {
-				onSuccess();
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onFail();
-			}
-		});
-		
+		if(view.getForm().validate()) {
+			ReturnMessage message = view.getForm().getInfo();
+
+			broker.setForReturn(message, new ResponseHandler<Receipt>() {
+
+				@Override
+				public void onResponse(Receipt response) {
+					onSuccess();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onFail();
+				}
+			});
+		}
 	}
 
 	protected void onFail() {
@@ -134,9 +135,9 @@ public class ReceiptReturnViewPresenter implements ViewPresenter{
 			onCancel();
 		}
 	}
-	
+
 	protected void clearView(){
-		
+
 		ReturnMessage message = new ReturnMessage();
 		message.receiptId = receiptId;
 		view.getForm().setValue(message);

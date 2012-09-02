@@ -125,13 +125,15 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				if(event.getValue() == null){
-					setIndividualMode();
+					setNoneMode();
 				}else if(event.getValue().equalsIgnoreCase(ModuleConstants.ClientTypeIDs.Person)){
 					setIndividualMode();
 				}else if(event.getValue().equalsIgnoreCase(ModuleConstants.ClientTypeIDs.Company)){
 					setCompanyMode();
 				}else if(event.getValue().equalsIgnoreCase(ModuleConstants.ClientTypeIDs.Other)){
 					setOtherMode();
+				}else{
+					setNoneMode();
 				}
 			}
 		});
@@ -256,6 +258,12 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	public void setOtherMode() {
 		companySection.setVisible(false);
 		otherSection.setVisible(true);
+		individualSection.setVisible(false);
+	}
+	
+	public void setNoneMode() {
+		companySection.setVisible(false);
+		otherSection.setVisible(false);
 		individualSection.setVisible(false);
 	}
 

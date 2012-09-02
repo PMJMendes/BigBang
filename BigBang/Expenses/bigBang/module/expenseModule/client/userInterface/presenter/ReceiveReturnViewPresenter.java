@@ -63,9 +63,9 @@ public class ReceiveReturnViewPresenter implements ViewPresenter{
 
 	private void bind() {
 		if(bound){return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -78,7 +78,7 @@ public class ReceiveReturnViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
@@ -89,24 +89,25 @@ public class ReceiveReturnViewPresenter implements ViewPresenter{
 	}
 
 	protected void onAccept() {
-		ReturnEx returnEx = view.getForm().getInfo();
-		broker.receiveReturn(returnEx, new ResponseHandler<Expense>() {
-			
-			@Override
-			public void onResponse(Expense response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				NavigationHistoryManager.getInstance().go(item);
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Devolução recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a Devolução."), TYPE.ALERT_NOTIFICATION));
-				
-			}
-		});
-		
+		if(view.getForm().validate()) {
+			ReturnEx returnEx = view.getForm().getInfo();
+			broker.receiveReturn(returnEx, new ResponseHandler<Expense>() {
+
+				@Override
+				public void onResponse(Expense response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Devolução recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a Devolução."), TYPE.ALERT_NOTIFICATION));
+
+				}
+			});
+		}
 	}
 
 	@Override

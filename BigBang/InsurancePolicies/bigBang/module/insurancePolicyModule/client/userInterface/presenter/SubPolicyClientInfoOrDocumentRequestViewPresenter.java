@@ -18,10 +18,10 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter;
 
 public class SubPolicyClientInfoOrDocumentRequestViewPresenter extends
-		InfoOrDocumentRequestViewPresenter<SubPolicy> {
+InfoOrDocumentRequestViewPresenter<SubPolicy> {
 
 	protected InsuranceSubPolicyBroker broker;
-	
+
 	public SubPolicyClientInfoOrDocumentRequestViewPresenter(
 			bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter.Display<SubPolicy> view) {
 		super(view);
@@ -61,19 +61,21 @@ public class SubPolicyClientInfoOrDocumentRequestViewPresenter extends
 
 	@Override
 	protected void onSend() {
-		InfoOrDocumentRequest request = view.getForm().getInfo();
-		broker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
+		if(view.getForm().validate()) {
+			InfoOrDocumentRequest request = view.getForm().getInfo();
+			broker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
 
-			@Override
-			public void onResponse(InfoOrDocumentRequest response) {
-				onCreateRequestSuccess();
-			}
+				@Override
+				public void onResponse(InfoOrDocumentRequest response) {
+					onCreateRequestSuccess();
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onCreateRequestFailed();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onCreateRequestFailed();
+				}
+			});
+		}
 	}
 
 	@Override
@@ -95,11 +97,11 @@ public class SubPolicyClientInfoOrDocumentRequestViewPresenter extends
 		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onCreateRequestFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o pedido de informação"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	@Override
 	protected void onGetOwnerFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));

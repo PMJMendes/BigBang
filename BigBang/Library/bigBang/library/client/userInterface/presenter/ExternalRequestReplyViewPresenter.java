@@ -39,26 +39,26 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 		SEND,
 		CANCEL
 	}
-	
+
 	public static interface Display {
 		HasEditableValue<Outgoing> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
-		
+
 		void setAvailableContacts(Contact[] contacts);
 		void setUserNames(String[] usernames);
-		
+
 		Widget asWidget();
 	}
-	
+
 	protected boolean bound = false;
 	protected ExternRequestServiceAsync service;
 	protected Display view;
-	
+
 	public ExternalRequestReplyViewPresenter(Display view) {
 		setView((UIObject) view);
 		service = ExternRequestService.Util.getInstance();
 	}   
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -74,19 +74,19 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		String externalRequestId = parameterHolder.getParameter("externalrequestid");
-		
+
 		if(externalRequestId == null || externalRequestId.isEmpty()) {
 			onFailure();
 		}else{
 			showReply(externalRequestId);
 		}
 	}
-	
+
 	protected void bind(){
 		if(bound) {return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<ExternalRequestReplyViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -99,19 +99,19 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
 	protected void clearView(){
 		this.view.getForm().setValue(null);
 	}
-	
+
 	protected void showReply(String ownerId) {
 		Outgoing message = new Outgoing();
 		message.requestId = ownerId;
 		view.getForm().setValue(message);
-		
+
 		ExternRequestService.Util.getInstance().getRequest(ownerId, new BigBangAsyncCallback<ExternalInfoRequest>() {
 
 			@Override
@@ -132,17 +132,17 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 					}
 				});
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				ExternalRequestReplyViewPresenter.this.onFailure();
 				super.onResponseFailure(caught);
 			}
 		});
-		
+
 		UserBroker userBroker = (UserBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.USER);
 		userBroker.getUsers(new ResponseHandler<User[]>() {
-			
+
 			@Override
 			public void onResponse(User[] response) {
 				String[] usernames = new String[response.length];
@@ -151,54 +151,56 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 				}
 				view.setUserNames(usernames);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
 			}
 		});
 	}
-	
-	protected void onSend() {
-		final Outgoing request = view.getForm().getInfo();
-		service.sendInformation(request, new BigBangAsyncCallback<ExternalInfoRequest>() {
 
-			@Override
-			public void onResponseSuccess(ExternalInfoRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExternalInfoRequest.REPLY, request.requestId));
-				onSendSuccess();
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				onSendFailed();
-				super.onResponseFailure(caught);
-			}
-		});
+	protected void onSend() {
+		if(view.getForm().validate()) {
+			final Outgoing request = view.getForm().getInfo();
+			service.sendInformation(request, new BigBangAsyncCallback<ExternalInfoRequest>() {
+
+				@Override
+				public void onResponseSuccess(ExternalInfoRequest result) {
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExternalInfoRequest.REPLY, request.requestId));
+					onSendSuccess();
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					onSendFailed();
+					super.onResponseFailure(caught);
+				}
+			});
+		}
 	}
-	
+
 	protected void onCancel(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onSendSuccess() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Resposta foi enviada com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onSendFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar a Resposta"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	protected void onFailure(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível enviar a Resposta"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 }

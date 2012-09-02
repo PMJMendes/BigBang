@@ -42,7 +42,7 @@ HasOperationPermissions {
 		void handleImageItem(ImageItem item);
 		Rectangle getImageSelection();
 		void showCropOption(boolean show);
-		
+
 		void clearImages();
 		HasWidgets getOverlayViewContainer();
 		void showOverlayViewContainer(boolean show);
@@ -122,19 +122,21 @@ HasOperationPermissions {
 	protected void onValidate() {
 		if(view.getImageSelection() == null) {
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recorte o talão na imagem do Recibo para realizar esta operação"), TYPE.INFO_NOTIFICATION));
-		}else{		
-			broker.updateAndValidateReceipt(view.getForm().getInfo(), view.getImageSelection(), new ResponseHandler<Receipt>() {
+		}else{
+			if(view.getForm().validate()) {
+				broker.updateAndValidateReceipt(view.getForm().getInfo(), view.getImageSelection(), new ResponseHandler<Receipt>() {
 
-				@Override
-				public void onResponse(Receipt response) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo guardado e validado com sucesso."), TYPE.TRAY_NOTIFICATION));
-				}
+					@Override
+					public void onResponse(Receipt response) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo guardado e validado com sucesso."), TYPE.TRAY_NOTIFICATION));
+					}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar/validar o recibo"), TYPE.ALERT_NOTIFICATION));
-				}
-			});
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar/validar o recibo"), TYPE.ALERT_NOTIFICATION));
+					}
+				});
+			}
 		}
 	}
 

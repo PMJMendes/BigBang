@@ -50,5 +50,8 @@ public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
 
 	void serialCreateExpense(Expense expense, DocuShareHandle handle,
 			ResponseHandler<Expense> responseHandler);
+
+	void massReceiveProof(String[] toReceive,
+			DocuShareHandle handle, ResponseHandler<Void> responseHandler);
 	
 }

@@ -170,4 +170,8 @@ public class TextBoxFormField extends FormField<String> {
 		((TextBox)field).setFocus(true);
 		((TextBox)field).selectAll();
 	}
+	
+	public void add(Widget widget) {
+		wrapper.add(widget);
+	}
 }

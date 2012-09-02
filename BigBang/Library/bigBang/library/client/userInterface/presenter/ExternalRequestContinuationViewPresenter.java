@@ -28,18 +28,18 @@ public class ExternalRequestContinuationViewPresenter implements ViewPresenter {
 		CONFIRM,
 		CANCEL
 	}
-	
+
 	public static interface Display {
 		HasEditableValue<Incoming> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
-		
+
 		Widget asWidget();
 	}
-	
+
 	protected boolean bound = false;
 	protected Display view;
 	protected ExternRequestServiceAsync service;
-	
+
 	public ExternalRequestContinuationViewPresenter(Display view) {
 		setView((UIObject) view);
 		service = ExternRequestService.Util.getInstance();
@@ -60,19 +60,19 @@ public class ExternalRequestContinuationViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		String requestId = parameterHolder.getParameter("externalrequestid");
-		
+
 		if(requestId == null || requestId.isEmpty()) {
 			onFailure();
 		} else {
 			showContinueRequest(requestId);
 		}
 	}
-	
+
 	protected void bind() {
 		if(bound) {return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<ExternalRequestContinuationViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -85,52 +85,54 @@ public class ExternalRequestContinuationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
-	
+
 	protected void showContinueRequest(String ownerId){
 		Incoming incoming = new Incoming();
 		incoming.requestId = ownerId;
 		view.getForm().setValue(incoming);
 	}
-	
+
 	protected void clearView() {
 		view.getForm().setValue(null);
 	}
-	
+
 	protected void onCancel(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
-	protected void onConfirm(){
-		final Incoming incoming = view.getForm().getInfo();
-		service.receiveAdditional(incoming, new BigBangAsyncCallback<ExternalInfoRequest>() {
 
-			@Override
-			public void onResponseSuccess(ExternalInfoRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExternalInfoRequest.CONTINUE, incoming.requestId));
-				onContinuationSuccess();
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				onContinuationFailed();
-				super.onResponseFailure(caught);
-			}
-			
-		});
+	protected void onConfirm(){
+		if(view.getForm().validate()) {
+			final Incoming incoming = view.getForm().getInfo();
+			service.receiveAdditional(incoming, new BigBangAsyncCallback<ExternalInfoRequest>() {
+
+				@Override
+				public void onResponseSuccess(ExternalInfoRequest result) {
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExternalInfoRequest.CONTINUE, incoming.requestId));
+					onContinuationSuccess();
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					onContinuationFailed();
+					super.onResponseFailure(caught);
+				}
+
+			});
+		}
 	}
-	
+
 	protected void onContinuationSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Pedido foi Continuado com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onContinuationFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível efectuar a Continuação do Pedido"), TYPE.ALERT_NOTIFICATION));
 	}
@@ -141,5 +143,5 @@ public class ExternalRequestContinuationViewPresenter implements ViewPresenter {
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 }

@@ -100,7 +100,7 @@ public class DASRequestViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -128,26 +128,27 @@ public class DASRequestViewPresenter implements ViewPresenter{
 	}
 
 	protected void receiveReply() {
-		DASRequest.Response response = new DASRequest.Response();
-		response.requestId = view.getForm().getInfo().id;
+		if(view.getForm().validate()) {
+			DASRequest.Response response = new DASRequest.Response();
+			response.requestId = view.getForm().getInfo().id;
 
-		broker.receiveResponse(response, new ResponseHandler<DASRequest>() {
+			broker.receiveResponse(response, new ResponseHandler<DASRequest>() {
 
-			@Override
-			public void onResponse(DASRequest response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.popFromStackParameter("display");
-				item.removeParameter("dasrequestid");
-				NavigationHistoryManager.getInstance().go(item);
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
-			}
+				@Override
+				public void onResponse(DASRequest response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.popFromStackParameter("display");
+					item.removeParameter("dasrequestid");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao receber a resposta à Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
-			}
-		});
-
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao receber a resposta à Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
 	}
 
 	protected void cancelDASRequest() {

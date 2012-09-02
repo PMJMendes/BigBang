@@ -10,6 +10,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -39,6 +40,7 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
+import bigBang.module.casualtyModule.client.resources.Resources;
 
 public class SubCasualtyForm extends FormView<SubCasualty> {
 
@@ -54,7 +56,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected ExpandableListBoxFormField insuredObject;
 	protected RadioButtonFormField belongsToPolicy;
 	protected TextBoxFormField insuredObjectName; 
-
+	protected Image statusIcon;
 
 	protected FormViewSection notesSection, internalNotesSection;
 
@@ -94,7 +96,10 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		insurerProcessNumber.setFieldWidth("175px");
 		status = new TextBoxFormField("Estado");
 		status.setEditable(false);
-		status.setFieldWidth("175px");
+		status.setFieldWidth("100%");
+		statusIcon = new Image();
+		status.add(statusIcon);
+
 		notes = new TextAreaFormField();
 		internalNotes = new TextAreaFormField();
 		hasJudicial = new CheckBoxFormField("Tem processo Judicial");
@@ -342,7 +347,12 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			insurerProcessNumber.setValue(info.insurerProcessNumber);
 			if(info.id != null){
 				status.setValue(info.isOpen ? "Aberto" : "Fechado");
-			}			
+				Resources resources = GWT.create(Resources.class);
+				statusIcon.setResource(info.isOpen ? resources.activeCasualtyIcon() : resources.inactiveCasualtyIcon());
+			}else{
+				status.setValue(null);
+				statusIcon.setVisible(false);
+			}
 			hasJudicial.setValue(info.hasJudicial);
 			notes.setValue(info.text);
 			internalNotes.setValue(info.internalNotes);

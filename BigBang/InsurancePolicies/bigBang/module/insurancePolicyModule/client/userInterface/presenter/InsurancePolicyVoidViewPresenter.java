@@ -64,9 +64,9 @@ public class InsurancePolicyVoidViewPresenter implements ViewPresenter {
 	public void setParameters(HasParameters parameterHolder) {
 		String ownerId = parameterHolder.getParameter("policyid");
 		ownerId = ownerId == null ? new String() : ownerId;
-		
+
 		clearView();
-		
+
 		if(ownerId.isEmpty()){
 			onGetOwnerFailed();
 		}else{
@@ -96,59 +96,61 @@ public class InsurancePolicyVoidViewPresenter implements ViewPresenter {
 
 		bound = true;
 	}
-	
+
 	private void clearView(){
 		view.getForm().setValue(null);
 	}
-	
+
 	private void showVoidPolicy(String ownerId){
-		
+
 		PolicyVoiding voiding = new PolicyVoiding();
 		voiding.policyId = ownerId;
 		view.getForm().setValue(voiding);
 	}
 
 	private void onVoidPolicy(){
-		String policyId = view.getForm().getInfo().policyId;
-		broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
-			
-			@Override
-			public void onResponse(InsurancePolicy response) {
-				boolean hasPermission = PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY);
-				
-				if(hasPermission){
-					broker.voidPolicy(view.getForm().getValue(), new ResponseHandler<InsurancePolicy>() {
+		if(view.getForm().validate()) {
+			String policyId = view.getForm().getInfo().policyId;
+			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
-						@Override
-						public void onResponse(InsurancePolicy response) {
-							onVoidPolicySuccess();
-							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-							item.removeParameter("show");
-							NavigationHistoryManager.getInstance().go(item);
-						}
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					boolean hasPermission = PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY);
 
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onVoidPolicyFailed();
-							NavigationHistoryManager.getInstance().reload();
-						}
-					});
-				}else{
-					onUserLacksPermission();
+					if(hasPermission){
+						broker.voidPolicy(view.getForm().getValue(), new ResponseHandler<InsurancePolicy>() {
+
+							@Override
+							public void onResponse(InsurancePolicy response) {
+								onVoidPolicySuccess();
+								NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+								item.removeParameter("show");
+								NavigationHistoryManager.getInstance().go(item);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								onVoidPolicyFailed();
+								NavigationHistoryManager.getInstance().reload();
+							}
+						});
+					}else{
+						onUserLacksPermission();
+						NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+						item.removeParameter("show");
+						NavigationHistoryManager.getInstance().go(item);
+					}
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetOwnerFailed();
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 					item.removeParameter("show");
 					NavigationHistoryManager.getInstance().go(item);
 				}
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onGetOwnerFailed();
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				NavigationHistoryManager.getInstance().go(item);
-			}
-		});
+			});
+		}
 	}
 
 	private void onVoidPolicySuccess(){
@@ -158,11 +160,11 @@ public class InsurancePolicyVoidViewPresenter implements ViewPresenter {
 	private void onVoidPolicyFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível anular a apólice"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	private void onGetOwnerFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível anular a apólice"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	private void onUserLacksPermission(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para anular a apólice"), TYPE.ALERT_NOTIFICATION));
 	}

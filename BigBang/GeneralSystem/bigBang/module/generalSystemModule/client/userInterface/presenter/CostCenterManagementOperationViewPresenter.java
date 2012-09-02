@@ -57,7 +57,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void prepareNewCostCenter(CostCenter costCenter);
-		
+
 		HasValueSelectables<User> getMembersList();
 
 		//PERMISSIONS
@@ -100,7 +100,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 		if(inCostCenterCreation()){
 			clearNewCostCenter();
 		}
-		
+
 		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageCostCenters);
 		view.allowCreate(hasPermissions);
 		view.allowEdit(hasPermissions);
@@ -156,12 +156,14 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
-					CostCenter info = view.getForm().getInfo();
-					view.getForm().setReadOnly(true);
-					if(info.id.equalsIgnoreCase("new"))
-						createCostCenter(info);
-					else
-						saveCostCenter(info);
+					if(view.getForm().validate()) {
+						CostCenter info = view.getForm().getInfo();
+						view.getForm().setReadOnly(true);
+						if(info.id.equalsIgnoreCase("new"))
+							createCostCenter(info);
+						else
+							saveCostCenter(info);
+					}
 					break;
 				case CANCEL_EDIT:
 					if(inCostCenterCreation()){
@@ -178,20 +180,20 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 				}
 			}
 		});
-		
+
 		view.getMembersList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				ValueSelectable<?> selected = (ValueSelectable<?>) event.getFirstSelected();
-				
+
 				if(selected != null) {
 					User user = (User) selected.getValue();
 					onMemberSelected(user);
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
@@ -227,7 +229,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 			view.getList().clearSelection();
 			view.prepareNewCostCenter(costCenter);
 			view.getForm().setValue(costCenter);
-	
+
 			view.allowDelete(hasPermissions);
 			view.allowEdit(hasPermissions);
 			view.setSaveModeEnabled(hasPermissions);
@@ -281,7 +283,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 				boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageCostCenters);
 				view.allowEdit(hasPermissions);
 				view.allowDelete(hasPermissions);
-				
+
 				view.setSaveModeEnabled(false);
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
@@ -356,12 +358,12 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 	private void onRefresh(){
 		costCenterBroker.requireDataRefresh();
 		costCenterBroker.getCostCenters(new ResponseHandler<CostCenter[]>() {
-			
+
 			@Override
 			public void onResponse(CostCenter[] response) {
 				return;
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
@@ -376,7 +378,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 		item.setParameter("userid", user.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onGetCostCenterFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o Centro de Custo seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

@@ -107,22 +107,24 @@ public class SubPolicyVoidViewPresenter implements ViewPresenter {
 	}
 
 	private void onVoidPolicy(){
-		broker.voidSubPolicy(view.getForm().getInfo(), new ResponseHandler<SubPolicy>() {
+		if(view.getForm().validate()) {
+			broker.voidSubPolicy(view.getForm().getInfo(), new ResponseHandler<SubPolicy>() {
 
-			@Override
-			public void onResponse(SubPolicy response) {
-				onVoidPolicySuccess();
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				NavigationHistoryManager.getInstance().go(item);
-			}
+				@Override
+				public void onResponse(SubPolicy response) {
+					onVoidPolicySuccess();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(item);
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onVoidPolicyFailed();
-				NavigationHistoryManager.getInstance().reload();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onVoidPolicyFailed();
+					NavigationHistoryManager.getInstance().reload();
+				}
+			});
+		}
 	}
 
 	private void onVoidPolicySuccess(){

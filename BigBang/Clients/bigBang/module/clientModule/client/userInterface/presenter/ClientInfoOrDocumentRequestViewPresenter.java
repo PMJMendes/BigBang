@@ -20,10 +20,10 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter;
 
 public class ClientInfoOrDocumentRequestViewPresenter extends
-		InfoOrDocumentRequestViewPresenter<Client> {
+InfoOrDocumentRequestViewPresenter<Client> {
 
 	private ClientProcessBroker broker;
-	
+
 	public ClientInfoOrDocumentRequestViewPresenter(Display<Client> view) {
 		super(view);
 		this.broker = (ClientProcessBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CLIENT);
@@ -34,26 +34,28 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 		parameterHolder.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
 		super.setParameters(parameterHolder);
 	}
-	
+
 	@Override
 	protected void onSend() {
-		InfoOrDocumentRequest request = view.getForm().getInfo();
-		broker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
-			
-			@Override
-			public void onResponse(InfoOrDocumentRequest response) {
-				view.getForm().setValue(response);
-				onSendRequestSuccess();
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.popFromStackParameter("display");
-				NavigationHistoryManager.getInstance().go(item);
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onSendRequestFailed();
-			}
-		});
+		if(view.getForm().validate()) {
+			InfoOrDocumentRequest request = view.getForm().getInfo();
+			broker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
+
+				@Override
+				public void onResponse(InfoOrDocumentRequest response) {
+					view.getForm().setValue(response);
+					onSendRequestSuccess();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.popFromStackParameter("display");
+					NavigationHistoryManager.getInstance().go(item);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSendRequestFailed();
+				}
+			});
+		}
 	}
 
 	@Override
@@ -97,7 +99,7 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 			}
 		});
 	}
-	
+
 	@Override
 	protected void onCancel() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -118,7 +120,7 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	@Override
 	protected void onUserLacksPermission() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para criar o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
@@ -140,5 +142,5 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 }

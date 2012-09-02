@@ -70,7 +70,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 	protected boolean bound = false;
 	protected Display view;
 	protected ClientGroupBroker clientGroupBroker;
-	
+
 	public ClientGroupManagementOperationViewPresenter(View view){
 		this.clientGroupBroker = ((ClientGroupBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT_GROUP));
 		this.setView(view);
@@ -88,7 +88,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 		container.add(this.view.asWidget());
 		setup();
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		String groupId = parameterHolder.getParameter("groupid");
@@ -97,7 +97,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 		if(inClientGroupCreation()){
 			clearNewClientGroup();
 		}
-		
+
 		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageClientGroups);
 		view.allowCreate(hasPermissions);
 		view.allowEdit(hasPermissions);
@@ -153,12 +153,14 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
-					ClientGroup info = view.getForm().getInfo();
-					view.getForm().setReadOnly(true);
-					if(info.id.equalsIgnoreCase("new")){
-						createClientGroup(info);
-					}else{
-						saveClientGroup(info);
+					if(view.getForm().validate()) {
+						ClientGroup info = view.getForm().getInfo();
+						view.getForm().setReadOnly(true);
+						if(info.id.equalsIgnoreCase("new")){
+							createClientGroup(info);
+						}else{
+							saveClientGroup(info);
+						}
 					}
 					break;
 				case CANCEL_EDIT:
@@ -176,7 +178,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
@@ -212,7 +214,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 			view.getList().clearSelection();
 			view.prepareNewClientGroup(group);
 			view.getForm().setValue(group);
-	
+
 			view.allowDelete(hasPermissions);
 			view.allowEdit(hasPermissions);
 			view.setSaveModeEnabled(hasPermissions);
@@ -341,19 +343,19 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 	private void onRefresh(){
 		clientGroupBroker.requireDataRefresh();
 		clientGroupBroker.getClientGroups(new ResponseHandler<ClientGroup[]>() {
-			
+
 			@Override
 			public void onResponse(ClientGroup[] response) {
 				return;
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
 			}
 		});
 	}
-	
+
 	private void onGetClientGroupFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o Grupo de Clientes seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

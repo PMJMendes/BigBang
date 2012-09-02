@@ -22,12 +22,15 @@ import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
+import bigBang.module.insurancePolicyModule.client.resources.Resources;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.ui.Image;
 
 public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {	
 
@@ -45,6 +48,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected ExpandableListBoxFormField fractioning;
 	protected NumericTextBoxFormField premium;
 	protected ExpandableListBoxFormField operationalProfile;
+	protected Image statusIcon;
 	
 	protected FormViewSection coInsurersSection;
 
@@ -100,6 +104,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		policyStatus = new TextBoxFormField("Estado");
 		policyStatus.setFieldWidth("100%");
 		policyStatus.setEditable(false);
+		statusIcon = new Image();
+		policyStatus.add(statusIcon);
 
 		addFormField(client, false);
 		addFormField(categoryLineSubLine, false);
@@ -348,7 +354,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 						item.pushIntoStackParameter("display", "search");
 						item.setParameter("clientid", response.id);
 						InsurancePolicyForm.this.client.setValue(item);
-						
+
 						InsurancePolicyForm.this.client.setValueName("#" + response.clientNumber + " - " + response.name);
 					}
 
@@ -358,6 +364,26 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			}
 
 			this.policyStatus.setValue(info.statusText);
+			Resources resources = GWT.create(Resources.class);
+			if(value.statusIcon == null) {
+				statusIcon.setResource(resources.provisionalPolicyIcon());
+				statusIcon.setVisible(false);
+			}else{
+				statusIcon.setVisible(true);
+				switch(value.statusIcon){
+				case OBSOLETE:
+					statusIcon.setResource(resources.inactivePolicyIcon());
+					break;
+				case PROVISIONAL:
+					statusIcon.setResource(resources.provisionalPolicyIcon());
+					break;
+				case VALID:
+					statusIcon.setResource(resources.activePolicyIcon());
+					break;
+				default:
+					return;
+				}
+			}
 			this.caseStudy.setValue(info.caseStudy);
 			this.operationalProfile.setValue(info.operationalProfileId);
 			this.notes.setValue(info.notes);

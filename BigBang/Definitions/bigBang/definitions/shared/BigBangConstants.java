@@ -269,6 +269,7 @@ public class BigBangConstants {
 			public static final String CREATE_EXTERNAL_REQUEST = "9D618AB8-53F5-4D5C-8CB7-A03800C56E4F";
 			public static final String PAYMENT_VALIDATION = "8D11C94A-E3B7-45C9-AB9A-A03800C5AB4B";
 			public static final String CLOSE_PROCESS = "0EEB387C-661F-4FB0-8675-A03800C5DE73";
+			public static final String RECEIVE_PROOF = "DDEB0BD3-10F8-4EB7-87C9-A0BC01249AC9";
 		}
 		
 	}

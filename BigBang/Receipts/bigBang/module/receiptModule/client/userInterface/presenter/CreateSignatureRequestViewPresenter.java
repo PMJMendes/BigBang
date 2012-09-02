@@ -30,25 +30,25 @@ public class CreateSignatureRequestViewPresenter implements ViewPresenter{
 	private ReceiptDataBroker broker;
 	private Display view;
 	private boolean bound;
-	
+
 	public enum Action{
 		CREATE_SIGNATURE_REQUEST,
 		CANCEL
 	}
-	
+
 	public interface Display{
-		
+
 		Widget asWidget();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		HasEditableValue<SignatureRequest> getForm();
-		
+
 	}
-	
+
 	public CreateSignatureRequestViewPresenter(Display view){
 		broker = (ReceiptDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 		setView((UIObject)view);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
@@ -68,16 +68,16 @@ public class CreateSignatureRequestViewPresenter implements ViewPresenter{
 		SignatureRequest request = new SignatureRequest();
 		request.receiptId = parameterHolder.getParameter("receiptid");
 		view.getForm().setValue(request);
-		
+
 	}
-	
+
 	public void bind(){
 		if(bound){
 			return;
 		}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<CreateSignatureRequestViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -87,31 +87,32 @@ public class CreateSignatureRequestViewPresenter implements ViewPresenter{
 				case CREATE_SIGNATURE_REQUEST:
 					onCreateSignatureRequest();
 					break;
-					
+
 				}
-				
+
 			}
 		});
 	}
 
 	protected void onCreateSignatureRequest() {
-		broker.createSignatureRequest(view.getForm().getInfo(), new ResponseHandler<Receipt>() {
-			
-			@Override
-			public void onResponse(Receipt response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				NavigationHistoryManager.getInstance().go(item);
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de Assinatura criado com sucesso."), TYPE.TRAY_NOTIFICATION));
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
-				
-			}
-		});
-		
+		if(view.getForm().validate()) {
+			broker.createSignatureRequest(view.getForm().getInfo(), new ResponseHandler<Receipt>() {
+
+				@Override
+				public void onResponse(Receipt response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de Assinatura criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
+
+				}
+			});
+		}
 	}
 
 	protected void onCancel() {

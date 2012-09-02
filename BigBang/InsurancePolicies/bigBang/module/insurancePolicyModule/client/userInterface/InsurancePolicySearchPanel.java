@@ -94,7 +94,9 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 				Resources resources = GWT.create(Resources.class);
 				if(value.statusIcon == null) {
 					statusIcon.setResource(resources.provisionalPolicyIcon());
+					statusIcon.setVisible(false);
 				}else{
+					statusIcon.setVisible(true);
 					switch(value.statusIcon){
 					case OBSOLETE:
 						statusIcon.setResource(resources.inactivePolicyIcon());

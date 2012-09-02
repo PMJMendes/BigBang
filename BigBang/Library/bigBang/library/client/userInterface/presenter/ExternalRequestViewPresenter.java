@@ -130,9 +130,10 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 					break;
 				}
 				case CONFIRM:{
-
-					ExternalInfoRequest toSend = view.getForm().getInfo();
-					saveExternalInformationRequest(toSend);
+					if(view.getForm().validate()) {
+						ExternalInfoRequest toSend = view.getForm().getInfo();
+						saveExternalInformationRequest(toSend);
+					}
 				}
 
 
@@ -148,7 +149,7 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 	protected void saveExternalInformationRequest(final ExternalInfoRequest toSend) {
 		toSend.parentDataObjectId = ownerId;
 		toSend.parentDataTypeId = ownerTypeId;
-		
+
 		counter = 0;
 
 		if(toSend.message.upgrades != null && toSend.message.upgrades.length > 0){
@@ -167,7 +168,7 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 
 						counter++;
 						if(counter == toSend.message.upgrades.length){
-							
+
 							createExternalInfoRequest(toSend);
 
 						}

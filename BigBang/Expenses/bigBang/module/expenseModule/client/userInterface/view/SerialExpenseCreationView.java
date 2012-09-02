@@ -87,7 +87,6 @@ public class SerialExpenseCreationView extends View implements SerialExpenseCrea
 		};
 
 		right.add(rightHeader);
-		rightHeader.setSize("100%", "21px");
 		right.add(toolbar);
 		right.add(form); 
 		right.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);

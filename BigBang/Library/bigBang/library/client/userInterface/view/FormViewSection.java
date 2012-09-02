@@ -173,8 +173,6 @@ public class FormViewSection extends View {
 	public void setReadOnly(boolean readOnly){
 		for(FormField<?> f : getFields()){
 			f.setReadOnly(readOnly);
-			if(readOnly)
-				f.setInvalid(false);
 		}
 		this.readOnly = readOnly;
 	}

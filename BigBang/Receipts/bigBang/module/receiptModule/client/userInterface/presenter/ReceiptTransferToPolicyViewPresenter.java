@@ -95,22 +95,22 @@ public class ReceiptTransferToPolicyViewPresenter implements ViewPresenter{
 	}
 
 	protected void onConfirmTransfer() {
-		String policyId = view.getForm().getInfo();
-		broker.transferToInsurancePolicy(receiptId, policyId, new ResponseHandler<Receipt>() {
+		if(view.getForm().validate()) {
+			String policyId = view.getForm().getInfo();
+			broker.transferToInsurancePolicy(receiptId, policyId, new ResponseHandler<Receipt>() {
 
-			@Override
-			public void onResponse(Receipt response) {
-				onTransferToPolicySuccess();
+				@Override
+				public void onResponse(Receipt response) {
+					onTransferToPolicySuccess();
 
-			}
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onTransferToPolicyFailed();				
-			}
-		});
-
-
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onTransferToPolicyFailed();				
+				}
+			});
+		}
 	}
 
 	@Override

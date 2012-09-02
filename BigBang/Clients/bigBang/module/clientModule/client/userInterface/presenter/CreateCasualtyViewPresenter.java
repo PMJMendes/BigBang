@@ -95,7 +95,7 @@ public class CreateCasualtyViewPresenter implements ViewPresenter {
 
 		bound = true;
 	}
-	
+
 	protected void clearView(){
 		view.getClientForm().setValue(null);
 		view.getForm().setValue(null);
@@ -104,7 +104,7 @@ public class CreateCasualtyViewPresenter implements ViewPresenter {
 
 	protected void showCreateCasualty(String clientId){
 		broker.getClient(clientId, new ResponseHandler<Client>() {
-			
+
 			@Override
 			public void onResponse(Client response) {
 				Casualty casualty = new Casualty();
@@ -112,41 +112,43 @@ public class CreateCasualtyViewPresenter implements ViewPresenter {
 				casualty.clientNumber = response.clientNumber;
 				casualty.clientName = response.name;
 				casualty.managerId = Session.getUserId();
-				
+
 				view.setSaveModeEnabled(true);
 				view.getForm().setValue(casualty);
 				view.getClientForm().setValue(response);
-				
+
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onFailure();
 			}
 		});
 	}
-	
+
 	protected void onSave(){
-		broker.createCasualty(view.getForm().getInfo(), new ResponseHandler<Casualty>() {
-			
-			@Override
-			public void onResponse(Casualty response) {
-				onSaveSuccess(response.id);
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onSaveFailed();
-			}
-		});
+		if(view.getForm().validate()) {
+			broker.createCasualty(view.getForm().getInfo(), new ResponseHandler<Casualty>() {
+
+				@Override
+				public void onResponse(Casualty response) {
+					onSaveSuccess(response.id);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSaveFailed();
+				}
+			});
+		}
 	}
-	
+
 	protected void onCancel(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onSaveSuccess(String casualtyId){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Sinistro foi Criado com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = new NavigationHistoryItem();
@@ -156,17 +158,17 @@ public class CreateCasualtyViewPresenter implements ViewPresenter {
 		item.setParameter("casualtyid", casualtyId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onSaveFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o Sinistro"), TYPE.ALERT_NOTIFICATION));
 		view.setSaveModeEnabled(true);
 	}
-	
+
 	protected void onFailure(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o Sinistro"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 }

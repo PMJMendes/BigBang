@@ -98,7 +98,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 		if(inUserCreation()){
 			clearNewUser();
 		}
-		
+
 		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageUsers);
 		view.allowCreate(hasPermissions);
 		view.allowEdit(hasPermissions);
@@ -154,12 +154,14 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
-					User info = view.getForm().getInfo();
-					view.getForm().setReadOnly(true);
-					if(info.id.equalsIgnoreCase("new"))
-						createUser(info);
-					else
-						saveUser(info);
+					if(view.getForm().validate()) {
+						User info = view.getForm().getInfo();
+						view.getForm().setReadOnly(true);
+						if(info.id.equalsIgnoreCase("new"))
+							createUser(info);
+						else
+							saveUser(info);
+					}
 					break;
 				case CANCEL_EDIT:
 					if(inUserCreation()){
@@ -176,7 +178,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
@@ -213,7 +215,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 			view.prepareNewUser(user);
 			view.getForm().setValue(user);
 			view.showFormPassword(true);
-	
+
 			view.allowDelete(hasPermissions);
 			view.allowEdit(hasPermissions);
 			view.setSaveModeEnabled(hasPermissions);
@@ -343,19 +345,19 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 	protected void onRefresh(){
 		userBroker.requireDataRefresh();
 		userBroker.getUsers(new ResponseHandler<User[]>() {
-			
+
 			@Override
 			public void onResponse(User[] response) {
 				return;
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
 			}
 		});
 	}
-	
+
 	private void onGetUserFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o utilizador seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

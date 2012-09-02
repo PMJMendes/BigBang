@@ -100,9 +100,9 @@ public class SubCasualtyRejectCloseViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(SubCasualty response) {
-//				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY)){ TODO IMPORTANT FJVC
-//					onRejectFailed();
-//				}
+				//				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY)){ TODO IMPORTANT FJVC
+				//					onRejectFailed();
+				//				}
 			}
 
 			@Override
@@ -117,18 +117,20 @@ public class SubCasualtyRejectCloseViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(SubCasualty response) {
-				broker.rejectCloseSubCasualty(response.id, view.getForm().getInfo(), new ResponseHandler<Void>() {
+				if(view.getForm().validate()) {
+					broker.rejectCloseSubCasualty(response.id, view.getForm().getInfo(), new ResponseHandler<Void>() {
 
-					@Override
-					public void onResponse(Void response) {
-						onRejectSuccess();
-					}
+						@Override
+						public void onResponse(Void response) {
+							onRejectSuccess();
+						}
 
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						onRejectFailed();
-					}
-				});
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onRejectFailed();
+						}
+					});
+				}
 			}
 
 			@Override

@@ -538,4 +538,25 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 		
 	}
 
+
+	@Override
+	public void massReceiveProof(String[] toReceive, DocuShareHandle handle,
+			final ResponseHandler<Void> responseHandler) {
+		service.massReceiveReception(toReceive, handle, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				responseHandler.onResponse(null);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						"Could not receive proof"
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
 }

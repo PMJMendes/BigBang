@@ -27,23 +27,23 @@ public class ExternalRequestClosingViewPresenter implements ViewPresenter {
 		CLOSE,
 		CANCEL
 	}
-	
+
 	public static interface Display {
 		HasEditableValue<Closing> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
-		
+
 		Widget asWidget();
 	}
-	
+
 	protected boolean bound = false;
 	protected ExternRequestServiceAsync service;
 	protected Display view;
-	
+
 	public ExternalRequestClosingViewPresenter(Display view) {
 		setView((UIObject) view);
 		service = ExternRequestService.Util.getInstance();
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -59,21 +59,21 @@ public class ExternalRequestClosingViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		String requestId = parameterHolder.getParameter("externalrequestid");
-		
+
 		clearView();
-		
+
 		if(requestId == null || requestId.isEmpty()) {
 			onFailure();
 		}else{
 			showClose(requestId);
 		}
 	}
-	
+
 	protected void bind(){
 		if(bound) {return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<ExternalRequestClosingViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()) {
@@ -85,44 +85,46 @@ public class ExternalRequestClosingViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
 	protected void clearView(){
 		view.getForm().setValue(null);
 	}
-	
+
 	protected void showClose(String requestId) {
 		Closing closing = new Closing();
 		closing.requestId = requestId;
 		view.getForm().setValue(closing);
 	}
-	
-	protected void onClose(){
-		final Closing closing = view.getForm().getInfo();
-		service.closeRequest(closing, new BigBangAsyncCallback<Void>() {
 
-			@Override
-			public void onResponseSuccess(Void result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExternalInfoRequest.CLOSE, closing.requestId));
-				onCloseSuccess();
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				onCloseFailed();
-				super.onResponseFailure(caught);
-			}
-		});
+	protected void onClose(){
+		if(view.getForm().validate()) {
+			final Closing closing = view.getForm().getInfo();
+			service.closeRequest(closing, new BigBangAsyncCallback<Void>() {
+
+				@Override
+				public void onResponseSuccess(Void result) {
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExternalInfoRequest.CLOSE, closing.requestId));
+					onCloseSuccess();
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					onCloseFailed();
+					super.onResponseFailure(caught);
+				}
+			});
+		}
 	}
-	
+
 	protected void onCancel(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onCloseSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Pedido foi Encerrado com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -131,16 +133,16 @@ public class ExternalRequestClosingViewPresenter implements ViewPresenter {
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onCloseFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Encerrar o Pedido"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	protected void onFailure(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível Encerrar o Pedido"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 }

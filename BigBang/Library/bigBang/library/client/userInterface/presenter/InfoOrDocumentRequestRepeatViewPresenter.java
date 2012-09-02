@@ -122,21 +122,23 @@ public class InfoOrDocumentRequestRepeatViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSend(){
-		final InfoOrDocumentRequest request = view.getForm().getInfo();
-		service.repeatRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+		if(view.getForm().validate()) {
+			final InfoOrDocumentRequest request = view.getForm().getInfo();
+			service.repeatRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
 
-			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.REPEAT_REQUEST, request.id));
-				onSendSuccess();
-			}
+				@Override
+				public void onResponseSuccess(InfoOrDocumentRequest result) {
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.REPEAT_REQUEST, request.id));
+					onSendSuccess();
+				}
 
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				onSendFailed();
-				super.onResponseFailure(caught);
-			}
-		});
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					onSendFailed();
+					super.onResponseFailure(caught);
+				}
+			});
+		}
 	}
 
 	protected void onCancel(){

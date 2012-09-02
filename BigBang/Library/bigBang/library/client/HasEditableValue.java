@@ -25,4 +25,6 @@ public interface HasEditableValue<T> extends HasValue<T>, Editable {
 	 */
 	public void revert();
 	
+	public boolean validate();
+	
 }

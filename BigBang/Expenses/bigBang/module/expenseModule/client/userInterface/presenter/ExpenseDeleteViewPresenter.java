@@ -29,12 +29,12 @@ public class ExpenseDeleteViewPresenter implements ViewPresenter{
 	private Display view;
 	private boolean bound;
 	private String expenseId;
-	
+
 	public enum Action{
 		DELETE_EXPENSE,
 		CANCEL
 	}
-	
+
 	public interface Display{
 		Widget asWidget();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -45,7 +45,7 @@ public class ExpenseDeleteViewPresenter implements ViewPresenter{
 		broker = (ExpenseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE);
 		setView((UIObject)view);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
@@ -60,19 +60,19 @@ public class ExpenseDeleteViewPresenter implements ViewPresenter{
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		
+
 		expenseId = parameterHolder.getParameter("expenseid");
 		view.getForm().setValue(null);
-		
+
 	}
-	
+
 	public void bind(){
 		if(bound){
 			return;
 		}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<ExpenseDeleteViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -82,9 +82,9 @@ public class ExpenseDeleteViewPresenter implements ViewPresenter{
 				case DELETE_EXPENSE:
 					onDeleteExpense();
 					break;
-					}
 				}
-			
+			}
+
 		});
 	}
 
@@ -95,23 +95,24 @@ public class ExpenseDeleteViewPresenter implements ViewPresenter{
 	}
 
 	protected void onDeleteExpense() {
-		broker.removeExpense(expenseId, view.getForm().getInfo(), new ResponseHandler<String>() {
-			
-			@Override
-			public void onResponse(String response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				item.removeParameter("expenseid");
-				NavigationHistoryManager.getInstance().go(item);
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Despesa de Saúde eliminada com sucesso."), TYPE.TRAY_NOTIFICATION));
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a Despesa de Saúde."), TYPE.ALERT_NOTIFICATION));
-			}
-		});
-		
+		if(view.getForm().validate()) {
+			broker.removeExpense(expenseId, view.getForm().getInfo(), new ResponseHandler<String>() {
+
+				@Override
+				public void onResponse(String response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					item.removeParameter("expenseid");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Despesa de Saúde eliminada com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a Despesa de Saúde."), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
 	}
-	
+
 }

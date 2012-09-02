@@ -2,6 +2,27 @@ package bigBang.module.expenseModule.client.userInterface;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.FormField;
+import bigBang.library.client.HasParameters;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.userInterface.CheckBoxFormField;
+import bigBang.library.client.userInterface.DatePickerFormField;
+import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.ExpandableSelectionFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
+import bigBang.library.client.userInterface.RadioButtonFormField;
+import bigBang.library.client.userInterface.TextAreaFormField;
+import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
+import bigBang.library.client.userInterface.view.FormView;
+import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,29 +36,6 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
-import bigBang.library.client.EventBus;
-import bigBang.library.client.FormField;
-import bigBang.library.client.HasParameters;
-import bigBang.library.client.Notification;
-import bigBang.library.client.Notification.TYPE;
-import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
-import bigBang.library.client.event.NewNotificationEvent;
-import bigBang.library.client.userInterface.CheckBoxFormField;
-import bigBang.library.client.userInterface.DatePickerFormField;
-import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ExpandableSelectionFormField;
-import bigBang.library.client.userInterface.NumericTextBoxFormField;
-import bigBang.library.client.userInterface.TextAreaFormField;
-import bigBang.library.client.userInterface.TextBoxFormField;
-import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
-import bigBang.library.client.userInterface.view.FormView;
-import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
-import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
-import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
 
 public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyWrapper>{
 
@@ -57,10 +55,13 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 	private Button settleButton;
 	private TextAreaFormField notes;
 	private DatePickerFormField expenseDate;
-	private ExpandableListBoxFormField insuredObjectId;
 	private ExpandableListBoxFormField coverageId;
 	private NumericTextBoxFormField expenseValue;
 	private boolean tempIsManual;
+
+	protected ExpandableListBoxFormField insuredObject;
+	protected RadioButtonFormField belongsToPolicy;
+	protected TextBoxFormField insuredObjectName; 
 
 	public SerialExpenseCreationForm(){
 
@@ -128,7 +129,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		});
 
 		subscriber = new TextBoxFormField("Beneficiário");
-		
+
 		noSubPolicy = new CheckBoxFormField("Sem apólice adesão (usar apólice principal)");
 
 		noSubPolicy.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -160,19 +161,26 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 
 		expenseDate = new DatePickerFormField("Data");
 		expenseDate.setMandatory(true);
-		insuredObjectId = new ExpandableListBoxFormField("Unidade de Risco");
-		insuredObjectId.setMandatory(true);
+
+		insuredObject = new ExpandableListBoxFormField("Unidade de Risco");
+		insuredObject.setWidth("250px");
+		insuredObject.setFieldWidth("231px");
+		insuredObjectName = new TextBoxFormField("Unidade de Risco");
+		insuredObjectName.setFieldWidth("250px");
+		belongsToPolicy = new RadioButtonFormField(true);
+		belongsToPolicy.addOption("true", "Presente na apólice");
+		belongsToPolicy.addOption("false", "Outra");
+
 		expenseValue = new NumericTextBoxFormField("Valor", true);
 		expenseValue.setFieldWidth("175px");
 		expenseValue.setUnitsLabel("€");
 		expenseValue.setMandatory(true);
-		
+
 		coverageId = new ExpandableListBoxFormField("Cobertura");
 
 		addFormFieldGroup(new FormField<?>[]{
 				expenseValue,
 				manager,
-				insuredObjectId,
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
@@ -180,7 +188,26 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 				expenseDate,	
 		}, false);
 
+		addFormField(insuredObject, true);
+		addFormField(insuredObjectName, true);
+		addFormField(belongsToPolicy, false);
 
+
+		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(event.getValue().equalsIgnoreCase("true")){
+					insuredObject.setVisible(true);
+					insuredObjectName.setVisible(false);
+				}else{
+					insuredObject.setVisible(false);
+					insuredObjectName.setVisible(true);
+				}
+				insuredObjectName.setValue(null);
+				insuredObject.setValue(null);
+			}
+		});
 
 		HorizontalPanel settlementPanel = new HorizontalPanel();
 		VerticalPanel settlementVerticalPanel = new VerticalPanel();
@@ -246,12 +273,12 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		newW.expense.settlement = settlement.getValue();
 		newW.expense.notes = notes.getValue();
 		newW.expense.expenseDate = expenseDate.getStringValue();
-		newW.expense.insuredObjectId = insuredObjectId.getValue();
 		newW.expense.value = expenseValue.getValue();
 		newW.expense.isManual = tempIsManual;
 		newW.expense.coverageId = coverageId.getValue();
 		newW.expense.coverageName = coverageId.getSelectedItemText();
-		newW.expense.insuredObjectName = insuredObjectId.getSelectedItemText();
+		newW.expense.insuredObjectId = insuredObject.getValue();
+		newW.expense.insuredObjectName = insuredObjectName.getValue();
 		return newW;
 	}
 
@@ -282,7 +309,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 						: BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS +"/"+info.expense.referenceId;
 
 
-				insuredObjectId.setListId(listId, new ResponseHandler<Void>() {
+				insuredObject.setListId(listId, new ResponseHandler<Void>() {
 					@Override
 					public void onResponse(Void response) {
 						return;
@@ -294,27 +321,29 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 					}
 				});
 
-				listId = info.expense.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
-						BigBangConstants.TypifiedListIds.POLICY_COVERAGE+"/"+info.expense.referenceId 
-						: BigBangConstants.TypifiedListIds.SUB_POLICY_COVERAGE +"/"+info.expense.referenceId;
+				if(info.expense.insuredObjectName != null){
+					belongsToPolicy.setValue("false", true);
+					insuredObjectName.setValue(info.expense.insuredObjectName);
+				}else{
+					belongsToPolicy.setValue("true", true);
+					insuredObject.setValue(info.expense.insuredObjectId);
+				}
 
-				BigBangTypifiedListBroker listBroker = info.expense.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
-						PolicyTypifiedListBroker.Util.getInstance() : SubPolicyTypifiedListBroker.Util.getInstance();
+				listId = BigBangConstants.EntityIds.COVERAGE + "/" + info.expense.referenceId;
 
-						coverageId.setTypifiedDataBroker(listBroker);
-						coverageId.setListId(listId, new ResponseHandler<Void>() {
+				coverageId.setListId(listId, new ResponseHandler<Void>() {
 
-							@Override
-							public void onResponse(Void response) {
-								return;
-							}
+					@Override
+					public void onResponse(Void response) {
+						return;
+					}
 
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de coberturas."), TYPE.ALERT_NOTIFICATION));
-							}
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de coberturas."), TYPE.ALERT_NOTIFICATION));
+					}
 
-						});
+				});
 			}
 			else{
 				clearExpense();
@@ -385,7 +414,9 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		expenseValue.setReadOnly(!b);
 		coverageId.setReadOnly(!b);
 		expenseDate.setReadOnly(!b);
-		insuredObjectId.setReadOnly(!b);
+		insuredObject.setReadOnly(!b);
+		insuredObjectName.setReadOnly(!b);
+		belongsToPolicy.setReadOnly(!b);
 		settleButton.setEnabled(b);
 		notes.setReadOnly(!b);
 	}
@@ -395,12 +426,13 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		manager.setValue(null);
 		coverageId.clearValues();
 		expenseDate.clear();
-		insuredObjectId.clearValues();
+		insuredObject.clearValues();
 		settlement.clear();
 		noSubPolicy.clear();
 		settleButton.setVisible(true);
 		settleLabel.setVisible(true);
 		settlement.setReadOnly(true);
+		belongsToPolicy.setValue("true");
 	}
 
 	public void clearSubPolicy() {

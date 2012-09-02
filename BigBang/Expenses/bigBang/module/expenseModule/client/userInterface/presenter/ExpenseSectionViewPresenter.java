@@ -23,7 +23,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 	public static enum SectionOperation {
 		OPERATIONS,
 		MASS_PARTICIPATE_TO_INSURER, MASS_NOTIFY_RESULTS_CLIENT, MASS_RETURN_TO_CLIENT,
-		REPORT, SERIAL_EXPENSE_CREATION
+		REPORT, SERIAL_EXPENSE_CREATION, PROOF_RECEPTION
 	}
 
 	public static interface Display {
@@ -108,6 +108,9 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					case SERIAL_EXPENSE_CREATION:
 						item.pushIntoStackParameter("display", "serialexpensecreation");
 						break;
+					case PROOF_RECEPTION:
+						item.pushIntoStackParameter("display", "proofreception");
+						break;
 					}
 					
 					
@@ -147,6 +150,9 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					}else if(display.equalsIgnoreCase("massreturntoclient")){
 						view.selectOperation(SectionOperation.MASS_RETURN_TO_CLIENT);
 						present("MASS_RETURN_TO_CLIENT", parameters);
+					}else if(display.equalsIgnoreCase("proofreception")){
+						view.selectOperation(SectionOperation.PROOF_RECEPTION);
+						present("PROOF_RECEPTION", parameters);
 					}else if(display.equalsIgnoreCase("report")){
 						view.selectOperation(SectionOperation.REPORT);
 						parameters.setParameter("processtypeid", BigBangConstants.EntityIds.EXPENSE);

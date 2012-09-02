@@ -236,7 +236,15 @@ public class DatePickerFormField extends FormField<Date> {
 		if(day.equals("") || month.equals("") || year.equals(""))
 			return null;
 
-		return this.format.parse(year+"-"+month+"-"+day);
+		Date result = null;
+		
+		try{
+			result = this.format.parse(year+"-"+month+"-"+day);
+		}catch(IllegalArgumentException e){
+			result = null;
+		}
+
+		return result;
 	}
 
 	public String getStringValue(){
@@ -246,7 +254,7 @@ public class DatePickerFormField extends FormField<Date> {
 	@Override
 	public void setInvalid(boolean invalid){
 		if(field != null){
-			if(invalid){
+			if(invalid && !isReadOnly()){
 				day.addStyleName("invalidFormField");
 				month.addStyleName("invalidFormField");
 				year.addStyleName("invalidFormField");
@@ -256,10 +264,10 @@ public class DatePickerFormField extends FormField<Date> {
 				year.removeStyleName("invalidFormField");
 			}
 		}
-		FieldValidator<?> validator = this.validator;
-		String message = validator == null ? null : validator.getErrorMessage();
-		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
-		this.errorMessageLabel.setVisible(invalid);
+//		FieldValidator<?> validator = this.validator;
+//		String message = validator == null ? null : validator.getErrorMessage();
+//		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
+//		this.errorMessageLabel.setVisible(invalid);
 	}
 
 	@Override

@@ -103,8 +103,10 @@ public class ExerciseViewPresenter implements ViewPresenter{
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case SAVE:
-					Exercise value = view.getExerciseForm().getInfo();
-					saveExercise(value);
+					if(view.getExerciseForm().validate()) {
+						Exercise value = view.getExerciseForm().getInfo();
+						saveExercise(value);
+					}
 					break;
 				case EDIT:
 					onEdit();
@@ -418,7 +420,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 		item.removeParameter("exerciseid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onSaveExerciseSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Exercício guardado no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

@@ -85,7 +85,7 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 	public void setParameters(HasParameters parameterHolder) {
 		String ownerId = parameterHolder.getParameter("clientid");
 		String requestId = parameterHolder.getParameter("quoterequestid");
-		
+
 		if(ownerId == null || ownerId.isEmpty()) {
 			clearView();
 			onGetQuoteRequestFailed();
@@ -204,14 +204,14 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 			onGetQuoteRequestFailed();
 		}else{
 			broker.getQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {
-				
+
 				@Override
 				public void onResponse(QuoteRequest response) {
 					view.setSaveModeEnabled(true);
 					view.getForm().setValue(response);
 					showOwner(ownerId);
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					onGetQuoteRequestFailed();
@@ -226,12 +226,12 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 			@Override
 			public void onResponse(Client response) {
 				view.getOwnerForm().setValue(response);
-				
+
 				QuoteRequest value = view.getForm().getValue();
 				value.clientName = response.name;
 				value.clientNumber = response.clientNumber;
 				value.clientId = response.id;
-				
+
 				view.getForm().setValue(value);
 			}
 
@@ -241,7 +241,7 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	protected void openQuoteRequest() {
 		broker.openRequestResource(null, new ResponseHandler<QuoteRequest>() {
 
@@ -260,18 +260,20 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSave() {
-		broker.commitRequest(view.getForm().getInfo(), new ResponseHandler<QuoteRequest>() {
+		if(view.getForm().validate()) {
+			broker.commitRequest(view.getForm().getInfo(), new ResponseHandler<QuoteRequest>() {
 
-			@Override
-			public void onResponse(QuoteRequest response) {
-				onSaveSuccess();
-			}
+				@Override
+				public void onResponse(QuoteRequest response) {
+					onSaveSuccess();
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onSaveFailed();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSaveFailed();
+				}
+			});
+		}
 	}
 
 	protected void onCancel(){
@@ -291,19 +293,19 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 
 	protected void saveWorkState(){
 		broker.updateQuoteRequest(view.getForm().getInfo(), new ResponseHandler<QuoteRequest>() {
-			
+
 			@Override
 			public void onResponse(QuoteRequest response) {
 				return;
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
 			}
 		});
 	}
-	
+
 	protected void onCreateInsuredObject(String objectType){
 		saveWorkState();
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
@@ -348,7 +350,7 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 		item.removeParameter("quoterequestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onGetSubLineDefinitionFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível acrescentar a Modalidade à Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
 	}

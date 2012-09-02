@@ -102,7 +102,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 		}
 
 	}
-	
+
 	private void setup(){
 		this.view.getContactsList().clearSelection();
 		this.view.getDocumentsList().clearSelection();
@@ -299,22 +299,23 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSave() {
-		Expense expense = view.getForm().getInfo();
+		if(view.getForm().validate()) {
+			Expense expense = view.getForm().getInfo();
 
-		this.expenseBroker.updateExpense(expense, new ResponseHandler<Expense>() {
+			this.expenseBroker.updateExpense(expense, new ResponseHandler<Expense>() {
 
-			@Override
-			public void onResponse(Expense response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Despesa de Saúde foi guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
-				NavigationHistoryManager.getInstance().reload();
-			}
+				@Override
+				public void onResponse(Expense response) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Despesa de Saúde foi guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
+					NavigationHistoryManager.getInstance().reload();
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a Despesa de Saúde"), TYPE.ALERT_NOTIFICATION));
-			}
-		});
-
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a Despesa de Saúde"), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
 	}
 
 	protected void onReturnToClient() {
@@ -421,7 +422,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 	private void showSubProcess(final BigBangProcess process){
 		String type = process.dataTypeId;
-		
+
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 			item.pushIntoStackParameter("display", "viewinforequest");

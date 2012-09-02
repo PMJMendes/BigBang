@@ -63,9 +63,8 @@ ResizeHandler, CloseHandler<PopupPanel> {
 	 */
 	private static final String DEFAULT_STYLENAME = "mosaic-InfoPanel";
 
-	public static final int DEFAULT_DELAY = 3333; // microseconds
+	public static final int DEFAULT_DELAY = 6000; // milis
 	public static final int WIDTH = 224;
-
 	public static final int HEIGHT = 72;
 
 	private static final List<InfoPanel> SLOTS = new ArrayList<InfoPanel>();
@@ -342,7 +341,8 @@ ResizeHandler, CloseHandler<PopupPanel> {
 		HorizontalPanel wrapper = new HorizontalPanel();
 		this.widget = wrapper;
 		
-		wrapper.setSpacing(5);
+		wrapper.setSpacing(0);
+		wrapper.setSize(WIDTH+"px", HEIGHT+"px");
 		wrapper.add(new Image(image));
 		
 		final FlowPanel contentPanel = new FlowPanel();

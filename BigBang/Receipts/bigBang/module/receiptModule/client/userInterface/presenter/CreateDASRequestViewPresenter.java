@@ -70,14 +70,14 @@ public class CreateDASRequestViewPresenter implements ViewPresenter{
 		view.getForm().setValue(request);
 
 	}
-	
+
 	public void bind(){
 		if(bound){
 			return;
 		}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<CreateDASRequestViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -93,24 +93,26 @@ public class CreateDASRequestViewPresenter implements ViewPresenter{
 	}
 
 	protected void onCreateDASRequest() {
-		broker.createDASRequest(view.getForm().getInfo(), new ResponseHandler<Receipt>() {
+		if(view.getForm().validate()) {
+			broker.createDASRequest(view.getForm().getInfo(), new ResponseHandler<Receipt>() {
 
-			@Override
-			public void onResponse(Receipt response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				NavigationHistoryManager.getInstance().go(item);
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Declaração de Ausência de Sinistro criada com sucesso."), TYPE.TRAY_NOTIFICATION));				
-			}
+				@Override
+				public void onResponse(Receipt response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Declaração de Ausência de Sinistro criada com sucesso."), TYPE.TRAY_NOTIFICATION));				
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
-				
-			}
-			
-		});
-		
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
+
+				}
+
+			});
+		}
+
 	}
 
 	protected void onCancel() {

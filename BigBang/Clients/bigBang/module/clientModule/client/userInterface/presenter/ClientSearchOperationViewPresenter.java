@@ -56,7 +56,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		MERGE_WITH_CLIENT,
 		TRANSFER_MANAGER,
 		REQUIRE_INFO_DOCUMENT,
-		
+
 		ON_NEW_RESULTS
 	}
 
@@ -190,12 +190,14 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					}
 					break;
 				case SAVE:
-					Client info = view.getForm().getInfo();
-					view.getForm().setReadOnly(true);
-					if(inClientCreation()){
-						createClient(info);
-					}else{
-						saveClient(info);
+					if(view.getForm().validate()) {
+						Client info = view.getForm().getInfo();
+						view.getForm().setReadOnly(true);
+						if(inClientCreation()){
+							createClient(info);
+						}else{
+							saveClient(info);
+						}
 					}
 					break;
 				case DELETE:
@@ -387,7 +389,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		this.view.getPolicyList().clearSelection();
 		this.view.getSubProcessesList().clearSelection();
 		this.view.getHistoryList().clearSelection();
-		
+
 		view.allowCreate(PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.CREATE_CLIENT));
 	}
 
@@ -410,7 +412,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			view.allowDelete(true);
 			view.allowEdit(true);
 			view.setSaveModeEnabled(true);
-			
+
 			view.getForm().setValue(client);
 			view.getForm().setReadOnly(false);
 		}else{
@@ -466,7 +468,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				view.setSaveModeEnabled(false);
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
-				
+
 				ensureListedAndSelected(response);
 			}
 
@@ -519,7 +521,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			ensureListedAndSelected(client);
 		}
 	}
-	
+
 	private void ensureListedAndSelected(Client client) {
 		boolean found = false;
 		for(ValueSelectable<ClientStub> entry : view.getList().getAll()) {
@@ -531,13 +533,13 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				entry.setSelected(false, false);
 			}
 		}
-		
+
 		if(!found) {
 			ValueSelectable<ClientStub> newEntry = view.addClientListEntry(client);
 			newEntry.setSelected(true, false);
 		}
 	}
-	
+
 	private void onGetClientFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter Cliente seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

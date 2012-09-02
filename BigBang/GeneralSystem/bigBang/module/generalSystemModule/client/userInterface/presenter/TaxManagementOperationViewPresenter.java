@@ -223,42 +223,44 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 				}
 
 				case SAVE_TAX:{
-					Tax newTax = view.getForm().getInfo();
-					if(newTax.id == null){
-						broker.addTax(lineId, subLineId, view.getForm().getInfo(), new ResponseHandler<Tax>(){
+					if(view.getForm().validate()) {
+						Tax newTax = view.getForm().getInfo();
+						if(newTax.id == null){
+							broker.addTax(lineId, subLineId, view.getForm().getInfo(), new ResponseHandler<Tax>(){
 
-							@Override
-							public void onResponse(Tax response) {
-								view.showForm(false);
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Campo de cobertura criado com sucesso."), TYPE.TRAY_NOTIFICATION));
-							}
+								@Override
+								public void onResponse(Tax response) {
+									view.showForm(false);
+									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Campo de cobertura criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+								}
 
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o campo de cobertura."), TYPE.ALERT_NOTIFICATION));
+								@Override
+								public void onError(Collection<ResponseError> errors) {
+									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o campo de cobertura."), TYPE.ALERT_NOTIFICATION));
 
-							}
-
-
-						});
-					}
-					else{
-						broker.updateTax(lineId, subLineId, newTax, new ResponseHandler<Tax>(){
-
-							@Override
-							public void onResponse(Tax response) {
-								view.showForm(false);
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Campo de cobertura gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o campo de cobertura."), TYPE.ALERT_NOTIFICATION));
-
-							}
+								}
 
 
-						});
+							});
+						}
+						else{
+							broker.updateTax(lineId, subLineId, newTax, new ResponseHandler<Tax>(){
+
+								@Override
+								public void onResponse(Tax response) {
+									view.showForm(false);
+									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Campo de cobertura gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
+								}
+
+								@Override
+								public void onError(Collection<ResponseError> errors) {
+									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o campo de cobertura."), TYPE.ALERT_NOTIFICATION));
+
+								}
+
+
+							});
+						}
 					}
 					break;
 				}
@@ -268,21 +270,21 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 
 							@Override
 							public void onResponse(Tax response) {
-							
+
 								view.showForm(false);
 								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Campo de cobertura eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
-								
+
 							}
 
 							@Override
 							public void onError(Collection<ResponseError> errors) {
-								
+
 								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o campo de cobertura."), TYPE.ALERT_NOTIFICATION));
 							}
-							
-							
-							
-							
+
+
+
+
 						});
 					}
 					else{

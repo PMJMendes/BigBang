@@ -39,19 +39,19 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 		REPEAT_SIGNATURE_REQUEST,
 		RECEIVE_REPLY
 	}
-	
+
 	protected Display view;
 	protected boolean bound = false;
 	private SignatureRequestBroker signatureBroker;
 	private ReceiptDataBroker receiptBroker;
 	private String signatureRequestId;
-	
+
 	public SignatureRequestViewPresenter(Display view) {
 		setView((UIObject) view);
 		signatureBroker = (SignatureRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SIGNATURE_REQUEST);
 		receiptBroker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 	}
-	
+
 	public static interface Display{
 		Widget asWidget();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -64,7 +64,7 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 		HasSelectables<ValueSelectable<HistoryItemStub>> getHistoryList();
 		void applyOwnerToList(String negotiationId);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
@@ -76,14 +76,14 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 		container.clear();
 		container.add(view.asWidget());
 	}
-	
+
 	private void bind(){
 		if(bound){
 			return;
 		}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<SignatureRequestViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -99,7 +99,7 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -111,7 +111,7 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
@@ -126,28 +126,29 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 	}
 
 	protected void repeatReceiveRequest() {
-		signatureBroker.repeatRequest(view.getForm().getInfo(), new ResponseHandler<SignatureRequest>() {
-			
-			@Override
-			public void onResponse(SignatureRequest response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de assinatura reenviado."), TYPE.TRAY_NOTIFICATION));
-				NavigationHistoryManager.getInstance().reload();
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
-			}
-		});
-		
+		if(view.getForm().validate()) {
+			signatureBroker.repeatRequest(view.getForm().getInfo(), new ResponseHandler<SignatureRequest>() {
+
+				@Override
+				public void onResponse(SignatureRequest response) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de assinatura reenviado."), TYPE.TRAY_NOTIFICATION));
+					NavigationHistoryManager.getInstance().reload();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
 	}
 
 	protected void receiveReply() {
 		SignatureRequest.Response response = new SignatureRequest.Response();
 		response.requestId = view.getForm().getInfo().id;
-		
+
 		signatureBroker.receiveResponse(response, new ResponseHandler<SignatureRequest>() {
-			
+
 			@Override
 			public void onResponse(SignatureRequest response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -156,7 +157,7 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao receber a resposta ao pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
@@ -176,7 +177,7 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 		signatureRequestId = parameterHolder.getParameter("signaturerequestid");
 		view.applyOwnerToList(signatureRequestId);
 		signatureBroker.getRequest(signatureRequestId, new ResponseHandler<SignatureRequest>() {
-			
+
 			@Override
 			public void onResponse(SignatureRequest response) {
 				view.getForm().setValue(response);
@@ -184,23 +185,23 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 				view.allowCancel(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SignatureRequestProcess.CANCEL_SIGNATURE_REQUEST));
 				view.allowReceiveResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SignatureRequestProcess.RECEIVE_REPLY));
 				view.allowRepeatRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SignatureRequestProcess.REPEAT_SIGNATURE_REQUEST));
-			
+
 				receiptBroker.getReceipt(response.receiptId, new ResponseHandler<Receipt>() {
-					
+
 					@Override
 					public void onResponse(Receipt response) {
 						view.getOwnerForm().setValue(response);
 						view.getOwnerForm().setReadOnly(true);
 					}
-					
+
 					@Override
 					public void onError(Collection<ResponseError> errors) {
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o recibo."), TYPE.ALERT_NOTIFICATION));
 					}
 				});
-				
+
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
@@ -208,9 +209,9 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 				view.disableToolbar();
 			}
 		});
-		
+
 	}
-	
-	
+
+
 
 }

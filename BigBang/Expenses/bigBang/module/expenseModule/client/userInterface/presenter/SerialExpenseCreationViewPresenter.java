@@ -199,9 +199,9 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 
 			}
 		});
-		
+
 		view.getNavigationPanel().registerNavigationStateChangedHandler(new NavigationStateChangedEventHandler() {
-			
+
 			@Override
 			public void onNavigationStateChanged(NavigationStateChangedEvent event) {
 				if(event.getObject() instanceof ImageHandlerPanel){
@@ -212,7 +212,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
@@ -232,11 +232,11 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 
 	protected void onSubPolicyChanged() {
 		String subPolicyId = view.getSubPolicyId();
-		
+
 		if(subPolicyId != null){
-		
+
 			subPolicyBroker.getSubPolicy(subPolicyId, new ResponseHandler<SubPolicy>() {
-				
+
 				@Override
 				public void onResponse(SubPolicy response) {
 					expensePolicyWrapper.subPolicy = response;
@@ -254,7 +254,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 					view.setExpenseEnabled(true);
 					view.enableToolbar(true);
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice adesão."), TYPE.ALERT_NOTIFICATION));				
@@ -268,28 +268,30 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 	}
 
 	protected void onSave() {
-		ExpensePolicyWrapper toSave = view.getForm().getInfo();
-		final DocuShareHandle handle = new DocuShareHandle();
-		
-		handle.handle = view.getSelectedDocuShareItem().handle;
-		
-		expenseBroker.serialCreateExpense(toSave.expense, handle, new ResponseHandler<Expense> () {
-			
-			@Override
-			public void onResponse(Expense response) {
-				editing = false;
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Despesa de saúde criada com sucesso."), TYPE.TRAY_NOTIFICATION));
-				view.removeDocuShareItem(handle);
-				view.panelNavigateBack();
-				expensePolicyWrapper = new ExpensePolicyWrapper();
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a despesa de saúde."), TYPE.ALERT_NOTIFICATION));				
-			}
-			
-		});
+		if(view.getForm().validate()) {
+			ExpensePolicyWrapper toSave = view.getForm().getInfo();
+			final DocuShareHandle handle = new DocuShareHandle();
+
+			handle.handle = view.getSelectedDocuShareItem().handle;
+
+			expenseBroker.serialCreateExpense(toSave.expense, handle, new ResponseHandler<Expense> () {
+
+				@Override
+				public void onResponse(Expense response) {
+					editing = false;
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Despesa de saúde criada com sucesso."), TYPE.TRAY_NOTIFICATION));
+					view.removeDocuShareItem(handle);
+					view.panelNavigateBack();
+					expensePolicyWrapper = new ExpensePolicyWrapper();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a despesa de saúde."), TYPE.ALERT_NOTIFICATION));				
+				}
+
+			});
+		}
 	}
 
 	protected void onPolicyNumberChanged() {
@@ -306,7 +308,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 	}
 
 	protected void onMarkExpense() {
-		
+
 		DocuShareItem currentItem = view.getSelectedDocuShareItem();
 		view.enablePolicyNumber(false);
 		view.markExpense(currentItem);

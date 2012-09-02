@@ -53,7 +53,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 		void removeFromList(ValueSelectable<Mediator> selectable);
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
-		
+
 		//Form
 		HasEditableValue<Mediator> getForm();
 		boolean isFormValid();
@@ -102,7 +102,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 		if(inMediatorCreation()){
 			clearNewMediator();
 		}
-		
+
 		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageMediators);
 		view.allowCreate(hasPermissions);
 		view.allowEdit(hasPermissions);
@@ -158,12 +158,14 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
-					Mediator info = view.getForm().getInfo();
-					view.getForm().setReadOnly(true);
-					if(info.id.equalsIgnoreCase("new"))
-						createMediator(info);
-					else
-						saveMediator(info);
+					if(view.getForm().validate()) {
+						Mediator info = view.getForm().getInfo();
+						view.getForm().setReadOnly(true);
+						if(info.id.equalsIgnoreCase("new"))
+							createMediator(info);
+						else
+							saveMediator(info);
+					}
 					break;
 				case CANCEL_EDIT:
 					if(inMediatorCreation()){
@@ -180,7 +182,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -221,10 +223,10 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
-	
+
 	private void setup(){
 		this.mediatorBroker.requireDataRefresh();
 		this.mediatorBroker.getMediators(new ResponseHandler<Mediator[]>() {
@@ -239,7 +241,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	private void clearView(){
 		view.setSaveModeEnabled(false);
 		view.clearAllowedPermissions();
@@ -247,7 +249,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 		view.getForm().setReadOnly(true);
 		view.getList().clearSelection();
 	}
-	
+
 	private void setupNewMediator(){
 		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageMediators);
 		if(hasPermissions){
@@ -257,7 +259,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 			view.getList().clearSelection();
 			view.prepareNewMediator(mediator);
 			view.getForm().setValue(mediator);
-	
+
 			view.allowDelete(hasPermissions);
 			view.allowEdit(hasPermissions);
 			view.setSaveModeEnabled(hasPermissions);
@@ -293,7 +295,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 		}
 		return false;
 	}
-	
+
 	private void showMediator(String mediatorId){
 		//Selects the mediator in list
 		for(ValueSelectable<Mediator> entry : view.getList().getAll()){
@@ -324,7 +326,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	public void createMediator(Mediator c) {
 		c.id = null;
 		this.mediatorBroker.addMediator(c, new ResponseHandler<Mediator>() {
@@ -383,16 +385,16 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 			});
 		}
 	}	
-	
+
 	private void onRefresh(){
 		mediatorBroker.requireDataRefresh();
 		mediatorBroker.getMediators(new ResponseHandler<Mediator[]>() {
-			
+
 			@Override
 			public void onResponse(Mediator[] response) {
 				return;
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;

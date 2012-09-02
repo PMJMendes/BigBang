@@ -90,40 +90,42 @@ public class SubPolicyTransferToPolicyViewPresenter implements ViewPresenter {
 
 		bound = true;
 	}
-	
+
 	protected void clearView(){
 		view.getForm().setValue(null);
 	}
-	
+
 	protected void onConfirmTransfer(){
-		String policyId = view.getForm().getInfo();
-		this.broker.transferToInsurancePolicy(this.subPolicyId, policyId, new ResponseHandler<SubPolicy>() {
-			
-			@Override
-			public void onResponse(SubPolicy response) {
-				onTransferToPolicySuccess();
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onTransferToPolicyFailed();
-			}
-		});
+		if(view.getForm().validate()) {
+			String policyId = view.getForm().getInfo();
+			this.broker.transferToInsurancePolicy(this.subPolicyId, policyId, new ResponseHandler<SubPolicy>() {
+
+				@Override
+				public void onResponse(SubPolicy response) {
+					onTransferToPolicySuccess();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onTransferToPolicyFailed();
+				}
+			});
+		}
 	}
-	
+
 	protected void onCancelTransfer(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void onTransferToPolicySuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Apólice Adesão foi transferida com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	} 
-	
+
 	protected void onTransferToPolicyFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível transferir a Apólice Adesão"), TYPE.ALERT_NOTIFICATION));
 	}

@@ -200,7 +200,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		navItem.setParameter("documentid", id);
 		navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CASUALTY);
 		NavigationHistoryManager.getInstance().go(navItem);
-		
+
 	}
 
 	protected void showContact(String id) {		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
@@ -209,7 +209,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 	navItem.setParameter("contactid", id);
 	navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CASUALTY);
 	NavigationHistoryManager.getInstance().go(navItem);
-		
+
 	}
 
 	protected void onInfoOrDocumentRequest() {
@@ -228,37 +228,37 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void showCasualty(String quoteRequestId) {
-			for(ValueSelectable<CasualtyStub> entry : view.getList().getAll()) {
-				CasualtyStub quoteRequest = entry.getValue();
-				if(quoteRequest.id.equalsIgnoreCase(quoteRequestId)){
-					entry.setSelected(true, false);
-				}else if(entry.isSelected()){
-					entry.setSelected(false, false);
-				}
+		for(ValueSelectable<CasualtyStub> entry : view.getList().getAll()) {
+			CasualtyStub quoteRequest = entry.getValue();
+			if(quoteRequest.id.equalsIgnoreCase(quoteRequestId)){
+				entry.setSelected(true, false);
+			}else if(entry.isSelected()){
+				entry.setSelected(false, false);
 			}
-			broker.getCasualty(quoteRequestId, new ResponseHandler<Casualty>() {
+		}
+		broker.getCasualty(quoteRequestId, new ResponseHandler<Casualty>() {
 
-				@Override
-				public void onResponse(Casualty response) {
-					view.clearAllowedPermissions();
-					view.getForm().setReadOnly(true);
-					view.setSaveModeEnabled(false);
+			@Override
+			public void onResponse(Casualty response) {
+				view.clearAllowedPermissions();
+				view.getForm().setReadOnly(true);
+				view.setSaveModeEnabled(false);
 
-					//TODO PERMISSIONS
-					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.UPDATE_CASUALTY));
-					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.DELETE_CASUALTY));
-					view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY));
-					view.allowCreateSubCasualty(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_SUB_CASUALTY));
-					view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER));
-					view.allowInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST));
-					view.getForm().setValue(response);
-				}
+				//TODO PERMISSIONS
+				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.UPDATE_CASUALTY));
+				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.DELETE_CASUALTY));
+				view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY));
+				view.allowCreateSubCasualty(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_SUB_CASUALTY));
+				view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER));
+				view.allowInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST));
+				view.getForm().setValue(response);
+			}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onGetCasualtyFailed();
-				}
-			});
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetCasualtyFailed();
+			}
+		});
 	}
 
 	protected void onEdit() {
@@ -267,18 +267,20 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSave() {
-		broker.updateCasualty(view.getForm().getInfo(), new ResponseHandler<Casualty>() {
+		if(view.getForm().validate()) {
+			broker.updateCasualty(view.getForm().getInfo(), new ResponseHandler<Casualty>() {
 
-			@Override
-			public void onResponse(Casualty response) {
-				onSaveSuccess();
-			}
+				@Override
+				public void onResponse(Casualty response) {
+					onSaveSuccess();
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onSaveFailed();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSaveFailed();
+				}
+			});
+		}
 	}
 
 	protected void onCancel(){
@@ -296,7 +298,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		navItem.setParameter("show", "close");
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
-	
+
 	protected void onCreateSubCasualty(){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "subcasualty");
@@ -310,7 +312,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		navItem.setParameter("show", "managertransfer");
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
-	
+
 	protected void showSubCasualty(String id){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "subcasualty");
@@ -318,7 +320,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		navItem.setParameter("subcasualtyid", id);
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
-	
+
 	protected void showSubProcess(BigBangProcess process){
 		String type = process.dataTypeId;
 

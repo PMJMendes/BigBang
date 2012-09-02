@@ -10,6 +10,7 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.DocumentNavigationList;
 import bigBang.library.client.userInterface.ImageHandlerPanel;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
@@ -35,12 +36,23 @@ public class ExpenseImagePanel extends View {
 
 	protected Image imagePanel;
 	DocuShareItem currentItem;
+	DocuShareItem locationItem;
 	protected NavigationPanel navigationPanel;
 	protected DocuShareServiceAsync service;
 	protected FileServiceAsync fileService;
 	protected SelectionChangedEventHandler selectionHandler;
+	
+	protected boolean filterNames = true;
+	protected boolean showSubFolders = false;
 
-	public ExpenseImagePanel() {
+	public ExpenseImagePanel(){
+		this(false, true);
+	}
+	
+	public ExpenseImagePanel(boolean showSubFolders, boolean filterNames) {
+		this.showSubFolders = showSubFolders;
+		this.filterNames = filterNames;
+		
 		this.service = DocuShareService.Util.getInstance();
 		this.fileService = FileService.Util.getInstance();
 
@@ -51,8 +63,6 @@ public class ExpenseImagePanel extends View {
 		wrapper.setSize("100%", "100%");
 
 		navigationPanel = new NavigationPanel();
-		navigationPanel.navBar.setText("Imagem da Despesa de Saúde");
-		navigationPanel.navBar.setHeight("30px");
 		navigationPanel.setSize("100%", "100%");
 
 		wrapper.add(navigationPanel);
@@ -66,6 +76,7 @@ public class ExpenseImagePanel extends View {
 				if(selectable != null){
 					DocuShareItem item = selectable.getValue();
 					if(item.directory){
+						locationItem = item;
 						navigateToDirectoryList(item.handle);
 					}else{
 						currentItem = item;
@@ -75,7 +86,9 @@ public class ExpenseImagePanel extends View {
 			}
 		};
 
-		navigateToDirectoryList(null, false);
+		setHeaderText("Imagem da Despesa de Saúde");
+		
+		navigateToDirectoryList(null, showSubFolders);
 	}
 
 	public NavigationPanel getNavigationPanel() {
@@ -134,11 +147,11 @@ public class ExpenseImagePanel extends View {
 	}
 
 	public void navigateToDirectoryList(String dirDesc){
-		navigateToDirectoryList(dirDesc, true);
+		navigateToDirectoryList(dirDesc, showSubFolders);
 	}
 
 	protected void navigateToDirectoryList(final String dirDesc, final boolean showSubFolders){
-		final ExpenseNavigationList list = new ExpenseNavigationList();
+		final DocumentNavigationList list = filterNames ? new ExpenseNavigationList() : new DocumentNavigationList();
 		ListHeader header = new ListHeader();
 		header.showRefreshButton();
 		list.setHeaderWidget(header);
@@ -167,7 +180,7 @@ public class ExpenseImagePanel extends View {
 
 	}
 
-	protected void fetchListContent(final ExpenseNavigationList list, final String dirDesc, final boolean showSubFolders){
+	protected void fetchListContent(final DocumentNavigationList list, final String dirDesc, final boolean showSubFolders){
 		if(dirDesc == null){
 			navigationPanel.setHomeWidget(list);
 		}else{
@@ -196,6 +209,10 @@ public class ExpenseImagePanel extends View {
 
 	public DocuShareItem getCurrentItem(){
 		return currentItem;
+	}
+	
+	public DocuShareItem getCurrentLocationItem() {
+		return locationItem;
 	}
 
 	public void removeSelected(String handler){
@@ -245,10 +262,16 @@ public class ExpenseImagePanel extends View {
 			}
 		}
 
-
-
+	}
+	
+	public void setHeaderText(String text) {
+		navigationPanel.navBar.setText(text);
 	}
 
+	public void showSubFolders(boolean show) {
+		this.showSubFolders = show;
+	}
+	
 }
 
 

@@ -27,12 +27,12 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class CreateExpenseViewPresenter implements ViewPresenter{
-	
+
 	public enum Action{
 		SAVE,
 		CANCEL
 	}
-	
+
 	public interface Display{
 		Widget asWidget();
 		HasEditableValue<Expense> getForm();
@@ -41,12 +41,12 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 		void setToolBarSaveMode(boolean b);
 		void setFormCreateMode();
 	}
-	
+
 	private InsurancePolicyBroker broker;
 	private Display view;
 	private boolean bound;
-	
-	
+
+
 	public CreateExpenseViewPresenter(Display view){
 		broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		setView((UIObject) view);
@@ -55,7 +55,7 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
-		
+
 	}
 
 	@Override
@@ -67,9 +67,9 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 
 	private void bind() {
 		if(bound){return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<CreateExpenseViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -82,24 +82,25 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
 	protected void onSave() {
-		broker.createExpense(view.getForm().getInfo(), new ResponseHandler<Expense>() {
-			
-			@Override
-			public void onResponse(Expense response) {
-				onCreateExpenseSuccess();
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onCreateExpenseFailed();
-			}
-		});
-		
+		if(view.getForm().validate()) {
+			broker.createExpense(view.getForm().getInfo(), new ResponseHandler<Expense>() {
+
+				@Override
+				public void onResponse(Expense response) {
+					onCreateExpenseSuccess();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onCreateExpenseFailed();
+				}
+			});
+		}
 	}
 
 	protected void onCreateExpenseFailed() {
@@ -123,17 +124,17 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 	public void setParameters(HasParameters parameterHolder) {
 		view.getForm().setValue(null);
 		String policyId = parameterHolder.getParameter("policyid");
-		
+
 		if(policyId != null && !policyId.isEmpty()){
 			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
-				
+
 				@Override
 				public void onResponse(InsurancePolicy response) {
 					showExpense(response);
 					view.getInsuranceForm().setValue(response);
 					view.setToolBarSaveMode(true);
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					onErrorPolicy();
@@ -164,5 +165,5 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 	protected void onErrorPolicy() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Apólice"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 }

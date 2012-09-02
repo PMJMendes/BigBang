@@ -28,24 +28,24 @@ public class InfoOrDocumentRequestReplyViewPresenter implements ViewPresenter {
 		SAVE,
 		CANCEL
 	}
-	
+
 	public static interface Display {
 		HasEditableValue<Response> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
-		
+
 		Widget asWidget();
 	}
-	
+
 	private boolean bound = false;
 	private InfoOrDocumentRequestServiceAsync service;
 	private Display view;
-	
+
 	public InfoOrDocumentRequestReplyViewPresenter(Display view){
 		setView((UIObject)view);
 		this.service = InfoOrDocumentRequestService.Util.getInstance();
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -62,7 +62,7 @@ public class InfoOrDocumentRequestReplyViewPresenter implements ViewPresenter {
 	public void setParameters(HasParameters parameterHolder) {
 		String requestId = parameterHolder.getParameter("requestid");
 		view.setSaveModeEnabled(true);
-		
+
 		if(requestId == null || requestId.isEmpty()) {
 			onFailure();
 		}else{
@@ -72,9 +72,9 @@ public class InfoOrDocumentRequestReplyViewPresenter implements ViewPresenter {
 
 	private void bind(){
 		if(bound) {return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<InfoOrDocumentRequestReplyViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -87,7 +87,7 @@ public class InfoOrDocumentRequestReplyViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
 
@@ -96,41 +96,43 @@ public class InfoOrDocumentRequestReplyViewPresenter implements ViewPresenter {
 		response.requestId = requestId;
 		view.getForm().setValue(response);
 	}
-	
-	private void onSave(){
-		service.receiveResponse(view.getForm().getInfo(), new BigBangAsyncCallback<InfoOrDocumentRequest>() {
 
-			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.RECEIVE_REPLY,  result.id));
-				onReplySuccess();
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				onReplyFailed();
-				super.onResponseFailure(caught);
-			}
-		});
+	private void onSave(){
+		if(view.getForm().validate()) {
+			service.receiveResponse(view.getForm().getInfo(), new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+
+				@Override
+				public void onResponseSuccess(InfoOrDocumentRequest result) {
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.RECEIVE_REPLY,  result.id));
+					onReplySuccess();
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					onReplyFailed();
+					super.onResponseFailure(caught);
+				}
+			});
+		}
 	}
-	
+
 	private void onCancel(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onReplySuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Resposta foi recebida com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onReplyFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a resposta"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	private void onFailure(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível receber a resposta"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

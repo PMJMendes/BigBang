@@ -122,18 +122,20 @@ public class SubPolicyDeleteViewPresenter implements ViewPresenter {
 				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY)){
 					onDeleteFailed();
 				}else{
-					broker.removeSubPolicy(response.id, view.getForm().getInfo(), new ResponseHandler<String>() {
+					if(view.getForm().validate()) {
+						broker.removeSubPolicy(response.id, view.getForm().getInfo(), new ResponseHandler<String>() {
 
-						@Override
-						public void onResponse(String response) {
-							onDeleteSuccess();
-						}
+							@Override
+							public void onResponse(String response) {
+								onDeleteSuccess();
+							}
 
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onDeleteFailed();
-						}
-					});
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								onDeleteFailed();
+							}
+						});
+					}
 				}
 			}
 
@@ -165,5 +167,5 @@ public class SubPolicyDeleteViewPresenter implements ViewPresenter {
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 }

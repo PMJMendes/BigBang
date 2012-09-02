@@ -22,12 +22,12 @@ import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewP
 public class InsurancePolicyCompanyInfoRequestViewPresenter extends InfoOrDocumentRequestViewPresenter<InsurancePolicy>{
 
 	private InsurancePolicyBroker broker;
-	
+
 	public InsurancePolicyCompanyInfoRequestViewPresenter(Display<InsurancePolicy> view) {
 		super(view);
 		broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder){
 		parameterHolder.setParameter("ownertypeid", BigBangConstants.EntityIds.INSURANCE_POLICY);
@@ -46,12 +46,12 @@ public class InsurancePolicyCompanyInfoRequestViewPresenter extends InfoOrDocume
 	@Override
 	protected void showOwner(String ownerId, String ownerTypeId) {
 		broker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
-			
+
 			@Override
 			public void onResponse(InsurancePolicy response) {
 				view.getOwnerForm().setValue(response);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onGetOwnerFailed();
@@ -63,41 +63,42 @@ public class InsurancePolicyCompanyInfoRequestViewPresenter extends InfoOrDocume
 	protected void checkOwnerPermissions(String ownerId, String ownerTypeId,
 			final ResponseHandler<Boolean> handler) {
 		broker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
-			
+
 			@Override
 			public void onResponse(InsurancePolicy response) {
 				handler.onResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST));
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onUserLacksPermission();
 			}
 		});
-		
+
 	}
 
 	@Override
 	protected void onSend() {
-		InfoOrDocumentRequest request = view.getForm().getInfo();
-		broker.createCompanyInfoRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
+		if(view.getForm().validate()) {
+			InfoOrDocumentRequest request = view.getForm().getInfo();
+			broker.createCompanyInfoRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
 
-			@Override
-			public void onResponse(InfoOrDocumentRequest response) {
-				view.getForm().setValue(response);
-				onSendRequestSuccess();
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.popFromStackParameter("display");
-				NavigationHistoryManager.getInstance().go(item);
-			}
+				@Override
+				public void onResponse(InfoOrDocumentRequest response) {
+					view.getForm().setValue(response);
+					onSendRequestSuccess();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.popFromStackParameter("display");
+					NavigationHistoryManager.getInstance().go(item);
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onSendRequestFailed();
-			}
-		});
-		
-		
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSendRequestFailed();
+				}
+			});
+		}
+
 	}
 
 	@Override

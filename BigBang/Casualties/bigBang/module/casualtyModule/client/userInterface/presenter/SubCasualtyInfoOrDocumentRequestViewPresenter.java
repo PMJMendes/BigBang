@@ -22,7 +22,7 @@ import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewP
 public class SubCasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumentRequestViewPresenter<SubCasualty>{
 
 	private SubCasualtyDataBroker broker;
-	
+
 	public SubCasualtyInfoOrDocumentRequestViewPresenter(Display<SubCasualty> view) {
 		super(view);
 		broker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
@@ -40,12 +40,12 @@ public class SubCasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumen
 	@Override
 	protected void showOwner(String ownerId, String ownerTypeId) {
 		broker.getSubCasualty(ownerId, new ResponseHandler<SubCasualty>() {
-			
+
 			@Override
 			public void onResponse(SubCasualty response) {
 				view.getOwnerForm().setValue(response);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onGetOwnerFailed();
@@ -57,12 +57,12 @@ public class SubCasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumen
 	protected void checkOwnerPermissions(String ownerId, String ownerTypeId,
 			final ResponseHandler<Boolean> handler) {
 		broker.getSubCasualty(ownerId, new ResponseHandler<SubCasualty>() {
-			
+
 			@Override
 			public void onResponse(SubCasualty response) {
 				handler.onResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_EXTERNAL_INFO_REQUEST));
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onUserLacksPermission();
@@ -72,23 +72,25 @@ public class SubCasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumen
 
 	@Override
 	protected void onSend() {
-		InfoOrDocumentRequest request = view.getForm().getInfo();
-		broker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
+		if(view.getForm().validate()) {
+			InfoOrDocumentRequest request = view.getForm().getInfo();
+			broker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
 
-			@Override
-			public void onResponse(InfoOrDocumentRequest response) {
-				view.getForm().setValue(response);
-				onSendRequestSuccess();
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.popFromStackParameter("display");
-				NavigationHistoryManager.getInstance().go(item);
-			}
+				@Override
+				public void onResponse(InfoOrDocumentRequest response) {
+					view.getForm().setValue(response);
+					onSendRequestSuccess();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.popFromStackParameter("display");
+					NavigationHistoryManager.getInstance().go(item);
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onSendRequestFailed();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSendRequestFailed();
+				}
+			});
+		}
 	}
 
 	@Override
@@ -133,7 +135,7 @@ public class SubCasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumen
 		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		parameterHolder.setParameter("ownertypeid", BigBangConstants.EntityIds.SUB_CASUALTY);

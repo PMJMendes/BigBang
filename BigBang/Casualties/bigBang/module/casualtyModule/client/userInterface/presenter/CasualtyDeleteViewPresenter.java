@@ -115,29 +115,31 @@ public class CasualtyDeleteViewPresenter implements ViewPresenter {
 	}
 
 	protected void onDelete(){
-		this.broker.getCasualty(casualtyId, new ResponseHandler<Casualty>() {
+		if(view.getForm().validate()){
+			this.broker.getCasualty(casualtyId, new ResponseHandler<Casualty>() {
 
-			@Override
-			public void onResponse(Casualty response) {
-				broker.deleteCasualty(response.id, view.getForm().getInfo(), new ResponseHandler<Void>() {
+				@Override
+				public void onResponse(Casualty response) {
+					broker.deleteCasualty(response.id, view.getForm().getInfo(), new ResponseHandler<Void>() {
 
-					@Override
-					public void onResponse(Void response) {
-						onDeleteSuccess();
-					}
+						@Override
+						public void onResponse(Void response) {
+							onDeleteSuccess();
+						}
 
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						onDeleteFailed();
-					}
-				});
-			}
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onDeleteFailed();
+						}
+					});
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onDeleteFailed();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onDeleteFailed();
+				}
+			});
+		}
 	}
 
 	protected void onCancel() {

@@ -30,12 +30,12 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 		MARK_FOR_CLOSING,
 		CANCEL
 	} 
-	
+
 	public static interface Display {
 		HasEditableValue<String> getForm();
-		
+
 		void allowMarkForClosing(boolean allow);
-		
+
 		void registerEventHandler(ActionInvokedEventHandler<Action> action);
 		Widget asWidget();
 	}
@@ -44,12 +44,12 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 	private SubCasualtyDataBroker broker;
 	private boolean bound =  false;
 	private String currentSubCasualtyId;
-	
+
 	public SubCasualtyMarkForClosingViewPresenter(Display view){
 		this.broker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
 		setView((UIObject)view);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
@@ -66,24 +66,26 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 	public void setParameters(HasParameters parameterHolder) {
 		this.currentSubCasualtyId = parameterHolder.getParameter("subcasualtyid");
 		this.currentSubCasualtyId = this.currentSubCasualtyId == null ? new String() : this.currentSubCasualtyId;
-		
+
 		if(this.currentSubCasualtyId.isEmpty()){
 			clearView();
 		}else{
 			showMarkForClosing(this.currentSubCasualtyId);
 		}
 	}
-	
+
 	private void bind(){
 		if(bound){return;}
-		
+
 		view.registerEventHandler(new ActionInvokedEventHandler<Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case MARK_FOR_CLOSING:
-					markForClosing(SubCasualtyMarkForClosingViewPresenter.this.currentSubCasualtyId, view.getForm().getInfo());
+					if(view.getForm().validate()) {
+						markForClosing(SubCasualtyMarkForClosingViewPresenter.this.currentSubCasualtyId, view.getForm().getInfo());
+					}
 					break;
 				case CANCEL:
 					onMarkForClosingCancelled();
@@ -91,34 +93,34 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		//APPLICATION-WIDE EVENTS
-		
+
 		bound = true;
 	}
-	
+
 	private void clearView(){
 		view.allowMarkForClosing(false);
 		view.getForm().setValue(null);
 	}
-	
+
 	private void showMarkForClosing(String subCasualtyId){
 		broker.getSubCasualty(subCasualtyId, new ResponseHandler<SubCasualty>() {
-			
+
 			@Override
 			public void onResponse(SubCasualty response) {
 				//TODO check permissions FJVC
 				view.getForm().setReadOnly(false);
 				view.allowMarkForClosing(true);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onGetClientFailed();
 			}
 		});
 	}
-	
+
 	private void markForClosing(String subCasualtyId, String revisorId){
 		this.broker.markForClosing(subCasualtyId, revisorId, new ResponseHandler<Void>() {
 
@@ -133,7 +135,7 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	private void onMarkForClosingSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Marcação de Encerramento efectuada com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -147,11 +149,11 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	} 
-	
+
 	private void onMarkForClosingFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível Marcar o Encerramento"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	private void onMarkForClosingCancelled(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");

@@ -1,5 +1,8 @@
 package bigBang.module.casualtyModule.client.userInterface;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.Image;
+
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.library.client.history.NavigationHistoryItem;
@@ -10,6 +13,7 @@ import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
+import bigBang.module.casualtyModule.client.resources.Resources;
 
 public class CasualtyForm extends FormView<Casualty> {
 
@@ -21,6 +25,7 @@ public class CasualtyForm extends FormView<Casualty> {
 	protected TextBoxFormField status;
 	protected CheckBoxFormField caseStudy;
 	protected TextAreaFormField notes;
+	protected Image statusIcon;
 
 	public CasualtyForm(){
 		number = new TextBoxFormField("Número de Processo");
@@ -42,7 +47,9 @@ public class CasualtyForm extends FormView<Casualty> {
 		manager.allowEdition(false);
 		status = new TextBoxFormField("Estado");
 		status.setEditable(false);
-		status.setFieldWidth("175px");
+		status.setFieldWidth("100%");
+		statusIcon = new Image();
+		status.add(statusIcon);
 
 		addSection("Informação Geral");
 		addFormField(client);
@@ -109,6 +116,11 @@ public class CasualtyForm extends FormView<Casualty> {
 			manager.setValue(info.managerId);
 			if(info.id != null){
 				status.setValue(info.isOpen ? "Aberto" : "Fechado");
+				Resources resources = GWT.create(Resources.class);
+				statusIcon.setResource(info.isOpen ? resources.activeCasualtyIcon() : resources.inactiveCasualtyIcon());
+			}else{
+				status.setValue(null);
+				statusIcon.setVisible(false);
 			}
 		}
 	}

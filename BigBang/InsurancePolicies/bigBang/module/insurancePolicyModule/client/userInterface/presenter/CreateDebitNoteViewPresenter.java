@@ -32,23 +32,23 @@ public class CreateDebitNoteViewPresenter implements ViewPresenter {
 		CREATE,
 		CANCEL
 	}
-	
+
 	public static interface Display {
 		HasEditableValue<DebitNote> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
 	}
-	
+
 	private Display view;
 	private InsurancePolicyBroker broker;
 	private boolean bound = false;
 	private String ownerId;
-	
+
 	public CreateDebitNoteViewPresenter(Display view) {
 		this.broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		setView((UIObject) view);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -74,12 +74,12 @@ public class CreateDebitNoteViewPresenter implements ViewPresenter {
 			view.getForm().setValue(null);
 		}
 	}
-	
+
 	private void bind(){
 		if(bound){return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<CreateDebitNoteViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -96,58 +96,60 @@ public class CreateDebitNoteViewPresenter implements ViewPresenter {
 		});
 		bound = true;
 	}
-	
+
 	private void onCreateDebitNote(){
-		final DebitNote note = view.getForm().getInfo();
-		broker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
-			
-			@Override
-			public void onResponse(InsurancePolicy response) {
-				boolean hasPermission = PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_DEBIT_NOTE);
-				if(hasPermission){
-					broker.issueDebitNote(ownerId, note, new ResponseHandler<Void>() {
+		if(view.getForm().validate()) {
+			final DebitNote note = view.getForm().getInfo();
+			broker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
 
-						@Override
-						public void onResponse(Void response) {
-							onCreateDebitNoteSuccess();
-							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-							item.removeParameter("show");
-							NavigationHistoryManager.getInstance().go(item);
-						}
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					boolean hasPermission = PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_DEBIT_NOTE);
+					if(hasPermission){
+						broker.issueDebitNote(ownerId, note, new ResponseHandler<Void>() {
 
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onCreateDebitNoteFailed();
-						}
-					});
-				}else{
-					onCreateDebitNoteFailed();
+							@Override
+							public void onResponse(Void response) {
+								onCreateDebitNoteSuccess();
+								NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+								item.removeParameter("show");
+								NavigationHistoryManager.getInstance().go(item);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								onCreateDebitNoteFailed();
+							}
+						});
+					}else{
+						onCreateDebitNoteFailed();
+						NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+						item.removeParameter("show");
+						NavigationHistoryManager.getInstance().go(item);
+					}
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetOwnerFailed();
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 					item.removeParameter("show");
 					NavigationHistoryManager.getInstance().go(item);
 				}
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onGetOwnerFailed();
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				NavigationHistoryManager.getInstance().go(item);
-			}
-		});
+			});
+		}
 	}
-	
+
 	private void onGetOwnerFailed(){
 		onCreateDebitNoteFailed();
 	}
-	
+
 	private void onCreateDebitNoteSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Nota de Débito foi criada com sucesso"), TYPE.TRAY_NOTIFICATION));
 	}
-	
+
 	private void onCreateDebitNoteFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a nota de débito"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 }

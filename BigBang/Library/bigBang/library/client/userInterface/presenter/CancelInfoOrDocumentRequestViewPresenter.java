@@ -28,22 +28,22 @@ public class CancelInfoOrDocumentRequestViewPresenter implements ViewPresenter {
 		CONFIRM,
 		CANCEL
 	}
-	
+
 	public static interface Display {
 		HasEditableValue<InfoOrDocumentRequest.Cancellation> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
 	}
-	
+
 	private boolean bound = false;
 	private InfoOrDocumentRequestServiceAsync service;
 	private Display view;
-	
+
 	public CancelInfoOrDocumentRequestViewPresenter(Display view){
 		setView((UIObject)view);
 		service = InfoOrDocumentRequestService.Util.getInstance();
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -65,10 +65,10 @@ public class CancelInfoOrDocumentRequestViewPresenter implements ViewPresenter {
 			showCancellation(requestId);
 		}
 	}
-	
+
 	private void bind(){
 		if(bound) {return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<CancelInfoOrDocumentRequestViewPresenter.Action>() {
 
 			@Override
@@ -83,34 +83,36 @@ public class CancelInfoOrDocumentRequestViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
-	
+
 	private void showCancellation(String requestId){
 		Cancellation cancellation = new Cancellation();
 		cancellation.requestId = requestId;
 		view.getForm().setValue(cancellation);
 	}
-	
-	private void onConfirm(){
-		final Cancellation toCancel = view.getForm().getInfo();
-		service.cancelRequest(toCancel, new BigBangAsyncCallback<Void>() {
 
-			@Override
-			public void onResponseSuccess(Void result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.CANCEL_REQUEST, toCancel.requestId));
-				onCancellationSuccess();
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				onCancellationFailed();
-				super.onResponseFailure(caught);
-			}
-		});
+	private void onConfirm(){
+		if(view.getForm().validate()) {
+			final Cancellation toCancel = view.getForm().getInfo();
+			service.cancelRequest(toCancel, new BigBangAsyncCallback<Void>() {
+
+				@Override
+				public void onResponseSuccess(Void result) {
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.CANCEL_REQUEST, toCancel.requestId));
+					onCancellationSuccess();
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					onCancellationFailed();
+					super.onResponseFailure(caught);
+				}
+			});
+		}
 	}
-	
+
 	private void onCancel(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
@@ -120,7 +122,7 @@ public class CancelInfoOrDocumentRequestViewPresenter implements ViewPresenter {
 	private void onCancellationFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar o pedido de informação"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	private void onCancellationSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de Informação cancelado com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -129,12 +131,12 @@ public class CancelInfoOrDocumentRequestViewPresenter implements ViewPresenter {
 		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onFailure(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível cancelar o pedido de informação"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 }

@@ -31,11 +31,14 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
+import bigBang.module.insurancePolicyModule.client.resources.Resources;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Image;
 
 public class SubPolicyForm extends FormView<SubPolicy> {
 
@@ -171,12 +174,12 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 	protected ExpandableListBoxFormField fractioning;
 	protected NumericTextBoxFormField premium;
 	protected SubPolicyFormTable table;
+	protected Image statusIcon;
 
 	protected Map<String, HeaderFormField> headerFields;
 	protected FormViewSection headerFieldsSection;
 
-	protected Map<String, HeaderFormField> extraFields;
-	protected FormViewSection extraFieldsSection;
+	protected SubPolicyExtraFieldsFormSection extraFieldsSection;
 
 	protected TextAreaFormField notes;
 
@@ -185,7 +188,6 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		this.scrollWrapper.getElement().getStyle().setOverflowX(Overflow.SCROLL);
 		
 		headerFields = new HashMap<String, HeaderFormField>();
-		extraFields = new HashMap<String, HeaderFormField>();
 
 		addSection("Apólice Adesão");
 		number  = new TextBoxFormField("Número");
@@ -223,9 +225,10 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		notes = new TextAreaFormField();
 		notes.setSize("100%", "200px");
 		policyStatus = new TextBoxFormField("Estado");
-		policyStatus.setFieldWidth("175px");
 		policyStatus.setFieldWidth("100%");
 		policyStatus.setEditable(false);
+		statusIcon = new Image();
+		policyStatus.add(statusIcon);
 		table = new SubPolicyFormTable();
 		table.setSize("100%", "100%");
 
@@ -269,8 +272,8 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 
 		addWidget(this.table);
 
-		this.extraFieldsSection = new FormViewSection("Informação Adicional");
-		addSection(this.extraFieldsSection);
+		this.extraFieldsSection = new SubPolicyExtraFieldsFormSection();
+		addSection(extraFieldsSection);
 
 		addSection("Notas");
 		addFormField(notes);
@@ -309,7 +312,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		result.headerFields = getHeaderFieldsInfo();
 		result.tableData = new TableSection[]{this.table.getData()};
 		result.coverages = this.table.getCoveragesData();
-		//result.extraData = getExtraFieldsInfo();
+		result.extraData = this.extraFieldsSection.getPolicyFields();
 
 		return result;
 	}
@@ -342,37 +345,6 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 
 	protected void clearHeaderFieldsInfo(){
 		for(HeaderFormField f : this.headerFields.values()) {
-			f.clear();
-		}
-	}
-
-	protected void setExtraFields(ExtraField[] fields){
-		this.extraFieldsSection.clear();
-		this.extraFields.clear();
-
-		for(int i = 0; fields != null && i < fields.length; i++) {
-			HeaderFormField field = new HeaderFormField(fields[i]);
-			field.setReadOnly(this.isReadOnly());
-			field.setFieldWidth("175px");
-			this.extraFieldsSection.addFormField(field, true);
-			this.extraFields.put(fields[i].fieldId, field);
-		}
-	}
-
-	protected ExtraField[] getExtraFieldsInfo(){
-		ExtraField[] fields = new ExtraField[this.extraFields.size()];
-		int i = 0;
-		for(HeaderFormField f : this.extraFields.values()) {
-			ExtraField extraField = (ExtraField) f.headerField;
-			extraField.value = f.getValue();
-			fields[i] = extraField;
-			i++;
-		}
-		return fields;
-	}
-
-	protected void clearExtraFields(){
-		for(HeaderFormField f : this.extraFields.values()) {
 			f.clear();
 		}
 	}
@@ -453,6 +425,24 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 			}
 
 			this.policyStatus.setValue(info.statusText);
+			Resources resources = GWT.create(Resources.class);
+			if(value.statusIcon == null) {
+				statusIcon.setResource(resources.provisionalPolicyIcon());
+			}else{
+				switch(value.statusIcon){
+				case OBSOLETE:
+					statusIcon.setResource(resources.inactivePolicyIcon());
+					break;
+				case PROVISIONAL:
+					statusIcon.setResource(resources.provisionalPolicyIcon());
+					break;
+				case VALID:
+					statusIcon.setResource(resources.activePolicyIcon());
+					break;
+				default:
+					return;
+				}
+			}
 			this.notes.setValue(info.notes);
 
 			if(info.startDate != null)
@@ -468,7 +458,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 				this.table.clear();
 			}
 
-			setExtraFields(info.extraData);
+			this.extraFieldsSection.setPolicyFields(info.extraData, info.coverages);
 		}
 	}
 
@@ -489,11 +479,6 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);
-		if(this.extraFields != null) {
-			for(HeaderFormField f : this.extraFields.values()){
-				f.setReadOnly(readOnly);
-			}
-		}
 		if(this.headerFields != null) {
 			for(HeaderFormField f : this.headerFields.values()){
 				f.setReadOnly(readOnly);
@@ -522,6 +507,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 	public void clearInfo() {
 		super.clearInfo();
 		this.table.clear();
+		this.extraFieldsSection.setPolicyFields(null, null);
 	}
 	
 }

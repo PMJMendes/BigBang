@@ -2,16 +2,6 @@ package bigBang.module.expenseModule.client.userInterface;
 
 import java.util.Collection;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -20,7 +10,6 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
-import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.DatePickerFormField;
@@ -31,8 +20,16 @@ import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
-import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ExpenseForm extends FormView<Expense>{
 
@@ -215,15 +212,22 @@ public class ExpenseForm extends FormView<Expense>{
 		NavigationHistoryItem referenceItem = new NavigationHistoryItem();
 		referenceItem.setParameter("section", "insurancePolicy");
 		referenceItem.setStackParameter("display");
-		referenceItem.pushIntoStackParameter("display", "search");
-		referenceItem.setParameter("policyid", info.referenceId);
-		reference.setValue(referenceItem);
-		reference.setValueName("#"+info.referenceNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName);
+		
+		if(info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
+			referenceItem.pushIntoStackParameter("display", "search");
+			referenceItem.setParameter("policyid", info.referenceId);
+			reference.setValue(referenceItem);
+			reference.setValueName("#"+info.referenceNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName);
+		}else if(info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
+			referenceItem.pushIntoStackParameter("display", "subpolicy");
+			referenceItem.setParameter("subpolicyid", info.referenceId);
+			reference.setValue(referenceItem);
+			reference.setValueName("#"+info.referenceNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName);
+		}
 
 		String listId = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
 				BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECT+"/"+info.referenceId 
 				: BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS +"/"+info.referenceId;
-
 
 		insuredObject.setListId(listId, new ResponseHandler<Void>() {
 			@Override
@@ -237,14 +241,8 @@ public class ExpenseForm extends FormView<Expense>{
 			}
 		});
 
-		listId = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
-				BigBangConstants.TypifiedListIds.POLICY_COVERAGE+"/"+info.referenceSubLineId
-				: BigBangConstants.TypifiedListIds.SUB_POLICY_COVERAGE +"/"+info.referenceSubLineId;
+		listId = BigBangConstants.EntityIds.COVERAGE+"/"+info.referenceSubLineId;
 		
-		BigBangTypifiedListBroker listBroker = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
-				PolicyTypifiedListBroker.Util.getInstance() : SubPolicyTypifiedListBroker.Util.getInstance();
-				
-		coverageId.setTypifiedDataBroker(listBroker);
 		coverageId.setListId(listId, new ResponseHandler<Void>() {
 
 			@Override
@@ -257,6 +255,8 @@ public class ExpenseForm extends FormView<Expense>{
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de coberturas."), TYPE.ALERT_NOTIFICATION));
 			}
 		});
+		coverageId.setValue(info.coverageId);
+
 		settlement.setValue(info.settlement);
 		isOpen.setValue(info.isOpen ? "Aberta" : "Fechada");
 		value.setValue(info.value);

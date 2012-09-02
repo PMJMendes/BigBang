@@ -29,6 +29,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/receipt.png")
 	ImageResource massCreationIcon();
 	
+	@Source("images/receiveProof.png")
+	ImageResource receiveProofIcon();
+	
 	@Source("images/reportIcon.png")
 	ImageResource reportIcon();
 	
