@@ -160,46 +160,46 @@ public class ReceiptListingsBase
 		ReportBuilder.styleCell(larrCells[1], false, true);
 
 		larrCells[2] = ReportBuilder.buildHeaderCell("Cliente");
-		ReportBuilder.styleCell(larrCells[0], false, true);
+		ReportBuilder.styleCell(larrCells[2], false, true);
 
 		larrCells[3] = ReportBuilder.buildHeaderCell("Apólice");
-		ReportBuilder.styleCell(larrCells[2], false, true);
-
-		larrCells[4] = ReportBuilder.buildHeaderCell("Companhia");
-		ReportBuilder.styleCell(larrCells[2], false, true);
-
-		larrCells[5] = ReportBuilder.buildHeaderCell("Ramo");
 		ReportBuilder.styleCell(larrCells[3], false, true);
 
-		larrCells[6] = ReportBuilder.buildHeaderCell("Descrição");
-		ReportBuilder.styleCell(larrCells[0], false, true);
-
-		larrCells[7] = ReportBuilder.buildHeaderCell("Prémio");
+		larrCells[4] = ReportBuilder.buildHeaderCell("Companhia");
 		ReportBuilder.styleCell(larrCells[4], false, true);
 
-		larrCells[8] = ReportBuilder.buildHeaderCell("Comissão");
-		ReportBuilder.styleCell(larrCells[4], false, true);
-
-		larrCells[9] = ReportBuilder.buildHeaderCell("Retrocessão");
-		ReportBuilder.styleCell(larrCells[4], false, true);
-
-		larrCells[10] = ReportBuilder.buildHeaderCell("Emissão");
+		larrCells[5] = ReportBuilder.buildHeaderCell("Ramo");
 		ReportBuilder.styleCell(larrCells[5], false, true);
 
-		larrCells[11] = ReportBuilder.buildHeaderCell("Vencimento");
+		larrCells[6] = ReportBuilder.buildHeaderCell("Descrição");
 		ReportBuilder.styleCell(larrCells[6], false, true);
 
-		larrCells[12] = ReportBuilder.buildHeaderCell("Até");
-		ReportBuilder.styleCell(larrCells[6], false, true);
-
-		larrCells[13] = ReportBuilder.buildHeaderCell("Data Limite");
+		larrCells[7] = ReportBuilder.buildHeaderCell("Prémio");
 		ReportBuilder.styleCell(larrCells[7], false, true);
 
-		larrCells[14] = ReportBuilder.buildHeaderCell("Data Cobrança");
+		larrCells[8] = ReportBuilder.buildHeaderCell("Comissão");
 		ReportBuilder.styleCell(larrCells[8], false, true);
 
-		larrCells[15] = ReportBuilder.buildHeaderCell("Meios");
+		larrCells[9] = ReportBuilder.buildHeaderCell("Retrocessão");
 		ReportBuilder.styleCell(larrCells[9], false, true);
+
+		larrCells[10] = ReportBuilder.buildHeaderCell("Emissão");
+		ReportBuilder.styleCell(larrCells[10], false, true);
+
+		larrCells[11] = ReportBuilder.buildHeaderCell("Vencimento");
+		ReportBuilder.styleCell(larrCells[11], false, true);
+
+		larrCells[12] = ReportBuilder.buildHeaderCell("Até");
+		ReportBuilder.styleCell(larrCells[12], false, true);
+
+		larrCells[13] = ReportBuilder.buildHeaderCell("Data Limite");
+		ReportBuilder.styleCell(larrCells[13], false, true);
+
+		larrCells[14] = ReportBuilder.buildHeaderCell("Data Cobrança");
+		ReportBuilder.styleCell(larrCells[14], false, true);
+
+		larrCells[15] = ReportBuilder.buildHeaderCell("Meios");
+		ReportBuilder.styleCell(larrCells[15], false, true);
 
 		return larrCells;
 	}
@@ -238,46 +238,46 @@ public class ReceiptListingsBase
 		ReportBuilder.styleCell(larrCells[1], true, true);
 
 		larrCells[2] = ReportBuilder.buildCell(lobjClient.getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[1], true, true);
-
-		larrCells[3] = ReportBuilder.buildCell(lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[2], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(lobjPolicy.GetCompany().getLabel(), TypeDefGUIDs.T_String);
+		larrCells[3] = ReportBuilder.buildCell(lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[3], true, true);
+
+		larrCells[4] = ReportBuilder.buildCell(lobjPolicy.GetCompany().getLabel(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[4], true, true);
 
 		larrCells[5] = ReportBuilder.buildCell(lobjPolicy.GetSubLine().getDescription(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[3], true, true);
-
-		larrCells[6] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DESCRIPTION), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[3], true, true);
-
-		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
-		ReportBuilder.styleCell(larrCells[4], true, true);
-
-		larrCells[8] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.COMMISSIONS), TypeDefGUIDs.T_Decimal);
-		ReportBuilder.styleCell(larrCells[4], true, true);
-
-		larrCells[9] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.RETROCESSIONS), TypeDefGUIDs.T_Decimal);
-		ReportBuilder.styleCell(larrCells[4], true, true);
-
-		larrCells[10] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.ISSUEDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
-		larrCells[11] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.MATURITYDATE), TypeDefGUIDs.T_Date);
+		larrCells[6] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DESCRIPTION), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[6], true, true);
 
-		larrCells[12] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.ENDDATE), TypeDefGUIDs.T_Date);
-		ReportBuilder.styleCell(larrCells[6], true, true);
-
-		larrCells[13] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DUEDATE), TypeDefGUIDs.T_Date);
+		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[7], true, true);
 
-		larrCells[14] = ReportBuilder.buildCell((lobjLog == null ? null : lobjLog.GetTimestamp()), TypeDefGUIDs.T_Date);
+		larrCells[8] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.COMMISSIONS), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[8], true, true);
 
-		larrCells[15] = ReportBuilder.buildCell((lobjLog == null ? null : getMeans(lobjLog)), TypeDefGUIDs.T_String);
+		larrCells[9] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.RETROCESSIONS), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[9], true, true);
+
+		larrCells[10] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.ISSUEDATE), TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[10], true, true);
+
+		larrCells[11] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.MATURITYDATE), TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[11], true, true);
+
+		larrCells[12] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.ENDDATE), TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[12], true, true);
+
+		larrCells[13] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DUEDATE), TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[13], true, true);
+
+		larrCells[14] = ReportBuilder.buildCell((lobjLog == null ? null : lobjLog.GetTimestamp()), TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[14], true, true);
+
+		larrCells[15] = ReportBuilder.buildCell((lobjLog == null ? null : getMeans(lobjLog)), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[15], true, true);
 
 		return larrCells;
 	}
