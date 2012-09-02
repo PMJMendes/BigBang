@@ -1,5 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Listings;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -7,7 +9,10 @@ import java.util.UUID;
 import org.apache.ecs.GenericElement;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -26,7 +31,7 @@ public class ReceiptPendingPayment
 		UUID lidManager;
 		GenericElement[] larrResult;
 
-		larrAux = getPendingForOperation(Constants.OPID_Receipt_Payment, Constants.UrgID_Pending);
+		larrAux = getPendingForOperation(parrParams);
 
 		larrMap = new HashMap<UUID, ArrayList<Receipt>>();
 		for ( i = 0; i < larrAux.length; i++ )
@@ -68,5 +73,97 @@ public class ReceiptPendingPayment
 		}
 
 		return larrResult;
+	}
+
+	protected static Receipt[] getPendingForOperation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		StringBuilder lstrSQL;
+		ArrayList<Receipt> larrAux;
+		IEntity lrefReceipts, lrefSteps;
+		MasterDB ldb;
+		ResultSet lrsReceipts;
+
+		try
+		{
+			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
+			lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNStep));
+
+			lstrSQL = new StringBuilder();
+			lstrSQL.append("SELECT * FROM (" +
+					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
+					lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
+					new java.lang.Object[] {Constants.OPID_Receipt_Payment, Constants.UrgID_Pending}, null) + ") [AuxSteps])");
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( parrParams[0] != null )
+			lstrSQL.append(" AND [Maturity Date] >= '" + parrParams[0] + "'");
+
+		if ( parrParams[1] != null )
+			lstrSQL.append(" AND [Maturity Date] <= '" + parrParams[1] + "'");
+
+		if ( parrParams[2] != null )
+			lstrSQL.append(" AND [Due Date] >= '" + parrParams[2] + "'");
+
+		if ( parrParams[3] != null )
+			lstrSQL.append(" AND [Due Date] <= '" + parrParams[3] + "'");
+
+		larrAux = new ArrayList<Receipt>();
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsReceipts = ldb.OpenRecordset(lstrSQL.toString());
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsReceipts.next() )
+				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts));
+		}
+		catch (Throwable e)
+		{
+			try { lrsReceipts.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsReceipts.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new Receipt[larrAux.size()]);
 	}
 }

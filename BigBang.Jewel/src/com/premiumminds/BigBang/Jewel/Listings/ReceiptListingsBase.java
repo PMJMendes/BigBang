@@ -1,8 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Listings;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -12,9 +10,6 @@ import org.apache.ecs.html.Table;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.TypeDefGUIDs;
-import Jewel.Engine.DataAccess.MasterDB;
-import Jewel.Engine.Implementation.Entity;
-import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.ILog;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -28,142 +23,6 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
 public class ReceiptListingsBase
 {
-	protected static Receipt[] getPendingForOperation(UUID pidOperation, UUID pidLevel)
-		throws BigBangJewelException
-	{
-		ArrayList<Receipt> larrAux;
-		IEntity lrefReceipts, lrefSteps;
-		MasterDB ldb;
-		ResultSet lrsReceipts;
-
-		larrAux = new ArrayList<Receipt>();
-
-		try
-		{
-			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
-			lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNStep));
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsReceipts = ldb.OpenRecordset("SELECT * FROM (" +
-					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
-					lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
-					new java.lang.Object[] {pidOperation, pidLevel}, null) + ") [AuxSteps])");
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			while ( lrsReceipts.next() )
-				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts));
-		}
-		catch (Throwable e)
-		{
-			try { lrsReceipts.close(); } catch (SQLException e1) {}
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsReceipts.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return larrAux.toArray(new Receipt[larrAux.size()]);
-	}
-
-	protected static Receipt[] getHistoryForOperation(UUID pidOperation)
-		throws BigBangJewelException
-	{
-		ArrayList<Receipt> larrAux;
-		IEntity lrefReceipts, lrefLogs;
-		MasterDB ldb;
-		ResultSet lrsReceipts;
-
-		larrAux = new ArrayList<Receipt>();
-
-		try
-		{
-			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
-			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsReceipts = ldb.OpenRecordset("SELECT * FROM (" +
-					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
-					lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-					new java.lang.Object[] {pidOperation, false}, null) + ") [AuxLogs])");
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			while ( lrsReceipts.next() )
-				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts));
-		}
-		catch (Throwable e)
-		{
-			try { lrsReceipts.close(); } catch (SQLException e1) {}
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsReceipts.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return larrAux.toArray(new Receipt[larrAux.size()]);
-	}
-
 	protected static Table buildHeaderSection(String pstrHeader, Receipt[] parrReceipts, int plngMapSize)
 	{
 		BigDecimal ldblTotal;

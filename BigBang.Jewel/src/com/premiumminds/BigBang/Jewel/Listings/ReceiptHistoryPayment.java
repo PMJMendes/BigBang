@@ -1,5 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Listings;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -7,7 +9,10 @@ import java.util.UUID;
 import org.apache.ecs.GenericElement;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -26,7 +31,7 @@ public class ReceiptHistoryPayment
 		UUID lidManager;
 		GenericElement[] larrResult;
 
-		larrAux = getHistoryForOperation(Constants.OPID_Receipt_Payment);
+		larrAux = getHistoryForOperation(parrParams);
 
 		larrMap = new HashMap<UUID, ArrayList<Receipt>>();
 		for ( i = 0; i < larrAux.length; i++ )
@@ -68,5 +73,95 @@ public class ReceiptHistoryPayment
 		}
 
 		return larrResult;
+	}
+
+	protected static Receipt[] getHistoryForOperation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		StringBuilder lstrSQL;
+		ArrayList<Receipt> larrAux;
+		IEntity lrefReceipts, lrefLogs;
+		MasterDB ldb;
+		ResultSet lrsReceipts;
+
+		larrAux = new ArrayList<Receipt>();
+
+		try
+		{
+			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
+			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
+
+			lstrSQL = new StringBuilder();
+			lstrSQL.append("SELECT * FROM (" +
+					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
+					lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+					new java.lang.Object[] {Constants.OPID_Receipt_Payment, false}, null) + ") [AuxLogs] WHERE 1=1");
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( parrParams[0] != null )
+			lstrSQL.append(" AND [Timestamp] >= '" + parrParams[0] + "'");
+
+		if ( parrParams[1] != null )
+			lstrSQL.append(" AND [Timestamp] <= '" + parrParams[1] + "'");
+
+		lstrSQL.append(")");
+
+		larrAux = new ArrayList<Receipt>();
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsReceipts = ldb.OpenRecordset(lstrSQL.toString());
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsReceipts.next() )
+				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts));
+		}
+		catch (Throwable e)
+		{
+			try { lrsReceipts.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsReceipts.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new Receipt[larrAux.size()]);
 	}
 }
