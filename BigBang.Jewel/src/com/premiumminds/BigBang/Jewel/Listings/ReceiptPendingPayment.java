@@ -26,7 +26,7 @@ public class ReceiptPendingPayment
 		UUID lidManager;
 		GenericElement[] larrResult;
 
-		larrAux = getPendingForOperation(Constants.OPID_Receipt_Payment);
+		larrAux = getPendingForOperation(Constants.OPID_Receipt_Payment, Constants.UrgID_Pending);
 
 		larrMap = new HashMap<UUID, ArrayList<Receipt>>();
 		for ( i = 0; i < larrAux.length; i++ )

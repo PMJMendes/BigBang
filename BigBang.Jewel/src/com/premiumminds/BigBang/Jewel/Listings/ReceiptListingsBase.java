@@ -16,10 +16,6 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.ILog;
-import Jewel.Petri.Interfaces.IStep;
-import Jewel.Petri.Objects.PNLog;
-import Jewel.Petri.Objects.PNProcess;
-import Jewel.Petri.Objects.PNStep;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -32,19 +28,19 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
 public class ReceiptListingsBase
 {
-	protected static Receipt[] getPendingForOperation(UUID pidOperation)
+	protected static Receipt[] getPendingForOperation(UUID pidOperation, UUID pidLevel)
 		throws BigBangJewelException
 	{
 		ArrayList<Receipt> larrAux;
-		IEntity lrefSteps;
+		IEntity lrefReceipts, lrefSteps;
 		MasterDB ldb;
-		ResultSet lrsSteps;
-		IStep lobjStep;
+		ResultSet lrsReceipts;
 
 		larrAux = new ArrayList<Receipt>();
 
 		try
 		{
+			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
 			lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNStep));
 			ldb = new MasterDB();
 		}
@@ -55,7 +51,10 @@ public class ReceiptListingsBase
 
 		try
 		{
-			lrsSteps = lrefSteps.SelectByMembers(ldb, new int[] {}, new java.lang.Object[] {}, new int[0]);
+			lrsReceipts = ldb.OpenRecordset("SELECT * FROM (" +
+					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
+					lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
+					new java.lang.Object[] {pidOperation, pidLevel}, null) + ") [AuxSteps])");
 		}
 		catch (Throwable e)
 		{
@@ -65,22 +64,19 @@ public class ReceiptListingsBase
 
 		try
 		{
-			while ( lrsSteps.next() )
-			{
-				lobjStep = PNStep.GetInstance(Engine.getCurrentNameSpace(), lrsSteps);
-				larrAux.add((Receipt)lobjStep.GetProcess().GetData());
-			}
+			while ( lrsReceipts.next() )
+				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts));
 		}
 		catch (Throwable e)
 		{
-			try { lrsSteps.close(); } catch (SQLException e1) {}
+			try { lrsReceipts.close(); } catch (SQLException e1) {}
 			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
-			lrsSteps.close();
+			lrsReceipts.close();
 		}
 		catch (Throwable e)
 		{
@@ -104,15 +100,15 @@ public class ReceiptListingsBase
 		throws BigBangJewelException
 	{
 		ArrayList<Receipt> larrAux;
-		IEntity lrefLogs;
+		IEntity lrefReceipts, lrefLogs;
 		MasterDB ldb;
-		ResultSet lrsLogs;
-		ILog lobjLog;
+		ResultSet lrsReceipts;
 
 		larrAux = new ArrayList<Receipt>();
 
 		try
 		{
+			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
 			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
 			ldb = new MasterDB();
 		}
@@ -123,7 +119,10 @@ public class ReceiptListingsBase
 
 		try
 		{
-			lrsLogs = lrefLogs.SelectByMembers(ldb, new int[] {}, new java.lang.Object[] {}, new int[0]);
+			lrsReceipts = ldb.OpenRecordset("SELECT * FROM (" +
+					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
+					lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+					new java.lang.Object[] {pidOperation, false}, null) + ") [AuxLogs])");
 		}
 		catch (Throwable e)
 		{
@@ -133,22 +132,19 @@ public class ReceiptListingsBase
 
 		try
 		{
-			while ( lrsLogs.next() )
-			{
-				lobjLog = PNLog.GetInstance(Engine.getCurrentNameSpace(), lrsLogs);
-				larrAux.add((Receipt)PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjLog.GetProcessID()).GetData());
-			}
+			while ( lrsReceipts.next() )
+				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts));
 		}
 		catch (Throwable e)
 		{
-			try { lrsLogs.close(); } catch (SQLException e1) {}
+			try { lrsReceipts.close(); } catch (SQLException e1) {}
 			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
-			lrsLogs.close();
+			lrsReceipts.close();
 		}
 		catch (Throwable e)
 		{
@@ -182,9 +178,12 @@ public class ReceiptListingsBase
 		ldblTotalRetro = new BigDecimal(0);
 		for ( i = 0; i < parrReceipts.length; i++ )
 		{
-			ldblTotal = ldblTotal.add((BigDecimal)parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM));
-			ldblTotalCom = ldblTotal.add((BigDecimal)parrReceipts[i].getAt(Receipt.I.COMMISSIONS));
-			ldblTotalRetro = ldblTotal.add((BigDecimal)parrReceipts[i].getAt(Receipt.I.RETROCESSIONS));
+			ldblTotal = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM) == null ? new BigDecimal(0) :
+					(BigDecimal)parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM)));
+			ldblTotalCom = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.COMMISSIONS) == null ? new BigDecimal(0) :
+					(BigDecimal)parrReceipts[i].getAt(Receipt.I.COMMISSIONS)));
+			ldblTotalRetro = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.RETROCESSIONS) == null ? new BigDecimal(0) :
+					(BigDecimal)parrReceipts[i].getAt(Receipt.I.RETROCESSIONS)));
 		}
 
 		larrRows = new TR[6];
@@ -236,9 +235,12 @@ public class ReceiptListingsBase
 		ldblTotalRetro = new BigDecimal(0);
 		for ( i = 0; i < parrReceipts.size(); i++ )
 		{
-			ldblTotal = ldblTotal.add((BigDecimal)parrReceipts.get(i).getAt(Receipt.I.TOTALPREMIUM));
-			ldblTotalCom = ldblTotal.add((BigDecimal)parrReceipts.get(i).getAt(Receipt.I.COMMISSIONS));
-			ldblTotalRetro = ldblTotal.add((BigDecimal)parrReceipts.get(i).getAt(Receipt.I.RETROCESSIONS));
+			ldblTotal = ldblTotal.add((parrReceipts.get(i).getAt(Receipt.I.TOTALPREMIUM) == null ? new BigDecimal(0) :
+					(BigDecimal)parrReceipts.get(i).getAt(Receipt.I.TOTALPREMIUM)));
+			ldblTotalCom = ldblTotal.add((parrReceipts.get(i).getAt(Receipt.I.COMMISSIONS) == null ? new BigDecimal(0) :
+					(BigDecimal)parrReceipts.get(i).getAt(Receipt.I.COMMISSIONS)));
+			ldblTotalRetro = ldblTotal.add((parrReceipts.get(i).getAt(Receipt.I.RETROCESSIONS) == null ? new BigDecimal(0) :
+					(BigDecimal)parrReceipts.get(i).getAt(Receipt.I.RETROCESSIONS)));
 		}
 
 		larrRows = new TR[6];
