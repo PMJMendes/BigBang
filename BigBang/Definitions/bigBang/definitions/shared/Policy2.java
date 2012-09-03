@@ -63,6 +63,8 @@ public class Policy2
 	public Coverage[] coverages;
 	public ColumnHeader[] columns;
 
+	public Object2[] objects;
+
 	public Policy2()
 	{
 		contacts = new Contact[0];
@@ -73,5 +75,6 @@ public class Policy2
 		exerciseData = new ExerciseData[0];
 		coverages = new Coverage[0];
 		columns = new ColumnHeader[0];
+		objects = new Object2[0];
 	}
 }
