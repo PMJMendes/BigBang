@@ -72,6 +72,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
 		void setReferenceParameters(HasParameters parameterHolder);
+		void openNewDetail();
 	}
 
 
@@ -300,7 +301,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 				subCasualty.casualtyId = casualty.id;
 
 				view.getForm().setValue(subCasualty);
-
+				view.openNewDetail();
 				//TODO PERMISSIONS
 				view.allowEdit(true);
 				view.allowDelete(true);

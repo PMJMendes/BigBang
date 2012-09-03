@@ -229,4 +229,9 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	public void setReferenceParameters(HasParameters parameterHolder) {
 		form.setPanelParameters(parameterHolder);
 	}
+
+	@Override
+	public void openNewDetail() {
+		form.openNewDetail();
+	}
 }

@@ -481,5 +481,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		}
 	}
 
+	public void openNewDetail() {
+		addSubCasualtyItemSection(new SubCasualtyItem());
+	}
+
 
 }

@@ -55,7 +55,6 @@ public class ExpenseForm extends FormView<Expense>{
 
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Despesa");
 		settlement = new NumericTextBoxFormField("Indemnização", true);
-		settlement.setMandatory(true);
 		settlement.setUnitsLabel("€");
 		settlement.setFieldWidth("175px");
 		settleButton = new Button("Substituir");
@@ -275,6 +274,10 @@ public class ExpenseForm extends FormView<Expense>{
 		settleButton.setVisible(!isManual);
 		settleLabel.setVisible(!isManual);
 		settlement.setEditable(isManual);
+		settlement.setMandatory(isManual);
+		if(isReadOnly()){
+			settlement.setReadOnly(true);
+		}
 	}
 
 	@Override

@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 public class NumericTextBoxFormField extends FormField<Double>{
@@ -27,12 +26,13 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	public class NumericWrapper implements HasValue<Double>{
 
-
 		protected TextBox field;
 		protected String curr = "";
 		private HandlerManager handlerManager;
 
 		public NumericWrapper() {
+			super();
+			
 			this.handlerManager = new HandlerManager(this);
 			field = new TextBox();
 			field.addKeyPressHandler(new KeyPressHandler() {
@@ -158,10 +158,17 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 
 	public NumericTextBoxFormField(boolean isMoney){
-		super();
+		this();
 		this.setAsMoney(isMoney);
+		
+
+	}
+
+	public NumericTextBoxFormField() {
+		super();
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
+		mainWrapper.setHeight("45px");
 
 		mainWrapper.add(this.label);
 		wrapper = new HorizontalPanel();
@@ -176,7 +183,6 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		wrapper.add(errorMessageLabel);
 
 		setFieldWidth("175px");
-
 	}
 
 	public void setAsMoney(boolean isMoney){
@@ -208,7 +214,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	@Override
 	public void setReadOnly(boolean readonly) {
 		if(!editable){
-			return;
+			 return;
 		}
 		TextBox field = ((TextBox)getTextBox());
 		if(field.isReadOnly() != readonly){
@@ -227,8 +233,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		((NumericWrapper)this.field).getField().setEnabled(!readonly);
 		((NumericWrapper)this.field).getField().setReadOnly(readonly);
 		((NumericWrapper)this.field).getField().getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
-		mandatoryIndicatorLabel.setVisible(!readonly&& this.isMandatory());
-
+		mandatoryIndicatorLabel.setVisible(!readonly && this.isMandatory());
 	}
 
 	public void showDecimal(boolean show){
@@ -258,21 +263,6 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	public void setTextAligment(TextAlignment alignment){
 		((NumericWrapper)this.field).getField().setAlignment(alignment);
-	}
-
-	@Override
-	public void setInvalid(boolean invalid) {
-		Widget field = ((NumericWrapper)this.field).getField();
-		if(field != null){
-			if(invalid)
-				((Widget)field).addStyleName("invalidFormField");
-			else
-				((Widget)field).removeStyleName("invalidFormField");
-		}
-		FieldValidator<?> validator = this.validator;
-		String message =  validator == null ? null : validator.getErrorMessage();
-		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
-		this.errorMessageLabel.setVisible(invalid);
 	}
 
 	public TextBox getTextBox() {
