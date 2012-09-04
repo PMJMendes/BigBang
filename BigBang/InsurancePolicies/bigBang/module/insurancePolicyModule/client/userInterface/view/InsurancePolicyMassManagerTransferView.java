@@ -5,8 +5,8 @@ import java.util.TreeMap;
 
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Policy2;
-import bigBang.definitions.shared.Policy2Stub;
+import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.HasCheckables;
@@ -28,9 +28,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
 public class InsurancePolicyMassManagerTransferView extends
-		MassManagerTransferView<Policy2Stub, Policy2> {
+		MassManagerTransferView<InsurancePolicyStub, InsurancePolicy> {
 
-	protected static class CheckablePoliciesSearchPanel extends CheckableSearchPanel<Policy2Stub> {
+	protected static class CheckablePoliciesSearchPanel extends CheckableSearchPanel<InsurancePolicyStub> {
 
 		public FiltersPanel filtersPanel;
 		
@@ -67,8 +67,8 @@ public class InsurancePolicyMassManagerTransferView extends
 		}
 
 		@Override
-		public ListEntry<Policy2Stub> addEntry(Policy2Stub value) {
-			ListEntry<Policy2Stub> entry = new InsurancePolicySearchPanel.Entry(value);
+		public ListEntry<InsurancePolicyStub> addEntry(InsurancePolicyStub value) {
+			ListEntry<InsurancePolicyStub> entry = new InsurancePolicySearchPanel.Entry(value);
 			add(0, entry);
 			return entry;
 		}
@@ -106,11 +106,11 @@ public class InsurancePolicyMassManagerTransferView extends
 		
 	}
 	
-	protected static class SelectedPoliciesList extends SelectedProcessesList<Policy2Stub> {
+	protected static class SelectedPoliciesList extends SelectedProcessesList<InsurancePolicyStub> {
 
 		@Override
-		public ListEntry<Policy2Stub> addEntry(Policy2Stub value) {
-			ListEntry<Policy2Stub> entry = new InsurancePolicySearchPanel.Entry(value);
+		public ListEntry<InsurancePolicyStub> addEntry(InsurancePolicyStub value) {
+			ListEntry<InsurancePolicyStub> entry = new InsurancePolicySearchPanel.Entry(value);
 			entry.setChecked(true);
 			this.add(entry);
 			return entry;
@@ -129,14 +129,14 @@ public class InsurancePolicyMassManagerTransferView extends
 	}
 
 	@Override
-	public void addProcessToTransfer(Policy2Stub value) {
+	public void addProcessToTransfer(InsurancePolicyStub value) {
 		this.selectedList.addEntry(value);
 		searchPanel.markForCheck(value.id);
 	}
 
 	@Override
 	public void removeProcessFromTransfer(String id) {
-		for(ValueSelectable<Policy2Stub> entry : this.selectedList){
+		for(ValueSelectable<InsurancePolicyStub> entry : this.selectedList){
 			if(id.equalsIgnoreCase(entry.getValue().id)){
 				this.selectedList.remove(entry);
 				break;

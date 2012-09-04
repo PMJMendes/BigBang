@@ -11,7 +11,7 @@ import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.Policy2Stub;
+import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasSelectables;
@@ -322,7 +322,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	}
 
 	@Override
-	public HasValueSelectables<Policy2Stub> getPolicyList() {
+	public HasValueSelectables<InsurancePolicyStub> getPolicyList() {
 		return this.childrenPanel.insurancePoliciesList;
 	}
 	

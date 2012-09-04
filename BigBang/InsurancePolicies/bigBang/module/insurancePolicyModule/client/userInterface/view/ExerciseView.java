@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -117,7 +117,7 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 	}
 
 	@Override
-	public HasEditableValue<Policy2> getInsurancePolicyForm() {
+	public HasEditableValue<InsurancePolicy> getInsurancePolicyForm() {
 		return this.policyForm;
 	}
 

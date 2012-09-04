@@ -7,8 +7,8 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
-import bigBang.definitions.shared.InsurancePolicy.ExtraField;
+import bigBang.definitions.shared.InsurancePolicyOLD.Coverage;
+import bigBang.definitions.shared.InsurancePolicyOLD.ExtraField;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
 import bigBang.library.client.userInterface.view.FormViewSection;

@@ -10,7 +10,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -111,17 +111,17 @@ public class InsurancePolicyVoidViewPresenter implements ViewPresenter {
 	private void onVoidPolicy(){
 		if(view.getForm().validate()) {
 			String policyId = view.getForm().getInfo().policyId;
-			broker.getPolicy(policyId, new ResponseHandler<Policy2>() {
+			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
-				public void onResponse(Policy2 response) {
+				public void onResponse(InsurancePolicy response) {
 					boolean hasPermission = PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY);
 
 					if(hasPermission){
-						broker.voidPolicy(view.getForm().getValue(), new ResponseHandler<Policy2>() {
+						broker.voidPolicy(view.getForm().getValue(), new ResponseHandler<InsurancePolicy>() {
 
 							@Override
-							public void onResponse(Policy2 response) {
+							public void onResponse(InsurancePolicy response) {
 								onVoidPolicySuccess();
 								NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 								item.removeParameter("show");

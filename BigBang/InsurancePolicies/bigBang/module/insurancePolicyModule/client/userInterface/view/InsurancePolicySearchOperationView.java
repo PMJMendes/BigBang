@@ -12,10 +12,10 @@ import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicyStub;
-import bigBang.definitions.shared.Policy2Stub;
+import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -70,7 +70,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			
 		searchPanel = new InsurancePolicySearchPanel(){
 			@Override
-			public void onResults(Collection<Policy2Stub> results) {
+			public void onResults(Collection<InsurancePolicyStub> results) {
 				super.onResults(results);
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.ON_NEW_RESULTS));
 			}
@@ -250,11 +250,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		
 		mainWrapper.add(contentWrapper);
 		
-		form.addValueChangeHandler(new ValueChangeHandler<Policy2>() {
+		form.addValueChangeHandler(new ValueChangeHandler<InsurancePolicy>() {
 			
 			@Override
-			public void onValueChange(ValueChangeEvent<Policy2> event) {
-				Policy2 policy = event.getValue();
+			public void onValueChange(ValueChangeEvent<InsurancePolicy> event) {
+				InsurancePolicy policy = event.getValue();
 				childrenPanel.setPolicy(policy);
 			}
 		});
@@ -278,7 +278,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 	
 	@Override
-	public HasValueSelectables<Policy2Stub> getList() {
+	public HasValueSelectables<InsurancePolicyStub> getList() {
 		return this.searchPanel;
 	}
 	
@@ -288,7 +288,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 
 	@Override
-	public HasEditableValue<Policy2> getForm() {
+	public HasEditableValue<InsurancePolicy> getForm() {
 		return this.form;
 	}
 
@@ -484,8 +484,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 
 	@Override
-	public ValueSelectable<Policy2Stub> addPolicyListEntry(
-			Policy2 policy) {
+	public ValueSelectable<InsurancePolicyStub> addPolicyListEntry(
+			InsurancePolicy policy) {
 		return searchPanel.addEntry(policy);
 	}
 

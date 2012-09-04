@@ -1,11 +1,12 @@
 package bigBang.definitions.shared;
 
 public class InsurancePolicyStub
-	extends ProcessBase
+	extends ComplexFieldContainer
 {
 	private static final long serialVersionUID = 1L;
 
-	public static enum PolicyStatus {
+	public static enum PolicyStatus
+	{
 		PROVISIONAL,
 		VALID,
 		OBSOLETE
@@ -26,4 +27,12 @@ public class InsurancePolicyStub
 	public String statusId;
 	public String statusText;
 	public PolicyStatus statusIcon;
+	
+	public InsurancePolicyStub()
+	{
+		headerFields = null;
+		columnFields = null;
+		extraFields = null;
+		exerciseData = null;
+	}
 }

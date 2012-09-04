@@ -14,7 +14,7 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.NegotiationStub;
 import bigBang.definitions.shared.SearchParameter;
@@ -263,7 +263,7 @@ public class NegotiationServiceImpl
 	}
 
 	@Override
-	public Policy2 createPolicy(Negotiation negotiation)
+	public InsurancePolicy createPolicy(Negotiation negotiation)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

@@ -7,7 +7,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
@@ -19,11 +19,11 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter;
 
-public class InsurancePolicyClientInfoRequestViewPresenter extends InfoOrDocumentRequestViewPresenter<Policy2>{
+public class InsurancePolicyClientInfoRequestViewPresenter extends InfoOrDocumentRequestViewPresenter<InsurancePolicy>{
 
 	private InsurancePolicyBroker broker;
 
-	public InsurancePolicyClientInfoRequestViewPresenter(Display<Policy2> view) {
+	public InsurancePolicyClientInfoRequestViewPresenter(Display<InsurancePolicy> view) {
 		super(view);
 		broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 	}
@@ -45,10 +45,10 @@ public class InsurancePolicyClientInfoRequestViewPresenter extends InfoOrDocumen
 
 	@Override
 	protected void showOwner(String ownerId, String ownerTypeId) {
-		broker.getPolicy(ownerId, new ResponseHandler<Policy2>() {
+		broker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(Policy2 response) {
+			public void onResponse(InsurancePolicy response) {
 				view.getOwnerForm().setValue(response);
 			}
 
@@ -62,10 +62,10 @@ public class InsurancePolicyClientInfoRequestViewPresenter extends InfoOrDocumen
 	@Override
 	protected void checkOwnerPermissions(String ownerId, String ownerTypeId,
 			final ResponseHandler<Boolean> handler) {
-		broker.getPolicy(ownerId, new ResponseHandler<Policy2>() {
+		broker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(Policy2 response) {
+			public void onResponse(InsurancePolicy response) {
 				handler.onResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST));
 			}
 

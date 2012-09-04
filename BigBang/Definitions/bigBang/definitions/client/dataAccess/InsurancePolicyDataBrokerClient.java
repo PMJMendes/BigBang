@@ -1,13 +1,13 @@
 package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 
 public interface InsurancePolicyDataBrokerClient extends
-		DataBrokerClient<Policy2> {
+		DataBrokerClient<InsurancePolicy> {
 	
-	public void addInsurancePolicy(Policy2 policy);
+	public void addInsurancePolicy(InsurancePolicy policy);
 	
-	public void updateInsurancePolicy(Policy2 policy);
+	public void updateInsurancePolicy(InsurancePolicy policy);
 	
 	public void removeInsurancePolicy(String policyId);
 	

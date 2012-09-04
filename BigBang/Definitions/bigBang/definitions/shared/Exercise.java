@@ -2,7 +2,7 @@ package bigBang.definitions.shared;
 
 import java.io.Serializable;
 
-import bigBang.definitions.shared.InsurancePolicy.FieldType;
+import bigBang.definitions.shared.InsurancePolicyOLD.FieldType;
 
 public class Exercise
 	extends ExerciseStub

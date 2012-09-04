@@ -9,7 +9,7 @@ import Jewel.Engine.Engine;
 import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.Object2;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.interfaces.Policy2Service;
@@ -48,12 +48,12 @@ public class Policy2ServiceImpl
 		return null;
 	}
 
-	public static Policy2 sGetEmptyPolicy(UUID pidSubLine)
+	public static InsurancePolicy sGetEmptyPolicy(UUID pidSubLine)
 		throws BigBangException
 	{
 		SubLine lobjSubLine;
 		FieldStructure lobjStructure;
-		Policy2 lobjResult;
+		InsurancePolicy lobjResult;
 		ComplexFieldContainer.ExerciseData lobjExercise;
 
 		try
@@ -87,7 +87,7 @@ public class Policy2ServiceImpl
 		return lobjResult;
 	}
 
-	public Policy2 getEmptyPolicy(String subLineId)
+	public InsurancePolicy getEmptyPolicy(String subLineId)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
@@ -105,7 +105,7 @@ public class Policy2ServiceImpl
 		return null;
 	}
 
-	public Policy2 getPolicy2(String policyId)
+	public InsurancePolicy getPolicy2(String policyId)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
@@ -123,7 +123,7 @@ public class Policy2ServiceImpl
 		return null;
 	}
 
-	public Policy2 editPolicy(Policy2 policy)
+	public InsurancePolicy editPolicy(InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
@@ -160,14 +160,14 @@ public class Policy2ServiceImpl
 		return lobjResult;
 	}
 
-	private static Policy2 sGetPolicyStructure(FieldStructure pobjStructure)
+	private static InsurancePolicy sGetPolicyStructure(FieldStructure pobjStructure)
 		throws BigBangException
 	{
-		Policy2 lobjResult;
+		InsurancePolicy lobjResult;
 		int llngMaxCol;
 		int i, j, k, l;
 
-		lobjResult = new Policy2();
+		lobjResult = new InsurancePolicy();
 
 		llngMaxCol = -1;
 		for ( i = 0; i < pobjStructure.marrCoverages.length; i++ )
@@ -179,15 +179,15 @@ public class Policy2ServiceImpl
 			}
 		}
 
-		lobjResult.coverages = new Policy2.Coverage[pobjStructure.marrCoverages.length - 1];
-		lobjResult.columns = new Policy2.ColumnHeader[llngMaxCol + 1];
+		lobjResult.coverages = new InsurancePolicy.Coverage[pobjStructure.marrCoverages.length - 1];
+		lobjResult.columns = new InsurancePolicy.ColumnHeader[llngMaxCol + 1];
 
 		l = 0;
 		for ( i = 0; i < pobjStructure.marrCoverages.length; i++ )
 		{
 			if ( pobjStructure.marrCoverages[i].IsHeader() )
 			{
-				lobjResult.coverages[l] = new Policy2.Coverage();
+				lobjResult.coverages[l] = new InsurancePolicy.Coverage();
 				lobjResult.coverages[l].coverageId = pobjStructure.marrCoverages[i].getKey().toString();
 				lobjResult.coverages[l].coverageName = pobjStructure.marrCoverages[i].getLabel();
 				lobjResult.coverages[l].mandatory = pobjStructure.marrCoverages[i].IsMandatory();
@@ -203,7 +203,7 @@ public class Policy2ServiceImpl
 					k = pobjStructure.marrFields[i][j].GetColumnOrder();
 					if ( (k >= 0) && (lobjResult.columns[k] == null) )
 					{
-						lobjResult.columns[k] = new Policy2.ColumnHeader();
+						lobjResult.columns[k] = new InsurancePolicy.ColumnHeader();
 						lobjResult.columns[k].label = pobjStructure.marrFields[i][j].getLabel();
 						lobjResult.columns[k].type = sGetFieldTypeByID(pobjStructure.marrFields[i][j].GetFieldType());
 						lobjResult.columns[k].unitsLabel = pobjStructure.marrFields[i][j].GetUnitsLabel();

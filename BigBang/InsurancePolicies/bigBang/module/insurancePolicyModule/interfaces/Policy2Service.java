@@ -1,7 +1,7 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
 import bigBang.definitions.shared.Object2;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
@@ -24,11 +24,11 @@ public interface Policy2Service
 		}
 	}
 
-	public Policy2 getEmptyPolicy(String subLineId) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy getEmptyPolicy(String subLineId) throws SessionExpiredException, BigBangException;
 	public Object2 getEmptyObject(String subLineId) throws SessionExpiredException, BigBangException;
 
-	public Policy2 getPolicy2(String policyId) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy getPolicy2(String policyId) throws SessionExpiredException, BigBangException;
 	public Object2 getPolicyObject(String objectId) throws  SessionExpiredException, BigBangException;
 
-	public Policy2 editPolicy(Policy2 policy) throws  SessionExpiredException, BigBangException;
+	public InsurancePolicy editPolicy(InsurancePolicy policy) throws  SessionExpiredException, BigBangException;
 }

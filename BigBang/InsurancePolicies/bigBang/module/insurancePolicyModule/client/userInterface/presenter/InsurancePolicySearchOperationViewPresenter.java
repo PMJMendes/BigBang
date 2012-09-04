@@ -13,8 +13,8 @@ import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.Policy2;
-import bigBang.definitions.shared.Policy2Stub;
+import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicyStub;
@@ -72,11 +72,11 @@ ViewPresenter {
 
 	public interface Display {
 		//Listtype filter text
-		HasValueSelectables<Policy2Stub> getList();
-		ValueSelectable<Policy2Stub> addPolicyListEntry(Policy2 policy);
+		HasValueSelectables<InsurancePolicyStub> getList();
+		ValueSelectable<InsurancePolicyStub> addPolicyListEntry(InsurancePolicy policy);
 
 		//Form
-		HasEditableValue<Policy2> getForm();
+		HasEditableValue<InsurancePolicy> getForm();
 		void scrollFormToTop();
 		boolean isFormValid();
 
@@ -175,8 +175,8 @@ ViewPresenter {
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
-				ValueSelectable<Policy2Stub> selected = (ValueSelectable<Policy2Stub>) event.getFirstSelected();
-				Policy2Stub selectedValue = selected == null ? null : selected.getValue();
+				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
+				InsurancePolicyStub selectedValue = selected == null ? null : selected.getValue();
 				String selectedPolicyId = selectedValue == null ? new String() : selectedValue.id;
 				selectedPolicyId = selectedPolicyId == null ? new String() : selectedPolicyId;
 
@@ -198,10 +198,10 @@ ViewPresenter {
 
 				switch(action.getAction()){
 				case EDIT:
-					broker.openPolicyResource(view.getForm().getValue().id, new ResponseHandler<Policy2>() {
+					broker.openPolicyResource(view.getForm().getValue().id, new ResponseHandler<InsurancePolicy>() {
 
 						@Override
-						public void onResponse(Policy2 response) {
+						public void onResponse(InsurancePolicy response) {
 							NavigationHistoryManager.getInstance().reload();
 						}
 						@Override
@@ -215,7 +215,7 @@ ViewPresenter {
 					break;
 				case SAVE:
 					if(view.getForm().validate()) {
-						Policy2 info = view.getForm().getInfo();
+						InsurancePolicy info = view.getForm().getInfo();
 						view.getForm().setReadOnly(true);
 						savePolicy(info);
 					}
@@ -468,7 +468,7 @@ ViewPresenter {
 	}
 
 	private void checkStatus(String nextPolicyId){
-		Policy2 policy = view.getForm().getValue();
+		InsurancePolicy policy = view.getForm().getValue();
 		if(policy != null && policy.id != null){
 			if((nextPolicyId == null || !nextPolicyId.equalsIgnoreCase(policy.id)) && broker.isTemp(policy.id)){
 				broker.closePolicyResource(policy.id, new ResponseHandler<Void>() {
@@ -514,12 +514,12 @@ ViewPresenter {
 		}else{
 			view.setForNew(false);
 
-			this.broker.getPolicy(policyId, new ResponseHandler<Policy2>() {
+			this.broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
-				public void onResponse(Policy2 response) {
-					for(ValueSelectable<Policy2Stub> entry : view.getList().getAll()) { //TODO
-						Policy2Stub entryValue = entry.getValue();
+				public void onResponse(InsurancePolicy response) {
+					for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) { //TODO
+						InsurancePolicyStub entryValue = entry.getValue();
 						if(entryValue.id.equalsIgnoreCase(response.id)) {
 							entry.setSelected(true, false);
 						}else{
@@ -571,12 +571,12 @@ ViewPresenter {
 			final boolean isNewPolicy = broker.isNewPolicy(policyId);
 			view.setForNew(isNewPolicy);
 
-			broker.getPolicy(policyId, new ResponseHandler<Policy2>() {
+			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
-				public void onResponse(Policy2 response) {
-					for(ValueSelectable<Policy2Stub> entry : view.getList().getAll()) { //TODO
-						Policy2Stub entryValue = entry.getValue();
+				public void onResponse(InsurancePolicy response) {
+					for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) { //TODO
+						InsurancePolicyStub entryValue = entry.getValue();
 						if(entryValue.id.equalsIgnoreCase(response.id)) {
 							entry.setSelected(true, false);
 						}else{
@@ -622,12 +622,12 @@ ViewPresenter {
 	}
 
 	protected void saveWorkState(final ResponseHandler<Void> handler){
-		final Policy2 policy = view.getForm().getInfo(); 
+		final InsurancePolicy policy = view.getForm().getInfo(); 
 		if(broker.isTemp(policy.id)){
-			broker.updatePolicy(policy, new ResponseHandler<Policy2>() {
+			broker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
-				public void onResponse(Policy2 response) {
+				public void onResponse(InsurancePolicy response) {
 					handler.onResponse(null);
 				}
 
@@ -641,15 +641,15 @@ ViewPresenter {
 		}
 	}
 
-	private void savePolicy(final Policy2 policy){
+	private void savePolicy(final InsurancePolicy policy){
 		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {
-				broker.commitPolicy(policy, new ResponseHandler<Policy2>() {
+				broker.commitPolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
-					public void onResponse(Policy2 response) {
+					public void onResponse(InsurancePolicy response) {
 						onSavePolicySuccess(response.id);
 					}
 
@@ -686,14 +686,14 @@ ViewPresenter {
 	}
 
 	private void onExecuteDetailedCalculations(){
-		Policy2 policy =  view.getForm().getValue();
+		InsurancePolicy policy =  view.getForm().getValue();
 		String policyId = policy == null ? null : policy.id;
 
 		if(policyId != null) {
-			broker.executeDetailedCalculations(policyId, new ResponseHandler<Policy2>() {
+			broker.executeDetailedCalculations(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
-				public void onResponse(Policy2 response) {
+				public void onResponse(InsurancePolicy response) {
 					onExecuteDetailedCalculationsSuccess();
 					NavigationHistoryManager.getInstance().reload();
 				}
@@ -978,7 +978,7 @@ ViewPresenter {
 	}
 
 	private void onCancelEdit(){
-		final Policy2 policy = view.getForm().getValue();
+		final InsurancePolicy policy = view.getForm().getValue();
 		final String policyId = broker.getFinalMapping(policy.id);
 		final boolean newPolicy = broker.isNewPolicy(policyId);
 
@@ -1019,14 +1019,14 @@ ViewPresenter {
 	}
 
 	private void onNewResults(){
-		Policy2 policy = view.getForm().getValue();
+		InsurancePolicy policy = view.getForm().getValue();
 
 		if(policy != null && policy.id != null) {
 			ensureListedAndSelected(policy);
 		}
 	}
 
-	private void ensureListedAndSelected(Policy2 policy) {
+	private void ensureListedAndSelected(InsurancePolicy policy) {
 		//		boolean found = false; TODO
 		//		for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) {
 		//			InsurancePolicyStub entryValue = entry.getValue();

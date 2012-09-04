@@ -10,7 +10,7 @@ import bigBang.definitions.shared.Exercise.HeaderData.FixedField;
 import bigBang.definitions.shared.Exercise.HeaderData.VariableField;
 import bigBang.definitions.shared.Exercise.HeaderData.VariableField.VariableValue;
 import bigBang.definitions.shared.Exercise.InsuredObject;
-import bigBang.definitions.shared.InsurancePolicy.FieldType;
+import bigBang.definitions.shared.InsurancePolicyOLD.FieldType;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;

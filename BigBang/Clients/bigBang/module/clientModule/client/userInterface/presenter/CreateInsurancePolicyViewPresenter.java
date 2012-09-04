@@ -10,7 +10,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
@@ -106,20 +106,20 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		if(categoryId == null || lineId == null || subLineId == null) {
 			onConfirmError();
 		}else{
-			broker.openPolicyResource(null, new ResponseHandler<Policy2>() {
+			broker.openPolicyResource(null, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
-				public void onResponse(Policy2 response) {
+				public void onResponse(InsurancePolicy response) {
 					response.clientId = clientId;
 					response.categoryId = view.getCategory();
 					response.lineId = view.getLine();
 					response.subLineId = view.getSubLine();
 //					response.statusIcon = PolicyStatus.PROVISIONAL;
 					
-					broker.initPolicy(response, new ResponseHandler<Policy2>() {
+					broker.initPolicy(response, new ResponseHandler<InsurancePolicy>() {
 
 						@Override
-						public void onResponse(Policy2 response) {
+						public void onResponse(InsurancePolicy response) {
 							onSuccess(response);
 						}
 
@@ -138,7 +138,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		}
 	}
 
-	protected void onSuccess(Policy2 policy){
+	protected void onSuccess(InsurancePolicy policy){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Apólice em criação no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
 
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

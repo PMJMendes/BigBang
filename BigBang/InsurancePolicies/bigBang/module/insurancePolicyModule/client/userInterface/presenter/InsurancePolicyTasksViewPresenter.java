@@ -11,7 +11,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasOperationPermissions;
 import bigBang.library.client.HasParameters;
@@ -32,7 +32,7 @@ public class InsurancePolicyTasksViewPresenter implements ViewPresenter, HasOper
 	}
 
 	public static interface Display {
-		HasValue<Policy2> getForm();
+		HasValue<InsurancePolicy> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 
 		//PERMISSIONS
@@ -110,10 +110,10 @@ public class InsurancePolicyTasksViewPresenter implements ViewPresenter, HasOper
 	}
 
 	protected void showPolicy(String policyId) {
-		broker.getPolicy(policyId, new ResponseHandler<Policy2>() {
+		broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(Policy2 response) {
+			public void onResponse(InsurancePolicy response) {
 				view.getForm().setValue(response);
 			}
 

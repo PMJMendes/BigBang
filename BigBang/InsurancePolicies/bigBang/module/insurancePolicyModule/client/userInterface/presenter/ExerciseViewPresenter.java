@@ -8,7 +8,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Exercise;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -31,7 +31,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 
 	public static interface Display{
 		HasEditableValue<Exercise> getExerciseForm();
-		HasEditableValue<Policy2> getInsurancePolicyForm();
+		HasEditableValue<InsurancePolicy> getInsurancePolicyForm();
 
 		//PERMISSIONS
 		void setSaveModeEnabled(boolean enabled);
@@ -150,17 +150,17 @@ public class ExerciseViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onResponse(final Exercise exercise) {
-				policyBroker.getPolicy(exercise.ownerId, new ResponseHandler<Policy2>() {
+				policyBroker.getPolicy(exercise.ownerId, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
-					public void onResponse(Policy2 policy) {
+					public void onResponse(InsurancePolicy policy) {
 						if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) || policyBroker.isTemp(policy.id)){
 							if(!policyBroker.isTemp(policy.id)){
-								policyBroker.openPolicyResource(policy.id, new ResponseHandler<Policy2>() { //TODO
+								policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() { //TODO
 
 									@Override
 									public void onResponse(
-											Policy2 response) {
+											InsurancePolicy response) {
 										broker.getExercise(exercise.id, new ResponseHandler<Exercise>() {
 
 											@Override
@@ -232,17 +232,17 @@ public class ExerciseViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onResponse(final Exercise object) {
-				policyBroker.getPolicy(object.ownerId, new ResponseHandler<Policy2>() {
+				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
-					public void onResponse(Policy2 policy) {
+					public void onResponse(InsurancePolicy policy) {
 						if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) || policyBroker.isTemp(policy.id)){
 							if(!policyBroker.isTemp(policy.id)){
-								policyBroker.openPolicyResource(policy.id, new ResponseHandler<Policy2>() { //TODO
+								policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() { //TODO
 
 									@Override
 									public void onResponse(
-											Policy2 response) {
+											InsurancePolicy response) {
 										broker.deleteExercise(objectId, new ResponseHandler<Void>() {
 
 											@Override
@@ -303,10 +303,10 @@ public class ExerciseViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onResponse(final Exercise object) {
-				policyBroker.getPolicy(object.ownerId, new ResponseHandler<Policy2>() {
+				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
-					public void onResponse(Policy2 policy) {
+					public void onResponse(InsurancePolicy policy) {
 						view.getExerciseForm().setReadOnly(true);
 						view.setSaveModeEnabled(false);
 						boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) ||
@@ -332,10 +332,10 @@ public class ExerciseViewPresenter implements ViewPresenter{
 	}
 
 	private void showCreateExercise(String ownerId) {
-		policyBroker.getPolicy(ownerId, new ResponseHandler<Policy2>() {
+		policyBroker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(final Policy2 policy) {
+			public void onResponse(final InsurancePolicy policy) {
 				boolean hasPermissions = true; //PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_EXERCISE);
 
 				if(hasPermissions){
@@ -358,10 +358,10 @@ public class ExerciseViewPresenter implements ViewPresenter{
 							}
 						});
 					}else{
-						policyBroker.openPolicyResource(policy.id, new ResponseHandler<Policy2>() {
+						policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() {
 
 							@Override
-							public void onResponse(Policy2 tempPolicy) {
+							public void onResponse(InsurancePolicy tempPolicy) {
 								broker.createExercise(tempPolicy.id, new ResponseHandler<Exercise>() {
 
 									@Override

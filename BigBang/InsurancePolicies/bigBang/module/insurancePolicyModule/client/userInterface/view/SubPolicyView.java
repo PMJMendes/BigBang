@@ -6,7 +6,7 @@ import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicy;
@@ -208,7 +208,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	}
 
 	@Override
-	public HasValue<Policy2> getParentPolicyForm() {
+	public HasValue<InsurancePolicy> getParentPolicyForm() {
 		return this.policyForm;
 	}
 

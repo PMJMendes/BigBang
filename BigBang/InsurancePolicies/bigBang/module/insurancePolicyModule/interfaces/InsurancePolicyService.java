@@ -5,7 +5,7 @@ import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicyOLD;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
@@ -41,20 +41,20 @@ public interface InsurancePolicyService
 		}
 	}
 
-	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy.TableSection getPage(String policyId, String insuredObjectId, String exerciseId)
+	public InsurancePolicyOLD getPolicy(String policyId) throws SessionExpiredException, BigBangException;
+	public InsurancePolicyOLD.TableSection getPage(String policyId, String insuredObjectId, String exerciseId)
 			throws SessionExpiredException, BigBangException;
 
 	public Remap[] openPolicyScratchPad(String policyId) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy initPolicyInPad(InsurancePolicy policy)
+	public InsurancePolicyOLD initPolicyInPad(InsurancePolicyOLD policy)
 			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public InsurancePolicy getPolicyInPad(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public InsurancePolicy updateHeader(InsurancePolicy policy)
+	public InsurancePolicyOLD getPolicyInPad(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public InsurancePolicyOLD updateHeader(InsurancePolicyOLD policy)
 			throws SessionExpiredException, BigBangException, CorruptedPadException;
 
-	public InsurancePolicy.TableSection getPageForEdit(String policyId, String objectId, String exerciseId)
+	public InsurancePolicyOLD.TableSection getPageForEdit(String policyId, String objectId, String exerciseId)
 			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public InsurancePolicy.TableSection savePage(InsurancePolicy.TableSection data)
+	public InsurancePolicyOLD.TableSection savePage(InsurancePolicyOLD.TableSection data)
 			throws SessionExpiredException, BigBangException, CorruptedPadException;
 
 	public InsuredObject getObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
@@ -72,7 +72,7 @@ public interface InsurancePolicyService
 	public Remap[] commitPad(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 	public Remap[] discardPad(String policyId) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy performCalculations(String policyId) throws SessionExpiredException, BigBangException,
+	public InsurancePolicyOLD performCalculations(String policyId) throws SessionExpiredException, BigBangException,
 			BigBangPolicyCalculationException;
 	public void validatePolicy(String policyId) throws SessionExpiredException, BigBangException, BigBangPolicyValidationException;
 
@@ -82,7 +82,7 @@ public interface InsurancePolicyService
 
 	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy transferToClient(String policyId, String newClientId) throws SessionExpiredException, BigBangException;
+	public InsurancePolicyOLD transferToClient(String policyId, String newClientId) throws SessionExpiredException, BigBangException;
 
 	public void createDebitNote(String policyId, DebitNote note) throws SessionExpiredException, BigBangException;
 
@@ -93,7 +93,7 @@ public interface InsurancePolicyService
 	public Expense createExpense(Expense expense) throws SessionExpiredException, BigBangException;
 	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy voidPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
+	public InsurancePolicyOLD voidPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
 
 	public void deletePolicy(String policyId) throws SessionExpiredException, BigBangException;
 

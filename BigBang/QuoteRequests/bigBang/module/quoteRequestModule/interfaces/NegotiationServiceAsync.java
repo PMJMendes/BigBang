@@ -2,7 +2,7 @@ package bigBang.module.quoteRequestModule.interfaces;
 
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.library.interfaces.SearchServiceAsync;
 
@@ -18,7 +18,7 @@ public interface NegotiationServiceAsync
 	void cancelNegotiation(Negotiation.Cancellation cancellation, AsyncCallback<Negotiation> callback);
 	void receiveResponse(Negotiation.Response response, AsyncCallback<Negotiation> callback);
 	void grantNegotiation(Negotiation.Grant grant, AsyncCallback<Negotiation> callback);
-	void createPolicy(Negotiation negotiation, AsyncCallback<Policy2> callback);
+	void createPolicy(Negotiation negotiation, AsyncCallback<InsurancePolicy> callback);
 	void createInfoRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createExternalRequest(ExternalInfoRequest request, AsyncCallback<ExternalInfoRequest> callback);
 	void closeNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);

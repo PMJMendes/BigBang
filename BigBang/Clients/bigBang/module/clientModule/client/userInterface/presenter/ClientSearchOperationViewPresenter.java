@@ -13,7 +13,7 @@ import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.Policy2Stub;
+import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -91,7 +91,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
-		HasValueSelectables<Policy2Stub> getPolicyList();
+		HasValueSelectables<InsurancePolicyStub> getPolicyList();
 		HasValueSelectables<QuoteRequestStub> getQuoteRequestList();
 		HasValueSelectables<CasualtyStub> getCasualtyList();
 
@@ -310,8 +310,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
-				ValueSelectable<Policy2Stub> selected = (ValueSelectable<Policy2Stub>) event.getFirstSelected();
-				Policy2Stub item = selected == null ? null : selected.getValue();
+				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
+				InsurancePolicyStub item = selected == null ? null : selected.getValue();
 				String itemId = item == null ? null : item.id;
 				itemId = itemId == null ? new String() : itemId;
 

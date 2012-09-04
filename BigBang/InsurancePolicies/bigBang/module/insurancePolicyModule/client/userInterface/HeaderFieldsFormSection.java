@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy.HeaderField;
+import bigBang.definitions.shared.InsurancePolicyOLD.HeaderField;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
 import bigBang.library.client.userInterface.view.FormViewSection;

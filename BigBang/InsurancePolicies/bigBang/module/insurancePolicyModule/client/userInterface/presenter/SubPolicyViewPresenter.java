@@ -13,7 +13,7 @@ import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicy;
@@ -52,7 +52,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 	public static interface Display {
 		HasEditableValue<SubPolicy> getForm();
 
-		HasValue<Policy2> getParentPolicyForm();
+		HasValue<InsurancePolicy> getParentPolicyForm();
 
 		HasValueSelectables<Contact> getContactsList();
 
@@ -710,10 +710,10 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 			onGetParentFailed();
 		} else {
 			this.policyBroker.getPolicy(parentPolicyId,
-					new ResponseHandler<Policy2>() {
+					new ResponseHandler<InsurancePolicy>() {
 
 				@Override
-				public void onResponse(Policy2 response) {
+				public void onResponse(InsurancePolicy response) {
 					view.getParentPolicyForm().setValue(response);
 				}
 

@@ -14,7 +14,7 @@ public class SubPolicy
 		
 		public String fieldId;
 		public String fieldName;
-		public InsurancePolicy.FieldType type;
+		public InsurancePolicyOLD.FieldType type;
 		public String unitsLabel;
 		public String refersToId;
 		public int order; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
@@ -52,7 +52,7 @@ public class SubPolicy
 		private static final long serialVersionUID = 1L;
 
 		public String label;
-		public InsurancePolicy.FieldType type;
+		public InsurancePolicyOLD.FieldType type;
 		public String unitsLabel;
 		public String refersToId;
 	}

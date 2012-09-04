@@ -19,7 +19,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.definitions.shared.SubPolicy;
@@ -295,10 +295,10 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 				//Show details for policy
 				InsurancePolicyBroker policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-				policyBroker.getPolicy(info.referenceId, new ResponseHandler<Policy2>() {
+				policyBroker.getPolicy(info.referenceId, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
-					public void onResponse(Policy2 response) {
+					public void onResponse(InsurancePolicy response) {
 						NavigationHistoryItem item = new NavigationHistoryItem();
 						item.setParameter("section", "insurancepolicy");
 						item.setStackParameter("display");

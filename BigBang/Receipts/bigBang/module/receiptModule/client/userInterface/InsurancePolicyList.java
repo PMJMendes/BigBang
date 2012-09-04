@@ -2,16 +2,16 @@ package bigBang.module.receiptModule.client.userInterface;
 
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Policy2Stub;
+import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
 
-public class InsurancePolicyList extends FilterableList<Policy2Stub>{
+public class InsurancePolicyList extends FilterableList<InsurancePolicyStub>{
 	
 	public class Entry extends InsurancePolicySearchPanel.Entry{
 		
-		public Entry(Policy2Stub value){
+		public Entry(InsurancePolicyStub value){
 			super(value);
 		}
 		
@@ -26,7 +26,7 @@ public class InsurancePolicyList extends FilterableList<Policy2Stub>{
 	
 	}
 	
-	public void addEntry(Policy2Stub stub){
+	public void addEntry(InsurancePolicyStub stub){
 		this.add(new Entry(stub));
 	}
 	

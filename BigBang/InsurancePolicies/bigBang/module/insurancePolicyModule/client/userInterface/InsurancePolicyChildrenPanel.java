@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.StackPanel;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
@@ -16,7 +16,7 @@ import bigBang.library.client.userInterface.view.View;
 
 public class InsurancePolicyChildrenPanel extends View {
 
-	protected Policy2 insurancePolicy;
+	protected InsurancePolicy insurancePolicy;
 	protected InsurancePolicyDataBrokerClient policyBrokerClient;
 
 	public ContactsList contactsList;
@@ -61,7 +61,7 @@ public class InsurancePolicyChildrenPanel extends View {
 	@Override
 	protected void initializeView() {}
 
-	public void setPolicy(Policy2 policy){
+	public void setPolicy(InsurancePolicy policy){
 		this.insurancePolicy = policy;
 		String policyId = policy == null ? null : policy.id;
 		
@@ -101,7 +101,7 @@ public class InsurancePolicyChildrenPanel extends View {
 			}
 
 			@Override
-			public void updateInsurancePolicy(Policy2 policy) {
+			public void updateInsurancePolicy(InsurancePolicy policy) {
 				return;
 			}
 
@@ -113,7 +113,7 @@ public class InsurancePolicyChildrenPanel extends View {
 			}
 
 			@Override
-			public void addInsurancePolicy(Policy2 policy) {
+			public void addInsurancePolicy(InsurancePolicy policy) {
 				return;
 			}
 

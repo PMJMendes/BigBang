@@ -3,7 +3,7 @@ package bigBang.library.client.userInterface.presenter;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.Policy2Stub;
+import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -176,7 +176,7 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 
 			view.setObjectType("Apólices");
 			for(int i = 0; i<transfer.objectStubs.length; i++){
-				Policy2Stub policy = (Policy2Stub)transfer.objectStubs[i];
+				InsurancePolicyStub policy = (InsurancePolicyStub)transfer.objectStubs[i];
 				ListEntry<Object> temp = new ListEntry<Object>(policy);
 				temp.setHeight("40px");
 				temp.setTitle("#" + policy.number);
@@ -249,12 +249,12 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 			item.setParameter("clientid", ((ClientStub) object).id);
 			NavigationHistoryManager.getInstance().go(item);
 			
-		}else if(object instanceof Policy2Stub) {
+		}else if(object instanceof InsurancePolicyStub) {
 			NavigationHistoryItem item = new NavigationHistoryItem();
 			item.setParameter("section", "insurancepolicy");
 			item.setStackParameter("display");
 			item.pushIntoStackParameter("display", "search");
-			item.setParameter("policyid", ((Policy2Stub) object).id);
+			item.setParameter("policyid", ((InsurancePolicyStub) object).id);
 			NavigationHistoryManager.getInstance().go(item);
 			
 		}else if(object instanceof QuoteRequestStub) {

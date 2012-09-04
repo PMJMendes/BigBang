@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.Expense;
-import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -87,7 +87,7 @@ public class CreateExpenseView extends View implements CreateExpenseViewPresente
 	}
 
 	@Override
-	public HasValue<Policy2> getInsuranceForm() {
+	public HasValue<InsurancePolicy> getInsuranceForm() {
 		return policyForm;
 	}
 
