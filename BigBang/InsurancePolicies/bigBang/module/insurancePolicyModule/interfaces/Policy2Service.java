@@ -6,12 +6,11 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("Policy2Service")
 public interface Policy2Service
-	extends RemoteService
+	extends InsurancePolicyService
 {
 	public static class Util
 	{
@@ -28,7 +27,7 @@ public interface Policy2Service
 	public Policy2 getEmptyPolicy(String subLineId) throws SessionExpiredException, BigBangException;
 	public Object2 getEmptyObject(String subLineId) throws SessionExpiredException, BigBangException;
 
-	public Policy2 getPolicy(String policyId) throws SessionExpiredException, BigBangException;
+	public Policy2 getPolicy2(String policyId) throws SessionExpiredException, BigBangException;
 	public Object2 getPolicyObject(String objectId) throws  SessionExpiredException, BigBangException;
 
 	public Policy2 editPolicy(Policy2 policy) throws  SessionExpiredException, BigBangException;

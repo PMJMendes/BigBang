@@ -69,6 +69,11 @@ public class Tax
 		return (String)getAt(3);
 	}
 
+	public String GetDefaultValue()
+	{
+		return (String)getAt(4);
+	}
+
 	public boolean GetVariesByObject()
 	{
 		return (Boolean)getAt(5);
