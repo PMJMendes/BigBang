@@ -121,7 +121,7 @@ public class Services
 			GWT.create(QuoteRequestObjectService.class);
 	public static final NegotiationServiceAsync negotiationService =
 			GWT.create(NegotiationService.class);
-	public static final InsurancePolicyServiceAsync insurancePolicyService =
+	public static final InsurancePolicyServiceAsync policy2Service =
 			GWT.create(InsurancePolicyService.class);
 	public static final PolicyObjectServiceAsync policyObjectService =
 			GWT.create(PolicyObjectService.class);

@@ -141,6 +141,8 @@ public class BigBang_Tests
 //		TestPolicyVoid.DoTest();
 //		TestPolicyDoubleInit.DoTest();
 //
+		TestPolicy2GetEmpty.DoTest();
+//
 //		TestObjectGet.DoTest();
 //		TestObjectCreate.DoTest();
 //		TestObjectEdit.DoTest();
