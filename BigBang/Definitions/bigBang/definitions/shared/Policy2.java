@@ -65,6 +65,8 @@ public class Policy2
 
 	public Object2[] objects;
 
+	public boolean hasExercises;
+
 	public Policy2()
 	{
 		contacts = new Contact[0];
