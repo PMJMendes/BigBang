@@ -1,9 +1,4 @@
 <servlet>
-	<servlet-name>Policy2Service</servlet-name>
-	<servlet-class>bigBang.module.insurancePolicyModule.server.Policy2ServiceImpl</servlet-class>
-</servlet>
-
-<servlet>
 	<servlet-name>InsurancePolicyService</servlet-name>
 	<servlet-class>bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceImpl</servlet-class>
 </servlet>
@@ -32,11 +27,6 @@
 	<servlet-name>SubPolicyExerciseService</servlet-name>
 	<servlet-class>bigBang.module.insurancePolicyModule.server.SubPolicyExerciseServiceImpl</servlet-class>
 </servlet>
-
-<servlet-mapping>
-	<servlet-name>Policy2Service</servlet-name>
-	<url-pattern>/bigbang_tests/Policy2Service</url-pattern>
-</servlet-mapping>
 
 <servlet-mapping>
 	<servlet-name>InsurancePolicyService</servlet-name>
