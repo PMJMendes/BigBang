@@ -344,6 +344,17 @@ public class Receipt
     	return false;
     }
 
+    public boolean isForCasualties()
+    {
+    	if ( Constants.RecType_Backcharge.equals(getAt(1)) )
+    		return true;
+
+    	if ( Constants.RecType_Casualty.equals(getAt(1)) )
+    		return true;
+
+    	return false;
+    }
+
     public String getReceiptType()
     	throws BigBangJewelException
     {

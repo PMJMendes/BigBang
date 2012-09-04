@@ -102,7 +102,7 @@ public class CreateReceipt
 
 			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
-			if ( lobjAux.isReverseCircuit() )
+			if ( lobjAux.isForCasualties() )
 			{
 				lobjAux.setAt(4, null);
 				lobjAux.setAt(5, null);
