@@ -52,7 +52,7 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 
 		public Entry(ExpenseStub value) {
 			super(value);
-			setHeight("60px");
+			setHeight("70px");
 			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 
@@ -114,7 +114,7 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 				clientLabel.setText("Cliente #" + value.clientNumber + "-" + value.clientName);
 				policyCoverageLabel.setText("Apólice #" + value.referenceNumber + (value.coverageName !=null ?  "- / " + value.coverageName : ""));
 				policyCoverageLabel.setTitle("Apólice / Cobertura");
-				objectLabel.setText(value.insuredObjectName);
+				objectLabel.setText(value.insuredObjectName == null ? "-" : value.insuredObjectName);
 
 				dateLabel.setText(value.expenseDate);
 				Resources resources = GWT.create(Resources.class);

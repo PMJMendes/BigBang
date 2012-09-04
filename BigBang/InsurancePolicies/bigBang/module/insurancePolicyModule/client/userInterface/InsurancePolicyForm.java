@@ -298,9 +298,6 @@ public abstract class InsurancePolicyForm extends FormView<Policy2> {
 				result.coInsurers = null;
 			}
 
-			result.headerFields = headerFieldsSection.getPolicyFields();
-			result.extraData = extraFieldsSection.getPolicyFields();
-			result.coverages = tableSection.getCoverages();
 			result.mediatorId = mediator.getValue();
 		}
 
@@ -398,9 +395,7 @@ public abstract class InsurancePolicyForm extends FormView<Policy2> {
 			else
 				endDate.clear();
 			
-			this.headerFieldsSection.setPolicyFields(info.headerFields);
 			this.tableSection.setInsurancePolicy(info);
-			this.extraFieldsSection.setPolicyFields(info.extraData, info.coverages);
 
 			this.duration.setValue(info.durationId);
 		}

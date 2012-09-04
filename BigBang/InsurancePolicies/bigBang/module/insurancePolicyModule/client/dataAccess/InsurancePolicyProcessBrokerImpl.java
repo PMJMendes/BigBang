@@ -39,7 +39,8 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
-import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
+import bigBang.module.insurancePolicyModule.interfaces.Policy2Service;
+import bigBang.module.insurancePolicyModule.interfaces.Policy2ServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
@@ -47,7 +48,7 @@ import com.google.gwt.core.client.GWT;
 
 public class InsurancePolicyProcessBrokerImpl extends DataBroker<Policy2> implements InsurancePolicyBroker {
 
-	protected InsurancePolicyServiceAsync service;
+	protected Policy2ServiceAsync service;
 	protected SearchDataBroker<Policy2Stub> searchBroker;
 	protected InsuredObjectDataBroker insuredObjectsBroker;
 	protected ExerciseDataBroker exerciseDataBroker;
@@ -55,24 +56,14 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<Policy2> implem
 	public boolean requiresRefresh;
 
 	public InsurancePolicyProcessBrokerImpl(){
-		this(InsurancePolicyService.Util.getInstance());
+		this(Policy2Service.Util.getInstance());
 	}
 
-	public InsurancePolicyProcessBrokerImpl(InsurancePolicyServiceAsync service){
-		this(InsurancePolicyService.Util.getInstance(), ((InsuredObjectDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)), ((ExerciseDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_EXERCISE)));
-	}
-
-	public InsurancePolicyProcessBrokerImpl(InsuredObjectDataBroker insuredObjectDataBroker, ExerciseDataBroker exerciseDataBroker){
-		this(InsurancePolicyService.Util.getInstance(), insuredObjectDataBroker, exerciseDataBroker);
-	}
-
-	public InsurancePolicyProcessBrokerImpl(InsurancePolicyServiceAsync service, InsuredObjectDataBroker insuredObjectDataBroker, ExerciseDataBroker exerciseDataBroker) {
+	public InsurancePolicyProcessBrokerImpl(Policy2ServiceAsync service) {
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_POLICY;
 		this.policiesInScratchPad = new HashMap<String, String>();
 		this.searchBroker = new InsurancePolicySearchDataBroker(this.service);
-		this.insuredObjectsBroker = insuredObjectDataBroker;
-		this.exerciseDataBroker = exerciseDataBroker;
 	}
 
 	@Override
@@ -132,33 +123,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<Policy2> implem
 			final ResponseHandler<Policy2> handler) {
 		final String policyId = getEffectiveId(insurancePolicyId);
 		if(isTemp(policyId)){
-			this.service.getPolicyInPad(policyId, new BigBangAsyncCallback<Policy2>() {
-
-				@Override
-				public void onResponseSuccess(Policy2 result) {
-					result.id = getFinalMapping(result.id);
-					incrementDataVersion();
-					for(DataBrokerClient<Policy2> bc : getClients()){
-						((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
-						((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
-					}
-					handler.onResponse(result);
-					requiresRefresh = false;
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(policyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not get the policy")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
 		}else{
-			this.service.getPolicy(policyId, new BigBangAsyncCallback<Policy2>() {
+			this.service.getPolicy2(policyId, new BigBangAsyncCallback<Policy2>() {
 
 				@Override
 				public void onResponseSuccess(Policy2 result) {
@@ -189,33 +155,6 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<Policy2> implem
 		if(isTemp(policyId)){
 			String tempPolicyId = policy.id;
 			policy.id = policyId;
-			service.updateHeader(policy, new BigBangAsyncCallback<Policy2>() {
-
-				@Override
-				public void onResponseSuccess(Policy2 result) {
-					result.id = getFinalMapping(result.id);
-					incrementDataVersion();
-					for(DataBrokerClient<Policy2> bc : getClients()){
-						((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
-						((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
-					}
-					handler.onResponse(result);
-					requiresRefresh = false;
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(policyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not save policy header")	
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
-			policy.id = tempPolicyId;
 		}else{
 			handler.onError(new String[]{
 					new String("Could not save the policy header. The policy is not in scratch pad")
@@ -474,24 +413,6 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<Policy2> implem
 			final ResponseHandler<TableSection> handler) {
 		final String policyId = getEffectiveId(insurancePolicyId);
 		if(isTemp(policyId)){
-			this.service.savePage(data, new BigBangAsyncCallback<Policy2.TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(policyId);
-					}
-					handler.onError(new String[]{
-							new String("Coulg not save the page")	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
 		}else{
 			handler.onError(new String[]{
 					new String("Could not save the page on an unopened policy resource")
@@ -503,21 +424,6 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<Policy2> implem
 	public void initPolicy(Policy2 policy,
 			final ResponseHandler<Policy2> handler) {
 		policy.id = getEffectiveId(policy.id);
-		service.initPolicyInPad(policy, new BigBangAsyncCallback<Policy2>() {
-
-			@Override
-			public void onResponseSuccess(Policy2 result) {
-				handler.onResponse(result);
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-					new String("Could not initialize the policy")	
-				});
-				super.onResponseFailure(caught);
-			}
-		});
 	}
 	
 	@Override
@@ -577,42 +483,42 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<Policy2> implem
 	
 	@Override
 	public void executeDetailedCalculations(final String policyId, final ResponseHandler<Policy2> handler){
-		service.performCalculations(policyId, new BigBangAsyncCallback<Policy2>() {
-
-			@Override
-			public void onResponseSuccess(Policy2 result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS, policyId));
-				handler.onResponse(result);
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not perform detailed calculations")
-				});
-				super.onResponseFailure(caught);
-			}
-		});
+//		service.performCalculations(policyId, new BigBangAsyncCallback<Policy2>() {
+//
+//			@Override
+//			public void onResponseSuccess(Policy2 result) {
+//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS, policyId));
+//				handler.onResponse(result);
+//			}
+//			
+//			@Override
+//			public void onResponseFailure(Throwable caught) {
+//				handler.onError(new String[]{
+//						new String("Could not perform detailed calculations")
+//				});
+//				super.onResponseFailure(caught);
+//			}
+//		}); TODO
 	}
 
 	@Override
 	public void voidPolicy(PolicyVoiding voiding, final ResponseHandler<Policy2> handler) {
-		service.voidPolicy(voiding, new BigBangAsyncCallback<Policy2>() {
-
-			@Override
-			public void onResponseSuccess(Policy2 result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY, result.id));
-				handler.onResponse(result);
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not void the policy")
-				});
-				super.onResponseFailure(caught);
-			}
-		});
+//		service.voidPolicy(voiding, new BigBangAsyncCallback<Policy2>() {
+//
+//			@Override
+//			public void onResponseSuccess(Policy2 result) {
+//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY, result.id));
+//				handler.onResponse(result);
+//			}
+//			
+//			@Override
+//			public void onResponseFailure(Throwable caught) {
+//				handler.onError(new String[]{
+//						new String("Could not void the policy")
+//				});
+//				super.onResponseFailure(caught);
+//			}
+//		}); TODO
 	}
 	
 	@Override
@@ -751,29 +657,29 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<Policy2> implem
 	
 	@Override
 	public void transferToClient(String policyId, String newClientId, final ResponseHandler<Policy2> handler){
-		service.transferToClient(policyId, newClientId, new BigBangAsyncCallback<Policy2>() {
-
-			@Override
-			public void onResponseSuccess(Policy2 result) {
-				incrementDataVersion();
-				for(DataBrokerClient<Policy2> bc : getClients()){
-					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
-					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
-				}
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT, result.id));
-				handler.onResponse(result);				
-			}
-		
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not transfer to client")
-				});
-				super.onResponseFailure(caught);
-			}
-		
-		
-		});
+//		service.transferToClient(policyId, newClientId, new BigBangAsyncCallback<Policy2>() {
+//
+//			@Override
+//			public void onResponseSuccess(Policy2 result) {
+//				incrementDataVersion();
+//				for(DataBrokerClient<Policy2> bc : getClients()){
+//					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
+//					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+//				}
+//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT, result.id));
+//				handler.onResponse(result);				
+//			}
+//		
+//			@Override
+//			public void onResponseFailure(Throwable caught) {
+//				handler.onError(new String[]{
+//						new String("Could not transfer to client")
+//				});
+//				super.onResponseFailure(caught);
+//			}
+//		
+//		
+//		}); TODO
 	}
 	
 	@Override

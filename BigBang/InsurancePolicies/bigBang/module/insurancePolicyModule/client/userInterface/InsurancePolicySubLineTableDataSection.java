@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -50,6 +51,7 @@ public abstract class InsurancePolicySubLineTableDataSection extends FormViewSec
 		insuredObjectsList.addValueChangeHandler(valueHandler);
 		exercisesList.addValueChangeHandler(valueHandler);
 
+		addWidget(new Label("Filtrar por:"), true);
 		addFormField(insuredObjectsList, true);
 		addFormField(exercisesList, false);
 		setTableData(null, null);
@@ -63,23 +65,23 @@ public abstract class InsurancePolicySubLineTableDataSection extends FormViewSec
 				this.table.removeFromParent();
 			}
 
-			Coverage[] coverageHeaders = policy.coverages;
-			this.table = new PolicyFormTable() {
-
-				@Override
-				public void onCoverageEnabled(String coverageId) {
-					InsurancePolicySubLineTableDataSection.this.onCoverageEnabled(coverageId);
-				}
-
-				@Override
-				public void onCoverageDisabled(String coverageId) {
-					InsurancePolicySubLineTableDataSection.this.onCoverageDisabled(coverageId);
-				}
-				
-			};
+//			Coverage[] coverageHeaders = policy.coverages;
+//			this.table = new PolicyFormTable() {
+//
+//				@Override
+//				public void onCoverageEnabled(String coverageId) {
+//					InsurancePolicySubLineTableDataSection.this.onCoverageEnabled(coverageId);
+//				}
+//
+//				@Override
+//				public void onCoverageDisabled(String coverageId) {
+//					InsurancePolicySubLineTableDataSection.this.onCoverageDisabled(coverageId);
+//				}
+//				
+//			};
 			addWidget(this.table);
 
-			this.table.setHeaders(coverageHeaders, policy.columns);
+//			this.table.setHeaders(coverageHeaders, policy.columns);
 			setTableData(tableSection);
 		}
 	}
@@ -89,46 +91,46 @@ public abstract class InsurancePolicySubLineTableDataSection extends FormViewSec
 	protected abstract void onCoverageDisabled(String coverageId);
 
 	public void setTableData(TableSection tableSection){
-		if(tableSection == null) {
-			clearTableData();
-		}else{
-			for(TableField tableField : tableSection.data) {
-				Field realTableField = new Field();
-				realTableField.id = tableField.fieldId;
-				realTableField.value = tableField.value;
-
-				ColumnHeader column = policy.columns[tableField.columnIndex];
-				
-				switch(column.type) {
-				case TEXT:
-					realTableField.type = Type.TEXT;
-					break;
-				case BOOLEAN:
-					realTableField.type = Type.BOOLEAN;
-					break;
-				case DATE:
-					realTableField.type = Type.DATE;
-					break;
-				case LIST:
-					realTableField.type = Type.LIST;
-					break;
-				case NUMERIC:
-					realTableField.type = Type.NUMERIC;
-					break;
-				case REFERENCE:
-					realTableField.type = Type.REFERENCE;
-					realTableField.reference = column.refersToId;
-					break;
-				}
-
-				table.setValue(tableField.coverageId, tableField.columnIndex+"", realTableField);
-			}
-		}
-		this.currentTableSection = tableSection;
-		if(this.table != null) {
-			this.table.setReadOnly(this.readOnly);
-			this.table.render();
-		}
+//		if(tableSection == null) {
+//			clearTableData();
+//		}else{
+//			for(TableField tableField : tableSection.data) {
+//				Field realTableField = new Field();
+//				realTableField.id = tableField.fieldId;
+//				realTableField.value = tableField.value;
+//
+//				ColumnHeader column = policy.columns[tableField.columnIndex];
+//				
+//				switch(column.type) {
+//				case TEXT:
+//					realTableField.type = Type.TEXT;
+//					break;
+//				case BOOLEAN:
+//					realTableField.type = Type.BOOLEAN;
+//					break;
+//				case DATE:
+//					realTableField.type = Type.DATE;
+//					break;
+//				case LIST:
+//					realTableField.type = Type.LIST;
+//					break;
+//				case NUMERIC:
+//					realTableField.type = Type.NUMERIC;
+//					break;
+//				case REFERENCE:
+//					realTableField.type = Type.REFERENCE;
+//					realTableField.reference = column.refersToId;
+//					break;
+//				}
+//
+//				table.setValue(tableField.coverageId, tableField.columnIndex+"", realTableField);
+//			}
+//		}
+//		this.currentTableSection = tableSection;
+//		if(this.table != null) {
+//			this.table.setReadOnly(this.readOnly);
+//			this.table.render();
+//		}
 	}
 
 	public TableSection getCurrentTableSection() {
@@ -152,8 +154,9 @@ public abstract class InsurancePolicySubLineTableDataSection extends FormViewSec
 	}
 
 	public Coverage[] getCoverages(){
-		onInsuredObjectFilterChanged(insuredObjectsList.getValue());
-		return this.table != null ? this.table.getCoverages() : null;
+//		onInsuredObjectFilterChanged(insuredObjectsList.getValue());
+//		return this.table != null ? this.table.getCoverages() : null;
+		return null;
 	}
 
 	@Override
@@ -233,44 +236,44 @@ public abstract class InsurancePolicySubLineTableDataSection extends FormViewSec
 				}
 			});
 		}
-		setTableData(policy, policy.tableData == null ? null : policy.tableData.length < 1 ? null : policy.tableData[0]);
+//		setTableData(policy, policy.tableData == null ? null : policy.tableData.length < 1 ? null : policy.tableData[0]);
 	}
 
 	protected void onInsuredObjectFilterChanged(String newValue){
-		if(this.table != null && this.policy.tableData != null && this.policy.tableData.length > 0) {
-			newValue = newValue == null ? null : newValue.isEmpty() ? null : newValue;
-			InsurancePolicyBroker broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-
-			if(broker.isTemp(policy.id)) {
-				broker.saveCoverageDetailsPage(policy.id, insuredObjectsList.getValue(), exercisesList.getValue(), getCurrentTableSection(), new ResponseHandler<TableSection>() {
-
-					@Override
-					public void onResponse(TableSection response) {
-						return;
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						return;
-					}
-				});
-			}
-
-			broker.openCoverageDetailsPage(policy.id, newValue, exercisesList.getValue(), new ResponseHandler<TableSection>() {
-
-				@Override
-				public void onResponse(TableSection response) {
-					table.clearValues();
-					setTableData(response);
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					return;
-				}
-
-			});
-		}
+//		if(this.table != null && this.policy.tableData != null && this.policy.tableData.length > 0) {
+//			newValue = newValue == null ? null : newValue.isEmpty() ? null : newValue;
+//			InsurancePolicyBroker broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+//
+//			if(broker.isTemp(policy.id)) {
+//				broker.saveCoverageDetailsPage(policy.id, insuredObjectsList.getValue(), exercisesList.getValue(), getCurrentTableSection(), new ResponseHandler<TableSection>() {
+//
+//					@Override
+//					public void onResponse(TableSection response) {
+//						return;
+//					}
+//
+//					@Override
+//					public void onError(Collection<ResponseError> errors) {
+//						return;
+//					}
+//				});
+//			}
+//
+//			broker.openCoverageDetailsPage(policy.id, newValue, exercisesList.getValue(), new ResponseHandler<TableSection>() {
+//
+//				@Override
+//				public void onResponse(TableSection response) {
+//					table.clearValues();
+//					setTableData(response);
+//				}
+//
+//				@Override
+//				public void onError(Collection<ResponseError> errors) {
+//					return;
+//				}
+//
+//			});
+//		}
 	}
 
 	protected void onExerciseFilterChanged(String newValue){

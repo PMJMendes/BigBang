@@ -421,15 +421,12 @@ public class InsurancePolicyModule implements Module {
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
-		InsuredObjectDataBrokerImpl insuredObjectDataBrokerImpl = new InsuredObjectDataBrokerImpl();
 		SubPolicyInsuredObjectDataBrokerImpl subPolicyInsuredObjectDataBrokerImpl = new SubPolicyInsuredObjectDataBrokerImpl();
 		ExerciseDataBrokerImpl exerciseDataBrokerImpl = new ExerciseDataBrokerImpl();
 
 		return new DataBroker[]{
-				insuredObjectDataBrokerImpl,
 				subPolicyInsuredObjectDataBrokerImpl,
-				exerciseDataBrokerImpl,
-				new InsurancePolicyProcessBrokerImpl(insuredObjectDataBrokerImpl, exerciseDataBrokerImpl),
+				new InsurancePolicyProcessBrokerImpl(),
 				new InsuranceSubPolicyBrokerImpl(subPolicyInsuredObjectDataBrokerImpl, exerciseDataBrokerImpl)
 		};
 	}
