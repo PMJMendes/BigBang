@@ -26,8 +26,8 @@ import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.SubPolicyExerciseDataBroker;
-import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
-import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceOLD;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceOLDAsync;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyExerciseService;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyExerciseServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyExerciseService;
@@ -40,7 +40,7 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 
 	protected PolicyExerciseServiceAsync service;
 	protected SubPolicyExerciseServiceAsync subPolicyExerciseService;
-	protected InsurancePolicyServiceAsync policyService;
+	protected InsurancePolicyServiceOLDAsync policyService;
 	protected InsurancePolicyBroker policyBroker;
 	protected InsuranceSubPolicyBroker subPolicyBroker;
 	protected SearchDataBroker<ExerciseStub> searchBroker;
@@ -52,7 +52,7 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 		this.dataElementId = BigBangConstants.EntityIds.POLICY_EXERCISE;
 		this.subPolicyExerciseService = SubPolicyExerciseService.Util.getInstance();
 		this.service = PolicyExerciseService.Util.getInstance();
-		this.policyService = InsurancePolicyService.Util.getInstance();
+		this.policyService = InsurancePolicyServiceOLD.Util.getInstance();
 		this.searchBroker = new ExerciseSearchBroker(this.service);
 		this.subPolicyExerciseSearchBroker = new SubPolicyExerciseSearchBroker(this.subPolicyExerciseService);
 		this.exercisesInScratchPad = new HashMap<String, String>();

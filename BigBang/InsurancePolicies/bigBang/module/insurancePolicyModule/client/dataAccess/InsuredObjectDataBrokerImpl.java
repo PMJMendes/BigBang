@@ -21,8 +21,8 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
-import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceOLD;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceOLDAsync;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyObjectService;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyObjectServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.InsuredObjectSearchParameter;
@@ -32,7 +32,7 @@ public class InsuredObjectDataBrokerImpl extends DataBroker<InsuredObject>
 implements InsuredObjectDataBroker {
 
 	protected PolicyObjectServiceAsync service;
-	protected InsurancePolicyServiceAsync policyService;
+	protected InsurancePolicyServiceOLDAsync policyService;
 	protected SearchDataBroker<InsuredObjectStub> searchBroker;
 
 	protected Map<String, String> objectsInScratchPad;
@@ -42,7 +42,7 @@ implements InsuredObjectDataBroker {
 	public InsuredObjectDataBrokerImpl(){
 		this.dataElementId = BigBangConstants.EntityIds.POLICY_INSURED_OBJECT;
 		this.service = PolicyObjectService.Util.getInstance();
-		this.policyService = InsurancePolicyService.Util.getInstance();
+		this.policyService = InsurancePolicyServiceOLD.Util.getInstance();
 		this.searchBroker = new InsuredObjectSearchBroker(this.service);
 		this.objectsInScratchPad = new HashMap<String, String>();
 	}

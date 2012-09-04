@@ -38,9 +38,9 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.shared.CorruptedPadException;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceOLD;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
-import bigBang.module.insurancePolicyModule.interfaces.Policy2Service;
-import bigBang.module.insurancePolicyModule.interfaces.Policy2ServiceAsync;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
@@ -48,7 +48,7 @@ import com.google.gwt.core.client.GWT;
 
 public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy> implements InsurancePolicyBroker {
 
-	protected Policy2ServiceAsync service;
+	protected InsurancePolicyServiceAsync service;
 	protected SearchDataBroker<InsurancePolicyStub> searchBroker;
 	protected InsuredObjectDataBroker insuredObjectsBroker;
 	protected ExerciseDataBroker exerciseDataBroker;
@@ -56,10 +56,10 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	public boolean requiresRefresh;
 
 	public InsurancePolicyProcessBrokerImpl(){
-		this(Policy2Service.Util.getInstance());
+		this(InsurancePolicyService.Util.getInstance());
 	}
 
-	public InsurancePolicyProcessBrokerImpl(Policy2ServiceAsync service) {
+	public InsurancePolicyProcessBrokerImpl(InsurancePolicyServiceAsync service) {
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_POLICY;
 		this.policiesInScratchPad = new HashMap<String, String>();

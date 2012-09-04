@@ -19,8 +19,8 @@ import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceOLDImpl;
 import bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceImpl;
-import bigBang.module.insurancePolicyModule.server.Policy2ServiceImpl;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectService;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestObjectSearchParameter;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestObjectSortParameter;
@@ -218,7 +218,7 @@ public class QuoteRequestObjectServiceImpl
 						lobjColumnHeader = new QuoteRequestObject.ColumnHeader();
 						lobjColumnHeader.index = larrValues[i][k].GetTax().GetColumnOrder();
 						lobjColumnHeader.label = larrValues[i][k].GetTax().getLabel();
-						lobjColumnHeader.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)larrValues[i][k].GetTax().getAt(2));
+						lobjColumnHeader.type = InsurancePolicyServiceImpl.sGetFieldTypeByID((UUID)larrValues[i][k].GetTax().getAt(2));
 						lobjColumnHeader.unitsLabel = (String)larrValues[i][k].GetTax().getAt(3);
 						lobjColumnHeader.refersToId = ( larrValues[i][k].GetTax().getAt(7) == null ? null :
 								((UUID)larrValues[i][k].GetTax().getAt(7)).toString() );
@@ -228,7 +228,7 @@ public class QuoteRequestObjectServiceImpl
 					lobjFixed = new QuoteRequestObject.CoverageData.FixedField();
 					lobjFixed.fieldId = larrValues[i][k].GetTax().getKey().toString();
 					lobjFixed.fieldName = larrValues[i][k].GetTax().getLabel();
-					lobjFixed.type = Policy2ServiceImpl.sGetFieldTypeByID(larrValues[i][k].GetTax().GetFieldType());
+					lobjFixed.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(larrValues[i][k].GetTax().GetFieldType());
 					lobjFixed.unitsLabel = larrValues[i][k].GetTax().GetUnitsLabel();
 					lobjFixed.refersToId = ( larrValues[i][k].GetTax().GetRefersToID() == null ? null :
 						larrValues[i][k].GetTax().GetRefersToID().toString() );
@@ -269,7 +269,7 @@ public class QuoteRequestObjectServiceImpl
 					lobjFixed = new QuoteRequestObject.CoverageData.FixedField();
 					lobjFixed.fieldId = larrValues[i][k].GetTax().getKey().toString();
 					lobjFixed.fieldName = larrValues[i][k].GetTax().getLabel();
-					lobjFixed.type = Policy2ServiceImpl.sGetFieldTypeByID(larrValues[i][k].GetTax().GetFieldType());
+					lobjFixed.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(larrValues[i][k].GetTax().GetFieldType());
 					lobjFixed.unitsLabel = larrValues[i][k].GetTax().GetUnitsLabel();
 					lobjFixed.refersToId = ( larrValues[i][k].GetTax().GetRefersToID() == null ? null :
 						larrValues[i][k].GetTax().GetRefersToID().toString() );

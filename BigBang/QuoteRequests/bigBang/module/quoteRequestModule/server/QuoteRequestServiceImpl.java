@@ -34,8 +34,8 @@ import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceOLDImpl;
 import bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceImpl;
-import bigBang.module.insurancePolicyModule.server.Policy2ServiceImpl;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSearchParameter;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter;
@@ -585,7 +585,7 @@ public class QuoteRequestServiceImpl
 					lobjHeader = new QuoteRequest.HeaderField();
 					lobjHeader.fieldId = marrSubLines.get(i).marrValues.get(j).midField.toString();
 					lobjHeader.fieldName = marrSubLines.get(i).marrValues.get(j).mrefField.mstrLabel;
-					lobjHeader.type = Policy2ServiceImpl.sGetFieldTypeByID(marrSubLines.get(i).marrValues.get(j).mrefField.midType);
+					lobjHeader.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(marrSubLines.get(i).marrValues.get(j).mrefField.midType);
 					lobjHeader.unitsLabel = marrSubLines.get(i).marrValues.get(j).mrefField.mstrUnits;
 					lobjHeader.refersToId = ( marrSubLines.get(i).marrValues.get(j).mrefField.midRefersTo == null ? null :
 						marrSubLines.get(i).marrValues.get(j).mrefField.midRefersTo.toString() );
@@ -640,7 +640,7 @@ public class QuoteRequestServiceImpl
 
 						lobjColumn = new QuoteRequest.ColumnHeader();
 						lobjColumn.label = marrSubLines.get(i).marrCoverages.get(j).marrFields[k].mstrLabel;
-						lobjColumn.type = Policy2ServiceImpl.sGetFieldTypeByID(marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midType);
+						lobjColumn.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midType);
 						lobjColumn.unitsLabel = marrSubLines.get(i).marrCoverages.get(j).marrFields[k].mstrUnits;
 						lobjColumn.refersToId = ( marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midRefersTo == null ? null :
 							marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midRefersTo.toString() );
@@ -689,7 +689,7 @@ public class QuoteRequestServiceImpl
 					lobjExtraField = new QuoteRequest.ExtraField();
 					lobjExtraField.fieldId = marrSubLines.get(i).marrValues.get(j).midField.toString();
 					lobjExtraField.fieldName = marrSubLines.get(i).marrValues.get(j).mrefField.mstrLabel;
-					lobjExtraField.type = Policy2ServiceImpl.sGetFieldTypeByID(marrSubLines.get(i).marrValues.get(j).mrefField.midType);
+					lobjExtraField.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(marrSubLines.get(i).marrValues.get(j).mrefField.midType);
 					lobjExtraField.unitsLabel = marrSubLines.get(i).marrValues.get(j).mrefField.mstrUnits;
 					lobjExtraField.refersToId = ( marrSubLines.get(i).marrValues.get(j).mrefField.midRefersTo == null ? null :
 						marrSubLines.get(i).marrValues.get(j).mrefField.midRefersTo.toString() );
@@ -900,7 +900,7 @@ public class QuoteRequestServiceImpl
 				lobjHeader = new QuoteRequest.HeaderField();
 				lobjHeader.fieldId = marrSubLines.get(plngSubLine).marrValues.get(i).midField.toString();
 				lobjHeader.fieldName = marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.mstrLabel;
-				lobjHeader.type = Policy2ServiceImpl.sGetFieldTypeByID(marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midType);
+				lobjHeader.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midType);
 				lobjHeader.unitsLabel = marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.mstrUnits;
 				lobjHeader.refersToId = ( marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midRefersTo == null ? null :
 					marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midRefersTo.toString() );
@@ -955,7 +955,7 @@ public class QuoteRequestServiceImpl
 
 					lobjColumn = new QuoteRequest.ColumnHeader();
 					lobjColumn.label = marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mstrLabel;
-					lobjColumn.type = Policy2ServiceImpl.sGetFieldTypeByID(marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midType);
+					lobjColumn.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midType);
 					lobjColumn.unitsLabel = marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mstrUnits;
 					lobjColumn.refersToId = ( marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midRefersTo == null ? null :
 						marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midRefersTo.toString() );
@@ -1004,7 +1004,7 @@ public class QuoteRequestServiceImpl
 				lobjExtraField = new QuoteRequest.ExtraField();
 				lobjExtraField.fieldId = marrSubLines.get(plngSubLine).marrValues.get(i).midField.toString();
 				lobjExtraField.fieldName = marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.mstrLabel;
-				lobjExtraField.type = Policy2ServiceImpl.sGetFieldTypeByID(marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midType);
+				lobjExtraField.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midType);
 				lobjExtraField.unitsLabel = marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.mstrUnits;
 				lobjExtraField.refersToId = ( marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midRefersTo == null ? null :
 					marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midRefersTo.toString() );
@@ -1253,7 +1253,7 @@ public class QuoteRequestServiceImpl
 					lobjFixed = new QuoteRequestObject.CoverageData.FixedField();
 					lobjFixed.fieldId = lobjValue.mrefField.midField.toString();
 					lobjFixed.fieldName = lobjValue.mrefField.mstrLabel;
-					lobjFixed.type = Policy2ServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
+					lobjFixed.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
 					lobjFixed.unitsLabel = lobjValue.mrefField.mstrUnits;
 					lobjFixed.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
 							lobjValue.mrefField.midRefersTo.toString() );
@@ -2098,7 +2098,7 @@ public class QuoteRequestServiceImpl
 					lobjHeader = new QuoteRequest.HeaderField();
 					lobjHeader.fieldId = lobjTax.getKey().toString();
 					lobjHeader.fieldName = lobjTax.getLabel();
-					lobjHeader.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)lobjTax.getAt(2));
+					lobjHeader.type = InsurancePolicyServiceImpl.sGetFieldTypeByID((UUID)lobjTax.getAt(2));
 					lobjHeader.unitsLabel = (String)lobjTax.getAt(3);
 					lobjHeader.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
 					lobjHeader.value = larrLocalValues[j].getLabel();
@@ -2119,7 +2119,7 @@ public class QuoteRequestServiceImpl
 					lobjExtra = new QuoteRequest.ExtraField();
 					lobjExtra.fieldId = lobjTax.getKey().toString();
 					lobjExtra.fieldName = lobjTax.getLabel();
-					lobjExtra.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)lobjTax.getAt(2));
+					lobjExtra.type = InsurancePolicyServiceImpl.sGetFieldTypeByID((UUID)lobjTax.getAt(2));
 					lobjExtra.unitsLabel = (String)lobjTax.getAt(3);
 					lobjExtra.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
 					lobjExtra.coverageId = lobjTax.GetCoverage().getKey().toString();
@@ -2167,7 +2167,7 @@ public class QuoteRequestServiceImpl
 					{
 						lobjColumnHeader = new QuoteRequest.ColumnHeader();
 						lobjColumnHeader.label = larrTaxes[k].getLabel();
-						lobjColumnHeader.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
+						lobjColumnHeader.type = InsurancePolicyServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
 						lobjColumnHeader.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjColumnHeader.refersToId = ( larrTaxes[k].getAt(7) == null ? null :
 								((UUID)larrTaxes[k].getAt(7)).toString() );
@@ -2203,7 +2203,7 @@ public class QuoteRequestServiceImpl
 					{
 						lobjColumnHeader = new QuoteRequest.ColumnHeader();
 						lobjColumnHeader.label = larrTaxes[k].getLabel();
-						lobjColumnHeader.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
+						lobjColumnHeader.type = InsurancePolicyServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
 						lobjColumnHeader.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjColumnHeader.refersToId = ( larrTaxes[k].getAt(7) == null ? null :
 								((UUID)larrTaxes[k].getAt(7)).toString() );
@@ -2221,7 +2221,7 @@ public class QuoteRequestServiceImpl
 						lobjHeader = new QuoteRequest.HeaderField();
 						lobjHeader.fieldId = larrTaxes[k].getKey().toString();
 						lobjHeader.fieldName = larrTaxes[k].getLabel();
-						lobjHeader.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
+						lobjHeader.type = InsurancePolicyServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
 						lobjHeader.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjHeader.refersToId = ( larrTaxes[k].getAt(7) == null ? null :
 								((UUID)larrTaxes[k].getAt(7)).toString() );
@@ -2243,7 +2243,7 @@ public class QuoteRequestServiceImpl
 						lobjExtra = new QuoteRequest.ExtraField();
 						lobjExtra.fieldId = larrTaxes[k].getKey().toString();
 						lobjExtra.fieldName = larrTaxes[k].getLabel();
-						lobjExtra.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
+						lobjExtra.type = InsurancePolicyServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
 						lobjExtra.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjExtra.refersToId = ( larrTaxes[k].getAt(7) == null ? null : ((UUID)larrTaxes[k].getAt(7)).toString() );
 						lobjExtra.coverageId = larrTaxes[k].GetCoverage().getKey().toString();
