@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
-
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ExerciseDataBroker;
@@ -20,13 +18,13 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DebitNote;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.Expense;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
@@ -45,10 +43,12 @@ import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsy
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
-public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy> implements InsurancePolicyBroker {
+import com.google.gwt.core.client.GWT;
+
+public class InsurancePolicyProcessBrokerImpl extends DataBroker<Policy2> implements InsurancePolicyBroker {
 
 	protected InsurancePolicyServiceAsync service;
-	protected SearchDataBroker<InsurancePolicyStub> searchBroker;
+	protected SearchDataBroker<Policy2Stub> searchBroker;
 	protected InsuredObjectDataBroker insuredObjectsBroker;
 	protected ExerciseDataBroker exerciseDataBroker;
 	protected Map<String, String> policiesInScratchPad;
@@ -82,12 +82,12 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 	@Override
 	public void notifyItemCreation(String itemId) {
-		this.getPolicy(itemId, new ResponseHandler<InsurancePolicy>() {
+		this.getPolicy(itemId, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 				incrementDataVersion();
-				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+				for(DataBrokerClient<Policy2> bc : getClients()){
 					((InsurancePolicyDataBrokerClient) bc).addInsurancePolicy(response);
 					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 				}
@@ -101,7 +101,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		incrementDataVersion();
-		for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+		for(DataBrokerClient<Policy2> bc : getClients()){
 			((InsurancePolicyDataBrokerClient) bc).removeInsurancePolicy(itemId);
 			((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 		}
@@ -109,12 +109,12 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
-		this.getPolicy(itemId, new ResponseHandler<InsurancePolicy>() {
+		this.getPolicy(itemId, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 				incrementDataVersion();
-				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+				for(DataBrokerClient<Policy2> bc : getClients()){
 					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(response);
 					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 				}
@@ -129,16 +129,16 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 	@Override
 	public void getPolicy(String insurancePolicyId,
-			final ResponseHandler<InsurancePolicy> handler) {
+			final ResponseHandler<Policy2> handler) {
 		final String policyId = getEffectiveId(insurancePolicyId);
 		if(isTemp(policyId)){
-			this.service.getPolicyInPad(policyId, new BigBangAsyncCallback<InsurancePolicy>() {
+			this.service.getPolicyInPad(policyId, new BigBangAsyncCallback<Policy2>() {
 
 				@Override
-				public void onResponseSuccess(InsurancePolicy result) {
+				public void onResponseSuccess(Policy2 result) {
 					result.id = getFinalMapping(result.id);
 					incrementDataVersion();
-					for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+					for(DataBrokerClient<Policy2> bc : getClients()){
 						((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
 						((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 					}
@@ -158,12 +158,12 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 			});
 		}else{
-			this.service.getPolicy(policyId, new BigBangAsyncCallback<InsurancePolicy>() {
+			this.service.getPolicy(policyId, new BigBangAsyncCallback<Policy2>() {
 
 				@Override
-				public void onResponseSuccess(InsurancePolicy result) {
+				public void onResponseSuccess(Policy2 result) {
 					incrementDataVersion();
-					for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+					for(DataBrokerClient<Policy2> bc : getClients()){
 						((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
 						((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 					}
@@ -183,19 +183,19 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void updatePolicy(InsurancePolicy policy,
-			final ResponseHandler<InsurancePolicy> handler) {
+	public void updatePolicy(Policy2 policy,
+			final ResponseHandler<Policy2> handler) {
 		final String policyId = getEffectiveId(policy.id);
 		if(isTemp(policyId)){
 			String tempPolicyId = policy.id;
 			policy.id = policyId;
-			service.updateHeader(policy, new BigBangAsyncCallback<InsurancePolicy>() {
+			service.updateHeader(policy, new BigBangAsyncCallback<Policy2>() {
 
 				@Override
-				public void onResponseSuccess(InsurancePolicy result) {
+				public void onResponseSuccess(Policy2 result) {
 					result.id = getFinalMapping(result.id);
 					incrementDataVersion();
-					for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+					for(DataBrokerClient<Policy2> bc : getClients()){
 						((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
 						((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 					}
@@ -232,7 +232,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			public void onResponseSuccess(Void result) {
 				String finalId = getFinalMapping(policyId);
 				incrementDataVersion();
-				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+				for(DataBrokerClient<Policy2> bc : getClients()){
 					((InsurancePolicyDataBrokerClient) bc).removeInsurancePolicy(finalId);
 					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 				}
@@ -252,7 +252,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 	@Override
 	public void getClientPolicies(String clientid,
-			final ResponseHandler<Collection<InsurancePolicyStub>> policies) {
+			final ResponseHandler<Collection<Policy2Stub>> policies) {
 		InsurancePolicySearchParameter parameter = new InsurancePolicySearchParameter();
 		parameter.ownerId = clientid;
 
@@ -265,10 +265,10 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				sort
 		};
 
-		this.searchBroker.search(parameters, sorts, -1, new ResponseHandler<Search<InsurancePolicyStub>>() {
+		this.searchBroker.search(parameters, sorts, -1, new ResponseHandler<Search<Policy2Stub>>() {
 
 			@Override
-			public void onResponse(Search<InsurancePolicyStub> response) {
+			public void onResponse(Search<Policy2Stub> response) {
 				policies.onResponse(response.getResults());
 			}
 
@@ -306,13 +306,13 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public SearchDataBroker<InsurancePolicyStub> getSearchBroker() {
+	public SearchDataBroker<Policy2Stub> getSearchBroker() {
 		return this.searchBroker;
 	}
 
 	@Override
 	public void openPolicyResource(final String policyId,
-			final ResponseHandler<InsurancePolicy> handler) {
+			final ResponseHandler<Policy2> handler) {
 
 		//NEW POLICY
 		if(policyId == null){
@@ -322,7 +322,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				public void onResponseSuccess(Remap[] result) {
 					//If new policy
 					if(result.length == 1 && result[0].remapIds.length == 1 && result[0].remapIds[0].oldId == null){
-						InsurancePolicy policy = new InsurancePolicy();
+						Policy2 policy = new Policy2();
 						RemapId remapId = result[0].remapIds[0];
 						policy.id = remapId.newId;
 						policiesInScratchPad.put(policy.id, policy.id);
@@ -372,7 +372,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void commitPolicy(final InsurancePolicy policy, final ResponseHandler<InsurancePolicy> handler){
+	public void commitPolicy(final Policy2 policy, final ResponseHandler<Policy2> handler){
 		final String policyId = getEffectiveId(policy.id);
 		this.service.commitPad(policyId, new BigBangAsyncCallback<Remap[]>() {
 
@@ -431,7 +431,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			final ResponseHandler<TableSection> handler) {
 		final String policyId = getEffectiveId(insurancePolicyId);
 		if(isTemp(policyId)){
-			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
+			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
 
 				@Override
 				public void onResponseSuccess(TableSection result) {
@@ -450,7 +450,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 			});
 		}else{
-			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
+			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
 
 				@Override
 				public void onResponseSuccess(TableSection result) {
@@ -474,7 +474,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			final ResponseHandler<TableSection> handler) {
 		final String policyId = getEffectiveId(insurancePolicyId);
 		if(isTemp(policyId)){
-			this.service.savePage(data, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
+			this.service.savePage(data, new BigBangAsyncCallback<Policy2.TableSection>() {
 
 				@Override
 				public void onResponseSuccess(TableSection result) {
@@ -500,13 +500,13 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void initPolicy(InsurancePolicy policy,
-			final ResponseHandler<InsurancePolicy> handler) {
+	public void initPolicy(Policy2 policy,
+			final ResponseHandler<Policy2> handler) {
 		policy.id = getEffectiveId(policy.id);
-		service.initPolicyInPad(policy, new BigBangAsyncCallback<InsurancePolicy>() {
+		service.initPolicyInPad(policy, new BigBangAsyncCallback<Policy2>() {
 
 			@Override
-			public void onResponseSuccess(InsurancePolicy result) {
+			public void onResponseSuccess(Policy2 result) {
 				handler.onResponse(result);
 			}
 			
@@ -576,11 +576,11 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 	
 	@Override
-	public void executeDetailedCalculations(final String policyId, final ResponseHandler<InsurancePolicy> handler){
-		service.performCalculations(policyId, new BigBangAsyncCallback<InsurancePolicy>() {
+	public void executeDetailedCalculations(final String policyId, final ResponseHandler<Policy2> handler){
+		service.performCalculations(policyId, new BigBangAsyncCallback<Policy2>() {
 
 			@Override
-			public void onResponseSuccess(InsurancePolicy result) {
+			public void onResponseSuccess(Policy2 result) {
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS, policyId));
 				handler.onResponse(result);
 			}
@@ -596,11 +596,11 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void voidPolicy(PolicyVoiding voiding, final ResponseHandler<InsurancePolicy> handler) {
-		service.voidPolicy(voiding, new BigBangAsyncCallback<InsurancePolicy>() {
+	public void voidPolicy(PolicyVoiding voiding, final ResponseHandler<Policy2> handler) {
+		service.voidPolicy(voiding, new BigBangAsyncCallback<Policy2>() {
 
 			@Override
-			public void onResponseSuccess(InsurancePolicy result) {
+			public void onResponseSuccess(Policy2 result) {
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY, result.id));
 				handler.onResponse(result);
 			}
@@ -645,7 +645,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			this.policiesInScratchPad.remove(newId);
 		}
 		incrementDataVersion();
-		for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+		for(DataBrokerClient<Policy2> bc : getClients()){
 			((InsurancePolicyDataBrokerClient) bc).remapItemId(oldId, newId);
 			((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 		}
@@ -679,7 +679,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			String exerciseId, final ResponseHandler<TableSection> handler) {
 		final String policyId = getEffectiveId(insurancePolicyId);
 		if(isTemp(policyId)){
-			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
+			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
 
 				@Override
 				public void onResponseSuccess(TableSection result) {
@@ -698,7 +698,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 			});
 		}else{
-			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
+			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
 
 				@Override
 				public void onResponseSuccess(TableSection result) {
@@ -750,13 +750,13 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 	
 	@Override
-	public void transferToClient(String policyId, String newClientId, final ResponseHandler<InsurancePolicy> handler){
-		service.transferToClient(policyId, newClientId, new BigBangAsyncCallback<InsurancePolicy>() {
+	public void transferToClient(String policyId, String newClientId, final ResponseHandler<Policy2> handler){
+		service.transferToClient(policyId, newClientId, new BigBangAsyncCallback<Policy2>() {
 
 			@Override
-			public void onResponseSuccess(InsurancePolicy result) {
+			public void onResponseSuccess(Policy2 result) {
 				incrementDataVersion();
-				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+				for(DataBrokerClient<Policy2> bc : getClients()){
 					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
 					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 				}
@@ -824,15 +824,15 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 	
 	@Override
-	public void getInsurancePoliciesWithNumber(String label, final ResponseHandler<Collection<InsurancePolicyStub>> handler){
+	public void getInsurancePoliciesWithNumber(String label, final ResponseHandler<Collection<Policy2Stub>> handler){
 		service.getExactResults(label, new BigBangAsyncCallback<SearchResult[]>() {
 
 			@Override
 			public void onResponseSuccess(SearchResult[] result) {
-				ArrayList<InsurancePolicyStub> stubs = new ArrayList<InsurancePolicyStub>();
+				ArrayList<Policy2Stub> stubs = new ArrayList<Policy2Stub>();
 				
 				for(int i = 0; i<result.length; i++){
-					stubs.add((InsurancePolicyStub)result[i]);
+					stubs.add((Policy2Stub)result[i]);
 				}
 				handler.onResponse(stubs);
 			}

@@ -12,7 +12,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Expense;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -36,7 +36,7 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 	public interface Display{
 		Widget asWidget();
 		HasEditableValue<Expense> getForm();
-		HasValue<InsurancePolicy> getInsuranceForm();
+		HasValue<Policy2> getInsuranceForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void setToolBarSaveMode(boolean b);
 		void setFormCreateMode();
@@ -126,10 +126,10 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 		String policyId = parameterHolder.getParameter("policyid");
 
 		if(policyId != null && !policyId.isEmpty()){
-			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
+			broker.getPolicy(policyId, new ResponseHandler<Policy2>() {
 
 				@Override
-				public void onResponse(InsurancePolicy response) {
+				public void onResponse(Policy2 response) {
 					showExpense(response);
 					view.getInsuranceForm().setValue(response);
 					view.setToolBarSaveMode(true);
@@ -146,7 +146,7 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 		}
 	}
 
-	protected void showExpense(InsurancePolicy response) {
+	protected void showExpense(Policy2 response) {
 		Expense expense = new Expense();
 		expense.clientId = response.clientId;
 		expense.clientName = response.clientName;

@@ -28,7 +28,7 @@ public interface InsurancePolicyServiceAsync
 	void getPolicyInPad(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void updateHeader(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void getPageForEdit(String policyId, String objectId, String exerciseId, AsyncCallback<TableSection> callback);
-	void savePage(InsurancePolicy.TableSection data, AsyncCallback<TableSection> callback);
+	void savePage(TableSection data, AsyncCallback<TableSection> callback);
 	void getObjectInPad(String objectId, AsyncCallback<InsuredObject> callback);
 	void createObjectInPad(String policyId, AsyncCallback<InsuredObject> callback);
 	void createObjectFromClientInPad(String policyId, AsyncCallback<InsuredObject> callback);

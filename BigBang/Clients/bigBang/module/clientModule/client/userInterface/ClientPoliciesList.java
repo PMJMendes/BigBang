@@ -7,8 +7,8 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
@@ -16,10 +16,10 @@ import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicy
 
 import com.google.gwt.event.logical.shared.AttachEvent;
 
-public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> implements InsurancePolicyDataBrokerClient{
+public class ClientPoliciesList extends FilterableList<Policy2Stub> implements InsurancePolicyDataBrokerClient{
 
 	public static class Entry extends InsurancePolicySearchPanel.Entry {
-		public Entry(InsurancePolicyStub policy) {
+		public Entry(Policy2Stub policy) {
 			super(policy);
 		}
 
@@ -58,12 +58,12 @@ public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> impl
 		discardOwner();
 		if(ownerId != null){
 			this.broker.registerClient(this);
-			broker.getClientPolicies(ownerId, new ResponseHandler<Collection<InsurancePolicyStub>>() {
+			broker.getClientPolicies(ownerId, new ResponseHandler<Collection<Policy2Stub>>() {
 
 				@Override
-				public void onResponse(Collection<InsurancePolicyStub> response) {
+				public void onResponse(Collection<Policy2Stub> response) {
 					ClientPoliciesList.this.clear();
-					for(InsurancePolicyStub s : response){
+					for(Policy2Stub s : response){
 						addEntry(s);
 					}
 				}
@@ -83,7 +83,7 @@ public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> impl
 		}
 	}
 
-	public void addEntry(InsurancePolicyStub policy) {
+	public void addEntry(Policy2Stub policy) {
 		add(new Entry(policy));
 	}
 
@@ -103,7 +103,7 @@ public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> impl
 	}
 
 	@Override
-	public void addInsurancePolicy(InsurancePolicy policy) {
+	public void addInsurancePolicy(Policy2 policy) {
 		if(this.ownerId != null){
 			if(policy.clientId.equalsIgnoreCase(this.ownerId)){
 				this.addEntry(policy);
@@ -112,8 +112,8 @@ public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> impl
 	}
 
 	@Override
-	public void updateInsurancePolicy(InsurancePolicy policy) {
-		for(ValueSelectable<InsurancePolicyStub> s : this){
+	public void updateInsurancePolicy(Policy2 policy) {
+		for(ValueSelectable<Policy2Stub> s : this){
 			if(s.getValue().id.equalsIgnoreCase(policy.id)){
 				s.setValue(policy);
 				break;
@@ -123,7 +123,7 @@ public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> impl
 
 	@Override
 	public void removeInsurancePolicy(String policyId) {
-		for(ValueSelectable<InsurancePolicyStub> s : this) {
+		for(ValueSelectable<Policy2Stub> s : this) {
 			if(s.getValue().id.equalsIgnoreCase(policyId)){
 				remove(s);
 				break;

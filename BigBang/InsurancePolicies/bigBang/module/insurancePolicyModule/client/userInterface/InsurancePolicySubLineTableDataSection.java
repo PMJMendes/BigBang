@@ -9,7 +9,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
 import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
@@ -25,7 +25,7 @@ import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedList
 
 public abstract class InsurancePolicySubLineTableDataSection extends FormViewSection {
 
-	protected InsurancePolicy policy;
+	protected Policy2 policy;
 
 	protected PolicyFormTable table;
 	protected TableSection currentTableSection;
@@ -55,7 +55,7 @@ public abstract class InsurancePolicySubLineTableDataSection extends FormViewSec
 		setTableData(null, null);
 	}
 
-	public void setTableData(InsurancePolicy policy, TableSection tableSection){
+	public void setTableData(Policy2 policy, TableSection tableSection){
 		if(policy == null){
 			clearTableData();
 		}else{
@@ -168,7 +168,7 @@ public abstract class InsurancePolicySubLineTableDataSection extends FormViewSec
 		this.exercisesList.setReadOnly(false);
 	}
 
-	public void setInsurancePolicy(final InsurancePolicy policy){
+	public void setInsurancePolicy(final Policy2 policy){
 		this.policy = policy;
 		if(policy == null) {
 			clearTableData();

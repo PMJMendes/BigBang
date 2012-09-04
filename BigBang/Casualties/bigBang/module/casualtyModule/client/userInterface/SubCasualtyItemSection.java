@@ -11,7 +11,7 @@ import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.definitions.shared.SubPolicy;
@@ -129,10 +129,10 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 				});
 				
 				InsurancePolicyBroker policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-				policyBroker.getPolicy(referenceId, new ResponseHandler<InsurancePolicy>() {
+				policyBroker.getPolicy(referenceId, new ResponseHandler<Policy2>() {
 					
 					@Override
-					public void onResponse(InsurancePolicy response) {
+					public void onResponse(Policy2 response) {
 						damageType.setListId(BigBangConstants.TypifiedListIds.DAMAGE_TYPE + "/" + response.subLineId, new ResponseHandler<Void>() {
 
 							@Override

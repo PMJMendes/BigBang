@@ -10,7 +10,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -106,10 +106,10 @@ public class InsurancePolicyManagerTransferViewPresenter implements ViewPresente
 	}
 
 	private void showManagerTransfer(String policyId){
-		broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
+		broker.getPolicy(policyId, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 				//TODO check permissions FJVC
 				view.getForm().setValue(Session.getUserId());
 				view.getForm().setReadOnly(false);

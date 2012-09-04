@@ -15,8 +15,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Expense;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -86,7 +86,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 
 			@Override
 			public void setInsurancePolicys(
-					Collection<InsurancePolicyStub> stubs) {
+					Collection<Policy2Stub> stubs) {
 				policyView.fillList(stubs);
 			}
 
@@ -327,10 +327,10 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 		view.enableMarkExpense(false);
 		view.setPolicyNumber(policyNumber);
 
-		policyBroker.getInsurancePoliciesWithNumber(policyNumber, new ResponseHandler<Collection<InsurancePolicyStub>>() {
+		policyBroker.getInsurancePoliciesWithNumber(policyNumber, new ResponseHandler<Collection<Policy2Stub>>() {
 
 			@Override
-			public void onResponse(Collection<InsurancePolicyStub> response) {
+			public void onResponse(Collection<Policy2Stub> response) {
 				if(response.size() > 1){
 					policyPresenter.setParameters(null);
 					policyPresenter.fillList(response);
@@ -339,7 +339,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 					view.enableMarkExpense(true);
 				}
 				else if(response.size() == 1){
-					getPolicy(((InsurancePolicyStub)response.toArray()[0]).id);
+					getPolicy(((Policy2Stub)response.toArray()[0]).id);
 					view.setPolicyNumberProblem(false);
 					view.enableMarkExpense(true);
 				}
@@ -364,17 +364,17 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		expensePolicyWrapper = new ExpensePolicyWrapper();
-		expensePolicyWrapper.policy = new InsurancePolicy();
+		expensePolicyWrapper.policy = new Policy2();
 		expensePolicyWrapper.expense = new Expense();
 		expensePolicyWrapper.subPolicy = new SubPolicy();
 		view.clear();
 	}
 
 	public void getPolicy(String id){
-		policyBroker.getPolicy(id, new ResponseHandler<InsurancePolicy>() {
+		policyBroker.getPolicy(id, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_HEALTH_EXPENSE)){
 					expensePolicyWrapper.policy = response;
 					view.setSubPolicies(response.id);

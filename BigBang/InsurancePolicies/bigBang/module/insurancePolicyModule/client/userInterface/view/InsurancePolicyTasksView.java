@@ -7,7 +7,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicy
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyTasksOperationsToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTasksViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTasksViewPresenter.Action;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
@@ -56,7 +56,7 @@ public class InsurancePolicyTasksView extends View implements InsurancePolicyTas
 	}
 
 	@Override
-	public HasValue<InsurancePolicy> getForm() {
+	public HasValue<Policy2> getForm() {
 		return form;
 	}
 

@@ -6,8 +6,8 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
 import bigBang.library.client.PermissionChecker;
@@ -21,20 +21,20 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.MassManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class InsurancePolicyMassManagerTransferViewPresenter extends MassManagerTransferViewPresenter<InsurancePolicyStub, InsurancePolicy> implements
+public class InsurancePolicyMassManagerTransferViewPresenter extends MassManagerTransferViewPresenter<Policy2Stub, Policy2> implements
 ViewPresenter {
 
 	protected InsurancePolicyBroker policyBroker;
 
 	public InsurancePolicyMassManagerTransferViewPresenter(
-			bigBang.library.client.userInterface.presenter.MassManagerTransferViewPresenter.Display<InsurancePolicyStub, InsurancePolicy> view) {
+			bigBang.library.client.userInterface.presenter.MassManagerTransferViewPresenter.Display<Policy2Stub, Policy2> view) {
 		super(view);
 		policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 	}
 
 	@Override
 	protected void onTransfer(String newManagerId,
-			Collection<InsurancePolicyStub> affectedProcesses) {
+			Collection<Policy2Stub> affectedProcesses) {
 		String[] processIds = new String[affectedProcesses.size()];
 
 		if(processIds.length == 0){
@@ -43,7 +43,7 @@ ViewPresenter {
 		}
 		
 		int i = 0;
-		for(InsurancePolicyStub p : affectedProcesses){
+		for(Policy2Stub p : affectedProcesses){
 			processIds[i] = p.id;
 			i++;
 		}
@@ -72,13 +72,13 @@ ViewPresenter {
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
-				ValueSelectable<InsurancePolicyStub> selectable = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
+				ValueSelectable<Policy2Stub> selectable = (ValueSelectable<Policy2Stub>) event.getFirstSelected();
 				if(selectable != null) {
 					view.getSelectedList().clearSelection();
-					policyBroker.getPolicy(selectable.getValue().id, new ResponseHandler<InsurancePolicy>() {
+					policyBroker.getPolicy(selectable.getValue().id, new ResponseHandler<Policy2>() {
 
 						@Override
-						public void onResponse(InsurancePolicy response) {
+						public void onResponse(Policy2 response) {
 							view.getSelectedProcessForm().setValue(response);
 						}
 
@@ -97,13 +97,13 @@ ViewPresenter {
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
-				ValueSelectable<InsurancePolicyStub> selectable = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
+				ValueSelectable<Policy2Stub> selectable = (ValueSelectable<Policy2Stub>) event.getFirstSelected();
 				if(selectable != null) {
 					view.getMainList().clearSelection();
-					policyBroker.getPolicy(selectable.getValue().id, new ResponseHandler<InsurancePolicy>() {
+					policyBroker.getPolicy(selectable.getValue().id, new ResponseHandler<Policy2>() {
 
 						@Override
-						public void onResponse(InsurancePolicy response) {
+						public void onResponse(Policy2 response) {
 							view.getSelectedProcessForm().setValue(response);
 						}
 

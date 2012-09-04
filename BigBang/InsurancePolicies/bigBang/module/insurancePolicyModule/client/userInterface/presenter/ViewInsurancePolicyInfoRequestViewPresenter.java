@@ -6,7 +6,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
@@ -16,11 +16,11 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewInfoOrDocumentRequestViewPresenter;
 
-public class ViewInsurancePolicyInfoRequestViewPresenter extends ViewInfoOrDocumentRequestViewPresenter<InsurancePolicy>{
+public class ViewInsurancePolicyInfoRequestViewPresenter extends ViewInfoOrDocumentRequestViewPresenter<Policy2>{
 
 	private InsurancePolicyBroker broker;
 	
-	public ViewInsurancePolicyInfoRequestViewPresenter(Display<InsurancePolicy> view){
+	public ViewInsurancePolicyInfoRequestViewPresenter(Display<Policy2> view){
 		super(view);
 		broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		
@@ -28,10 +28,10 @@ public class ViewInsurancePolicyInfoRequestViewPresenter extends ViewInfoOrDocum
 
 	@Override
 	protected void showParent(String parentId) {
-		broker.getPolicy(parentId, new ResponseHandler<InsurancePolicy>() {
+		broker.getPolicy(parentId, new ResponseHandler<Policy2>() {
 			
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 				view.getParentForm().setValue(response);
 			}
 			

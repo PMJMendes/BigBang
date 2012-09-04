@@ -17,7 +17,7 @@ import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
@@ -376,7 +376,7 @@ public class ClientServiceImpl
 		return getClient(receptorId);
 	}
 
-	public InsurancePolicy createPolicy(String clientProcessId, InsurancePolicy policy)
+	public Policy2 createPolicy(String clientProcessId, Policy2 policy)
 		throws SessionExpiredException, BigBangException
 	{
 //		CreatePolicy lopCP;

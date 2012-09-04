@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
+import bigBang.definitions.shared.Policy2.ColumnHeader;
+import bigBang.definitions.shared.Policy2.Coverage;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TwoKeyTable.Field;

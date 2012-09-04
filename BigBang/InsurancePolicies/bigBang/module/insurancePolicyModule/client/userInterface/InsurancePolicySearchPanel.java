@@ -17,8 +17,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
@@ -32,12 +32,12 @@ import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParamete
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter.SortableField;
 
-public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub> implements InsurancePolicyDataBrokerClient {
+public class InsurancePolicySearchPanel extends SearchPanel<Policy2Stub> implements InsurancePolicyDataBrokerClient {
 
 	/**
 	 * An entry in the search panel
 	 */
-	public static class Entry extends ListEntry<InsurancePolicyStub>{
+	public static class Entry extends ListEntry<Policy2Stub>{
 		
 		protected Label numberLabel;
 		protected Label clientLabel;
@@ -45,14 +45,14 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		protected Label insuredObjectLabel;
 		protected Image statusIcon;
 
-		public Entry(InsurancePolicyStub policy){
+		public Entry(Policy2Stub policy){
 			super(policy);
 			setHeight("65px");
 			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 
 		public <I extends Object> void setInfo(I info) {
-			InsurancePolicyStub value = (InsurancePolicyStub)info;
+			Policy2Stub value = (Policy2Stub)info;
 			if(value.id != null){
 				if(numberLabel == null) {
 					numberLabel = getFormatedLabel();
@@ -153,7 +153,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	protected FiltersPanel filtersPanel;
 
 	protected int insurancePolicyDataVersion = 0;
-	protected Map<String, InsurancePolicyStub> policiesToUpdate;
+	protected Map<String, Policy2Stub> policiesToUpdate;
 	protected Map<String, Void> policiesToRemove;
 
 	private String ownerId;
@@ -162,7 +162,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		super(((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY)).getSearchBroker());
 		
 		
-		policiesToUpdate = new HashMap<String, InsurancePolicyStub>();
+		policiesToUpdate = new HashMap<String, Policy2Stub>();
 		policiesToRemove = new HashMap<String, Void>();
 				
 		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
@@ -241,8 +241,8 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	}
 
 	@Override
-	public void onResults(Collection<InsurancePolicyStub> results) {
-		for(InsurancePolicyStub s : results){
+	public void onResults(Collection<Policy2Stub> results) {
+		for(Policy2Stub s : results){
 			if(!policiesToRemove.containsKey(s.id)){
 				if(policiesToUpdate.containsKey(s.id)){
 					s = policiesToUpdate.get(s.id);
@@ -254,8 +254,8 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 
 	protected Entry addSearchResult(SearchResult r){
 		Entry entry = null;
-		if(r instanceof InsurancePolicyStub){
-			entry = new Entry((InsurancePolicyStub)r);
+		if(r instanceof Policy2Stub){
+			entry = new Entry((Policy2Stub)r);
 			add(entry);
 		}
 		return entry;
@@ -268,7 +268,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		}
 	}
 	
-	public ValueSelectable<InsurancePolicyStub> addEntry(InsurancePolicyStub policy) {
+	public ValueSelectable<Policy2Stub> addEntry(Policy2Stub policy) {
 		Entry entry = new Entry(policy);
 		add(0, entry);
 		return entry;
@@ -283,14 +283,14 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	}
 
 	@Override
-	public void addInsurancePolicy(InsurancePolicy policy) {
+	public void addInsurancePolicy(Policy2 policy) {
 		this.add(0, new Entry(policy));
 	}
 
 	@Override
-	public void updateInsurancePolicy(InsurancePolicy policy) {
-		for(ValueSelectable<InsurancePolicyStub> s : this) {
-			InsurancePolicyStub policyStub = s.getValue();
+	public void updateInsurancePolicy(Policy2 policy) {
+		for(ValueSelectable<Policy2Stub> s : this) {
+			Policy2Stub policyStub = s.getValue();
 			if(policy.id.equalsIgnoreCase(policyStub.id)){
 				s.setValue(policy);
 				return;
@@ -301,8 +301,8 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 
 	@Override
 	public void removeInsurancePolicy(String policyId) {
-		for(ValueSelectable<InsurancePolicyStub> s : this) {
-			InsurancePolicyStub policyStub = s.getValue();
+		for(ValueSelectable<Policy2Stub> s : this) {
+			Policy2Stub policyStub = s.getValue();
 			if(policyId.equalsIgnoreCase(policyStub.id)){
 				remove(s);
 				return;

@@ -15,7 +15,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -136,10 +136,10 @@ public class InsurancePolicyTransferToClientViewPresenter implements ViewPresent
 	}
 	protected void onTransferToClient(Client value) {
 
-		broker.transferToClient(policyId, value.id, new ResponseHandler<InsurancePolicy>() {
+		broker.transferToClient(policyId, value.id, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				item.removeParameter("show");

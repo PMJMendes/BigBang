@@ -6,7 +6,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
@@ -34,10 +34,10 @@ public class InsurancePolicyNegotiationViewPresenter extends NegotiationViewPres
 
 		ownerId = parameterHolder.getParameter("policyid");
 		ownerTypeId = BigBangConstants.EntityIds.INSURANCE_POLICY;
-		insurancePolicyBroker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
+		insurancePolicyBroker.getPolicy(ownerId, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 				view.getOwnerForm().setValue(response);	
 				managerId = response.managerId;
 				companyId = response.insuranceAgencyId;

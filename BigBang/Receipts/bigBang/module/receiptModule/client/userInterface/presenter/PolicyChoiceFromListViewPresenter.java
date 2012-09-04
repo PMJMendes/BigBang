@@ -6,8 +6,8 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -50,15 +50,15 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 
 		void clear();
 
-		HasValueSelectables<InsurancePolicyStub> getList();
+		HasValueSelectables<Policy2Stub> getList();
 
-		void fillList(Collection<InsurancePolicyStub> collection);
+		void fillList(Collection<Policy2Stub> collection);
 
 		void enableConfirm(boolean b);
 
 		Widget asWidget();
 
-		HasEditableValue<InsurancePolicy> getForm();
+		HasEditableValue<Policy2> getForm();
 
 		void enableMarkReceipt(boolean b);
 
@@ -104,14 +104,14 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 
 	protected void listChanged() {
 		view.enableConfirm(true);
-		Collection<ValueSelectable<InsurancePolicyStub>> selected = view.getList().getSelected();
+		Collection<ValueSelectable<Policy2Stub>> selected = view.getList().getSelected();
 		
 		if(selected.size() > 0){
 
-			broker.getPolicy(((InsurancePolicyStub)((Entry)selected.toArray()[0]).getValue()).id,  new ResponseHandler<InsurancePolicy>() {
+			broker.getPolicy(((Policy2Stub)((Entry)selected.toArray()[0]).getValue()).id,  new ResponseHandler<Policy2>() {
 				
 				@Override
-				public void onResponse(InsurancePolicy response) {
+				public void onResponse(Policy2 response) {
 					view.getForm().setValue(response);
 				}
 				
@@ -133,9 +133,9 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 		view.enableConfirm(false);
 	}
 	
-	public abstract void setInsurancePolicys(Collection<InsurancePolicyStub> stubs);
+	public abstract void setInsurancePolicys(Collection<Policy2Stub> stubs);
 	public abstract void getSelectedInsurancePolicy();
-	public void fillList(Collection<InsurancePolicyStub> collection){
+	public void fillList(Collection<Policy2Stub> collection){
 	
 		view.fillList(collection);
 		

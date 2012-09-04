@@ -2,8 +2,8 @@ package bigBang.module.receiptModule.client.userInterface.view;
 
 import java.util.Collection;
 
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -119,7 +119,7 @@ public class PolicyChoiceFromListView extends View implements PolicyChoiceFromLi
 	}
 	
 	@Override
-	public HasEditableValue<InsurancePolicy> getForm() {
+	public HasEditableValue<Policy2> getForm() {
 		return form;
 	}
 
@@ -135,16 +135,16 @@ public class PolicyChoiceFromListView extends View implements PolicyChoiceFromLi
 	}
 
 	@Override
-	public HasValueSelectables<InsurancePolicyStub> getList() {
+	public HasValueSelectables<Policy2Stub> getList() {
 		return list;
 	}
 	
 	@Override
-	public void fillList(Collection<InsurancePolicyStub> collection) {
+	public void fillList(Collection<Policy2Stub> collection) {
 		list.clear();
 		form.clearInfo();
 		
-		for(InsurancePolicyStub stub : collection){
+		for(Policy2Stub stub : collection){
 
 			list.add(new Entry(stub));
 		}

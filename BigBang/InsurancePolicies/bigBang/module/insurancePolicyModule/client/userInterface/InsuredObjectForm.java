@@ -11,7 +11,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObject.CoverageData;
 import bigBang.definitions.shared.InsuredObject.Exercise;
@@ -733,7 +733,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		}
 	}
 
-	public void setForPolicyStatusNew(InsurancePolicyStub.PolicyStatus status){
+	public void setForPolicyStatusNew(Policy2Stub.PolicyStatus status){
 		switch(status){
 		case PROVISIONAL:
 			this.type.setReadOnly(true);

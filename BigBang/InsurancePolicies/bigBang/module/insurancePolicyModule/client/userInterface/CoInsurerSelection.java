@@ -1,7 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy.CoInsurer;
+import bigBang.definitions.shared.Policy2.CoInsurer;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;

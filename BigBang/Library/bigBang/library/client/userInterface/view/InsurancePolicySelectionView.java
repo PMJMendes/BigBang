@@ -7,8 +7,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -89,12 +89,12 @@ public class InsurancePolicySelectionView extends View implements InsurancePolic
 	}
 
 	@Override
-	public HasValueSelectables<InsurancePolicyStub> getList() {
+	public HasValueSelectables<Policy2Stub> getList() {
 		return this.list;
 	}
 
 	@Override
-	public HasEditableValue<InsurancePolicy> getForm() {
+	public HasEditableValue<Policy2> getForm() {
 		return this.form;
 	}
 

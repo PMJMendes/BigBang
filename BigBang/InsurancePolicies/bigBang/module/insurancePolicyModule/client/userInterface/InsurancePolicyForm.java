@@ -8,7 +8,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.history.NavigationHistoryItem;
@@ -32,7 +32,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Image;
 
-public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {	
+public abstract class InsurancePolicyForm extends FormView<Policy2> {	
 
 	protected ExpandableListBoxFormField manager;
 	protected TextBoxFormField number;
@@ -258,8 +258,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	}
 
 	@Override
-	public InsurancePolicy getInfo() {
-		InsurancePolicy result = this.value;
+	public Policy2 getInfo() {
+		Policy2 result = this.value;
 
 		if(result != null) {
 			result.managerId = manager.getValue();
@@ -308,7 +308,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	}
 
 	@Override
-	public void setInfo(final InsurancePolicy info) {
+	public void setInfo(final Policy2 info) {
 		if(info == null) {
 			clearInfo();
 		}else{
@@ -409,7 +409,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	@Override
 	protected void clearValue() {
 		super.clearValue();
-		this.value = new InsurancePolicy();
+		this.value = new Policy2();
 	}
 
 	@Override

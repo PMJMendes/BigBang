@@ -1,6 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -98,7 +98,7 @@ public class CreateReceiptView extends View implements CreateReceiptViewPresente
 	}
 
 	@Override
-	public HasValue<InsurancePolicy> getParentForm() {
+	public HasValue<Policy2> getParentForm() {
 		return this.ownerForm;
 	}
 

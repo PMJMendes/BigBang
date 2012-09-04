@@ -11,7 +11,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DebitNote;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -100,10 +100,10 @@ public class CreateDebitNoteViewPresenter implements ViewPresenter {
 	private void onCreateDebitNote(){
 		if(view.getForm().validate()) {
 			final DebitNote note = view.getForm().getInfo();
-			broker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
+			broker.getPolicy(ownerId, new ResponseHandler<Policy2>() {
 
 				@Override
-				public void onResponse(InsurancePolicy response) {
+				public void onResponse(Policy2 response) {
 					boolean hasPermission = PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_DEBIT_NOTE);
 					if(hasPermission){
 						broker.issueDebitNote(ownerId, note, new ResponseHandler<Void>() {

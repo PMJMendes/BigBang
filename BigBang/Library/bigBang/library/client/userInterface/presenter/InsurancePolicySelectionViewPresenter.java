@@ -13,8 +13,8 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
@@ -34,8 +34,8 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 	}
 
 	public static interface Display {
-		HasValueSelectables<InsurancePolicyStub> getList();
-		HasEditableValue<InsurancePolicy> getForm();
+		HasValueSelectables<Policy2Stub> getList();
+		HasEditableValue<Policy2> getForm();
 		
 		void allowConfirm(boolean allow);
 
@@ -95,15 +95,15 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
-				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
-				InsurancePolicyStub policy = selected == null ? null : selected.getValue();
+				ValueSelectable<Policy2Stub> selected = (ValueSelectable<Policy2Stub>) event.getFirstSelected();
+				Policy2Stub policy = selected == null ? null : selected.getValue();
 				if(policy == null) {
 					view.getForm().setValue(null);
 				}else{
-					policyBroker.getPolicy(policy.id, new ResponseHandler<InsurancePolicy>(){
+					policyBroker.getPolicy(policy.id, new ResponseHandler<Policy2>(){
 
 						@Override
-						public void onResponse(InsurancePolicy response) {
+						public void onResponse(Policy2 response) {
 							view.getForm().setValue(response);
 						}
 
@@ -117,11 +117,11 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 			}
 		});
 
-		view.getForm().addValueChangeHandler(new ValueChangeHandler<InsurancePolicy>() {
+		view.getForm().addValueChangeHandler(new ValueChangeHandler<Policy2>() {
 
 			@Override
-			public void onValueChange(ValueChangeEvent<InsurancePolicy> event) {
-				InsurancePolicy policy = event.getValue();
+			public void onValueChange(ValueChangeEvent<Policy2> event) {
+				Policy2 policy = event.getValue();
 				view.allowConfirm(policy != null);
 			}
 		});
@@ -144,7 +144,7 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 		bound = true;
 	}
 
-	protected void onPolicySelected(InsurancePolicy policy){
+	protected void onPolicySelected(Policy2 policy){
 		ValueChangeEvent.fire(this, policy == null ? null : policy.id);
 	}
 
@@ -164,10 +164,10 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 
 	@Override
 	public void setValue(String value, final boolean fireEvents) {
-		this.policyBroker.getPolicy(value, new ResponseHandler<InsurancePolicy>() {
+		this.policyBroker.getPolicy(value, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 				view.getForm().setValue(response);
 				if(fireEvents) {
 					ValueChangeEvent.fire(InsurancePolicySelectionViewPresenter.this, response.id);

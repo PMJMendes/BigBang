@@ -7,7 +7,7 @@ import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -31,7 +31,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 	public static interface Display{
 		HasEditableValue<InsuredObject> getInsuredObjectForm();
-		HasEditableValue<InsurancePolicy> getInsurancePolicyForm();
+		HasEditableValue<Policy2> getInsurancePolicyForm();
 
 		//PERMISSIONS
 		void setSaveModeEnabled(boolean enabled);
@@ -151,17 +151,17 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(final InsuredObject object) {
-				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
+				policyBroker.getPolicy(object.ownerId, new ResponseHandler<Policy2>() {
 
 					@Override
-					public void onResponse(InsurancePolicy policy) {
+					public void onResponse(Policy2 policy) {
 						if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) || policyBroker.isTemp(policy.id)){
 							if(!policyBroker.isTemp(policy.id)){
-								policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() { //TODO
+								policyBroker.openPolicyResource(policy.id, new ResponseHandler<Policy2>() { //TODO
 
 									@Override
 									public void onResponse(
-											InsurancePolicy response) {
+											Policy2 response) {
 										broker.getInsuredObject(object.id, new ResponseHandler<InsuredObject>() {
 
 											@Override
@@ -233,17 +233,17 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(final InsuredObject object) {
-				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
+				policyBroker.getPolicy(object.ownerId, new ResponseHandler<Policy2>() {
 
 					@Override
-					public void onResponse(InsurancePolicy policy) {
+					public void onResponse(Policy2 policy) {
 						if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) || policyBroker.isTemp(policy.id)){
 							if(!policyBroker.isTemp(policy.id)){
-								policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() { //TODO
+								policyBroker.openPolicyResource(policy.id, new ResponseHandler<Policy2>() { //TODO
 
 									@Override
 									public void onResponse(
-											InsurancePolicy response) {
+											Policy2 response) {
 										broker.deleteInsuredObject(objectId, new ResponseHandler<Void>() {
 
 											@Override
@@ -304,10 +304,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(final InsuredObject object) {
-				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
+				policyBroker.getPolicy(object.ownerId, new ResponseHandler<Policy2>() {
 
 					@Override
-					public void onResponse(InsurancePolicy policy) {
+					public void onResponse(Policy2 policy) {
 						view.getInsuredObjectForm().setReadOnly(true);
 						view.setSaveModeEnabled(false);
 						boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) ||
@@ -333,10 +333,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	}
 
 	private void showCreateObject(final String ownerId) {
-		policyBroker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
+		policyBroker.getPolicy(ownerId, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(final InsurancePolicy policy) {
+			public void onResponse(final Policy2 policy) {
 				boolean hasPermissions = true; //PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT);
 
 				if(hasPermissions){
@@ -359,10 +359,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 							}
 						});
 					}else{
-						policyBroker.openPolicyResource(ownerId, new ResponseHandler<InsurancePolicy>() {
+						policyBroker.openPolicyResource(ownerId, new ResponseHandler<Policy2>() {
 
 							@Override
-							public void onResponse(InsurancePolicy tempPolicy) {
+							public void onResponse(Policy2 tempPolicy) {
 								broker.createInsuredObject(tempPolicy.id, new ResponseHandler<InsuredObject>() {
 
 									@Override

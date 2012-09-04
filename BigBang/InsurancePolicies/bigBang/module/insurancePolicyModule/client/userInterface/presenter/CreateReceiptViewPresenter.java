@@ -11,7 +11,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -35,7 +35,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 
 	public static interface Display {
 		HasEditableValue<Receipt> getForm();
-		HasValue<InsurancePolicy> getParentForm();
+		HasValue<Policy2> getParentForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
 
@@ -98,10 +98,10 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 		view.getForm().setValue(null);
 		view.getParentForm().setValue(null);
 		view.setSaveModeEnabled(true);
-		broker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
+		broker.getPolicy(ownerId, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 				view.getParentForm().setValue(response);
 				Receipt receipt = new Receipt();
 				receipt.policyId = response.id;

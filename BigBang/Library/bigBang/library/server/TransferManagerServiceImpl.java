@@ -15,7 +15,7 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.definitions.shared.SearchResult;
@@ -404,9 +404,9 @@ public class TransferManagerServiceImpl
 		return lobjResult;
 	}
 
-	private static InsurancePolicyStub BuildPolicyStub(Policy pobjPolicy)
+	private static Policy2Stub BuildPolicyStub(Policy pobjPolicy)
 	{
-		InsurancePolicyStub lobjResult;
+		Policy2Stub lobjResult;
 		IProcess lobjProcess;
 		Client lobjAuxClient;
 		SubLine lobjSubLine;
@@ -449,7 +449,7 @@ public class TransferManagerServiceImpl
 			lobjStatus = null;
 		}
 
-		lobjResult = new InsurancePolicyStub();
+		lobjResult = new Policy2Stub();
 
 		lobjResult.id = pobjPolicy.getKey().toString();
 		lobjResult.number = pobjPolicy.getLabel();
@@ -471,15 +471,15 @@ public class TransferManagerServiceImpl
 			switch ( (Integer)lobjStatus.getAt(1) )
 			{
 			case 0:
-				lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.PROVISIONAL;
+				lobjResult.statusIcon = Policy2Stub.PolicyStatus.PROVISIONAL;
 				break;
 
 			case 1:
-				lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.VALID;
+				lobjResult.statusIcon = Policy2Stub.PolicyStatus.VALID;
 				break;
 
 			case 2:
-				lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
+				lobjResult.statusIcon = Policy2Stub.PolicyStatus.OBSOLETE;
 				break;
 			}
 		}

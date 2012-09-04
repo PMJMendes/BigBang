@@ -10,8 +10,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.InsuranceAgency;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Policy2;
+import bigBang.definitions.shared.Policy2Stub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.library.client.EventBus;
@@ -167,7 +167,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 			@Override
 			public void setInsurancePolicys(
-					Collection<InsurancePolicyStub> stubs) {
+					Collection<Policy2Stub> stubs) {
 				policyView.fillList(stubs);
 
 			}
@@ -390,10 +390,10 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 	protected void getPolicy(String id) {
 
-		policyBroker.getPolicy(id, new ResponseHandler<InsurancePolicy>() {
+		policyBroker.getPolicy(id, new ResponseHandler<Policy2>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(Policy2 response) {
 
 				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT)){
 
@@ -475,17 +475,17 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		view.enableMarkReceipt(false);
 		view.setPolicyNumber(policyNumber, true);
 
-		policyBroker.getInsurancePoliciesWithNumber(policyNumber, new ResponseHandler<Collection<InsurancePolicyStub>>() {
+		policyBroker.getInsurancePoliciesWithNumber(policyNumber, new ResponseHandler<Collection<Policy2Stub>>() {
 
 			@Override
-			public void onResponse(Collection<InsurancePolicyStub> response) {
+			public void onResponse(Collection<Policy2Stub> response) {
 				if(response.size() > 1){
 					policyPresenter.setParameters(null);
 					policyPresenter.fillList(response);
 					popupPolicy.center();
 				}
 				else if(response.size() == 1){
-					getPolicy(((InsurancePolicyStub)response.toArray()[0]).id);
+					getPolicy(((Policy2Stub)response.toArray()[0]).id);
 				}
 				else{
 					view.enableMarkReceipt(true);

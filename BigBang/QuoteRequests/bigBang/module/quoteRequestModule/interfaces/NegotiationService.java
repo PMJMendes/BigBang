@@ -2,7 +2,7 @@ package bigBang.module.quoteRequestModule.interfaces;
 
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Policy2;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
@@ -43,7 +43,7 @@ public interface NegotiationService
 
 	public Negotiation grantNegotiation(Negotiation.Grant grant) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy createPolicy(Negotiation negotiation) throws SessionExpiredException, BigBangException;
+	public Policy2 createPolicy(Negotiation negotiation) throws SessionExpiredException, BigBangException;
 
 	public InfoOrDocumentRequest createInfoRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request) throws SessionExpiredException, BigBangException;
