@@ -6,7 +6,7 @@ import java.util.Map;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SubPolicy.ColumnHeader;
 import bigBang.definitions.shared.SubPolicy.Coverage;
-import bigBang.definitions.shared.InsurancePolicyOLD.FieldType;
+import bigBang.definitions.shared.FieldContainer.FieldType;
 import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.definitions.shared.SubPolicy.TableSection.TableField;
 import bigBang.library.client.FieldValidator;

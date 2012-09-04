@@ -6,11 +6,10 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsurancePolicyOLD;
-import bigBang.definitions.shared.InsurancePolicyOLD.TableSection;
-import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicyOLD.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 
@@ -28,7 +27,7 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	public void openCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, ResponseHandler<TableSection> handler);
 
-	public void saveCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, TableSection data, ResponseHandler<InsurancePolicyOLD.TableSection> handler);
+	public void saveCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, TableSection data, ResponseHandler<TableSection> handler);
 
 	public void updatePolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
 

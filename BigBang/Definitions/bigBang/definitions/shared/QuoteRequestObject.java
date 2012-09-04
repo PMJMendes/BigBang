@@ -19,7 +19,7 @@ public class QuoteRequestObject
 
 			public String fieldId;
 			public String fieldName;
-			public InsurancePolicyOLD.FieldType type;
+			public InsurancePolicy.FieldType type;
 			public String unitsLabel;
 			public String refersToId;
 			public int columnIndex; // Informacional. Se -1, não está na tabela. Se 0 ou mais, na página identificada por tempObjectId
@@ -37,7 +37,7 @@ public class QuoteRequestObject
 
 		public int index;
 		public String label;
-		public InsurancePolicyOLD.FieldType type;
+		public InsurancePolicy.FieldType type;
 		public String unitsLabel;
 		public String refersToId;
 	}

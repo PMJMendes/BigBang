@@ -722,7 +722,7 @@ public class SubPolicyServiceImpl
 				lobjHeader = new SubPolicy.HeaderField();
 				lobjHeader.fieldId = marrValues.get(i).midField.toString();
 				lobjHeader.fieldName = marrValues.get(i).mrefField.mstrLabel;
-				lobjHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID(marrValues.get(i).mrefField.midType);
+				lobjHeader.type = Policy2ServiceImpl.sGetFieldTypeByID(marrValues.get(i).mrefField.midType);
 				lobjHeader.unitsLabel = marrValues.get(i).mrefField.mstrUnits;
 				lobjHeader.refersToId = ( marrValues.get(i).mrefField.midRefersTo == null ? null :
 						marrValues.get(i).mrefField.midRefersTo.toString() );
@@ -777,7 +777,7 @@ public class SubPolicyServiceImpl
 
 					lobjColumn = new SubPolicy.ColumnHeader();
 					lobjColumn.label = marrCoverages.get(i).marrFields[j].mstrLabel;
-					lobjColumn.type = InsurancePolicyServiceImpl.GetFieldTypeByID(marrCoverages.get(i).marrFields[j].midType);
+					lobjColumn.type = Policy2ServiceImpl.sGetFieldTypeByID(marrCoverages.get(i).marrFields[j].midType);
 					lobjColumn.unitsLabel = marrCoverages.get(i).marrFields[j].mstrUnits;
 					lobjColumn.refersToId = ( marrCoverages.get(i).marrFields[j].midRefersTo == null ? null :
 						marrCoverages.get(i).marrFields[j].midRefersTo.toString() );
@@ -823,7 +823,7 @@ public class SubPolicyServiceImpl
 				lobjExtraField = new SubPolicy.ExtraField();
 				lobjExtraField.fieldId = marrValues.get(i).midField.toString();
 				lobjExtraField.fieldName = marrValues.get(i).mrefField.mstrLabel;
-				lobjExtraField.type = InsurancePolicyServiceImpl.GetFieldTypeByID(marrValues.get(i).mrefField.midType);
+				lobjExtraField.type = Policy2ServiceImpl.sGetFieldTypeByID(marrValues.get(i).mrefField.midType);
 				lobjExtraField.unitsLabel = marrValues.get(i).mrefField.mstrUnits;
 				lobjExtraField.refersToId = ( marrValues.get(i).mrefField.midRefersTo == null ? null :
 						marrValues.get(i).mrefField.midRefersTo.toString() );
@@ -2337,7 +2337,7 @@ public class SubPolicyServiceImpl
 				lobjHeader = new SubPolicy.HeaderField();
 				lobjHeader.fieldId = lobjTax.getKey().toString();
 				lobjHeader.fieldName = lobjTax.getLabel();
-				lobjHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)lobjTax.getAt(2));
+				lobjHeader.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)lobjTax.getAt(2));
 				lobjHeader.unitsLabel = (String)lobjTax.getAt(3);
 				lobjHeader.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
 				lobjHeader.value = larrLocalValues[i].getLabel();
@@ -2358,7 +2358,7 @@ public class SubPolicyServiceImpl
 				lobjExtra = new SubPolicy.ExtraField();
 				lobjExtra.fieldId = lobjTax.getKey().toString();
 				lobjExtra.fieldName = lobjTax.getLabel();
-				lobjExtra.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)lobjTax.getAt(2));
+				lobjExtra.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)lobjTax.getAt(2));
 				lobjExtra.unitsLabel = (String)lobjTax.getAt(3);
 				lobjExtra.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
 				lobjExtra.coverageId = lobjTax.GetCoverage().getKey().toString();
@@ -2406,7 +2406,7 @@ public class SubPolicyServiceImpl
 				{
 					lobjColumnHeader = new SubPolicy.ColumnHeader();
 					lobjColumnHeader.label = larrTaxes[j].getLabel();
-					lobjColumnHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
+					lobjColumnHeader.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
 					lobjColumnHeader.unitsLabel = (String)larrTaxes[j].getAt(3);
 					lobjColumnHeader.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
 					larrOutColumns.put(larrTaxes[j].GetColumnOrder(), lobjColumnHeader);
@@ -2441,7 +2441,7 @@ public class SubPolicyServiceImpl
 				{
 					lobjColumnHeader = new SubPolicy.ColumnHeader();
 					lobjColumnHeader.label = larrTaxes[j].getLabel();
-					lobjColumnHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
+					lobjColumnHeader.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
 					lobjColumnHeader.unitsLabel = (String)larrTaxes[j].getAt(3);
 					lobjColumnHeader.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
 					larrOutColumns.put(larrTaxes[j].GetColumnOrder(), lobjColumnHeader);
@@ -2458,7 +2458,7 @@ public class SubPolicyServiceImpl
 					lobjHeader = new SubPolicy.HeaderField();
 					lobjHeader.fieldId = larrTaxes[j].getKey().toString();
 					lobjHeader.fieldName = larrTaxes[j].getLabel();
-					lobjHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
+					lobjHeader.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
 					lobjHeader.unitsLabel = (String)larrTaxes[j].getAt(3);
 					lobjHeader.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
 					lobjHeader.value = (String)larrTaxes[j].getAt(4);
@@ -2479,7 +2479,7 @@ public class SubPolicyServiceImpl
 					lobjExtra = new SubPolicy.ExtraField();
 					lobjExtra.fieldId = larrTaxes[j].getKey().toString();
 					lobjExtra.fieldName = larrTaxes[j].getLabel();
-					lobjExtra.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
+					lobjExtra.type = Policy2ServiceImpl.sGetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
 					lobjExtra.unitsLabel = (String)larrTaxes[j].getAt(3);
 					lobjExtra.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
 					lobjExtra.coverageId = larrTaxes[j].GetCoverage().getKey().toString();
