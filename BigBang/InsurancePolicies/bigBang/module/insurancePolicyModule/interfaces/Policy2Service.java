@@ -1,16 +1,29 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
-import bigBang.definitions.shared.Object2;
+import bigBang.definitions.shared.BigBangPolicyValidationException;
+import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
+import bigBang.definitions.shared.Object2;
+import bigBang.definitions.shared.PolicyVoiding;
+import bigBang.definitions.shared.Receipt;
+import bigBang.library.interfaces.ExactItemSubService;
+import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationException;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("Policy2Service")
 public interface Policy2Service
-	extends InsurancePolicyService
+	extends SearchService, ExactItemSubService
 {
 	public static class Util
 	{
@@ -27,8 +40,38 @@ public interface Policy2Service
 	public InsurancePolicy getEmptyPolicy(String subLineId) throws SessionExpiredException, BigBangException;
 	public Object2 getEmptyObject(String subLineId) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy getPolicy2(String policyId) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;
 	public Object2 getPolicyObject(String objectId) throws  SessionExpiredException, BigBangException;
 
 	public InsurancePolicy editPolicy(InsurancePolicy policy) throws  SessionExpiredException, BigBangException;
+
+	public InsurancePolicy performCalculations(String policyId)
+			throws SessionExpiredException, BigBangException, BigBangPolicyCalculationException;
+	public void validatePolicy(String policyId) throws SessionExpiredException, BigBangException, BigBangPolicyValidationException;
+
+	public InsuredObject includeObject(String policyId, InsuredObject object) throws SessionExpiredException, BigBangException;
+	public InsuredObject includeObjectFromClient(String policyId) throws SessionExpiredException, BigBangException;
+	public void excludeObject(String policyId, String objectId) throws SessionExpiredException, BigBangException;
+
+	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
+
+	public InsurancePolicy transferToClient(String policyId, String newClientId) throws SessionExpiredException, BigBangException;
+
+	public void createDebitNote(String policyId, DebitNote note) throws SessionExpiredException, BigBangException;
+
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
+	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
+
+	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
+	public Expense createExpense(Expense expense) throws SessionExpiredException, BigBangException;
+	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
+
+	public InsurancePolicy voidPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
+
+	public void deletePolicy(String policyId) throws SessionExpiredException, BigBangException;
+
+	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
+
+	//public RiskAnalisys createRiskAnalisys(String policyId, RiskAnalisys riskAnalisys) throws SessionExpiredException, BigBangException;
+	//public 
 }

@@ -124,7 +124,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		final String policyId = getEffectiveId(insurancePolicyId);
 		if(isTemp(policyId)){
 		}else{
-			this.service.getPolicy2(policyId, new BigBangAsyncCallback<InsurancePolicy>() {
+			this.service.getPolicy(policyId, new BigBangAsyncCallback<InsurancePolicy>() {
 
 				@Override
 				public void onResponseSuccess(InsurancePolicy result) {
@@ -255,54 +255,54 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 		//NEW POLICY
 		if(policyId == null){
-			service.openPolicyScratchPad(policyId, new BigBangAsyncCallback<Remap[]>() {
-
-				@Override
-				public void onResponseSuccess(Remap[] result) {
-					//If new policy
-					if(result.length == 1 && result[0].remapIds.length == 1 && result[0].remapIds[0].oldId == null){
-						InsurancePolicy policy = new InsurancePolicy();
-						RemapId remapId = result[0].remapIds[0];
-						policy.id = remapId.newId;
-						policiesInScratchPad.put(policy.id, policy.id);
-						handler.onResponse(policy);
-					}
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(policyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not open the new policy resource")
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
+//			service.openPolicyScratchPad(policyId, new BigBangAsyncCallback<Remap[]>() {
+//
+//				@Override
+//				public void onResponseSuccess(Remap[] result) {
+//					//If new policy
+//					if(result.length == 1 && result[0].remapIds.length == 1 && result[0].remapIds[0].oldId == null){
+//						InsurancePolicy policy = new InsurancePolicy();
+//						RemapId remapId = result[0].remapIds[0];
+//						policy.id = remapId.newId;
+//						policiesInScratchPad.put(policy.id, policy.id);
+//						handler.onResponse(policy);
+//					}
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					if(caught instanceof CorruptedPadException){
+//						onPadCorrupted(policyId);
+//					}
+//					handler.onError(new String[]{
+//							new String("Could not open the new policy resource")
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//
+//			});
 		}else if(!isTemp(policyId)){
 			//EXISTING POLICY
-			service.openPolicyScratchPad(policyId, new BigBangAsyncCallback<Remap[]>() {
-
-				@Override
-				public void onResponseSuccess(Remap[] result) {
-					doRemapping(result);
-					getPolicy(policyId, handler);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(policyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not open the policy resource")
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
+//			service.openPolicyScratchPad(policyId, new BigBangAsyncCallback<Remap[]>() {
+//
+//				@Override
+//				public void onResponseSuccess(Remap[] result) {
+//					doRemapping(result);
+//					getPolicy(policyId, handler);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					if(caught instanceof CorruptedPadException){
+//						onPadCorrupted(policyId);
+//					}
+//					handler.onError(new String[]{
+//							new String("Could not open the policy resource")
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//
+//			});
 		}else{
 			handler.onError(new String[]{
 					new String("Cannot open a policy resource twice for the same policy")	
@@ -313,50 +313,50 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	@Override
 	public void commitPolicy(final InsurancePolicy policy, final ResponseHandler<InsurancePolicy> handler){
 		final String policyId = getEffectiveId(policy.id);
-		this.service.commitPad(policyId, new BigBangAsyncCallback<Remap[]>() {
-
-			@Override
-			public void onResponseSuccess(Remap[] result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY, policy.id));
-				String policyId = result[0].remapIds[0].newId;
-				doRemapping(result);
-				getPolicy(policyId, handler);
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				if(caught instanceof CorruptedPadException){
-					onPadCorrupted(policyId);
-				}
-				handler.onError(new String[]{
-						new String("Could not commit the scratch pad")	
-				});
-				super.onResponseFailure(caught);
-			}
-
-		});
+//		this.service.commitPad(policyId, new BigBangAsyncCallback<Remap[]>() {
+//
+//			@Override
+//			public void onResponseSuccess(Remap[] result) {
+//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY, policy.id));
+//				String policyId = result[0].remapIds[0].newId;
+//				doRemapping(result);
+//				getPolicy(policyId, handler);
+//			}
+//
+//			@Override
+//			public void onResponseFailure(Throwable caught) {
+//				if(caught instanceof CorruptedPadException){
+//					onPadCorrupted(policyId);
+//				}
+//				handler.onError(new String[]{
+//						new String("Could not commit the scratch pad")	
+//				});
+//				super.onResponseFailure(caught);
+//			}
+//
+//		});
 	}
 
 	@Override
 	public void closePolicyResource(String policyId, final ResponseHandler<Void> handler) {
 		policyId = getEffectiveId(policyId);
 		if(isTemp(policyId)){
-			service.discardPad(policyId, new BigBangAsyncCallback<Remap[]>() {
-
-				@Override
-				public void onResponseSuccess(Remap[] result) {
-					doRemapping(result);
-					handler.onResponse(null);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not close the policy resource")	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
+//			service.discardPad(policyId, new BigBangAsyncCallback<Remap[]>() {
+//
+//				@Override
+//				public void onResponseSuccess(Remap[] result) {
+//					doRemapping(result);
+//					handler.onResponse(null);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					handler.onError(new String[]{
+//							new String("Could not close the policy resource")	
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//			});
 		}else{
 			handler.onError(new String[]{
 					new String("Cannot close an unopened policy resource")
@@ -370,40 +370,40 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			final ResponseHandler<TableSection> handler) {
 		final String policyId = getEffectiveId(insurancePolicyId);
 		if(isTemp(policyId)){
-			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(policyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not get the requested page for edit")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
+//			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
+//
+//				@Override
+//				public void onResponseSuccess(TableSection result) {
+//					handler.onResponse(result);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					if(caught instanceof CorruptedPadException){
+//						onPadCorrupted(policyId);
+//					}
+//					handler.onError(new String[]{
+//							new String("Could not get the requested page for edit")
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//			});
 		}else{
-			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not get the requested page")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
+//			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
+//
+//				@Override
+//				public void onResponseSuccess(TableSection result) {
+//					handler.onResponse(result);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					handler.onError(new String[]{
+//							new String("Could not get the requested page")
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//			});
 		}
 	}
 
@@ -585,40 +585,40 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			String exerciseId, final ResponseHandler<TableSection> handler) {
 		final String policyId = getEffectiveId(insurancePolicyId);
 		if(isTemp(policyId)){
-			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(policyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not get the requested page")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
+//			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
+//
+//				@Override
+//				public void onResponseSuccess(TableSection result) {
+//					handler.onResponse(result);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					if(caught instanceof CorruptedPadException){
+//						onPadCorrupted(policyId);
+//					}
+//					handler.onError(new String[]{
+//							new String("Could not get the requested page")
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//			});
 		}else{
-			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not get the requested page")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
+//			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<TableSection>() {
+//
+//				@Override
+//				public void onResponseSuccess(TableSection result) {
+//					handler.onResponse(result);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					handler.onError(new String[]{
+//							new String("Could not get the requested page")
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//			});
 		}
 	}
 
