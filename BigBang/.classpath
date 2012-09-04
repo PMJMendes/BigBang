@@ -15,7 +15,6 @@
 	<classpathentry excluding="**/.svn/" kind="src" path="Casualties"/>
 	<classpathentry excluding="**/.svn/" kind="src" path="Expenses"/>
 	<classpathentry excluding="**/.svn/" kind="src" path="Complaints"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre7"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BigBang.Jewel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Jewel.Petri"/>
@@ -35,5 +34,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/pdfbox-1.6.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jdom-1.1.3.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/ecs-1.4.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
