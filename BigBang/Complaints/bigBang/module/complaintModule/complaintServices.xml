@@ -1,0 +1,9 @@
+<servlet>
+	<servlet-name>ComplaintService</servlet-name>
+	<servlet-class>bigBang.module.complaintModule.server.ComplaintServiceImpl</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>ComplaintService</servlet-name>
+	<url-pattern>/bigbang/ComplaintService</url-pattern>
+</servlet-mapping>

@@ -1,0 +1,51 @@
+package bigBang.library.client.userInterface;
+
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.MenuItem;
+
+public abstract class ContactOperationsToolBar extends BigBangOperationsToolBar{
+
+	private MenuItem deleteItem;
+	private MenuItem createSubContact;
+
+	public ContactOperationsToolBar(){
+		
+		hideAll();
+		this.deleteItem = new MenuItem("Eliminar", new Command() {
+
+			@Override
+			public void execute() {
+				onDelete();
+			}
+		});
+		
+		createSubContact = new MenuItem("Sub Contacto", new Command() {
+
+			@Override
+			public void execute() {
+				onCreateSubContact();
+			}
+		});
+		
+		showItem(BigBangOperationsToolBar.SUB_MENU.EDIT, true);
+		showItem(SUB_MENU.ADMIN, true);
+		addItem(SUB_MENU.ADMIN, deleteItem);
+		showItem(SUB_MENU.CREATE, true);
+		addItem(SUB_MENU.CREATE, createSubContact);
+	}
+	
+	
+	public void allowEdit(boolean b){
+		
+		createMenuItem.setEnabled(b);
+		editCancelMenuItem.setEnabled(b);
+		adminMenuItem.setEnabled(b);
+		
+	}
+	
+	public abstract void onCreateSubContact();
+
+	public abstract void onDelete();
+	
+	
+}

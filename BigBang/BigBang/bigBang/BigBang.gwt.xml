@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='bigbang'>
+	<!-- Inherit the core Web Toolkit stuff. -->
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.i18n.I18N"/>
+
+	<!-- Inherit the default GWT style sheet. You can change -->
+	<!-- the theme of your GWT application by uncommenting -->
+	<!-- any one of the following lines. -->
+	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard' /> -->
+	 <inherits name='com.google.gwt.user.theme.chrome.Chrome'/>
+	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
+
+	<!-- Other module inherits -->
+	
+	<!-- Properties -->
+	<set-property name="user.agent" value="safari"/>
+
+	
+	<!-- Poruguese language, independent of country -->
+	<extend-property name="locale" values="pt"/>
+	<set-property-fallback name="locale" value="pt"/>
+	<set-property name="locale" value="pt" />
+
+	<!-- BigBang Application modules -->
+	<inherits name="com.google.gwt.http.HTTP"/>
+	<inherits name="Jewel.Web.Jewel_Web_no_load" />
+	<inherits name="bigBang.library.BigBangLibrary" />
+	<inherits name="bigBang.definitions.BigBangDefinitions" />
+	<inherits name="bigBang.module.mainModule.MainModule" />
+	<inherits name="bigBang.module.loginModule.LoginModule" />
+	
+	<!-- Specify the app entry point class. -->
+	<entry-point class='bigBang.client.BigBang' />
+
+	<!-- Specify the paths for translatable code -->
+	<source path='client' />
+	<source path='shared' />
+
+	<inherits name="bigBang.module.tasksModule.TasksModule" />
+	<inherits name="bigBang.module.generalSystemModule.GeneralSystemModule"/>
+	<inherits name="bigBang.module.clientModule.ClientModule"/>
+	<inherits name="bigBang.module.insurancePolicyModule.InsurancePolicyModule"/>
+	<inherits name="bigBang.module.receiptModule.ReceiptModule"/>
+	<inherits name="bigBang.module.expenseModule.ExpenseModule"/>
+	<inherits name="bigBang.module.complaintModule.ComplaintModule"/>
+	<inherits name="bigBang.module.casualtyModule.CasualtyModule"/>
+	<inherits name="bigBang.module.quoteRequestModule.QuoteRequestModule"/>
+	<inherits name="bigBang.module.riskAnalisysModule.RiskAnalisysModule"/>
+
+</module>

@@ -1,0 +1,10 @@
+.background {
+	background: url("images/EmptyContainerBackground.png");
+}
+
+.errorLabel {
+	background-color: #fff0da;
+	color: black;
+	border: 1px solid red;
+	padding: 10px;
+}

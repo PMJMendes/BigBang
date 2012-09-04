@@ -1,0 +1,29 @@
+<servlet>
+	<servlet-name>QuoteRequestService</servlet-name>
+	<servlet-class>bigBang.module.quoteRequestModule.server.QuoteRequestServiceImpl</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>QuoteRequestObjectService</servlet-name>
+	<servlet-class>bigBang.module.quoteRequestModule.server.QuoteRequestObjectServiceImpl</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>NegotiationService</servlet-name>
+	<servlet-class>bigBang.module.quoteRequestModule.server.NegotiationServiceImpl</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>QuoteRequestService</servlet-name>
+	<url-pattern>/bigbang_tests/QuoteRequestService</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>QuoteRequestObjectService</servlet-name>
+	<url-pattern>/bigbang_tests/QuoteRequestObjectService</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>NegotiationService</servlet-name>
+	<url-pattern>/bigbang_tests/NegotiationService</url-pattern>
+</servlet-mapping>
