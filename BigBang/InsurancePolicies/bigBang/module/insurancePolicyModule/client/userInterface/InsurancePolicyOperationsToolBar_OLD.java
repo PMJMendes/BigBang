@@ -5,7 +5,7 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
-public abstract class InsurancePolicyOperationsToolBar extends BigBangOperationsToolBar {
+public abstract class InsurancePolicyOperationsToolBar_OLD extends BigBangOperationsToolBar {
 
 	//CREATE
 	protected MenuItem receiptItem;
@@ -25,7 +25,9 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	protected MenuItem managerTransfer;
 	protected MenuItem clientAsInsuredObject;
 	protected MenuItem includeInsuredObject;
-	
+	protected MenuItem createInsuredObject;
+	protected MenuItem createExercise;
+
 	//REQUESTS
 	protected MenuItem agencyInfoRequestItem;
 	protected MenuItem clientInfoRequestItem;
@@ -39,7 +41,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	//OTHER
 
 
-	public InsurancePolicyOperationsToolBar(){
+	public InsurancePolicyOperationsToolBar_OLD(){
 		//CREATE
 		receiptItem = new MenuItem("Recibo", new Command() {
 
@@ -141,6 +143,22 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.DATA, clientAsInsuredObject);
+		createInsuredObject = new MenuItem("Criar Unidade de Risco", new Command() {
+
+			@Override
+			public void execute() {
+				onCreateInsuredObject();
+			}
+		});
+		addItem(SUB_MENU.DATA, createInsuredObject);	
+		createExercise = new MenuItem("Abrir Exercício", new Command() {
+
+			@Override
+			public void execute() {
+				onCreateExercise();
+			}
+		});
+		addItem(SUB_MENU.DATA, createExercise);	
 
 		//REQUESTS
 		agencyInfoRequestItem = new MenuItem("Pedido de Informação à Seguradora", new Command() {
@@ -219,6 +237,14 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		this.includeInsuredObject.setEnabled(allow);
 	}
 	
+	public void allowCreateInsuredObject(boolean allow){
+		this.createInsuredObject.setEnabled(allow);
+	}
+
+	public void allowCreateExercise(boolean allow) {
+		this.createExercise.setEnabled(allow);
+	}
+
 	public void allowDelete(boolean allow) {
 		this.deleteItem.setEnabled(allow);
 	}
