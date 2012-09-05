@@ -1,7 +1,6 @@
 package bigbang.tests.client;
 
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
@@ -81,21 +80,21 @@ public class TestPolicyGet
 
 	private static void DoStep3()
 	{
-		AsyncCallback<TableSection> callback = new AsyncCallback<TableSection>()
-		{
-			public void onFailure(Throwable caught)
-			{
-				return;
-			}
-
-			public void onSuccess(TableSection result)
-			{
+//		AsyncCallback<TableSection> callback = new AsyncCallback<TableSection>()
+//		{
+//			public void onFailure(Throwable caught)
+//			{
+//				return;
+//			}
+//
+//			public void onSuccess(TableSection result)
+//			{
 				DoStep4(tmpWorkspace);
-			}
-		};
-
-		Services.insurancePolicyService.getPage("87c1b24d-daa1-42bc-864a-a058003c4dba",
-				"070a6adc-48bc-428c-a785-a058003ca488", null, callback);
+//			}
+//		};
+//
+//		Services.insurancePolicyService.getPage("87c1b24d-daa1-42bc-864a-a058003c4dba",
+//				"070a6adc-48bc-428c-a785-a058003ca488", null, callback);
 	}
 
 	private static void DoStep4(String workspaceId)
