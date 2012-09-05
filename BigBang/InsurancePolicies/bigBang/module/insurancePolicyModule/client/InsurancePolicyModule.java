@@ -16,7 +16,6 @@ import bigBang.module.clientModule.client.userInterface.view.ClientSelectionView
 import bigBang.module.insurancePolicyModule.client.dataAccess.ExerciseDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsurancePolicyProcessBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsuranceSubPolicyBrokerImpl;
-import bigBang.module.insurancePolicyModule.client.dataAccess.InsuredObjectDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyInsuredObjectDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateDebitNoteViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseSubPolicyViewPresenter;
@@ -57,7 +56,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuranceP
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyMassManagerTransferView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyNegotiationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyOperationsView;
-import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView2;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySectionView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyTasksView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyTransferToClientView;
@@ -116,7 +115,7 @@ public class InsurancePolicyModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				InsurancePolicySearchOperationView2 view = (InsurancePolicySearchOperationView2) GWT.create(InsurancePolicySearchOperationView2.class);
+				InsurancePolicySearchOperationView view = (InsurancePolicySearchOperationView) GWT.create(InsurancePolicySearchOperationView.class);
 				InsurancePolicySearchOperationViewPresenter presenter = new InsurancePolicySearchOperationViewPresenter(view);
 				return presenter;
 			}
