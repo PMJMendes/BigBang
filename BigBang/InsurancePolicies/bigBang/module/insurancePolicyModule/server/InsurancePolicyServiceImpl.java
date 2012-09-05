@@ -200,7 +200,7 @@ public class InsurancePolicyServiceImpl
 		}
 		else
 		{
-			lobjResult.hasExercises = false;
+			lobjResult.hasExercises = true;
 
 			try
 			{
@@ -214,7 +214,7 @@ public class InsurancePolicyServiceImpl
 			if ( (larrExercises == null) || (larrExercises.length == 0) )
 			{
 				lobjExercise = sGetExerciseStructure(lobjStructure);
-				lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(1º Ano)");
+				lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(Ano Corrente)");
 
 				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
 			}
@@ -235,6 +235,71 @@ public class InsurancePolicyServiceImpl
 			}
 		}
 
+
+		return lobjResult;
+	}
+
+	public static InsuredObject sGetEmptyObject(UUID pidPolicy)
+		throws BigBangException
+	{
+		Policy lobjPolicy;
+		SubLine lobjSubLine;
+		FieldStructure lobjStructure;
+		InsuredObject lobjResult;
+		PolicyExercise[] larrExercises;
+		ComplexFieldContainer.ExerciseData lobjExercise;
+		int i;
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), pidPolicy);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjSubLine = lobjPolicy.GetSubLine();
+
+		lobjStructure = sGetSubLineStructure(lobjSubLine);
+
+		lobjResult = sGetObjectStructure(lobjStructure);
+
+		if ( Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
+		{
+			lobjResult.exerciseData = null;
+		}
+		else
+		{
+			try
+			{
+				larrExercises = lobjPolicy.GetCurrentExercises();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			if ( (larrExercises == null) || (larrExercises.length == 0) )
+			{
+				lobjExercise = sGetIntersectStructure(lobjStructure);
+				lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(Ano Corrente)");
+
+				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
+			}
+			else
+			{
+				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[larrExercises.length];
+
+				for ( i = 0; i < larrExercises.length; i++ )
+				{
+					lobjExercise = sGetIntersectStructure(lobjStructure);
+					sFillStaticExercise(lobjExercise, larrExercises[i]);
+
+					lobjResult.exerciseData[i] = lobjExercise;
+				}
+			}
+		}
 
 		return lobjResult;
 	}
@@ -1261,7 +1326,7 @@ public class InsurancePolicyServiceImpl
 
 		return lobjResult;
 	}
-	
+
 	private static ComplexFieldContainer.ExerciseData sGetExerciseStructure(FieldStructure pobjStructure)
 	{
 		ComplexFieldContainer.ExerciseData lobjResult;
@@ -1272,7 +1337,29 @@ public class InsurancePolicyServiceImpl
 
 		return lobjResult;
 	}
-	
+
+	private static InsuredObject sGetObjectStructure(FieldStructure pobjStructure)
+	{
+		InsuredObject lobjResult;
+
+		lobjResult = new InsuredObject();
+
+		sBuildFieldContainer(lobjResult, pobjStructure, true, false);
+
+		return lobjResult;
+	}
+
+	private static ComplexFieldContainer.ExerciseData sGetIntersectStructure(FieldStructure pobjStructure)
+	{
+		ComplexFieldContainer.ExerciseData lobjResult;
+
+		lobjResult = new ComplexFieldContainer.ExerciseData();
+
+		sBuildFieldContainer(lobjResult, pobjStructure, true, true);
+
+		return lobjResult;
+	}
+
 	private static void sSortCoverages(Coverage[] parrCoverages)
 	{
 		Arrays.sort(parrCoverages, new Comparator<Coverage>()
