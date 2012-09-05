@@ -3,7 +3,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm_OLD;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyTasksOperationsToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTasksViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTasksViewPresenter.Action;
@@ -14,7 +14,7 @@ import bigBang.library.client.userInterface.view.View;
 
 public class InsurancePolicyTasksView extends View implements InsurancePolicyTasksViewPresenter.Display{
 
-	protected InsurancePolicyForm form;
+	protected InsurancePolicyForm_OLD form;
 	protected InsurancePolicyTasksOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> handler;
 	
@@ -37,7 +37,7 @@ public class InsurancePolicyTasksView extends View implements InsurancePolicyTas
 		};
 		wrapper.add(toolbar);
 		
-		form = new InsurancePolicyForm(){
+		form = new InsurancePolicyForm_OLD(){
 			
 			@Override
 			public void onSubLineChanged(String subLineId) {

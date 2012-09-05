@@ -17,7 +17,7 @@ import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.SelectedProcessesList;
 import bigBang.library.client.userInterface.view.MassManagerTransferView;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm_OLD;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel.Filters;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
@@ -118,7 +118,7 @@ public class InsurancePolicyMassManagerTransferView extends
 	}
 	
 	public InsurancePolicyMassManagerTransferView() {
-		super(new InsurancePolicyForm() {
+		super(new InsurancePolicyForm_OLD() {
 
 			@Override
 			public void onSubLineChanged(String subLineId) {

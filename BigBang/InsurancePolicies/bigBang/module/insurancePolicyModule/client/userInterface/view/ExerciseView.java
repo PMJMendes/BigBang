@@ -14,14 +14,14 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseOperationsToolbar;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm_OLD;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ExerciseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ExerciseViewPresenter.Action;
 
 public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 	
 	private ExerciseForm exerciseForm;
-	private InsurancePolicyForm policyForm;
+	private InsurancePolicyForm_OLD policyForm;
 	private ActionInvokedEventHandler<Action> actionHandler;
 	private ExerciseOperationsToolbar toolbar;	
 	
@@ -32,7 +32,7 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 		mainWrapper.setSize("100%", "100%");
 		
 		exerciseForm = new ExerciseForm();
-		policyForm = new InsurancePolicyForm(){
+		policyForm = new InsurancePolicyForm_OLD(){
 			
 			@Override
 			public void onSubLineChanged(String subLineId) {

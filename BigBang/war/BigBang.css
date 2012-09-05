@@ -1,6 +1,5 @@
 /** Add css rules here for your application. */
-	/** Example rules used by the template application (remove for your app) */
-	
+/** Example rules used by the template application (remove for your app) */
 body {
 	background-color: gray;
 	background-image: url(images/EmptyContainerBackground.png);
@@ -14,18 +13,25 @@ h1 {
 	text-align: center;
 }
 
-.bigBangFormFieldLabel{
+.bigBangFormFieldLabel {
 	font-size: 11px;
-	font-weight: bold;	
+	font-weight: bold;
 }
 
-.gwt-MenuBarPopup{
+.bigBangExerciseChooser {
+	vertical-align: top;
+	background-color: #F6F6F6;
+	border: solid black;
+	border-width: 1px 0px 1px 0px;
+}
+
+.gwt-MenuBarPopup {
 	z-index: 12000;
 }
 
-.linkFileText{
+.linkFileText {
 	color: blue;
-	text-decoration:underline;
+	text-decoration: underline;
 	cursor: pointer;
 }
 
@@ -41,12 +47,11 @@ h1 {
 }
 
 .gwt-DisclosurePanel .content {
- 	width: auto;
- 	overflow-y: visible;
+	width: auto;
+	overflow-y: visible;
 }
 
 /** Most GWT widgets already have a style name defined */
-
 .gwt-TabBar {
 	background-image: url("images/menubg.png") !important;
 	color: #003156 !important;
@@ -58,7 +63,7 @@ h1 {
 	min-width: 100px;
 	height: 25px !important;
 	margin-left: 0px !important;
-	padding-top:10px !important;
+	padding-top: 10px !important;
 	background-image: url("images/menubg.png") !important;
 	color: #003156 !important;
 	border-left: 1px solid #c9def3;
@@ -106,7 +111,7 @@ h1 {
 	background-image: url("images/operationsToolbarSelected.png") !important;
 }
 
-.gwt-MenuItem-disabled{
+.gwt-MenuItem-disabled {
 	color: #BBB !important;
 }
 
@@ -165,7 +170,7 @@ h1 {
 }
 
 /* stackPanel */
-.gwt-StackPanel .gwt-StackPanelItem { 
+.gwt-StackPanel .gwt-StackPanelItem {
 	height: 25px !important;
 	background: url("images/listHeaderBackground1.png") repeat-x !important;
 	margin: 0px !important;
@@ -175,11 +180,12 @@ h1 {
 	font-weight: bold !important;
 	border: none !important;
 }
+
 .gwt-StackPanel .gwt-StackPanelItem-selected {
 	color: black;
 }
 
-.gwt-SuggestBoxPopup{
+.gwt-SuggestBoxPopup {
 	z-index: 12000 !important;
 }
 
@@ -188,92 +194,90 @@ h1 {
 }
 
 /*Auto complete field*/
-
 /** Add css rules here for your application. */
-
 .auto_suggest {
-    z-index: 20;
-    background-color: white;
-    padding: 10px;
-    width: 400px;
-    height: 230px;
+	z-index: 20;
+	background-color: white;
+	padding: 10px;
+	width: 400px;
+	height: 230px;
 }
 
 .original-token-input {
-    width: 396px;
-    border: 1px solid #8496ba;
-    font-size: 12px;
-    font-family: Verdana;
-    padding: 4px 8px;
+	width: 396px;
+	border: 1px solid #8496ba;
+	font-size: 12px;
+	font-family: Verdana;
+	padding: 4px 8px;
 }
 
 /* Example tokeninput style #2: Facebook style */
 ul.token-input-list-facebook {
-    overflow: hidden;
-    height: auto !important;
-    height: 1%;
-    width: 400px;
-    border: 1px solid #8496ba;
-    cursor: text;
-    font-size: 12px;
-    font-family: Verdana;
-    min-height: 1px;
-    z-index: 999;
-    margin: 0;
-    padding: 0;
-    background-color: #fff;
+	overflow: hidden;
+	height: auto !important;
+	height: 1%;
+	width: 400px;
+	border: 1px solid #8496ba;
+	cursor: text;
+	font-size: 12px;
+	font-family: Verdana;
+	min-height: 1px;
+	z-index: 999;
+	margin: 0;
+	padding: 0;
+	background-color: #fff;
 }
 
 ul.token-input-list-facebook {
-    list-style-type: none;
+	list-style-type: none;
 }
 
 ul.token-input-list-facebook li input {
-    border: 0;
-    width: 100px;
-    padding: 3px 8px;
-    background-color: white;
-    margin: 2px 0;
+	border: 0;
+	width: 100px;
+	padding: 3px 8px;
+	background-color: white;
+	margin: 2px 0;
 }
 
 li.token-input-token-facebook {
-    overflow: hidden;
-    height: auto !important;
-    height: 1%;
-    margin: 3px;
-    padding: 1px 3px;
-    background-color: #eff2f7;
-    color: #000;
-    cursor: default;
-    border: 1px solid #ccd5e4;
-    font-size: 11px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    float: left;
+	overflow: hidden;
+	height: auto !important;
+	height: 1%;
+	margin: 3px;
+	padding: 1px 3px;
+	background-color: #eff2f7;
+	color: #000;
+	cursor: default;
+	border: 1px solid #ccd5e4;
+	font-size: 11px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	float: left;
 }
 
 li.token-input-token-facebook p {
-    display: inline;
-    padding: 0;
-    margin: 0;
+	display: inline;
+	padding: 0;
+	margin: 0;
 }
 
 li.token-input-token-facebook span {
-    color: #a6b3cf;
-    margin-left: 5px;
-    font-weight: bold;
-    cursor: pointer;
+	color: #a6b3cf;
+	margin-left: 5px;
+	font-weight: bold;
+	cursor: pointer;
 }
 
 li.token-input-selected-token-facebook {
-    background-color: #5670a6;
-    border: 1px solid #3b5998;
-    color: #fff;
+	background-color: #5670a6;
+	border: 1px solid #3b5998;
+	color: #fff;
 }
 
 li.token-input-input-token-facebook {
-    float: left;
+	float: left;
 }
 
 /*Search Form*/
@@ -340,7 +344,7 @@ li.token-input-input-token-facebook {
 	background: url("images/formSectionTitleBackground.png") repeat-x;
 }
 
-.formDisclosureSectionHeader :hover{
+.formDisclosureSectionHeader :hover {
 	background: #688aa2;
 }
 
@@ -386,8 +390,8 @@ li.token-input-input-token-facebook {
 }
 
 .badge-cell {
-	position:absolute;
-	min-width:15px;
+	position: absolute;
+	min-width: 15px;
 }
 
 /* lists */
@@ -404,32 +408,28 @@ li.token-input-input-token-facebook {
 }
 
 .listItem-selected {
-	color:white !important;
+	color: white !important;
 	font-weight: bold;
 }
 
 .listItem {
-	background-color: aliceBlue; //#f6f6f6;
+	background-color: aliceBlue; //# f6f6f6;
 	border-bottom: 1px solid #e0e0e0;
 }
 
 /*****************************************************************************************************/
 /* Jewel Web (Back Office) CSS                                                                       */
 /*****************************************************************************************************/
-
 /*****************************************************************************************************/
 /* Generic                                                                                           */
 /*****************************************************************************************************/
-
-html
-{
+html {
 	overflow: hidden;
 	height: 100%;
 	width: 100%;
 }
 
-body
-{
+body {
 	overflow: hidden;
 	font: 8pt Verdana;
 	height: 100%;
@@ -438,14 +438,11 @@ body
 	padding: 0;
 }
 
-img
-{
+img {
 	display: block;
 }
 
-button
-{
-/* 	font: 8pt Verdana; */
+button { /* 	font: 8pt Verdana; */
 	white-space: nowrap;
 	margin: 0;
 }
@@ -453,27 +450,22 @@ button
 /*****************************************************************************************************/
 /* Login screen                                                                                      */
 /*****************************************************************************************************/
-
-.loginOuter
-{
+.loginOuter {
 	width: 100%;
 }
 
-.loginWrapper
-{
+.loginWrapper {
 	vertical-align: middle !important;
 }
 
-.loginInner
-{
+.loginInner {
 	margin: auto;
 	border: 1px solid black;
 	height: 0;
 	width: 0;
 }
 
-.loginError
-{
+.loginError {
 	width: 214px;
 	text-align: center;
 	color: Red;
@@ -481,30 +473,25 @@ button
 	margin: auto;
 }
 
-.loginForm
-{
+.loginForm {
 	margin: 5px;
 }
 
-.loginLabel
-{
+.loginLabel {
 	width: 100px;
 }
 
-.loginInput
-{
+.loginInput {
 	width: 100px;
 	font: 8pt Verdana;
 }
 
-.loginDomains
-{
+.loginDomains {
 	width: 100%;
 	font: 8pt Verdana;
 }
 
-.loginButton
-{
+.loginButton {
 	height: 0;
 	text-align: center;
 	padding: 5px 0 10px 0;
@@ -513,63 +500,54 @@ button
 /*****************************************************************************************************/
 /* Main screen                                                                                       */
 /*****************************************************************************************************/
-
-.mainWrapper
-{
+.mainWrapper {
+	
 }
 
-.mainHeader
-{
+.mainHeader {
 	width: 100%;
 }
 
-.headerLogo
-{
+.headerLogo {
 	width: 0;
 }
 
-.headerText
-{
+.headerText {
 	width: 100%;
 }
 
-.headerText div
-{
+.headerText div {
 	text-align: center;
 	font-weight: bold;
 	font-size: 20pt;
 }
 
-.messageLine
-{
+.messageLine {
 	width: 100%;
 	padding: 5px;
 	color: red;
 }
 
-.mainContainer
-{
+.mainContainer {
 	border-width: 1px 0 0 0;
 	border-style: solid;
 	border-color: black;
 	width: 100%;
 }
 
-.leftContainerWrapper
-{
+.leftContainerWrapper {
+	
 }
 
-.leftContainer
-{
+.leftContainer {
 	overflow: auto;
 }
 
-.rightContainerWrapper
-{
+.rightContainerWrapper {
+	
 }
 
-.rightContainer
-{
+.rightContainer {
 	border-width: 0 0 0 1px;
 	border-style: solid;
 	border-color: black;
@@ -577,32 +555,26 @@ button
 	overflow: auto;
 }
 
-.normalbk
-{
+.normalbk {
 	background-color: #87cefa;
 }
 
-.alternate
-{
+.alternate {
 	background-color: #d3eefd;
 }
 
 /*****************************************************************************************************/
 /* Tree Nav                                                                                          */
 /*****************************************************************************************************/
-
-.jewel-Tree
-{
+.jewel-Tree {
 	position: static !important;
 }
 
-.jewel-Tree table
-{
+.jewel-Tree table {
 	padding: 3px 3px 3px 7px;
 }
 
-.jewel-Tree .gwt-TreeItem
-{
+.jewel-Tree .gwt-TreeItem {
 	cursor: pointer;
 	display: block !important;
 	padding: 2px 0 1px 0;
@@ -612,37 +584,32 @@ button
 /*****************************************************************************************************/
 /* Main View                                                                                         */
 /*****************************************************************************************************/
-
-.jewel-ClosableTabPanel
-{
+.jewel-ClosableTabPanel {
+	
 }
 
-.jewel-ClosableTabBar
-{
+.jewel-ClosableTabBar {
 	width: 100%;
 }
 
-.jewel-ClosableTabBar-TabBar-wrapper
-{
+.jewel-ClosableTabBar-TabBar-wrapper {
 	width: 100%;
 }
 
-.jewel-ClosableTabPanel .gwt-TabBar
-{
+.jewel-ClosableTabPanel .gwt-TabBar {
+	
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarFirst-wrapper
-{
+.jewel-ClosableTabPanel .gwt-TabBarFirst-wrapper {
 	display: none;
 	visibility: hidden;
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarFirst
-{
+.jewel-ClosableTabPanel .gwt-TabBarFirst {
+	
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarItem-wrapper
-{
+.jewel-ClosableTabPanel .gwt-TabBarItem-wrapper {
 	background-color: white;
 	cursor: pointer;
 	border-width: 1px 0px 1px 1px;
@@ -650,51 +617,45 @@ button
 	border-color: black;
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarItem
-{
+.jewel-ClosableTabPanel .gwt-TabBarItem {
+	
 }
 
-.jewel-ClosableTabBar-LabelWrapper
-{
+.jewel-ClosableTabBar-LabelWrapper {
 	vertical-align: middle !important;
 }
 
-.jewel-ClosableTabBar-Label
-{
+.jewel-ClosableTabBar-Label {
 	margin: 2px;
 }
 
-.jewel-ClosableTabBar-CloseButtonWrapper
-{
+.jewel-ClosableTabBar-CloseButtonWrapper {
+	
 }
 
-.jewel-ClosableTabBar-CloseButton
-{
+.jewel-ClosableTabBar-CloseButton {
 	cursor: pointer;
 	margin: 2px;
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarItem-wrapper-selected
-{
+.jewel-ClosableTabPanel .gwt-TabBarItem-wrapper-selected {
 	cursor: default;
 	background-color: transparent;
 	border-color: black black transparent black;
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarItem-selected
-{
+.jewel-ClosableTabPanel .gwt-TabBarItem-selected {
+	
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarRest-wrapper
-{
+.jewel-ClosableTabPanel .gwt-TabBarRest-wrapper {
 	background-color: white;
 	border-width: 0px 0px 1px 1px;
 	border-style: solid;
 	border-color: white black black black;
 }
 
-.jewel-ClosableTabBar-CloseAll-wrapper
-{
+.jewel-ClosableTabBar-CloseAll-wrapper {
 	background-color: white;
 	border-width: 1px 0px 1px 0px;
 	border-style: solid;
@@ -703,14 +664,12 @@ button
 	vertical-align: middle !important;
 }
 
-.jewel-ClosableTabBar-CloseAll
-{
+.jewel-ClosableTabBar-CloseAll {
 	font: 8pt Verdana;
 	white-space: nowrap;
 }
 
-.jewel-ClosableTabPanel .gwt-TabPanelBottom
-{
+.jewel-ClosableTabPanel .gwt-TabPanelBottom {
 	border-width: 0 1px 1px 1px;
 	border-style: solid;
 	border-color: black;
@@ -719,18 +678,15 @@ button
 /*****************************************************************************************************/
 /* DynaSearch                                                                                        */
 /*****************************************************************************************************/
-
-.jewel-DynaSearch
-{
+.jewel-DynaSearch {
+	
 }
 
-.jewel-DynaSearch-Search
-{
+.jewel-DynaSearch-Search {
 	margin: 5px;
 }
 
-.jewel-DynaSearch-Results
-{
+.jewel-DynaSearch-Results {
 	border-width: 1px 0 0 0;
 	border-style: solid;
 	border-color: black;
@@ -739,38 +695,32 @@ button
 /*****************************************************************************************************/
 /* DynaView                                                                                          */
 /*****************************************************************************************************/
-
-.jewel-DynaView
-{
+.jewel-DynaView {
 	width: 100%;
 }
 
-.jewel-DynaViewTabBar
-{
+.jewel-DynaViewTabBar {
 	width: 100%;
 }
 
-.jewel-DynaView-TabBar-wrapper
-{
+.jewel-DynaView-TabBar-wrapper {
 	width: 100%;
 }
 
-.jewel-DynaView .gwt-TabBar
-{
+.jewel-DynaView .gwt-TabBar {
+	
 }
 
-.jewel-DynaView .gwt-TabBarFirst-wrapper
-{
+.jewel-DynaView .gwt-TabBarFirst-wrapper {
 	display: none;
 	visibility: hidden;
 }
 
-.jewel-DynaView .gwt-TabBarFirst
-{
+.jewel-DynaView .gwt-TabBarFirst {
+	
 }
 
-.jewel-DynaView .gwt-TabBarItem-wrapper
-{
+.jewel-DynaView .gwt-TabBarItem-wrapper {
 	background-color: white;
 	cursor: pointer;
 	border-width: 1px 1px 1px 0;
@@ -780,46 +730,40 @@ button
 	text-align: center;
 }
 
-.jewel-DynaView .gwt-TabBarItem
-{
+.jewel-DynaView .gwt-TabBarItem {
 	margin: 4px;
 }
 
-.jewel-DynaView .gwt-TabBarItem-wrapper-selected
-{
+.jewel-DynaView .gwt-TabBarItem-wrapper-selected {
 	background-color: transparent;
 	cursor: default;
 	border-color: black black transparent black;
 }
 
-.jewel-DynaView .gwt-TabBarItem-selected
-{
+.jewel-DynaView .gwt-TabBarItem-selected {
+	
 }
 
-.jewel-DynaView .gwt-TabBarRest-wrapper
-{
+.jewel-DynaView .gwt-TabBarRest-wrapper {
 	background-color: transparent;
 	border-width: 1px 0 1px 0;
 	border-style: solid;
 	border-color: transparent black black black;
 }
 
-.jewel-DynaViewToolbar-Wrapper
-{
+.jewel-DynaViewToolbar-Wrapper {
 	width: 0;
 	border-width: 1px 0 1px 0;
 	border-style: solid;
 	border-color: transparent black black black;
 }
 
-.jewel-DynaViewToolbar
-{
+.jewel-DynaViewToolbar {
 	background-color: transparent;
 	margin: 0 5px 1px 0;
 }
 
-.jewel-DynaView .gwt-TabPanelBottom
-{
+.jewel-DynaView .gwt-TabPanelBottom {
 	border-width: 0px;
 	border-style: none;
 }
@@ -827,67 +771,54 @@ button
 /*****************************************************************************************************/
 /* DynaForm                                                                                          */
 /*****************************************************************************************************/
-
-.jewel-DynaForm
-{
+.jewel-DynaForm {
+	
 }
 
-.jewel-DynaForm-Form
-{
+.jewel-DynaForm-Form {
 	table-layout: fixed;
 }
 
-.jewel-Control
-{
+.jewel-Control {
 	font: 8pt Verdana;
 }
 
 /*****************************************************************************************************/
 /* DynaFormActive                                                                                    */
 /*****************************************************************************************************/
-
-.jewel-DynaForm-ActionBar
-{
+.jewel-DynaForm-ActionBar {
 	margin: 5px;
 }
 
 /*****************************************************************************************************/
 /* DynaGrid                                                                                          */
 /*****************************************************************************************************/
-
-.jewel-DynaGrid
-{
+.jewel-DynaGrid {
 	width: 100%;
 }
 
-.jewel-DynaGrid-Main
-{
+.jewel-DynaGrid-Main {
 	margin: 20px 5px 5px 5px;
 }
 
-.jewel-DynaGrid-Toolbar
-{
+.jewel-DynaGrid-Toolbar {
 	width: 100%;
 }
 
-.jewel-DynaGrid-Unsort-Wrapper
-{
+.jewel-DynaGrid-Unsort-Wrapper {
 	width: 0px;
 }
 
-.jewel-DynaGrid-Refresh-Wrapper
-{
+.jewel-DynaGrid-Refresh-Wrapper {
 	width: 0px;
 }
 
-.jewel-DynaGrid-New-Wrapper
-{
+.jewel-DynaGrid-New-Wrapper {
 	text-align: right;
 	width: 100%;
 }
 
-.jewel-DynaGrid-Grid
-{
+.jewel-DynaGrid-Grid {
 	border-width: 1px;
 	border-style: solid;
 	border-color: black;
@@ -896,105 +827,87 @@ button
 	empty-cells: show;
 }
 
-.jewel-DynaGrid-Grid-HeaderCell
-{
+.jewel-DynaGrid-Grid-HeaderCell {
 	background-color: LightGrey;
 	text-align: center;
 }
 
-.jewel-DynaGrid-Grid-Row
-{
+.jewel-DynaGrid-Grid-Row {
 	border-color: Black;
 }
 
-.jewel-DynaGrid-Grid-Row:hover td
-{
+.jewel-DynaGrid-Grid-Row:hover td {
 	background-color: LightBlue;
 	border-color: Black;
 }
 
-.jewel-DynaGrid-Grid-OddRow
-{
+.jewel-DynaGrid-Grid-OddRow {
 	background-color: White;
 }
 
-.jewel-DynaGrid-Grid-EvenRow
-{
+.jewel-DynaGrid-Grid-EvenRow {
 	background-color: LightCyan;
 }
 
-.jewel-DynaGrid-Grid-HeaderCell:hover
-{
+.jewel-DynaGrid-Grid-HeaderCell:hover {
 	background-color: LightBlue;
 }
 
-.jewel-DynaGrid-Grid-Selected
-{
+.jewel-DynaGrid-Grid-Selected {
 	background-color: #316ac5;
 	color: White;
 	border-color: Black;
 	cursor: default;
 }
 
-.jewel-DynaGrid-Grid-Selected:hover td
-{
+.jewel-DynaGrid-Grid-Selected:hover td {
 	background-color: #316ac5;
 	color: White;
 	border-color: Black;
 	cursor: default;
 }
 
-.jewel-DynaGrid-Grid-CellDiv
-{
+.jewel-DynaGrid-Grid-CellDiv {
 	white-space: nowrap;
 	overflow: hidden;
 	height: 13px;
 }
 
-.jewel-DynaGrid-Grid td
-{
+.jewel-DynaGrid-Grid td {
 	border-width: 1px;
 	border-color: Black;
 	border-style: solid;
 }
 
-.jewel-DynaGrid-Pagebar
-{
+.jewel-DynaGrid-Pagebar {
 	width: 100%;
 }
 
-.jewel-DynaGrid-First-Wrapper
-{
+.jewel-DynaGrid-First-Wrapper {
 	width: 0px;
 }
 
-.jewel-DynaGrid-Prev-Wrapper
-{
+.jewel-DynaGrid-Prev-Wrapper {
 	width: 0px;
 }
 
-.jewel-DynaGrid-PageText-Wrapper
-{
+.jewel-DynaGrid-PageText-Wrapper {
 	width: 100%;
 }
 
-.jewel-DynaGrid-PageText
-{
+.jewel-DynaGrid-PageText {
 	text-align: center;
 }
 
-.jewel-DynaGrid-Next-Wrapper
-{
+.jewel-DynaGrid-Next-Wrapper {
 	width: 0px;
 }
 
-.jewel-DynaGrid-Last-Wrapper
-{
+.jewel-DynaGrid-Last-Wrapper {
 	width: 0px;
 }
 
-.jewel-DynaGrid-Editor
-{
+.jewel-DynaGrid-Editor {
 	border-width: 1px 0 0 0;
 	border-style: solid;
 	border-color: black;
@@ -1004,14 +917,11 @@ button
 /*****************************************************************************************************/
 /* Lookup                                                                                            */
 /*****************************************************************************************************/
-
-.jewel-Lookup-Display
-{
+.jewel-Lookup-Display {
 	font: 8pt Verdana;
 }
 
-.jewel-Lookup-Button
-{
+.jewel-Lookup-Button {
 	cursor: pointer;
 	border: 2px outset white;
 }
@@ -1019,22 +929,19 @@ button
 /*****************************************************************************************************/
 /* Lookup Popup                                                                                      */
 /*****************************************************************************************************/
-
-.jewel-LookupPopup
-{
+.jewel-LookupPopup {
 	border: 2px outset white;
 }
 
-.jewel-LookupPopup .dialogTop
-{
+.jewel-LookupPopup .dialogTop {
+	
 }
 
-.jewel-LookupPopup .dialogTopCenter
-{
+.jewel-LookupPopup .dialogTopCenter {
+	
 }
 
-.jewel-LookupPopup .dialogTopCenterInner
-{
+.jewel-LookupPopup .dialogTopCenterInner {
 	background-color: blue;
 	color: white;
 	font: bold 10pt "Trebuchet MS";
@@ -1042,59 +949,48 @@ button
 	padding: 2px 2px 2px 5px;
 }
 
-.jewel-LookupPopup .Caption
-{
+.jewel-LookupPopup .Caption {
 	cursor: default;
 }
 
-.jewel-LookupPopup .dialogMiddleCenter
-{
+.jewel-LookupPopup .dialogMiddleCenter {
 	vertical-align: top;
 	background-color: #87cefa;
 }
 
-.jewel-LookupPopup .dialogContent
-{
+.jewel-LookupPopup .dialogContent {
 	height: 100%;
 }
 
-.jewel-LookupPopup-Error-Wrapper
-{
+.jewel-LookupPopup-Error-Wrapper {
 	height: 0;
 }
 
-.jewel-LookupPopup .messageLine
-{
+.jewel-LookupPopup .messageLine {
 	padding: 2px;
 	border-width: 1px;
 	border-style: none none solid none;
 	border-color: black;
 }
 
-
 /* This style is here because this bar only appears in Dynagrids inside Lookup Popups */
-.jewel-DynaGrid-Resultsbar-Wrapper
-{
+.jewel-DynaGrid-Resultsbar-Wrapper {
 	width: 100%;
 	text-align: center;
 	margin: 10px 0 0 0;
 }
 
-.jewel-DynaGrid-Resultsbar
-{
+.jewel-DynaGrid-Resultsbar {
 	margin: auto;
 }
 /*****************************************************************************************************/
 /* Datebox                                                                                           */
 /*****************************************************************************************************/
-
-.jewel-Datebox-Display
-{
+.jewel-Datebox-Display {
 	font: 8pt Verdana;
 }
 
-.jewel-Datebox-Button
-{
+.jewel-Datebox-Button {
 	cursor: pointer;
 	border: 2px outset white;
 }
@@ -1102,23 +998,20 @@ button
 /*****************************************************************************************************/
 /* DatePopup                                                                                         */
 /*****************************************************************************************************/
-
-.jewel-DatePopup
-{
+.jewel-DatePopup {
 	border: 2px outset white;
 	background-color: white;
 }
 
-.jewel-DatePopup .dialogTop
-{
+.jewel-DatePopup .dialogTop {
+	
 }
 
-.jewel-DatePopup .dialogTopCenter
-{
+.jewel-DatePopup .dialogTopCenter {
+	
 }
 
-.jewel-DatePopup .dialogTopCenterInner
-{
+.jewel-DatePopup .dialogTopCenterInner {
 	background-color: blue;
 	color: white;
 	font: bold 10pt "Trebuchet MS";
@@ -1126,184 +1019,154 @@ button
 	padding: 2px 2px 2px 5px;
 }
 
-.jewel-DatePopup .Caption
-{
+.jewel-DatePopup .Caption {
 	cursor: default;
 }
 
-.jewel-DatePopup .dialogContent
-{
+.jewel-DatePopup .dialogContent {
 	margin: 5px;
 }
 
-.jewel-DatePopup-Datepicker
-{
+.jewel-DatePopup-Datepicker {
 	border-width: 1px;
 	border-style: solid;
 	border-color: black;
 	width: 100%;
 }
 
-.jewel-DatePopup-Datepicker .datePickerMonthSelector
-{
+.jewel-DatePopup-Datepicker .datePickerMonthSelector {
 	border-width: 0px 0px 1px 0px;
 	border-color: black;
 	border-style: solid;
 }
 
-.jewel-DatePopup-Datepicker .datePickerMonth
-{
+.jewel-DatePopup-Datepicker .datePickerMonth {
 	text-align: center;
 	font-weight: bold;
 	color: darkblue;
 	cursor: default;
 }
 
-.jewel-DatePopup-Datepicker .datePickerPreviousButton
-{
+.jewel-DatePopup-Datepicker .datePickerPreviousButton {
 	cursor: pointer;
 }
 
-.jewel-DatePopup-Datepicker .datePickerNextButton
-{
+.jewel-DatePopup-Datepicker .datePickerNextButton {
 	cursor: pointer;
 }
-.jewel-DatePopup-Datepicker .datePickerDays
-{
+
+.jewel-DatePopup-Datepicker .datePickerDays {
 	width: 100%;
 }
 
-.jewel-DatePopup-Datepicker .datePickerWeekendLabel
-{
+.jewel-DatePopup-Datepicker .datePickerWeekendLabel {
 	font-weight: bold;
 	padding: 5px 0px;
 	text-align: center;
 	cursor: default;
 }
 
-.jewel-DatePopup-Datepicker .datePickerWeekdayLabel
-{
+.jewel-DatePopup-Datepicker .datePickerWeekdayLabel {
 	font-weight: bold;
 	padding: 5px 0px;
 	text-align: center;
 	cursor: default;
 }
 
-.jewel-DatePopup-Datepicker .datePickerDay
-{
+.jewel-DatePopup-Datepicker .datePickerDay {
 	padding: 0px 0px 5px;
 	text-align: center;
 	cursor: pointer;
 }
 
-.jewel-DatePopup-Datepicker .datePickerDayIsToday
-{
+.jewel-DatePopup-Datepicker .datePickerDayIsToday {
 	text-decoration: underline;
 }
 
-.jewel-DatePopup-Datepicker .datePickerDayIsFiller
-{
+.jewel-DatePopup-Datepicker .datePickerDayIsFiller {
 	color: lightgray;
 }
 
-.jewel-DatePopup-Datepicker .datePickerDayIsValue
-{
+.jewel-DatePopup-Datepicker .datePickerDayIsValue {
 	font-weight: bold;
 	color: white;
 	background-color: blue;
 }
 
-.jewel-DatePopup-Timebar
-{
+.jewel-DatePopup-Timebar {
 	margin: 5px 0px;
 	width: 100%;
 }
 
-.jewel-DatePopup-Hours
-{
+.jewel-DatePopup-Hours {
 	width: 50px;
 }
 
-.jewel-DatePopup-Minutes
-{
+.jewel-DatePopup-Minutes {
 	width: 50px;
 }
 
-.jewel-DatePopup-Seconds
-{
+.jewel-DatePopup-Seconds {
 	width: 50px;
 }
 
-.jewel-DatePopup-Nanos
-{
+.jewel-DatePopup-Nanos {
 	width: 80px;
 }
 
-.jewel-DatePopup-Separator
-{
+.jewel-DatePopup-Separator {
 	font-weight: bold;
 	margin: 0 2px;
 }
 
-.jewel-DatePopup-Separator-Wrapper
-{
+.jewel-DatePopup-Separator-Wrapper {
 	vertical-align: baseline !important;
 }
 
-.jewel-DatePopup-Buttonbar
-{
+.jewel-DatePopup-Buttonbar {
 	width: 100%;
 }
 
-.jewel-DatePopup-Button-Wrapper
-{
+.jewel-DatePopup-Button-Wrapper {
 	width: 0;
 }
 
-.jewel-DatePopup-Buttongap-Wrapper
-{
+.jewel-DatePopup-Buttongap-Wrapper {
 	width: 100%;
 }
 
 /*****************************************************************************************************/
 /* MFileXfer                                                                                         */
 /*****************************************************************************************************/
-
-.Jewel-MFileXfer-Attach
-{
+.Jewel-MFileXfer-Attach {
 	width: 58px;
 }
 
-.Jewel-MFileXfer-View
-{
+.Jewel-MFileXfer-View {
 	width: 49px;
 }
 
-.Jewel-MFileXfer-Clear
-{
+.Jewel-MFileXfer-Clear {
 	width: 53px;
 }
 
 /*****************************************************************************************************/
 /* FilePopup                                                                                         */
 /*****************************************************************************************************/
-
-.jewel-FilePopup
-{
+.jewel-FilePopup {
 	border: 2px outset white;
 	background-color: white;
 }
 
-.jewel-FilePopup .dialogTop
-{
+.jewel-FilePopup .dialogTop {
+	
 }
 
-.jewel-FilePopup .dialogTopCenter
-{
+.jewel-FilePopup .dialogTopCenter {
+	
 }
 
-.jewel-FilePopup .dialogTopCenterInner
-{
+.jewel-FilePopup .dialogTopCenterInner {
 	background-color: blue;
 	color: white;
 	font: bold 10pt "Trebuchet MS";
@@ -1311,61 +1174,51 @@ button
 	padding: 2px 2px 2px 5px;
 }
 
-.jewel-FilePopup .Caption
-{
+.jewel-FilePopup .Caption {
 	cursor: default;
 }
 
-.jewel-FilePopup .dialogContent
-{
+.jewel-FilePopup .dialogContent {
 	margin: 5px;
 }
 
-.jewel-FilePopup-Main
-{
+.jewel-FilePopup-Main {
 	height: 0;
 }
 
-.jewel-FilePopup-Form-Wrapper
-{
+.jewel-FilePopup-Form-Wrapper {
 	height: 0;
 }
 
-.jewel-FilePopup-Form
-{
+.jewel-FilePopup-Form {
 	margin: 0;
 	padding: 0;
 }
 
-.jewel-FilePopup-Upload
-{
+.jewel-FilePopup-Upload {
+	
 }
 
-.jewel-FilePopup-Buttonbar
-{
+.jewel-FilePopup-Buttonbar {
 	width: 100%;
 	margin: 5px 0 0 0;
 }
 
-.jewel-FilePopup-Ok-Wrapper
-{
+.jewel-FilePopup-Ok-Wrapper {
 	width: 100%;
 }
 
-.jewel-FilePopup-Cancel-Wrapper
-{
+.jewel-FilePopup-Cancel-Wrapper {
 	width: 0;
 }
 
 /*****************************************************************************************************/
 /* DynaReport                                                                                        */
 /*****************************************************************************************************/
-
-.jewel-DynaReport
-{
+.jewel-DynaReport {
+	
 }
 
-.jewel-DynaReport-Open
-{
+.jewel-DynaReport-Open {
 	margin: 5px;
 }

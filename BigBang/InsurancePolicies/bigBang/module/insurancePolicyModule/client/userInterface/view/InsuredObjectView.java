@@ -13,7 +13,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm_OLD;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectOperationsToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuredObjectViewPresenter;
@@ -21,7 +21,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Insur
 
 public class InsuredObjectView extends View implements InsuredObjectViewPresenter.Display {
 
-	protected InsurancePolicyForm insurancePolicyForm;
+	protected InsurancePolicyForm_OLD insurancePolicyForm;
 	protected InsuredObjectForm form;
 	private InsuredObjectOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
@@ -45,7 +45,7 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 		}));
 		insurancePolicyFormWrapper.add(insurancePolicyFormHeader);
 		
-		insurancePolicyForm = new InsurancePolicyForm() {
+		insurancePolicyForm = new InsurancePolicyForm_OLD() {
 			
 			@Override
 			public void onSubLineChanged(String subLineId) {
