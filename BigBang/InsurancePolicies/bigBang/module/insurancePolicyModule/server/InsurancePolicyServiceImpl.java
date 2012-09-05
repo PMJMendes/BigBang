@@ -64,6 +64,7 @@ import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.Data.DebitNoteData;
 import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -86,6 +87,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ExecMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.PerformComputations;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.TransferToClient;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
@@ -529,15 +531,6 @@ public class InsurancePolicyServiceImpl
 		return sGetEmptyPolicy(UUID.fromString(subLineId), UUID.fromString(clientId));
 	}
 
-	public InsuredObject getEmptyObject(String policyId)
-		throws SessionExpiredException, BigBangException
-	{
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		return sGetEmptyObject(UUID.fromString(policyId));
-	}
-
 	public InsurancePolicy getPolicy(String policyId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -547,13 +540,55 @@ public class InsurancePolicyServiceImpl
 		return sGetPolicy(UUID.fromString(policyId));
 	}
 
-	public InsurancePolicy editPolicy(InsurancePolicy policy)
+	public InsuredObject getEmptyObject(String policyId)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return null;
+		return sGetEmptyObject(UUID.fromString(policyId));
+	}
+
+	public InsurancePolicy editPolicy(InsurancePolicy policy)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		PolicyData lobjData;
+		ManageData lopMPD;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policy.id));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( !lobjPolicy.GetSubLine().getKey().equals(UUID.fromString(policy.subLineId)) )
+			throw new BigBangException("Erro: Não pode alterar a modalidade da apólice.");
+
+		lobjData = sBuildData(policy, lobjPolicy);
+
+		try
+		{
+			lopMPD = new ManageData(lobjPolicy.GetProcessID());
+			lopMPD.mobjData = lobjData;
+
+			lopMPD.mobjContactOps = null;
+			lopMPD.mobjDocOps = null;
+
+			lopMPD.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetPolicy(lobjPolicy.getKey());
 	}
 
 	public InsurancePolicy performCalculations(String policyId)
@@ -1370,7 +1405,7 @@ public class InsurancePolicyServiceImpl
 				lobjResult.coverages[l].coverageId = pobjStructure.marrCoverages[i].getKey().toString();
 				lobjResult.coverages[l].coverageName = pobjStructure.marrCoverages[i].getLabel();
 				lobjResult.coverages[l].mandatory = pobjStructure.marrCoverages[i].IsMandatory();
-				lobjResult.coverages[l].order = pobjStructure.marrCoverages[i].GetOrder();
+				lobjResult.coverages[l].order = l;
 				lobjResult.coverages[l].presentInPolicy = ( lobjResult.coverages[l].mandatory ? true : null );
 				l++;
 
@@ -1873,5 +1908,162 @@ public class InsurancePolicyServiceImpl
 			pobjField.valueId = lobjAux.midValue.toString();
 			pobjField.value = lobjAux.mstrValue;
 		}
+	}
+	
+	private static PolicyData sBuildData(InsurancePolicy pobjSource, Policy pobjReference)
+	{
+		PolicyData lobjData;
+		int i;
+
+		lobjData = new PolicyData();
+//		lobjData.Clone(mobjPolicy);
+//
+//		lobjData.mbModified = mobjPolicy.mbModified;
+//
+//		if ( marrCoInsurers.size() > 0 )
+//		{
+//			lobjData.marrCoInsurers = new PolicyCoInsurerData[marrCoInsurers.size()];
+//			for ( i = 0; i < marrCoInsurers.size(); i++ )
+//			{
+//				lobjData.marrCoInsurers[i] = new PolicyCoInsurerData();
+//				lobjData.marrCoInsurers[i].Clone(marrCoInsurers.get(i));
+//				if ( marrCoInsurers.get(i).mbDeleted )
+//					lobjData.marrCoInsurers[i].mbDeleted = true;
+//				else if ( marrCoInsurers.get(i).mid == null )
+//					lobjData.marrCoInsurers[i].mbNew = true;
+//			}
+//		}
+//		else
+//			lobjData.marrCoInsurers = null;
+//
+//		if ( marrCoverages.size() > 0 )
+//		{
+//			lobjData.marrCoverages = new PolicyCoverageData[marrCoverages.size()];
+//			for ( i = 0; i < marrCoverages.size(); i++ )
+//			{
+//				lobjData.marrCoverages[i] = new PolicyCoverageData();
+//				lobjData.marrCoverages[i].Clone(marrCoverages.get(i));
+//				if ( marrCoverages.get(i).mid == null )
+//					lobjData.marrCoverages[i].mbNew = true;
+//			}
+//		}
+//		else
+//			lobjData.marrCoverages = null;
+//
+//		if ( marrObjects.size() > 0 )
+//		{
+//			lobjData.marrObjects = new PolicyObjectData[marrObjects.size()];
+//			for ( i = 0; i < marrObjects.size(); i++ )
+//			{
+//				lobjData.marrObjects[i] = new PolicyObjectData();
+//				lobjData.marrObjects[i].Clone(marrObjects.get(i));
+//				if ( marrObjects.get(i).mbDeleted )
+//					lobjData.marrObjects[i].mbDeleted = true;
+//				else if ( marrObjects.get(i).mid == null )
+//					lobjData.marrObjects[i].mbNew = true;
+//			}
+//		}
+//		else
+//			lobjData.marrObjects = null;
+//
+//		if ( marrExercises.size() > 0 )
+//		{
+//			lobjData.marrExercises = new PolicyExerciseData[marrExercises.size()];
+//			for ( i = 0; i < marrExercises.size(); i++ )
+//			{
+//				if ( mbIsNew )
+//				{
+//					if ( marrExercises.get(i).mdtStart == null )
+//						marrExercises.get(i).mdtStart = mobjPolicy.mdtBeginDate;
+//				}
+//
+//				lobjData.marrExercises[i] = new PolicyExerciseData();
+//				lobjData.marrExercises[i].Clone(marrExercises.get(i));
+//				if ( marrExercises.get(i).mbDeleted )
+//					lobjData.marrExercises[i].mbDeleted = true;
+//				else if ( marrExercises.get(i).mid == null )
+//					lobjData.marrExercises[i].mbNew = true;
+//			}
+//		}
+//		else
+//			lobjData.marrExercises = null;
+//
+//		if ( marrValues.size() > 0 )
+//		{
+//			lobjData.marrValues = new PolicyValueData[marrValues.size()];
+//			for ( i = 0; i < marrValues.size(); i++ )
+//			{
+//				lobjData.marrValues[i] = new PolicyValueData();
+//				lobjData.marrValues[i].Clone(marrValues.get(i));
+//				if ( marrValues.get(i).mbDeleted )
+//					lobjData.marrValues[i].mbDeleted = true;
+//				else if ( marrValues.get(i).mid == null )
+//					lobjData.marrValues[i].mbNew = true;
+//			}
+//		}
+//		else
+//			lobjData.marrValues = null;
+
+		return lobjData;
+	}
+	
+	private static void sBuildStaticData(PolicyData pobjDest, InsurancePolicy pobjSource)
+	{
+//		Hashtable<UUID, PolicyCoInsurerData> lmapCoInsurers;
+//		UUID lidCompany;
+//		PolicyCoInsurerData lobjCoInsurer;
+//		int i, j;
+//
+//		pobjDest.midClient = ( pobjSource.clientId == null ? null : UUID.fromString(pobjSource.clientId) );
+//		pobjDest.mstrNumber = pobjSource.number;
+//		pobjDest.midCompany = UUID.fromString(pobjSource.insuranceAgencyId);
+//		pobjDest.mdtBeginDate = ( pobjSource.startDate == null ? null :
+//				Timestamp.valueOf(pobjSource.startDate + " 00:00:00.0") );
+//		pobjDest.midSubLine = UUID.fromString(pobjSource.subLineId);
+//		pobjDest.midDuration = UUID.fromString(pobjSource.durationId);
+//		pobjDest.midFractioning = UUID.fromString(pobjSource.fractioningId);
+//		pobjDest.mlngMaturityDay = pobjSource.maturityDay;
+//		pobjDest.mlngMaturityMonth = pobjSource.maturityMonth;
+//		pobjDest.mdtEndDate = ( pobjSource.expirationDate == null ? null :
+//				Timestamp.valueOf(pobjSource.expirationDate + " 00:00:00.0") );
+//		pobjDest.mstrNotes = pobjSource.notes;
+//		pobjDest.midManager = ( pobjSource.managerId == null ? null : UUID.fromString(pobjSource.managerId) );
+//		pobjDest.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
+//		pobjDest.mbCaseStudy = pobjSource.caseStudy;
+//		pobjDest.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );
+//		pobjDest.midProfile = ( pobjSource.operationalProfileId == null ? null : UUID.fromString(pobjSource.operationalProfileId) );
+//
+//		pobjDest.mbModified = true;
+//
+//		j = -1;
+//		lmapCoInsurers = new Hashtable<UUID, PolicyCoInsurerData>();
+//		if ( pobjSource.coInsurers != null )
+//		{
+//			for ( i = 0; i < pobjSource.coInsurers.length; i++ )
+//			{
+//				lidCompany = UUID.fromString(pobjSource.coInsurers[i].insuranceAgencyId);
+//				j = FindCoInsurer(lidCompany, j + 1);
+//				if ( j < 0 )
+//				{
+//					lobjCoInsurer = new PolicyCoInsurerData();
+//					lobjCoInsurer.midPolicy = pobjDest.mid;
+//					lobjCoInsurer.midCompany = lidCompany;
+//					lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent+"");
+//					marrCoInsurers.add(lobjCoInsurer);
+//				}
+//				else
+//				{
+//					lobjCoInsurer = marrCoInsurers.get(j);
+//					lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent+"");
+//					lobjCoInsurer.mbDeleted = false;
+//				}
+//				lmapCoInsurers.put(lidCompany, lobjCoInsurer);
+//			}
+//		}
+//		for ( i = 0; i < marrCoInsurers.size(); i++ )
+//		{
+//			if ( lmapCoInsurers.get(marrCoInsurers.get(i).midCompany) == null )
+//				marrCoInsurers.get(i).mbDeleted = true;
+//		}
 	}
 }
