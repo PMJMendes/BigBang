@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.Remap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -58,14 +58,14 @@ public class TestSubObjectCreate
 
 	private static void DoStep2()
 	{
-		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject> ()
+		AsyncCallback<InsuredObjectOLD> callback = new AsyncCallback<InsuredObjectOLD> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsuredObject result)
+			public void onSuccess(InsuredObjectOLD result)
 			{
 				DoStep3(result);
 			}
@@ -74,16 +74,16 @@ public class TestSubObjectCreate
 		Services.subPolicyService.createObjectInPad(gstrPad, callback);
 	}
 
-	private static void DoStep3(InsuredObject object)
+	private static void DoStep3(InsuredObjectOLD object)
 	{
-		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject> ()
+		AsyncCallback<InsuredObjectOLD> callback = new AsyncCallback<InsuredObjectOLD> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsuredObject result)
+			public void onSuccess(InsuredObjectOLD result)
 			{
 				DoStep4();
 			}

@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
@@ -54,14 +54,14 @@ public class TestSubObjectGet
 
 	private static void DoStep2(SearchResult stub)
 	{
-		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject>()
+		AsyncCallback<InsuredObjectOLD> callback = new AsyncCallback<InsuredObjectOLD>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsuredObject result)
+			public void onSuccess(InsuredObjectOLD result)
 			{
 				DoStep3(tmpWorkspace);
 			}
