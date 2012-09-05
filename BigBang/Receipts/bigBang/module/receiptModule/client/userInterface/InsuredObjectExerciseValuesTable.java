@@ -2,8 +2,8 @@ package bigBang.module.receiptModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.Grid;
 
-import bigBang.definitions.shared.InsuredObject.Exercise;
-import bigBang.definitions.shared.InsuredObject.HeaderData;
+import bigBang.definitions.shared.InsuredObjectOLD.Exercise;
+import bigBang.definitions.shared.InsuredObjectOLD.HeaderData;
 import bigBang.library.client.userInterface.view.View;
 
 public class InsuredObjectExerciseValuesTable extends View {

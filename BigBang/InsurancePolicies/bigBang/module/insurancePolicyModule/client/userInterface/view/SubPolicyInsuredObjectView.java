@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -97,7 +97,7 @@ public class SubPolicyInsuredObjectView extends View implements SubPolicyInsured
 	}
 
 	@Override
-	public HasEditableValue<InsuredObject> getInsuredObjectForm() {
+	public HasEditableValue<InsuredObjectOLD> getInsuredObjectForm() {
 		return this.objectForm;
 	}
 

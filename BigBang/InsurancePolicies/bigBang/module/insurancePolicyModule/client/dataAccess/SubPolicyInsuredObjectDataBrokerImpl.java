@@ -14,8 +14,8 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsuredObject;
-import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObjectStubOLD;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
@@ -28,12 +28,12 @@ import bigBang.module.insurancePolicyModule.interfaces.SubPolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.InsuredObjectSearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsuredObjectSortParameter;
 
-public class SubPolicyInsuredObjectDataBrokerImpl extends DataBroker<InsuredObject>
+public class SubPolicyInsuredObjectDataBrokerImpl extends DataBroker<InsuredObjectOLD>
 implements InsuredObjectDataBroker {
 
 	protected SubPolicyObjectServiceAsync service;
 	protected SubPolicyServiceAsync subPolicyService;
-	protected SearchDataBroker<InsuredObjectStub> searchBroker;
+	protected SearchDataBroker<InsuredObjectStubOLD> searchBroker;
 
 	protected Map<String, String> objectsInScratchPad;
 	protected InsuranceSubPolicyBroker subPolicyBroker;
@@ -55,12 +55,12 @@ implements InsuredObjectDataBroker {
 	@Override
 	public void notifyItemCreation(String itemId) {
 		itemId = getEffectiveId(itemId);
-		this.getInsuredObject(itemId, new ResponseHandler<InsuredObject>() {
+		this.getInsuredObject(itemId, new ResponseHandler<InsuredObjectOLD>() {
 
 			@Override
-			public void onResponse(InsuredObject response) {
+			public void onResponse(InsuredObjectOLD response) {
 				incrementDataVersion();
-				for(DataBrokerClient<InsuredObject> bc : getClients()){
+				for(DataBrokerClient<InsuredObjectOLD> bc : getClients()){
 					((InsuredObjectDataBrokerClient) bc).addInsuredObject(response);
 					((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS, getCurrentDataVersion());
 				}
@@ -77,7 +77,7 @@ implements InsuredObjectDataBroker {
 	public void notifyItemDeletion(String itemId) {
 		incrementDataVersion();
 		itemId = getEffectiveId(itemId);
-		for(DataBrokerClient<InsuredObject> bc : getClients()){
+		for(DataBrokerClient<InsuredObjectOLD> bc : getClients()){
 			((InsuredObjectDataBrokerClient) bc).removeInsuredObject(itemId);
 			((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS, getCurrentDataVersion());
 		}
@@ -86,12 +86,12 @@ implements InsuredObjectDataBroker {
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		itemId = getEffectiveId(itemId);
-		this.getInsuredObject(itemId, new ResponseHandler<InsuredObject>() {
+		this.getInsuredObject(itemId, new ResponseHandler<InsuredObjectOLD>() {
 
 			@Override
-			public void onResponse(InsuredObject response) {
+			public void onResponse(InsuredObjectOLD response) {
 				incrementDataVersion();
-				for(DataBrokerClient<InsuredObject> bc : getClients()){
+				for(DataBrokerClient<InsuredObjectOLD> bc : getClients()){
 					((InsuredObjectDataBrokerClient) bc).updateInsuredObject(response);
 					((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS, getCurrentDataVersion());
 				}
@@ -106,13 +106,13 @@ implements InsuredObjectDataBroker {
 
 	@Override
 	public void getInsuredObject(String id,
-			final ResponseHandler<InsuredObject> handler) {
+			final ResponseHandler<InsuredObjectOLD> handler) {
 		id = getEffectiveId(id);
 		if(isTemp(id)){
-			subPolicyService.getObjectInPad(id, new BigBangAsyncCallback<InsuredObject>() {
+			subPolicyService.getObjectInPad(id, new BigBangAsyncCallback<InsuredObjectOLD>() {
 
 				@Override
-				public void onResponseSuccess(InsuredObject result) {
+				public void onResponseSuccess(InsuredObjectOLD result) {
 					result.id = getFinalMapping(result.id);
 					handler.onResponse(result);
 				}
@@ -127,10 +127,10 @@ implements InsuredObjectDataBroker {
 
 			});
 		}else{
-			this.service.getObject(id, new BigBangAsyncCallback<InsuredObject>() {
+			this.service.getObject(id, new BigBangAsyncCallback<InsuredObjectOLD>() {
 
 				@Override
-				public void onResponseSuccess(InsuredObject result) {
+				public void onResponseSuccess(InsuredObjectOLD result) {
 					handler.onResponse(result);
 				}
 
@@ -147,16 +147,16 @@ implements InsuredObjectDataBroker {
 	}
 
 	@Override
-	public void createInsuredObject(String ownerId, final ResponseHandler<InsuredObject> handler) {
+	public void createInsuredObject(String ownerId, final ResponseHandler<InsuredObjectOLD> handler) {
 		if(getSubPolicyBroker().isTemp(ownerId)){
 			ownerId = getSubPolicyBroker().getEffectiveId(ownerId);
-			subPolicyService.createObjectInPad(ownerId, new BigBangAsyncCallback<InsuredObject>() {
+			subPolicyService.createObjectInPad(ownerId, new BigBangAsyncCallback<InsuredObjectOLD>() {
 
 				@Override
-				public void onResponseSuccess(InsuredObject result) {
+				public void onResponseSuccess(InsuredObjectOLD result) {
 					objectsInScratchPad.put(result.id, result.id);
 					incrementDataVersion();
-					for(DataBrokerClient<InsuredObject> client : clients) {
+					for(DataBrokerClient<InsuredObjectOLD> client : clients) {
 						((InsuredObjectDataBrokerClient)client).addInsuredObject(result);
 						((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 					}
@@ -180,20 +180,20 @@ implements InsuredObjectDataBroker {
 	}
 
 	@Override
-	public void updateInsuredObject(InsuredObject object,
-			final ResponseHandler<InsuredObject> handler) {
+	public void updateInsuredObject(InsuredObjectOLD object,
+			final ResponseHandler<InsuredObjectOLD> handler) {
 		String id = getEffectiveId(object.id);
 		if(isTemp(id)){
 			String tempId = object.id;
 			object.id = id;
 
-			subPolicyService.updateObjectInPad(object, new BigBangAsyncCallback<InsuredObject>() {
+			subPolicyService.updateObjectInPad(object, new BigBangAsyncCallback<InsuredObjectOLD>() {
 
 				@Override
-				public void onResponseSuccess(InsuredObject result) {
+				public void onResponseSuccess(InsuredObjectOLD result) {
 					result.id = getFinalMapping(result.id);
 					incrementDataVersion();
-					for(DataBrokerClient<InsuredObject> client : clients) {
+					for(DataBrokerClient<InsuredObjectOLD> client : clients) {
 						((InsuredObjectDataBrokerClient)client).updateInsuredObject(result);
 						((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 					}
@@ -220,10 +220,10 @@ implements InsuredObjectDataBroker {
 	public void deleteInsuredObject(String objectId,
 			final ResponseHandler<Void> handler) {
 		objectId = getEffectiveId(objectId);
-		getInsuredObject(objectId, new ResponseHandler<InsuredObject>() {
+		getInsuredObject(objectId, new ResponseHandler<InsuredObjectOLD>() {
 
 			@Override
-			public void onResponse(final InsuredObject response) {
+			public void onResponse(final InsuredObjectOLD response) {
 				String ownerId = response.ownerId;
 				if(getSubPolicyBroker().isTemp(ownerId)){
 					String tempId = getEffectiveId(response.id);
@@ -232,7 +232,7 @@ implements InsuredObjectDataBroker {
 						@Override
 						public void onResponseSuccess(Void result) {
 							incrementDataVersion();
-							for(DataBrokerClient<InsuredObject> client : clients) {
+							for(DataBrokerClient<InsuredObjectOLD> client : clients) {
 								((InsuredObjectDataBrokerClient)client).removeInsuredObject(response.id);
 								((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 							}
@@ -265,7 +265,7 @@ implements InsuredObjectDataBroker {
 
 	@Override
 	public void getProcessInsuredObjects(String ownerId,
-			final ResponseHandler<Collection<InsuredObjectStub>> handler) {
+			final ResponseHandler<Collection<InsuredObjectStubOLD>> handler) {
 
 		ownerId = getSubPolicyBroker().getFinalMapping(ownerId);
 
@@ -282,10 +282,10 @@ implements InsuredObjectDataBroker {
 				sort
 		};
 
-		this.getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<InsuredObjectStub>>() {
+		this.getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<InsuredObjectStubOLD>>() {
 
 			@Override
-			public void onResponse(Search<InsuredObjectStub> response) {
+			public void onResponse(Search<InsuredObjectStubOLD> response) {
 				handler.onResponse(response.getResults());
 			}
 
@@ -322,7 +322,7 @@ implements InsuredObjectDataBroker {
 	}
 
 	@Override
-	public SearchDataBroker<InsuredObjectStub> getSearchBroker() {
+	public SearchDataBroker<InsuredObjectStubOLD> getSearchBroker() {
 		return this.searchBroker;
 	}
 

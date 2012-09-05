@@ -12,13 +12,13 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicyStub;
-import bigBang.definitions.shared.InsuredObject;
-import bigBang.definitions.shared.InsuredObject.CoverageData;
-import bigBang.definitions.shared.InsuredObject.Exercise;
-import bigBang.definitions.shared.InsuredObject.HeaderData;
-import bigBang.definitions.shared.InsuredObject.HeaderData.FixedField;
-import bigBang.definitions.shared.InsuredObject.HeaderData.VariableField;
-import bigBang.definitions.shared.InsuredObject.HeaderData.VariableField.VariableValue;
+import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObjectOLD.CoverageData;
+import bigBang.definitions.shared.InsuredObjectOLD.Exercise;
+import bigBang.definitions.shared.InsuredObjectOLD.HeaderData;
+import bigBang.definitions.shared.InsuredObjectOLD.HeaderData.FixedField;
+import bigBang.definitions.shared.InsuredObjectOLD.HeaderData.VariableField;
+import bigBang.definitions.shared.InsuredObjectOLD.HeaderData.VariableField.VariableValue;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
@@ -34,7 +34,7 @@ import bigBang.library.client.userInterface.TwoKeyTableView;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
-public class InsuredObjectForm extends FormView<InsuredObject> {
+public class InsuredObjectForm extends FormView<InsuredObjectOLD> {
 
 	public class DynFormField extends FormField<String> {
 
@@ -325,7 +325,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.dynamicHeaderSection.showHeader(false);
 		this.addSection(dynamicHeaderSection);
 
-		this.setValue(new InsuredObject());
+		this.setValue(new InsuredObjectOLD());
 	}
 
 	protected void showSectionForTypeWithId(String typeId) {
@@ -362,8 +362,8 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	}
 
 	@Override
-	public InsuredObject getInfo() {
-		InsuredObject result = this.value;
+	public InsuredObjectOLD getInfo() {
+		InsuredObjectOLD result = this.value;
 
 		//common fields
 		result.unitIdentification = identification.getValue();
@@ -471,9 +471,9 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	}
 
 	@Override
-	public void setInfo(InsuredObject info) {
+	public void setInfo(InsuredObjectOLD info) {
 		if(info == null){
-			this.setValue(new InsuredObject());
+			this.setValue(new InsuredObjectOLD());
 			return;
 		}
 

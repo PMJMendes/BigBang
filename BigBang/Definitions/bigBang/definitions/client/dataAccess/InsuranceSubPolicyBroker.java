@@ -6,7 +6,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SubPolicy;
@@ -48,9 +48,9 @@ public interface InsuranceSubPolicyBroker extends
 
 	void validateSubPolicy(String subPolicyId, ResponseHandler<Void> handler);
 	
-	void includeInsuredObject(InsuredObject object, ResponseHandler<InsuredObject> handler);
+	void includeInsuredObject(InsuredObjectOLD object, ResponseHandler<InsuredObjectOLD> handler);
 	
-	void includeObjectFromClient(String subPolicyId, ResponseHandler<InsuredObject> handler);
+	void includeObjectFromClient(String subPolicyId, ResponseHandler<InsuredObjectOLD> handler);
 	
 	void excludeObject(String subPolicyId, String objectId, ResponseHandler<Void> handler);
 	

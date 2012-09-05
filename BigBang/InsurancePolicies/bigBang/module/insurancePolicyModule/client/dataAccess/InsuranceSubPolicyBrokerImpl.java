@@ -21,7 +21,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
@@ -614,12 +614,12 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void includeInsuredObject(InsuredObject object,
-			final ResponseHandler<InsuredObject> handler) {
-		service.includeObject(object.ownerId, object, new BigBangAsyncCallback<InsuredObject>() {
+	public void includeInsuredObject(InsuredObjectOLD object,
+			final ResponseHandler<InsuredObjectOLD> handler) {
+		service.includeObject(object.ownerId, object, new BigBangAsyncCallback<InsuredObjectOLD>() {
 
 			@Override
-			public void onResponseSuccess(InsuredObject result) {
+			public void onResponseSuccess(InsuredObjectOLD result) {
 				insuredObjectsBroker.notifyItemCreation(result.id);
 			}
 			
@@ -635,11 +635,11 @@ implements InsuranceSubPolicyBroker {
 
 	@Override
 	public void includeObjectFromClient(final String subPolicyId,
-			final ResponseHandler<InsuredObject> handler) {
-		service.includeObjectFromClient(subPolicyId, new BigBangAsyncCallback<InsuredObject>() {
+			final ResponseHandler<InsuredObjectOLD> handler) {
+		service.includeObjectFromClient(subPolicyId, new BigBangAsyncCallback<InsuredObjectOLD>() {
 
 			@Override
-			public void onResponseSuccess(InsuredObject result) {
+			public void onResponseSuccess(InsuredObjectOLD result) {
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.INCLUDE_OBJECT_FROM_CLIENT, subPolicyId));
 				insuredObjectsBroker.notifyItemCreation(result.id);
 			}

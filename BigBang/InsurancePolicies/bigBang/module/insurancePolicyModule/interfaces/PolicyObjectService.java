@@ -1,6 +1,6 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -25,5 +25,5 @@ public interface PolicyObjectService
 		}
 	}
 
-	public InsuredObject getObject(String objectId) throws SessionExpiredException, BigBangException;
+	public InsuredObjectOLD getObject(String objectId) throws SessionExpiredException, BigBangException;
 }

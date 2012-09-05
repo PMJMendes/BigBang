@@ -6,7 +6,7 @@ import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicyOLD;
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -57,10 +57,10 @@ public interface InsurancePolicyServiceOLD
 	public InsurancePolicyOLD.TableSection savePage(InsurancePolicyOLD.TableSection data)
 			throws SessionExpiredException, BigBangException, CorruptedPadException;
 
-	public InsuredObject getObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public InsuredObject createObjectInPad(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public InsuredObject createObjectFromClientInPad(String policyId) throws SessionExpiredException, BigBangException;
-	public InsuredObject updateObjectInPad(InsuredObject data)
+	public InsuredObjectOLD getObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public InsuredObjectOLD createObjectInPad(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public InsuredObjectOLD createObjectFromClientInPad(String policyId) throws SessionExpiredException, BigBangException;
+	public InsuredObjectOLD updateObjectInPad(InsuredObjectOLD data)
 			throws SessionExpiredException, BigBangException, CorruptedPadException;
 	public void deleteObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 
@@ -76,8 +76,8 @@ public interface InsurancePolicyServiceOLD
 			BigBangPolicyCalculationException;
 	public void validatePolicy(String policyId) throws SessionExpiredException, BigBangException, BigBangPolicyValidationException;
 
-	public InsuredObject includeObject(String policyId, InsuredObject object) throws SessionExpiredException, BigBangException;
-	public InsuredObject includeObjectFromClient(String policyId) throws SessionExpiredException, BigBangException;
+	public InsuredObjectOLD includeObject(String policyId, InsuredObjectOLD object) throws SessionExpiredException, BigBangException;
+	public InsuredObjectOLD includeObjectFromClient(String policyId) throws SessionExpiredException, BigBangException;
 	public void excludeObject(String policyId, String objectId) throws SessionExpiredException, BigBangException;
 
 	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;

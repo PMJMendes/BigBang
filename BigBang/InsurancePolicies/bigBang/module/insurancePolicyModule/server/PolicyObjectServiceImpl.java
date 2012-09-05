@@ -10,8 +10,8 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.Address;
-import bigBang.definitions.shared.InsuredObject;
-import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObjectStubOLD;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
@@ -37,14 +37,14 @@ public class PolicyObjectServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public InsuredObject getObject(String objectId)
+	public InsuredObjectOLD getObject(String objectId)
 		throws SessionExpiredException, BigBangException
 	{
 		UUID lidObject;
 		PolicyObject lobjObject;
 		ObjectBase lobjZipCode;
 		ObjectBase lobjType;
-		InsuredObject lobjResult;
+		InsuredObjectOLD lobjResult;
 		Policy lobjPolicy;
 		PolicyExercise[] larrExercises;
 		PolicyCoverage[] larrCoverages;
@@ -53,14 +53,14 @@ public class PolicyObjectServiceImpl
 		int i, j, k;
 		ArrayList<PolicyCoverage> larrLocalCoverages;
 		PolicyCoverage lobjHeaderCoverage;
-		ArrayList<InsuredObject.CoverageData.FixedField> larrAuxFixed;
-		InsuredObject.CoverageData.FixedField lobjFixed;
-		ArrayList<InsuredObject.CoverageData.VariableField> larrAuxVariable;
-		InsuredObject.CoverageData.VariableField lobjVariable;
-		Hashtable<UUID, InsuredObject.CoverageData.VariableField> larrValueMap;
-		Hashtable<UUID, ArrayList<InsuredObject.CoverageData.VariableField.VariableValue>> larrAuxMap;
-		InsuredObject.CoverageData.VariableField.VariableValue lobjValue;
-		ArrayList<InsuredObject.CoverageData.VariableField.VariableValue> larrAuxValues;
+		ArrayList<InsuredObjectOLD.CoverageData.FixedField> larrAuxFixed;
+		InsuredObjectOLD.CoverageData.FixedField lobjFixed;
+		ArrayList<InsuredObjectOLD.CoverageData.VariableField> larrAuxVariable;
+		InsuredObjectOLD.CoverageData.VariableField lobjVariable;
+		Hashtable<UUID, InsuredObjectOLD.CoverageData.VariableField> larrValueMap;
+		Hashtable<UUID, ArrayList<InsuredObjectOLD.CoverageData.VariableField.VariableValue>> larrAuxMap;
+		InsuredObjectOLD.CoverageData.VariableField.VariableValue lobjValue;
+		ArrayList<InsuredObjectOLD.CoverageData.VariableField.VariableValue> larrAuxValues;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -110,7 +110,7 @@ public class PolicyObjectServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lobjResult = new InsuredObject();
+		lobjResult = new InsuredObjectOLD();
 		lobjResult.id = lobjObject.getKey().toString();
 		lobjResult.ownerId = ((UUID)lobjObject.getAt(1)).toString();
 		lobjResult.unitIdentification = lobjObject.getLabel();
@@ -187,10 +187,10 @@ public class PolicyObjectServiceImpl
 			lobjResult.electronicIdTag = (String)lobjObject.getAt(32);
 		}
 
-		lobjResult.exercises = new InsuredObject.Exercise[larrExercises.length];
+		lobjResult.exercises = new InsuredObjectOLD.Exercise[larrExercises.length];
 		for ( i = 0; i < larrExercises.length; i++ )
 		{
-			lobjResult.exercises[i] = new InsuredObject.Exercise();
+			lobjResult.exercises[i] = new InsuredObjectOLD.Exercise();
 			lobjResult.exercises[i].id = larrExercises[i].getKey().toString();
 			lobjResult.exercises[i].label = larrExercises[i].getLabel();
 		}
@@ -220,21 +220,21 @@ public class PolicyObjectServiceImpl
 				return 1;
 			}
 		});
-		lobjResult.coverageData = new InsuredObject.CoverageData[larrCoverages.length];
-		larrValueMap = new Hashtable<UUID, InsuredObject.CoverageData.VariableField>();
-		larrAuxMap = new Hashtable<UUID, ArrayList<InsuredObject.CoverageData.VariableField.VariableValue>>();
+		lobjResult.coverageData = new InsuredObjectOLD.CoverageData[larrCoverages.length];
+		larrValueMap = new Hashtable<UUID, InsuredObjectOLD.CoverageData.VariableField>();
+		larrAuxMap = new Hashtable<UUID, ArrayList<InsuredObjectOLD.CoverageData.VariableField.VariableValue>>();
 		for ( i = 0; i < larrCoverages.length; i++ )
 		{
-			lobjResult.coverageData[i] = new InsuredObject.CoverageData();
+			lobjResult.coverageData[i] = new InsuredObjectOLD.CoverageData();
 			lobjResult.coverageData[i].coverageId = larrCoverages[i].GetCoverage().getKey().toString();
 			lobjResult.coverageData[i].coverageLabel = larrCoverages[i].GetCoverage().getLabel();
-			larrAuxFixed = new ArrayList<InsuredObject.CoverageData.FixedField>();
+			larrAuxFixed = new ArrayList<InsuredObjectOLD.CoverageData.FixedField>();
 			for ( j = 0; j < larrFixed.length; j++ )
 			{
 				if ( !larrFixed[j].GetTax().GetCoverage().getKey().equals(larrCoverages[i].GetCoverage().getKey()) )
 					continue;
 
-				lobjFixed = new InsuredObject.CoverageData.FixedField();
+				lobjFixed = new InsuredObjectOLD.CoverageData.FixedField();
 				lobjFixed.fieldId = larrFixed[j].GetTax().getKey().toString();
 				lobjFixed.fieldName = larrFixed[j].GetTax().getLabel();
 				lobjFixed.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(larrFixed[j].GetTax().GetFieldType());
@@ -246,10 +246,10 @@ public class PolicyObjectServiceImpl
 				larrAuxFixed.add(lobjFixed);
 			}
 			lobjResult.coverageData[i].fixedFields =
-					larrAuxFixed.toArray(new InsuredObject.CoverageData.FixedField[larrAuxFixed.size()]);
-			java.util.Arrays.sort(lobjResult.coverageData[i].fixedFields, new Comparator<InsuredObject.CoverageData.FixedField>()
+					larrAuxFixed.toArray(new InsuredObjectOLD.CoverageData.FixedField[larrAuxFixed.size()]);
+			java.util.Arrays.sort(lobjResult.coverageData[i].fixedFields, new Comparator<InsuredObjectOLD.CoverageData.FixedField>()
 			{
-				public int compare(InsuredObject.CoverageData.FixedField o1, InsuredObject.CoverageData.FixedField o2)
+				public int compare(InsuredObjectOLD.CoverageData.FixedField o1, InsuredObjectOLD.CoverageData.FixedField o2)
 				{
 					if ( o1.columnIndex == o2.columnIndex )
 					{
@@ -267,7 +267,7 @@ public class PolicyObjectServiceImpl
 				}
 			});
 
-			larrAuxVariable = new ArrayList<InsuredObject.CoverageData.VariableField>();
+			larrAuxVariable = new ArrayList<InsuredObjectOLD.CoverageData.VariableField>();
 			for ( j = 0; j < larrExercises.length; j++ )
 			{
 				for ( k = 0; k < larrVariable[j].length; k++ )
@@ -278,7 +278,7 @@ public class PolicyObjectServiceImpl
 					lobjVariable = larrValueMap.get(larrVariable[j][k].GetTax().getKey());
 					if ( lobjVariable == null )
 					{
-						lobjVariable = new InsuredObject.CoverageData.VariableField();
+						lobjVariable = new InsuredObjectOLD.CoverageData.VariableField();
 						lobjVariable.fieldId = larrVariable[j][k].GetTax().getKey().toString();
 						lobjVariable.fieldName = larrVariable[j][k].GetTax().getLabel();
 						lobjVariable.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(larrVariable[j][k].GetTax().GetFieldType());
@@ -288,21 +288,21 @@ public class PolicyObjectServiceImpl
 						lobjVariable.columnIndex = larrVariable[j][k].GetTax().GetColumnOrder();
 						larrValueMap.put(larrVariable[j][k].GetTax().getKey(), lobjVariable);
 						larrAuxMap.put(larrVariable[j][k].GetTax().getKey(),
-								new ArrayList<InsuredObject.CoverageData.VariableField.VariableValue>());
+								new ArrayList<InsuredObjectOLD.CoverageData.VariableField.VariableValue>());
 						larrAuxVariable.add(lobjVariable);
 					}
-					lobjValue = new InsuredObject.CoverageData.VariableField.VariableValue();
+					lobjValue = new InsuredObjectOLD.CoverageData.VariableField.VariableValue();
 					lobjValue.exerciseIndex = j;
 					lobjValue.value = larrVariable[j][k].getLabel();
 					larrAuxMap.get(larrVariable[j][k].GetTax().getKey()).add(lobjValue);
 				}
 			}
 			lobjResult.coverageData[i].variableFields =
-					larrAuxVariable.toArray(new InsuredObject.CoverageData.VariableField[larrAuxVariable.size()]);
+					larrAuxVariable.toArray(new InsuredObjectOLD.CoverageData.VariableField[larrAuxVariable.size()]);
 			java.util.Arrays.sort(lobjResult.coverageData[i].variableFields,
-					new Comparator<InsuredObject.CoverageData.VariableField>()
+					new Comparator<InsuredObjectOLD.CoverageData.VariableField>()
 			{
-				public int compare(InsuredObject.CoverageData.VariableField o1, InsuredObject.CoverageData.VariableField o2)
+				public int compare(InsuredObjectOLD.CoverageData.VariableField o1, InsuredObjectOLD.CoverageData.VariableField o2)
 				{
 					if ( o1.columnIndex == o2.columnIndex )
 					{
@@ -323,19 +323,19 @@ public class PolicyObjectServiceImpl
 			{
 				larrAuxValues = larrAuxMap.get(UUID.fromString(lobjResult.coverageData[i].variableFields[j].fieldId));
 				lobjResult.coverageData[i].variableFields[j].data =
-						larrAuxValues.toArray(new InsuredObject.CoverageData.VariableField.VariableValue[larrAuxValues.size()]);
+						larrAuxValues.toArray(new InsuredObjectOLD.CoverageData.VariableField.VariableValue[larrAuxValues.size()]);
 			}
 		}
 		if ( lobjHeaderCoverage != null )
 		{
-			lobjResult.headerData = new InsuredObject.CoverageData();
-			larrAuxFixed = new ArrayList<InsuredObject.CoverageData.FixedField>();
+			lobjResult.headerData = new InsuredObjectOLD.CoverageData();
+			larrAuxFixed = new ArrayList<InsuredObjectOLD.CoverageData.FixedField>();
 			for ( j = 0; j < larrFixed.length; j++ )
 			{
 				if ( !larrFixed[j].GetTax().GetCoverage().getKey().equals(lobjHeaderCoverage.GetCoverage().getKey()) )
 					continue;
 
-				lobjFixed = new InsuredObject.CoverageData.FixedField();
+				lobjFixed = new InsuredObjectOLD.CoverageData.FixedField();
 				lobjFixed.fieldId = larrFixed[j].GetTax().getKey().toString();
 				lobjFixed.fieldName = larrFixed[j].GetTax().getLabel();
 				lobjFixed.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(larrFixed[j].GetTax().GetFieldType());
@@ -347,10 +347,10 @@ public class PolicyObjectServiceImpl
 				larrAuxFixed.add(lobjFixed);
 			}
 			lobjResult.headerData.fixedFields =
-					larrAuxFixed.toArray(new InsuredObject.CoverageData.FixedField[larrAuxFixed.size()]);
-			java.util.Arrays.sort(lobjResult.headerData.fixedFields, new Comparator<InsuredObject.CoverageData.FixedField>()
+					larrAuxFixed.toArray(new InsuredObjectOLD.CoverageData.FixedField[larrAuxFixed.size()]);
+			java.util.Arrays.sort(lobjResult.headerData.fixedFields, new Comparator<InsuredObjectOLD.CoverageData.FixedField>()
 			{
-				public int compare(InsuredObject.CoverageData.FixedField o1, InsuredObject.CoverageData.FixedField o2)
+				public int compare(InsuredObjectOLD.CoverageData.FixedField o1, InsuredObjectOLD.CoverageData.FixedField o2)
 				{
 					if ( o1.columnIndex == o2.columnIndex )
 					{
@@ -368,7 +368,7 @@ public class PolicyObjectServiceImpl
 				}
 			});
 
-			larrAuxVariable = new ArrayList<InsuredObject.CoverageData.VariableField>();
+			larrAuxVariable = new ArrayList<InsuredObjectOLD.CoverageData.VariableField>();
 			for ( j = 0; j < larrExercises.length; j++ )
 			{
 				for ( k = 0; k < larrVariable[j].length; k++ )
@@ -379,7 +379,7 @@ public class PolicyObjectServiceImpl
 					lobjVariable = larrValueMap.get(larrVariable[j][k].GetTax().getKey());
 					if ( lobjVariable == null )
 					{
-						lobjVariable = new InsuredObject.CoverageData.VariableField();
+						lobjVariable = new InsuredObjectOLD.CoverageData.VariableField();
 						lobjVariable.fieldId = larrVariable[j][k].GetTax().getKey().toString();
 						lobjVariable.fieldName = larrVariable[j][k].GetTax().getLabel();
 						lobjVariable.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(larrVariable[j][k].GetTax().GetFieldType());
@@ -389,21 +389,21 @@ public class PolicyObjectServiceImpl
 						lobjVariable.columnIndex = larrVariable[j][k].GetTax().GetColumnOrder();
 						larrValueMap.put(larrVariable[j][k].GetTax().getKey(), lobjVariable);
 						larrAuxMap.put(larrVariable[j][k].GetTax().getKey(),
-								new ArrayList<InsuredObject.CoverageData.VariableField.VariableValue>());
+								new ArrayList<InsuredObjectOLD.CoverageData.VariableField.VariableValue>());
 						larrAuxVariable.add(lobjVariable);
 					}
-					lobjValue = new InsuredObject.CoverageData.VariableField.VariableValue();
+					lobjValue = new InsuredObjectOLD.CoverageData.VariableField.VariableValue();
 					lobjValue.exerciseIndex = j;
 					lobjValue.value = larrVariable[j][k].getLabel();
 					larrAuxMap.get(larrVariable[j][k].GetTax().getKey()).add(lobjValue);
 				}
 			}
 			lobjResult.headerData.variableFields =
-					larrAuxVariable.toArray(new InsuredObject.CoverageData.VariableField[larrAuxVariable.size()]);
+					larrAuxVariable.toArray(new InsuredObjectOLD.CoverageData.VariableField[larrAuxVariable.size()]);
 			java.util.Arrays.sort(lobjResult.headerData.variableFields,
-					new Comparator<InsuredObject.CoverageData.VariableField>()
+					new Comparator<InsuredObjectOLD.CoverageData.VariableField>()
 			{
-				public int compare(InsuredObject.CoverageData.VariableField o1, InsuredObject.CoverageData.VariableField o2)
+				public int compare(InsuredObjectOLD.CoverageData.VariableField o1, InsuredObjectOLD.CoverageData.VariableField o2)
 				{
 					if ( o1.columnIndex == o2.columnIndex )
 					{
@@ -424,7 +424,7 @@ public class PolicyObjectServiceImpl
 			{
 				larrAuxValues = larrAuxMap.get(UUID.fromString(lobjResult.headerData.variableFields[j].fieldId));
 				lobjResult.headerData.variableFields[j].data =
-						larrAuxValues.toArray(new InsuredObject.CoverageData.VariableField.VariableValue[larrAuxValues.size()]);
+						larrAuxValues.toArray(new InsuredObjectOLD.CoverageData.VariableField.VariableValue[larrAuxValues.size()]);
 			}
 		}
 
@@ -496,9 +496,9 @@ public class PolicyObjectServiceImpl
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
-		InsuredObjectStub lobjResult;
+		InsuredObjectStubOLD lobjResult;
 
-		lobjResult = new InsuredObjectStub();
+		lobjResult = new InsuredObjectStubOLD();
 		lobjResult.id = pid.toString();
 		lobjResult.unitIdentification = (String)parrValues[0];
 		lobjResult.ownerId = ((UUID)parrValues[1]).toString();

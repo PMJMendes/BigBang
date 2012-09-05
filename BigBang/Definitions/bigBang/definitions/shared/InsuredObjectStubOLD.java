@@ -1,7 +1,7 @@
 package bigBang.definitions.shared;
 
-public class Object2Stub
-	extends ComplexFieldContainer
+public class InsuredObjectStubOLD
+	extends SearchResult
 {
 	private static final long serialVersionUID = 1L;
 
@@ -13,12 +13,4 @@ public class Object2Stub
 	public String exclusionDate;
 	public String typeId;
 	public String typeText;
-	
-	public Object2Stub()
-	{
-		headerFields = null;
-		columnFields = null;
-		extraFields = null;
-		exerciseData = null;
-	}
 }

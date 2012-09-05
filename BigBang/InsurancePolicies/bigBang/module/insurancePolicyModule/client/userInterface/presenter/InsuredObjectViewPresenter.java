@@ -8,7 +8,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class InsuredObjectViewPresenter implements ViewPresenter {
 
 	public static interface Display{
-		HasEditableValue<InsuredObject> getInsuredObjectForm();
+		HasEditableValue<InsuredObjectOLD> getInsuredObjectForm();
 		HasEditableValue<InsurancePolicy> getInsurancePolicyForm();
 
 		//PERMISSIONS
@@ -104,7 +104,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 				switch(action.getAction()){
 				case SAVE:
 					if(view.getInsuredObjectForm().validate()) {
-						InsuredObject value = view.getInsuredObjectForm().getInfo();
+						InsuredObjectOLD value = view.getInsuredObjectForm().getInfo();
 						saveObject(value);
 					}
 					break;
@@ -147,10 +147,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 	private void onEdit(){
 		String objectId = view.getInsuredObjectForm().getValue().id;
-		broker.getInsuredObject(objectId, new ResponseHandler<InsuredObject>() {
+		broker.getInsuredObject(objectId, new ResponseHandler<InsuredObjectOLD>() {
 
 			@Override
-			public void onResponse(final InsuredObject object) {
+			public void onResponse(final InsuredObjectOLD object) {
 				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
@@ -162,11 +162,11 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 									@Override
 									public void onResponse(
 											InsurancePolicy response) {
-										broker.getInsuredObject(object.id, new ResponseHandler<InsuredObject>() {
+										broker.getInsuredObject(object.id, new ResponseHandler<InsuredObjectOLD>() {
 
 											@Override
 											public void onResponse(
-													InsuredObject response) {
+													InsuredObjectOLD response) {
 												view.getInsuredObjectForm().setValue(response);
 												view.setSaveModeEnabled(true);
 												view.getInsuredObjectForm().setReadOnly(false);
@@ -189,11 +189,11 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 									}
 								});
 							}else{
-								broker.getInsuredObject(object.id, new ResponseHandler<InsuredObject>() {
+								broker.getInsuredObject(object.id, new ResponseHandler<InsuredObjectOLD>() {
 
 									@Override
 									public void onResponse(
-											InsuredObject response) {
+											InsuredObjectOLD response) {
 										view.getInsuredObjectForm().setValue(response);
 										view.setSaveModeEnabled(true);
 										view.getInsuredObjectForm().setReadOnly(false);
@@ -229,10 +229,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 	private void onDelete(){
 		final String objectId = view.getInsuredObjectForm().getValue().id;
-		broker.getInsuredObject(objectId, new ResponseHandler<InsuredObject>() {
+		broker.getInsuredObject(objectId, new ResponseHandler<InsuredObjectOLD>() {
 
 			@Override
-			public void onResponse(final InsuredObject object) {
+			public void onResponse(final InsuredObjectOLD object) {
 				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
@@ -300,10 +300,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	}
 
 	private void showObject(String objectId){
-		broker.getInsuredObject(objectId, new ResponseHandler<InsuredObject>() {
+		broker.getInsuredObject(objectId, new ResponseHandler<InsuredObjectOLD>() {
 
 			@Override
-			public void onResponse(final InsuredObject object) {
+			public void onResponse(final InsuredObjectOLD object) {
 				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
@@ -341,10 +341,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 				if(hasPermissions){
 					if(policyBroker.isTemp(ownerId)){
-						broker.createInsuredObject(ownerId, new ResponseHandler<InsuredObject>() {
+						broker.createInsuredObject(ownerId, new ResponseHandler<InsuredObjectOLD>() {
 
 							@Override
-							public void onResponse(InsuredObject object) {
+							public void onResponse(InsuredObjectOLD object) {
 								view.getInsuredObjectForm().setReadOnly(false);
 								view.setSaveModeEnabled(true);
 								view.allowEdit(true);
@@ -363,10 +363,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 							@Override
 							public void onResponse(InsurancePolicy tempPolicy) {
-								broker.createInsuredObject(tempPolicy.id, new ResponseHandler<InsuredObject>() {
+								broker.createInsuredObject(tempPolicy.id, new ResponseHandler<InsuredObjectOLD>() {
 
 									@Override
-									public void onResponse(InsuredObject object) {
+									public void onResponse(InsuredObjectOLD object) {
 										view.getInsuredObjectForm().setReadOnly(false);
 										view.setSaveModeEnabled(true);
 										view.allowEdit(true);
@@ -400,11 +400,11 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 		});
 	}
 
-	protected void saveObject(InsuredObject object) {
-		broker.updateInsuredObject(object, new ResponseHandler<InsuredObject>() {
+	protected void saveObject(InsuredObjectOLD object) {
+		broker.updateInsuredObject(object, new ResponseHandler<InsuredObjectOLD>() {
 
 			@Override
-			public void onResponse(InsuredObject response) {
+			public void onResponse(InsuredObjectOLD response) {
 				onSaveObjectSucces();
 			}
 

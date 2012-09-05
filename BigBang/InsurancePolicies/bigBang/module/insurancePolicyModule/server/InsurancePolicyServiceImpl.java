@@ -27,10 +27,10 @@ import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.Object2;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.Permission;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
@@ -153,8 +153,8 @@ public class InsurancePolicyServiceImpl
 		{
 			lobjResult.hasExercises = true;
 
-			lobjExercise = sGetExerciseStructure(lobjStructure,
-					(Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(1º Ano)"));
+			lobjExercise = sGetExerciseStructure(lobjStructure);
+			lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(1º Ano)");
 
 			lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
 		}
@@ -213,8 +213,8 @@ public class InsurancePolicyServiceImpl
 
 			if ( (larrExercises == null) || (larrExercises.length == 0) )
 			{
-				lobjExercise = sGetExerciseStructure(lobjStructure,
-						(Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(Ano Corrente)"));
+				lobjExercise = sGetExerciseStructure(lobjStructure);
+				lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(1º Ano)");
 
 				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
 			}
@@ -224,11 +224,8 @@ public class InsurancePolicyServiceImpl
 
 				for ( i = 0; i < larrExercises.length; i++ )
 				{
-					lobjExercise = sGetExerciseStructure(lobjStructure, larrExercises[i].getLabel());
-					lobjExercise.startDate = ( larrExercises[i].getAt(2) == null ? null :
-							((Timestamp)larrExercises[i].getAt(2)).toString().substring(0, 10) );
-					lobjExercise.endDate = ( larrExercises[i].getAt(3) == null ? null :
-							((Timestamp)larrExercises[i].getAt(3)).toString().substring(0, 10) );
+					lobjExercise = sGetExerciseStructure(lobjStructure);
+					sFillStaticExercise(lobjExercise, larrExercises[i]);
 
 					larrData = sExtractData(lobjPolicy, null, larrExercises[i].getKey());
 					sFillContainer(lobjExercise, larrData);
@@ -387,7 +384,7 @@ public class InsurancePolicyServiceImpl
 		return sGetEmptyPolicy(UUID.fromString(subLineId), UUID.fromString(clientId));
 	}
 
-	public Object2 getEmptyObject(String subLineId)
+	public InsuredObject getEmptyObject(String subLineId)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
@@ -405,7 +402,7 @@ public class InsurancePolicyServiceImpl
 		return sGetPolicy(UUID.fromString(policyId));
 	}
 
-	public Object2 getPolicyObject(String objectId)
+	public InsuredObject getPolicyObject(String objectId)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
@@ -494,14 +491,14 @@ public class InsurancePolicyServiceImpl
 	}
 
 	@Override
-	public InsuredObject includeObject(String policyId, InsuredObject object)
+	public InsuredObjectOLD includeObject(String policyId, InsuredObjectOLD object)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public InsuredObject includeObjectFromClient(String policyId)
+	public InsuredObjectOLD includeObjectFromClient(String policyId)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
@@ -1265,18 +1262,17 @@ public class InsurancePolicyServiceImpl
 		return lobjResult;
 	}
 	
-	private static ComplexFieldContainer.ExerciseData sGetExerciseStructure(FieldStructure pobjStructure, String pstrLabel)
+	private static ComplexFieldContainer.ExerciseData sGetExerciseStructure(FieldStructure pobjStructure)
 	{
 		ComplexFieldContainer.ExerciseData lobjResult;
 		
 		lobjResult = new ComplexFieldContainer.ExerciseData();
-		lobjResult.label = pstrLabel;
 
 		sBuildFieldContainer(lobjResult, pobjStructure, false, true);
 
 		return lobjResult;
 	}
-
+	
 	private static void sSortCoverages(Coverage[] parrCoverages)
 	{
 		Arrays.sort(parrCoverages, new Comparator<Coverage>()
@@ -1405,7 +1401,7 @@ public class InsurancePolicyServiceImpl
 		pobjResult.value = pobjSource.GetDefaultValue();
 	}
 	
-	private static void sFillStaticEmptyPolicy(InsurancePolicy pobjResult, SubLine pobjSubLine, UUID pidClient)
+	private static void sFillStaticEmptyPolicy(InsurancePolicy pobjDest, SubLine pobjSubLine, UUID pidClient)
 		throws BigBangException
 	{
 		Client lobjClient;
@@ -1423,18 +1419,18 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		pobjResult.clientId = lobjClient.getKey().toString();
-		pobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
-		pobjResult.clientName = lobjClient.getLabel();
-		pobjResult.categoryId = lobjCategory.getKey().toString();
-		pobjResult.categoryName = lobjCategory.getLabel();
-		pobjResult.lineId = lobjLine.getKey().toString();
-		pobjResult.lineName = lobjLine.getLabel();
-		pobjResult.subLineId = pobjSubLine.getKey().toString();
-		pobjResult.subLineName = pobjSubLine.getLabel();
+		pobjDest.clientId = lobjClient.getKey().toString();
+		pobjDest.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
+		pobjDest.clientName = lobjClient.getLabel();
+		pobjDest.categoryId = lobjCategory.getKey().toString();
+		pobjDest.categoryName = lobjCategory.getLabel();
+		pobjDest.lineId = lobjLine.getKey().toString();
+		pobjDest.lineName = lobjLine.getLabel();
+		pobjDest.subLineId = pobjSubLine.getKey().toString();
+		pobjDest.subLineName = pobjSubLine.getLabel();
 	}
 	
-	private static void sFillStaticPolicy(InsurancePolicy pobjResult, Policy lobjPolicy)
+	private static void sFillStaticPolicy(InsurancePolicy pobjDest, Policy pobjSource)
 		throws BigBangException
 	{
 		IProcess lobjProc;
@@ -1451,87 +1447,97 @@ public class InsurancePolicyServiceImpl
 
 		try
 		{
-			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjPolicy.GetProcessID());
+			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pobjSource.GetProcessID());
 			larrPerms = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
-			lobjSubLine = lobjPolicy.GetSubLine();
+			lobjSubLine = pobjSource.GetSubLine();
 			lobjLine = lobjSubLine.getLine();
 			lobjCategory = lobjLine.getCategory();
-			lstrObject = lobjPolicy.GetObjectFootprint();
+			lstrObject = pobjSource.GetObjectFootprint();
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
-					(UUID)lobjPolicy.getAt(13));
+					(UUID)pobjSource.getAt(13));
 			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(8));
-			larrCoInsurers = lobjPolicy.GetCurrentCoInsurers();
+			larrCoInsurers = pobjSource.GetCurrentCoInsurers();
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		pobjResult.id = lobjPolicy.getKey().toString();
+		pobjDest.id = pobjSource.getKey().toString();
 
-		pobjResult.processId = lobjProc.getKey().toString();
-		pobjResult.permissions = larrPerms;
+		pobjDest.processId = lobjProc.getKey().toString();
+		pobjDest.permissions = larrPerms;
 
-		pobjResult.number = (String)lobjPolicy.getAt(0);
-		pobjResult.clientId = lobjClient.getKey().toString();
-		pobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
-		pobjResult.clientName = lobjClient.getLabel();
-		pobjResult.categoryId = lobjCategory.getKey().toString();
-		pobjResult.categoryName = lobjCategory.getLabel();
-		pobjResult.lineId = lobjLine.getKey().toString();
-		pobjResult.lineName = lobjLine.getLabel();
-		pobjResult.subLineId = lobjSubLine.getKey().toString();
-		pobjResult.subLineName = lobjSubLine.getLabel();
-		pobjResult.insuredObject = lstrObject;
-		pobjResult.caseStudy = (Boolean)lobjPolicy.getAt(12);
-		pobjResult.statusId = lobjStatus.getKey().toString();
-		pobjResult.statusText = lobjStatus.getLabel();
+		pobjDest.number = (String)pobjSource.getAt(0);
+		pobjDest.clientId = lobjClient.getKey().toString();
+		pobjDest.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
+		pobjDest.clientName = lobjClient.getLabel();
+		pobjDest.categoryId = lobjCategory.getKey().toString();
+		pobjDest.categoryName = lobjCategory.getLabel();
+		pobjDest.lineId = lobjLine.getKey().toString();
+		pobjDest.lineName = lobjLine.getLabel();
+		pobjDest.subLineId = lobjSubLine.getKey().toString();
+		pobjDest.subLineName = lobjSubLine.getLabel();
+		pobjDest.insuredObject = lstrObject;
+		pobjDest.caseStudy = (Boolean)pobjSource.getAt(12);
+		pobjDest.statusId = lobjStatus.getKey().toString();
+		pobjDest.statusText = lobjStatus.getLabel();
 		switch ( (Integer)lobjStatus.getAt(1) )
 		{
 		case 0:
-			pobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.PROVISIONAL;
+			pobjDest.statusIcon = InsurancePolicyStub.PolicyStatus.PROVISIONAL;
 			break;
 
 		case 1:
-			pobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.VALID;
+			pobjDest.statusIcon = InsurancePolicyStub.PolicyStatus.VALID;
 			break;
 
 		case 2:
-			pobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
+			pobjDest.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
 			break;
 		}
 
-		pobjResult.managerId = lobjProc.GetManagerID().toString();
-		pobjResult.insuranceAgencyId = ((UUID)lobjPolicy.getAt(2)).toString();
-		pobjResult.startDate = (lobjPolicy.getAt(4) == null ? null :
-				((Timestamp)lobjPolicy.getAt(4)).toString().substring(0, 10));
-		pobjResult.durationId = ((UUID)lobjPolicy.getAt(5)).toString();
-		pobjResult.fractioningId = ((UUID)lobjPolicy.getAt(6)).toString();
-		pobjResult.maturityDay = (lobjPolicy.getAt(7) == null ? 0 : (Integer)lobjPolicy.getAt(7));
-		pobjResult.maturityMonth = (lobjPolicy.getAt(8) == null ? 0 : (Integer)lobjPolicy.getAt(8));
-		pobjResult.expirationDate = (lobjPolicy.getAt(9) == null ? null :
-				((Timestamp)lobjPolicy.getAt(9)).toString().substring(0, 10));
-		pobjResult.notes = (String)lobjPolicy.getAt(10);
-		pobjResult.mediatorId = (lobjPolicy.getAt(11) == null ? null : ((UUID)lobjPolicy.getAt(11)).toString());
-		pobjResult.inheritMediatorId = lobjMed.getKey().toString();
-		pobjResult.inheritMediatorName = lobjMed.getLabel();
-		pobjResult.premium = (lobjPolicy.getAt(14) == null ? null : ((BigDecimal)lobjPolicy.getAt(14)).doubleValue());
-		pobjResult.operationalProfileId = (lobjPolicy.getAt(18) == null ? null : ((UUID)lobjPolicy.getAt(18)).toString());
-		pobjResult.docushare = (String)lobjPolicy.getAt(15);
+		pobjDest.managerId = lobjProc.GetManagerID().toString();
+		pobjDest.insuranceAgencyId = ((UUID)pobjSource.getAt(2)).toString();
+		pobjDest.startDate = (pobjSource.getAt(4) == null ? null :
+				((Timestamp)pobjSource.getAt(4)).toString().substring(0, 10));
+		pobjDest.durationId = ((UUID)pobjSource.getAt(5)).toString();
+		pobjDest.fractioningId = ((UUID)pobjSource.getAt(6)).toString();
+		pobjDest.maturityDay = (pobjSource.getAt(7) == null ? 0 : (Integer)pobjSource.getAt(7));
+		pobjDest.maturityMonth = (pobjSource.getAt(8) == null ? 0 : (Integer)pobjSource.getAt(8));
+		pobjDest.expirationDate = (pobjSource.getAt(9) == null ? null :
+				((Timestamp)pobjSource.getAt(9)).toString().substring(0, 10));
+		pobjDest.notes = (String)pobjSource.getAt(10);
+		pobjDest.mediatorId = (pobjSource.getAt(11) == null ? null : ((UUID)pobjSource.getAt(11)).toString());
+		pobjDest.inheritMediatorId = lobjMed.getKey().toString();
+		pobjDest.inheritMediatorName = lobjMed.getLabel();
+		pobjDest.premium = (pobjSource.getAt(14) == null ? null : ((BigDecimal)pobjSource.getAt(14)).doubleValue());
+		pobjDest.operationalProfileId = (pobjSource.getAt(18) == null ? null : ((UUID)pobjSource.getAt(18)).toString());
+		pobjDest.docushare = (String)pobjSource.getAt(15);
 
 		if ( larrCoInsurers.length > 0 )
 		{
-			pobjResult.coInsurers = new InsurancePolicy.CoInsurer[larrCoInsurers.length];
+			pobjDest.coInsurers = new InsurancePolicy.CoInsurer[larrCoInsurers.length];
 			for ( i = 0; i < larrCoInsurers.length; i++ )
 			{
-				pobjResult.coInsurers[i] = new InsurancePolicy.CoInsurer();
-				pobjResult.coInsurers[i].insuranceAgencyId = ((UUID)larrCoInsurers[i].getAt(1)).toString();
-				pobjResult.coInsurers[i].percent = ((BigDecimal)larrCoInsurers[i].getAt(2)).doubleValue();
+				pobjDest.coInsurers[i] = new InsurancePolicy.CoInsurer();
+				pobjDest.coInsurers[i].insuranceAgencyId = ((UUID)larrCoInsurers[i].getAt(1)).toString();
+				pobjDest.coInsurers[i].percent = ((BigDecimal)larrCoInsurers[i].getAt(2)).doubleValue();
 			}
 		}
 		else
-			pobjResult.coInsurers = null;
+			pobjDest.coInsurers = null;
+	}
+	
+	private static void sFillStaticExercise(ComplexFieldContainer.ExerciseData pobjDest, PolicyExercise pobjSource)
+		throws BigBangException
+	{
+		pobjDest.label = pobjSource.getLabel();
+		pobjDest.startDate = ( pobjSource.getAt(2) == null ? null :
+				((Timestamp)pobjSource.getAt(2)).toString().substring(0, 10) );
+		pobjDest.endDate = ( pobjSource.getAt(3) == null ? null :
+				((Timestamp)pobjSource.getAt(3)).toString().substring(0, 10) );
 	}
 
 	private static Map<UUID, FieldContents> sExtractData(Policy lobjPolicy, UUID pidObject, UUID pidExercise)

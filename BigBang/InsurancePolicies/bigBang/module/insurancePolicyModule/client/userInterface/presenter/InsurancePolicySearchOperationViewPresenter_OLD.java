@@ -15,7 +15,7 @@ import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
-import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.InsuredObjectStubOLD;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.EventBus;
@@ -108,7 +108,7 @@ ViewPresenter {
 		//children lists
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
-		HasValueSelectables<InsuredObjectStub> getObjectsList();
+		HasValueSelectables<InsuredObjectStubOLD> getObjectsList();
 		HasValueSelectables<ExerciseStub> getExercisesList();
 		HasValueSelectables<SubPolicyStub> getSubPoliciesList();
 		HasValueSelectables<ReceiptStub> getReceiptsList();
@@ -331,7 +331,7 @@ ViewPresenter {
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
-				InsuredObjectStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<InsuredObjectStub>)event.getFirstSelected()).getValue();
+				InsuredObjectStubOLD selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<InsuredObjectStubOLD>)event.getFirstSelected()).getValue();
 				if(selectedValue != null) {
 					showInsuredObject(selectedValue);
 				}
@@ -847,7 +847,7 @@ ViewPresenter {
 		GWT.log("Could not close a policy resource : " + NavigationHistoryManager.getInstance().getCurrentState());
 	}
 
-	private void showInsuredObject(final InsuredObjectStub object) {
+	private void showInsuredObject(final InsuredObjectStubOLD object) {
 		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override

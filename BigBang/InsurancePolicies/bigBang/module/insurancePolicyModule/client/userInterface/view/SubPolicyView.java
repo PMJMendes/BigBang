@@ -7,7 +7,7 @@ import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.InsuredObjectStubOLD;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicy.TableSection;
@@ -308,7 +308,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	}
 
 	@Override
-	public HasValueSelectables<InsuredObjectStub> getInsuredObjectsList() {
+	public HasValueSelectables<InsuredObjectStubOLD> getInsuredObjectsList() {
 		return childrenPanel.insuredObjectsList;
 	}
 

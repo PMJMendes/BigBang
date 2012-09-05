@@ -14,7 +14,7 @@ import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.InsuredObjectStubOLD;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicy.TableSection;
@@ -60,7 +60,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 		HasValueSelectables<ExerciseStub> getExercisesList();
 
-		HasValueSelectables<InsuredObjectStub> getInsuredObjectsList();
+		HasValueSelectables<InsuredObjectStubOLD> getInsuredObjectsList();
 
 		HasValueSelectables<ReceiptStub> getReceiptsList();
 
@@ -284,7 +284,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 				} else if (source == view.getDocumentsList()) {
 					showDocument((Document) value);
 				} else if (source == view.getInsuredObjectsList()) {
-					showInsuredObject((InsuredObjectStub) value);
+					showInsuredObject((InsuredObjectStubOLD) value);
 				} else if (source == view.getExercisesList()) {
 					showExercise((ExerciseStub) value);
 				} else if (source == view.getReceiptsList()) {
@@ -769,7 +769,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		});
 	}
 
-	protected void showInsuredObject(final InsuredObjectStub insuredObject) {
+	protected void showInsuredObject(final InsuredObjectStubOLD insuredObject) {
 		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override

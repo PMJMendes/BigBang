@@ -8,23 +8,23 @@ import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsuredObject;
-import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObjectStubOLD;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 
-public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
+public class InsuredObjectsList extends FilterableList<InsuredObjectStubOLD> {
 
-	protected class Entry extends ListEntry<InsuredObjectStub>{
+	protected class Entry extends ListEntry<InsuredObjectStubOLD>{
 
-		public Entry(InsuredObjectStub value) {
+		public Entry(InsuredObjectStubOLD value) {
 			super(value);
 		}
 
 		public <I extends Object> void setInfo(I info) {
-			InsuredObjectStub o = (InsuredObjectStub) info;
+			InsuredObjectStubOLD o = (InsuredObjectStubOLD) info;
 			setTitle(o.unitIdentification);
 		};
 	}
@@ -56,12 +56,12 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 			clear();
 		}else{
 			if(!insurancePolicyBroker.isTemp(ownerId)){
-				this.insuredObjectsBroker.getProcessInsuredObjects(ownerId, new ResponseHandler<Collection<InsuredObjectStub>>() {
+				this.insuredObjectsBroker.getProcessInsuredObjects(ownerId, new ResponseHandler<Collection<InsuredObjectStubOLD>>() {
 
 					@Override
-					public void onResponse(Collection<InsuredObjectStub> response) {
+					public void onResponse(Collection<InsuredObjectStubOLD> response) {
 						clear();
-						for(InsuredObjectStub o : response){
+						for(InsuredObjectStubOLD o : response){
 							addEntry(o);
 						}
 					}
@@ -77,7 +77,7 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 		}
 	}
 
-	protected void addEntry(InsuredObjectStub object){
+	protected void addEntry(InsuredObjectStubOLD object){
 		this.add(new Entry(object));
 	}
 
@@ -102,8 +102,8 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 			}
 
 			@Override
-			public void updateInsuredObject(InsuredObject object) {
-				for(ValueSelectable<InsuredObjectStub> e : InsuredObjectsList.this){
+			public void updateInsuredObject(InsuredObjectOLD object) {
+				for(ValueSelectable<InsuredObjectStubOLD> e : InsuredObjectsList.this){
 					if(object != null && object.id != null && object.id.equalsIgnoreCase(e.getValue().id)){
 						e.setValue(object);
 						break;
@@ -113,7 +113,7 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 
 			@Override
 			public void removeInsuredObject(String id) {
-				for(ValueSelectable<InsuredObjectStub> e : InsuredObjectsList.this){
+				for(ValueSelectable<InsuredObjectStubOLD> e : InsuredObjectsList.this){
 					if(id != null && id.equalsIgnoreCase(e.getValue().id)){
 						remove(e);
 						break;
@@ -122,7 +122,7 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 			}
 
 			@Override
-			public void addInsuredObject(InsuredObject object) {
+			public void addInsuredObject(InsuredObjectOLD object) {
 				String objectOwnerId = insurancePolicyBroker.getFinalMapping(object.ownerId);
 				String currentOwnerId = insurancePolicyBroker.getFinalMapping(InsuredObjectsList.this.ownerId);
 

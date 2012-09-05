@@ -1,13 +1,13 @@
 package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 
 public interface InsuredObjectDataBrokerClient extends
-		DataBrokerClient<InsuredObject> {
+		DataBrokerClient<InsuredObjectOLD> {
 
-	public void addInsuredObject(InsuredObject object);
+	public void addInsuredObject(InsuredObjectOLD object);
 	
-	public void updateInsuredObject(InsuredObject object);
+	public void updateInsuredObject(InsuredObjectOLD object);
 	
 	public void removeInsuredObject(String id);
 	

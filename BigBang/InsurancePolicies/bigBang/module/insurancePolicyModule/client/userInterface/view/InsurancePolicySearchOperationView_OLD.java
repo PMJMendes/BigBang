@@ -16,7 +16,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
-import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.InsuredObjectStubOLD;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
@@ -435,7 +435,7 @@ public class InsurancePolicySearchOperationView_OLD extends View implements Insu
 	}
 
 	@Override
-	public HasValueSelectables<InsuredObjectStub> getObjectsList() {
+	public HasValueSelectables<InsuredObjectStubOLD> getObjectsList() {
 		return this.childrenPanel.insuredObjectsList;
 	}
 	

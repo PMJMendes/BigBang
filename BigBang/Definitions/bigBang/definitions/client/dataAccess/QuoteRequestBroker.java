@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
@@ -28,7 +28,7 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 	public void closeQuoteRequest(String id, String notes, ResponseHandler<QuoteRequest> handler);
 	public void deleteQuoteRequest(String id, String reason,  ResponseHandler<String> handler);
 	
-	public void insertInsuredObject(InsuredObject object, ResponseHandler<InsuredObject> handler);
+	public void insertInsuredObject(InsuredObjectOLD object, ResponseHandler<InsuredObjectOLD> handler);
 	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request, ResponseHandler<InfoOrDocumentRequest> handler);
 	public void createQuoteRequestManagerTransfer(String[] requestIds, String managerId, ResponseHandler<QuoteRequest> handler);
 	public void createRiskAnalysis(RiskAnalysis riskAnalysis, ResponseHandler<RiskAnalysis> handler);

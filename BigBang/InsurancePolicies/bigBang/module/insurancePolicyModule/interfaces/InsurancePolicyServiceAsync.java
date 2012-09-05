@@ -5,10 +5,10 @@ import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.Object2;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.interfaces.ExactItemSubServiceAsync;
@@ -20,14 +20,14 @@ public interface InsurancePolicyServiceAsync
 	extends SearchServiceAsync, ExactItemSubServiceAsync
 {
 	void getEmptyPolicy(String subLineId, String clientId, AsyncCallback<InsurancePolicy> callback);
-	void getEmptyObject(String subLineId, AsyncCallback<Object2> callback);
+	void getEmptyObject(String subLineId, AsyncCallback<InsuredObject> callback);
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
-	void getPolicyObject(String objectId, AsyncCallback<Object2> callback);
+	void getPolicyObject(String objectId, AsyncCallback<InsuredObject> callback);
 	void editPolicy(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void performCalculations(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void validatePolicy(String policyId, AsyncCallback<Void> callback);
-	void includeObject(String policyId, InsuredObject object, AsyncCallback<InsuredObject> callback);
-	void includeObjectFromClient(String policyId, AsyncCallback<InsuredObject> callback);
+	void includeObject(String policyId, InsuredObjectOLD object, AsyncCallback<InsuredObjectOLD> callback);
+	void includeObjectFromClient(String policyId, AsyncCallback<InsuredObjectOLD> callback);
 	void excludeObject(String policyId, String objectId, AsyncCallback<Void> callback);
 	void openNewExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
 	void transferToClient(String policyId, String newClientId, AsyncCallback<InsurancePolicy> callback);
