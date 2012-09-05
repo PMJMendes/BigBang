@@ -130,11 +130,10 @@ public class BigBang_Tests
 //		TestNegotiationGrant.DoTest();
 //		TestNegotiationCancel.DoTest();
 //
-//		TestPolicyCreate.DoTest();
-//		TestPolicyEdit.DoTest();
-//
 //		TestPolicyGetEmpty.DoTest();
 //		TestPolicyGet.DoTest();
+//		TestPolicyCreate.DoTest();
+//		TestPolicyEdit.DoTest();
 //		TestPolicyGetEmptyObject.DoTest();
 //		TestPolicyDelete.DoTest();
 //		TestPolicyValidate.DoTest();

@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
@@ -47,21 +47,21 @@ public class TestObjectGet
 		};
 
 		parameter = new InsuredObjectSearchParameter();
-		parameter.policyId = "87c1b24d-daa1-42bc-864a-a058003c4dba";
+		parameter.policyId = "C1F15187-4201-49D8-9A7B-A0B8002EB131";
 
 		Services.policyObjectService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
 	{
-		AsyncCallback<InsuredObjectOLD> callback = new AsyncCallback<InsuredObjectOLD>()
+		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsuredObjectOLD result)
+			public void onSuccess(InsuredObject result)
 			{
 				DoStep3(tmpWorkspace);
 			}
