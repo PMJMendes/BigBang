@@ -161,7 +161,7 @@ public class InsurancePolicyServiceImpl
 
 		return lobjResult;
 	}
-	
+
 	public static InsurancePolicy sGetPolicy(UUID pidPolicy)
 		throws BigBangException
 	{
@@ -402,7 +402,7 @@ public class InsurancePolicyServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return null;
+		return sGetPolicy(UUID.fromString(policyId));
 	}
 
 	public Object2 getPolicyObject(String objectId)
