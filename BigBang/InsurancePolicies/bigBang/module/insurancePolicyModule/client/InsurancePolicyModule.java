@@ -29,7 +29,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Insur
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyMassManagerTransferViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyNegotiationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyOperationsViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter2;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTasksViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTransferToClientViewPresenter;
@@ -57,7 +57,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuranceP
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyMassManagerTransferView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyNegotiationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyOperationsView;
-import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView2;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySectionView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyTasksView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyTransferToClientView;
@@ -116,8 +116,8 @@ public class InsurancePolicyModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				InsurancePolicySearchOperationView view = (InsurancePolicySearchOperationView) GWT.create(InsurancePolicySearchOperationView.class);
-				InsurancePolicySearchOperationViewPresenter presenter = new InsurancePolicySearchOperationViewPresenter(view);
+				InsurancePolicySearchOperationView2 view = (InsurancePolicySearchOperationView2) GWT.create(InsurancePolicySearchOperationView2.class);
+				InsurancePolicySearchOperationViewPresenter2 presenter = new InsurancePolicySearchOperationViewPresenter2(view);
 				return presenter;
 			}
 		});
