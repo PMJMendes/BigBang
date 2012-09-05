@@ -20,8 +20,8 @@ public interface InsurancePolicyServiceAsync
 	extends SearchServiceAsync, ExactItemSubServiceAsync
 {
 	void getEmptyPolicy(String subLineId, String clientId, AsyncCallback<InsurancePolicy> callback);
-	void getEmptyObject(String subLineId, AsyncCallback<InsuredObject> callback);
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
+	void getEmptyObject(String policyId, AsyncCallback<InsuredObject> callback);
 	void getPolicyObject(String objectId, AsyncCallback<InsuredObject> callback);
 	void editPolicy(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void performCalculations(String policyId, AsyncCallback<InsurancePolicy> callback);

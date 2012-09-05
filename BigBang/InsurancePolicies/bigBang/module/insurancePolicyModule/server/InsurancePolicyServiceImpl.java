@@ -27,10 +27,10 @@ import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.Permission;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
@@ -264,6 +264,7 @@ public class InsurancePolicyServiceImpl
 		lobjStructure = sGetSubLineStructure(lobjSubLine);
 
 		lobjResult = sGetObjectStructure(lobjStructure);
+		sFillStaticEmptyObject(lobjResult, lobjPolicy);
 
 		if ( Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
 		{
@@ -449,13 +450,13 @@ public class InsurancePolicyServiceImpl
 		return sGetEmptyPolicy(UUID.fromString(subLineId), UUID.fromString(clientId));
 	}
 
-	public InsuredObject getEmptyObject(String subLineId)
+	public InsuredObject getEmptyObject(String policyId)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return null;
+		return sGetEmptyObject(UUID.fromString(policyId));
 	}
 
 	public InsurancePolicy getPolicy(String policyId)
@@ -1625,6 +1626,28 @@ public class InsurancePolicyServiceImpl
 				((Timestamp)pobjSource.getAt(2)).toString().substring(0, 10) );
 		pobjDest.endDate = ( pobjSource.getAt(3) == null ? null :
 				((Timestamp)pobjSource.getAt(3)).toString().substring(0, 10) );
+	}
+
+	private static void sFillStaticEmptyObject(InsuredObject pobjDest, Policy pobjPolicy)
+		throws BigBangException
+	{
+		SubLine lobjSubLine;
+		ObjectBase lobjType;
+
+		try
+		{
+			lobjSubLine = pobjPolicy.GetSubLine();
+			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ObjectType),
+					lobjSubLine.getObjectType());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		pobjDest.ownerId = pobjPolicy.getKey().toString();
+		pobjDest.typeId = lobjType.getKey().toString();
+		pobjDest.typeText = lobjType.getLabel();
 	}
 
 	private static Map<UUID, FieldContents> sExtractData(Policy lobjPolicy, UUID pidObject, UUID pidExercise)
