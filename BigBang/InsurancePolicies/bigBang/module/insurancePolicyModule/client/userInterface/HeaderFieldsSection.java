@@ -5,6 +5,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
@@ -15,8 +16,8 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 	private GenericFormField[] formFields;
 	private HeaderField[] value;
 	
-	public HeaderFieldsSection(String title) {
-		super(title);
+	public HeaderFieldsSection() {
+		super("");
 	}
 
 	@Override
@@ -43,6 +44,13 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 
 	@Override
 	public void setValue(HeaderField[] value, boolean fireEvents) {
+		
+		if(formFields != null){
+			for(int i = 0; i<formFields.length ; i++){
+				formFields[i].removeFromParent();
+			}
+		}
+		
 		this.value = value;
 		formFields = new GenericFormField[value.length];
 		
@@ -56,12 +64,14 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 				break;
 			case LIST:
 				formFields[i] = new GenericFormField(TYPE.LIST);
+				formFields[i].setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+value[i].fieldId);
 				break;
 			case NUMERIC:
 				formFields[i] = new GenericFormField(TYPE.NUMBER);
 				break;
 			case REFERENCE:
 				formFields[i] = new GenericFormField(TYPE.REFERENCE);
+				formFields[i].setListId(value[i].refersToId);
 				break;
 			case TEXT:
 				formFields[i] = new GenericFormField(TYPE.TEXT);
@@ -69,7 +79,9 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 			}
 			
 			formFields[i].setValue(value[i].value);
-			formFields[i].setLabel(value[i].value);
+			formFields[i].setLabel(value[i].fieldName);
+			
+			addFormField(formFields[i], true);
 		}
 		
 		if(fireEvents){

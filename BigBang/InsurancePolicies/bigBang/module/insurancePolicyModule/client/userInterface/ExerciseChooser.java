@@ -1,6 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
-import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.view.View;
@@ -15,13 +15,13 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-public class ExerciseChooser extends View implements HasValue<ExerciseStub[]>{
+public class ExerciseChooser extends View implements HasValue<ExerciseData[]>{
 
 	private ExpandableListBoxFormField exercises;
 	private DatePickerFormField startDate;
 	private DatePickerFormField endDate;
 	private Button newButton;
-	private ExerciseStub[] value;
+	private ExerciseData[] value;
 
 	public ExerciseChooser() {
 
@@ -31,6 +31,8 @@ public class ExerciseChooser extends View implements HasValue<ExerciseStub[]>{
 		startDate = new DatePickerFormField("Data de início");
 		endDate = new DatePickerFormField("Data de fim");
 		newButton = new Button("Novo Exercício");
+		
+		exercises.setEditable(false);
 		
 		wrapper.add(exercises);
 		wrapper.add(startDate);
@@ -68,13 +70,13 @@ public class ExerciseChooser extends View implements HasValue<ExerciseStub[]>{
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<ExerciseStub[]> handler) {
+			ValueChangeHandler<ExerciseData[]> handler) {
 		return this.addHandler(handler, ValueChangeEvent.getType());
 	}
 
 
 	@Override
-	public ExerciseStub[] getValue() {
+	public ExerciseData[] getValue() {
 		return value;
 	}
 
@@ -83,19 +85,21 @@ public class ExerciseChooser extends View implements HasValue<ExerciseStub[]>{
 	}
 
 	@Override
-	public void setValue(ExerciseStub[] value) {
+	public void setValue(ExerciseData[] value) {
 		setValue(value, true);
 	}
 
 
 	@Override
-	public void setValue(ExerciseStub[] value, boolean fireEvents) {
+	public void setValue(ExerciseData[] value, boolean fireEvents) {
 		this.value = value;
 
+		exercises.clearValues();
+		
 		for(int i = 0; i<value.length; i++){
-			exercises.addItem(value[i].id, value[i].label);
+			exercises.addItem(value[i].label, value[i].id);
 		}
-		exercises.setValue(value[0].id);
+		exercises.removeItem(0);
 
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
@@ -106,6 +110,13 @@ public class ExerciseChooser extends View implements HasValue<ExerciseStub[]>{
 	@Override
 	protected void initializeView() {
 		return;		
+	}
+
+
+	public void setReadOnly(boolean readOnly) {
+		startDate.setReadOnly(readOnly);
+		endDate.setReadOnly(readOnly);
+		newButton.setVisible(!readOnly);
 	}
 
 }

@@ -25,7 +25,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.SlidePanel;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyChildrenPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyChildrenPanel_OLD;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm_OLD;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar_OLD;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
@@ -51,7 +51,7 @@ public class InsurancePolicySearchOperationView_OLD extends View implements Insu
 	protected InsurancePolicySearchPanel searchPanel;
 	protected InsurancePolicyForm_OLD form;
 	protected InsurancePolicyOperationsToolBar_OLD toolbar;
-	protected InsurancePolicyChildrenPanel childrenPanel; 
+	protected InsurancePolicyChildrenPanel_OLD childrenPanel; 
 	protected ActionInvokedEventHandler<Action> actionHandler;
 
 	public InsurancePolicySearchOperationView_OLD(){
@@ -87,7 +87,7 @@ public class InsurancePolicySearchOperationView_OLD extends View implements Insu
 		childrenPresentersPanel.setSize("100%", "100%");
 		this.childrenPresentersPanel = childrenPresentersPanel;
 		
-		childrenPanel = new InsurancePolicyChildrenPanel();
+		childrenPanel = new InsurancePolicyChildrenPanel_OLD();
 		childrenPanel.setSize("100%", "100%");
 		contentWrapper.addEast(childrenPanel, 300);
 		

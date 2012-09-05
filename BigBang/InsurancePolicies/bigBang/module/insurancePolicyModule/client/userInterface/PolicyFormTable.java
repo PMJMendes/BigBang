@@ -192,6 +192,18 @@ public abstract class PolicyFormTable extends TwoKeyTableView {
 	
 	public abstract void onCoverageDisabled(String coverageId);
 
+	public void putField(int coverageIndex, int columnIndex,
+			Field realTableField) {
+		String coverageId = null;
+		for(int i = 0; i<coverages.length; i++){
+			if(coverageIndex == i){
+				coverageId = coverages[i].coverageId;
+				break;
+			}
+		}
+		table.setValue(coverageId, columnIndex+"", realTableField);
+	}
+
 	
 
 }
