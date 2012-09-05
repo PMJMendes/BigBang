@@ -41,7 +41,6 @@ public interface InsurancePolicyService
 
 	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;
 	public InsuredObject getEmptyObject(String policyId) throws SessionExpiredException, BigBangException;
-	public InsuredObject getPolicyObject(String objectId) throws  SessionExpiredException, BigBangException;
 
 	public InsurancePolicy editPolicy(InsurancePolicy policy) throws  SessionExpiredException, BigBangException;
 

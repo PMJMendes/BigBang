@@ -5,7 +5,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("SubPolicyObjectService")
 public interface SubPolicyObjectService
-	extends PolicyObjectService
+	extends PolicyObjectServiceOLD
 {
 	/**
 	 * Utility class for simplifying access to the instance of async service.

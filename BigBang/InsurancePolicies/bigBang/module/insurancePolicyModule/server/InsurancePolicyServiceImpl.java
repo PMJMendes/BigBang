@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
@@ -18,6 +19,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
+import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.DebitNote;
@@ -38,6 +40,7 @@ import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
@@ -70,6 +73,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoInsurer;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
@@ -167,9 +171,9 @@ public class InsurancePolicyServiceImpl
 	{
 		Policy lobjPolicy;
 		SubLine lobjSubLine;
-		Map<UUID, FieldContents> larrData;
 		FieldStructure lobjStructure;
 		InsurancePolicy lobjResult;
+		Map<UUID, FieldContents> larrData;
 		PolicyExercise[] larrExercises;
 		ComplexFieldContainer.ExerciseData lobjExercise;
 		int i;
@@ -296,6 +300,81 @@ public class InsurancePolicyServiceImpl
 				{
 					lobjExercise = sGetIntersectStructure(lobjStructure);
 					sFillStaticExercise(lobjExercise, larrExercises[i]);
+
+					lobjResult.exerciseData[i] = lobjExercise;
+				}
+			}
+		}
+
+		return lobjResult;
+	}
+
+	public static InsuredObject sGetObject(UUID pidObject)
+		throws BigBangException
+	{
+		PolicyObject lobjObject;
+		Policy lobjPolicy;
+		SubLine lobjSubLine;
+		FieldStructure lobjStructure;
+		InsuredObject lobjResult;
+		Map<UUID, FieldContents> larrData;
+		PolicyExercise[] larrExercises;
+		ComplexFieldContainer.ExerciseData lobjExercise;
+		int i;
+
+		try
+		{
+			lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), pidObject);
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjObject.getAt(1));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjSubLine = lobjPolicy.GetSubLine();
+
+		lobjStructure = sGetSubLineStructure(lobjSubLine);
+
+		lobjResult = sGetObjectStructure(lobjStructure);
+		sFillStaticObject(lobjResult, lobjObject);
+
+		larrData = sExtractData(lobjPolicy, pidObject, null);
+		sFillContainer(lobjResult, larrData);
+
+		if ( Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
+		{
+			lobjResult.exerciseData = null;
+		}
+		else
+		{
+			try
+			{
+				larrExercises = lobjPolicy.GetCurrentExercises();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			if ( (larrExercises == null) || (larrExercises.length == 0) )
+			{
+				lobjExercise = sGetIntersectStructure(lobjStructure);
+				lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(Ano Corrente)");
+
+				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
+			}
+			else
+			{
+				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[larrExercises.length];
+
+				for ( i = 0; i < larrExercises.length; i++ )
+				{
+					lobjExercise = sGetIntersectStructure(lobjStructure);
+					sFillStaticExercise(lobjExercise, larrExercises[i]);
+
+					larrData = sExtractData(lobjPolicy, pidObject, larrExercises[i].getKey());
+					sFillContainer(lobjExercise, larrData);
 
 					lobjResult.exerciseData[i] = lobjExercise;
 				}
@@ -466,15 +545,6 @@ public class InsurancePolicyServiceImpl
 			throw new SessionExpiredException();
 
 		return sGetPolicy(UUID.fromString(policyId));
-	}
-
-	public InsuredObject getPolicyObject(String objectId)
-		throws SessionExpiredException, BigBangException
-	{
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		return null;
 	}
 
 	public InsurancePolicy editPolicy(InsurancePolicy policy)
@@ -1648,6 +1718,104 @@ public class InsurancePolicyServiceImpl
 		pobjDest.ownerId = pobjPolicy.getKey().toString();
 		pobjDest.typeId = lobjType.getKey().toString();
 		pobjDest.typeText = lobjType.getLabel();
+	}
+
+	private static void sFillStaticObject(InsuredObject pobjDest, PolicyObject pobjSource)
+		throws BigBangException
+	{
+		ObjectBase lobjZipCode;
+		ObjectBase lobjType;
+
+		try
+		{
+			if ( pobjSource.getAt(5) == null )
+				lobjZipCode = null;
+			else
+				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
+						(UUID)pobjSource.getAt(5));
+			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ObjectType),
+					(UUID)pobjSource.getAt(2));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		pobjDest.id = pobjSource.getKey().toString();
+
+		pobjDest.ownerId = ((UUID)pobjSource.getAt(1)).toString();
+
+		pobjDest.unitIdentification = pobjSource.getLabel();
+		if ( (pobjSource.getAt(3) != null) || (pobjSource.getAt(4) != null) || (lobjZipCode != null) )
+		{
+			pobjDest.address = new Address();
+			pobjDest.address.street1 = (String)pobjSource.getAt(3);
+			pobjDest.address.street2 = (String)pobjSource.getAt(4);
+			if ( lobjZipCode != null )
+			{
+				pobjDest.address.zipCode = new ZipCode();
+				pobjDest.address.zipCode.code = (String)lobjZipCode.getAt(0);
+				pobjDest.address.zipCode.city = (String)lobjZipCode.getAt(1);
+				pobjDest.address.zipCode.county = (String)lobjZipCode.getAt(2);
+				pobjDest.address.zipCode.district = (String)lobjZipCode.getAt(3);
+				pobjDest.address.zipCode.country = (String)lobjZipCode.getAt(4);
+			}
+			else
+				pobjDest.address.zipCode = null;
+		}
+		pobjDest.inclusionDate = ( pobjSource.getAt(6) == null ? null :
+				((Timestamp)pobjSource.getAt(6)).toString().substring(0, 10) );
+		pobjDest.exclusionDate = ( pobjSource.getAt(7) == null ? null :
+				((Timestamp)pobjSource.getAt(7)).toString().substring(0, 10) );
+		pobjDest.typeId = lobjType.getKey().toString();
+		pobjDest.typeText = lobjType.getLabel();
+
+		if ( Constants.ObjTypeID_Person.equals(lobjType.getKey()) )
+		{
+			pobjDest.taxNumberPerson = (String)pobjSource.getAt(8);
+			pobjDest.genderId = ( pobjSource.getAt(9) == null ? null : ((UUID)pobjSource.getAt(9)).toString() );
+			pobjDest.birthDate = ( pobjSource.getAt(10) == null ? null :
+					((Timestamp)pobjSource.getAt(10)).toString().substring(0, 10) );
+			pobjDest.clientNumberPerson = ( pobjSource.getAt(11) == null ? null : ((Integer)pobjSource.getAt(11)).toString() );
+			pobjDest.insuranceCompanyInternalIdPerson = (String)pobjSource.getAt(12);
+		}
+
+		if ( Constants.ObjTypeID_Group.equals(lobjType.getKey()) )
+		{
+			pobjDest.taxNumberCompany = (String)pobjSource.getAt(13);
+			pobjDest.caeId = ( pobjSource.getAt(14) == null ? null : ((UUID)pobjSource.getAt(14)).toString() );
+			pobjDest.grievousCaeId = ( pobjSource.getAt(15) == null ? null : ((UUID)pobjSource.getAt(15)).toString() );
+			pobjDest.activityNotes = (String)pobjSource.getAt(16);
+			pobjDest.productNotes = (String)pobjSource.getAt(17);
+			pobjDest.businessVolumeId = ( pobjSource.getAt(18) == null ? null : ((UUID)pobjSource.getAt(18)).toString() );
+			pobjDest.europeanUnionEntity = (String)pobjSource.getAt(19);
+			pobjDest.clientNumberGroup = ( pobjSource.getAt(20) == null ? null : ((Integer)pobjSource.getAt(20)).toString() );
+		}
+
+		if ( Constants.ObjTypeID_Equipment.equals(lobjType.getKey()) )
+		{
+			pobjDest.makeAndModel = (String)pobjSource.getAt(21);
+			pobjDest.equipmentDescription = (String)pobjSource.getAt(22);
+			pobjDest.firstRegistryDate = ( pobjSource.getAt(23) == null ? null :
+					((Timestamp)pobjSource.getAt(23)).toString().substring(0, 10) );
+			pobjDest.manufactureYear = ( pobjSource.getAt(24) == null ? null : ((Integer)pobjSource.getAt(24)).toString() );
+			pobjDest.clientInternalId = (String)pobjSource.getAt(25);
+			pobjDest.insuranceCompanyInternalIdVehicle = (String)pobjSource.getAt(26);
+		}
+
+		if ( Constants.ObjTypeID_Site.equals(lobjType.getKey()) )
+		{
+			pobjDest.siteDescription = (String)pobjSource.getAt(27);
+		}
+
+		if ( Constants.ObjTypeID_Animal.equals(lobjType.getKey()) )
+		{
+			pobjDest.species = (String)pobjSource.getAt(28);
+			pobjDest.race = (String)pobjSource.getAt(29);
+			pobjDest.birthYear = ( pobjSource.getAt(30) == null ? null : ((Integer)pobjSource.getAt(30)).toString() );
+			pobjDest.cityRegistryNumber = (String)pobjSource.getAt(31);
+			pobjDest.electronicIdTag = (String)pobjSource.getAt(32);
+		}
 	}
 
 	private static Map<UUID, FieldContents> sExtractData(Policy lobjPolicy, UUID pidObject, UUID pidExercise)

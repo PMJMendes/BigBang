@@ -1,6 +1,6 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -8,8 +8,8 @@ import bigBang.library.shared.SessionExpiredException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("PolicyObjectService")
-public interface PolicyObjectService
+@RemoteServiceRelativePath("PolicyObjectServiceOLD")
+public interface PolicyObjectServiceOLD
 	extends SearchService
 {
 	/**
@@ -25,5 +25,5 @@ public interface PolicyObjectService
 		}
 	}
 
-	public InsuredObject getObject(String objectId) throws SessionExpiredException, BigBangException;
+	public InsuredObjectOLD getObject(String objectId) throws SessionExpiredException, BigBangException;
 }
