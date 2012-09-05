@@ -1130,7 +1130,7 @@ public class InsurancePolicyServiceImpl
 		llngMaxCol = -1;
 		for ( i = 0; i < pobjStructure.marrCoverages.length; i++ )
 		{
-			for ( j = 0; j < pobjStructure.marrFields[i].length; i++ )
+			for ( j = 0; j < pobjStructure.marrFields[i].length; j++ )
 			{
 				if ( pobjStructure.marrFields[i][j].IsVisible() && (pobjStructure.marrFields[i][j].GetColumnOrder() > llngMaxCol) )
 					llngMaxCol = pobjStructure.marrFields[i][j].GetColumnOrder();
@@ -1143,14 +1143,14 @@ public class InsurancePolicyServiceImpl
 		l = 0;
 		for ( i = 0; i < pobjStructure.marrCoverages.length; i++ )
 		{
-			if ( pobjStructure.marrCoverages[i].IsHeader() )
+			if ( !pobjStructure.marrCoverages[i].IsHeader() )
 			{
 				lobjResult.coverages[l] = new InsurancePolicy.Coverage();
 				lobjResult.coverages[l].coverageId = pobjStructure.marrCoverages[i].getKey().toString();
 				lobjResult.coverages[l].coverageName = pobjStructure.marrCoverages[i].getLabel();
 				lobjResult.coverages[l].mandatory = pobjStructure.marrCoverages[i].IsMandatory();
 				lobjResult.coverages[l].order = pobjStructure.marrCoverages[i].GetOrder();
-				lobjResult.coverages[l].presentInPolicy = ( lobjResult.coverages[i].mandatory ? true : null );
+				lobjResult.coverages[l].presentInPolicy = ( lobjResult.coverages[l].mandatory ? true : null );
 				l++;
 
 				for ( j = 0; j < pobjStructure.marrFields[i].length; j++ )
@@ -1165,7 +1165,8 @@ public class InsurancePolicyServiceImpl
 						lobjResult.columns[k].label = pobjStructure.marrFields[i][j].getLabel();
 						lobjResult.columns[k].type = sGetFieldTypeByID(pobjStructure.marrFields[i][j].GetFieldType());
 						lobjResult.columns[k].unitsLabel = pobjStructure.marrFields[i][j].GetUnitsLabel();
-						lobjResult.columns[k].refersToId = pobjStructure.marrFields[i][j].GetRefersToID().toString();
+						lobjResult.columns[k].refersToId = ( pobjStructure.marrFields[i][j].GetRefersToID() == null ? null :
+								pobjStructure.marrFields[i][j].GetRefersToID().toString() );
 					}
 				}
 			}
@@ -1257,7 +1258,7 @@ public class InsurancePolicyServiceImpl
 
 		for ( i = 0; i < parrStructure.marrCoverages.length; i++ )
 		{
-			if ( !parrStructure.marrCoverages[i].IsHeader() )
+			if ( parrStructure.marrCoverages[i].IsHeader() )
 			{
 				for ( j = 0; j < parrStructure.marrFields[i].length; j++ )
 				{
