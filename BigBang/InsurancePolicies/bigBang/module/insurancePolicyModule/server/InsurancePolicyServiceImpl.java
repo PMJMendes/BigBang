@@ -1310,7 +1310,7 @@ public class InsurancePolicyServiceImpl
 		pobjResult.fieldName = pobjSource.getLabel();
 		pobjResult.type = sGetFieldTypeByID(pobjSource.GetFieldType());
 		pobjResult.unitsLabel = pobjSource.GetUnitsLabel();
-		pobjResult.refersToId = pobjSource.GetRefersToID().toString();
+		pobjResult.refersToId = ( pobjSource.GetRefersToID() == null ? null : pobjSource.GetRefersToID().toString() );
 		pobjResult.order = pobjSource.GetColumnOrder();
 
 		pobjResult.value = pobjSource.GetDefaultValue();
