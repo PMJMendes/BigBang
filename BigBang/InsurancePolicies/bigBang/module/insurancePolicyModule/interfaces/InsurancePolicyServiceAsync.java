@@ -19,7 +19,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface InsurancePolicyServiceAsync
 	extends SearchServiceAsync, ExactItemSubServiceAsync
 {
-	void getEmptyPolicy(String subLineId, AsyncCallback<InsurancePolicy> callback);
+	void getEmptyPolicy(String subLineId, String clientId, AsyncCallback<InsurancePolicy> callback);
 	void getEmptyObject(String subLineId, AsyncCallback<Object2> callback);
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void getPolicyObject(String objectId, AsyncCallback<Object2> callback);

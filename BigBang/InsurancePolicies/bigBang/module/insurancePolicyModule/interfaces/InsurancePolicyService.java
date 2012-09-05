@@ -37,7 +37,7 @@ public interface InsurancePolicyService
 		}
 	}
 
-	public InsurancePolicy getEmptyPolicy(String subLineId) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy getEmptyPolicy(String subLineId, String clientId) throws SessionExpiredException, BigBangException;
 	public Object2 getEmptyObject(String subLineId) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;

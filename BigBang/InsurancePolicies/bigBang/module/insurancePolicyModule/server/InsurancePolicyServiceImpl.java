@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -29,6 +31,7 @@ import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Object2;
+import bigBang.definitions.shared.Permission;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
@@ -63,7 +66,11 @@ import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Coverage;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoInsurer;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -92,6 +99,12 @@ public class InsurancePolicyServiceImpl
 		public Tax[][] marrFields;
 	}
 
+	private static class FieldContents
+	{
+		public UUID midValue;
+		public String mstrValue;
+	}
+
 	public static FieldContainer.FieldType sGetFieldTypeByID(UUID pidFieldType)
 	{
 		if ( Constants.FieldID_Boolean.equals(pidFieldType) )
@@ -109,7 +122,7 @@ public class InsurancePolicyServiceImpl
 		return null;
 	}
 
-	public static InsurancePolicy sGetEmptyPolicy(UUID pidSubLine)
+	public static InsurancePolicy sGetEmptyPolicy(UUID pidSubLine, UUID pidClient)
 		throws BigBangException
 	{
 		SubLine lobjSubLine;
@@ -129,6 +142,7 @@ public class InsurancePolicyServiceImpl
 		lobjStructure = sGetSubLineStructure(lobjSubLine);
 
 		lobjResult = sGetPolicyStructure(lobjStructure);
+		sFillStaticEmptyPolicy(lobjResult, lobjSubLine, pidClient);
 
 		if ( Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
 		{
@@ -140,8 +154,8 @@ public class InsurancePolicyServiceImpl
 			lobjResult.hasExercises = true;
 
 			lobjExercise = sGetExerciseStructure(lobjStructure,
-					(Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "1º Ano"));
-			
+					(Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(1º Ano)"));
+
 			lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
 		}
 
@@ -151,7 +165,81 @@ public class InsurancePolicyServiceImpl
 	public static InsurancePolicy sGetPolicy(UUID pidPolicy)
 		throws BigBangException
 	{
-		return null;
+		Policy lobjPolicy;
+		SubLine lobjSubLine;
+		Map<UUID, FieldContents> larrData;
+		FieldStructure lobjStructure;
+		InsurancePolicy lobjResult;
+		PolicyExercise[] larrExercises;
+		ComplexFieldContainer.ExerciseData lobjExercise;
+		int i;
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), pidPolicy);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjSubLine = lobjPolicy.GetSubLine();
+
+		lobjStructure = sGetSubLineStructure(lobjSubLine);
+
+		lobjResult = sGetPolicyStructure(lobjStructure);
+		sFillStaticPolicy(lobjResult, lobjPolicy);
+
+		larrData = sExtractData(lobjPolicy, null, null);
+		sFillContainer(lobjResult, larrData);
+
+		if ( Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
+		{
+			lobjResult.hasExercises = false;
+			lobjResult.exerciseData = null;
+		}
+		else
+		{
+			lobjResult.hasExercises = false;
+
+			try
+			{
+				larrExercises = lobjPolicy.GetCurrentExercises();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			if ( (larrExercises == null) || (larrExercises.length == 0) )
+			{
+				lobjExercise = sGetExerciseStructure(lobjStructure,
+						(Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(Ano Corrente)"));
+
+				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
+			}
+			else
+			{
+				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[larrExercises.length];
+
+				for ( i = 0; i < larrExercises.length; i++ )
+				{
+					lobjExercise = sGetExerciseStructure(lobjStructure, larrExercises[i].getLabel());
+					lobjExercise.startDate = ( larrExercises[i].getAt(2) == null ? null :
+							((Timestamp)larrExercises[i].getAt(2)).toString().substring(0, 10) );
+					lobjExercise.endDate = ( larrExercises[i].getAt(3) == null ? null :
+							((Timestamp)larrExercises[i].getAt(3)).toString().substring(0, 10) );
+
+					larrData = sExtractData(lobjPolicy, null, larrExercises[i].getKey());
+					sFillContainer(lobjExercise, larrData);
+
+					lobjResult.exerciseData[i] = lobjExercise;
+				}
+			}
+		}
+
+
+		return lobjResult;
 	}
 
 	public SearchResult[] getExactResults(String label)
@@ -290,13 +378,13 @@ public class InsurancePolicyServiceImpl
 		return larrResult.toArray(new SearchResult[larrResult.size()]);
 	}
 
-	public InsurancePolicy getEmptyPolicy(String subLineId)
+	public InsurancePolicy getEmptyPolicy(String subLineId, String clientId)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return sGetEmptyPolicy(UUID.fromString(subLineId));
+		return sGetEmptyPolicy(UUID.fromString(subLineId), UUID.fromString(clientId));
 	}
 
 	public Object2 getEmptyObject(String subLineId)
@@ -1315,5 +1403,191 @@ public class InsurancePolicyServiceImpl
 		pobjResult.order = pobjSource.GetColumnOrder();
 
 		pobjResult.value = pobjSource.GetDefaultValue();
+	}
+	
+	private static void sFillStaticEmptyPolicy(InsurancePolicy pobjResult, SubLine pobjSubLine, UUID pidClient)
+		throws BigBangException
+	{
+		Client lobjClient;
+		Line lobjLine;
+		Category lobjCategory;
+
+		try
+		{
+			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), pidClient);
+			lobjLine = pobjSubLine.getLine();
+			lobjCategory = lobjLine.getCategory();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		pobjResult.clientId = lobjClient.getKey().toString();
+		pobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
+		pobjResult.clientName = lobjClient.getLabel();
+		pobjResult.categoryId = lobjCategory.getKey().toString();
+		pobjResult.categoryName = lobjCategory.getLabel();
+		pobjResult.lineId = lobjLine.getKey().toString();
+		pobjResult.lineName = lobjLine.getLabel();
+		pobjResult.subLineId = pobjSubLine.getKey().toString();
+		pobjResult.subLineName = pobjSubLine.getLabel();
+	}
+	
+	private static void sFillStaticPolicy(InsurancePolicy pobjResult, Policy lobjPolicy)
+		throws BigBangException
+	{
+		IProcess lobjProc;
+		Permission[] larrPerms;
+		Client lobjClient;
+		SubLine lobjSubLine;
+		Line lobjLine;
+		Category lobjCategory;
+		String lstrObject;
+		ObjectBase lobjStatus;
+		Mediator lobjMed;
+		PolicyCoInsurer[] larrCoInsurers;
+		int i;
+
+		try
+		{
+			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjPolicy.GetProcessID());
+			larrPerms = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
+			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
+			lobjSubLine = lobjPolicy.GetSubLine();
+			lobjLine = lobjSubLine.getLine();
+			lobjCategory = lobjLine.getCategory();
+			lstrObject = lobjPolicy.GetObjectFootprint();
+			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
+					(UUID)lobjPolicy.getAt(13));
+			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(8));
+			larrCoInsurers = lobjPolicy.GetCurrentCoInsurers();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		pobjResult.id = lobjPolicy.getKey().toString();
+
+		pobjResult.processId = lobjProc.getKey().toString();
+		pobjResult.permissions = larrPerms;
+
+		pobjResult.number = (String)lobjPolicy.getAt(0);
+		pobjResult.clientId = lobjClient.getKey().toString();
+		pobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
+		pobjResult.clientName = lobjClient.getLabel();
+		pobjResult.categoryId = lobjCategory.getKey().toString();
+		pobjResult.categoryName = lobjCategory.getLabel();
+		pobjResult.lineId = lobjLine.getKey().toString();
+		pobjResult.lineName = lobjLine.getLabel();
+		pobjResult.subLineId = lobjSubLine.getKey().toString();
+		pobjResult.subLineName = lobjSubLine.getLabel();
+		pobjResult.insuredObject = lstrObject;
+		pobjResult.caseStudy = (Boolean)lobjPolicy.getAt(12);
+		pobjResult.statusId = lobjStatus.getKey().toString();
+		pobjResult.statusText = lobjStatus.getLabel();
+		switch ( (Integer)lobjStatus.getAt(1) )
+		{
+		case 0:
+			pobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.PROVISIONAL;
+			break;
+
+		case 1:
+			pobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.VALID;
+			break;
+
+		case 2:
+			pobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
+			break;
+		}
+
+		pobjResult.managerId = lobjProc.GetManagerID().toString();
+		pobjResult.insuranceAgencyId = ((UUID)lobjPolicy.getAt(2)).toString();
+		pobjResult.startDate = (lobjPolicy.getAt(4) == null ? null :
+				((Timestamp)lobjPolicy.getAt(4)).toString().substring(0, 10));
+		pobjResult.durationId = ((UUID)lobjPolicy.getAt(5)).toString();
+		pobjResult.fractioningId = ((UUID)lobjPolicy.getAt(6)).toString();
+		pobjResult.maturityDay = (lobjPolicy.getAt(7) == null ? 0 : (Integer)lobjPolicy.getAt(7));
+		pobjResult.maturityMonth = (lobjPolicy.getAt(8) == null ? 0 : (Integer)lobjPolicy.getAt(8));
+		pobjResult.expirationDate = (lobjPolicy.getAt(9) == null ? null :
+				((Timestamp)lobjPolicy.getAt(9)).toString().substring(0, 10));
+		pobjResult.notes = (String)lobjPolicy.getAt(10);
+		pobjResult.mediatorId = (lobjPolicy.getAt(11) == null ? null : ((UUID)lobjPolicy.getAt(11)).toString());
+		pobjResult.inheritMediatorId = lobjMed.getKey().toString();
+		pobjResult.inheritMediatorName = lobjMed.getLabel();
+		pobjResult.premium = (lobjPolicy.getAt(14) == null ? null : ((BigDecimal)lobjPolicy.getAt(14)).doubleValue());
+		pobjResult.operationalProfileId = (lobjPolicy.getAt(18) == null ? null : ((UUID)lobjPolicy.getAt(18)).toString());
+		pobjResult.docushare = (String)lobjPolicy.getAt(15);
+
+		if ( larrCoInsurers.length > 0 )
+		{
+			pobjResult.coInsurers = new InsurancePolicy.CoInsurer[larrCoInsurers.length];
+			for ( i = 0; i < larrCoInsurers.length; i++ )
+			{
+				pobjResult.coInsurers[i] = new InsurancePolicy.CoInsurer();
+				pobjResult.coInsurers[i].insuranceAgencyId = ((UUID)larrCoInsurers[i].getAt(1)).toString();
+				pobjResult.coInsurers[i].percent = ((BigDecimal)larrCoInsurers[i].getAt(2)).doubleValue();
+			}
+		}
+		else
+			pobjResult.coInsurers = null;
+	}
+
+	private static Map<UUID, FieldContents> sExtractData(Policy lobjPolicy, UUID pidObject, UUID pidExercise)
+		throws BigBangException
+	{
+		PolicyValue[] larrValues;
+		HashMap<UUID, FieldContents> larrResult;
+		FieldContents lobjAux;
+		int i;
+
+		try
+		{
+			larrValues = lobjPolicy.GetCurrentKeyedValues(pidObject, pidExercise);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		larrResult = new HashMap<UUID, FieldContents>();
+
+		for ( i = 0; i < larrValues.length; i++ )
+		{
+			lobjAux = new FieldContents();
+			lobjAux.midValue = larrValues[i].getKey();
+			lobjAux.mstrValue = larrValues[i].getLabel();
+			larrResult.put(larrValues[i].GetTax().getKey(), lobjAux);
+		}
+
+		return larrResult;
+	}
+
+	private static void sFillContainer(FieldContainer pobjContainer, Map<UUID, FieldContents> parrData)
+	{
+		int i;
+
+		for ( i = 0; i < pobjContainer.headerFields.length; i++ )
+			sFillField(pobjContainer.headerFields[i], parrData);
+
+		for ( i = 0; i < pobjContainer.columnFields.length; i++ )
+			sFillField(pobjContainer.columnFields[i], parrData);
+
+		for ( i = 0; i < pobjContainer.extraFields.length; i++ )
+			sFillField(pobjContainer.extraFields[i], parrData);
+	}
+
+	private static void sFillField(FieldContainer.HeaderField pobjField, Map<UUID, FieldContents> parrData)
+	{
+		FieldContents lobjAux;
+
+		lobjAux = parrData.get(UUID.fromString(pobjField.fieldId));
+
+		if ( lobjAux != null )
+		{
+			pobjField.valueId = lobjAux.midValue.toString();
+			pobjField.value = lobjAux.mstrValue;
+		}
 	}
 }
