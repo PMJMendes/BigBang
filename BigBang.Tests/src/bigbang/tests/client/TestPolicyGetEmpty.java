@@ -26,6 +26,7 @@ public class TestPolicyGetEmpty
 			}
 		};
 
-		Services.insurancePolicyService.getEmptyPolicy("BEBB58B5-CD95-4872-B72F-9EE90118938F", callback);
+		Services.insurancePolicyService.getEmptyPolicy("BEBB58B5-CD95-4872-B72F-9EE90118938F", "5936520C-307B-48BC-993E-A0B80001F71A",
+				callback);
 	}
 }
