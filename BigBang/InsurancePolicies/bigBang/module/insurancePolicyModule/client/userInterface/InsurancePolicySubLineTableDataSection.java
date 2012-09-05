@@ -11,6 +11,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicyOLD.ColumnHeader;
 import bigBang.definitions.shared.InsurancePolicyOLD.Coverage;
 import bigBang.definitions.shared.InsurancePolicyOLD.TableSection;
 import bigBang.definitions.shared.InsurancePolicyOLD.TableSection.TableField;
@@ -19,6 +20,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TwoKeyTable.Field;
+import bigBang.library.client.userInterface.TwoKeyTable.Type;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
 
