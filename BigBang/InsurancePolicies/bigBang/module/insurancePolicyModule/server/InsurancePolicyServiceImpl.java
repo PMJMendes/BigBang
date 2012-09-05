@@ -1475,7 +1475,7 @@ public class InsurancePolicyServiceImpl
 				if ( o1.IsMandatory() == o2.IsMandatory() )
 				{
 					if ( o1.GetOrder() == o2.GetOrder() )
-						return o1.getKey().compareTo(o2.getKey());
+						return o1.getLabel().compareTo(o2.getLabel());
 					return o1.GetOrder() - o2.GetOrder();
 				}
 				if ( o1.IsMandatory() )
