@@ -5,6 +5,8 @@ public class InsuredObject
 {
 	private static final long serialVersionUID = 1L;
 
+	public boolean deleteThis;
+
 	public String taxNumberPerson;
 	public String genderId;
 	public String birthDate;
@@ -37,6 +39,8 @@ public class InsuredObject
 
 	public InsuredObject()
 	{
+		deleteThis = false;
+
 		headerFields = new HeaderField[0];
 		columnFields = new ColumnField[0];
 		extraFields = new ExtraField[0];
