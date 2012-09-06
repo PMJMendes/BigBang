@@ -5,8 +5,12 @@ public class InsuredObject
 {
 	private static final long serialVersionUID = 1L;
 
-	public boolean deleteThis;
-
+	public static enum Change {
+		CREATED,
+		MODIFIED,
+		DELETED
+	}
+	
 	public String taxNumberPerson;
 	public String genderId;
 	public String birthDate;
@@ -36,14 +40,15 @@ public class InsuredObject
 	public String birthYear;
 	public String cityRegistryNumber;
 	public String electronicIdTag;
+	
+	public Change change;
 
 	public InsuredObject()
 	{
-		deleteThis = false;
-
 		headerFields = new HeaderField[0];
 		columnFields = new ColumnField[0];
 		extraFields = new ExtraField[0];
 		exerciseData = new ExerciseData[0];
 	}
+	
 }
