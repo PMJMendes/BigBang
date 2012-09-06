@@ -63,9 +63,8 @@ public class InsurancePolicy
 	public Coverage[] coverages;
 	public ColumnHeader[] columns;
 
-	public InsuredObject[] objects;
-
-	public boolean hasExercises;
+	public InsuredObject emptyObject;
+	public InsuredObject[] changedObjects;
 
 	public InsurancePolicy()
 	{
@@ -77,6 +76,6 @@ public class InsurancePolicy
 		exerciseData = new ExerciseData[0];
 		coverages = new Coverage[0];
 		columns = new ColumnHeader[0];
-		objects = new InsuredObject[0];
+		changedObjects = new InsuredObject[0];
 	}
 }
