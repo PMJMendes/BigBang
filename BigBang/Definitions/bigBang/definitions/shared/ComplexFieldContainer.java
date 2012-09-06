@@ -10,10 +10,14 @@ public class ComplexFieldContainer
 	{
 		private static final long serialVersionUID = 1L;
 
+		public boolean isActive;
+	
 		public String label;
 		public String startDate;
 		public String endDate;
 	}
 	
+	public boolean hasExercises;
+
 	public ExerciseData[] exerciseData;
 }
