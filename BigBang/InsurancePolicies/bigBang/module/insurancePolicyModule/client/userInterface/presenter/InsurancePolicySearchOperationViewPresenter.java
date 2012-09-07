@@ -110,7 +110,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void allowCreateReceipt(boolean allow);
 		void allowCreateInsuredObject(boolean allow);
 		void allowIncludeInsuredObject(boolean allow);
-		void allowCreateExercise(boolean allow);
 		void allowValidatePolicy(boolean allow);
 		void allowVoidPolicy(boolean allow);
 		void allowTransferBrokerage(boolean allow);
@@ -374,8 +373,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	
 
 	protected void showExpense(ExpenseStub selectedValue) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 
 
