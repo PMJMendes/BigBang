@@ -36,7 +36,10 @@ import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExercis
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.PolicySelectButton;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSearchPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.PolicyNotesFormSection;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
 
@@ -50,8 +53,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	private InsurancePolicyOperationsToolBar toolbar;
 	private InsuredObjectSearchPanel objectsList;
 	private InsurancePolicyForm policyForm;
+	private InsuredObjectForm objectForm;
 	private ExerciseChooser exerciseChooser;
 	private CoverageExerciseDetailsForm detailsForm;
+	private PolicyNotesFormSection policyNotesForm;
+	private PolicySelectButton policySelectButton;
 
 	public InsurancePolicySearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -93,146 +99,122 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 			@Override
 			public void onVoidPolicy() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.VOID_POLICY));
 			}
 
 			@Override
 			public void onBrokerageTransfer() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.TRANSFER_BROKERAGE));
 			}
 
 			@Override
 			public void onDelete() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.DELETE));
 			}
 
 			@Override
 			public void onValidate() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.VALIDATE));
 			}
 
 			@Override
 			public void onCreateSubstitutePolicy() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_SUBSTITUTE_POLICY));
 			}
 
 			@Override
 			public void onRequestInfoFromClient() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.REQUEST_CLIENT_INFO));
 			}
 
 			@Override
 			public void onRequestInfoFromAgency() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.REQUEST_AGENCY_INFO));
 			}
 
 			@Override
 			public void onCreateInsuredObject() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_INSURED_OBJECT));
 			}
 
 			@Override
 			public void onIncludeInsuredObject() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.INCLUDE_INSURED_OBJECT));
 			}
 
 			@Override
 			public void onCreateExercise() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_EXERCISE));
 			}
 
 			@Override
 			public void onCreateInsuredObjectFromClient() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_INSURED_OBJECT_FROM_CLIENT));
 			}
 
 			@Override
 			public void onCreateManagerTransfer() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.TRANSFER_MANAGER));
 			}
 
 			@Override
 			public void onExecuteDecailedCalculations() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.EXECUTE_DETAILED_CALCULATIONS));
 			}
 
 			@Override
 			public void onCreateInfoManagementProcess() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_INFO_MANAGEMENT_PROCESS));
 			}
 
 			@Override
 			public void onCreateSubPolicy() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_SUB_POLICY));
 			}
 
 			@Override
 			public void onIssueDebitNote() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.ISSUE_DEBIT_NOTE));
 			}
 
 			@Override
 			public void onCreateNegotiation() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_NEGOTIATION));
 			}
 
 			@Override
 			public void onCreateHealthExpense() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_EXPENSE));
 			}
 
 			@Override
 			public void onCreateRiskAnalysis() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_RISK_ANALISYS));
 			}
 
 			@Override
 			public void onCreateReceipt() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_RECEIPT));
 			}
 
 			@Override
 			public void onTransferToClient() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.TRANSFER_TO_CLIENT));
 			}
 
 			@Override
 			public void onEditRequest() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.EDIT));
 			}
 
 			@Override
 			public void onSaveRequest() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.SAVE));
 			}
 
 			@Override
 			public void onCancelRequest() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CANCEL_EDIT));
 			}
 
 		};
@@ -243,23 +225,36 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		HorizontalPanel formPanel = new HorizontalPanel();
 
 		policyForm = new InsurancePolicyForm();
-		//TODO ADD INSURANCE, OBJECT AND EXERCISE FORM
-
+		objectForm = new InsuredObjectForm();
+		
+		VerticalPanel objectsPolicyContainer = new VerticalPanel();
+		
+		policySelectButton = new PolicySelectButton(new InsurancePolicyStub());
+		
+		objectsPolicyContainer.add(policySelectButton);
 		objectsList = new InsuredObjectSearchPanel(null); //TODO METER AQUI O BROKER
 		objectsList.showFilterField(false);
-		formPanel.add(objectsList);
+		objectsPolicyContainer.add(objectsList);
+		formPanel.add(objectsPolicyContainer);
 		objectsList.setWidth("100%");
-		formPanel.setCellWidth(objectsList, "200px");
+		objectsPolicyContainer.setCellWidth(objectsList, "200px");
+		formPanel.setCellWidth(objectsPolicyContainer, "200px");
 		formPanel.add(policyForm.getNonScrollableContent());
+		formPanel.add(objectForm.getNonScrollableContent());
+		
+		policyForm.getNonScrollableContent().setVisible(false); //TODO REMOVE THIS
+	//	objectForm.getNonScrollableContent().setVisible(false);
+		
 		formPanel.setCellWidth(policyForm, "100%");
 		policyForm.getNonScrollableContent().setSize("100%", "100%");
+		objectForm.getNonScrollableContent().setSize("100%", "100%");
 		formPanel.setSize("100%", "100%");
 		formContainer.add(formPanel);
 		formContainer.setCellHeight(formPanel, "100%");
 
 		ScrollPanel scrollContainer = new ScrollPanel();
 		scrollContainer.setSize("100%", "100%");
-		
+
 		VerticalPanel centerWrapper = new VerticalPanel();
 
 		centerWrapper.setSize("100%", "100%");
@@ -267,25 +262,30 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		VerticalPanel toolbarAndCenterWrapper = new VerticalPanel();
 		toolbarAndCenterWrapper.setSize("100%", "100%");
 		toolbarAndCenterWrapper.add(toolbar);
-		
+
 		centerWrapper.add(formContainer);
 		centerWrapper.setCellHeight(formContainer, "100%");
 		VerticalPanel detailTableContainer = new VerticalPanel();
 		detailTableContainer.setSize("100%", "100%");
-		
+
 		exerciseChooser = new ExerciseChooser();
 		detailTableContainer.add(exerciseChooser);
 
 		detailsForm = new CoverageExerciseDetailsForm("");
 		detailTableContainer.add(detailsForm.getNonScrollableContent());
-		
+
 		centerWrapper.add(detailTableContainer);
 		centerWrapper.setCellHeight(detailTableContainer, "100%");
-
+		
+		policyNotesForm = new PolicyNotesFormSection();
+		policyNotesForm.setSize("100%", "100%");
+		
+		centerWrapper.add(policyNotesForm);
+		
 		scrollContainer.add(centerWrapper);
 		scrollContainer.getElement().getStyle().setBackgroundColor("whiteSmoke");
 		scrollContainer.getElement().getStyle().setOverflowX(Style.Overflow.HIDDEN);
-		
+
 		toolbarAndCenterWrapper.add(scrollContainer);
 		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
 		contentWrapper.add(toolbarAndCenterWrapper);
@@ -298,248 +298,203 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
-		// TODO Auto-generated method stub
-		
+		actionHandler = handler;
 	}
 
 	@Override
 	public HasValueSelectables<InsurancePolicyStub> getList() {
-		// TODO Auto-generated method stub
-		return null;
+		return searchPanel;
 	}
 
 	@Override
 	public HasEditableValue<InsurancePolicy> getPolicyHeaderForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return policyForm;
 	}
 
 	@Override
 	public HasEditableValue<InsuredObject> getInsuredObjectHeaderForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return objectForm;
 	}
 
 	@Override
 	public void allowDeleteInsuredObject(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowDelete(allow);
 	}
 
 	@Override
 	public HasEditableValue<FieldContainer> getCommonFieldsForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return detailsForm;
 	}
 
 	@Override
 	public HasValue<ExerciseData> getExerciseForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return exerciseChooser;
 	}
 
 	@Override
 	public HasValue<String> getExerciseSelector() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void allowCreateNewExercise(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		return exerciseChooser.getExerciseSelector();
 	}
 
 	@Override
 	public HasValue<String> getPolicyNotesForm() {
-		// TODO Auto-generated method stub
+		//TODO;
 		return null;
 	}
 
 	@Override
 	public HasValueSelectables<InsuredObjectStub> getInsuredObjectsList() {
-		// TODO Auto-generated method stub
-		return null;
+		return objectsList;
 	}
 
 	@Override
 	public void clearAllowedPermissions() {
-		// TODO Auto-generated method stub
-		
+		toolbar.lockAll();
 	}
 
 	@Override
 	public void allowEdit(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowEdit(allow);
 	}
 
 	@Override
 	public void allowDelete(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowDelete(allow);
 	}
 
 	@Override
 	public void allowCreateReceipt(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowCreateReceipt(allow);
 	}
 
 	@Override
 	public void allowCreateInsuredObject(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		//TODO
 	}
 
 	@Override
 	public void allowIncludeInsuredObject(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowIncludeInsuredObject(allow);
 	}
 
 	@Override
-	public void allowCreateExercise(boolean allow) {
-		// TODO Auto-generated method stub
-		
+	public void allowCreateNewExercise(boolean allow) {
+		exerciseChooser.allowCreateExercise(allow);
 	}
 
 	@Override
 	public void allowValidatePolicy(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowValidate(allow);
 	}
 
 	@Override
 	public void allowVoidPolicy(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowVoidPolicy(allow);
 	}
 
 	@Override
 	public void allowTransferBrokerage(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowTransferBrokerage(allow);
 	}
 
 	@Override
 	public void allowCreateSubstitutePolicy(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowCreateSubstitutepolicy(allow);
 	}
 
 	@Override
 	public void allowRequestClientInfo(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowRequestClientInfo(allow);
 	}
 
 	@Override
 	public void allowRequestAgencyInfo(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowRequestAgencyInfo(allow);
 	}
 
 	@Override
 	public void allowCreateInsuredObjectFromClient(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowCreateInsuredObjectFromClient(allow);
 	}
 
 	@Override
 	public void allowTransferManager(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowTransferManager(allow);
 	}
 
 	@Override
 	public void allowExecuteDetailedCalculations(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowExecuteDetailedalculations(allow);
 	}
 
 	@Override
 	public void allowCreateInfoManagementProcess(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowCreateInfoManagementProcess(allow);
 	}
 
 	@Override
 	public void allowCreateSubPolicy(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowCreateSubPolicy(allow);
 	}
 
 	@Override
 	public void allowIssueDebitNote(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowIssueDebitNote(allow);
 	}
 
 	@Override
 	public void allowCreateNegotiation(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowCreateNegotiation(allow);
 	}
 
 	@Override
 	public void allowCreateHealthExpense(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowCreateHealthExpense(allow);
 	}
 
 	@Override
 	public void allowCreateRiskAnalisys(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowCreateRiskAnalisys(allow);
 	}
 
 	@Override
 	public void allowTransferToClient(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		toolbar.allowTransferToClient(allow);
 	}
 
 	@Override
 	public HasValueSelectables<Contact> getContactsList() {
-		// TODO Auto-generated method stub
-		return null;
+		return childrenPanel.contactsList;
 	}
 
 	@Override
 	public HasValueSelectables<Document> getDocumentsList() {
-		// TODO Auto-generated method stub
-		return null;
+		return childrenPanel.documentsList;
 	}
 
 	@Override
 	public HasValueSelectables<SubPolicyStub> getSubPoliciesList() {
-		// TODO Auto-generated method stub
-		return null;
+		return childrenPanel.subPoliciesList;
 	}
 
 	@Override
 	public HasValueSelectables<ReceiptStub> getReceiptsList() {
-		// TODO Auto-generated method stub
-		return null;
+		return childrenPanel.receiptsList;
 	}
 
 	@Override
 	public HasValueSelectables<ExpenseStub> getExpensesList() {
-		// TODO Auto-generated method stub
-		return null;
+		return childrenPanel.expensesList;
 	}
 
 	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
-		// TODO Auto-generated method stub
-		return null;
+		return childrenPanel.historyList;
 	}
 
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
-		// TODO Auto-generated method stub
-		return null;
+		return childrenPanel.subProcessesList;
 	}
 
 }
