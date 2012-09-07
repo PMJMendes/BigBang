@@ -378,7 +378,7 @@ public class DataBuilder
 
 		public ExerciseBuilder withSource(String pstrLabel, boolean pbForObject)
 		{
-			mbIsEmpty = false;
+			mbIsEmpty = true;
 			mobjExercise = null;
 			mstrLabel = pstrLabel;
 			mbForObject = pbForObject;
@@ -678,6 +678,8 @@ public class DataBuilder
 			throws BigBangException
 		{
 			ObjectBase lobjType;
+			Line lobjLine;
+			Category lobjCategory;
 
 			try
 			{
@@ -687,6 +689,12 @@ public class DataBuilder
 			{
 				throw new BigBangException(e.getMessage(), e);
 			}
+			lobjLine = mobjSubLine.getLine();
+			lobjCategory = lobjLine.getCategory();
+
+			mobjOutObject.subLineName = mobjSubLine.getLabel();
+			mobjOutObject.lineName = lobjLine.getLabel();
+			mobjOutObject.categoryName = lobjCategory.getLabel();
 
 			mobjOutObject.typeId = midObjectType.toString();
 			mobjOutObject.typeText = lobjType.getLabel();
@@ -697,6 +705,8 @@ public class DataBuilder
 		{
 			ObjectBase lobjZipCode;
 			ObjectBase lobjType;
+			Line lobjLine;
+			Category lobjCategory;
 
 			try
 			{
@@ -712,8 +722,8 @@ public class DataBuilder
 			{
 				throw new BigBangException(e.getMessage(), e);
 			}
-
-			mobjOutObject.id = mobjObject.getKey().toString();
+			lobjLine = mobjSubLine.getLine();
+			lobjCategory = lobjLine.getCategory();
 
 			mobjOutObject.unitIdentification = mobjObject.getLabel();
 			if ( (mobjObject.getAt(3) != null) || (mobjObject.getAt(4) != null) || (lobjZipCode != null) )
@@ -739,6 +749,12 @@ public class DataBuilder
 					((Timestamp)mobjObject.getAt(7)).toString().substring(0, 10) );
 			mobjOutObject.typeId = lobjType.getKey().toString();
 			mobjOutObject.typeText = lobjType.getLabel();
+
+			mobjOutObject.subLineName = mobjSubLine.getLabel();
+			mobjOutObject.lineName = lobjLine.getLabel();
+			mobjOutObject.categoryName = lobjCategory.getLabel();
+
+			mobjOutObject.id = mobjObject.getKey().toString();
 
 			if ( Constants.ObjTypeID_Person.equals(lobjType.getKey()) )
 			{
