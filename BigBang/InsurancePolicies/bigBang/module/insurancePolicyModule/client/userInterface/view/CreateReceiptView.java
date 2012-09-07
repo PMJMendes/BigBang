@@ -9,7 +9,7 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm_OLD;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter.Action;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class CreateReceiptView extends View implements CreateReceiptViewPresenter.Display {
 	
 	private ReceiptForm form;
-	private InsurancePolicyForm_OLD ownerForm;
+	private InsurancePolicyForm ownerForm;
 	private ActionInvokedEventHandler<Action> handler;
 	private BigBangOperationsToolBar toolbar;
 	
@@ -72,13 +72,7 @@ public class CreateReceiptView extends View implements CreateReceiptViewPresente
 		ownerFormHeader.setHeight("30px");
 		ownerFormWrapper.add(ownerFormHeader);
 		
-		ownerForm = new InsurancePolicyForm_OLD() {
-			
-			@Override
-			public void onSubLineChanged(String subLineId) {
-				return;
-			}
-		};
+		ownerForm = new InsurancePolicyForm();
 		ownerForm.setReadOnly(true);
 		ownerFormWrapper.add(ownerForm);
 		ownerFormWrapper.setCellHeight(ownerForm, "100%");

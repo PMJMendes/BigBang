@@ -16,10 +16,10 @@ public interface PolicyObjectService
 	 * Utility class for simplifying access to the instance of async service.
 	 */
 	public static class Util {
-		private static PolicyObjectServiceOLDAsync instance;
-		public static PolicyObjectServiceOLDAsync getInstance(){
+		private static PolicyObjectServiceAsync instance;
+		public static PolicyObjectServiceAsync getInstance(){
 			if (instance == null) {
-				instance = GWT.create(PolicyObjectServiceOLD.class);
+				instance = GWT.create(PolicyObjectService.class);
 			}
 			return instance;
 		}

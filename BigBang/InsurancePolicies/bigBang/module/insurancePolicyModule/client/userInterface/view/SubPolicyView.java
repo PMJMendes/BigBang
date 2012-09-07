@@ -17,7 +17,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm_OLD;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyChildrenPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyOperationsToolbar;
@@ -37,7 +37,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 	private ActionInvokedEventHandler<Action> actionHandler;
 	private SubPolicyForm form;
-	private InsurancePolicyForm_OLD policyForm;
+	private InsurancePolicyForm policyForm;
 	private SubPolicyOperationsToolbar toolbar;
 	private SubPolicyChildrenPanel childrenPanel;
 
@@ -134,13 +134,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		VerticalPanel policyFormWrapper = new VerticalPanel();
 		policyFormWrapper.setSize("100%", "100%");
 
-		policyForm = new InsurancePolicyForm_OLD() {
-
-			@Override
-			public void onSubLineChanged(String subLineId) {
-				return;
-			}
-		};
+		policyForm = new InsurancePolicyForm();
 		policyForm.setReadOnly(true);
 		policyForm.setSize("100%", "100%");
 

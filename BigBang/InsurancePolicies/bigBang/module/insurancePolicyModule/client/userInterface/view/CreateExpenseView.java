@@ -13,13 +13,13 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.userInterface.ExpenseForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.CreateExpenseOperationsToolbar;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm_OLD;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter.Action;
 
 public class CreateExpenseView extends View implements CreateExpenseViewPresenter.Display{
 
-	protected InsurancePolicyForm_OLD policyForm;
+	protected InsurancePolicyForm policyForm;
 	protected ExpenseForm form;
 	protected ActionInvokedEventHandler<Action> handler;
 	protected CreateExpenseOperationsToolbar toolbar;
@@ -37,13 +37,7 @@ public class CreateExpenseView extends View implements CreateExpenseViewPresente
 		parentHeader.setHeight("30px");
 		parentWrapper.add(parentHeader);
 
-		policyForm = new InsurancePolicyForm_OLD() {
-
-			@Override
-			public void onSubLineChanged(String subLineId) {
-				return;
-			}
-		};
+		policyForm = new InsurancePolicyForm();
 
 		policyForm.setReadOnly(true);
 		policyForm.setSize("100%", "100%");

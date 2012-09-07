@@ -1,16 +1,7 @@
 package bigBang.module.clientModule.client.userInterface.presenter;
 
-import java.util.Collection;
-
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
@@ -22,6 +13,10 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
 
 public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 
@@ -106,40 +101,12 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		if(categoryId == null || lineId == null || subLineId == null) {
 			onConfirmError();
 		}else{
-			broker.openPolicyResource(null, new ResponseHandler<InsurancePolicy>() {
-
-				@Override
-				public void onResponse(InsurancePolicy response) {
-					response.clientId = clientId;
-					response.categoryId = view.getCategory();
-					response.lineId = view.getLine();
-					response.subLineId = view.getSubLine();
-//					response.statusIcon = PolicyStatus.PROVISIONAL;
-					
-					broker.initPolicy(response, new ResponseHandler<InsurancePolicy>() {
-
-						@Override
-						public void onResponse(InsurancePolicy response) {
-							onSuccess(response);
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							CreateInsurancePolicyViewPresenter.this.onError();
-						}
-					});				
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					CreateInsurancePolicyViewPresenter.this.onError();
-				}
-			});
+			onSuccess(view.getSubLine());
 		}
 	}
 
-	protected void onSuccess(InsurancePolicy policy){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Apólice em criação no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
+	protected void onSuccess(String subLineId){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A criar Apólice..."), TYPE.TRAY_NOTIFICATION));
 
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
@@ -149,7 +116,8 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		item.setParameter("section", "insurancepolicy");
 		item.setStackParameter("display");
 		item.pushIntoStackParameter("display", "search");
-		item.setParameter("policyid", policy.id);
+		item.setParameter("policyid", "new");
+		item.setParameter("subLineId", subLineId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

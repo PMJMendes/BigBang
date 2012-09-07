@@ -49,13 +49,11 @@ implements InsuranceSubPolicyBroker {
 	protected InsuredObjectDataBroker insuredObjectsBroker;
 	protected ExerciseDataBroker exerciseDataBroker;
 
-	public InsuranceSubPolicyBrokerImpl(InsuredObjectDataBroker insuredObjectsBroker, ExerciseDataBroker exerciseBroker) {
+	public InsuranceSubPolicyBrokerImpl() {
 		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY;
 		this.service = SubPolicyService.Util.getInstance();
 		this.subPoliciesInScratchPad = new HashMap<String, String>();
 		this.searchBroker = new InsuranceSubPolicySearchDataBroker();
-		this.insuredObjectsBroker = insuredObjectsBroker;
-		this.exerciseDataBroker = exerciseBroker;
 	}
 
 	@Override
