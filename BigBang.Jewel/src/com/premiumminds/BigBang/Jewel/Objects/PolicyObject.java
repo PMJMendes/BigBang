@@ -39,8 +39,37 @@ public class PolicyObject
 		}
 	}
 
+    private Policy mrefOwner;
+
 	public void Initialize()
 		throws JewelEngineException
 	{
+		if ( getAt(1) != null )
+		{
+			try
+			{
+				mrefOwner = Policy.GetInstance(getNameSpace(), (UUID)getAt(1));
+			}
+			catch (Throwable e)
+			{
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+		}
 	}
+
+    public Policy GetOwner()
+    {
+    	if ( mrefOwner == null )
+    	{
+			try
+			{
+				Initialize();
+			}
+			catch (Throwable e)
+			{
+			}
+    	}
+
+    	return mrefOwner;
+    }
 }

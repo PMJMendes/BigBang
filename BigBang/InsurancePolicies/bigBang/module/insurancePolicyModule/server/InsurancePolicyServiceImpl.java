@@ -4,14 +4,10 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
@@ -19,9 +15,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
-import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
-import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
@@ -29,18 +23,15 @@ import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
-import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.Permission;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
-import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
@@ -58,7 +49,6 @@ import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 import bigBang.module.quoteRequestModule.server.NegotiationServiceImpl;
 import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
@@ -70,17 +60,10 @@ import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
-import com.premiumminds.BigBang.Jewel.Objects.Coverage;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
-import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoInsurer;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
-import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateDebitNote;
@@ -101,18 +84,6 @@ public class InsurancePolicyServiceImpl
 	implements InsurancePolicyService
 {
 	private static final long serialVersionUID = 1L;
-	
-	private static class FieldStructure
-	{
-		public Coverage[] marrCoverages;
-		public Tax[][] marrFields;
-	}
-
-	private static class FieldContents
-	{
-		public UUID midValue;
-		public String mstrValue;
-	}
 
 	public static FieldContainer.FieldType sGetFieldTypeByID(UUID pidFieldType)
 	{
@@ -129,265 +100,6 @@ public class InsurancePolicyServiceImpl
 		if ( Constants.FieldID_Text.equals(pidFieldType) )
 			return FieldContainer.FieldType.TEXT;
 		return null;
-	}
-
-	public static InsurancePolicy sGetEmptyPolicy(UUID pidSubLine, UUID pidClient)
-		throws BigBangException
-	{
-		SubLine lobjSubLine;
-		FieldStructure lobjStructure;
-		InsurancePolicy lobjResult;
-		ComplexFieldContainer.ExerciseData lobjExercise;
-
-		try
-		{
-			lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), pidSubLine);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjStructure = sGetSubLineStructure(lobjSubLine);
-
-		lobjResult = sGetPolicyStructure(lobjStructure);
-		sFillStaticEmptyPolicy(lobjResult, lobjSubLine, pidClient);
-
-		if ( Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
-		{
-			lobjResult.hasExercises = false;
-			lobjResult.exerciseData = null;
-		}
-		else
-		{
-			lobjResult.hasExercises = true;
-
-			lobjExercise = sGetExerciseStructure(lobjStructure);
-			lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(1º Ano)");
-
-			lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
-		}
-
-		return lobjResult;
-	}
-
-	public static InsurancePolicy sGetPolicy(UUID pidPolicy)
-		throws BigBangException
-	{
-		Policy lobjPolicy;
-		SubLine lobjSubLine;
-		FieldStructure lobjStructure;
-		InsurancePolicy lobjResult;
-		Map<UUID, FieldContents> larrData;
-		PolicyExercise[] larrExercises;
-		ComplexFieldContainer.ExerciseData lobjExercise;
-		int i;
-
-		try
-		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), pidPolicy);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjSubLine = lobjPolicy.GetSubLine();
-
-		lobjStructure = sGetSubLineStructure(lobjSubLine);
-
-		lobjResult = sGetPolicyStructure(lobjStructure);
-		sFillStaticPolicy(lobjResult, lobjPolicy);
-		sFillCoverageInfo(lobjResult, lobjPolicy);
-
-		larrData = sExtractData(lobjPolicy, null, null);
-		sFillContainer(lobjResult, larrData);
-
-		if ( Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
-		{
-			lobjResult.hasExercises = false;
-			lobjResult.exerciseData = null;
-		}
-		else
-		{
-			lobjResult.hasExercises = true;
-
-			try
-			{
-				larrExercises = lobjPolicy.GetCurrentExercises();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
-			if ( (larrExercises == null) || (larrExercises.length == 0) )
-			{
-				lobjExercise = sGetExerciseStructure(lobjStructure);
-				lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(Ano Corrente)");
-
-				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
-			}
-			else
-			{
-				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[larrExercises.length];
-
-				for ( i = 0; i < larrExercises.length; i++ )
-				{
-					lobjExercise = sGetExerciseStructure(lobjStructure);
-					sFillStaticExercise(lobjExercise, larrExercises[i]);
-
-					larrData = sExtractData(lobjPolicy, null, larrExercises[i].getKey());
-					sFillContainer(lobjExercise, larrData);
-
-					lobjResult.exerciseData[i] = lobjExercise;
-				}
-			}
-		}
-
-
-		return lobjResult;
-	}
-
-	public static InsuredObject sGetEmptyObject(UUID pidPolicy)
-		throws BigBangException
-	{
-		Policy lobjPolicy;
-		SubLine lobjSubLine;
-		FieldStructure lobjStructure;
-		InsuredObject lobjResult;
-		PolicyExercise[] larrExercises;
-		ComplexFieldContainer.ExerciseData lobjExercise;
-		int i;
-
-		try
-		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), pidPolicy);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjSubLine = lobjPolicy.GetSubLine();
-
-		lobjStructure = sGetSubLineStructure(lobjSubLine);
-
-		lobjResult = sGetObjectStructure(lobjStructure);
-		sFillStaticEmptyObject(lobjResult, lobjPolicy);
-
-		if ( Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
-		{
-			lobjResult.exerciseData = null;
-		}
-		else
-		{
-			try
-			{
-				larrExercises = lobjPolicy.GetCurrentExercises();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
-			if ( (larrExercises == null) || (larrExercises.length == 0) )
-			{
-				lobjExercise = sGetIntersectStructure(lobjStructure);
-				lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(Ano Corrente)");
-
-				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
-			}
-			else
-			{
-				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[larrExercises.length];
-
-				for ( i = 0; i < larrExercises.length; i++ )
-				{
-					lobjExercise = sGetIntersectStructure(lobjStructure);
-					sFillStaticExercise(lobjExercise, larrExercises[i]);
-
-					lobjResult.exerciseData[i] = lobjExercise;
-				}
-			}
-		}
-
-		return lobjResult;
-	}
-
-	public static InsuredObject sGetObject(UUID pidObject)
-		throws BigBangException
-	{
-		PolicyObject lobjObject;
-		Policy lobjPolicy;
-		SubLine lobjSubLine;
-		FieldStructure lobjStructure;
-		InsuredObject lobjResult;
-		Map<UUID, FieldContents> larrData;
-		PolicyExercise[] larrExercises;
-		ComplexFieldContainer.ExerciseData lobjExercise;
-		int i;
-
-		try
-		{
-			lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), pidObject);
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjObject.getAt(1));
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjSubLine = lobjPolicy.GetSubLine();
-
-		lobjStructure = sGetSubLineStructure(lobjSubLine);
-
-		lobjResult = sGetObjectStructure(lobjStructure);
-		sFillStaticObject(lobjResult, lobjObject);
-
-		larrData = sExtractData(lobjPolicy, pidObject, null);
-		sFillContainer(lobjResult, larrData);
-
-		if ( Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
-		{
-			lobjResult.exerciseData = null;
-		}
-		else
-		{
-			try
-			{
-				larrExercises = lobjPolicy.GetCurrentExercises();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
-			if ( (larrExercises == null) || (larrExercises.length == 0) )
-			{
-				lobjExercise = sGetIntersectStructure(lobjStructure);
-				lobjExercise.label = (Constants.ExID_Variable.equals(lobjSubLine.getExerciseType()) ?  "Período Inicial" : "(Ano Corrente)");
-
-				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[] {lobjExercise};
-			}
-			else
-			{
-				lobjResult.exerciseData = new ComplexFieldContainer.ExerciseData[larrExercises.length];
-
-				for ( i = 0; i < larrExercises.length; i++ )
-				{
-					lobjExercise = sGetIntersectStructure(lobjStructure);
-					sFillStaticExercise(lobjExercise, larrExercises[i]);
-
-					larrData = sExtractData(lobjPolicy, pidObject, larrExercises[i].getKey());
-					sFillContainer(lobjExercise, larrData);
-
-					lobjResult.exerciseData[i] = lobjExercise;
-				}
-			}
-		}
-
-		return lobjResult;
 	}
 
 	public SearchResult[] getExactResults(String label)
@@ -532,7 +244,7 @@ public class InsurancePolicyServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return sGetEmptyPolicy(UUID.fromString(subLineId), UUID.fromString(clientId));
+		return new DataBuilder().getEmptyPolicy(UUID.fromString(subLineId), UUID.fromString(clientId));
 	}
 
 	public InsurancePolicy getPolicy(String policyId)
@@ -541,16 +253,7 @@ public class InsurancePolicyServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return sGetPolicy(UUID.fromString(policyId));
-	}
-
-	public InsuredObject getEmptyObject(String policyId)
-		throws SessionExpiredException, BigBangException
-	{
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		return sGetEmptyObject(UUID.fromString(policyId));
+		return new DataBuilder().getPolicy(UUID.fromString(policyId));
 	}
 
 	public InsurancePolicy editPolicy(InsurancePolicy policy)
@@ -592,7 +295,7 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetPolicy(lobjPolicy.getKey());
+		return new DataBuilder().getPolicy(lobjPolicy.getKey());
 	}
 
 	public InsurancePolicy performCalculations(String policyId)
@@ -628,7 +331,7 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetPolicy(lobjPolicy.getKey());
+		return new DataBuilder().getPolicy(lobjPolicy.getKey());
 	}
 
 	public void validatePolicy(String policyId)
@@ -1348,594 +1051,6 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return lbFound;
-	}
-	
-	private static FieldStructure sGetSubLineStructure(SubLine pobjSubLine)
-		throws BigBangException
-	{
-		FieldStructure lobjResult;
-		int i;
-
-		lobjResult = new FieldStructure();
-
-		try
-		{
-			lobjResult.marrCoverages = pobjSubLine.GetCurrentCoverages();
-			sSortCoverages(lobjResult.marrCoverages);
-
-			lobjResult.marrFields = new Tax[lobjResult.marrCoverages.length][];
-			for ( i = 0; i < lobjResult.marrCoverages.length; i++ )
-			{
-				lobjResult.marrFields[i] = lobjResult.marrCoverages[i].GetCurrentTaxes();
-				sSortFields(lobjResult.marrFields[i]);
-			}
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return lobjResult;
-	}
-
-	private static InsurancePolicy sGetPolicyStructure(FieldStructure pobjStructure)
-		throws BigBangException
-	{
-		InsurancePolicy lobjResult;
-		int llngMaxCol;
-		int i, j, k, l;
-
-		lobjResult = new InsurancePolicy();
-
-		llngMaxCol = -1;
-		for ( i = 0; i < pobjStructure.marrCoverages.length; i++ )
-		{
-			for ( j = 0; j < pobjStructure.marrFields[i].length; j++ )
-			{
-				if ( pobjStructure.marrFields[i][j].IsVisible() && (pobjStructure.marrFields[i][j].GetColumnOrder() > llngMaxCol) )
-					llngMaxCol = pobjStructure.marrFields[i][j].GetColumnOrder();
-			}
-		}
-
-		lobjResult.coverages = new InsurancePolicy.Coverage[pobjStructure.marrCoverages.length - 1];
-		lobjResult.columns = new InsurancePolicy.ColumnHeader[llngMaxCol + 1];
-
-		l = 0;
-		for ( i = 0; i < pobjStructure.marrCoverages.length; i++ )
-		{
-			if ( !pobjStructure.marrCoverages[i].IsHeader() )
-			{
-				lobjResult.coverages[l] = new InsurancePolicy.Coverage();
-				lobjResult.coverages[l].coverageId = pobjStructure.marrCoverages[i].getKey().toString();
-				lobjResult.coverages[l].coverageName = pobjStructure.marrCoverages[i].getLabel();
-				lobjResult.coverages[l].mandatory = pobjStructure.marrCoverages[i].IsMandatory();
-				lobjResult.coverages[l].order = l;
-				lobjResult.coverages[l].presentInPolicy = ( lobjResult.coverages[l].mandatory ? true : null );
-				l++;
-
-				for ( j = 0; j < pobjStructure.marrFields[i].length; j++ )
-				{
-					if ( !pobjStructure.marrFields[i][j].IsVisible() )
-						continue;
-
-					k = pobjStructure.marrFields[i][j].GetColumnOrder();
-					if ( (k >= 0) && (lobjResult.columns[k] == null) )
-					{
-						lobjResult.columns[k] = new InsurancePolicy.ColumnHeader();
-						lobjResult.columns[k].label = pobjStructure.marrFields[i][j].getLabel();
-						lobjResult.columns[k].type = sGetFieldTypeByID(pobjStructure.marrFields[i][j].GetFieldType());
-						lobjResult.columns[k].unitsLabel = pobjStructure.marrFields[i][j].GetUnitsLabel();
-						lobjResult.columns[k].refersToId = ( pobjStructure.marrFields[i][j].GetRefersToID() == null ? null :
-								pobjStructure.marrFields[i][j].GetRefersToID().toString() );
-					}
-				}
-			}
-		}
-
-		sBuildFieldContainer(lobjResult, pobjStructure, false, false);
-
-		return lobjResult;
-	}
-
-	private static ComplexFieldContainer.ExerciseData sGetExerciseStructure(FieldStructure pobjStructure)
-	{
-		ComplexFieldContainer.ExerciseData lobjResult;
-		
-		lobjResult = new ComplexFieldContainer.ExerciseData();
-
-		sBuildFieldContainer(lobjResult, pobjStructure, false, true);
-
-		return lobjResult;
-	}
-
-	private static InsuredObject sGetObjectStructure(FieldStructure pobjStructure)
-	{
-		InsuredObject lobjResult;
-
-		lobjResult = new InsuredObject();
-
-		sBuildFieldContainer(lobjResult, pobjStructure, true, false);
-
-		return lobjResult;
-	}
-
-	private static ComplexFieldContainer.ExerciseData sGetIntersectStructure(FieldStructure pobjStructure)
-	{
-		ComplexFieldContainer.ExerciseData lobjResult;
-
-		lobjResult = new ComplexFieldContainer.ExerciseData();
-
-		sBuildFieldContainer(lobjResult, pobjStructure, true, true);
-
-		return lobjResult;
-	}
-
-	private static void sSortCoverages(Coverage[] parrCoverages)
-	{
-		Arrays.sort(parrCoverages, new Comparator<Coverage>()
-		{
-			public int compare(Coverage o1, Coverage o2)
-			{
-				if ( o1.IsMandatory() == o2.IsMandatory() )
-				{
-					if ( o1.GetOrder() == o2.GetOrder() )
-						return o1.getLabel().compareTo(o2.getLabel());
-					return o1.GetOrder() - o2.GetOrder();
-				}
-				if ( o1.IsMandatory() )
-					return -1;
-				return 1;
-			}
-		});
-	}
-
-	private static void sSortFields(Tax[] parrFields)
-	{
-		Arrays.sort(parrFields, new Comparator<Tax>()
-		{
-			public int compare(Tax o1, Tax o2)
-			{
-				if ( o1.IsVisible() == o2.IsVisible() )
-				{
-					if ( o1.GetColumnOrder() == o2.GetColumnOrder() )
-					{
-						if ( o1.GetFieldType().equals(o2.GetFieldType()) )
-						{
-							if ( (o1.GetRefersToID() == null && o1.GetRefersToID() == null) ||
-									o1.GetRefersToID().equals(o1.GetRefersToID()) )
-								return o1.getLabel().compareTo(o2.getLabel());
-							if ( o1.GetRefersToID() == null )
-								return -1;
-							if ( o2.GetRefersToID() == null )
-								return 1;
-							return o1.GetRefersToID().compareTo(o2.GetRefersToID());
-						}
-						return o1.GetFieldType().compareTo(o2.GetFieldType());
-					}
-					if ( (o1.GetColumnOrder() < 0) || (o2.GetColumnOrder() < 0) )
-						return o2.GetColumnOrder() - o1.GetColumnOrder();
-					return o1.GetColumnOrder() - o2.GetColumnOrder();
-				}
-				if ( o1.IsVisible() )
-					return -1;
-				return 1;
-			}
-		});
-	}
-
-	private static void sBuildFieldContainer(FieldContainer pobjContainer, FieldStructure parrStructure, boolean pbObjVar, boolean pbExVar)
-	{
-		ArrayList<FieldContainer.HeaderField> larrHeaders;
-		ArrayList<FieldContainer.ColumnField> larrColumns;
-		ArrayList<FieldContainer.ExtraField> larrExtras;
-		FieldContainer.HeaderField lobjHeader;
-		FieldContainer.ColumnField lobjColumn;
-		FieldContainer.ExtraField lobjExtra;
-		int i, j;
-
-		larrHeaders = new ArrayList<FieldContainer.HeaderField>();
-		larrColumns = new ArrayList<FieldContainer.ColumnField>();
-		larrExtras = new ArrayList<FieldContainer.ExtraField>();
-
-		for ( i = 0; i < parrStructure.marrCoverages.length; i++ )
-		{
-			if ( parrStructure.marrCoverages[i].IsHeader() )
-			{
-				for ( j = 0; j < parrStructure.marrFields[i].length; j++ )
-				{
-					if ( !parrStructure.marrFields[i][j].IsVisible() ||
-							(parrStructure.marrFields[i][j].GetVariesByObject() != pbObjVar) ||
-							(parrStructure.marrFields[i][j].GetVariesByExercise() != pbExVar) )
-						continue;
-
-					lobjHeader = new FieldContainer.HeaderField();
-					sBuildField(lobjHeader, parrStructure.marrFields[i][j]);
-					larrHeaders.add(lobjHeader);
-				}
-			}
-			else
-			{
-				for ( j = 0; j < parrStructure.marrFields[i].length; j++ )
-				{
-					if ( !parrStructure.marrFields[i][j].IsVisible() ||
-							(parrStructure.marrFields[i][j].GetVariesByObject() != pbObjVar) ||
-							(parrStructure.marrFields[i][j].GetVariesByExercise() != pbExVar) )
-						continue;
-
-					if ( parrStructure.marrFields[i][j].GetColumnOrder() < 0 )
-					{
-						lobjExtra = new FieldContainer.ExtraField();
-						sBuildField(lobjExtra, parrStructure.marrFields[i][j]);
-						lobjExtra.coverageIndex = i;
-						larrExtras.add(lobjExtra);
-					}
-					else
-					{
-						lobjColumn = new FieldContainer.ColumnField();
-						sBuildField(lobjColumn, parrStructure.marrFields[i][j]);
-						lobjColumn.coverageIndex = i;
-						lobjColumn.columnIndex = parrStructure.marrFields[i][j].GetColumnOrder();
-						larrColumns.add(lobjColumn);
-					}
-				}
-			}
-		}
-
-		pobjContainer.headerFields = larrHeaders.toArray(new FieldContainer.HeaderField[larrHeaders.size()]);
-		pobjContainer.columnFields = larrColumns.toArray(new FieldContainer.ColumnField[larrColumns.size()]);
-		pobjContainer.extraFields = larrExtras.toArray(new FieldContainer.ExtraField[larrExtras.size()]);
-	}
-	
-	private static void sBuildField(FieldContainer.HeaderField pobjResult, Tax pobjSource)
-	{
-		pobjResult.fieldId = pobjSource.getKey().toString();
-		pobjResult.fieldName = pobjSource.getLabel();
-		pobjResult.type = sGetFieldTypeByID(pobjSource.GetFieldType());
-		pobjResult.unitsLabel = pobjSource.GetUnitsLabel();
-		pobjResult.refersToId = ( pobjSource.GetRefersToID() == null ? null : pobjSource.GetRefersToID().toString() );
-		pobjResult.order = pobjSource.GetColumnOrder();
-
-		pobjResult.value = pobjSource.GetDefaultValue();
-	}
-	
-	private static void sFillStaticEmptyPolicy(InsurancePolicy pobjDest, SubLine pobjSubLine, UUID pidClient)
-		throws BigBangException
-	{
-		Client lobjClient;
-		Line lobjLine;
-		Category lobjCategory;
-
-		try
-		{
-			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), pidClient);
-			lobjLine = pobjSubLine.getLine();
-			lobjCategory = lobjLine.getCategory();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		pobjDest.clientId = lobjClient.getKey().toString();
-		pobjDest.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
-		pobjDest.clientName = lobjClient.getLabel();
-		pobjDest.categoryId = lobjCategory.getKey().toString();
-		pobjDest.categoryName = lobjCategory.getLabel();
-		pobjDest.lineId = lobjLine.getKey().toString();
-		pobjDest.lineName = lobjLine.getLabel();
-		pobjDest.subLineId = pobjSubLine.getKey().toString();
-		pobjDest.subLineName = pobjSubLine.getLabel();
-	}
-	
-	private static void sFillStaticPolicy(InsurancePolicy pobjDest, Policy pobjSource)
-		throws BigBangException
-	{
-		IProcess lobjProc;
-		Permission[] larrPerms;
-		Client lobjClient;
-		SubLine lobjSubLine;
-		Line lobjLine;
-		Category lobjCategory;
-		String lstrObject;
-		ObjectBase lobjStatus;
-		Mediator lobjMed;
-		PolicyCoInsurer[] larrCoInsurers;
-		int i;
-
-		try
-		{
-			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pobjSource.GetProcessID());
-			larrPerms = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
-			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
-			lobjSubLine = pobjSource.GetSubLine();
-			lobjLine = lobjSubLine.getLine();
-			lobjCategory = lobjLine.getCategory();
-			lstrObject = pobjSource.GetObjectFootprint();
-			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
-					(UUID)pobjSource.getAt(13));
-			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(8));
-			larrCoInsurers = pobjSource.GetCurrentCoInsurers();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		pobjDest.id = pobjSource.getKey().toString();
-
-		pobjDest.processId = lobjProc.getKey().toString();
-		pobjDest.permissions = larrPerms;
-
-		pobjDest.number = (String)pobjSource.getAt(0);
-		pobjDest.clientId = lobjClient.getKey().toString();
-		pobjDest.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
-		pobjDest.clientName = lobjClient.getLabel();
-		pobjDest.categoryId = lobjCategory.getKey().toString();
-		pobjDest.categoryName = lobjCategory.getLabel();
-		pobjDest.lineId = lobjLine.getKey().toString();
-		pobjDest.lineName = lobjLine.getLabel();
-		pobjDest.subLineId = lobjSubLine.getKey().toString();
-		pobjDest.subLineName = lobjSubLine.getLabel();
-		pobjDest.insuredObject = lstrObject;
-		pobjDest.caseStudy = (Boolean)pobjSource.getAt(12);
-		pobjDest.statusId = lobjStatus.getKey().toString();
-		pobjDest.statusText = lobjStatus.getLabel();
-		switch ( (Integer)lobjStatus.getAt(1) )
-		{
-		case 0:
-			pobjDest.statusIcon = InsurancePolicyStub.PolicyStatus.PROVISIONAL;
-			break;
-
-		case 1:
-			pobjDest.statusIcon = InsurancePolicyStub.PolicyStatus.VALID;
-			break;
-
-		case 2:
-			pobjDest.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
-			break;
-		}
-
-		pobjDest.managerId = lobjProc.GetManagerID().toString();
-		pobjDest.insuranceAgencyId = ((UUID)pobjSource.getAt(2)).toString();
-		pobjDest.startDate = (pobjSource.getAt(4) == null ? null :
-				((Timestamp)pobjSource.getAt(4)).toString().substring(0, 10));
-		pobjDest.durationId = ((UUID)pobjSource.getAt(5)).toString();
-		pobjDest.fractioningId = ((UUID)pobjSource.getAt(6)).toString();
-		pobjDest.maturityDay = (pobjSource.getAt(7) == null ? 0 : (Integer)pobjSource.getAt(7));
-		pobjDest.maturityMonth = (pobjSource.getAt(8) == null ? 0 : (Integer)pobjSource.getAt(8));
-		pobjDest.expirationDate = (pobjSource.getAt(9) == null ? null :
-				((Timestamp)pobjSource.getAt(9)).toString().substring(0, 10));
-		pobjDest.notes = (String)pobjSource.getAt(10);
-		pobjDest.mediatorId = (pobjSource.getAt(11) == null ? null : ((UUID)pobjSource.getAt(11)).toString());
-		pobjDest.inheritMediatorId = lobjMed.getKey().toString();
-		pobjDest.inheritMediatorName = lobjMed.getLabel();
-		pobjDest.premium = (pobjSource.getAt(14) == null ? null : ((BigDecimal)pobjSource.getAt(14)).doubleValue());
-		pobjDest.operationalProfileId = (pobjSource.getAt(18) == null ? null : ((UUID)pobjSource.getAt(18)).toString());
-		pobjDest.docushare = (String)pobjSource.getAt(15);
-
-		if ( larrCoInsurers.length > 0 )
-		{
-			pobjDest.coInsurers = new InsurancePolicy.CoInsurer[larrCoInsurers.length];
-			for ( i = 0; i < larrCoInsurers.length; i++ )
-			{
-				pobjDest.coInsurers[i] = new InsurancePolicy.CoInsurer();
-				pobjDest.coInsurers[i].insuranceAgencyId = ((UUID)larrCoInsurers[i].getAt(1)).toString();
-				pobjDest.coInsurers[i].percent = ((BigDecimal)larrCoInsurers[i].getAt(2)).doubleValue();
-			}
-		}
-		else
-			pobjDest.coInsurers = null;
-	}
-	
-	private static void sFillStaticExercise(ComplexFieldContainer.ExerciseData pobjDest, PolicyExercise pobjSource)
-		throws BigBangException
-	{
-		pobjDest.label = pobjSource.getLabel();
-		pobjDest.startDate = ( pobjSource.getAt(2) == null ? null :
-				((Timestamp)pobjSource.getAt(2)).toString().substring(0, 10) );
-		pobjDest.endDate = ( pobjSource.getAt(3) == null ? null :
-				((Timestamp)pobjSource.getAt(3)).toString().substring(0, 10) );
-	}
-
-	private static void sFillStaticEmptyObject(InsuredObject pobjDest, Policy pobjPolicy)
-		throws BigBangException
-	{
-		SubLine lobjSubLine;
-		ObjectBase lobjType;
-
-		try
-		{
-			lobjSubLine = pobjPolicy.GetSubLine();
-			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ObjectType),
-					lobjSubLine.getObjectType());
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		pobjDest.ownerId = pobjPolicy.getKey().toString();
-		pobjDest.typeId = lobjType.getKey().toString();
-		pobjDest.typeText = lobjType.getLabel();
-	}
-
-	private static void sFillStaticObject(InsuredObject pobjDest, PolicyObject pobjSource)
-		throws BigBangException
-	{
-		ObjectBase lobjZipCode;
-		ObjectBase lobjType;
-
-		try
-		{
-			if ( pobjSource.getAt(5) == null )
-				lobjZipCode = null;
-			else
-				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
-						(UUID)pobjSource.getAt(5));
-			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ObjectType),
-					(UUID)pobjSource.getAt(2));
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		pobjDest.id = pobjSource.getKey().toString();
-
-		pobjDest.ownerId = ((UUID)pobjSource.getAt(1)).toString();
-
-		pobjDest.unitIdentification = pobjSource.getLabel();
-		if ( (pobjSource.getAt(3) != null) || (pobjSource.getAt(4) != null) || (lobjZipCode != null) )
-		{
-			pobjDest.address = new Address();
-			pobjDest.address.street1 = (String)pobjSource.getAt(3);
-			pobjDest.address.street2 = (String)pobjSource.getAt(4);
-			if ( lobjZipCode != null )
-			{
-				pobjDest.address.zipCode = new ZipCode();
-				pobjDest.address.zipCode.code = (String)lobjZipCode.getAt(0);
-				pobjDest.address.zipCode.city = (String)lobjZipCode.getAt(1);
-				pobjDest.address.zipCode.county = (String)lobjZipCode.getAt(2);
-				pobjDest.address.zipCode.district = (String)lobjZipCode.getAt(3);
-				pobjDest.address.zipCode.country = (String)lobjZipCode.getAt(4);
-			}
-			else
-				pobjDest.address.zipCode = null;
-		}
-		pobjDest.inclusionDate = ( pobjSource.getAt(6) == null ? null :
-				((Timestamp)pobjSource.getAt(6)).toString().substring(0, 10) );
-		pobjDest.exclusionDate = ( pobjSource.getAt(7) == null ? null :
-				((Timestamp)pobjSource.getAt(7)).toString().substring(0, 10) );
-		pobjDest.typeId = lobjType.getKey().toString();
-		pobjDest.typeText = lobjType.getLabel();
-
-		if ( Constants.ObjTypeID_Person.equals(lobjType.getKey()) )
-		{
-			pobjDest.taxNumberPerson = (String)pobjSource.getAt(8);
-			pobjDest.genderId = ( pobjSource.getAt(9) == null ? null : ((UUID)pobjSource.getAt(9)).toString() );
-			pobjDest.birthDate = ( pobjSource.getAt(10) == null ? null :
-					((Timestamp)pobjSource.getAt(10)).toString().substring(0, 10) );
-			pobjDest.clientNumberPerson = ( pobjSource.getAt(11) == null ? null : ((Integer)pobjSource.getAt(11)).toString() );
-			pobjDest.insuranceCompanyInternalIdPerson = (String)pobjSource.getAt(12);
-		}
-
-		if ( Constants.ObjTypeID_Group.equals(lobjType.getKey()) )
-		{
-			pobjDest.taxNumberCompany = (String)pobjSource.getAt(13);
-			pobjDest.caeId = ( pobjSource.getAt(14) == null ? null : ((UUID)pobjSource.getAt(14)).toString() );
-			pobjDest.grievousCaeId = ( pobjSource.getAt(15) == null ? null : ((UUID)pobjSource.getAt(15)).toString() );
-			pobjDest.activityNotes = (String)pobjSource.getAt(16);
-			pobjDest.productNotes = (String)pobjSource.getAt(17);
-			pobjDest.businessVolumeId = ( pobjSource.getAt(18) == null ? null : ((UUID)pobjSource.getAt(18)).toString() );
-			pobjDest.europeanUnionEntity = (String)pobjSource.getAt(19);
-			pobjDest.clientNumberGroup = ( pobjSource.getAt(20) == null ? null : ((Integer)pobjSource.getAt(20)).toString() );
-		}
-
-		if ( Constants.ObjTypeID_Equipment.equals(lobjType.getKey()) )
-		{
-			pobjDest.makeAndModel = (String)pobjSource.getAt(21);
-			pobjDest.equipmentDescription = (String)pobjSource.getAt(22);
-			pobjDest.firstRegistryDate = ( pobjSource.getAt(23) == null ? null :
-					((Timestamp)pobjSource.getAt(23)).toString().substring(0, 10) );
-			pobjDest.manufactureYear = ( pobjSource.getAt(24) == null ? null : ((Integer)pobjSource.getAt(24)).toString() );
-			pobjDest.clientInternalId = (String)pobjSource.getAt(25);
-			pobjDest.insuranceCompanyInternalIdVehicle = (String)pobjSource.getAt(26);
-		}
-
-		if ( Constants.ObjTypeID_Site.equals(lobjType.getKey()) )
-		{
-			pobjDest.siteDescription = (String)pobjSource.getAt(27);
-		}
-
-		if ( Constants.ObjTypeID_Animal.equals(lobjType.getKey()) )
-		{
-			pobjDest.species = (String)pobjSource.getAt(28);
-			pobjDest.race = (String)pobjSource.getAt(29);
-			pobjDest.birthYear = ( pobjSource.getAt(30) == null ? null : ((Integer)pobjSource.getAt(30)).toString() );
-			pobjDest.cityRegistryNumber = (String)pobjSource.getAt(31);
-			pobjDest.electronicIdTag = (String)pobjSource.getAt(32);
-		}
-	}
-
-	private static void sFillCoverageInfo(InsurancePolicy pobjDest, Policy pobjSource)
-		throws BigBangException
-	{
-		PolicyCoverage[] larrCoverages;
-		HashMap<String, Integer> lmapIndexes;
-		int i;
-
-		try
-		{
-			larrCoverages = pobjSource.GetCurrentCoverages();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lmapIndexes = new HashMap<String, Integer>();
-		for ( i = 0; i < pobjDest.coverages.length; i++ )
-			lmapIndexes.put(pobjDest.coverages[i].coverageId, i);
-		
-		for ( i = 0; i < larrCoverages.length; i++ )
-			pobjDest.coverages[lmapIndexes.get(larrCoverages[i].getKey().toString())].presentInPolicy = larrCoverages[i].IsPresent();
-	}
-
-	private static Map<UUID, FieldContents> sExtractData(Policy lobjPolicy, UUID pidObject, UUID pidExercise)
-		throws BigBangException
-	{
-		PolicyValue[] larrValues;
-		HashMap<UUID, FieldContents> larrResult;
-		FieldContents lobjAux;
-		int i;
-
-		try
-		{
-			larrValues = lobjPolicy.GetCurrentKeyedValues(pidObject, pidExercise);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		larrResult = new HashMap<UUID, FieldContents>();
-
-		for ( i = 0; i < larrValues.length; i++ )
-		{
-			lobjAux = new FieldContents();
-			lobjAux.midValue = larrValues[i].getKey();
-			lobjAux.mstrValue = larrValues[i].getLabel();
-			larrResult.put(larrValues[i].GetTax().getKey(), lobjAux);
-		}
-
-		return larrResult;
-	}
-
-	private static void sFillContainer(FieldContainer pobjContainer, Map<UUID, FieldContents> parrData)
-	{
-		int i;
-
-		for ( i = 0; i < pobjContainer.headerFields.length; i++ )
-			sFillField(pobjContainer.headerFields[i], parrData);
-
-		for ( i = 0; i < pobjContainer.columnFields.length; i++ )
-			sFillField(pobjContainer.columnFields[i], parrData);
-
-		for ( i = 0; i < pobjContainer.extraFields.length; i++ )
-			sFillField(pobjContainer.extraFields[i], parrData);
-	}
-
-	private static void sFillField(FieldContainer.HeaderField pobjField, Map<UUID, FieldContents> parrData)
-	{
-		FieldContents lobjAux;
-
-		lobjAux = parrData.get(UUID.fromString(pobjField.fieldId));
-
-		if ( lobjAux != null )
-		{
-			pobjField.valueId = lobjAux.midValue.toString();
-			pobjField.value = lobjAux.mstrValue;
-		}
 	}
 	
 	private static PolicyData sBuildData(InsurancePolicy pobjSource, Policy pobjReference)

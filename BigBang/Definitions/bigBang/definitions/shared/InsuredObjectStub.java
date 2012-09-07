@@ -5,8 +5,6 @@ public class InsuredObjectStub
 {
 	private static final long serialVersionUID = 1L;
 
-	public String ownerId;
-
 	public String unitIdentification;
 	public Address address;
 	public String inclusionDate;

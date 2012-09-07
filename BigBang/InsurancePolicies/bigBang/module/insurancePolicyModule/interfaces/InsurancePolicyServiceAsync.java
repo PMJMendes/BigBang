@@ -8,7 +8,6 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.interfaces.ExactItemSubServiceAsync;
@@ -21,7 +20,6 @@ public interface InsurancePolicyServiceAsync
 {
 	void getEmptyPolicy(String subLineId, String clientId, AsyncCallback<InsurancePolicy> callback);
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
-	void getEmptyObject(String policyId, AsyncCallback<InsuredObject> callback);
 	void editPolicy(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void performCalculations(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void validatePolicy(String policyId, AsyncCallback<Void> callback);

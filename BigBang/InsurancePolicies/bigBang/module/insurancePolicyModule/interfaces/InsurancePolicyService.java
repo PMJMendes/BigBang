@@ -9,7 +9,6 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.interfaces.ExactItemSubService;
@@ -40,7 +39,6 @@ public interface InsurancePolicyService
 	public InsurancePolicy getEmptyPolicy(String subLineId, String clientId) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;
-	public InsuredObject getEmptyObject(String policyId) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy editPolicy(InsurancePolicy policy) throws  SessionExpiredException, BigBangException;
 

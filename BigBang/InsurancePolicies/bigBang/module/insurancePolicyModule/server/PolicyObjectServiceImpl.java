@@ -33,7 +33,7 @@ public class PolicyObjectServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return InsurancePolicyServiceImpl.sGetObject(UUID.fromString(objectId));
+		return new DataBuilder().getObject(UUID.fromString(objectId));
 	}
 
 	protected UUID getObjectID()
@@ -106,7 +106,6 @@ public class PolicyObjectServiceImpl
 		lobjResult = new InsuredObjectStub();
 		lobjResult.id = pid.toString();
 		lobjResult.unitIdentification = (String)parrValues[0];
-		lobjResult.ownerId = ((UUID)parrValues[1]).toString();
 		lobjResult.typeId = ((UUID)parrValues[2]).toString();
 		lobjResult.typeText = (String)parrValues[3];
 		if ( (parrValues[4] != null) || (parrValues[5] != null) || (parrValues[6] != null) )
