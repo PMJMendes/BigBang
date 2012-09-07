@@ -1,7 +1,11 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -13,7 +17,7 @@ import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
 import bigBang.library.client.userInterface.view.View;
 
-public class CoverageFieldsGrid extends View{
+public class CoverageFieldsGrid extends View implements HasValue<ColumnField[]>{
 
 
 	class Field extends GenericFormField{
@@ -39,6 +43,7 @@ public class CoverageFieldsGrid extends View{
 
 	protected Field[][] fields;
 	protected Grid grid;
+	private ColumnField[] value;
 
 	public CoverageFieldsGrid() {
 		VerticalPanel wrapper = new VerticalPanel();
@@ -51,10 +56,10 @@ public class CoverageFieldsGrid extends View{
 	public void setHeaders(Coverage[] coverages, ColumnHeader[] headers){
 
 		fields = new Field[coverages.length+1][headers.length+2];
-		
+
 		grid.clear();
 		grid.resize(coverages.length+1, headers.length+2);
-		
+
 		fields[0][0] = new Field(TYPE.TEXT);
 		fields[0][0].setEditable(false);
 		fields[0][0].setValue("Incluir");
@@ -63,7 +68,7 @@ public class CoverageFieldsGrid extends View{
 		fields[0][0].setTextAlignment(TextAlignment.CENTER);
 		grid.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
 		grid.getCellFormatter().setWidth(0, 0, "150px");
-		
+
 		fields[0][1] = new Field(TYPE.TEXT);
 		fields[0][1].setEditable(false);
 		fields[0][1].setValue("Coberturas");
@@ -81,7 +86,7 @@ public class CoverageFieldsGrid extends View{
 			fields[i][1] = new Field(TYPE.TEXT);
 			fields[i][1].setEditable(false);
 			fields[i][1].setValue(coverages[i-1].coverageName);
-			
+
 			grid.setWidget(i, 0, fields[i][0]);
 			grid.setWidget(i, 1, fields[i][1]);
 			if((i % 2) != 0){
@@ -101,13 +106,13 @@ public class CoverageFieldsGrid extends View{
 			grid.setWidget(0, j, fields[0][j]);
 			grid.getCellFormatter().setHorizontalAlignment(0, j, HasHorizontalAlignment.ALIGN_CENTER);
 		}
-		
+
 	}
 
 
 	@Override
 	protected void initializeView() {
-		
+
 	}
 
 	public void fillTable(ColumnField[] formFields) {
@@ -143,6 +148,36 @@ public class CoverageFieldsGrid extends View{
 			fields[row][column].setWidth("130px");
 			grid.setWidget(row, column, fields[row][column]);
 			grid.getCellFormatter().setHorizontalAlignment(row, column, HasHorizontalAlignment.ALIGN_CENTER);
+		}
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(
+			ValueChangeHandler<ColumnField[]> handler) {
+		return this.addHandler(handler, ValueChangeEvent.getType());
+		}
+
+	@Override
+	public ColumnField[] getValue() {
+		ColumnField[] result = value;
+		for(int i = 0; i<result.length; i++){
+			result[i].value = fields[result[i].coverageIndex][result[i].columnIndex].getValue();
+		}
+		return result;
+	}
+
+	@Override
+	public void setValue(ColumnField[] value) {
+		setValue(value, true);
+	}
+
+	@Override
+	public void setValue(ColumnField[] value, boolean fireEvents) {
+		this.value = value;
+		fillTable(value);
+
+		if(fireEvents){
+			ValueChangeEvent.fire(this, value);
 		}
 	}
 

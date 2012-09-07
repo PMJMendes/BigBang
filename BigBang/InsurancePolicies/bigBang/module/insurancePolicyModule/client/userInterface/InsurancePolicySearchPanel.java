@@ -83,7 +83,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 					setRightWidget(statusIcon);
 				}
 
-				numberLabel.setText(value.number == null ? "Nova Apólice" : "#" + value.number);
+				numberLabel.setText(value.number == null ? "Nova Apólice" : "Apólice #" + value.number);
 				clientLabel.setText("#" + (value.clientNumber == null ? "" : value.clientNumber) + " - " + (value.clientName == null ? "" : value.clientName));
 				lineLabel.setText((value.categoryName == null ? "-" : value.categoryName)+
 						" / "+(value.lineName == null ? "-" : value.lineName)+" / "+(value.subLineName == null ? "-" : value.subLineName));

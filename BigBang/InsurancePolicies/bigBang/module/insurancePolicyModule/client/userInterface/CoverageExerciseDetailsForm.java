@@ -12,7 +12,6 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 	HeaderFieldsSection exerciseDetailsSection;
 	TableFieldsSection tableFieldsSection;
 	ExtraFieldsSection extraFieldsSection;
-	private Coverage[] coverages;
 
 	public CoverageExerciseDetailsForm(String sectionName) {
 		super();
@@ -23,13 +22,17 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		addSection(tableFieldsSection);
 
 		extraFieldsSection = new ExtraFieldsSection();
-		addWidget(extraFieldsSection);
+		addSection(extraFieldsSection);
 
 	}
 
 	@Override
 	public FieldContainer getInfo() {
-		return value; //TODO GET VALUES;	
+		FieldContainer result = value;
+		result.headerFields = exerciseDetailsSection.getValue();
+		result.extraFields = extraFieldsSection.getValue();
+		result.columnFields = tableFieldsSection.getValue();
+		return result;	
 		}
 
 	@Override
@@ -44,8 +47,7 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 
 	public void fillTable(Coverage[] coverages, ColumnHeader[] columns, ColumnField[] fields){
 		tableFieldsSection.setHeaders(coverages, columns);
-		this.coverages = coverages;
-		tableFieldsSection.setTableData(fields);
+		tableFieldsSection.setValue(fields);
 	}
 
 	public void setExtraFields(ExtraField[] fields){

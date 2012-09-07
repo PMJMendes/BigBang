@@ -282,6 +282,9 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public void allowCreateRiskAnalisys(boolean allow) {
 		this.riskAnalysis.setEnabled(allow);
 	}
+	public void allowEdit(boolean allow) {
+		this.editCancelMenuItem.setEnabled(allow);
+	}
 	
 
 	public abstract void onVoidPolicy();
@@ -325,5 +328,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public abstract void onCreateReceipt();
 	
 	public abstract void onTransferToClient();
+
+
 
 }

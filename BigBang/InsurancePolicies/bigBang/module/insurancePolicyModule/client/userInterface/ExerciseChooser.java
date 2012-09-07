@@ -125,4 +125,8 @@ public class ExerciseChooser extends View implements HasValue<ExerciseData>{
 		newButton.setVisible(!readOnly);
 	}
 
+	public void allowCreateExercise(boolean allow) {
+		newButton.setEnabled(allow);
+	}
+
 }

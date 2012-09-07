@@ -212,8 +212,51 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 	
 	@Override
 	public InsurancePolicy getInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		InsurancePolicy result = this.value;
+
+		if(result != null) {
+			result.managerId = manager.getValue();
+			result.number = number.getValue();
+			result.insuranceAgencyId = insuranceAgency.getValue();
+			String maturityDay = "";
+			String maturityMonth = "";
+			if(maturityDate.getStringValue() != null && !maturityDate.getStringValue().isEmpty()){
+				String[] maturity = maturityDate.getStringValue().split("-");
+				maturityDay = maturity[0];
+				maturityMonth = maturity[1];
+			}
+			try{
+				result.maturityDay = Integer.parseInt(maturityDay);
+			}catch(Exception e) {
+				result.maturityDay = -1;
+			}
+			try{
+				result.maturityMonth = Integer.parseInt(maturityMonth);
+			}catch(Exception e) {
+				result.maturityMonth = -1;
+			}
+			result.startDate = startDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(startDate.getValue());
+			result.expirationDate = endDate.getValue() == null ? null :  DateTimeFormat.getFormat("yyyy-MM-dd").format(endDate.getValue());
+			result.durationId = duration.getValue();
+			result.fractioningId = fractioning.getValue();
+			result.premium = premium.getValue();
+			result.caseStudy = caseStudy.getValue();
+			result.operationalProfileId = operationalProfile.getValue();
+			result.notes = notes.getValue();
+
+			if(coInsurance.getValue()){
+				result.coInsurers = coInsurers.getValue();
+			}
+			else{
+				result.coInsurers = null;
+			}
+
+			result.mediatorId = mediator.getValue();
+		}
+		
+		result.headerFields = headerForm.getValue();
+
+		return result;
 	}
 
 	@Override
