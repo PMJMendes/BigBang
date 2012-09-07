@@ -5,12 +5,17 @@ public class InsuredObject
 {
 	private static final long serialVersionUID = 1L;
 
-	public static enum Change {
+	public static enum Change
+	{
 		CREATED,
 		MODIFIED,
 		DELETED
 	}
 	
+	public String categoryName;
+	public String lineName;
+	public String subLineName;
+
 	public String taxNumberPerson;
 	public String genderId;
 	public String birthDate;
