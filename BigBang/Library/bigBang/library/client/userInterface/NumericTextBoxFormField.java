@@ -168,7 +168,6 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		super();
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
-		mainWrapper.setHeight("45px");
 
 		mainWrapper.add(this.label);
 		wrapper = new HorizontalPanel();
