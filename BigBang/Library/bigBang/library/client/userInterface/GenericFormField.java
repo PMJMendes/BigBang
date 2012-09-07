@@ -8,6 +8,8 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
@@ -270,6 +272,10 @@ public class GenericFormField extends FormField<String> {
 	@Override
 	public void focus() {
 		myField.getElement().focus();
+	}
+
+	public void setTextAlignment(TextAlignment alignment) {
+		((TextBox)((TextBoxFormField)myField).getTextBox()).setAlignment(alignment);
 	}
 
 }
