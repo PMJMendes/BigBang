@@ -14,7 +14,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectFormOLD;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectOperationsToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyInsuredObjectViewPresenter;
@@ -23,7 +23,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPo
 public class SubPolicyInsuredObjectView extends View implements SubPolicyInsuredObjectViewPresenter.Display {
 
 	private FormView<SubPolicy> subPolicyForm;
-	private InsuredObjectForm objectForm;
+	private InsuredObjectFormOLD objectForm;
 	private InsuredObjectOperationsToolbar toolbar;
 	private ActionInvokedEventHandler<Action> actionHandler;
 	
@@ -82,7 +82,7 @@ public class SubPolicyInsuredObjectView extends View implements SubPolicyInsured
 		};
 		objectWrapper.add(toolbar);
 		
-		objectForm = new InsuredObjectForm();
+		objectForm = new InsuredObjectFormOLD();
 		objectForm.showTypeSection(false);
 		objectForm.setReadOnly(true);
 		objectWrapper.add(objectForm);
