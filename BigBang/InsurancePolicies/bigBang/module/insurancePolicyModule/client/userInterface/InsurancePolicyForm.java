@@ -56,7 +56,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 	private HeaderFieldsSection headerForm;
 	
 	public InsurancePolicyForm() {
-		addSection("Apólice");
+		addSection("Cabeçalho de Apólice");
 		number  = new TextBoxFormField("Número");
 		client = new NavigationFormField("Cliente");
 		number.setFieldWidth("175px");
@@ -204,9 +204,10 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 				}
 			}
 		});
-		
-		//TODO TO REMOVE
+	
 		coInsurance.setValue(false);
+		headerForm = new HeaderFieldsSection();
+		addSection(headerForm);
 	}
 	
 	@Override
@@ -310,12 +311,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 			this.duration.setValue(info.durationId);
 		}
 		
-		if(headerForm != null && headerForm.isAttached()){
-			headerForm.removeFromParent();
-		}
-		headerForm = new HeaderFieldsSection();
 		headerForm.setHeaderText(categoryLineSubLine.getValue());
-		addSection(headerForm);
 		headerForm.setValue(info.headerFields);
 		
 	}

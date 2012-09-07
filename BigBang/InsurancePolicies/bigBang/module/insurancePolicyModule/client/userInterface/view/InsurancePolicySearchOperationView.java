@@ -2,20 +2,37 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import java.util.Collection;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.ExpenseStub;
+import bigBang.definitions.shared.FieldContainer;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.SubPolicyStub;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseChooser;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyChildrenPanel;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyDetailsForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExerciseDetailsForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
@@ -34,7 +51,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	private InsuredObjectSearchPanel objectsList;
 	private InsurancePolicyForm policyForm;
 	private ExerciseChooser exerciseChooser;
-	private InsurancePolicyDetailsForm detailsForm;
+	private CoverageExerciseDetailsForm detailsForm;
 
 	public InsurancePolicySearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -47,7 +64,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		ListHeader searchPanelHeader = new ListHeader("Apólices");
 		searchPanelWrapper.add(searchPanelHeader);
 
-		searchPanel = new InsurancePolicySearchPanel(){ //TODO FAZ SENTIDO MANTER ESTE SEARCHPANEL?
+		searchPanel = new InsurancePolicySearchPanel(){ //TODO FAZ SENTIDO MANTER ESTE SEARCHPANEL? OU CRIAR UM NOVO?
 
 			@Override
 			public void onResults(Collection<InsurancePolicyStub> results) {
@@ -223,38 +240,55 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		VerticalPanel formContainer = new VerticalPanel();
 		formContainer.setSize("100%", "100%");
 
-		SplitLayoutPanel formPanel = new SplitLayoutPanel();
+		HorizontalPanel formPanel = new HorizontalPanel();
 
 		policyForm = new InsurancePolicyForm();
 		//TODO ADD INSURANCE, OBJECT AND EXERCISE FORM
 
 		objectsList = new InsuredObjectSearchPanel(null); //TODO METER AQUI O BROKER
-		formPanel.addWest(objectsList, 200);
-		formPanel.add(policyForm);
+		objectsList.showFilterField(false);
+		formPanel.add(objectsList);
+		objectsList.setWidth("100%");
+		formPanel.setCellWidth(objectsList, "200px");
+		formPanel.add(policyForm.getNonScrollableContent());
+		formPanel.setCellWidth(policyForm, "100%");
+		policyForm.getNonScrollableContent().setSize("100%", "100%");
 		formPanel.setSize("100%", "100%");
 		formContainer.add(formPanel);
 		formContainer.setCellHeight(formPanel, "100%");
 
-		VerticalPanel rightWrapper = new VerticalPanel();
+		ScrollPanel scrollContainer = new ScrollPanel();
+		scrollContainer.setSize("100%", "100%");
+		
+		VerticalPanel centerWrapper = new VerticalPanel();
 
-		rightWrapper.setSize("100%", "100%");
+		centerWrapper.setSize("100%", "100%");
 
-		rightWrapper.add(toolbar);
-		rightWrapper.add(formContainer);
-		rightWrapper.setCellHeight(formContainer, "100%");
+		VerticalPanel toolbarAndCenterWrapper = new VerticalPanel();
+		toolbarAndCenterWrapper.setSize("100%", "100%");
+		toolbarAndCenterWrapper.add(toolbar);
+		
+		centerWrapper.add(formContainer);
+		centerWrapper.setCellHeight(formContainer, "100%");
 		VerticalPanel detailTableContainer = new VerticalPanel();
 		detailTableContainer.setSize("100%", "100%");
 		
 		exerciseChooser = new ExerciseChooser();
 		detailTableContainer.add(exerciseChooser);
 
-		detailsForm = new InsurancePolicyDetailsForm("");
+		detailsForm = new CoverageExerciseDetailsForm("");
 		detailTableContainer.add(detailsForm.getNonScrollableContent());
 		
-		rightWrapper.add(detailTableContainer);
-		rightWrapper.setCellHeight(detailTableContainer, "100%");
+		centerWrapper.add(detailTableContainer);
+		centerWrapper.setCellHeight(detailTableContainer, "100%");
 
-		contentWrapper.add(rightWrapper);
+		scrollContainer.add(centerWrapper);
+		scrollContainer.getElement().getStyle().setBackgroundColor("whiteSmoke");
+		scrollContainer.getElement().getStyle().setOverflowX(Style.Overflow.HIDDEN);
+		
+		toolbarAndCenterWrapper.add(scrollContainer);
+		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
+		contentWrapper.add(toolbarAndCenterWrapper);
 		mainWrapper.add(contentWrapper);
 
 	}
@@ -263,19 +297,249 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	protected void initializeView() {}
 
 	@Override
-	public void setReadOnly(boolean readOnly){
-		policyForm.setReadOnly(readOnly);
-		exerciseChooser.setReadOnly(readOnly);
-		detailsForm.setReadOnly(readOnly);
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		// TODO Auto-generated method stub
+		
 	}
-	
+
 	@Override
-	public void setValue(InsurancePolicy result) {
-		policyForm.setValue(result);
-		exerciseChooser.setValue(result.exerciseData);
-		detailsForm.setValue(result.exerciseData[0]);
-		detailsForm.setExerciseDetailSectionName("Detalhes do exercício "+ result.exerciseData[0].label + " para a Apólice");
-		detailsForm.fillTable(result.coverages, result.columns, result.exerciseData[0].columnFields);
+	public HasValueSelectables<InsurancePolicyStub> getList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasEditableValue<InsurancePolicy> getPolicyHeaderForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasEditableValue<InsuredObject> getInsuredObjectHeaderForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void allowDeleteInsuredObject(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public HasEditableValue<FieldContainer> getCommonFieldsForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValue<ExerciseData> getExerciseForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValue<String> getExerciseSelector() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void allowCreateNewExercise(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public HasValue<String> getPolicyNotesForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValueSelectables<InsuredObjectStub> getInsuredObjectsList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void clearAllowedPermissions() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowEdit(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowDelete(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateReceipt(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateInsuredObject(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowIncludeInsuredObject(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateExercise(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowValidatePolicy(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowVoidPolicy(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowTransferBrokerage(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateSubstitutePolicy(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowRequestClientInfo(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowRequestAgencyInfo(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateInsuredObjectFromClient(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowTransferManager(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowExecuteDetailedCalculations(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateInfoManagementProcess(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateSubPolicy(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowIssueDebitNote(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateNegotiation(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateHealthExpense(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowCreateRiskAnalisys(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void allowTransferToClient(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public HasValueSelectables<Contact> getContactsList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValueSelectables<Document> getDocumentsList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValueSelectables<SubPolicyStub> getSubPoliciesList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValueSelectables<ReceiptStub> getReceiptsList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValueSelectables<ExpenseStub> getExpensesList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValueSelectables<HistoryItemStub> getHistoryList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

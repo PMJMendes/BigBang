@@ -1,0 +1,149 @@
+package bigBang.module.insurancePolicyModule.client.userInterface;
+
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.FieldContainer.ColumnField;
+import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
+import bigBang.definitions.shared.InsurancePolicy.Coverage;
+import bigBang.library.client.userInterface.GenericFormField;
+import bigBang.library.client.userInterface.GenericFormField.TYPE;
+import bigBang.library.client.userInterface.view.View;
+
+public class CoverageFieldsGrid extends View{
+
+
+	class Field extends GenericFormField{
+
+		private String id;
+
+		public Field(TYPE type) {
+			super(type);
+		}
+		public Field(TYPE type, String id){
+			super(type);
+			this.id = id;
+		}
+
+		public void setId(String id){
+			this.id = id;
+		}
+
+		public String getId(){
+			return id;
+		}
+	}
+
+	protected Field[][] fields;
+	protected Grid grid;
+
+	public CoverageFieldsGrid() {
+		VerticalPanel wrapper = new VerticalPanel();
+		initWidget(wrapper);
+		fields = new Field[0][0];
+		grid = new Grid();
+		wrapper.add(grid);
+	}
+
+	public void setHeaders(Coverage[] coverages, ColumnHeader[] headers){
+
+		fields = new Field[coverages.length+1][headers.length+2];
+		
+		grid.clear();
+		grid.resize(coverages.length+1, headers.length+2);
+		
+		fields[0][0] = new Field(TYPE.TEXT);
+		fields[0][0].setEditable(false);
+		fields[0][0].setValue("Incluir");
+		grid.setWidget(0, 0, fields[0][0]);
+		fields[0][0].setFieldWidth("100px");
+		fields[0][0].setTextAlignment(TextAlignment.CENTER);
+		grid.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
+		grid.getCellFormatter().setWidth(0, 0, "150px");
+		
+		fields[0][1] = new Field(TYPE.TEXT);
+		fields[0][1].setEditable(false);
+		fields[0][1].setValue("Coberturas");
+		grid.setWidget(0, 1, fields[0][1]);
+		fields[0][1].setFieldWidth("100px");
+		fields[0][1].setTextAlignment(TextAlignment.CENTER);
+		grid.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
+
+		for(int i = 1; i<fields.length; i++){
+			fields[i][0] = new Field(TYPE.BOOLEAN);
+			fields[i][0].id = coverages[i-1].coverageId;
+			fields[i][0].setValue(coverages[i-1].mandatory ? "1" : "0");
+			fields[i][0].setEditable(coverages[i-1].mandatory ? false : true);
+			fields[i][0].getElement().getStyle();
+			fields[i][1] = new Field(TYPE.TEXT);
+			fields[i][1].setEditable(false);
+			fields[i][1].setValue(coverages[i-1].coverageName);
+			
+			grid.setWidget(i, 0, fields[i][0]);
+			grid.setWidget(i, 1, fields[i][1]);
+			if((i % 2) != 0){
+				grid.getRowFormatter().getElement(i).getStyle().setBackgroundColor("#CCC");
+			}
+			fields[i][1].setTextAlignment(TextAlignment.CENTER);
+			fields[i][1].setFieldWidth("200px");
+			grid.getCellFormatter().setHorizontalAlignment(i, 0, HasHorizontalAlignment.ALIGN_CENTER);
+			grid.getCellFormatter().setHorizontalAlignment(i, 1, HasHorizontalAlignment.ALIGN_CENTER);
+		}
+		for(int j = 2; j<fields[0].length; j++){
+			fields[0][j] = new Field(TYPE.TEXT);
+			fields[0][j].setValue(headers[j-2].label+" ("+headers[j-2].unitsLabel+")");
+			fields[0][j].setEditable(false);
+			fields[0][j].setTextAlignment(TextAlignment.CENTER);
+			fields[0][j].setFieldWidth("130px");
+			grid.setWidget(0, j, fields[0][j]);
+			grid.getCellFormatter().setHorizontalAlignment(0, j, HasHorizontalAlignment.ALIGN_CENTER);
+		}
+		
+	}
+
+
+	@Override
+	protected void initializeView() {
+		
+	}
+
+	public void fillTable(ColumnField[] formFields) {
+		int row;
+		int column;
+		for(int i = 0; i<formFields.length; i++){
+			row = formFields[i].coverageIndex+1;
+			column = formFields[i].columnIndex+2;
+			switch(formFields[i].type){
+			case BOOLEAN:
+				fields[row][column] = new Field(TYPE.BOOLEAN);
+				break;
+			case DATE:
+				fields[row][column] = new Field(TYPE.DATE);
+				break;
+			case LIST:
+				fields[row][column] = new Field(TYPE.LIST);
+				fields[row][column].setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+formFields[i].fieldId);
+				break;
+			case NUMERIC:
+				fields[row][column] = new Field(TYPE.NUMBER);
+				break;
+			case REFERENCE:
+				fields[row][column] = new Field(TYPE.REFERENCE);
+				fields[row][column].setListId(formFields[i].refersToId);
+				break;
+			case TEXT:
+				fields[row][column] = new Field(TYPE.TEXT);
+				break;
+			}
+			fields[row][column].setValue(formFields[i].value);
+			fields[row][column].setFieldWidth("100px");
+			fields[row][column].setWidth("130px");
+			grid.setWidget(row, column, fields[row][column]);
+			grid.getCellFormatter().setHorizontalAlignment(row, column, HasHorizontalAlignment.ALIGN_CENTER);
+		}
+	}
+
+}

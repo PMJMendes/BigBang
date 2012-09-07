@@ -15,13 +15,13 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-public class ExerciseChooser extends View implements HasValue<ExerciseData[]>{
+public class ExerciseChooser extends View implements HasValue<ExerciseData>{
 
 	private ExpandableListBoxFormField exercises;
 	private DatePickerFormField startDate;
 	private DatePickerFormField endDate;
 	private Button newButton;
-	private ExerciseData[] value;
+	private ExerciseData value;
 
 	public ExerciseChooser() {
 
@@ -50,34 +50,28 @@ public class ExerciseChooser extends View implements HasValue<ExerciseData[]>{
 		
 		wrapper.setStyleName("bigBangExerciseChooser");
 		
-		exercises.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if(value != null){
-					for(int i = 0; i<value.length; i++){
-						if(event.getValue().equalsIgnoreCase(value[i].id)){
-							startDate.setValue(value[i].startDate);
-							endDate.setValue(value[i].endDate);
-							break;
-						}
-					}
-				}
-			}
-		});
+	}
+	
+	public HasValue<String> getExerciseSelector(){
+		return exercises;
 	}
 
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<ExerciseData[]> handler) {
+			ValueChangeHandler<ExerciseData> handler) {
 		return this.addHandler(handler, ValueChangeEvent.getType());
 	}
 
 
 	@Override
-	public ExerciseData[] getValue() {
-		return value;
+	public ExerciseData getValue() {
+		ExerciseData newValue = value;
+		
+		newValue.startDate = startDate.getStringValue();
+		newValue.endDate = endDate.getStringValue();
+		
+		return newValue;
 	}
 
 	public String getCurrentId(){
@@ -85,25 +79,37 @@ public class ExerciseChooser extends View implements HasValue<ExerciseData[]>{
 	}
 
 	@Override
-	public void setValue(ExerciseData[] value) {
+	public void setValue(ExerciseData value) {
 		setValue(value, true);
 	}
 
 
 	@Override
-	public void setValue(ExerciseData[] value, boolean fireEvents) {
+	public void setValue(ExerciseData value, boolean fireEvents) {
 		this.value = value;
-
-		exercises.clearValues();
 		
-		for(int i = 0; i<value.length; i++){
-			exercises.addItem(value[i].label, value[i].id);
-		}
-		exercises.removeItem(0);
-
+		exercises.setValue(value.id);
+		startDate.setValue(value.startDate);
+		endDate.setValue(value.endDate);
+		
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
+	}
+	
+	public void setAvailableExercises(ExerciseData[] availableExs){
+		
+		exercises.clearValues();
+		
+		for(int i = 0; i<availableExs.length; i++){
+			exercises.addItem(availableExs[i].label, availableExs[i].id);
+		}
+		exercises.removeItem(0);
+
+	}
+	
+	public void addAvailableExercise(ExerciseData newExercise){
+		exercises.addItem(newExercise.label, newExercise.id);
 	}
 
 
