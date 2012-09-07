@@ -27,7 +27,9 @@ public class FieldContainer
 		public FieldType type;
 		public String unitsLabel;
 		public String refersToId;
-		public int order; // JMMM: Variável auxiliar para ordenação, ignorar no Client Side
+		public int order;
+
+		public boolean readOnly;
 
 		public String valueId; // JMMM: Variável auxiliar server side
 		public String value;
