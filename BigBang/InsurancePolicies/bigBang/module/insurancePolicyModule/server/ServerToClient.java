@@ -40,7 +40,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
 
-public class DataBuilder
+public class ServerToClient
 {
 	public static FieldContainer.FieldType sGetFieldTypeByID(UUID pidFieldType)
 	{
@@ -95,13 +95,13 @@ public class DataBuilder
 			try
 			{
 				marrCoverages = mobjSubLine.GetCurrentCoverages();
-				sSortCoverages(marrCoverages);
+				sortCoverages(marrCoverages);
 
 				marrFields = new Tax[marrCoverages.length][];
 				for ( i = 0; i < marrCoverages.length; i++ )
 				{
 					marrFields[i] = marrCoverages[i].GetCurrentTaxes();
-					sSortFields(marrFields[i]);
+					sortFields(marrFields[i]);
 				}
 			}
 			catch (Throwable e)
@@ -304,7 +304,7 @@ public class DataBuilder
 			}
 		}
 
-		private void sSortCoverages(Coverage[] parrCoverages)
+		private void sortCoverages(Coverage[] parrCoverages)
 		{
 			Arrays.sort(parrCoverages, new Comparator<Coverage>()
 			{
@@ -323,7 +323,7 @@ public class DataBuilder
 			});
 		}
 
-		private void sSortFields(Tax[] parrFields)
+		private void sortFields(Tax[] parrFields)
 		{
 			Arrays.sort(parrFields, new Comparator<Tax>()
 			{
@@ -609,7 +609,7 @@ public class DataBuilder
 	}
 
 	private ComplexFieldContainerBuilder mobjComplexBuilder;
-	
+
 	private ComplexFieldContainerBuilder getComplexBuilder()
 	{
 		if ( mobjComplexBuilder == null )

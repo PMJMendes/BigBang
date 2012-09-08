@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -55,14 +54,12 @@ import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.Data.DebitNoteData;
 import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
-import com.premiumminds.BigBang.Jewel.Data.PolicyCoInsurerData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyCoInsurer;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -244,7 +241,7 @@ public class InsurancePolicyServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return new DataBuilder().getEmptyPolicy(UUID.fromString(subLineId), UUID.fromString(clientId));
+		return new ServerToClient().getEmptyPolicy(UUID.fromString(subLineId), UUID.fromString(clientId));
 	}
 
 	public InsurancePolicy getPolicy(String policyId)
@@ -253,7 +250,7 @@ public class InsurancePolicyServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return new DataBuilder().getPolicy(UUID.fromString(policyId));
+		return new ServerToClient().getPolicy(UUID.fromString(policyId));
 	}
 
 	public InsurancePolicy editPolicy(InsurancePolicy policy)
@@ -278,7 +275,7 @@ public class InsurancePolicyServiceImpl
 		if ( !lobjPolicy.GetSubLine().getKey().equals(UUID.fromString(policy.subLineId)) )
 			throw new BigBangException("Erro: Não pode alterar a modalidade da apólice.");
 
-		lobjData = sBuildData(policy, lobjPolicy);
+		lobjData = new ClientToServer().getDataForEdit(lobjPolicy, policy);
 
 		try
 		{
@@ -295,7 +292,7 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return new DataBuilder().getPolicy(lobjPolicy.getKey());
+		return new ServerToClient().getPolicy(lobjPolicy.getKey());
 	}
 
 	public InsurancePolicy performCalculations(String policyId)
@@ -331,7 +328,7 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return new DataBuilder().getPolicy(lobjPolicy.getKey());
+		return new ServerToClient().getPolicy(lobjPolicy.getKey());
 	}
 
 	public void validatePolicy(String policyId)
@@ -1051,170 +1048,5 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return lbFound;
-	}
-	
-	private static PolicyData sBuildData(InsurancePolicy pobjSource, Policy pobjReference)
-		throws BigBangException
-	{
-		PolicyCoInsurer[] larrCoInsurers;
-		PolicyData lobjData;
-
-		try
-		{
-			larrCoInsurers = pobjReference.GetCurrentCoInsurers();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjData = new PolicyData();
-
-		sBuildStaticData(lobjData, pobjSource, larrCoInsurers);
-
-//		if ( marrCoverages.size() > 0 )
-//		{
-//			lobjData.marrCoverages = new PolicyCoverageData[marrCoverages.size()];
-//			for ( i = 0; i < marrCoverages.size(); i++ )
-//			{
-//				lobjData.marrCoverages[i] = new PolicyCoverageData();
-//				lobjData.marrCoverages[i].Clone(marrCoverages.get(i));
-//				if ( marrCoverages.get(i).mid == null )
-//					lobjData.marrCoverages[i].mbNew = true;
-//			}
-//		}
-//		else
-//			lobjData.marrCoverages = null;
-//
-//		if ( marrObjects.size() > 0 )
-//		{
-//			lobjData.marrObjects = new PolicyObjectData[marrObjects.size()];
-//			for ( i = 0; i < marrObjects.size(); i++ )
-//			{
-//				lobjData.marrObjects[i] = new PolicyObjectData();
-//				lobjData.marrObjects[i].Clone(marrObjects.get(i));
-//				if ( marrObjects.get(i).mbDeleted )
-//					lobjData.marrObjects[i].mbDeleted = true;
-//				else if ( marrObjects.get(i).mid == null )
-//					lobjData.marrObjects[i].mbNew = true;
-//			}
-//		}
-//		else
-//			lobjData.marrObjects = null;
-//
-//		if ( marrExercises.size() > 0 )
-//		{
-//			lobjData.marrExercises = new PolicyExerciseData[marrExercises.size()];
-//			for ( i = 0; i < marrExercises.size(); i++ )
-//			{
-//				if ( mbIsNew )
-//				{
-//					if ( marrExercises.get(i).mdtStart == null )
-//						marrExercises.get(i).mdtStart = mobjPolicy.mdtBeginDate;
-//				}
-//
-//				lobjData.marrExercises[i] = new PolicyExerciseData();
-//				lobjData.marrExercises[i].Clone(marrExercises.get(i));
-//				if ( marrExercises.get(i).mbDeleted )
-//					lobjData.marrExercises[i].mbDeleted = true;
-//				else if ( marrExercises.get(i).mid == null )
-//					lobjData.marrExercises[i].mbNew = true;
-//			}
-//		}
-//		else
-//			lobjData.marrExercises = null;
-//
-//		if ( marrValues.size() > 0 )
-//		{
-//			lobjData.marrValues = new PolicyValueData[marrValues.size()];
-//			for ( i = 0; i < marrValues.size(); i++ )
-//			{
-//				lobjData.marrValues[i] = new PolicyValueData();
-//				lobjData.marrValues[i].Clone(marrValues.get(i));
-//				if ( marrValues.get(i).mbDeleted )
-//					lobjData.marrValues[i].mbDeleted = true;
-//				else if ( marrValues.get(i).mid == null )
-//					lobjData.marrValues[i].mbNew = true;
-//			}
-//		}
-//		else
-//			lobjData.marrValues = null;
-
-		return lobjData;
-	}
-	
-	private static void sBuildStaticData(PolicyData pobjDest, InsurancePolicy pobjSource, PolicyCoInsurer[] parrReference)
-	{
-		HashMap<UUID, UUID> lmapCoInsurers;
-		ArrayList<PolicyCoInsurerData> larrData;
-		PolicyCoInsurerData lobjCoInsurer;
-		int i;
-
-		pobjDest.mid = UUID.fromString(pobjSource.id);
-
-		pobjDest.midClient = ( pobjSource.clientId == null ? null : UUID.fromString(pobjSource.clientId) );
-		pobjDest.mstrNumber = pobjSource.number;
-		pobjDest.midCompany = UUID.fromString(pobjSource.insuranceAgencyId);
-		pobjDest.midSubLine = UUID.fromString(pobjSource.subLineId);
-		pobjDest.mdtBeginDate = ( pobjSource.startDate == null ? null :
-				Timestamp.valueOf(pobjSource.startDate + " 00:00:00.0") );
-		pobjDest.midDuration = UUID.fromString(pobjSource.durationId);
-		pobjDest.midFractioning = UUID.fromString(pobjSource.fractioningId);
-		pobjDest.mlngMaturityDay = pobjSource.maturityDay;
-		pobjDest.mlngMaturityMonth = pobjSource.maturityMonth;
-		pobjDest.mdtEndDate = ( pobjSource.expirationDate == null ? null :
-				Timestamp.valueOf(pobjSource.expirationDate + " 00:00:00.0") );
-		pobjDest.mstrNotes = pobjSource.notes;
-		pobjDest.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
-		pobjDest.mbCaseStudy = pobjSource.caseStudy;
-		pobjDest.midStatus = UUID.fromString(pobjSource.statusId);
-		pobjDest.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );
-		pobjDest.mstrDocuShare = pobjSource.docushare;
-		pobjDest.midProfile = ( pobjSource.operationalProfileId == null ? null : UUID.fromString(pobjSource.operationalProfileId) );
-
-		pobjDest.midManager = ( pobjSource.managerId == null ? null : UUID.fromString(pobjSource.managerId) );
-		pobjDest.midProcess = UUID.fromString(pobjSource.processId);
-
-		pobjDest.mbModified = true;
-
-		lmapCoInsurers = new HashMap<UUID, UUID>();
-		for ( i = 0; i < parrReference.length; i++ )
-			lmapCoInsurers.put((UUID)parrReference[i].getAt(1), parrReference[i].getKey());
-
-		larrData = new ArrayList<PolicyCoInsurerData>();
-
-		if ( pobjSource.coInsurers != null )
-		{
-			for ( i = 0; i < pobjSource.coInsurers.length; i++ )
-			{
-				lobjCoInsurer = new PolicyCoInsurerData();
-				lobjCoInsurer.midPolicy = pobjDest.mid;
-				lobjCoInsurer.midCompany = UUID.fromString(pobjSource.coInsurers[i].insuranceAgencyId);
-				lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent+"");
-				lobjCoInsurer.mbDeleted = false;
-
-				lobjCoInsurer.mid = lmapCoInsurers.get(lobjCoInsurer.midCompany);
-				if ( lobjCoInsurer.mid == null )
-					lobjCoInsurer.mbNew = true;
-				else
-				{
-					lobjCoInsurer.mbNew = false;
-					lmapCoInsurers.remove(lobjCoInsurer.midCompany);
-				}
-				
-				larrData.add(lobjCoInsurer);
-			}
-		}
-
-		for ( UUID lid: lmapCoInsurers.keySet() )
-		{
-			lobjCoInsurer = new PolicyCoInsurerData();
-			lobjCoInsurer.mid = lmapCoInsurers.get(lid);
-			lobjCoInsurer.mbNew = false;
-			lobjCoInsurer.mbDeleted = true;
-			larrData.add(lobjCoInsurer);
-		}
-
-		pobjDest.marrCoInsurers = larrData.toArray(new PolicyCoInsurerData[larrData.size()]);
 	}
 }
