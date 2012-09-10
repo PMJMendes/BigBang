@@ -380,7 +380,7 @@ public class ClientServiceImpl
 		return getClient(receptorId);
 	}
 
-	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy)
+	public InsurancePolicy createPolicy(InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
@@ -392,7 +392,8 @@ public class ClientServiceImpl
 
 		try
 		{
-			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(clientId));
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(policy.clientId));
 		}
 		catch (Throwable e)
 		{
@@ -420,8 +421,7 @@ public class ClientServiceImpl
 	}
 
 	@Override
-	public RiskAnalysis createRiskAnalisys(String clientId,
-			RiskAnalysis riskAnalisys) throws SessionExpiredException,
+	public RiskAnalysis createRiskAnalisys(RiskAnalysis riskAnalisys) throws SessionExpiredException,
 			BigBangException {
 		// TODO Auto-generated method stub
 		return null;

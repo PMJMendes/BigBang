@@ -11,101 +11,142 @@ import bigBang.definitions.shared.FieldContainer.ExtraField;
 import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
-import bigBang.definitions.shared.InsuredObject.Change;
 import bigBang.library.client.DeepCopy;
 
 public class WorkSpace {
+	private static String NEWID = "new";
 
-	protected List<InsuredObject> alteredObjects;
-	protected ExerciseData[] exercises;
+	protected InsurancePolicy originalPolicy;
+
 	protected InsurancePolicy policy;
+	protected List<InsuredObject> alteredObjects;
+	protected int idCounter;
 
-	protected int idCounter = 0;
-
-	public WorkSpace(){
+	public WorkSpace() {
 		this.alteredObjects = new ArrayList<InsuredObject>();
+	}
+
+	private boolean isPolicyLoaded(String id) {
+		return (this.policy != null) && this.policy.id.equalsIgnoreCase(id);
+	}
+
+	/**
+	 * Creates the edition context
+	 * @param policy 
+	 */
+	public InsurancePolicy loadPolicy(InsurancePolicy policy) {
+		originalPolicy = policy;
+		alteredObjects.clear();
+		idCounter = 0;
+
+		if ( policy == null )
+			this.policy = null;
+		else {
+			try {
+				this.policy = DeepCopy.copy(originalPolicy);
+			} catch (Exception e) {
+				policy = null;
+			}
+		}
+
+		if ( policy.id == null )
+			policy.id = NEWID;
+
+		return policy;
+	}
+
+	public InsurancePolicy reset(String policyId) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
+
+		return loadPolicy(originalPolicy);
+	}
+
+	public InsurancePolicy getWholePolicy(String policyId) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
+
+		try {
+			originalPolicy = DeepCopy.copy(policy);
+		} catch (Exception e) {
+			return null;
+		}
+
+		if ( NEWID.equals(originalPolicy.id) )
+			originalPolicy.id = null;
+
+		if ( originalPolicy.exerciseData != null )
+		{
+			for ( ExerciseData exercise : originalPolicy.exerciseData )
+				if ( NEWID.equals(exercise.id) )
+					exercise.id = null;
+		}
+
+		originalPolicy.changedObjects = alteredObjects.toArray(new InsuredObject[alteredObjects.size()]);
+		for ( InsuredObject object : originalPolicy.changedObjects )
+		{
+			object.headerFields = splitArray(object.headerFields, originalPolicy.headerFields.length);
+			if ( InsuredObject.Change.CREATED.equals(object.change) )
+				object.id = null;
+		}
+
+		return originalPolicy;
 	}
 
 
 	//INSURANCE POLICY
 
-	public boolean isPolicyContext(String id){
-		return this.policy != null && this.policy.id.equalsIgnoreCase(id);
+	public InsurancePolicy getPolicyHeader(String policyId) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
+
+		return policy;
 	}
 
-	public InsurancePolicy getWholePolicy() {
-		//TODO MAJOR
-		return null;
-	}
-	
-	/**
-	 * Creates the edition context
-	 * @param policy
-	 */
-	public void editPolicy(InsurancePolicy policy) {
+	public InsurancePolicy updatePolicyHeader(InsurancePolicy policy) {
+		if ( !isPolicyLoaded(policy.id) )
+			return null;
+
 		this.policy = policy;
-		this.exercises = policy == null ? null : policy.exerciseData;
-		alteredObjects.clear();
-	}
-
-	public InsurancePolicy getPolicy(){
-		if(this.policy == null) {
-			return null; 
-		}else{
-			try {
-				return DeepCopy.copy(this.policy);
-			} catch (Exception e) {
-				return null;
-			}
-		}
-	}
-
-	public InsurancePolicy updatePolicy(InsurancePolicy policy){
-		if(this.policy != null && this.policy.id.equalsIgnoreCase(policy.id)) {
-			this.policy = policy;
-			return getPolicy();
-		}
-		return null;
+		return policy;
 	}
 
 
 	//EXERCISES
 
-	public ExerciseData getExercise(String id) {
-		for(ExerciseData exercise : exercises) {
-			if(exercise.id.equalsIgnoreCase(id)){
-				return exercise;
-			}
-		}
-		return null;
+	public ExerciseData[] getExercises(String policyId) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
+
+		return this.policy.exerciseData;
 	}
 
-	public ExerciseData[] getExercises(){
-		return this.exercises;
-	}
+	public ExerciseData createExercise(String policyId) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
 
-	public ExerciseData createExercise(ExerciseData exercise){
-		ExerciseData newExercise = exercises[exercises.length - 1];
-		boolean creationAvailable = exercises == null ? false : newExercise.id.equalsIgnoreCase("new") ? false : true;
+		if((policy.exerciseData != null) && (policy.exerciseData.length > 0) && !policy.exerciseData[0].isActive) {
+			policy.exerciseData[0].isActive = true;
+			policy.exerciseData[0].id = NEWID;
 
-		if(creationAvailable) {
-			newExercise.id = "new";
-			
-			
-			
-			
-			return newExercise;
-		}else{
+			for ( InsuredObject object : alteredObjects )
+				object.exerciseData[0].isActive = true;
+			policy.emptyObject.exerciseData[0].isActive = true;
+
+			return policy.exerciseData[0];
+		} else {
 			return null;
 		}
 	}
 
-	public ExerciseData updateExercise(ExerciseData alteredExercise) {
-		for(int i = 0; i < exercises.length; i++) {
-			ExerciseData exercise = exercises[i];
-			if(exercise.id.equalsIgnoreCase(alteredExercise.id)) {
-				exercises[i] = alteredExercise;
-				return alteredExercise; //
+	public ExerciseData updateExerciseHeader(String policyId, ExerciseData alteredExercise) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
+
+		for(int i = 0; i < policy.exerciseData.length; i++) {
+			if(policy.exerciseData[i].id.equalsIgnoreCase(alteredExercise.id)) {
+				policy.exerciseData[i] = alteredExercise;
+				return alteredExercise;
 			}
 		}
 		return null;
@@ -114,111 +155,114 @@ public class WorkSpace {
 
 	//INSURED OBJECTS
 
-	public InsuredObject createObject() {
-		InsuredObject newObject;
-		try {
-			newObject = DeepCopy.copy(policy.emptyObject);
-		} catch (Exception e) {
+	public InsuredObject getObjectHeader(String policyId, String objectId) {
+		if ( !isPolicyLoaded(policyId) )
 			return null;
+
+		for ( InsuredObject object : alteredObjects )
+			if(object.id.equalsIgnoreCase(objectId))
+				return object;
+
+		return null;
+	}
+
+	public InsuredObject loadExistingObject(String policyId, InsuredObject object) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
+
+		for ( InsuredObject oldObject : alteredObjects )
+		{
+			if(oldObject.id.equalsIgnoreCase(object.id)) {
+				return object;
+			}
 		}
 
-		newObject.change = Change.CREATED;
-		newObject.id = idCounter+"";
-		idCounter++;
-
-		alteredObjects.add(newObject);
-		newObject.headerFields = (HeaderField[]) mergeArrays(new HeaderField[][] {policy.headerFields, newObject.headerFields});
-
-		return newObject;
-	}
-	
-	public InsuredObject manageObject(InsuredObject object) {
 		InsuredObject newObject;
+
 		try {
 			newObject = DeepCopy.copy(object);
+			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {policy.headerFields, object.headerFields},
+					new boolean[] {true, false});
 		} catch (Exception e) {
-			e.printStackTrace();
 			return null;
 		}
+
+		newObject.change = InsuredObject.Change.MODIFIED;
+		if ( policy.exerciseData != null )
+			newObject.exerciseData[0].isActive = policy.exerciseData[0].isActive;
 		alteredObjects.add(newObject);
-		newObject.headerFields = (HeaderField[]) mergeArrays(new HeaderField[][] {policy.headerFields, newObject.headerFields});
+
 		return newObject;
 	}
 
-	public InsuredObject updateObject(InsuredObject alteredObject) {
+	public InsuredObject createLocalObject(String policyId) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
+
+		InsuredObject newObject;
+
+		try {
+			newObject = DeepCopy.copy(policy.emptyObject);
+			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {policy.headerFields, newObject.headerFields},
+					new boolean[] {true, false});
+		} catch (Exception e) {
+			return null;
+		}
+
+		newObject.change = InsuredObject.Change.CREATED;
+		newObject.id = idCounter+"";
+		idCounter++;
+		alteredObjects.add(newObject);
+
+		return newObject;
+	}
+
+	public InsuredObject updateObject(String policyId, InsuredObject alteredObject) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
+
 		ListIterator<InsuredObject> iterator = this.alteredObjects.listIterator();
-		boolean contained = false;
 
 		while(iterator.hasNext()) {
 			InsuredObject object = iterator.next();
 			if(object.id.equalsIgnoreCase(alteredObject.id)) {
 				iterator.remove();
-				alteredObject.change = Change.MODIFIED;
+				alteredObject.change = InsuredObject.Change.MODIFIED;
 				iterator.add(alteredObject);
-				contained = true;
-				break;
+				return alteredObject;
 			}
 		}
 
-		if(!contained) {
-			return null;
-		}
-
-		return alteredObject;
+		return null;
 	} 
 
-	public void deleteObject(String objectId) {
-		ListIterator<InsuredObject> iterator = this.alteredObjects.listIterator();
+	public void deleteObject(String policyId, String objectId) {
+		if ( !isPolicyLoaded(policyId) )
+			return;
 
-		while(iterator.hasNext()) {
-			InsuredObject object = iterator.next();
+		for( InsuredObject object : alteredObjects ) {
 			if(object.id.equalsIgnoreCase(objectId)) {
-				object.change = Change.DELETED;
+				object.change = InsuredObject.Change.DELETED;
 				break;
 			}
 		}
 	}
 
-	public InsuredObject getObject(String id) {
-		ListIterator<InsuredObject> iterator = this.alteredObjects.listIterator();
 
-		while(iterator.hasNext()) {
-			InsuredObject object = iterator.next();
-			if(object.id.equalsIgnoreCase(id)) {
-				object.headerFields = (HeaderField[]) mergeArrays(new HeaderField[][] {policy.headerFields, object.headerFields});
-				return object;
-			}
-		}
-		return null;
-	}
+	//CONTEXT
 
-	protected InsuredObject[] getAlteredObjects(){
-		if(policy == null) {
+	public FieldContainer getContext(String policyId, String objectId, String exerciseId) {
+		if ( !isPolicyLoaded(policyId) )
 			return null;
-		}else{
-			InsuredObject[] result = new InsuredObject[this.alteredObjects.size()];
-			for(int i = 0; i < result.length; i++) {
-				try {
-					result[i] = DeepCopy.copy(alteredObjects.get(i));
-					if(result[i].change == Change.CREATED){
-						result[i].id = null;
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			return result;
-		}
-	}
 
-	public FieldContainer getContextRelatedFields(String objectId, String exerciseId) {
-		FieldContainer result = new FieldContainer();
+		FieldContainer result;
+		int exerciseIndex = -1;
+		int i;
 
-		ExerciseData exercise = null;
 		if(exerciseId != null) {
-			for(ExerciseData e : exercises) {
-				if(e.id.equalsIgnoreCase(exerciseId)){
-					exercise = e;
+			for( i = 0; i < policy.exerciseData.length; i++ ) {
+				if(exerciseId.equalsIgnoreCase(policy.exerciseData[i].id)) {
+					exerciseIndex = i;
 					break;
 				}
 			}
@@ -234,120 +278,269 @@ public class WorkSpace {
 			}
 		}
 
-		
-		//HEADER FIELDS
-		int policyHeaderFieldsCount = this.policy.headerFields.length;
-		
-		int exerciseHeaderFieldsCount = 0;
-		if(exercise != null) {
-			exerciseHeaderFieldsCount = exercise.headerFields.length;
-		}
+		result = new FieldContainer();
 
-		int objectHeaderFieldsCount = 0;
-		if(object != null) {
-			objectHeaderFieldsCount = object.headerFields.length;
-		}
-		
-		result.headerFields = new HeaderField[policyHeaderFieldsCount + exerciseHeaderFieldsCount + objectHeaderFieldsCount];
-		for(int i = 0; i < this.policy.headerFields.length; i++) {
-			result.headerFields[i] = this.policy.headerFields[i];
-			result.headerFields[i].readOnly = false;
-		}
-		for(int i = 0; i < exerciseHeaderFieldsCount; i++) {
-			int j = i + policyHeaderFieldsCount;
-			result.headerFields[j] = exercise.headerFields[i];
-//			result.headerFields[j].readOnly = true; //TODO
-		}
-		for(int i = 0; i < objectHeaderFieldsCount; i++) {
-			int j = i + policyHeaderFieldsCount + exerciseHeaderFieldsCount;
-			result.headerFields[j] = object.headerFields[i];
-//			result.headerFields[j].readOnly = true; //TODO
-		}
+		try
+		{
+			result.headerFields = mergeHeaderArrays(new HeaderField[][] {
+						( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].headerFields ),
+						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
+					}, new boolean[] {true, false});
 
-		
-		//COLUMN FIELDS
-		int policyColumnFieldsCount = this.policy.columnFields.length;
-		
-		int exerciseColumnFieldsCount = 0;
-		if(exercise != null) {
-			exerciseColumnFieldsCount = exercise.columnFields.length;
-		}
+			result.columnFields = mergeColumnArrays(new ColumnField[][] {
+						policy.columnFields,
+						( object == null ? null : object.columnFields ),
+						( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].columnFields ),
+						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
+					}, new boolean[] {true, false, true, false});
 
-		int objectColumnFieldsCount = 0;
-		if(object != null) {
-			objectColumnFieldsCount = object.columnFields.length;
-		}
-		
-		result.columnFields = new ColumnField[policyColumnFieldsCount + exerciseColumnFieldsCount + objectColumnFieldsCount];
-		for(int i = 0; i < this.policy.columnFields.length; i++) {
-			result.columnFields[i] = this.policy.columnFields[i];
-			result.columnFields[i].readOnly = false;
-		}
-		for(int i = 0; i < exerciseColumnFieldsCount; i++) {
-			int j = i + policyColumnFieldsCount;
-			result.columnFields[j] = exercise.columnFields[i];
-//			result.columnFields[j].readOnly = true; //TODO
-		}
-		for(int i = 0; i < objectColumnFieldsCount; i++) {
-			int j = i + policyColumnFieldsCount + exerciseColumnFieldsCount;
-			result.columnFields[j] = object.columnFields[i];
-//			result.columnFields[j].readOnly = true; //TODO
-		}
-
-
-		//EXTRA FIELDS
-//		int policyColumnFieldsCount = this.policy.columnFields.length;
-//		
-//		int exerciseColumnFieldsCount = 0;
-//		if(exercise != null) {
-//			exerciseColumnFieldsCount = exercise.columnFields.length;
-//		}
-//
-//		int objectColumnFieldsCount = 0;
-//		if(object != null) {
-//			objectColumnFieldsCount = object.columnFields.length;
-//		}
-		
-		result.columnFields = new ColumnField[policyColumnFieldsCount + exerciseColumnFieldsCount + objectColumnFieldsCount];
-		for(int i = 0; i < this.policy.columnFields.length; i++) {
-			result.columnFields[i] = this.policy.columnFields[i];
-			result.columnFields[i].readOnly = false;
-		}
-		for(int i = 0; i < exerciseColumnFieldsCount; i++) {
-			int j = i + policyColumnFieldsCount;
-			result.columnFields[j] = exercise.columnFields[i];
-//			result.columnFields[j].readOnly = true; //TODO
-		}
-		for(int i = 0; i < objectColumnFieldsCount; i++) {
-			int j = i + policyColumnFieldsCount + exerciseColumnFieldsCount;
-			result.columnFields[j] = object.columnFields[i];
-//			result.columnFields[j].readOnly = true; //TODO
+			result.extraFields = mergeExtraArrays(new ExtraField[][] {
+						policy.extraFields,
+						( object == null ? null : object.extraFields ),
+						( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].extraFields ),
+						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].extraFields)
+					}, new boolean[] {true, false, true, false});
+		} catch (Exception e) {
+			return null;
 		}
 
 		return result;
 	}
 
-	private static HeaderField[] mergeArrays(HeaderField[][] parrSource)
-	{
-		HeaderField[] larrResult;
-		int llngLen;
-		int llngStart;
-		int i, j;
+	public void updateContext(String policyId, String objectId, String exerciseId, FieldContainer contents) {
+		if ( !isPolicyLoaded(policyId) )
+			return;
 
-		llngLen = 0;
-		for ( i = 0; i < parrSource.length; i++ )
-			llngLen += parrSource[i].length;
+		int exerciseIndex = -1;
+		int i;
 
-		larrResult = new HeaderField[llngLen];
-
-		llngStart = 0;
-		for ( i = 0; i < llngLen; i++ )
-		{
-			for ( j = 0; j < parrSource[i].length; j++ )
-				larrResult[llngStart + j] = parrSource[i][j];
-			llngStart += parrSource[i].length;
+		if(exerciseId != null) {
+			for( i = 0; i < policy.exerciseData.length; i++ ) {
+				if(exerciseId.equalsIgnoreCase(policy.exerciseData[i].id)) {
+					exerciseIndex = i;
+					break;
+				}
+			}
 		}
 
-		return larrResult;
+		InsuredObject object = null;
+		if(objectId != null){
+			for(InsuredObject o : alteredObjects) {
+				if(o.id.equalsIgnoreCase(objectId)){
+					object = o;
+					break;
+				}
+			}
+		}
+
+		readMergedHeaderArray(contents.headerFields, new HeaderField[][] {
+					( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].headerFields ),
+					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
+				}, new boolean[] {true, false});
+
+		readMergedColumnArray(contents.columnFields, new ColumnField[][] {
+					policy.columnFields,
+					( object == null ? null : object.columnFields ),
+					( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].columnFields ),
+					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
+				}, new boolean[] {true, false, true, false});
+
+		readMergedExtraArray(contents.extraFields, new ExtraField[][] {
+					policy.extraFields,
+					( object == null ? null : object.extraFields ),
+					( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].extraFields ),
+					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].extraFields)
+				}, new boolean[] {true, false, true, false});
+	}
+
+	private static HeaderField[] mergeHeaderArrays(HeaderField[][] source, boolean[] readOnly) throws Exception
+	{
+		HeaderField[] result;
+		int len;
+		int start;
+		int i, j;
+
+		len = 0;
+		for ( i = 0; i < source.length; i++ )
+		{
+			if ( source[i] != null )
+				len += source[i].length;
+		}
+
+		result = new HeaderField[len];
+
+		start = 0;
+		for ( i = 0; i < len; i++ )
+		{
+			if ( source[i] != null )
+			{
+				for ( j = 0; j < source[i].length; j++ )
+				{
+					result[start + j] = DeepCopy.copy(source[i][j]);
+					result[start + j].readOnly = readOnly[i];
+				}
+				start += source[i].length;
+			}
+		}
+
+		return result;
+	}
+
+	private static ColumnField[] mergeColumnArrays(ColumnField[][] source, boolean[] readOnly) throws Exception
+	{
+		ColumnField[] result;
+		int len;
+		int start;
+		int i, j;
+
+		len = 0;
+		for ( i = 0; i < source.length; i++ )
+		{
+			if ( source[i] != null )
+				len += source[i].length;
+		}
+
+		result = new ColumnField[len];
+
+		start = 0;
+		for ( i = 0; i < source.length; i++ )
+		{
+			if ( source[i] != null )
+			{
+				for ( j = 0; j < source[i].length; j++ )
+				{
+					result[start + j] = DeepCopy.copy(source[i][j]);
+					result[start + j].readOnly = readOnly[i];
+				}
+				start += source[i].length;
+			}
+		}
+
+		return result;
+	}
+
+	private static ExtraField[] mergeExtraArrays(ExtraField[][] source, boolean[] readOnly) throws Exception
+	{
+		ExtraField[] result;
+		int len;
+		int[] at;
+		int currentCoverage;
+		int i, j;
+
+		at = new int[source.length];
+		len = 0;
+		for ( i = 0; i < source.length; i++ )
+		{
+			at[i] = 0;
+			if ( source[i] != null )
+				len += source[i].length;
+		}
+
+		result = new ExtraField[len];
+
+		currentCoverage = 0;
+		i = 0;
+		while ( i < len )
+		{
+			for ( j = 0; j < source.length; j++ )
+			{
+				if ( source[j] != null )
+				{
+					while ( (at[j] < source[j].length) && (source[j][at[j]].coverageIndex == currentCoverage) )
+					{
+						result[i] = DeepCopy.copy(source[j][at[j]]);
+						result[i].readOnly = readOnly[j];
+						at[j]++;
+						i++;
+					}
+				}
+			}
+			currentCoverage++;
+		}
+
+		return result;
+	}
+
+	private static HeaderField[] splitArray(HeaderField[] source, int start)
+	{
+		HeaderField[] result;
+		int i;
+
+		result = new HeaderField[source.length - start];
+
+		for ( i = start; i < source.length; i++ )
+			result[i - start] = source[i];
+
+		return result;
+	}
+
+	private static void readMergedHeaderArray(HeaderField[] source, HeaderField[][] dest, boolean[] ignore)
+	{
+		int start;
+		int i, j;
+
+		start = 0;
+		for ( i = 0; i < dest.length; i++ )
+		{
+			if ( dest[i] != null )
+			{
+				if ( !ignore[i] )
+				{
+					for ( j = 0; j < dest[i].length; j++ )
+						dest[i][j].value = source[start + j].value;
+				}
+				start += dest[i].length;
+			}
+		}
+	}
+
+	private static void readMergedColumnArray(ColumnField[] source, ColumnField[][] dest, boolean[] ignore)
+	{
+		int start;
+		int i, j;
+
+		start = 0;
+		for ( i = 0; i < dest.length; i++ )
+		{
+			if ( dest[i] != null )
+			{
+				if ( !ignore[i] )
+				{
+					for ( j = 0; j < dest[i].length; j++ )
+						dest[i][j].value = source[start + j].value;
+				}
+				start += dest[i].length;
+			}
+		}
+	}
+
+	private static void readMergedExtraArray(ExtraField[] source, ExtraField[][] dest, boolean[] ignore)
+	{
+		int[] at;
+		int currentCoverage;
+		int i, j;
+
+		at = new int[dest.length];
+		for ( i = 0; i < dest.length; i++ )
+			at[i] = 0;
+
+		currentCoverage = 0;
+		i = 0;
+		while ( i < source.length )
+		{
+			for ( j = 0; j < dest.length; j++ )
+			{
+				if ( (dest[j] != null) && !ignore[j] )
+				{
+					while ( (at[j] < dest[j].length) && (dest[j][at[j]].coverageIndex == currentCoverage) )
+					{
+						dest[j][at[j]].value = source[i].value;
+						at[j]++;
+						i++;
+					}
+				}
+			}
+			currentCoverage++;
+		}
 	}
 }

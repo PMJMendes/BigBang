@@ -18,32 +18,36 @@ import bigBang.definitions.shared.Receipt;
 public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePolicy> {
 
 	//GET & SET
-	
-	public void persistPolicy(String policyId, ResponseHandler<InsurancePolicy> handler);
-	
+
 	public void getPolicy(String policyId, ResponseHandler<InsurancePolicy> handler);
 
-	public void updatePolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
-	
-	public void discardEditData();
-	
+	public InsurancePolicy updatePolicyHeader(InsurancePolicy policy);
+
+	public void persistPolicy(String policyId, ResponseHandler<InsurancePolicy> handler);
+
+	public InsurancePolicy discardEditData(String policyId);
+
 	public void removePolicy(String policyId, ResponseHandler<String> handler);
+
+	public ExerciseData createExercise(String policyId);
+
+	public ExerciseData updateExercise(String policyId, ExerciseData exercise);
 
 	public void getInsuredObject(String policyId, String objectId, ResponseHandler<InsuredObject> handler);
 
-	public InsuredObject addInsuredObject(String policyId);
+	public InsuredObject createInsuredObject(String policyId);
+
+	public InsuredObject updateInsuredObject(String policyId, InsuredObject object);
 
 	public void removeInsuredObject(String policyId, String objectId);
 
-	public void updateInsuredObject(String policyId, InsuredObject object);
+	public FieldContainer getContextForPolicy(String policyId, String exerciseId);
 	
-	public ExerciseData addExercise(String policyId, ExerciseData exercise);
-	
-	public ExerciseData updateExercise(String policyId, ExerciseData exercise);
-	
-	public FieldContainer getFieldsContainerForPolicy(String policyId, String ExerciseId);
-	
-	public FieldContainer getFieldsContainerForInsuredObject(String objectId, String exerciseId);
+	public void saveContextForPolicy(String policyId, String exerciseId, FieldContainer contents);
+
+	public FieldContainer getContextForInsuredObject(String policyId, String objectId, String exerciseId);
+
+	public void saveContextForInsuredObject(String policyId, String objectId, String exerciseId, FieldContainer contents);
 
 
 	// OTHER OPS
@@ -55,11 +59,11 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	public SearchDataBroker<InsurancePolicyStub> getSearchBroker();
 
 	void validatePolicy(String policyId, ResponseHandler<Void> handler);
-	
+
 	void executeDetailedCalculations(String policyId, ResponseHandler<InsurancePolicy> handler);
-	
+
 	void voidPolicy(PolicyVoiding voiding,	ResponseHandler<InsurancePolicy> responseHandler);
-	
+
 	void issueDebitNote(String policyId, DebitNote note, ResponseHandler<Void> handler);
 
 	public void createNegotiation(Negotiation negotiation, ResponseHandler<Negotiation> handler);

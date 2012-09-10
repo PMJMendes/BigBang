@@ -3,6 +3,7 @@ package bigBang.module.insurancePolicyModule.client.dataAccess;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
@@ -43,6 +44,7 @@ import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
 public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy> implements InsurancePolicyBroker {
 
+	protected ClientProcessBroker clientBroker;
 	protected InsurancePolicyServiceAsync service;
 	protected PolicyObjectServiceAsync insuredObjectService;
 	protected SearchDataBroker<InsurancePolicyStub> searchBroker;
@@ -56,6 +58,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	public InsurancePolicyProcessBrokerImpl(InsurancePolicyServiceAsync service, PolicyObjectServiceAsync insuredObjectService) {
 		this.service = service;
 		this.insuredObjectService = insuredObjectService;
+		this.clientBroker = (ClientProcessBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CLIENT);
 		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_POLICY;
 		this.searchBroker = new InsurancePolicySearchDataBroker(this.service);
 		this.workspace = new WorkSpace();
@@ -120,6 +123,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(InsurancePolicy result) {
+				workspace.loadPolicy(result);
+
 				incrementDataVersion();
 				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
 					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
@@ -140,48 +145,73 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void updatePolicy(InsurancePolicy policy,
-			final ResponseHandler<InsurancePolicy> handler) {
-		if(workspace.isPolicyContext(policy.id)){
-			workspace.updatePolicy(policy);
-		}else{
-			return;
-		}
+	public InsurancePolicy updatePolicyHeader(InsurancePolicy policy) {
+		return workspace.updatePolicyHeader(policy);
 	}
 
 	@Override
-	public void persistPolicy(String policyId, final ResponseHandler<InsurancePolicy> handler) {
-		InsurancePolicy policy = workspace.getPolicy();
+	public void persistPolicy(String policyId,
+			final ResponseHandler<InsurancePolicy> handler) {
+		InsurancePolicy policy;
 
-		if(policy != null && policy.id.equalsIgnoreCase(policyId)){
-			service.editPolicy(policy, new BigBangAsyncCallback<InsurancePolicy>() {
+		policy = workspace.getWholePolicy(policyId);
 
-				@Override
-				public void onResponseSuccess(InsurancePolicy result) {
-					workspace.editPolicy(null);
+		if(policy != null) {
+			if ( policy.id == null) {
+				clientBroker.createPolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
-					incrementDataVersion();
-					for(DataBrokerClient<InsurancePolicy> bc : getClients()){
-						((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
-						((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+					@Override
+					public void onResponse(InsurancePolicy response) {
+						workspace.loadPolicy(response);
+
+						incrementDataVersion();
+						for(DataBrokerClient<InsurancePolicy> bc : getClients()) {
+							((InsurancePolicyDataBrokerClient) bc).addInsurancePolicy(response);
+							((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+						}
+						handler.onResponse(response);
 					}
-					handler.onResponse(result);
-					requiresRefresh = false;
-				}
 
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							"Could not update the policy"	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						handler.onError(errors);
+					}
+				});
+			} else {
+				this.service.editPolicy(policy, new BigBangAsyncCallback<InsurancePolicy>() {
+	
+					@Override
+					public void onResponseSuccess(InsurancePolicy result) {
+						workspace.loadPolicy(result);
+
+						incrementDataVersion();
+						for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+							((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
+							((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+						}
+						handler.onResponse(result);
+						requiresRefresh = false;
+					}
+	
+					@Override
+					public void onResponseFailure(Throwable caught) {
+						handler.onError(new String[]{
+								"Could not update the policy"	
+						});
+						super.onResponseFailure(caught);
+					}
+				});
+			}
+		} else {
 			handler.onError(new String[]{
 					"Could not update the policy"	
 			});
 		}
+	}
+
+	@Override
+	public InsurancePolicy discardEditData(String policyId) {
+		return workspace.reset(policyId);
 	}
 
 	@Override
@@ -190,7 +220,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				workspace.editPolicy(null);
+				workspace.loadPolicy(null);
 
 				incrementDataVersion();
 				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
@@ -212,22 +242,29 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void discardEditData() {
-		this.workspace.editPolicy(null);
+	public ExerciseData createExercise(String policyId) {
+		return workspace.createExercise(policyId);
 	}
 
 	@Override
-	public void getInsuredObject(String policyId, String objectId,
+	public ExerciseData updateExercise(String policyId, ExerciseData exercise) {
+		return workspace.updateExerciseHeader(policyId, exercise);
+	}
+
+	@Override
+	public void getInsuredObject(final String policyId, String objectId,
 			final ResponseHandler<InsuredObject> handler) {
-		if(this.workspace.getObject(objectId) != null) {
-			handler.onResponse(workspace.getObject(objectId));
-		}else{
+		InsuredObject object = workspace.getObjectHeader(policyId, objectId);
+
+		if(object != null) {
+			handler.onResponse(object);
+		} else {
 			insuredObjectService.getObject(objectId, new BigBangAsyncCallback<InsuredObject>() {
 
 				@Override
 				public void onResponseSuccess(InsuredObject result) {
-					workspace.updateObject(result);
-					handler.onResponse(result);
+					workspace.loadExistingObject(policyId, result);
+					handler.onResponse(workspace.getObjectHeader(policyId, result.id));
 				}
 
 				@Override
@@ -242,61 +279,44 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public InsuredObject addInsuredObject(String policyId) {
-		return workspace.createObject();
+	public InsuredObject createInsuredObject(String policyId) {
+		return workspace.createLocalObject(policyId);
+	}
+
+	@Override
+	public InsuredObject updateInsuredObject(String policyId, InsuredObject objectId) {
+		return workspace.updateObject(policyId, objectId);
 	}
 
 	@Override
 	public void removeInsuredObject(String policyId, String objectId) {
-		if(workspace.isPolicyContext(policyId)){
-			workspace.deleteObject(objectId);
-		}else{
-			return;
-		}
+		workspace.deleteObject(policyId, objectId);
 	}
 
 	@Override
-	public void updateInsuredObject(String policyId, InsuredObject objectId) {
-		if(workspace.isPolicyContext(policyId)){
-			workspace.updateObject(objectId);
-		}else{
-			return;
-		}
+	public FieldContainer getContextForPolicy(String policyId, String exerciseId) {
+		return workspace.getContext(policyId, null, exerciseId);
 	}
 
 	@Override
-	public ExerciseData addExercise(String policyId, ExerciseData exercise) {
-		if(workspace.isPolicyContext(policyId)){
-			return workspace.createExercise(exercise);
-		}else{
-			return null;
-		}
+	public void saveContextForPolicy(String policyId, String exerciseId,
+			FieldContainer contents) {
+		workspace.updateContext(policyId, null, exerciseId, contents);
+		
 	}
 
 	@Override
-	public ExerciseData updateExercise(String policyId, ExerciseData exercise) {
-		if(workspace.isPolicyContext(policyId)){
-			return workspace.updateExercise(exercise);
-		}else{
-			return null;
-		}
+	public FieldContainer getContextForInsuredObject(String policyId,
+			String objectId, String exerciseId) {
+		return workspace.getContext(policyId, objectId, exerciseId);
 	}
 
 	@Override
-	public FieldContainer getFieldsContainerForPolicy(String policyId,
-			String exerciseId) {
-		if(workspace.isPolicyContext(policyId)){
-			return null; //workspace.getExerciseRelatedFields(exerciseId); TODO
-		}else{
-			return null;
-		}
+	public void saveContextForInsuredObject(String policyId, String objectId,
+			String exerciseId, FieldContainer contents) {
+		workspace.updateContext(policyId, objectId, exerciseId, contents);
 	}
 
-	@Override
-	public FieldContainer getFieldsContainerForInsuredObject(String objectId,
-			String exerciseId) {
-		return null; //TODO workspace.getInsuredObjectRelatedFields(objectId, exerciseId);
-	}	
 
 	//Other operations
 

@@ -17,6 +17,7 @@ import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -169,14 +170,14 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void createRiskAnalisys(final String clientId, RiskAnalysis riskAnalisys,
+	public void createRiskAnalisys(RiskAnalysis riskAnalisys,
 			final ResponseHandler<RiskAnalysis> handler) {
-		service.createRiskAnalisys(clientId, riskAnalisys, new BigBangAsyncCallback<RiskAnalysis>() {
+		service.createRiskAnalisys(riskAnalisys, new BigBangAsyncCallback<RiskAnalysis>() {
 
 			@Override
 			public void onResponseSuccess(RiskAnalysis result) {
 				//TODO
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_RISK_ANALISYS, clientId));				
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_RISK_ANALISYS, result.clientId));				
 
 				handler.onResponse(result);
 
@@ -188,6 +189,30 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 						new String("Could not create new Risk analisys")	
 				});
 				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void createPolicy(InsurancePolicy policy,
+			final ResponseHandler<InsurancePolicy> handler) {
+		service.createPolicy(policy, new BigBangAsyncCallback<InsurancePolicy>() {
+
+			@Override
+			public void onResponseSuccess(InsurancePolicy result) {
+				//TODO
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_POLICY, result.clientId));
+
+				handler.onResponse(result);
+				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create new Policy")	
+				});
+				super.onResponseFailure(caught);			
 			}
 		});
 	}

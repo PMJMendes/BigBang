@@ -40,8 +40,8 @@ public interface ClientService
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy) throws SessionExpiredException, BigBangException;
-	public RiskAnalysis createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy createPolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
+	public RiskAnalysis createRiskAnalisys(RiskAnalysis riskAnalisys) throws SessionExpiredException, BigBangException;
 	public Casualty createCasualty(Casualty casualty) throws SessionExpiredException, BigBangException;
 
 	public void deleteClient(String clientId, String reason) throws SessionExpiredException, BigBangException;

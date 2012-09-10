@@ -8,6 +8,7 @@ import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.RiskAnalysis;
 
@@ -57,7 +58,9 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	 * @param riskAnalysis The risk analysis to be created
 	 * @param handler The handler to be notified on response
 	 */
-	public void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, ResponseHandler<RiskAnalysis> handler);
+	public void createRiskAnalisys(RiskAnalysis riskAnalisys, ResponseHandler<RiskAnalysis> handler);
+
+	public void createPolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
 
 	public void createCasualty(Casualty casualty, ResponseHandler<Casualty> handler);
 	
