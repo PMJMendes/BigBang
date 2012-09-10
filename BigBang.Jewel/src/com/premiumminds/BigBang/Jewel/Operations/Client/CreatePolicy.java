@@ -169,8 +169,44 @@ public class CreatePolicy
 
 			if ( mobjData.marrExercises != null )
 			{
-				for ( i = 0; i < mobjData.marrExercises.length; i++ )
+				for ( i = mobjData.marrExercises.length - 1; i <= 0 ; i-- )
 				{
+					if ( mobjData.marrExercises[i].mdtStart == null )
+					{
+						if ( i == mobjData.marrExercises.length - 1 )
+							mobjData.marrExercises[i].mdtStart = mobjData.mdtBeginDate;
+						else
+						{
+							if ( Constants.ExID_Variable.equals(lobjPolicy.GetSubLine().getExerciseType()) )
+								throw new BigBangJewelException("Erro: Não pode abrir uma prorrogação em criação de apólice.");
+
+							if ( mobjData.marrExercises[i + 1].mdtEnd == null )
+							{
+						    	ldtAux2 = Calendar.getInstance();
+						    	ldtAux2.setTimeInMillis(mobjData.marrExercises[i + 1].mdtStart.getTime());
+								mobjData.marrExercises[i + 1].mdtEnd = Timestamp.valueOf("" + ldtAux2.get(Calendar.YEAR) +
+										"-12-31  00:00:00.0");
+								lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrExercises[i + 1].mid);
+								mobjData.marrExercises[i + 1].ToObject(lobjExercise);
+								lobjExercise.SaveToDb(pdb);
+							}
+
+					    	ldtAux2 = Calendar.getInstance();
+					    	ldtAux2.setTimeInMillis(mobjData.marrExercises[i + 1].mdtEnd.getTime());
+					    	ldtAux2.add(Calendar.DAY_OF_MONTH, 1);
+							mobjData.marrExercises[i].mdtStart = new Timestamp(ldtAux2.getTimeInMillis());
+						}
+
+						if ( Constants.ExID_Variable.equals(lobjPolicy.GetSubLine().getExerciseType()) )
+							mobjData.marrExercises[i].mstrLabel = "Prorrogação n. " + i;
+						else
+						{
+					    	ldtAux2 = Calendar.getInstance();
+					    	ldtAux2.setTimeInMillis(mobjData.marrExercises[i].mdtStart.getTime());
+							mobjData.marrExercises[i].mstrLabel = "Ano de " + ldtAux2.get(Calendar.YEAR);
+						}
+					}
+
 					mobjData.marrExercises[i].midOwner = mobjData.mid;
 					lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrExercises[i].ToObject(lobjExercise);

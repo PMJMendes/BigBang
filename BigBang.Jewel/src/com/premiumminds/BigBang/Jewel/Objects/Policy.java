@@ -556,7 +556,7 @@ public class Policy
 		try
 		{
 			lrsExercises = lrefExercises.SelectByMembers(ldb, new int[] {Constants.FKPolicy_In_Exercise},
-					new java.lang.Object[] {getKey()}, new int[] {2});
+					new java.lang.Object[] {getKey()}, new int[] {-2});
 		}
 		catch (Throwable e)
 		{

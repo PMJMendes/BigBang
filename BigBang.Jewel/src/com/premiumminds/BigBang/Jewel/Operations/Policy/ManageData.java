@@ -1,6 +1,8 @@
 package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -183,6 +185,7 @@ public class ManageData
 		PolicyObject lobjObject;
 		PolicyExercise lobjExercise;
 		PolicyValue lobjValue;
+		Calendar ldtAux2;
 		int i;
 
 		lidOwner = null;
@@ -191,20 +194,23 @@ public class ManageData
 			if ( mobjData != null )
 			{
 				lidOwner = mobjData.mid;
+				lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), lidOwner);
 
 				if ( mobjData.mbModified )
 				{
-					lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
-
 					mobjData.mobjPrevValues = new PolicyData();
 					mobjData.mobjPrevValues.FromObject(lobjAux);
 					mobjData.mobjPrevValues.mobjPrevValues = null;
 
 					mobjData.midManager = GetProcess().GetManagerID();
+					mobjData.midSubLine = mobjData.mobjPrevValues.midSubLine;
+					mobjData.midStatus = mobjData.mobjPrevValues.midStatus;
+					mobjData.midClient = mobjData.mobjPrevValues.midClient;
+
 					if ( (Integer)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
 							mobjData.midStatus).getAt(1) > 0 )
 						mobjData.midCompany = mobjData.mobjPrevValues.midCompany;
-					mobjData.midSubLine = mobjData.mobjPrevValues.midSubLine;
+
 					mobjData.ToObject(lobjAux);
 					lobjAux.SaveToDb(pdb);
 				}
@@ -307,7 +313,7 @@ public class ManageData
 
 				if ( mobjData.marrExercises != null )
 				{
-					for ( i = 0; i < mobjData.marrExercises.length; i++ )
+					for ( i = mobjData.marrExercises.length - 1; i <= 0 ; i-- )
 					{
 						if ( mobjData.marrExercises[i].mbDeleted )
 						{
@@ -315,6 +321,42 @@ public class ManageData
 						}
 						else if ( mobjData.marrExercises[i].mbNew )
 						{
+							if ( mobjData.marrExercises[i].mdtStart == null )
+							{
+								if ( i == mobjData.marrExercises.length - 1 )
+									mobjData.marrExercises[i].mdtStart = mobjData.mdtBeginDate;
+								else
+								{
+									if ( mobjData.marrExercises[i + 1].mdtEnd == null )
+									{
+										if ( Constants.ExID_Variable.equals(lobjAux.GetSubLine().getExerciseType()) )
+											throw new BigBangJewelException("Erro: Não pode abrir uma prorrogação sem especificar o fim do período anterior.");
+
+								    	ldtAux2 = Calendar.getInstance();
+								    	ldtAux2.setTimeInMillis(mobjData.marrExercises[i + 1].mdtStart.getTime());
+										mobjData.marrExercises[i + 1].mdtEnd = Timestamp.valueOf("" + ldtAux2.get(Calendar.YEAR) +
+												"-12-31  00:00:00.0");
+										lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrExercises[i + 1].mid);
+										mobjData.marrExercises[i + 1].ToObject(lobjExercise);
+										lobjExercise.SaveToDb(pdb);
+									}
+
+							    	ldtAux2 = Calendar.getInstance();
+							    	ldtAux2.setTimeInMillis(mobjData.marrExercises[i + 1].mdtEnd.getTime());
+							    	ldtAux2.add(Calendar.DAY_OF_MONTH, 1);
+									mobjData.marrExercises[i].mdtStart = new Timestamp(ldtAux2.getTimeInMillis());
+								}
+
+								if ( Constants.ExID_Variable.equals(lobjAux.GetSubLine().getExerciseType()) )
+									mobjData.marrExercises[i].mstrLabel = "Prorrogação n. " + i;
+								else
+								{
+							    	ldtAux2 = Calendar.getInstance();
+							    	ldtAux2.setTimeInMillis(mobjData.marrExercises[i].mdtStart.getTime());
+									mobjData.marrExercises[i].mstrLabel = "Ano de " + ldtAux2.get(Calendar.YEAR);
+								}
+							}
+
 							mobjData.marrExercises[i].midOwner = mobjData.mid;
 							lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 							mobjData.marrExercises[i].ToObject(lobjExercise);

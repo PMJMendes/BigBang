@@ -63,7 +63,7 @@ public class ATFF
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		lidExercise = marrExercises[marrExercises.length - 1].getKey();
+		lidExercise = marrExercises[0].getKey();
 
 		llngResult = FindValue(FindFieldID("LEGAL", "CCALC"), null, lidExercise, j + 1);
 		llngDelta = FindValue(FindFieldID("LEGAL", "DELTA"), null, lidExercise, llngResult + 1);
