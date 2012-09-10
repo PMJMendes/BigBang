@@ -145,6 +145,11 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
+	public InsurancePolicy getPolicyHeader(String policyId) {
+		return workspace.getPolicyHeader(policyId);
+	}
+
+	@Override
 	public InsurancePolicy updatePolicyHeader(InsurancePolicy policy) {
 		return workspace.updatePolicyHeader(policy);
 	}
