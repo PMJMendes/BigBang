@@ -39,17 +39,21 @@ import bigBang.module.casualtyModule.server.CasualtyServiceImpl;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter;
+import bigBang.module.insurancePolicyModule.server.ClientToServer;
+import bigBang.module.insurancePolicyModule.server.ServerToClient;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.ClientData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateInfoRequest;
+import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageData;
@@ -376,77 +380,43 @@ public class ClientServiceImpl
 		return getClient(receptorId);
 	}
 
-	public InsurancePolicy createPolicy(String clientProcessId, InsurancePolicy policy)
+	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
-//		CreatePolicy lopCP;
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		PolicyData lobjData;
+		CreatePolicy lopMPD;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-//		try
-//		{
-//			lopCP = new CreatePolicy(UUID.fromString(clientProcessId));
-//			lopCP.mobjData = new PolicyData();
-//
-//			lopCP.mobjData.mid = null;
-//
-//			lopCP.mobjData.mstrNumber = policy.number;
-//			lopCP.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
-//			lopCP.mobjData.midSubLine = UUID.fromString(policy.subLineId);
-//			lopCP.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate + " 00:00:00.0") );
-//			lopCP.mobjData.midDuration = UUID.fromString(policy.durationId);
-//			lopCP.mobjData.midFractioning = UUID.fromString(policy.fractioningId);
-//			lopCP.mobjData.mlngMaturityDay = policy.maturityDay;
-//			lopCP.mobjData.mlngMaturityMonth = policy.maturityMonth;
-//			lopCP.mobjData.mdtEndDate = ( policy.expirationDate == null ? null :
-//					Timestamp.valueOf(policy.expirationDate + " 00:00:00.0") );
-//			lopCP.mobjData.mstrNotes = policy.notes;
-//			lopCP.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
-//			lopCP.mobjData.mbCaseStudy = policy.caseStudy;
-//
-//			lopCP.mobjData.midManager = ( policy.managerId == null ? null : UUID.fromString(policy.managerId) );
-//			lopCP.mobjData.midProcess = null;
-//
-//			lopCP.mobjData.mobjPrevValues = null;
-//
-//			if ( (policy.contacts != null) && (policy.contacts.length > 0) )
-//			{
-//				lopCP.mobjContactOps = new ContactOps();
-//				lopCP.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(lopCP.mobjContactOps,
-//						policy.contacts, Constants.ObjID_Policy);
-//			}
-//			else
-//				lopCP.mobjContactOps = null;
-//			if ( (policy.documents != null) && (policy.documents.length > 0) )
-//			{
-//				lopCP.mobjDocOps = new DocOps();
-//				lopCP.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCP.mobjDocOps,
-//						policy.documents, Constants.ObjID_Policy);
-//			}
-//			else
-//				lopCP.mobjDocOps = null;
-//
-//			lopCP.Execute();
-//
-//		}
-//		catch (Throwable e)
-//		{
-//			throw new BigBangException(e.getMessage(), e);
-//		}
-//
-//		policy.id = lopCP.mobjData.mid.toString();
-//		policy.processId = lopCP.mobjData.midProcess.toString();
-//		policy.number = lopCP.mobjData.mstrNumber;
-//		policy.managerId = lopCP.mobjData.midManager.toString();
-//		policy.mediatorId = lopCP.mobjData.midMediator.toString();
-//		if ( (policy.contacts != null) && (policy.contacts.length > 0) )
-//			ContactsServiceImpl.WalkContactTree(lopCP.mobjContactOps.marrCreate, policy.contacts);
-//		if ( (policy.documents != null) && (policy.documents.length > 0) )
-//			DocumentServiceImpl.WalkDocTree(lopCP.mobjDocOps.marrCreate, policy.documents);
-//
-//		return policy;
-		throw new BigBangException("Erro: Operação de crição directa não suportada.");
+		try
+		{
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(clientId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjData = new ClientToServer().getDataForCreate(policy);
+
+		try
+		{
+			lopMPD = new CreatePolicy(lobjClient.GetProcessID());
+			lopMPD.mobjData = lobjData;
+
+			lopMPD.mobjContactOps = null;
+			lopMPD.mobjDocOps = null;
+
+			lopMPD.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return new ServerToClient().getPolicy(lopMPD.mobjData.mid);
 	}
 
 	@Override
