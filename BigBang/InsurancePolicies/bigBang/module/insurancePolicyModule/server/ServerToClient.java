@@ -567,7 +567,7 @@ public class ServerToClient
 					mobjContainer.exerciseData = new ComplexFieldContainer.ExerciseData[2];
 
 					mobjContainer.exerciseData[0] = lobjAux
-							.withSource(Constants.ExID_Variable.equals(midExerciseType) ? "Prorrogação" : "(Novo Exercício)", mbForObject)
+							.withSource(Constants.ExID_Variable.equals(midExerciseType) ? "(Erro)" : "(Novo Exercício)", mbForObject)
 							.withContainer(false)
 							.build()
 							.result();

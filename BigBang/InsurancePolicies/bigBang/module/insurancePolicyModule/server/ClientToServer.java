@@ -480,13 +480,13 @@ public class ClientToServer
 			mobjOutPolicy.mstrNotes = mobjPolicy.notes;
 			mobjOutPolicy.midMediator = ( mobjPolicy.mediatorId == null ? null : UUID.fromString(mobjPolicy.mediatorId) );
 			mobjOutPolicy.mbCaseStudy = mobjPolicy.caseStudy;
-			mobjOutPolicy.midStatus = UUID.fromString(mobjPolicy.statusId);
+			mobjOutPolicy.midStatus = null;
 			mobjOutPolicy.mdblPremium = ( mobjPolicy.premium == null ? null : new BigDecimal(mobjPolicy.premium+"") );
 			mobjOutPolicy.mstrDocuShare = mobjPolicy.docushare;
 			mobjOutPolicy.midProfile = ( mobjPolicy.operationalProfileId == null ? null : UUID.fromString(mobjPolicy.operationalProfileId) );
 
 			mobjOutPolicy.midManager = ( mobjPolicy.managerId == null ? null : UUID.fromString(mobjPolicy.managerId) );
-			mobjOutPolicy.midProcess = UUID.fromString(mobjPolicy.processId);
+			mobjOutPolicy.midProcess = ( mobjPolicy.processId == null ? null : UUID.fromString(mobjPolicy.processId) );
 
 			mobjOutPolicy.mbModified = true;
 		}
@@ -499,8 +499,12 @@ public class ClientToServer
 			int i;
 
 			lmapCoInsurers = new HashMap<UUID, UUID>();
-			for ( i = 0; i < marrReference.length; i++ )
-				lmapCoInsurers.put((UUID)marrReference[i].getAt(1), marrReference[i].getKey());
+
+			if ( marrReference != null )
+			{
+				for ( i = 0; i < marrReference.length; i++ )
+					lmapCoInsurers.put((UUID)marrReference[i].getAt(1), marrReference[i].getKey());
+			}
 
 			larrData = new ArrayList<PolicyCoInsurerData>();
 
