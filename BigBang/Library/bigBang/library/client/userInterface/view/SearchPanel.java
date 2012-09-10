@@ -62,6 +62,8 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	protected boolean requestedNextPage = false;
 	protected String operationId = null;
 
+	private VerticalPanel headerWidgetWrapper;
+
 	/**
 	 * The class constructor
 	 * @param the search service to be used.
@@ -120,10 +122,11 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		searchFieldWrapper.add(searchButton);
 		searchFieldWrapper.setCellWidth(searchButton, "100px");
 		searchFieldWrapper.setSpacing(5);
-		searchFieldWrapper.getElement().getStyle()
-				.setBackgroundImage("url(images/listHeaderBackground1.png)");
 
-		VerticalPanel headerWidgetWrapper = new VerticalPanel();
+		headerWidgetWrapper = new VerticalPanel();
+		headerWidgetWrapper.getElement().getStyle()
+		.setBackgroundImage("url(images/listHeaderBackground1.png)");
+
 		headerWidgetWrapper.setSize("100%", "100%");
 		headerWidgetWrapper.add(searchFieldWrapper);
 		
@@ -364,6 +367,10 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 
 	protected void onGenericError() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível completar a pesquisa"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	public VerticalPanel getHeaderWidget(){
+		return headerWidgetWrapper;
 	}
 	
 }

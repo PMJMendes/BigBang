@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-public class ExerciseChooser extends View implements HasValue<ExerciseData>{
+public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
 	private ExpandableListBoxFormField exercises;
 	private DatePickerFormField startDate;
@@ -23,7 +23,7 @@ public class ExerciseChooser extends View implements HasValue<ExerciseData>{
 	private Button newButton;
 	private ExerciseData value;
 
-	public ExerciseChooser() {
+	public ExerciseSelector() {
 
 		HorizontalPanel wrapper = new HorizontalPanel();
 		initWidget(wrapper);
@@ -99,7 +99,7 @@ public class ExerciseChooser extends View implements HasValue<ExerciseData>{
 	
 	public void setAvailableExercises(ExerciseData[] availableExs){
 		
-		exercises.clearValues();
+		exercises.clearValues();			
 		
 		for(int i = 0; i<availableExs.length; i++){
 			exercises.addItem(availableExs[i].label, availableExs[i].id);

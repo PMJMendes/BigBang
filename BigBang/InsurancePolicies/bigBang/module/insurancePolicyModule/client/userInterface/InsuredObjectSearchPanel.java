@@ -2,21 +2,32 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
 
+import org.gwt.mosaic.ui.client.ToolButton;
+import org.gwt.mosaic.ui.client.util.ButtonHelper;
+import org.gwt.mosaic.ui.client.util.ButtonHelper.ButtonLabelType;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
 
 public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> implements InsuredObjectDataBrokerClient{
+	
+	protected ToolButton createNew;
 
 	public static class Entry extends ListEntry<InsuredObjectStub>{
 
 		protected Label name;
-
+		
 		public Entry(InsuredObjectStub object){
 			super(object);
 			setHeight("30px");
@@ -41,6 +52,16 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 
 	public InsuredObjectSearchPanel(SearchDataBroker<InsuredObjectStub> broker) { //TODO ESTE BROKER NAO ESTÁ CORRECTO
 		super(broker);
+
+		Resources r = GWT.create(Resources.class);
+		createNew = new ToolButton(ButtonHelper.createButtonLabel(
+				AbstractImagePrototype.create(r.listNewIcon()), "Novo",
+				ButtonLabelType.TEXT_ON_LEFT));
+		
+		getHeaderWidget().insert(createNew, 0);
+		createNew.getElement().getStyle().setMarginRight(5, Unit.PX);
+		createNew.getElement().getStyle().setMarginTop(5, Unit.PX);
+		getHeaderWidget().setCellHorizontalAlignment(createNew, HasHorizontalAlignment.ALIGN_RIGHT);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -90,6 +111,10 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 	public void updateInsuredObject(InsuredObjectOLD object) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void allowCreateInsuredObject(boolean allow) {
+		createNew.setEnabled(allow);
 	}
 
 

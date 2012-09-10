@@ -13,6 +13,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
+import bigBang.definitions.shared.FieldContainer.ColumnField;
+import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
+import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExpenseStub;
@@ -30,7 +33,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseChooser;
+import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseSelector;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyChildrenPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExerciseDetailsForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
@@ -54,7 +57,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	private InsuredObjectSearchPanel objectsList;
 	private InsurancePolicyForm policyForm;
 	private InsuredObjectForm objectForm;
-	private ExerciseChooser exerciseChooser;
+	private ExerciseSelector exerciseChooser;
 	private CoverageExerciseDetailsForm detailsForm;
 	private PolicyNotesFormSection policyNotesForm;
 	private PolicySelectButton policySelectButton;
@@ -70,8 +73,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		ListHeader searchPanelHeader = new ListHeader("Apólices");
 		searchPanelWrapper.add(searchPanelHeader);
 
-		searchPanel = new InsurancePolicySearchPanel(){ //TODO FAZ SENTIDO MANTER ESTE SEARCHPANEL? OU CRIAR UM NOVO?
-
+		searchPanel = new InsurancePolicySearchPanel(){ 
 			@Override
 			public void onResults(Collection<InsurancePolicyStub> results) {
 				super.onResults(results);
@@ -226,25 +228,27 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		policyForm = new InsurancePolicyForm();
 		objectForm = new InsuredObjectForm();
-		
+
 		VerticalPanel objectsPolicyContainer = new VerticalPanel();
-		
+
 		policySelectButton = new PolicySelectButton(new InsurancePolicyStub());
-		
+		objectsPolicyContainer.setSize("100%","100%");
 		objectsPolicyContainer.add(policySelectButton);
 		objectsList = new InsuredObjectSearchPanel(null); //TODO METER AQUI O BROKER
 		objectsList.showFilterField(false);
 		objectsPolicyContainer.add(objectsList);
+		objectsPolicyContainer.setCellHeight(objectsList, "100%");
+		objectsList.setSize("100%", "100%");
 		formPanel.add(objectsPolicyContainer);
-		objectsList.setWidth("100%");
 		objectsPolicyContainer.setCellWidth(objectsList, "200px");
 		formPanel.setCellWidth(objectsPolicyContainer, "200px");
+		formPanel.setCellHeight(objectsPolicyContainer, "100%");
 		formPanel.add(policyForm.getNonScrollableContent());
 		formPanel.add(objectForm.getNonScrollableContent());
-		
-		policyForm.getNonScrollableContent().setVisible(false); //TODO REMOVE THIS
-	//	objectForm.getNonScrollableContent().setVisible(false);
-		
+
+		//policyForm.getNonScrollableContent().setVisible(false); //TODO REMOVE THIS
+		objectForm.getNonScrollableContent().setVisible(false);
+
 		formPanel.setCellWidth(policyForm, "100%");
 		policyForm.getNonScrollableContent().setSize("100%", "100%");
 		objectForm.getNonScrollableContent().setSize("100%", "100%");
@@ -268,7 +272,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		VerticalPanel detailTableContainer = new VerticalPanel();
 		detailTableContainer.setSize("100%", "100%");
 
-		exerciseChooser = new ExerciseChooser();
+		exerciseChooser = new ExerciseSelector();
 		detailTableContainer.add(exerciseChooser);
 
 		detailsForm = new CoverageExerciseDetailsForm("");
@@ -276,20 +280,21 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		centerWrapper.add(detailTableContainer);
 		centerWrapper.setCellHeight(detailTableContainer, "100%");
-		
+
 		policyNotesForm = new PolicyNotesFormSection();
 		policyNotesForm.setSize("100%", "100%");
-		
+
 		centerWrapper.add(policyNotesForm);
-		
+
 		scrollContainer.add(centerWrapper);
 		scrollContainer.getElement().getStyle().setBackgroundColor("whiteSmoke");
-		scrollContainer.getElement().getStyle().setOverflowX(Style.Overflow.HIDDEN);
 
 		toolbarAndCenterWrapper.add(scrollContainer);
 		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
 		contentWrapper.add(toolbarAndCenterWrapper);
 		mainWrapper.add(contentWrapper);
+
+		searchPanel.doSearch();
 
 	}
 
@@ -332,14 +337,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 
 	@Override
-	public HasValue<String> getExerciseSelector() {
-		return exerciseChooser.getExerciseSelector();
-	}
-
-	@Override
 	public HasValue<String> getPolicyNotesForm() {
-		//TODO;
-		return null;
+		return policyNotesForm;	
 	}
 
 	@Override
@@ -369,7 +368,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void allowCreateInsuredObject(boolean allow) {
-		//TODO
+		objectsList.allowCreateInsuredObject(allow);
 	}
 
 	@Override
@@ -495,6 +494,31 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
 		return childrenPanel.subProcessesList;
+	}
+
+	@Override
+	public void setAvailableExercises(ExerciseData[] exerciseData) {
+		exerciseChooser.setAvailableExercises(exerciseData);
+	}
+
+	@Override
+	public HasValue<InsurancePolicyStub> getPolicySelector() {
+		return policySelectButton;
+	}
+
+	@Override
+	public void setExerciseVisible(boolean b) {
+		exerciseChooser.setVisible(b);
+	}
+
+	@Override
+	public HasValue<String> getExerciseSelector() {
+		return exerciseChooser.getExerciseSelector();
+	}
+	
+	@Override
+	public void setTableValues(	Coverage[] coverages, ColumnHeader[] columns, ColumnField[] fields){
+		detailsForm.fillTable(coverages, columns, fields);
 	}
 
 }

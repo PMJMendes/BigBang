@@ -23,7 +23,6 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 
 		extraFieldsSection = new ExtraFieldsSection();
 		addSection(extraFieldsSection);
-
 	}
 
 	@Override
@@ -38,7 +37,8 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 	@Override
 	public void setInfo(FieldContainer info) {
 		value = info;
-		exerciseDetailsSection.setValue(value.headerFields);
+		exerciseDetailsSection.setValue(info.headerFields);
+		extraFieldsSection.setValue(info.extraFields);
 	}
 
 	public void setExerciseDetailSectionName(String string) {

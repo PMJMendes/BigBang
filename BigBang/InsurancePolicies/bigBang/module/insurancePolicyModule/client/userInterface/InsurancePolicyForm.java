@@ -243,7 +243,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 			result.caseStudy = caseStudy.getValue();
 			result.operationalProfileId = operationalProfile.getValue();
 			result.notes = notes.getValue();
-
+			
 			if(coInsurance.getValue()){
 				result.coInsurers = coInsurers.getValue();
 			}

@@ -17,8 +17,11 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.FieldContainer;
+import bigBang.definitions.shared.FieldContainer.ColumnField;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
+import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
@@ -139,6 +142,15 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 		Widget asWidget();
+
+		void setAvailableExercises(ExerciseData[] exerciseData);
+
+		HasValue<InsurancePolicyStub> getPolicySelector();
+
+		void setExerciseVisible(boolean b);
+
+		void setTableValues(Coverage[] coverages, ColumnHeader[] columns,
+				ColumnField[] fields);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -465,8 +477,41 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
-		//TODO
+		String policyId = parameterHolder.getParameter("policyid");
+		broker.getPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
+			
+			@Override
+			public void onResponse(InsurancePolicy response) {
+				
+				view.getPolicyHeaderForm().setValue(response);
+				view.getPolicyNotesForm().setValue(response.notes);
 
+				if(response.exerciseData == null){
+					view.setExerciseVisible(false);
+				}
+				else{
+					view.setAvailableExercises(response.exerciseData);
+					view.getExerciseForm().setValue(response.exerciseData[0]);
+					view.getExerciseSelector().setValue(response.exerciseData[0].id);
+					view.setExerciseVisible(true);
+				}
+				view.getPolicySelector().setValue(response);
+				
+				FieldContainer container = broker.getContextForPolicy(response.id, response.hasExercises ? response.exerciseData[0].id : null);
+				view.setTableValues(response.coverages, response.columns, container.columnFields);
+				view.getCommonFieldsForm().setValue(container);
+				
+				//TODO CHILDRENPANEL
+		//TODO PERMISSIONS
+				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub
+				
+			}
+		});	
 	}
 
 	private void transferToClient(){

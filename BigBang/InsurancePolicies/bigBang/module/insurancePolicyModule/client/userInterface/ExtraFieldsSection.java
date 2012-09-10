@@ -43,6 +43,7 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Extr
 
 	@Override
 	public void setValue(ExtraField[] value, boolean fireEvents) {
+		
 		if(formFields != null){
 			for(int i = 0; i<formFields.length ; i++){
 				formFields[i].removeFromParent();
