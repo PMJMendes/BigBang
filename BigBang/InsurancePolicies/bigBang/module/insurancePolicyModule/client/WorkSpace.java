@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.FieldContainer.ColumnField;
@@ -129,8 +127,8 @@ public class WorkSpace {
 		idCounter++;
 
 		alteredObjects.add(newObject);
-		newObject.headerFields = (HeaderField[]) ArrayUtils.addAll(policy.headerFields, newObject.headerFields);
-		
+		newObject.headerFields = (HeaderField[]) mergeArrays(new HeaderField[][] {policy.headerFields, newObject.headerFields});
+
 		return newObject;
 	}
 	
@@ -143,7 +141,7 @@ public class WorkSpace {
 			return null;
 		}
 		alteredObjects.add(newObject);
-		newObject.headerFields = (HeaderField[]) ArrayUtils.addAll(policy.headerFields, newObject.headerFields);
+		newObject.headerFields = (HeaderField[]) mergeArrays(new HeaderField[][] {policy.headerFields, newObject.headerFields});
 		return newObject;
 	}
 
@@ -187,7 +185,7 @@ public class WorkSpace {
 		while(iterator.hasNext()) {
 			InsuredObject object = iterator.next();
 			if(object.id.equalsIgnoreCase(id)) {
-				object.headerFields = (HeaderField[]) ArrayUtils.addAll(policy.headerFields, object.headerFields);
+				object.headerFields = (HeaderField[]) mergeArrays(new HeaderField[][] {policy.headerFields, object.headerFields});
 				return object;
 			}
 		}
@@ -329,4 +327,27 @@ public class WorkSpace {
 		return result;
 	}
 
+	private static HeaderField[] mergeArrays(HeaderField[][] parrSource)
+	{
+		HeaderField[] larrResult;
+		int llngLen;
+		int llngStart;
+		int i, j;
+
+		llngLen = 0;
+		for ( i = 0; i < parrSource.length; i++ )
+			llngLen += parrSource[i].length;
+
+		larrResult = new HeaderField[llngLen];
+
+		llngStart = 0;
+		for ( i = 0; i < llngLen; i++ )
+		{
+			for ( j = 0; j < parrSource[i].length; j++ )
+				larrResult[llngStart + j] = parrSource[i][j];
+			llngStart += parrSource[i].length;
+		}
+
+		return larrResult;
+	}
 }
