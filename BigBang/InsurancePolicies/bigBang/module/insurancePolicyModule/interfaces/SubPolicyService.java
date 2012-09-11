@@ -4,7 +4,7 @@ import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
@@ -53,11 +53,11 @@ public interface SubPolicyService
 	public SubPolicy.TableSection savePage(SubPolicy.TableSection data)
 			throws SessionExpiredException, BigBangException, CorruptedPadException;
 
-	public InsuredObjectOLD getObjectInPad(String objectId)
+	public InsuredObject getObjectInPad(String objectId)
 			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public InsuredObjectOLD createObjectInPad(String subPolicyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public InsuredObjectOLD createObjectFromClientInPad(String subPolicyId) throws SessionExpiredException, BigBangException;
-	public InsuredObjectOLD updateObjectInPad(InsuredObjectOLD data)
+	public InsuredObject createObjectInPad(String subPolicyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public InsuredObject createObjectFromClientInPad(String subPolicyId) throws SessionExpiredException, BigBangException;
+	public InsuredObject updateObjectInPad(InsuredObject data)
 			throws SessionExpiredException, BigBangException, CorruptedPadException;
 	public void deleteObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 
@@ -70,8 +70,8 @@ public interface SubPolicyService
 			BigBangPolicyCalculationException;
 	public void validateSubPolicy(String subPolicyId) throws SessionExpiredException, BigBangException, BigBangPolicyValidationException;
 
-	public InsuredObjectOLD includeObject(String subPolicyId, InsuredObjectOLD object) throws SessionExpiredException, BigBangException;
-	public InsuredObjectOLD includeObjectFromClient(String subPolicyId) throws SessionExpiredException, BigBangException;
+	public InsuredObject includeObject(String subPolicyId, InsuredObject object) throws SessionExpiredException, BigBangException;
+	public InsuredObject includeObjectFromClient(String subPolicyId) throws SessionExpiredException, BigBangException;
 	public void excludeObject(String subPolicyId, String objectId) throws SessionExpiredException, BigBangException;
 
 	public SubPolicy transferToPolicy(String subPolicyId, String newPolicyId) throws SessionExpiredException, BigBangException;

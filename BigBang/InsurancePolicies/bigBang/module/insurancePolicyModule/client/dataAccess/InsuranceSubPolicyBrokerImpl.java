@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
-
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ExerciseDataBroker;
@@ -21,15 +19,15 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
+import bigBang.definitions.shared.Remap.RemapId;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SubPolicy;
-import bigBang.definitions.shared.SubPolicyStub;
-import bigBang.definitions.shared.Remap.RemapId;
 import bigBang.definitions.shared.SubPolicy.TableSection;
+import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -39,6 +37,8 @@ import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.SubPolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.SubPolicySortParameter;
+
+import com.google.gwt.core.client.GWT;
 
 public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy>
 implements InsuranceSubPolicyBroker {
@@ -612,12 +612,12 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void includeInsuredObject(InsuredObjectOLD object,
-			final ResponseHandler<InsuredObjectOLD> handler) {
-		service.includeObject(object.ownerId, object, new BigBangAsyncCallback<InsuredObjectOLD>() {
+	public void includeInsuredObject(String subPolicyId, InsuredObject object,
+			final ResponseHandler<InsuredObject> handler) {
+		service.includeObject(subPolicyId, object, new BigBangAsyncCallback<InsuredObject>() {
 
 			@Override
-			public void onResponseSuccess(InsuredObjectOLD result) {
+			public void onResponseSuccess(InsuredObject result) {
 				insuredObjectsBroker.notifyItemCreation(result.id);
 			}
 			
@@ -633,11 +633,11 @@ implements InsuranceSubPolicyBroker {
 
 	@Override
 	public void includeObjectFromClient(final String subPolicyId,
-			final ResponseHandler<InsuredObjectOLD> handler) {
-		service.includeObjectFromClient(subPolicyId, new BigBangAsyncCallback<InsuredObjectOLD>() {
+			final ResponseHandler<InsuredObject> handler) {
+		service.includeObjectFromClient(subPolicyId, new BigBangAsyncCallback<InsuredObject>() {
 
 			@Override
-			public void onResponseSuccess(InsuredObjectOLD result) {
+			public void onResponseSuccess(InsuredObject result) {
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.INCLUDE_OBJECT_FROM_CLIENT, subPolicyId));
 				insuredObjectsBroker.notifyItemCreation(result.id);
 			}

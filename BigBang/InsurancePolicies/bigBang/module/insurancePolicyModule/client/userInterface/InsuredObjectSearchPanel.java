@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
-import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.ListEntry;
@@ -84,7 +84,7 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 	}
 
 	@Override
-	public void remapItemId(String newId, String oldId) {
+	public void remapItemId(String newId, String Id) {
 		// TODO Auto-generated method stub
 
 	}
@@ -102,13 +102,13 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 	}
 
 	@Override
-	public void addInsuredObject(InsuredObjectOLD object) {
+	public void addInsuredObject(InsuredObject object) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateInsuredObject(InsuredObjectOLD object) {
+	public void updateInsuredObject(InsuredObject object) {
 		// TODO Auto-generated method stub
 		
 	}

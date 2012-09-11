@@ -6,7 +6,7 @@ import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -47,8 +47,8 @@ public interface InsurancePolicyService
 			throws SessionExpiredException, BigBangException, BigBangPolicyCalculationException;
 	public void validatePolicy(String policyId) throws SessionExpiredException, BigBangException, BigBangPolicyValidationException;
 
-	public InsuredObjectOLD includeObject(String policyId, InsuredObjectOLD object) throws SessionExpiredException, BigBangException;
-	public InsuredObjectOLD includeObjectFromClient(String policyId) throws SessionExpiredException, BigBangException;
+	public InsuredObject includeObject(String policyId, InsuredObject object) throws SessionExpiredException, BigBangException;
+	public InsuredObject includeObjectFromClient(String policyId) throws SessionExpiredException, BigBangException;
 	public void excludeObject(String policyId, String objectId) throws SessionExpiredException, BigBangException;
 
 	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;

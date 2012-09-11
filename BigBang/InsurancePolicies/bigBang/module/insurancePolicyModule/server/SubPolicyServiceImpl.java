@@ -8,7 +8,6 @@ import java.util.Hashtable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
@@ -16,12 +15,11 @@ import Jewel.Engine.Interfaces.IUser;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
-import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
@@ -33,7 +31,6 @@ import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.definitions.shared.TipifiedListItem;
-import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
@@ -82,7 +79,6 @@ import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.PerformComputations;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.TransferToPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ValidateSubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.VoidSubPolicy;
-import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class SubPolicyServiceImpl
 	extends SearchServiceBase
@@ -130,7 +126,7 @@ public class SubPolicyServiceImpl
 		{
 			private static final long serialVersionUID = 1L;
 
-			public int mlngOrigIndex;
+//			public int mlngOrigIndex;
 		}
 
 		private static class PadValue
@@ -537,7 +533,7 @@ public class SubPolicyServiceImpl
 				larrResult[0].typeId = Constants.ObjID_SubPolicy.toString();
 				larrResult[0].remapIds = new Remap.RemapId[1];
 				larrResult[0].remapIds[0] = new Remap.RemapId();
-				larrResult[0].remapIds[0].oldId = null;
+//				larrResult[0].remapIds[0].Id = null;
 				larrResult[0].remapIds[0].newId = mid.toString();
 				larrResult[0].remapIds[0].newIdIsInPad = true;
 
@@ -550,7 +546,7 @@ public class SubPolicyServiceImpl
 			larrResult[0].typeId = Constants.ObjID_SubPolicy.toString();
 			larrResult[0].remapIds = new Remap.RemapId[1];
 			larrResult[0].remapIds[0] = new Remap.RemapId();
-			larrResult[0].remapIds[0].oldId = mobjSubPolicy.mid.toString();
+//			larrResult[0].remapIds[0].Id = mobjSubPolicy.mid.toString();
 			larrResult[0].remapIds[0].newId = mid.toString();
 			larrResult[0].remapIds[0].newIdIsInPad = true;
 
@@ -560,7 +556,7 @@ public class SubPolicyServiceImpl
 			for ( i = 0; i < larrResult[1].remapIds.length; i++ )
 			{
 				larrResult[1].remapIds[i] = new Remap.RemapId();
-				larrResult[1].remapIds[i].oldId = marrObjects.get(i).mid.toString();
+//				larrResult[1].remapIds[i].Id = marrObjects.get(i).mid.toString();
 				larrResult[1].remapIds[i].newId = mid.toString() + ":" + i;
 				larrResult[1].remapIds[i].newIdIsInPad = true;
 			}
@@ -579,7 +575,7 @@ public class SubPolicyServiceImpl
 			larrResult[0].typeId = Constants.ObjID_SubPolicy.toString();
 			larrResult[0].remapIds = new Remap.RemapId[1];
 			larrResult[0].remapIds[0] = new Remap.RemapId();
-			larrResult[0].remapIds[0].oldId = mid.toString();
+//			larrResult[0].remapIds[0].Id = mid.toString();
 			larrResult[0].remapIds[0].newId = (mobjSubPolicy.mid == null ? null : mobjSubPolicy.mid.toString());
 			larrResult[0].remapIds[0].newIdIsInPad = false;
 
@@ -589,7 +585,7 @@ public class SubPolicyServiceImpl
 			for ( i = 0; i < larrResult[1].remapIds.length; i++ )
 			{
 				larrResult[1].remapIds[i] = new Remap.RemapId();
-				larrResult[1].remapIds[i].oldId = mid.toString() + ":" + i;
+//				larrResult[1].remapIds[i].Id = mid.toString() + ":" + i;
 				if ( (pbWithCommit && marrObjects.get(i).mbDeleted) || (marrObjects.get(i).mid == null) )
 					larrResult[1].remapIds[i].newId = null;
 				else
@@ -985,379 +981,379 @@ public class SubPolicyServiceImpl
 			return larrResult.toArray(new TipifiedListItem[larrResult.size()]);
 		}
 
-		public void WriteObject(InsuredObjectOLD pobjResult, int plngObject)
+		public void WriteObject(InsuredObject pobjResult, int plngObject)
 			throws BigBangException, CorruptedPadException
 		{
-			SubPolicyObjectData lobjObject;
-			ObjectBase lobjZipCode;
-			int i, j, k;
-			ArrayList<PadExercise> larrExercises;
-			PadExercise[] larrSortedExercises;
-			final Hashtable<Integer, Integer> larrExerciseMap;
-			ArrayList<PadCoverage> larrCoverages;
-			PadCoverage[] larrSortedCoverages;
-			PadCoverage lobjHeaderCoverage;
-			Hashtable<UUID, ArrayList<InsuredObjectOLD.CoverageData.FixedField>> larrFixed;
-			Hashtable<UUID, ArrayList<InsuredObjectOLD.CoverageData.VariableField>> larrVarRef;
-			Hashtable<UUID, ArrayList<PadValue>> larrVariable;
-			InsuredObjectOLD.CoverageData.FixedField lobjFixed;
-			InsuredObjectOLD.CoverageData.VariableField lobjVariable;
-			PadValue lobjValue;
-			ArrayList<InsuredObjectOLD.CoverageData.FixedField> larrAuxFixed;
-			ArrayList<InsuredObjectOLD.CoverageData.VariableField> larrAuxVarRef;
-			ArrayList<PadValue> larrAuxVariable;
-			PadValue[] larrSortedVariable;
-
-			if ( !mbValid )
-				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
-
-			lobjObject = marrObjects.get(plngObject);
-			pobjResult.id = mid.toString() + ":" + Integer.toString(plngObject);
-			pobjResult.ownerId = mid.toString();
-			pobjResult.unitIdentification = lobjObject.mstrName;
-			if ( (lobjObject.mstrAddress1 == null) && (lobjObject.mstrAddress2 == null) && (lobjObject.midZipCode == null) )
-				pobjResult.address = null;
-			else
-			{
-				pobjResult.address = new Address();
-				pobjResult.address.street1 = lobjObject.mstrAddress1;
-				pobjResult.address.street2 = lobjObject.mstrAddress2;
-				if ( lobjObject.midZipCode == null )
-					pobjResult.address.zipCode = null;
-				else
-				{
-					try
-					{
-						lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-								ObjectGUIDs.O_PostalCode), lobjObject.midZipCode);
-					}
-					catch (Throwable e)
-					{
-						throw new BigBangException(e.getMessage(), e);
-					}
-					pobjResult.address.zipCode = new ZipCode();
-					pobjResult.address.zipCode.code = (String)lobjZipCode.getAt(0);
-					pobjResult.address.zipCode.city = (String)lobjZipCode.getAt(1);
-					pobjResult.address.zipCode.county = (String)lobjZipCode.getAt(2);
-					pobjResult.address.zipCode.district = (String)lobjZipCode.getAt(3);
-					pobjResult.address.zipCode.country = (String)lobjZipCode.getAt(4);
-				}
-			}
-			pobjResult.typeId = lobjObject.midType.toString();
-			try
-			{
-				pobjResult.typeText = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-						Constants.ObjID_ObjectType), lobjObject.midType).getLabel();
-			}
-			catch (Throwable e)
-			{
-				pobjResult.typeText = "(Erro a obter o nome do tipo.)";
-			}
-			pobjResult.inclusionDate = ( lobjObject.mdtInclusion == null ? null :
-					lobjObject.mdtInclusion.toString().substring(0, 10) ); 
-			pobjResult.exclusionDate = ( lobjObject.mdtExclusion == null ? null :
-				lobjObject.mdtExclusion.toString().substring(0, 10) );
-
-			pobjResult.taxNumberPerson = lobjObject.mstrFiscalI;
-			pobjResult.genderId = ( lobjObject.midSex == null ? null : lobjObject.midSex.toString() );
-			pobjResult.birthDate = ( lobjObject.mdtDateOfBirth == null ? null :
-					lobjObject.mdtDateOfBirth.toString().substring(0, 10) );
-			pobjResult.clientNumberPerson = ( lobjObject.mlngClientNumberI == null ? null : lobjObject.mlngClientNumberI.toString() );
-			pobjResult.insuranceCompanyInternalIdPerson = lobjObject.mstrInsurerIDI;
-
-			pobjResult.taxNumberCompany = lobjObject.mstrFiscalC;
-			pobjResult.caeId = ( lobjObject.midPredomCAE == null ? null : lobjObject.midPredomCAE.toString() );
-			pobjResult.grievousCaeId = ( lobjObject.midGrievousCAE == null ? null : lobjObject.midGrievousCAE.toString() );
-			pobjResult.activityNotes = lobjObject.mstrActivityNotes;
-			pobjResult.productNotes = lobjObject.mstrProductNotes;
-			pobjResult.businessVolumeId = ( lobjObject.midSales == null ? null : lobjObject.midSales.toString() );
-			pobjResult.europeanUnionEntity = lobjObject.mstrEUEntity;
-			pobjResult.clientNumberGroup = ( lobjObject.mlngClientNumberC == null ? null : lobjObject.mlngClientNumberC.toString() );
-
-			pobjResult.makeAndModel = lobjObject.mstrMakeAndModel;
-			pobjResult.equipmentDescription = lobjObject.mstrEquipmentNotes;
-			pobjResult.firstRegistryDate = ( lobjObject.mdtFirstRegistry == null ? null :
-					lobjObject.mdtFirstRegistry.toString().substring(0, 10) );
-			pobjResult.manufactureYear = ( lobjObject.mlngManufactureYear == null ? null :
-					lobjObject.mlngManufactureYear.toString() );
-			pobjResult.clientInternalId = lobjObject.mstrClientIDE;
-			pobjResult.insuranceCompanyInternalIdVehicle = lobjObject.mstrInsurerIDE;
-
-			pobjResult.siteDescription = lobjObject.mstrSiteNotes;
-
-			pobjResult.species = lobjObject.mstrSpecies;
-			pobjResult.race = lobjObject.mstrRace;
-			pobjResult.birthYear = ( lobjObject.mlngAge == null ? null : lobjObject.mlngAge.toString() );
-			pobjResult.cityRegistryNumber = lobjObject.mstrCityNumber;
-			pobjResult.electronicIdTag = lobjObject.mstrElectronicIDTag;
-
-			larrExercises = new ArrayList<PadExercise>();
-			for ( i = 0; i < marrExercises.size(); i++ )
-			{
-				if ( marrExercises.get(i).mbDeleted )
-					continue;
-				marrExercises.get(i).mlngOrigIndex = i;
-				larrExercises.add(marrExercises.get(i));
-			}
-			larrSortedExercises = larrExercises.toArray(new PadExercise[larrExercises.size()]);
-			java.util.Arrays.sort(larrSortedExercises, new Comparator<PadExercise>()
-			{
-				public int compare(PadExercise o1, PadExercise o2)
-				{
-					if ( o1.mdtStart == null )
-					{
-						if ( o2.mdtStart == null )
-							return 0;
-						return 1;
-					}
-					if ( o2.mdtStart == null )
-						return -1;
-
-					return o1.mdtStart.compareTo(o2.mdtStart);
-				}
-			});
-			pobjResult.exercises = new InsuredObjectOLD.Exercise[larrSortedExercises.length];
-			larrExerciseMap = new Hashtable<Integer, Integer>();
-			for ( i = 0; i < larrSortedExercises.length; i++ )
-			{
-				pobjResult.exercises[i] = new InsuredObjectOLD.Exercise();
-				pobjResult.exercises[i].id = mid.toString() + ":" + Integer.toString(larrSortedExercises[i].mlngOrigIndex);
-				pobjResult.exercises[i].label = larrSortedExercises[i].mstrLabel;
-				larrExerciseMap.put(larrSortedExercises[i].mlngOrigIndex, i);
-			}
-
-			lobjHeaderCoverage = null;
-			larrCoverages = new ArrayList<PadCoverage>();
-			for ( i = 0; i < marrCoverages.size(); i++ )
-			{
-				if ( marrCoverages.get(i).mbIsHeader )
-					lobjHeaderCoverage = marrCoverages.get(i);
-				else
-					larrCoverages.add(marrCoverages.get(i));
-			}
-			larrSortedCoverages = larrCoverages.toArray(new PadCoverage[larrCoverages.size()]);
-			java.util.Arrays.sort(larrSortedCoverages, new Comparator<PadCoverage>()
-			{
-				public int compare(PadCoverage o1, PadCoverage o2)
-				{
-					if ( o1.mbMandatory == o2.mbMandatory )
-					{
-						if ( o1.mlngOrder == o2.mlngOrder )
-							return o1.mstrLabel.compareTo(o2.mstrLabel);
-						return o1.mlngOrder - o2.mlngOrder;
-					}
-					if ( o1.mbMandatory )
-						return -1;
-					return 1;
-				}
-			});
-			pobjResult.coverageData = new InsuredObjectOLD.CoverageData[larrSortedCoverages.length];
-			larrFixed = new Hashtable<UUID, ArrayList<InsuredObjectOLD.CoverageData.FixedField>>();
-			larrVarRef = new Hashtable<UUID, ArrayList<InsuredObjectOLD.CoverageData.VariableField>>();
-			for ( i = 0; i < larrSortedCoverages.length; i++ )
-			{
-				pobjResult.coverageData[i] = new InsuredObjectOLD.CoverageData();
-				pobjResult.coverageData[i].coverageId = larrSortedCoverages[i].midCoverage.toString();
-				try
-				{
-					pobjResult.coverageData[i].coverageLabel = Coverage.GetInstance(Engine.getCurrentNameSpace(),
-							larrSortedCoverages[i].midCoverage).getLabel();
-				}
-				catch (Throwable e)
-				{
-					pobjResult.coverageData[i].coverageLabel = "(Erro a obter o nome da cobertura.)";
-				}
-				larrFixed.put(larrSortedCoverages[i].midCoverage, new ArrayList<InsuredObjectOLD.CoverageData.FixedField>());
-				larrVarRef.put(larrSortedCoverages[i].midCoverage, new ArrayList<InsuredObjectOLD.CoverageData.VariableField>());
-			}
-			if ( lobjHeaderCoverage != null )
-			{
-				pobjResult.headerData = new InsuredObjectOLD.HeaderData();
-				larrFixed.put(lobjHeaderCoverage.midCoverage, new ArrayList<InsuredObjectOLD.CoverageData.FixedField>());
-				larrVarRef.put(lobjHeaderCoverage.midCoverage, new ArrayList<InsuredObjectOLD.CoverageData.VariableField>());
-			}
-
-			larrVariable = new Hashtable<UUID, ArrayList<PadValue>>();
-			for ( i = 0; i < marrValues.size(); i++ )
-			{
-				lobjValue = marrValues.get(i);
-				if ( lobjValue.mbDeleted || (lobjValue.mlngObject != plngObject) )
-					continue;
-
-				if ( lobjValue.mrefField.mbVariesByExercise )
-				{
-					if ( larrVariable.get(lobjValue.mrefField.midField) == null )
-					{
-						lobjVariable = new InsuredObjectOLD.CoverageData.VariableField();
-						lobjVariable.fieldId = lobjValue.mrefField.midField.toString();
-						lobjVariable.fieldName = lobjValue.mrefField.mstrLabel;
-						lobjVariable.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
-						lobjVariable.unitsLabel = lobjValue.mrefField.mstrUnits;
-						lobjVariable.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
-							lobjValue.mrefField.midRefersTo.toString() );
-						lobjVariable.columnIndex = lobjValue.mrefField.mlngColIndex;
-						lobjVariable.data = new InsuredObjectOLD.CoverageData.VariableField.VariableValue[pobjResult.exercises.length];
-						larrVarRef.get(lobjValue.mrefCoverage.midCoverage).add(lobjVariable);
-						larrVariable.put(lobjValue.mrefField.midField, new ArrayList<PadValue>());
-					}
-					larrVariable.get(lobjValue.mrefField.midField).add(lobjValue);
-				}
-				else
-				{
-					lobjFixed = new InsuredObjectOLD.CoverageData.FixedField();
-					lobjFixed.fieldId = lobjValue.mrefField.midField.toString();
-					lobjFixed.fieldName = lobjValue.mrefField.mstrLabel;
-					lobjFixed.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
-					lobjFixed.unitsLabel = lobjValue.mrefField.mstrUnits;
-					lobjFixed.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
-							lobjValue.mrefField.midRefersTo.toString() );
-					lobjFixed.columnIndex = lobjValue.mrefField.mlngColIndex;
-					lobjFixed.value = lobjValue.mstrValue;
-					larrFixed.get(lobjValue.mrefCoverage.midCoverage).add(lobjFixed);
-				}
-			}
-
-			for ( i = 0; i < pobjResult.coverageData.length; i++ )
-			{
-				larrAuxFixed = larrFixed.get(UUID.fromString(pobjResult.coverageData[i].coverageId));
-				pobjResult.coverageData[i].fixedFields =
-						larrAuxFixed.toArray(new InsuredObjectOLD.CoverageData.FixedField[larrAuxFixed.size()]);
-				java.util.Arrays.sort(pobjResult.coverageData[i].fixedFields,
-						new Comparator<InsuredObjectOLD.CoverageData.FixedField>()
-				{
-					public int compare(InsuredObjectOLD.CoverageData.FixedField o1, InsuredObjectOLD.CoverageData.FixedField o2)
-					{
-						if ( o1.columnIndex == o2.columnIndex )
-						{
-							if ( o1.type == o2.type )
-							{
-								if ( o1.refersToId == o1.refersToId )
-									return o1.fieldName.compareTo(o2.fieldName);
-								return o1.refersToId.compareTo(o2.refersToId);
-							}
-							return o1.type.compareTo(o2.type);
-						}
-						if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
-							return o2.columnIndex - o1.columnIndex;
-						return o1.columnIndex - o2.columnIndex;
-					}
-				});
-
-				larrAuxVarRef = larrVarRef.get(UUID.fromString(pobjResult.coverageData[i].coverageId));
-				pobjResult.coverageData[i].variableFields =
-						larrAuxVarRef.toArray(new InsuredObjectOLD.CoverageData.VariableField[larrAuxVarRef.size()]);
-				java.util.Arrays.sort(pobjResult.coverageData[i].variableFields,
-						new Comparator<InsuredObjectOLD.CoverageData.VariableField>()
-				{
-					public int compare(InsuredObjectOLD.CoverageData.VariableField o1, InsuredObjectOLD.CoverageData.VariableField o2)
-					{
-						if ( o1.columnIndex == o2.columnIndex )
-						{
-							if ( o1.type == o2.type )
-							{
-								if ( o1.refersToId == o1.refersToId )
-									return o1.fieldName.compareTo(o2.fieldName);
-								return o1.refersToId.compareTo(o2.refersToId);
-							}
-							return o1.type.compareTo(o2.type);
-						}
-						if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
-							return o2.columnIndex - o1.columnIndex;
-						return o1.columnIndex - o2.columnIndex;
-					}
-				});
-
-				for ( j = 0; j < pobjResult.coverageData[i].variableFields.length; j++ )
-				{
-					larrAuxVariable = larrVariable.get(UUID.fromString(pobjResult.coverageData[i].variableFields[j].fieldId));
-					larrSortedVariable = larrAuxVariable.toArray(new PadValue[larrAuxVariable.size()]);
-					java.util.Arrays.sort(larrSortedVariable, new Comparator<PadValue>()
-					{
-						public int compare(PadValue o1, PadValue o2)
-						{
-							return larrExerciseMap.get(o1.mlngExercise) - larrExerciseMap.get(o2.mlngExercise);
-						}
-					});
-					for ( k = 0; k < larrSortedVariable.length; k++ )
-					{
-						pobjResult.coverageData[i].variableFields[j].data[k] =
-								new InsuredObjectOLD.HeaderData.VariableField.VariableValue();
-						pobjResult.coverageData[i].variableFields[j].data[k].exerciseIndex =
-								larrExerciseMap.get(larrSortedVariable[k].mlngExercise);
-						pobjResult.coverageData[i].variableFields[j].data[k].value = larrSortedVariable[k].mstrValue;
-					}
-				}
-			}
-			if ( lobjHeaderCoverage != null )
-			{
-				larrAuxFixed = larrFixed.get(lobjHeaderCoverage.midCoverage);
-				pobjResult.headerData.fixedFields =
-						larrAuxFixed.toArray(new InsuredObjectOLD.CoverageData.FixedField[larrAuxFixed.size()]);
-				java.util.Arrays.sort(pobjResult.headerData.fixedFields,
-						new Comparator<InsuredObjectOLD.CoverageData.FixedField>()
-				{
-					public int compare(InsuredObjectOLD.CoverageData.FixedField o1, InsuredObjectOLD.CoverageData.FixedField o2)
-					{
-						if ( o1.columnIndex == o2.columnIndex )
-						{
-							if ( o1.type == o2.type )
-							{
-								if ( o1.refersToId == o1.refersToId )
-									return o1.fieldName.compareTo(o2.fieldName);
-								return o1.refersToId.compareTo(o2.refersToId);
-							}
-							return o1.type.compareTo(o2.type);
-						}
-						if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
-							return o2.columnIndex - o1.columnIndex;
-						return o1.columnIndex - o2.columnIndex;
-					}
-				});
-
-				larrAuxVarRef = larrVarRef.get(lobjHeaderCoverage.midCoverage);
-				pobjResult.headerData.variableFields =
-						larrAuxVarRef.toArray(new InsuredObjectOLD.CoverageData.VariableField[larrAuxVarRef.size()]);
-				java.util.Arrays.sort(pobjResult.headerData.variableFields,
-						new Comparator<InsuredObjectOLD.CoverageData.VariableField>()
-				{
-					public int compare(InsuredObjectOLD.CoverageData.VariableField o1, InsuredObjectOLD.CoverageData.VariableField o2)
-					{
-						if ( o1.columnIndex == o2.columnIndex )
-						{
-							if ( o1.type == o2.type )
-							{
-								if ( o1.refersToId == o1.refersToId )
-									return o1.fieldName.compareTo(o2.fieldName);
-								return o1.refersToId.compareTo(o2.refersToId);
-							}
-							return o1.type.compareTo(o2.type);
-						}
-						if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
-							return o2.columnIndex - o1.columnIndex;
-						return o1.columnIndex - o2.columnIndex;
-					}
-				});
-
-				for ( i = 0; i < pobjResult.headerData.variableFields.length; i++ )
-				{
-					larrAuxVariable = larrVariable.get(UUID.fromString(pobjResult.headerData.variableFields[i].fieldId));
-					larrSortedVariable = larrAuxVariable.toArray(new PadValue[larrAuxVariable.size()]);
-					java.util.Arrays.sort(larrSortedVariable, new Comparator<PadValue>()
-					{
-						public int compare(PadValue o1, PadValue o2)
-						{
-							return larrExerciseMap.get(o1.mlngExercise) - larrExerciseMap.get(o2.mlngExercise);
-						}
-					});
-					for ( j = 0; j < larrSortedVariable.length; j++ )
-					{
-						pobjResult.headerData.variableFields[i].data[j] = new InsuredObjectOLD.HeaderData.VariableField.VariableValue();
-						pobjResult.headerData.variableFields[i].data[j].exerciseIndex =
-								larrExerciseMap.get(larrSortedVariable[j].mlngExercise);
-						pobjResult.headerData.variableFields[i].data[j].value = larrSortedVariable[j].mstrValue;
-					}
-				}
-			}
+//			SubPolicyObjectData lobjObject;
+//			ObjectBase lobjZipCode;
+//			int i, j, k;
+//			ArrayList<PadExercise> larrExercises;
+//			PadExercise[] larrSortedExercises;
+//			final Hashtable<Integer, Integer> larrExerciseMap;
+//			ArrayList<PadCoverage> larrCoverages;
+//			PadCoverage[] larrSortedCoverages;
+//			PadCoverage lobjHeaderCoverage;
+//			Hashtable<UUID, ArrayList<InsuredObject.CoverageData.FixedField>> larrFixed;
+//			Hashtable<UUID, ArrayList<InsuredObject.CoverageData.VariableField>> larrVarRef;
+//			Hashtable<UUID, ArrayList<PadValue>> larrVariable;
+//			InsuredObject.CoverageData.FixedField lobjFixed;
+//			InsuredObject.CoverageData.VariableField lobjVariable;
+//			PadValue lobjValue;
+//			ArrayList<InsuredObject.CoverageData.FixedField> larrAuxFixed;
+//			ArrayList<InsuredObject.CoverageData.VariableField> larrAuxVarRef;
+//			ArrayList<PadValue> larrAuxVariable;
+//			PadValue[] larrSortedVariable;
+//
+//			if ( !mbValid )
+//				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+//
+//			lobjObject = marrObjects.get(plngObject);
+//			pobjResult.id = mid.toString() + ":" + Integer.toString(plngObject);
+//			pobjResult.ownerId = mid.toString();
+//			pobjResult.unitIdentification = lobjObject.mstrName;
+//			if ( (lobjObject.mstrAddress1 == null) && (lobjObject.mstrAddress2 == null) && (lobjObject.midZipCode == null) )
+//				pobjResult.address = null;
+//			else
+//			{
+//				pobjResult.address = new Address();
+//				pobjResult.address.street1 = lobjObject.mstrAddress1;
+//				pobjResult.address.street2 = lobjObject.mstrAddress2;
+//				if ( lobjObject.midZipCode == null )
+//					pobjResult.address.zipCode = null;
+//				else
+//				{
+//					try
+//					{
+//						lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+//								ObjectGUIDs.O_PostalCode), lobjObject.midZipCode);
+//					}
+//					catch (Throwable e)
+//					{
+//						throw new BigBangException(e.getMessage(), e);
+//					}
+//					pobjResult.address.zipCode = new ZipCode();
+//					pobjResult.address.zipCode.code = (String)lobjZipCode.getAt(0);
+//					pobjResult.address.zipCode.city = (String)lobjZipCode.getAt(1);
+//					pobjResult.address.zipCode.county = (String)lobjZipCode.getAt(2);
+//					pobjResult.address.zipCode.district = (String)lobjZipCode.getAt(3);
+//					pobjResult.address.zipCode.country = (String)lobjZipCode.getAt(4);
+//				}
+//			}
+//			pobjResult.typeId = lobjObject.midType.toString();
+//			try
+//			{
+//				pobjResult.typeText = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+//						Constants.ObjID_ObjectType), lobjObject.midType).getLabel();
+//			}
+//			catch (Throwable e)
+//			{
+//				pobjResult.typeText = "(Erro a obter o nome do tipo.)";
+//			}
+//			pobjResult.inclusionDate = ( lobjObject.mdtInclusion == null ? null :
+//					lobjObject.mdtInclusion.toString().substring(0, 10) ); 
+//			pobjResult.exclusionDate = ( lobjObject.mdtExclusion == null ? null :
+//				lobjObject.mdtExclusion.toString().substring(0, 10) );
+//
+//			pobjResult.taxNumberPerson = lobjObject.mstrFiscalI;
+//			pobjResult.genderId = ( lobjObject.midSex == null ? null : lobjObject.midSex.toString() );
+//			pobjResult.birthDate = ( lobjObject.mdtDateOfBirth == null ? null :
+//					lobjObject.mdtDateOfBirth.toString().substring(0, 10) );
+//			pobjResult.clientNumberPerson = ( lobjObject.mlngClientNumberI == null ? null : lobjObject.mlngClientNumberI.toString() );
+//			pobjResult.insuranceCompanyInternalIdPerson = lobjObject.mstrInsurerIDI;
+//
+//			pobjResult.taxNumberCompany = lobjObject.mstrFiscalC;
+//			pobjResult.caeId = ( lobjObject.midPredomCAE == null ? null : lobjObject.midPredomCAE.toString() );
+//			pobjResult.grievousCaeId = ( lobjObject.midGrievousCAE == null ? null : lobjObject.midGrievousCAE.toString() );
+//			pobjResult.activityNotes = lobjObject.mstrActivityNotes;
+//			pobjResult.productNotes = lobjObject.mstrProductNotes;
+//			pobjResult.businessVolumeId = ( lobjObject.midSales == null ? null : lobjObject.midSales.toString() );
+//			pobjResult.europeanUnionEntity = lobjObject.mstrEUEntity;
+//			pobjResult.clientNumberGroup = ( lobjObject.mlngClientNumberC == null ? null : lobjObject.mlngClientNumberC.toString() );
+//
+//			pobjResult.makeAndModel = lobjObject.mstrMakeAndModel;
+//			pobjResult.equipmentDescription = lobjObject.mstrEquipmentNotes;
+//			pobjResult.firstRegistryDate = ( lobjObject.mdtFirstRegistry == null ? null :
+//					lobjObject.mdtFirstRegistry.toString().substring(0, 10) );
+//			pobjResult.manufactureYear = ( lobjObject.mlngManufactureYear == null ? null :
+//					lobjObject.mlngManufactureYear.toString() );
+//			pobjResult.clientInternalId = lobjObject.mstrClientIDE;
+//			pobjResult.insuranceCompanyInternalIdVehicle = lobjObject.mstrInsurerIDE;
+//
+//			pobjResult.siteDescription = lobjObject.mstrSiteNotes;
+//
+//			pobjResult.species = lobjObject.mstrSpecies;
+//			pobjResult.race = lobjObject.mstrRace;
+//			pobjResult.birthYear = ( lobjObject.mlngAge == null ? null : lobjObject.mlngAge.toString() );
+//			pobjResult.cityRegistryNumber = lobjObject.mstrCityNumber;
+//			pobjResult.electronicIdTag = lobjObject.mstrElectronicIDTag;
+//
+//			larrExercises = new ArrayList<PadExercise>();
+//			for ( i = 0; i < marrExercises.size(); i++ )
+//			{
+//				if ( marrExercises.get(i).mbDeleted )
+//					continue;
+//				marrExercises.get(i).mlngOrigIndex = i;
+//				larrExercises.add(marrExercises.get(i));
+//			}
+//			larrSortedExercises = larrExercises.toArray(new PadExercise[larrExercises.size()]);
+//			java.util.Arrays.sort(larrSortedExercises, new Comparator<PadExercise>()
+//			{
+//				public int compare(PadExercise o1, PadExercise o2)
+//				{
+//					if ( o1.mdtStart == null )
+//					{
+//						if ( o2.mdtStart == null )
+//							return 0;
+//						return 1;
+//					}
+//					if ( o2.mdtStart == null )
+//						return -1;
+//
+//					return o1.mdtStart.compareTo(o2.mdtStart);
+//				}
+//			});
+//			pobjResult.exercises = new InsuredObject.Exercise[larrSortedExercises.length];
+//			larrExerciseMap = new Hashtable<Integer, Integer>();
+//			for ( i = 0; i < larrSortedExercises.length; i++ )
+//			{
+//				pobjResult.exercises[i] = new InsuredObject.Exercise();
+//				pobjResult.exercises[i].id = mid.toString() + ":" + Integer.toString(larrSortedExercises[i].mlngOrigIndex);
+//				pobjResult.exercises[i].label = larrSortedExercises[i].mstrLabel;
+//				larrExerciseMap.put(larrSortedExercises[i].mlngOrigIndex, i);
+//			}
+//
+//			lobjHeaderCoverage = null;
+//			larrCoverages = new ArrayList<PadCoverage>();
+//			for ( i = 0; i < marrCoverages.size(); i++ )
+//			{
+//				if ( marrCoverages.get(i).mbIsHeader )
+//					lobjHeaderCoverage = marrCoverages.get(i);
+//				else
+//					larrCoverages.add(marrCoverages.get(i));
+//			}
+//			larrSortedCoverages = larrCoverages.toArray(new PadCoverage[larrCoverages.size()]);
+//			java.util.Arrays.sort(larrSortedCoverages, new Comparator<PadCoverage>()
+//			{
+//				public int compare(PadCoverage o1, PadCoverage o2)
+//				{
+//					if ( o1.mbMandatory == o2.mbMandatory )
+//					{
+//						if ( o1.mlngOrder == o2.mlngOrder )
+//							return o1.mstrLabel.compareTo(o2.mstrLabel);
+//						return o1.mlngOrder - o2.mlngOrder;
+//					}
+//					if ( o1.mbMandatory )
+//						return -1;
+//					return 1;
+//				}
+//			});
+//			pobjResult.coverageData = new InsuredObject.CoverageData[larrSortedCoverages.length];
+//			larrFixed = new Hashtable<UUID, ArrayList<InsuredObject.CoverageData.FixedField>>();
+//			larrVarRef = new Hashtable<UUID, ArrayList<InsuredObject.CoverageData.VariableField>>();
+//			for ( i = 0; i < larrSortedCoverages.length; i++ )
+//			{
+//				pobjResult.coverageData[i] = new InsuredObject.CoverageData();
+//				pobjResult.coverageData[i].coverageId = larrSortedCoverages[i].midCoverage.toString();
+//				try
+//				{
+//					pobjResult.coverageData[i].coverageLabel = Coverage.GetInstance(Engine.getCurrentNameSpace(),
+//							larrSortedCoverages[i].midCoverage).getLabel();
+//				}
+//				catch (Throwable e)
+//				{
+//					pobjResult.coverageData[i].coverageLabel = "(Erro a obter o nome da cobertura.)";
+//				}
+//				larrFixed.put(larrSortedCoverages[i].midCoverage, new ArrayList<InsuredObject.CoverageData.FixedField>());
+//				larrVarRef.put(larrSortedCoverages[i].midCoverage, new ArrayList<InsuredObject.CoverageData.VariableField>());
+//			}
+//			if ( lobjHeaderCoverage != null )
+//			{
+//				pobjResult.headerData = new InsuredObject.HeaderData();
+//				larrFixed.put(lobjHeaderCoverage.midCoverage, new ArrayList<InsuredObject.CoverageData.FixedField>());
+//				larrVarRef.put(lobjHeaderCoverage.midCoverage, new ArrayList<InsuredObject.CoverageData.VariableField>());
+//			}
+//
+//			larrVariable = new Hashtable<UUID, ArrayList<PadValue>>();
+//			for ( i = 0; i < marrValues.size(); i++ )
+//			{
+//				lobjValue = marrValues.get(i);
+//				if ( lobjValue.mbDeleted || (lobjValue.mlngObject != plngObject) )
+//					continue;
+//
+//				if ( lobjValue.mrefField.mbVariesByExercise )
+//				{
+//					if ( larrVariable.get(lobjValue.mrefField.midField) == null )
+//					{
+//						lobjVariable = new InsuredObject.CoverageData.VariableField();
+//						lobjVariable.fieldId = lobjValue.mrefField.midField.toString();
+//						lobjVariable.fieldName = lobjValue.mrefField.mstrLabel;
+//						lobjVariable.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
+//						lobjVariable.unitsLabel = lobjValue.mrefField.mstrUnits;
+//						lobjVariable.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
+//							lobjValue.mrefField.midRefersTo.toString() );
+//						lobjVariable.columnIndex = lobjValue.mrefField.mlngColIndex;
+//						lobjVariable.data = new InsuredObject.CoverageData.VariableField.VariableValue[pobjResult.exercises.length];
+//						larrVarRef.get(lobjValue.mrefCoverage.midCoverage).add(lobjVariable);
+//						larrVariable.put(lobjValue.mrefField.midField, new ArrayList<PadValue>());
+//					}
+//					larrVariable.get(lobjValue.mrefField.midField).add(lobjValue);
+//				}
+//				else
+//				{
+//					lobjFixed = new InsuredObject.CoverageData.FixedField();
+//					lobjFixed.fieldId = lobjValue.mrefField.midField.toString();
+//					lobjFixed.fieldName = lobjValue.mrefField.mstrLabel;
+//					lobjFixed.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
+//					lobjFixed.unitsLabel = lobjValue.mrefField.mstrUnits;
+//					lobjFixed.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
+//							lobjValue.mrefField.midRefersTo.toString() );
+//					lobjFixed.columnIndex = lobjValue.mrefField.mlngColIndex;
+//					lobjFixed.value = lobjValue.mstrValue;
+//					larrFixed.get(lobjValue.mrefCoverage.midCoverage).add(lobjFixed);
+//				}
+//			}
+//
+//			for ( i = 0; i < pobjResult.coverageData.length; i++ )
+//			{
+//				larrAuxFixed = larrFixed.get(UUID.fromString(pobjResult.coverageData[i].coverageId));
+//				pobjResult.coverageData[i].fixedFields =
+//						larrAuxFixed.toArray(new InsuredObject.CoverageData.FixedField[larrAuxFixed.size()]);
+//				java.util.Arrays.sort(pobjResult.coverageData[i].fixedFields,
+//						new Comparator<InsuredObject.CoverageData.FixedField>()
+//				{
+//					public int compare(InsuredObject.CoverageData.FixedField o1, InsuredObject.CoverageData.FixedField o2)
+//					{
+//						if ( o1.columnIndex == o2.columnIndex )
+//						{
+//							if ( o1.type == o2.type )
+//							{
+//								if ( o1.refersToId == o1.refersToId )
+//									return o1.fieldName.compareTo(o2.fieldName);
+//								return o1.refersToId.compareTo(o2.refersToId);
+//							}
+//							return o1.type.compareTo(o2.type);
+//						}
+//						if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
+//							return o2.columnIndex - o1.columnIndex;
+//						return o1.columnIndex - o2.columnIndex;
+//					}
+//				});
+//
+//				larrAuxVarRef = larrVarRef.get(UUID.fromString(pobjResult.coverageData[i].coverageId));
+//				pobjResult.coverageData[i].variableFields =
+//						larrAuxVarRef.toArray(new InsuredObject.CoverageData.VariableField[larrAuxVarRef.size()]);
+//				java.util.Arrays.sort(pobjResult.coverageData[i].variableFields,
+//						new Comparator<InsuredObject.CoverageData.VariableField>()
+//				{
+//					public int compare(InsuredObject.CoverageData.VariableField o1, InsuredObject.CoverageData.VariableField o2)
+//					{
+//						if ( o1.columnIndex == o2.columnIndex )
+//						{
+//							if ( o1.type == o2.type )
+//							{
+//								if ( o1.refersToId == o1.refersToId )
+//									return o1.fieldName.compareTo(o2.fieldName);
+//								return o1.refersToId.compareTo(o2.refersToId);
+//							}
+//							return o1.type.compareTo(o2.type);
+//						}
+//						if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
+//							return o2.columnIndex - o1.columnIndex;
+//						return o1.columnIndex - o2.columnIndex;
+//					}
+//				});
+//
+//				for ( j = 0; j < pobjResult.coverageData[i].variableFields.length; j++ )
+//				{
+//					larrAuxVariable = larrVariable.get(UUID.fromString(pobjResult.coverageData[i].variableFields[j].fieldId));
+//					larrSortedVariable = larrAuxVariable.toArray(new PadValue[larrAuxVariable.size()]);
+//					java.util.Arrays.sort(larrSortedVariable, new Comparator<PadValue>()
+//					{
+//						public int compare(PadValue o1, PadValue o2)
+//						{
+//							return larrExerciseMap.get(o1.mlngExercise) - larrExerciseMap.get(o2.mlngExercise);
+//						}
+//					});
+//					for ( k = 0; k < larrSortedVariable.length; k++ )
+//					{
+//						pobjResult.coverageData[i].variableFields[j].data[k] =
+//								new InsuredObject.HeaderData.VariableField.VariableValue();
+//						pobjResult.coverageData[i].variableFields[j].data[k].exerciseIndex =
+//								larrExerciseMap.get(larrSortedVariable[k].mlngExercise);
+//						pobjResult.coverageData[i].variableFields[j].data[k].value = larrSortedVariable[k].mstrValue;
+//					}
+//				}
+//			}
+//			if ( lobjHeaderCoverage != null )
+//			{
+//				larrAuxFixed = larrFixed.get(lobjHeaderCoverage.midCoverage);
+//				pobjResult.headerData.fixedFields =
+//						larrAuxFixed.toArray(new InsuredObject.CoverageData.FixedField[larrAuxFixed.size()]);
+//				java.util.Arrays.sort(pobjResult.headerData.fixedFields,
+//						new Comparator<InsuredObject.CoverageData.FixedField>()
+//				{
+//					public int compare(InsuredObject.CoverageData.FixedField o1, InsuredObject.CoverageData.FixedField o2)
+//					{
+//						if ( o1.columnIndex == o2.columnIndex )
+//						{
+//							if ( o1.type == o2.type )
+//							{
+//								if ( o1.refersToId == o1.refersToId )
+//									return o1.fieldName.compareTo(o2.fieldName);
+//								return o1.refersToId.compareTo(o2.refersToId);
+//							}
+//							return o1.type.compareTo(o2.type);
+//						}
+//						if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
+//							return o2.columnIndex - o1.columnIndex;
+//						return o1.columnIndex - o2.columnIndex;
+//					}
+//				});
+//
+//				larrAuxVarRef = larrVarRef.get(lobjHeaderCoverage.midCoverage);
+//				pobjResult.headerData.variableFields =
+//						larrAuxVarRef.toArray(new InsuredObject.CoverageData.VariableField[larrAuxVarRef.size()]);
+//				java.util.Arrays.sort(pobjResult.headerData.variableFields,
+//						new Comparator<InsuredObject.CoverageData.VariableField>()
+//				{
+//					public int compare(InsuredObject.CoverageData.VariableField o1, InsuredObject.CoverageData.VariableField o2)
+//					{
+//						if ( o1.columnIndex == o2.columnIndex )
+//						{
+//							if ( o1.type == o2.type )
+//							{
+//								if ( o1.refersToId == o1.refersToId )
+//									return o1.fieldName.compareTo(o2.fieldName);
+//								return o1.refersToId.compareTo(o2.refersToId);
+//							}
+//							return o1.type.compareTo(o2.type);
+//						}
+//						if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
+//							return o2.columnIndex - o1.columnIndex;
+//						return o1.columnIndex - o2.columnIndex;
+//					}
+//				});
+//
+//				for ( i = 0; i < pobjResult.headerData.variableFields.length; i++ )
+//				{
+//					larrAuxVariable = larrVariable.get(UUID.fromString(pobjResult.headerData.variableFields[i].fieldId));
+//					larrSortedVariable = larrAuxVariable.toArray(new PadValue[larrAuxVariable.size()]);
+//					java.util.Arrays.sort(larrSortedVariable, new Comparator<PadValue>()
+//					{
+//						public int compare(PadValue o1, PadValue o2)
+//						{
+//							return larrExerciseMap.get(o1.mlngExercise) - larrExerciseMap.get(o2.mlngExercise);
+//						}
+//					});
+//					for ( j = 0; j < larrSortedVariable.length; j++ )
+//					{
+//						pobjResult.headerData.variableFields[i].data[j] = new InsuredObject.HeaderData.VariableField.VariableValue();
+//						pobjResult.headerData.variableFields[i].data[j].exerciseIndex =
+//								larrExerciseMap.get(larrSortedVariable[j].mlngExercise);
+//						pobjResult.headerData.variableFields[i].data[j].value = larrSortedVariable[j].mstrValue;
+//					}
+//				}
+//			}
 		}
 
 		public TipifiedListItem[] GetExercises()
@@ -1843,156 +1839,156 @@ public class SubPolicyServiceImpl
 			return llngIndex;
 		}
 
-		public void UpdateObject(InsuredObjectOLD pobjSource, int plngObject)
+		public void UpdateObject(InsuredObject pobjSource, int plngObject)
 			throws BigBangException, CorruptedPadException
 		{
-			UUID lidType;
-			UUID lidZipCode;
-			PadObject lobjObject;
-			int i, j, k, l;
-
-			if ( !mbValid )
-				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
-
-			if ( (marrObjects.get(plngObject) == null) || marrObjects.get(plngObject).mbDeleted )
-				throw new BigBangException("Erro: Não pode alterar um objecto apagado.");
-
-			try
-			{
-				lidType = (UUID)Policy.GetInstance(Engine.getCurrentNameSpace(), midMainPolicy).GetSubLine().getAt(2);
-				if ( (pobjSource.address != null) && (pobjSource.address.zipCode != null) )
-					lidZipCode = ZipCodeBridge.GetZipCode(pobjSource.address.zipCode.code, pobjSource.address.zipCode.city,
-							pobjSource.address.zipCode.county, pobjSource.address.zipCode.district,
-							pobjSource.address.zipCode.country);
-				else
-					lidZipCode = null;
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
-			lobjObject = marrObjects.get(plngObject);
-
-			lobjObject.mstrName = pobjSource.unitIdentification;
-			lobjObject.midOwner = mobjSubPolicy.mid;
-			lobjObject.midType = lidType;
-			if ( pobjSource.address != null )
-			{
-				lobjObject.mstrAddress1 = pobjSource.address.street1;
-				lobjObject.mstrAddress2 = pobjSource.address.street2;
-				if ( pobjSource.address.zipCode != null )
-					lobjObject.midZipCode = lidZipCode;
-				else
-					lobjObject.midZipCode = null;
-			}
-			else
-			{
-				lobjObject.mstrAddress1 = null;
-				lobjObject.mstrAddress2 = null;
-				lobjObject.midZipCode = null;
-			}
-			lobjObject.mdtInclusion = ( pobjSource.inclusionDate == null ? null :
-					Timestamp.valueOf(pobjSource.inclusionDate + " 00:00:00.0") );
-			lobjObject.mdtExclusion = ( pobjSource.exclusionDate == null ? null :
-					Timestamp.valueOf(pobjSource.exclusionDate + " 00:00:00.0") );
-
-			lobjObject.mstrFiscalI = pobjSource.taxNumberPerson;
-			lobjObject.midSex = ( pobjSource.genderId == null ? null : UUID.fromString(pobjSource.genderId) );
-			lobjObject.mdtDateOfBirth = ( pobjSource.birthDate == null ? null :
-					Timestamp.valueOf(pobjSource.birthDate + " 00:00:00.0") );
-			lobjObject.mlngClientNumberI = ( pobjSource.clientNumberPerson == null ? null :
-					Integer.decode(pobjSource.clientNumberPerson) );
-			lobjObject.mstrInsurerIDI = pobjSource.insuranceCompanyInternalIdPerson;
-
-			lobjObject.mstrFiscalC = pobjSource.taxNumberCompany;
-			lobjObject.midPredomCAE = ( pobjSource.caeId == null ? null : UUID.fromString(pobjSource.caeId) );
-			lobjObject.midGrievousCAE = ( pobjSource.grievousCaeId == null ? null : UUID.fromString(pobjSource.grievousCaeId) );
-			lobjObject.mstrActivityNotes = pobjSource.activityNotes;
-			lobjObject.mstrProductNotes = pobjSource.productNotes;
-			lobjObject.midSales = ( pobjSource.businessVolumeId == null ? null : UUID.fromString(pobjSource.businessVolumeId) );
-			lobjObject.mstrEUEntity = pobjSource.europeanUnionEntity;
-			lobjObject.mlngClientNumberC = ( pobjSource.clientNumberGroup == null ? null :
-					Integer.decode(pobjSource.clientNumberGroup) );
-
-			lobjObject.mstrMakeAndModel = pobjSource.makeAndModel;
-			lobjObject.mstrEquipmentNotes = pobjSource.equipmentDescription;
-			lobjObject.mdtFirstRegistry = ( pobjSource.firstRegistryDate == null ? null :
-					Timestamp.valueOf(pobjSource.firstRegistryDate + " 00:00:00.0") );
-			lobjObject.mlngManufactureYear = ( pobjSource.manufactureYear == null ? null :
-					Integer.decode(pobjSource.manufactureYear) );
-			lobjObject.mstrClientIDE = pobjSource.clientInternalId;
-			lobjObject.mstrInsurerIDE = pobjSource.insuranceCompanyInternalIdVehicle;
-
-			lobjObject.mstrSiteNotes = pobjSource.siteDescription;
-
-			lobjObject.mstrSpecies = pobjSource.species;
-			lobjObject.mstrRace = pobjSource.race;
-			lobjObject.mlngAge = ( pobjSource.birthYear == null ? null :
-					Integer.decode(pobjSource.birthYear) );
-			lobjObject.mstrCityNumber = pobjSource.cityRegistryNumber;
-			lobjObject.mstrElectronicIDTag = pobjSource.electronicIdTag;
-
-			mbValid = false;
-
-			l = -1;
-
-			if ( pobjSource.headerData != null )
-			{
-				for ( i = 0; i < pobjSource.headerData.fixedFields.length; i++ )
-				{
-					l = FindValue(UUID.fromString(pobjSource.headerData.fixedFields[i].fieldId), plngObject, -1, l + 1);
-					if ( l < 0 )
-						throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
-					marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.fixedFields[i].value) ? null :
-							pobjSource.headerData.fixedFields[i].value );
-				}
-
-				for ( i = 0; i < pobjSource.headerData.variableFields.length; i++ )
-				{
-					for ( j = 0; j < pobjSource.headerData.variableFields[i].data.length; j++ )
-					{
-						l = FindValue(UUID.fromString(pobjSource.headerData.variableFields[i].fieldId), plngObject,
-								Integer.parseInt(pobjSource.exercises[pobjSource.headerData.variableFields[i].data[j]
-										.exerciseIndex].id.split(":")[1]), l + 1);
-						if ( l < 0 )
-							throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
-						marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.variableFields[i].data[j].value) ?
-								null : pobjSource.headerData.variableFields[i].data[j].value );
-					}
-				}
-			}
-
-			if ( pobjSource.coverageData != null )
-			{
-				for ( i = 0; i < pobjSource.coverageData.length; i++ )
-				{
-					for ( j = 0; j < pobjSource.coverageData[i].fixedFields.length; j++ )
-					{
-						l = FindValue(UUID.fromString(pobjSource.coverageData[i].fixedFields[j].fieldId), plngObject, -1, l + 1);
-						if ( l < 0 )
-							throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
-						marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].fixedFields[j].value) ? null :
-								pobjSource.coverageData[i].fixedFields[j].value );
-					}
-
-					for ( j = 0; j < pobjSource.coverageData[i].variableFields.length; j++ )
-					{
-						for ( k = 0; k < pobjSource.coverageData[i].variableFields[j].data.length; k++ )
-						{
-							l = FindValue(UUID.fromString(pobjSource.coverageData[i].variableFields[j].fieldId), plngObject,
-									Integer.parseInt(pobjSource.exercises[pobjSource.coverageData[i].variableFields[j].data[k]
-											.exerciseIndex].id.split(":")[1]), l + 1);
-							if ( l < 0 )
-								throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
-							marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].variableFields[j].data[k].value) ?
-									null : pobjSource.coverageData[i].variableFields[j].data[k].value );
-						}
-					}
-				}
-			}
-
-			mbValid = true;
+//			UUID lidType;
+//			UUID lidZipCode;
+//			PadObject lobjObject;
+//			int i, j, k, l;
+//
+//			if ( !mbValid )
+//				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+//
+//			if ( (marrObjects.get(plngObject) == null) || marrObjects.get(plngObject).mbDeleted )
+//				throw new BigBangException("Erro: Não pode alterar um objecto apagado.");
+//
+//			try
+//			{
+//				lidType = (UUID)Policy.GetInstance(Engine.getCurrentNameSpace(), midMainPolicy).GetSubLine().getAt(2);
+//				if ( (pobjSource.address != null) && (pobjSource.address.zipCode != null) )
+//					lidZipCode = ZipCodeBridge.GetZipCode(pobjSource.address.zipCode.code, pobjSource.address.zipCode.city,
+//							pobjSource.address.zipCode.county, pobjSource.address.zipCode.district,
+//							pobjSource.address.zipCode.country);
+//				else
+//					lidZipCode = null;
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//
+//			lobjObject = marrObjects.get(plngObject);
+//
+//			lobjObject.mstrName = pobjSource.unitIdentification;
+//			lobjObject.midOwner = mobjSubPolicy.mid;
+//			lobjObject.midType = lidType;
+//			if ( pobjSource.address != null )
+//			{
+//				lobjObject.mstrAddress1 = pobjSource.address.street1;
+//				lobjObject.mstrAddress2 = pobjSource.address.street2;
+//				if ( pobjSource.address.zipCode != null )
+//					lobjObject.midZipCode = lidZipCode;
+//				else
+//					lobjObject.midZipCode = null;
+//			}
+//			else
+//			{
+//				lobjObject.mstrAddress1 = null;
+//				lobjObject.mstrAddress2 = null;
+//				lobjObject.midZipCode = null;
+//			}
+//			lobjObject.mdtInclusion = ( pobjSource.inclusionDate == null ? null :
+//					Timestamp.valueOf(pobjSource.inclusionDate + " 00:00:00.0") );
+//			lobjObject.mdtExclusion = ( pobjSource.exclusionDate == null ? null :
+//					Timestamp.valueOf(pobjSource.exclusionDate + " 00:00:00.0") );
+//
+//			lobjObject.mstrFiscalI = pobjSource.taxNumberPerson;
+//			lobjObject.midSex = ( pobjSource.genderId == null ? null : UUID.fromString(pobjSource.genderId) );
+//			lobjObject.mdtDateOfBirth = ( pobjSource.birthDate == null ? null :
+//					Timestamp.valueOf(pobjSource.birthDate + " 00:00:00.0") );
+//			lobjObject.mlngClientNumberI = ( pobjSource.clientNumberPerson == null ? null :
+//					Integer.decode(pobjSource.clientNumberPerson) );
+//			lobjObject.mstrInsurerIDI = pobjSource.insuranceCompanyInternalIdPerson;
+//
+//			lobjObject.mstrFiscalC = pobjSource.taxNumberCompany;
+//			lobjObject.midPredomCAE = ( pobjSource.caeId == null ? null : UUID.fromString(pobjSource.caeId) );
+//			lobjObject.midGrievousCAE = ( pobjSource.grievousCaeId == null ? null : UUID.fromString(pobjSource.grievousCaeId) );
+//			lobjObject.mstrActivityNotes = pobjSource.activityNotes;
+//			lobjObject.mstrProductNotes = pobjSource.productNotes;
+//			lobjObject.midSales = ( pobjSource.businessVolumeId == null ? null : UUID.fromString(pobjSource.businessVolumeId) );
+//			lobjObject.mstrEUEntity = pobjSource.europeanUnionEntity;
+//			lobjObject.mlngClientNumberC = ( pobjSource.clientNumberGroup == null ? null :
+//					Integer.decode(pobjSource.clientNumberGroup) );
+//
+//			lobjObject.mstrMakeAndModel = pobjSource.makeAndModel;
+//			lobjObject.mstrEquipmentNotes = pobjSource.equipmentDescription;
+//			lobjObject.mdtFirstRegistry = ( pobjSource.firstRegistryDate == null ? null :
+//					Timestamp.valueOf(pobjSource.firstRegistryDate + " 00:00:00.0") );
+//			lobjObject.mlngManufactureYear = ( pobjSource.manufactureYear == null ? null :
+//					Integer.decode(pobjSource.manufactureYear) );
+//			lobjObject.mstrClientIDE = pobjSource.clientInternalId;
+//			lobjObject.mstrInsurerIDE = pobjSource.insuranceCompanyInternalIdVehicle;
+//
+//			lobjObject.mstrSiteNotes = pobjSource.siteDescription;
+//
+//			lobjObject.mstrSpecies = pobjSource.species;
+//			lobjObject.mstrRace = pobjSource.race;
+//			lobjObject.mlngAge = ( pobjSource.birthYear == null ? null :
+//					Integer.decode(pobjSource.birthYear) );
+//			lobjObject.mstrCityNumber = pobjSource.cityRegistryNumber;
+//			lobjObject.mstrElectronicIDTag = pobjSource.electronicIdTag;
+//
+//			mbValid = false;
+//
+//			l = -1;
+//
+//			if ( pobjSource.headerData != null )
+//			{
+//				for ( i = 0; i < pobjSource.headerData.fixedFields.length; i++ )
+//				{
+//					l = FindValue(UUID.fromString(pobjSource.headerData.fixedFields[i].fieldId), plngObject, -1, l + 1);
+//					if ( l < 0 )
+//						throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
+//					marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.fixedFields[i].value) ? null :
+//							pobjSource.headerData.fixedFields[i].value );
+//				}
+//
+//				for ( i = 0; i < pobjSource.headerData.variableFields.length; i++ )
+//				{
+//					for ( j = 0; j < pobjSource.headerData.variableFields[i].data.length; j++ )
+//					{
+//						l = FindValue(UUID.fromString(pobjSource.headerData.variableFields[i].fieldId), plngObject,
+//								Integer.parseInt(pobjSource.exercises[pobjSource.headerData.variableFields[i].data[j]
+//										.exerciseIndex].id.split(":")[1]), l + 1);
+//						if ( l < 0 )
+//							throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
+//						marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.variableFields[i].data[j].value) ?
+//								null : pobjSource.headerData.variableFields[i].data[j].value );
+//					}
+//				}
+//			}
+//
+//			if ( pobjSource.coverageData != null )
+//			{
+//				for ( i = 0; i < pobjSource.coverageData.length; i++ )
+//				{
+//					for ( j = 0; j < pobjSource.coverageData[i].fixedFields.length; j++ )
+//					{
+//						l = FindValue(UUID.fromString(pobjSource.coverageData[i].fixedFields[j].fieldId), plngObject, -1, l + 1);
+//						if ( l < 0 )
+//							throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
+//						marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].fixedFields[j].value) ? null :
+//								pobjSource.coverageData[i].fixedFields[j].value );
+//					}
+//
+//					for ( j = 0; j < pobjSource.coverageData[i].variableFields.length; j++ )
+//					{
+//						for ( k = 0; k < pobjSource.coverageData[i].variableFields[j].data.length; k++ )
+//						{
+//							l = FindValue(UUID.fromString(pobjSource.coverageData[i].variableFields[j].fieldId), plngObject,
+//									Integer.parseInt(pobjSource.exercises[pobjSource.coverageData[i].variableFields[j].data[k]
+//											.exerciseIndex].id.split(":")[1]), l + 1);
+//							if ( l < 0 )
+//								throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
+//							marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].variableFields[j].data[k].value) ?
+//									null : pobjSource.coverageData[i].variableFields[j].data[k].value );
+//						}
+//					}
+//				}
+//			}
+//
+//			mbValid = true;
 		}
 
 		public void DeleteObject(int plngObject)
@@ -2891,14 +2887,14 @@ public class SubPolicyServiceImpl
 		throw new BigBangException("Erro: Lista inválida para o espaço de trabalho.");
 	}
 
-	public InsuredObjectOLD getObjectInPad(String objectId)
+	public InsuredObject getObjectInPad(String objectId)
 		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		String[] larrAux;
 		UUID lidPad;
 		int llngObject;
 		SubPolicyScratchPad lobjPad;
-		InsuredObjectOLD lobjResult;
+		InsuredObject lobjResult;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -2911,16 +2907,16 @@ public class SubPolicyServiceImpl
 
 		lobjPad = GetScratchPadStorage().get(lidPad);
 
-		lobjResult = new InsuredObjectOLD();
+		lobjResult = new InsuredObject();
 		lobjPad.WriteObject(lobjResult, llngObject);
 		return lobjResult;
 	}
 
-	public InsuredObjectOLD createObjectInPad(String subPolicyId)
+	public InsuredObject createObjectInPad(String subPolicyId)
 		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		SubPolicyScratchPad lobjPad;
-		InsuredObjectOLD lobjResult;
+		InsuredObject lobjResult;
 		int llngObject;
 
 		if ( Engine.getCurrentUser() == null )
@@ -2932,19 +2928,19 @@ public class SubPolicyServiceImpl
 		lobjPad = GetScratchPadStorage().get(UUID.fromString(subPolicyId));
 		llngObject = lobjPad.CreateNewObject();
 
-		lobjResult = new InsuredObjectOLD();
+		lobjResult = new InsuredObject();
 		lobjPad.WriteObject(lobjResult, llngObject);
 		return lobjResult;
 	}
 
 	@Override
-	public InsuredObjectOLD createObjectFromClientInPad(String subPolicyId)
+	public InsuredObject createObjectFromClientInPad(String subPolicyId)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public InsuredObjectOLD updateObjectInPad(InsuredObjectOLD data)
+	public InsuredObject updateObjectInPad(InsuredObject data)
 		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		SubPolicyScratchPad lobjPad;
@@ -3112,14 +3108,14 @@ public class SubPolicyServiceImpl
 	}
 
 	@Override
-	public InsuredObjectOLD includeObject(String subPolicyId, InsuredObjectOLD object)
+	public InsuredObject includeObject(String subPolicyId, InsuredObject object)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public InsuredObjectOLD includeObjectFromClient(String subPolicyId)
+	public InsuredObject includeObjectFromClient(String subPolicyId)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

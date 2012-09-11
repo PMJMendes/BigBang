@@ -22,7 +22,7 @@ import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
-import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -410,14 +410,14 @@ public class InsurancePolicyServiceImpl
 	}
 
 	@Override
-	public InsuredObjectOLD includeObject(String policyId, InsuredObjectOLD object)
+	public InsuredObject includeObject(String policyId, InsuredObject object)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public InsuredObjectOLD includeObjectFromClient(String policyId)
+	public InsuredObject includeObjectFromClient(String policyId)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

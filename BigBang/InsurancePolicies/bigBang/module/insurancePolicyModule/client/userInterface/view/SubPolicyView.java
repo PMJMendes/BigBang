@@ -303,7 +303,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 	@Override
 	public HasValueSelectables<InsuredObjectStubOLD> getInsuredObjectsList() {
-		return childrenPanel.insuredObjectsList;
+		return null; //childrenPanel.insuredObjectsList;
 	}
 
 	@Override
