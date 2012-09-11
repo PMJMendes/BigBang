@@ -237,7 +237,7 @@ public class SubPolicyObjectServiceImpl
 				lobjFixed = new InsuredObjectOLD.CoverageData.FixedField();
 				lobjFixed.fieldId = larrFixed[j].GetTax().getKey().toString();
 				lobjFixed.fieldName = larrFixed[j].GetTax().getLabel();
-				lobjFixed.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(larrFixed[j].GetTax().GetFieldType());
+				lobjFixed.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(larrFixed[j].GetTax().GetFieldType());
 				lobjFixed.unitsLabel = larrFixed[j].GetTax().GetUnitsLabel();
 				lobjFixed.refersToId = ( larrFixed[j].GetTax().GetRefersToID() == null ? null :
 					larrFixed[j].GetTax().GetRefersToID().toString() );
@@ -281,7 +281,7 @@ public class SubPolicyObjectServiceImpl
 						lobjVariable = new InsuredObjectOLD.CoverageData.VariableField();
 						lobjVariable.fieldId = larrVariable[j][k].GetTax().getKey().toString();
 						lobjVariable.fieldName = larrVariable[j][k].GetTax().getLabel();
-						lobjVariable.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(larrVariable[j][k].GetTax().GetFieldType());
+						lobjVariable.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(larrVariable[j][k].GetTax().GetFieldType());
 						lobjVariable.unitsLabel = larrVariable[j][k].GetTax().GetUnitsLabel();
 						lobjVariable.refersToId = ( larrVariable[j][k].GetTax().GetRefersToID() == null ? null :
 								larrVariable[j][k].GetTax().GetRefersToID().toString() );
@@ -338,7 +338,7 @@ public class SubPolicyObjectServiceImpl
 				lobjFixed = new InsuredObjectOLD.CoverageData.FixedField();
 				lobjFixed.fieldId = larrFixed[j].GetTax().getKey().toString();
 				lobjFixed.fieldName = larrFixed[j].GetTax().getLabel();
-				lobjFixed.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(larrFixed[j].GetTax().GetFieldType());
+				lobjFixed.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(larrFixed[j].GetTax().GetFieldType());
 				lobjFixed.unitsLabel = larrFixed[j].GetTax().GetUnitsLabel();
 				lobjFixed.refersToId = ( larrFixed[j].GetTax().GetRefersToID() == null ? null :
 					larrFixed[j].GetTax().GetRefersToID().toString() );
@@ -382,7 +382,7 @@ public class SubPolicyObjectServiceImpl
 						lobjVariable = new InsuredObjectOLD.CoverageData.VariableField();
 						lobjVariable.fieldId = larrVariable[j][k].GetTax().getKey().toString();
 						lobjVariable.fieldName = larrVariable[j][k].GetTax().getLabel();
-						lobjVariable.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(larrVariable[j][k].GetTax().GetFieldType());
+						lobjVariable.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(larrVariable[j][k].GetTax().GetFieldType());
 						lobjVariable.unitsLabel = larrVariable[j][k].GetTax().GetUnitsLabel();
 						lobjVariable.refersToId = ( larrVariable[j][k].GetTax().GetRefersToID() == null ? null :
 								larrVariable[j][k].GetTax().GetRefersToID().toString() );

@@ -11,6 +11,7 @@ import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
+import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.interfaces.ExactItemSubService;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
@@ -22,7 +23,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("InsurancePolicyService")
 public interface InsurancePolicyService
-	extends SearchService, ExactItemSubService
+	extends SearchService, ExactItemSubService, DependentItemSubService
 {
 	public static class Util
 	{

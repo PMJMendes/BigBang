@@ -1191,7 +1191,7 @@ public class SubPolicyServiceImpl
 						lobjVariable = new InsuredObjectOLD.CoverageData.VariableField();
 						lobjVariable.fieldId = lobjValue.mrefField.midField.toString();
 						lobjVariable.fieldName = lobjValue.mrefField.mstrLabel;
-						lobjVariable.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(lobjValue.mrefField.midType);
+						lobjVariable.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
 						lobjVariable.unitsLabel = lobjValue.mrefField.mstrUnits;
 						lobjVariable.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
 							lobjValue.mrefField.midRefersTo.toString() );
@@ -1207,7 +1207,7 @@ public class SubPolicyServiceImpl
 					lobjFixed = new InsuredObjectOLD.CoverageData.FixedField();
 					lobjFixed.fieldId = lobjValue.mrefField.midField.toString();
 					lobjFixed.fieldName = lobjValue.mrefField.mstrLabel;
-					lobjFixed.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(lobjValue.mrefField.midType);
+					lobjFixed.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
 					lobjFixed.unitsLabel = lobjValue.mrefField.mstrUnits;
 					lobjFixed.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
 							lobjValue.mrefField.midRefersTo.toString() );
@@ -1508,7 +1508,7 @@ public class SubPolicyServiceImpl
 						lobjVariable = new Exercise.CoverageData.VariableField();
 						lobjVariable.fieldId = lobjValue.mrefField.midField.toString();
 						lobjVariable.fieldName = lobjValue.mrefField.mstrLabel;
-						lobjVariable.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(lobjValue.mrefField.midType);
+						lobjVariable.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
 						lobjVariable.unitsLabel = lobjValue.mrefField.mstrUnits;
 						lobjVariable.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
 							lobjValue.mrefField.midRefersTo.toString() );
@@ -1524,7 +1524,7 @@ public class SubPolicyServiceImpl
 					lobjFixed = new Exercise.CoverageData.FixedField();
 					lobjFixed.fieldId = lobjValue.mrefField.midField.toString();
 					lobjFixed.fieldName = lobjValue.mrefField.mstrLabel;
-					lobjFixed.type = InsurancePolicyServiceOLDImpl.GetFieldTypeByID(lobjValue.mrefField.midType);
+					lobjFixed.type = InsurancePolicyServiceImpl.sGetFieldTypeByID(lobjValue.mrefField.midType);
 					lobjFixed.unitsLabel = lobjValue.mrefField.mstrUnits;
 					lobjFixed.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
 							lobjValue.mrefField.midRefersTo.toString() );

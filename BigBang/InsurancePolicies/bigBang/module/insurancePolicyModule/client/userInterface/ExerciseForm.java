@@ -10,7 +10,7 @@ import bigBang.definitions.shared.Exercise.HeaderData.FixedField;
 import bigBang.definitions.shared.Exercise.HeaderData.VariableField;
 import bigBang.definitions.shared.Exercise.HeaderData.VariableField.VariableValue;
 import bigBang.definitions.shared.Exercise.InsuredObject;
-import bigBang.definitions.shared.InsurancePolicyOLD.FieldType;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
@@ -77,9 +77,9 @@ public class ExerciseForm extends FormView<Exercise> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void setValue(String value){
-			if(headerField.type == FieldType.DATE){	
+			if(headerField.type == InsurancePolicy.FieldType.DATE){	
 				((DatePickerFormField)field).setValue(value);		//this.dynamicVariableHeaderDataTable.removeFromParent();
-			}else if(headerField.type == FieldType.NUMERIC){	
+			}else if(headerField.type == InsurancePolicy.FieldType.NUMERIC){	
 				((NumericTextBoxFormField)field).setStringValue(value);		//this.dynamicVariableHeaderDataTable.removeFromParent();
 			}
 			else
@@ -89,9 +89,9 @@ public class ExerciseForm extends FormView<Exercise> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getValue() {
-			if(headerField.type == FieldType.DATE){	
+			if(headerField.type == InsurancePolicy.FieldType.DATE){	
 				return ((DatePickerFormField)field).getStringValue();
-			}else if(headerField.type == FieldType.NUMERIC){	
+			}else if(headerField.type == InsurancePolicy.FieldType.NUMERIC){	
 				return ((NumericTextBoxFormField)field).getStringValue();
 			}
 			else{

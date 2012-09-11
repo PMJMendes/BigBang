@@ -10,13 +10,14 @@ import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
+import bigBang.library.interfaces.DependentItemSubServiceAsync;
 import bigBang.library.interfaces.ExactItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface InsurancePolicyServiceAsync
-	extends SearchServiceAsync, ExactItemSubServiceAsync
+	extends SearchServiceAsync, ExactItemSubServiceAsync, DependentItemSubServiceAsync
 {
 	void getEmptyPolicy(String subLineId, String clientId, AsyncCallback<InsurancePolicy> callback);
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);

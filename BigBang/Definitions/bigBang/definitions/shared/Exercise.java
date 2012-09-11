@@ -2,8 +2,6 @@ package bigBang.definitions.shared;
 
 import java.io.Serializable;
 
-import bigBang.definitions.shared.InsurancePolicyOLD.FieldType;
-
 public class Exercise
 	extends ExerciseStub
 {
@@ -30,7 +28,7 @@ public class Exercise
 
 			public String fieldId;
 			public String fieldName;
-			public FieldType type;
+			public InsurancePolicy.FieldType type;
 			public String unitsLabel;
 			public String refersToId;
 			public int columnIndex; // Informacional. Se -1, não está na tabela. Se 0 ou mais, na página identificada por tempExerciseId
@@ -54,7 +52,7 @@ public class Exercise
 
 			public String fieldId;
 			public String fieldName;
-			public FieldType type;
+			public InsurancePolicy.FieldType type;
 			public String unitsLabel;
 			public String refersToId;
 			public int columnIndex; // Informacional. Se 0 ou mais, na página identificada por tempObjectId e tempExerciseId

@@ -19,7 +19,6 @@ import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceOLDImpl;
 import bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceImpl;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectService;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestObjectSearchParameter;

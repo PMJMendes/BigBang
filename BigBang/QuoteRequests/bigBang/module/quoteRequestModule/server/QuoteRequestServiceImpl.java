@@ -34,7 +34,6 @@ import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceOLDImpl;
 import bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceImpl;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSearchParameter;

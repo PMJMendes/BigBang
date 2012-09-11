@@ -31,6 +31,7 @@ import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
@@ -60,6 +61,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -233,6 +235,48 @@ public class InsurancePolicyServiceImpl
         }
 
 		return larrResult.toArray(new SearchResult[larrResult.size()]);
+	}
+
+	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		PolicyCoverage[] larrCoverages;
+		ArrayList<TipifiedListItem> larrResult;
+		TipifiedListItem lobjAux;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( filterId == null )
+			throw new BigBangException("Erro: Apólice não existente.");
+
+		try
+		{
+			if ( Constants.ObjID_PolicyCoverage.equals(UUID.fromString(listId)) )
+			{
+				lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(filterId));
+				larrCoverages = lobjPolicy.GetCurrentCoverages();
+				larrResult = new ArrayList<TipifiedListItem>();
+				for ( i = 0; i < larrCoverages.length; i++ )
+				{
+					if ( (larrCoverages[i].GetCoverage().IsHeader()) || (larrCoverages[i].IsPresent() == null) || !larrCoverages[i].IsPresent() )
+						continue;
+					lobjAux = new TipifiedListItem();
+					lobjAux.id = larrCoverages[i].getKey().toString();
+					lobjAux.value = larrCoverages[i].GetCoverage().getLabel();
+					larrResult.add(lobjAux);
+				}
+				return larrResult.toArray(new TipifiedListItem[larrResult.size()]);
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		throw new BigBangException("Erro: Lista inválida para o espaço de trabalho.");
 	}
 
 	public InsurancePolicy getEmptyPolicy(String subLineId, String clientId)
