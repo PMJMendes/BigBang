@@ -21,6 +21,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	public void getPolicy(String policyId, ResponseHandler<InsurancePolicy> handler);
 
+	public void getEmptyPolicy(String subLineId, String clientId, ResponseHandler<InsurancePolicy> handler);
+
 	public InsurancePolicy getPolicyHeader(String policyId);
 
 	public InsurancePolicy updatePolicyHeader(InsurancePolicy policy);
