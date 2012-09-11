@@ -145,6 +145,34 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
+	public void getEmptyPolicy(String subLineId, String clientId,
+			final ResponseHandler<InsurancePolicy> handler) {
+		this.service.getEmptyPolicy(subLineId, clientId, new BigBangAsyncCallback<InsurancePolicy>() {
+
+			@Override
+			public void onResponseSuccess(InsurancePolicy result) {
+				workspace.loadPolicy(result);
+
+				incrementDataVersion();
+				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
+					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+				requiresRefresh = false;
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the empty policy")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
 	public InsurancePolicy getPolicyHeader(String policyId) {
 		return workspace.getPolicyHeader(policyId);
 	}
