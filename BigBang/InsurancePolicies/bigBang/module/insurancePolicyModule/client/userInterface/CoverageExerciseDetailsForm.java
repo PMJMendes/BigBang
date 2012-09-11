@@ -15,13 +15,16 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 
 	public CoverageExerciseDetailsForm(String sectionName) {
 		super();
+		this.setWidth("100%");
 		exerciseDetailsSection = new HeaderFieldsSection();
+		exerciseDetailsSection.setSize("100%", "100%");
 		addSection(exerciseDetailsSection);
 
 		tableFieldsSection = new TableFieldsSection();
 		addSection(tableFieldsSection);
 
 		extraFieldsSection = new ExtraFieldsSection();
+		extraFieldsSection.setSize("100%", "100%");
 		addSection(extraFieldsSection);
 	}
 
@@ -52,6 +55,14 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 
 	public void setExtraFields(ExtraField[] fields){
 		extraFieldsSection.setValue(fields);
+	}
+
+	public void setCoveragesExtraFields(Coverage[] coverages) {
+		extraFieldsSection.setCoveragesExtraFields(coverages);
+	}
+
+	public void setExerciseDetailsVisible(boolean b) {
+		exerciseDetailsSection.setVisible(b);
 	}
 
 }

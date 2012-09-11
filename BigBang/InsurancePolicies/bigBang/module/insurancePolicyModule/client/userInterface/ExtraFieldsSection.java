@@ -4,9 +4,11 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.FieldContainer.ExtraField;
+import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
 import bigBang.library.client.userInterface.view.FormViewSection;
@@ -15,6 +17,7 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Extr
 
 	private GenericFormField[] formFields;
 	private ExtraField[] value;
+	private Coverage[] coverages;
 
 	public ExtraFieldsSection() {
 		super("Detalhes Adicionais");
@@ -44,16 +47,26 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Extr
 	@Override
 	public void setValue(ExtraField[] value, boolean fireEvents) {
 		
-		if(formFields != null){
-			for(int i = 0; i<formFields.length ; i++){
-				formFields[i].removeFromParent();
-			}
+		this.clear();
+		
+		if(coverages == null){
+			return;
 		}
 
+		Label temp = new Label();
+		int tempIndex = value[0].coverageIndex;
+		temp.setText(coverages[tempIndex].coverageName);
+		addWidget(temp, false);
 		this.value = value;
 		formFields = new GenericFormField[value.length];
 
 		for(int i = 0; i<formFields.length; i++){
+			if(tempIndex != value[i].coverageIndex){
+				temp = new Label();
+				tempIndex = value[i].coverageIndex;
+				temp.setText(coverages[tempIndex].coverageName);
+				addWidget(temp, false);
+			}
 			switch(value[i].type){
 			case BOOLEAN:
 				formFields[i] = new GenericFormField(TYPE.BOOLEAN);
@@ -74,18 +87,25 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Extr
 				break;
 			case TEXT:
 				formFields[i] = new GenericFormField(TYPE.TEXT);
-				break;
+				break; 
 			}
 
 			formFields[i].setValue(value[i].value);
 			formFields[i].setLabel(value[i].fieldName);
+			formFields[i].setUnitsLabel(value[i].unitsLabel);
+			formFields[i].setReadOnly(value[i].readOnly);
 
-			addFormField(formFields[i], true);
+			addFormField(formFields[i], (i < formFields.length - 1 && value[i+1].coverageIndex == tempIndex));
 		}
 
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
+
+	}
+
+	public void setCoveragesExtraFields(Coverage[] coverages){
+		this.coverages = coverages;
 	}
 
 }

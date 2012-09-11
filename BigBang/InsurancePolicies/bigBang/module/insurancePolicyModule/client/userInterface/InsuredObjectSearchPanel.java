@@ -117,6 +117,10 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 		createNew.setEnabled(allow);
 	}
 
+	public void setReadOnly(boolean b) {
+		createNew.setEnabled(!b);
+	}
+
 
 
 }

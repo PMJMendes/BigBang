@@ -1,9 +1,11 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 import bigBang.definitions.shared.FieldContainer.ColumnField;
 import bigBang.definitions.shared.InsurancePolicy.Coverage;
@@ -16,8 +18,10 @@ public class TableFieldsSection extends FormViewSection implements HasValue<Colu
 	
 	public TableFieldsSection() {
 		super("Coberturas");
-		addWidget(table);
-
+		SimplePanel panel = new SimplePanel();
+		panel.setWidget(table);
+		panel.getElement().getStyle().setMarginRight(20, Unit.PX);
+		addWidget(panel);
 	}
 	
 	public void setHeaders(Coverage[] coverages, ColumnHeader[] columns){

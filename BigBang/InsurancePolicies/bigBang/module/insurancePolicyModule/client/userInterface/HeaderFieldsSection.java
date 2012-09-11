@@ -80,6 +80,8 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 			
 			formFields[i].setValue(value[i].value);
 			formFields[i].setLabel(value[i].fieldName);
+			formFields[i].setUnitsLabel(value[i].unitsLabel);
+			formFields[i].setReadOnly(value[i].readOnly);
 			
 			addFormField(formFields[i], true);
 		}

@@ -1,13 +1,16 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.FieldContainer.ColumnField;
@@ -15,9 +18,8 @@ import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
 import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
-import bigBang.library.client.userInterface.view.View;
 
-public class CoverageFieldsGrid extends View implements HasValue<ColumnField[]>{
+public class CoverageFieldsGrid extends Grid implements HasValue<ColumnField[]>{
 
 
 	class Field extends GenericFormField{
@@ -46,11 +48,16 @@ public class CoverageFieldsGrid extends View implements HasValue<ColumnField[]>{
 	private ColumnField[] value;
 
 	public CoverageFieldsGrid() {
-		VerticalPanel wrapper = new VerticalPanel();
-		initWidget(wrapper);
+		super(1,1);
 		fields = new Field[0][0];
 		grid = new Grid();
-		wrapper.add(grid);
+		ScrollPanel p = new ScrollPanel();
+		p.setWidget(grid);
+		p.getElement().getStyle().setOverflowY(Overflow.VISIBLE);
+		p.getElement().getStyle().setOverflowX(Overflow.SCROLL);
+		this.setWidget(0, 0, p);
+		this.getElement().getStyle().setTableLayout(TableLayout.FIXED);
+		this.setSize("100%", "100%");
 	}
 
 	public void setHeaders(Coverage[] coverages, ColumnHeader[] headers){
@@ -99,21 +106,16 @@ public class CoverageFieldsGrid extends View implements HasValue<ColumnField[]>{
 		}
 		for(int j = 2; j<fields[0].length; j++){
 			fields[0][j] = new Field(TYPE.TEXT);
-			fields[0][j].setValue(headers[j-2].label+" ("+headers[j-2].unitsLabel+")");
+			fields[0][j].setValue(headers[j-2].label + (headers[j-2].unitsLabel == null ? "" : " ("+headers[j-2].unitsLabel+")"));
 			fields[0][j].setEditable(false);
 			fields[0][j].setTextAlignment(TextAlignment.CENTER);
-			fields[0][j].setFieldWidth("130px");
+			fields[0][j].setFieldWidth("140px");
 			grid.setWidget(0, j, fields[0][j]);
 			grid.getCellFormatter().setHorizontalAlignment(0, j, HasHorizontalAlignment.ALIGN_CENTER);
 		}
 
 	}
 
-
-	@Override
-	protected void initializeView() {
-
-	}
 
 	public void fillTable(ColumnField[] formFields) {
 		int row;
@@ -146,6 +148,7 @@ public class CoverageFieldsGrid extends View implements HasValue<ColumnField[]>{
 			fields[row][column].setValue(formFields[i].value);
 			fields[row][column].setFieldWidth("100px");
 			fields[row][column].setWidth("130px");
+			fields[row][column].setReadOnly(formFields[i].readOnly);
 			grid.setWidget(row, column, fields[row][column]);
 			grid.getCellFormatter().setHorizontalAlignment(row, column, HasHorizontalAlignment.ALIGN_CENTER);
 		}
@@ -155,7 +158,7 @@ public class CoverageFieldsGrid extends View implements HasValue<ColumnField[]>{
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<ColumnField[]> handler) {
 		return this.addHandler(handler, ValueChangeEvent.getType());
-		}
+	}
 
 	@Override
 	public ColumnField[] getValue() {
@@ -179,6 +182,12 @@ public class CoverageFieldsGrid extends View implements HasValue<ColumnField[]>{
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
+	}
+
+	@Override
+	public void fireEvent(GwtEvent<?> event) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

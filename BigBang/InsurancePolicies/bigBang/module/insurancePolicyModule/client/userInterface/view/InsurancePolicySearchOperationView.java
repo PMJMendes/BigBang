@@ -2,7 +2,6 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import java.util.Collection;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -277,9 +276,9 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		detailsForm = new CoverageExerciseDetailsForm("");
 		detailTableContainer.add(detailsForm.getNonScrollableContent());
-
 		centerWrapper.add(detailTableContainer);
 		centerWrapper.setCellHeight(detailTableContainer, "100%");
+		centerWrapper.setCellWidth(detailTableContainer, "100%");
 
 		policyNotesForm = new PolicyNotesFormSection();
 		policyNotesForm.setSize("100%", "100%");
@@ -288,6 +287,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		scrollContainer.add(centerWrapper);
 		scrollContainer.getElement().getStyle().setBackgroundColor("whiteSmoke");
+//		scrollContainer.getElement().getStyle().setOverflowX(Style.Overflow.AUTO);
 
 		toolbarAndCenterWrapper.add(scrollContainer);
 		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
@@ -509,6 +509,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void setExerciseVisible(boolean b) {
 		exerciseChooser.setVisible(b);
+		detailsForm.setExerciseDetailsVisible(b);
 	}
 
 	@Override
@@ -519,6 +520,21 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void setTableValues(	Coverage[] coverages, ColumnHeader[] columns, ColumnField[] fields){
 		detailsForm.fillTable(coverages, columns, fields);
+	}
+
+	@Override
+	public void setCoveragesExtraFields(Coverage[] coverages) {
+		detailsForm.setCoveragesExtraFields(coverages);
+	}
+
+	@Override
+	public void setReadOnly(boolean b) {
+		detailsForm.setReadOnly(b);
+		exerciseChooser.setReadOnly(b);
+		objectForm.setReadOnly(b);
+		policyForm.setReadOnly(b);
+		policyNotesForm.setReadOnly(b);
+		objectsList.setReadOnly(b);
 	}
 
 }

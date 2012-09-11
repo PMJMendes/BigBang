@@ -151,6 +151,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		void setTableValues(Coverage[] coverages, ColumnHeader[] columns,
 				ColumnField[] fields);
+
+		void setCoveragesExtraFields(Coverage[] coverages);
+
+		void setReadOnly(boolean b);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -478,40 +482,46 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	public void setParameters(HasParameters parameterHolder) {
 
 		String policyId = parameterHolder.getParameter("policyid");
-		broker.getPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
-			
-			@Override
-			public void onResponse(InsurancePolicy response) {
+		
+		if(policyId != null){
+			broker.getPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
 				
-				view.getPolicyHeaderForm().setValue(response);
-				view.getPolicyNotesForm().setValue(response.notes);
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					
+					view.getPolicyHeaderForm().setValue(response);
+					view.getPolicyNotesForm().setValue(response.notes);
 
-				if(response.exerciseData == null){
-					view.setExerciseVisible(false);
+					if(response.exerciseData == null){
+						view.setExerciseVisible(false);
+					}
+					else{
+						view.setAvailableExercises(response.exerciseData);
+						view.getExerciseForm().setValue(response.exerciseData[0]);
+						view.getExerciseSelector().setValue(response.exerciseData[0].id);
+						view.setExerciseVisible(true);
+					}
+					view.getPolicySelector().setValue(response);
+					
+					FieldContainer container = broker.getContextForPolicy(response.id, response.hasExercises ? response.exerciseData[0].id : null);
+					view.setTableValues(response.coverages, response.columns, container.columnFields);
+					view.setCoveragesExtraFields(response.coverages);
+					view.getCommonFieldsForm().setValue(container);
+					
+					view.setReadOnly(true);
+					//TODO CHILDRENPANEL
+			//TODO PERMISSIONS
+					
 				}
-				else{
-					view.setAvailableExercises(response.exerciseData);
-					view.getExerciseForm().setValue(response.exerciseData[0]);
-					view.getExerciseSelector().setValue(response.exerciseData[0].id);
-					view.setExerciseVisible(true);
+				
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+						// TODO Auto-generated method stub
+					
 				}
-				view.getPolicySelector().setValue(response);
-				
-				FieldContainer container = broker.getContextForPolicy(response.id, response.hasExercises ? response.exerciseData[0].id : null);
-				view.setTableValues(response.coverages, response.columns, container.columnFields);
-				view.getCommonFieldsForm().setValue(container);
-				
-				//TODO CHILDRENPANEL
-		//TODO PERMISSIONS
-				
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
-				
-			}
-		});	
+			});	
+		}
+		
 	}
 
 	private void transferToClient(){
