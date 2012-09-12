@@ -11,7 +11,6 @@ import bigBang.definitions.shared.FieldContainer.ExtraField;
 import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
-import bigBang.library.client.DeepCopy;
 
 public class WorkSpace {
 	private static String NEWID = "new";
@@ -43,7 +42,7 @@ public class WorkSpace {
 			this.policy = null;
 		else {
 			try {
-				this.policy = DeepCopy.copy(originalPolicy);
+				this.policy = new InsurancePolicy(originalPolicy);
 			} catch (Exception e) {
 				policy = null;
 			}
@@ -67,7 +66,7 @@ public class WorkSpace {
 			return null;
 
 		try {
-			originalPolicy = DeepCopy.copy(policy);
+			originalPolicy = new InsurancePolicy(policy);
 		} catch (Exception e) {
 			return null;
 		}
@@ -180,7 +179,7 @@ public class WorkSpace {
 		InsuredObject newObject;
 
 		try {
-			newObject = DeepCopy.copy(object);
+			newObject = new InsuredObject(object);
 			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {policy.headerFields, object.headerFields},
 					new boolean[] {true, false});
 		} catch (Exception e) {
@@ -202,7 +201,7 @@ public class WorkSpace {
 		InsuredObject newObject;
 
 		try {
-			newObject = DeepCopy.copy(policy.emptyObject);
+			newObject = new InsuredObject(policy.emptyObject);
 			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {policy.headerFields, newObject.headerFields},
 					new boolean[] {true, false});
 		} catch (Exception e) {
@@ -376,7 +375,7 @@ public class WorkSpace {
 			{
 				for ( j = 0; j < source[i].length; j++ )
 				{
-					result[start + j] = DeepCopy.copy(source[i][j]);
+					result[start + j] = new HeaderField(source[i][j]);
 					result[start + j].readOnly = readOnly[i];
 				}
 				start += source[i].length;
@@ -409,7 +408,7 @@ public class WorkSpace {
 			{
 				for ( j = 0; j < source[i].length; j++ )
 				{
-					result[start + j] = DeepCopy.copy(source[i][j]);
+					result[start + j] = new ColumnField(source[i][j]);
 					result[start + j].readOnly = readOnly[i];
 				}
 				start += source[i].length;
@@ -448,7 +447,7 @@ public class WorkSpace {
 				{
 					while ( (at[j] < source[j].length) && (source[j][at[j]].coverageIndex == currentCoverage) )
 					{
-						result[i] = DeepCopy.copy(source[j][at[j]]);
+						result[i] = new ExtraField(source[j][at[j]]);
 						result[i].readOnly = readOnly[j];
 						at[j]++;
 						i++;

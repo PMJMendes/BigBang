@@ -17,4 +17,13 @@ public class ZipCode
 	{
 		code = city = county = district = country = null;
 	}
+
+	public ZipCode(ZipCode orig)
+	{
+		this.code = orig.code;
+		this.city = orig.city;
+		this.county = orig.county;
+		this.district = orig.district;
+		this.country = orig.country;
+	}
 }

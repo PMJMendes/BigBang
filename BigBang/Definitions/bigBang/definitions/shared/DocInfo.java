@@ -9,4 +9,14 @@ public class DocInfo
 
 	public String name;
 	public String value;
+
+	public DocInfo()
+	{
+	}
+
+	public DocInfo(DocInfo orig)
+	{
+		this.name = orig.name;
+		this.value = orig.value;
+	}
 }

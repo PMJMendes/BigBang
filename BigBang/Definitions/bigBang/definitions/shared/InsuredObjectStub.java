@@ -19,4 +19,16 @@ public class InsuredObjectStub
 		extraFields = null;
 		exerciseData = null;
 	}
+
+	public InsuredObjectStub(InsuredObjectStub orig)
+	{
+		super(orig);
+
+		this.unitIdentification = orig.unitIdentification;
+		this.address = (orig.address == null ? null : new Address(orig.address));
+		this.inclusionDate = orig.inclusionDate;
+		this.exclusionDate = orig.exclusionDate;
+		this.typeId = orig.typeId;
+		this.typeText = orig.typeText;
+	}
 }

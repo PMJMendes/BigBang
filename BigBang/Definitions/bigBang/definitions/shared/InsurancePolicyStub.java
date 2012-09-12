@@ -35,4 +35,25 @@ public class InsurancePolicyStub
 		extraFields = null;
 		exerciseData = null;
 	}
+	
+	public InsurancePolicyStub(InsurancePolicyStub orig)
+	{
+		super(orig);
+
+		this.number = orig.number;
+		this.clientId = orig.clientId;
+		this.clientNumber = orig.clientNumber;
+		this.clientName = orig.clientName;
+		this.categoryId = orig.categoryId;
+		this.categoryName = orig.categoryName;
+		this.lineId = orig.lineId;
+		this.lineName = orig.lineName;
+		this.subLineId = orig.subLineId;
+		this.subLineName = orig.subLineName;
+		this.insuredObject = orig.insuredObject;
+		this.caseStudy = orig.caseStudy;
+		this.statusId = orig.statusId;
+		this.statusText = orig.statusText;
+		this.statusIcon = orig.statusIcon;
+	}
 }
