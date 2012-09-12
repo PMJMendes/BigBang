@@ -15,6 +15,7 @@ import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectio
 import bigBang.module.clientModule.client.userInterface.view.ClientSelectionView;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsurancePolicyProcessBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsuranceSubPolicyBrokerImpl;
+import bigBang.module.insurancePolicyModule.client.dataAccess.InsuredObjectDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyInsuredObjectDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateDebitNoteViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseSubPolicyViewPresenter;
@@ -402,7 +403,8 @@ public class InsurancePolicyModule implements Module {
 		return new DataBroker[]{
 				subPolicyInsuredObjectDataBrokerImpl,
 				new InsurancePolicyProcessBrokerImpl(),
-				new InsuranceSubPolicyBrokerImpl()
+				new InsuranceSubPolicyBrokerImpl(), 
+				new InsuredObjectDataBrokerImpl()
 		};
 	}
 

@@ -31,27 +31,27 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 		startDate = new DatePickerFormField("Data de início");
 		endDate = new DatePickerFormField("Data de fim");
 		newButton = new Button("Novo Exercício");
-		
+
 		exercises.setEditable(false);
-		
+
 		wrapper.add(exercises);
 		wrapper.add(startDate);
 		wrapper.add(endDate);
 		wrapper.setCellHorizontalAlignment(exercises, HasHorizontalAlignment.ALIGN_LEFT);
 		wrapper.setCellHorizontalAlignment(startDate, HasHorizontalAlignment.ALIGN_LEFT);
 		wrapper.setCellHorizontalAlignment(endDate, HasHorizontalAlignment.ALIGN_LEFT);
-		
+
 		wrapper.add(newButton);
 		wrapper.setCellHorizontalAlignment(newButton, HasHorizontalAlignment.ALIGN_RIGHT);		
 		wrapper.setCellVerticalAlignment(newButton, HasVerticalAlignment.ALIGN_MIDDLE);
 		wrapper.setCellWidth(newButton, "100%");
 		wrapper.setSize("100%", "100%");
 		newButton.getElement().getStyle().setMarginRight(5, Unit.PX);
-		
+
 		wrapper.setStyleName("bigBangExerciseChooser");
-		
+
 	}
-	
+
 	public HasValue<String> getExerciseSelector(){
 		return exercises;
 	}
@@ -68,8 +68,10 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 	public ExerciseData getValue() {
 		ExerciseData newValue = value;
 		
-		newValue.startDate = startDate.getStringValue();
-		newValue.endDate = endDate.getStringValue();
+		if(value != null){
+			newValue.startDate = startDate.getStringValue();
+			newValue.endDate = endDate.getStringValue();
+		}
 		
 		return newValue;
 	}
@@ -87,27 +89,27 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 	@Override
 	public void setValue(ExerciseData value, boolean fireEvents) {
 		this.value = value;
-		
+
 		exercises.setValue(value.id);
 		startDate.setValue(value.startDate);
 		endDate.setValue(value.endDate);
-		
+
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
 	}
-	
+
 	public void setAvailableExercises(ExerciseData[] availableExs){
-		
+
 		exercises.clearValues();			
-		
+
 		for(int i = 0; i<availableExs.length; i++){
 			exercises.addItem(availableExs[i].label, availableExs[i].id);
 		}
 		exercises.removeItem(0);
 
 	}
-	
+
 	public void addAvailableExercise(ExerciseData newExercise){
 		exercises.addItem(newExercise.label, newExercise.id);
 	}

@@ -49,7 +49,7 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Extr
 		
 		this.clear();
 		
-		if(coverages == null){
+		if(coverages == null || coverages.length == 0){
 			return;
 		}
 

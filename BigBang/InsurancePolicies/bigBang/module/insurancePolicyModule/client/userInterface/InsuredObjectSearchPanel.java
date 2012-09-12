@@ -1,6 +1,8 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 import org.gwt.mosaic.ui.client.util.ButtonHelper;
@@ -12,22 +14,28 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 
+import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
-import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SearchResult;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
+import bigBang.module.insurancePolicyModule.shared.InsuredObjectSearchParameter;
 
 public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> implements InsuredObjectDataBrokerClient{
-	
+
 	protected ToolButton createNew;
 
 	public static class Entry extends ListEntry<InsuredObjectStub>{
 
 		protected Label name;
-		
+
 		public Entry(InsuredObjectStub object){
 			super(object);
 			setHeight("30px");
@@ -41,76 +49,127 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 					name = getFormatedLabel();
 					setWidget(name);
 				}
-				
 				name.setText(value.unitIdentification);
 			}
-			
-			
 		}
 	}
 
+	protected int insuredObjectDataVersion = 0;
+	protected Map<String, InsuredObjectStub> objectsToUpdate;
+	protected Map<String, Void> objectsToRemove;
 
-	public InsuredObjectSearchPanel(SearchDataBroker<InsuredObjectStub> broker) { //TODO ESTE BROKER NAO ESTÁ CORRECTO
-		super(broker);
+	private String ownerId;
+	private int insurancePolicyDataVersion = 0;
+
+	public InsuredObjectSearchPanel() { 
+		super(((InsuredObjectDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECT)).getSearchBroker());
 
 		Resources r = GWT.create(Resources.class);
 		createNew = new ToolButton(ButtonHelper.createButtonLabel(
 				AbstractImagePrototype.create(r.listNewIcon()), "Novo",
 				ButtonLabelType.TEXT_ON_LEFT));
-		
+
 		getHeaderWidget().insert(createNew, 0);
 		createNew.getElement().getStyle().setMarginRight(5, Unit.PX);
 		createNew.getElement().getStyle().setMarginTop(5, Unit.PX);
 		getHeaderWidget().setCellHorizontalAlignment(createNew, HasHorizontalAlignment.ALIGN_RIGHT);
-		// TODO Auto-generated constructor stub
+
+		objectsToRemove = new HashMap<String, Void>();
+		objectsToUpdate = new HashMap<String, InsuredObjectStub>();
+
+		InsuredObjectDataBroker broker = (InsuredObjectDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT);
+		broker.registerClient(this);
 	}
 
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {
-		// TODO Auto-generated method stub
-
+		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)) {
+			this.insurancePolicyDataVersion  = number;
+		}
 	}
 
 	@Override
 	public int getDataVersion(String dataElementId) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECT)){
+			return this.insurancePolicyDataVersion;
+		}
+		return -1;	
 	}
 
 	@Override
 	public void removeInsuredObject(String id) {
-		// TODO Auto-generated method stub
-
+		for(ValueSelectable<InsuredObjectStub> s : this){
+			InsuredObjectStub objectStub = s.getValue();
+			if(id.equalsIgnoreCase(objectStub.id)){
+				remove(s);
+				return;
+			}
+		}
 	}
 
 	@Override
 	public void remapItemId(String newId, String Id) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public void doSearch() {
-		// TODO Auto-generated method stub
+
+		if(this.workspaceId != null){
+			this.broker.disposeSearch(this.workspaceId);
+			this.workspaceId = null;
+		}
+		this.objectsToRemove.clear();
+		this.objectsToUpdate.clear();
+
+		InsuredObjectSearchParameter parameter = new InsuredObjectSearchParameter();
+		parameter.freeText = this.textBoxFilter.getValue();
+		parameter.policyId = ownerId;
+
+		SearchParameter[] parameters = new SearchParameter[]{
+				parameter
+		};
+
+		doSearch(parameters, null);
 
 	}
 
 	@Override
 	public void onResults(Collection<InsuredObjectStub> results) {
-		// TODO Auto-generated method stub
+		for(InsuredObjectStub s : results){
+			if(!objectsToRemove.containsKey(s.id)){
+				if(objectsToUpdate.containsKey(s.id)){
+					s = objectsToUpdate.get(s.id);
+				}
+				addSearchResult(s);
+			}
+		}
 
+	}
+
+	protected Entry addSearchResult(SearchResult r) {
+		Entry entry = null;
+		if(r instanceof InsuredObjectStub){
+			entry = new Entry((InsuredObjectStub)r);
+			add(entry);
+		}
+		return entry;
 	}
 
 	@Override
 	public void addInsuredObject(InsuredObject object) {
-		// TODO Auto-generated method stub
-		
+		this.add(0, new Entry(object));
 	}
 
 	@Override
 	public void updateInsuredObject(InsuredObject object) {
-		// TODO Auto-generated method stub
-		
+		for(ValueSelectable<InsuredObjectStub> s : this){
+			InsuredObjectStub objectStub = s.getValue();
+			if(object.id.equalsIgnoreCase(objectStub.id)){
+				s.setValue(object);
+				return;
+			}
+		}
 	}
 
 	public void allowCreateInsuredObject(boolean allow) {
@@ -121,6 +180,20 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 		createNew.setEnabled(!b);
 	}
 
+	public void setOwner(String ownerId) {
+
+		if(ownerId != null){
+			this.ownerId = ownerId;
+		}
+
+		InsuredObjectSearchParameter parameter = new InsuredObjectSearchParameter();
+		parameter.policyId = ownerId;
+
+		SearchParameter[] parameters = new SearchParameter[]{parameter};
+
+		doSearch(parameters, null);
+
+	}
 
 
 }

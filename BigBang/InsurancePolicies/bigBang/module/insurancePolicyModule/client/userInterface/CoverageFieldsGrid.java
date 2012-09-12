@@ -117,7 +117,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<ColumnField[]>{
 	}
 
 
-	public void fillTable(ColumnField[] formFields) {
+	private void fillTable(ColumnField[] formFields) {
 		int row;
 		int column;
 		for(int i = 0; i<formFields.length; i++){
@@ -164,7 +164,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<ColumnField[]>{
 	public ColumnField[] getValue() {
 		ColumnField[] result = value;
 		for(int i = 0; i<result.length; i++){
-			result[i].value = fields[result[i].coverageIndex][result[i].columnIndex].getValue();
+			result[i].value = fields[result[i].coverageIndex+1][result[i].columnIndex+2].getValue();
 		}
 		return result;
 	}

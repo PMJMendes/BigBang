@@ -2,25 +2,16 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
-import bigBang.definitions.shared.FieldContainer.ColumnField;
-import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
+import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
@@ -32,18 +23,26 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExerciseDetailsForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseSelector;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyChildrenPanel;
-import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExerciseDetailsForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
-import bigBang.module.insurancePolicyModule.client.userInterface.PolicySelectButton;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSearchPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.PolicyNotesFormSection;
+import bigBang.module.insurancePolicyModule.client.userInterface.PolicySelectButton;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
+
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class InsurancePolicySearchOperationView extends View implements InsurancePolicySearchOperationViewPresenter.Display{
 
@@ -233,7 +232,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		policySelectButton = new PolicySelectButton(new InsurancePolicyStub());
 		objectsPolicyContainer.setSize("100%","100%");
 		objectsPolicyContainer.add(policySelectButton);
-		objectsList = new InsuredObjectSearchPanel(null); //TODO METER AQUI O BROKER
+		objectsList = new InsuredObjectSearchPanel(); //TODO METER AQUI O BROKER
 		objectsList.showFilterField(false);
 		objectsPolicyContainer.add(objectsList);
 		objectsPolicyContainer.setCellHeight(objectsList, "100%");
@@ -518,8 +517,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 	
 	@Override
-	public void setTableValues(	Coverage[] coverages, ColumnHeader[] columns, ColumnField[] fields){
-		detailsForm.fillTable(coverages, columns, fields);
+	public void setTableValues(	Coverage[] coverages, ColumnHeader[] columns){
+		detailsForm.fillTable(coverages, columns);
 	}
 
 	@Override
@@ -535,6 +534,33 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		policyForm.setReadOnly(b);
 		policyNotesForm.setReadOnly(b);
 		objectsList.setReadOnly(b);
+	}
+
+	@Override
+	public void setOwner(String id) {
+		objectsList.setOwner(id);
+		childrenPanel.contactsList.setOwner(id);
+		childrenPanel.documentsList.setOwner(id);
+		childrenPanel.expensesList.setOwner(id);
+		childrenPanel.historyList.setOwner(id);
+		childrenPanel.receiptsList.setOwner(id);
+		childrenPanel.subPoliciesList.setOwner(id);
+		childrenPanel.subProcessesList.setOwner(id);
+	}
+
+	@Override
+	public void showObjectForm(boolean b) {
+		objectForm.setVisible(b);
+	}
+
+	@Override
+	public void showPolicyForm(boolean b) {
+		policyForm.setVisible(b);
+	}
+
+	@Override
+	public void clearPolicySelection() {
+		policySelectButton.setSelected(false, false);
 	}
 
 }
