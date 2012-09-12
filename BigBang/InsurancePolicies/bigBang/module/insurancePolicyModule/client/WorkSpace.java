@@ -529,11 +529,12 @@ public class WorkSpace {
 		{
 			for ( j = 0; j < dest.length; j++ )
 			{
-				if ( (dest[j] != null) && !ignore[j] )
+				if ( (dest[j] != null) )
 				{
 					while ( (at[j] < dest[j].length) && (dest[j][at[j]].coverageIndex == currentCoverage) )
 					{
-						dest[j][at[j]].value = source[i].value;
+						if ( !ignore[j] )
+							dest[j][at[j]].value = source[i].value;
 						at[j]++;
 						i++;
 					}
