@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.SubPolicy.ColumnHeader;
 import bigBang.definitions.shared.SubPolicy.Coverage;
-import bigBang.definitions.shared.FieldContainer.FieldType;
 import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.definitions.shared.SubPolicy.TableSection.TableField;
 import bigBang.library.client.FieldValidator;
@@ -32,7 +32,7 @@ public class SubPolicyFormTable extends View implements HasValue<TableSection> {
 		protected FormField<?> field;
 		protected TableField tableField;
 		protected String coverageId;
-		protected FieldType type;
+		protected FieldContainer.FieldType type;
 
 		public Field(TableField tableField, ColumnHeader columnDefinition) {
 			super();
@@ -120,7 +120,7 @@ public class SubPolicyFormTable extends View implements HasValue<TableSection> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void setValue(String value, boolean fireEvents) {
-			if(this.type == FieldType.DATE){
+			if(this.type == FieldContainer.FieldType.DATE){
 				((DatePickerFormField) this.field).setValue(value);
 			}else{
 				((FormField<String>)this.field).setValue(value, fireEvents);
@@ -130,7 +130,7 @@ public class SubPolicyFormTable extends View implements HasValue<TableSection> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getValue() {
-			if(this.type == FieldType.DATE){
+			if(this.type == FieldContainer.FieldType.DATE){
 				return ((DatePickerFormField) this.field).getStringValue();
 			}else{
 				return ((FormField<String>)this.field).getValue();

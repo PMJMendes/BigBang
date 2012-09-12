@@ -52,7 +52,7 @@ public class SubPolicy
 		private static final long serialVersionUID = 1L;
 
 		public String label;
-		public InsurancePolicy.FieldType type;
+		public FieldContainer.FieldType type;
 		public String unitsLabel;
 		public String refersToId;
 	}
