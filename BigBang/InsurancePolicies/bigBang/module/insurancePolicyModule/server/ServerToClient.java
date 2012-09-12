@@ -148,12 +148,13 @@ public class ServerToClient
 			FieldContainer.HeaderField lobjHeader;
 			FieldContainer.ColumnField lobjColumn;
 			FieldContainer.ExtraField lobjExtra;
-			int i, j;
+			int i, j, l;
 
 			larrHeaders = new ArrayList<FieldContainer.HeaderField>();
 			larrColumns = new ArrayList<FieldContainer.ColumnField>();
 			larrExtras = new ArrayList<FieldContainer.ExtraField>();
 
+			l = 0;
 			for ( i = 0; i < marrCoverages.length; i++ )
 			{
 				if ( marrCoverages[i].IsHeader() )
@@ -183,18 +184,19 @@ public class ServerToClient
 						{
 							lobjExtra = new FieldContainer.ExtraField();
 							buildField(lobjExtra, marrFields[i][j]);
-							lobjExtra.coverageIndex = i;
+							lobjExtra.coverageIndex = l;
 							larrExtras.add(lobjExtra);
 						}
 						else
 						{
 							lobjColumn = new FieldContainer.ColumnField();
 							buildField(lobjColumn, marrFields[i][j]);
-							lobjColumn.coverageIndex = i;
+							lobjColumn.coverageIndex = l;
 							lobjColumn.columnIndex = marrFields[i][j].GetColumnOrder();
 							larrColumns.add(lobjColumn);
 						}
 					}
+					l++;
 				}
 			}
 
