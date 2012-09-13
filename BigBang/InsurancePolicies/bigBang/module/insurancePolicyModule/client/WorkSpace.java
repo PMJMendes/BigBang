@@ -369,7 +369,7 @@ public class WorkSpace {
 		result = new HeaderField[len];
 
 		start = 0;
-		for ( i = 0; i < len; i++ )
+		for ( i = 0; i < source.length; i++ )
 		{
 			if ( source[i] != null )
 			{
