@@ -231,7 +231,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		policySelectButton = new PolicySelectButton(new InsurancePolicyStub());
 		objectsPolicyContainer.setSize("100%","100%");
 		objectsPolicyContainer.add(policySelectButton);
-		objectsList = new InsuredObjectSearchPanel(null); //TODO METER AQUI O BROKER
+		objectsList = new InsuredObjectSearchPanel(); //TODO METER AQUI O BROKER
 		objectsList.showFilterField(false);
 		objectsPolicyContainer.add(objectsList);
 		objectsPolicyContainer.setCellHeight(objectsList, "100%");
@@ -538,7 +538,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void setOwner(String id) {
-//		objectsList.setOwner(id);
+		objectsList.setOwner(id);
 		childrenPanel.contactsList.setOwner(id);
 		childrenPanel.documentsList.setOwner(id);
 		childrenPanel.expensesList.setOwner(id);
