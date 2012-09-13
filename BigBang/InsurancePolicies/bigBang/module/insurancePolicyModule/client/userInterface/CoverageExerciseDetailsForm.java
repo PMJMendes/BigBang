@@ -1,8 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import bigBang.definitions.shared.FieldContainer;
-import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.library.client.userInterface.view.FormView;
 
 public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
@@ -47,11 +46,15 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		exerciseDetailsSection.setHeaderText(string);
 	}
 
-	public void fillTable(Coverage[] coverages, ColumnHeader[] columns){
+	public void fillTable(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns){
 		tableFieldsSection.setHeaders(coverages, columns);
 	}
 
-	public void setCoveragesExtraFields(Coverage[] coverages) {
+	public void setExtraFields(FieldContainer.ExtraField[] fields){
+		extraFieldsSection.setValue(fields);
+	}
+
+	public void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages) {
 		extraFieldsSection.setCoveragesExtraFields(coverages);
 	}
 
