@@ -7,17 +7,17 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.FieldContainer.ExtraField;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
+import bigBang.definitions.shared.FieldContainer;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
-public class ExtraFieldsSection extends FormViewSection implements HasValue<ExtraField[]>{
+public class ExtraFieldsSection extends FormViewSection implements HasValue<FieldContainer.ExtraField[]>{
 
 	private GenericFormField[] formFields;
-	private ExtraField[] value;
-	private Coverage[] coverages;
+	private FieldContainer.ExtraField[] value;
+	private StructuredFieldContainer.Coverage[] coverages;
 
 	public ExtraFieldsSection() {
 		super("Detalhes Adicionais");
@@ -25,13 +25,13 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Extr
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<ExtraField[]> handler) {
+			ValueChangeHandler<FieldContainer.ExtraField[]> handler) {
 		return this.addHandler(handler, ValueChangeEvent.getType());
 	}
 
 	@Override
-	public ExtraField[] getValue() {
-		ExtraField[] fields = value;
+	public FieldContainer.ExtraField[] getValue() {
+		FieldContainer.ExtraField[] fields = value;
 
 		for(int i = 0; i<fields.length; i++){
 			fields[i].value = formFields[i].getValue();
@@ -40,12 +40,12 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Extr
 		return fields;	}
 
 	@Override
-	public void setValue(ExtraField[] value) {
+	public void setValue(FieldContainer.ExtraField[] value) {
 		setValue(value, true);		
 	}
 
 	@Override
-	public void setValue(ExtraField[] value, boolean fireEvents) {
+	public void setValue(FieldContainer.ExtraField[] value, boolean fireEvents) {
 		
 		this.clear();
 		
@@ -104,7 +104,7 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Extr
 
 	}
 
-	public void setCoveragesExtraFields(Coverage[] coverages){
+	public void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages){
 		this.coverages = coverages;
 	}
 
