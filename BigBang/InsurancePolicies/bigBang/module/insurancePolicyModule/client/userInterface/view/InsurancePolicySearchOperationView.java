@@ -10,12 +10,11 @@ import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -232,7 +231,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		policySelectButton = new PolicySelectButton(new InsurancePolicyStub());
 		objectsPolicyContainer.setSize("100%","100%");
 		objectsPolicyContainer.add(policySelectButton);
-		objectsList = new InsuredObjectSearchPanel(); //TODO METER AQUI O BROKER
+		objectsList = new InsuredObjectSearchPanel(null); //TODO METER AQUI O BROKER
 		objectsList.showFilterField(false);
 		objectsPolicyContainer.add(objectsList);
 		objectsPolicyContainer.setCellHeight(objectsList, "100%");
@@ -517,12 +516,13 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 	
 	@Override
-	public void setTableValues(	Coverage[] coverages, ColumnHeader[] columns){
+	public void setTableValues(	StructuredFieldContainer.Coverage[] coverages,
+			StructuredFieldContainer.ColumnHeader[] columns){
 		detailsForm.fillTable(coverages, columns);
 	}
 
 	@Override
-	public void setCoveragesExtraFields(Coverage[] coverages) {
+	public void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages) {
 		detailsForm.setCoveragesExtraFields(coverages);
 	}
 
@@ -538,7 +538,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void setOwner(String id) {
-		objectsList.setOwner(id);
+//		objectsList.setOwner(id);
 		childrenPanel.contactsList.setOwner(id);
 		childrenPanel.documentsList.setOwner(id);
 		childrenPanel.expensesList.setOwner(id);

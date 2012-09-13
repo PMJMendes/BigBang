@@ -1,5 +1,11 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.FieldContainer;
+import bigBang.definitions.shared.StructuredFieldContainer;
+import bigBang.library.client.userInterface.GenericFormField;
+import bigBang.library.client.userInterface.GenericFormField.TYPE;
+
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -12,14 +18,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
-import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.FieldContainer.ColumnField;
-import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
-import bigBang.library.client.userInterface.GenericFormField;
-import bigBang.library.client.userInterface.GenericFormField.TYPE;
-
-public class CoverageFieldsGrid extends Grid implements HasValue<ColumnField[]>{
+public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.ColumnField[]>{
 
 
 	class Field extends GenericFormField{
@@ -45,7 +44,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<ColumnField[]>{
 
 	protected Field[][] fields;
 	protected Grid grid;
-	private ColumnField[] value;
+	private FieldContainer.ColumnField[] value;
 
 	public CoverageFieldsGrid() {
 		super(1,1);
@@ -60,7 +59,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<ColumnField[]>{
 		this.setSize("100%", "100%");
 	}
 
-	public void setHeaders(Coverage[] coverages, ColumnHeader[] headers){
+	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] headers){
 
 		fields = new Field[coverages.length+1][headers.length+2];
 
@@ -117,7 +116,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<ColumnField[]>{
 	}
 
 
-	private void fillTable(ColumnField[] formFields) {
+	public void fillTable(FieldContainer.ColumnField[] formFields) {
 		int row;
 		int column;
 		for(int i = 0; i<formFields.length; i++){
@@ -156,13 +155,13 @@ public class CoverageFieldsGrid extends Grid implements HasValue<ColumnField[]>{
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<ColumnField[]> handler) {
+			ValueChangeHandler<FieldContainer.ColumnField[]> handler) {
 		return this.addHandler(handler, ValueChangeEvent.getType());
 	}
 
 	@Override
-	public ColumnField[] getValue() {
-		ColumnField[] result = value;
+	public FieldContainer.ColumnField[] getValue() {
+		FieldContainer.ColumnField[] result = value;
 		for(int i = 0; i<result.length; i++){
 			result[i].value = fields[result[i].coverageIndex+1][result[i].columnIndex+2].getValue();
 		}
@@ -170,12 +169,12 @@ public class CoverageFieldsGrid extends Grid implements HasValue<ColumnField[]>{
 	}
 
 	@Override
-	public void setValue(ColumnField[] value) {
+	public void setValue(FieldContainer.ColumnField[] value) {
 		setValue(value, true);
 	}
 
 	@Override
-	public void setValue(ColumnField[] value, boolean fireEvents) {
+	public void setValue(FieldContainer.ColumnField[] value, boolean fireEvents) {
 		this.value = value;
 		fillTable(value);
 

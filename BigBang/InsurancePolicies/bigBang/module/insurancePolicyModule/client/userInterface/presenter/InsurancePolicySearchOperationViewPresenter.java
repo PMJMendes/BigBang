@@ -7,19 +7,18 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangProcess;
-import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
+import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -46,8 +45,6 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
-
-
 
 public class InsurancePolicySearchOperationViewPresenter implements ViewPresenter{
 
@@ -97,7 +94,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void allowDeleteInsuredObject(boolean allow);
 		HasEditableValue<FieldContainer> getCommonFieldsForm();
 
-		HasValue<ExerciseData> getExerciseForm();
+		HasValue<ComplexFieldContainer.ExerciseData> getExerciseForm();
 		HasValue<String> getExerciseSelector();
 		void allowCreateNewExercise(boolean allow);
 
@@ -142,13 +139,15 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		Widget asWidget();
 
-		void setAvailableExercises(ExerciseData[] exerciseData);
+		void setAvailableExercises(ComplexFieldContainer.ExerciseData[] exerciseData);
 
 		HasValue<InsurancePolicyStub> getPolicySelector();
 
 		void setExerciseVisible(boolean b);
 
-		void setCoveragesExtraFields(Coverage[] coverages);
+		void setTableValues(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns);
+
+		void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages);
 
 		void setReadOnly(boolean b);
 
@@ -159,8 +158,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void showPolicyForm(boolean b);
 
 		void clearPolicySelection();
-
-		void setTableValues(Coverage[] coverages, ColumnHeader[] columns);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -471,7 +468,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	}
 	
 	private String getCurrentExerciseId() {
-		ExerciseData ex = view.getExerciseForm().getValue();
+		ComplexFieldContainer.ExerciseData ex = view.getExerciseForm().getValue();
 		return  ex != null ? ex.id : null;
 	}
 	
