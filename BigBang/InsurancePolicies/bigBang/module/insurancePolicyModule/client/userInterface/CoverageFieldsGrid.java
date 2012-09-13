@@ -44,6 +44,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 	protected Field[][] fields;
 	protected Grid grid;
 	private FieldContainer.ColumnField[] value;
+	private boolean readOnly;
 
 	public CoverageFieldsGrid() {
 		super(1,1);
@@ -90,7 +91,8 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
-					setRowEnabled(event.getSource(), event.getValue().equalsIgnoreCase("1"));
+
+					setEnabledRows();
 				}
 			});
 			fields[i][0].setEditable(coverages[i-1].mandatory ? false : true);
@@ -121,17 +123,19 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 	}
 
 
-	protected void setRowEnabled(Object source, boolean enabled) {
+	protected void setEnabledRows() {
 
 		for(int i = 1; i<fields.length; i++){
-			if(fields[i][0].equals(source)){
-				for(int j = 2; j<fields[0].length; j++){
-					if(fields[i][j] != null){
+			for(int j = 2; j<fields[0].length; j++){
+				if(fields[i][j] != null){
+					if(fields[i][0].getValue().equalsIgnoreCase("0")){
 						fields[i][j].clear();
-						fields[i][j].setEditable(enabled);
+						fields[i][j].setEditable(false);
+					}else{
+						fields[i][j].setEditable(true);
+						fields[i][j].setReadOnly(readOnly);
 					}
 				}
-				return;
 			}
 		}
 
@@ -206,6 +210,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 
 	public void setReadOnly(boolean readOnly) {
 
+		this.readOnly = readOnly;
 		FieldContainer.ColumnField[] result = value;
 		if(result == null){
 			return;
@@ -217,6 +222,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 			}
 		}
 		setFirstColumnReadOnly(readOnly);
+		setEnabledRows();
 	}
 
 	private void setFirstColumnReadOnly(boolean readOnly) {

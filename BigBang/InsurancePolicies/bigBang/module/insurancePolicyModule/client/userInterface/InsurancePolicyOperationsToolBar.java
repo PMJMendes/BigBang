@@ -330,5 +330,4 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public abstract void onTransferToClient();
 
 
-
 }

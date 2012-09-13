@@ -5,7 +5,6 @@ import java.util.Collection;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
-import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
@@ -28,6 +27,8 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.module.insurancePolicyModule.client.SubPolicyWorkSpace;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyObjectService;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyObjectServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
@@ -39,8 +40,8 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy>
 implements InsuranceSubPolicyBroker {
 
 	protected SubPolicyServiceAsync service;
+	protected InsurancePolicyServiceAsync policyService;
 	protected SearchDataBroker<SubPolicyStub> searchBroker;
-	protected InsurancePolicyBroker policyBroker = (InsurancePolicyBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 	protected SubPolicyObjectServiceAsync insuredObjectService;
 	protected InsuredObjectDataBroker insuredObjectsBroker;
 	protected SubPolicyWorkSpace workspace;
@@ -52,6 +53,7 @@ implements InsuranceSubPolicyBroker {
 	public InsuranceSubPolicyBrokerImpl(SubPolicyServiceAsync service, SubPolicyObjectServiceAsync insuredObjectService) {
 		this.service = service;
 		this.insuredObjectService = insuredObjectService;
+		policyService = InsurancePolicyService.Util.getInstance();
 		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY;
 		this.searchBroker = new InsuranceSubPolicySearchDataBroker();
 		this.workspace = new SubPolicyWorkSpace();
@@ -180,24 +182,26 @@ implements InsuranceSubPolicyBroker {
 
 		if(subPolicy != null) {
 			if ( subPolicy.id == null) {
-				policyBroker.createSubPolicy(subPolicy, new ResponseHandler<SubPolicy>() {
-
+				policyService.createSubPolicy(subPolicy, new BigBangAsyncCallback<SubPolicy>() {
+					
 					@Override
-					public void onResponse(SubPolicy response) {
-						workspace.loadSubPolicy(response);
+					public void onResponseSuccess(SubPolicy result) {
+						workspace.loadSubPolicy(result);
 
 						incrementDataVersion();
 						for(DataBrokerClient<SubPolicy> bc : getClients()) {
-							((InsuranceSubPolicyDataBrokerClient) bc).addInsuranceSubPolicy(response);
+							((InsuranceSubPolicyDataBrokerClient) bc).addInsuranceSubPolicy(result);
 							((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
 						}
-						handler.onResponse(response);
+						handler.onResponse(result);
 					}
-
+					
 					@Override
-					public void onError(Collection<ResponseError> errors) {
-						handler.onError(errors);
+					public void onResponseFailure(Throwable caught) {
+						super.onResponseFailure(caught);
+						handler.onError(new String[]{"Could not create subpolicy"});
 					}
+				
 				});
 			} else {
 				this.service.editSubPolicy(subPolicy, new BigBangAsyncCallback<SubPolicy>() {

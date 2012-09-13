@@ -231,7 +231,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		policySelectButton = new PolicySelectButton(new InsurancePolicyStub());
 		objectsPolicyContainer.setSize("100%","100%");
 		objectsPolicyContainer.add(policySelectButton);
-		objectsList = new InsuredObjectSearchPanel(); //TODO METER AQUI O BROKER
+		objectsList = new InsuredObjectSearchPanel();
 		objectsList.showFilterField(false);
 		objectsPolicyContainer.add(objectsList);
 		objectsPolicyContainer.setCellHeight(objectsList, "100%");
@@ -243,7 +243,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		formPanel.add(policyForm.getNonScrollableContent());
 		formPanel.add(objectForm.getNonScrollableContent());
 
-		//policyForm.getNonScrollableContent().setVisible(false); //TODO REMOVE THIS
 		objectForm.getNonScrollableContent().setVisible(false);
 
 		formPanel.setCellWidth(policyForm, "100%");
@@ -561,6 +560,17 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void clearPolicySelection() {
 		policySelectButton.setSelected(false, false);
+	}
+
+	@Override
+	public void setToolbarEditMode(boolean b) {
+		toolbar.setSaveModeEnabled(b);
+		toolbar.lockNonSaveOptions(b);
+	}
+
+	@Override
+	public void lockToolbar() {
+		toolbar.lockAll();
 	}
 
 }

@@ -158,6 +158,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void showPolicyForm(boolean b);
 
 		void clearPolicySelection();
+
+		void setToolbarEditMode(boolean b);
+
+		void lockToolbar();
 	}
 
 	private InsurancePolicyBroker broker;
@@ -168,7 +172,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	private boolean isEditModeEnabled;
 
 	public InsurancePolicySearchOperationViewPresenter(Display view){
-		this.broker = ((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY));
+		this.broker = (InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		setView((UIObject) view);
 	}
 
@@ -474,7 +478,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					getCurrentExerciseId(),
 					view.getCommonFieldsForm().getInfo());
 		}
-
 	}
 
 
@@ -490,14 +493,23 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void showHistory(HistoryItemStub selectedValue) {
-		// TODO Auto-generated method stub
-
+		saveInternally();
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.pushIntoStackParameter("display", "policyhistory"); //TODO VERIFICAR SE ISTO ESTA BEM!
+		navItem.setParameter("historyownerid", policyId);
+		navItem.setParameter("historyItemId", selectedValue.id);
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 
 	protected void showReceipt(ReceiptStub selectedValue) {
-		// TODO Auto-generated method stub
-
+		saveInternally();// FAZ-se ISTO?
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("section", "receipt");
+		navItem.setStackParameter("display");
+		navItem.pushIntoStackParameter("display", "search"); //TODO VERIFICAR SE ISTO ESTA BEM!
+		navItem.setParameter("receiptid", selectedValue.id);
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 
@@ -508,14 +520,24 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void showDocument(Document selectedValue) {
-		// TODO Auto-generated method stub
-
+		saveInternally();
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "documentmanagement");
+		navItem.setParameter("ownerid", selectedValue.ownerId);
+		navItem.setParameter("documentid", selectedValue.id);
+		navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.INSURANCE_POLICY);
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 
 	protected void showContact(Contact selectedValue) {
-		// TODO Auto-generated method stub
-
+		saveInternally();
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "contactmanagement");
+		navItem.setParameter("ownerid", selectedValue.ownerId);
+		navItem.setParameter("contactid", selectedValue.id);
+		navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.INSURANCE_POLICY);
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 
@@ -527,7 +549,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	protected void onVoidPolicy() {
 		// TODO Auto-generated method stub
-
 	}
 
 
@@ -544,19 +565,45 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void onDelete() {
-		// TODO Auto-generated method stub
-
+		broker.removePolicy(policyId, new ResponseHandler<String>() {
+			
+			@Override
+			public void onResponse(String response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Apólice eliminada com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.removeParameter(policyId);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a apólice"), TYPE.ALERT_NOTIFICATION));					
+			}
+		});
 	}
 
 
 	protected void onEdit() {
 		view.setReadOnly(false);
 		isEditModeEnabled = true;
+		view.setToolbarEditMode(true);
 	}
 
 
 	protected void onSave() {
-		// TODO Auto-generated method stub
+		saveInternally();
+		broker.persistPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
+			
+			@Override
+			public void onResponse(InsurancePolicy response) {
+				onSavePolicySuccess(response.id);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar a apólice"), TYPE.ALERT_NOTIFICATION));					
+			}
+		});
 		isEditModeEnabled = false;
 	}
 
@@ -615,6 +662,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 					view.setOwner(response.id);
 					view.getPolicyNotesForm().setValue(response.notes);
+					view.setToolbarEditMode(false);
 
 					if(response.exerciseData == null){
 						view.setExerciseVisible(false);
@@ -633,27 +681,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 					view.setReadOnly(true);					
 					//PERMISSIONS
-					view.allowCreateHealthExpense(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_HEALTH_EXPENSE));
-					view.allowCreateInfoManagementProcess(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INFO_MANAGEMENT_PROCESS));
-					view.allowCreateInsuredObjectFromClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INSURED_OBJECT_FROM_CLIENT));
-					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY));
-					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.DELETE_POLICY));
-					view.allowCreateReceipt(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT));
-					view.allowIncludeInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT));
-					view.allowValidatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VALIDATE_POLICY));
-					view.allowVoidPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY));
-					view.allowTransferBrokerage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_BROKERAGE));
-					view.allowCreateSubstitutePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUBSTITUTE_POLICY));
-					view.allowRequestClientInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST));
-					view.allowRequestAgencyInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST));
-					view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER));
-					view.allowExecuteDetailedCalculations(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS));
-					view.allowCreateSubPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY));
-					view.allowIssueDebitNote(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_DEBIT_NOTE));
-					view.allowCreateNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_NEGOTIATION));
-					view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
-					view.allowTransferToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT));
-
+					setPermissions(response);
+					
 					fillPolicy();
 				}
 
@@ -662,6 +691,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice"), TYPE.ALERT_NOTIFICATION));
 				}
 			});	
+		}
+		else{
+			view.lockToolbar();
+			view.setReadOnly(true);
 		}
 
 	}
@@ -767,6 +800,31 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		item.pushIntoStackParameter("display", "clientinforequest");
 		item.setParameter("ownerid", policyId);
 		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	private void setPermissions(InsurancePolicy response){
+		
+		view.allowCreateHealthExpense(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_HEALTH_EXPENSE));
+		view.allowCreateInfoManagementProcess(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INFO_MANAGEMENT_PROCESS));
+		view.allowCreateInsuredObjectFromClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INSURED_OBJECT_FROM_CLIENT));
+		view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY));
+		view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.DELETE_POLICY));
+		view.allowCreateReceipt(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT));
+		view.allowIncludeInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT));
+		view.allowValidatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VALIDATE_POLICY));
+		view.allowVoidPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY));
+		view.allowTransferBrokerage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_BROKERAGE));
+		view.allowCreateSubstitutePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUBSTITUTE_POLICY));
+		view.allowRequestClientInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST));
+		view.allowRequestAgencyInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST));
+		view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER));
+		view.allowExecuteDetailedCalculations(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS));
+		view.allowCreateSubPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY));
+		view.allowIssueDebitNote(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_DEBIT_NOTE));
+		view.allowCreateNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_NEGOTIATION));
+		view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
+		view.allowTransferToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT));
+	
 	}
 
 }

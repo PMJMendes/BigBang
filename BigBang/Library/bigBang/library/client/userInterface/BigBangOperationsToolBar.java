@@ -256,6 +256,14 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	public void showConfirmOnCancel(boolean confirm) {
 		this.confirmOnCancel = confirm;
 	}
+	
+	public void lockNonSaveOptions(boolean b) {
+		adminMenuItem.setEnabled(b);
+		createMenuItem.setEnabled(b);
+		dataMenuItem.setEnabled(b);
+		executeMenuItem.setEnabled(b);
+		requestMenuItem.setEnabled(b);
+	}
 
 	/**
 	 * Invoked when the edit button is pressed by the user.
@@ -271,5 +279,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	 * Invoked when the cancel button is pressed by the user
 	 */
 	public abstract void onCancelRequest();
+	
+	
 
 }
