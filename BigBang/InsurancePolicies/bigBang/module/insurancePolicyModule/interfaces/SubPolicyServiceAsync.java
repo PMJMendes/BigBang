@@ -1,37 +1,23 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
-import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
-import bigBang.definitions.shared.Remap;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.interfaces.DependentItemSubServiceAsync;
+import bigBang.library.interfaces.ExactItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SubPolicyServiceAsync
-	extends SearchServiceAsync, DependentItemSubServiceAsync
+	extends SearchServiceAsync, ExactItemSubServiceAsync, DependentItemSubServiceAsync
 {
+	void getEmptySubPolicy(String policyId, AsyncCallback<SubPolicy> callback);
 	void getSubPolicy(String subPolicyId, AsyncCallback<SubPolicy> callback);
-	void getPage(String subPolicyId, String objectId, String exerciseId, AsyncCallback<SubPolicy.TableSection> callback);
-	void openSubPolicyScratchPad(String subPolicyId, AsyncCallback<Remap[]> callback);
-	void initSubPolicyInPad(SubPolicy subPolicy, AsyncCallback<SubPolicy> callback);
-	void getSubPolicyInPad(String subPolicyId, AsyncCallback<SubPolicy> callback);
-	void updateHeader(SubPolicy policy, AsyncCallback<SubPolicy> callback);
-	void getPageForEdit(String subPolicyId, String objectId, String exerciseId, AsyncCallback<SubPolicy.TableSection> callback);
-	void savePage(SubPolicy.TableSection data, AsyncCallback<SubPolicy.TableSection> callback);
-	void getObjectInPad(String objectId, AsyncCallback<InsuredObject> callback);
-	void createObjectInPad(String subPolicyId, AsyncCallback<InsuredObject> callback);
-	void createObjectFromClientInPad(String subPolicyId, AsyncCallback<InsuredObject> callback);
-	void updateObjectInPad(InsuredObject data, AsyncCallback<InsuredObject> callback);
-	void deleteObjectInPad(String objectId, AsyncCallback<Void> callback);
-	void getExerciseInPad(String exerciseId, AsyncCallback<Exercise> callback);
-	void commitPad(String subPolicyId, AsyncCallback<Remap[]> callback);
-	void discardPad(String subPolicyId, AsyncCallback<Remap[]> callback);
+	void editSubPolicy(SubPolicy subPolicy, AsyncCallback<SubPolicy> callback);
 	void performCalculations(String subPolicyId, AsyncCallback<SubPolicy> callback);
 	void validateSubPolicy(String subPolicyId, AsyncCallback<Void> callback);
 	void includeObject(String subPolicyId, InsuredObject object, AsyncCallback<InsuredObject> callback);

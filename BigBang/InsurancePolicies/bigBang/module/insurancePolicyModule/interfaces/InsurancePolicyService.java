@@ -11,6 +11,7 @@ import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.interfaces.ExactItemSubService;
 import bigBang.library.interfaces.SearchService;
@@ -60,6 +61,7 @@ public interface InsurancePolicyService
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
+	public SubPolicy createSubPolicy(SubPolicy subPolicy) throws SessionExpiredException, BigBangException;
 	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
 	public Expense createExpense(Expense expense) throws SessionExpiredException, BigBangException;
 	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;

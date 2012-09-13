@@ -33,7 +33,7 @@ public class PolicyObjectServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return new ServerToClient().getObject(UUID.fromString(objectId));
+		return new ServerToClient().getPolicyObject(UUID.fromString(objectId));
 	}
 
 	protected UUID getObjectID()

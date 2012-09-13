@@ -10,6 +10,7 @@ import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.interfaces.DependentItemSubServiceAsync;
 import bigBang.library.interfaces.ExactItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
@@ -32,6 +33,7 @@ public interface InsurancePolicyServiceAsync
 	void createDebitNote(String policyId, DebitNote note, AsyncCallback<Void> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
+	void createSubPolicy(SubPolicy subPolicy, AsyncCallback<SubPolicy> callback);
 	void createReceipt(String policyId, Receipt receipt, AsyncCallback<Receipt> callback);
 	void createExpense(Expense expense, AsyncCallback<Expense> callback);
 	void createNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);

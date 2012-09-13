@@ -1,18 +1,16 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
 import bigBang.definitions.shared.BigBangPolicyValidationException;
-import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
-import bigBang.definitions.shared.Remap;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.interfaces.DependentItemSubService;
+import bigBang.library.interfaces.ExactItemSubService;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationException;
 
@@ -21,7 +19,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("SubPolicyService")
 public interface SubPolicyService
-	extends SearchService, DependentItemSubService
+	extends SearchService, ExactItemSubService, DependentItemSubService
 {
 
 	/**
@@ -37,34 +35,11 @@ public interface SubPolicyService
 		}
 	}
 
+	public SubPolicy getEmptySubPolicy(String policyId) throws SessionExpiredException, BigBangException;
+
 	public SubPolicy getSubPolicy(String subPolicyId) throws SessionExpiredException, BigBangException;
-	public SubPolicy.TableSection getPage(String subPolicyId, String objectId, String exerciseId)
-			throws SessionExpiredException, BigBangException;
 
-	public Remap[] openSubPolicyScratchPad(String subPolicyId) throws SessionExpiredException, BigBangException;
-	public SubPolicy initSubPolicyInPad(SubPolicy subPolicy)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public SubPolicy getSubPolicyInPad(String subPolicyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public SubPolicy updateHeader(SubPolicy subPolicy)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-
-	public SubPolicy.TableSection getPageForEdit(String subPolicyId, String objectId, String exerciseId)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public SubPolicy.TableSection savePage(SubPolicy.TableSection data)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-
-	public InsuredObject getObjectInPad(String objectId)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public InsuredObject createObjectInPad(String subPolicyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public InsuredObject createObjectFromClientInPad(String subPolicyId) throws SessionExpiredException, BigBangException;
-	public InsuredObject updateObjectInPad(InsuredObject data)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public void deleteObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-
-	public Exercise getExerciseInPad(String exerciseId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-
-	public Remap[] commitPad(String subPolicyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public Remap[] discardPad(String subPolicyId) throws SessionExpiredException, BigBangException;
+	public SubPolicy editSubPolicy(SubPolicy subPolicy) throws  SessionExpiredException, BigBangException;
 
 	public SubPolicy performCalculations(String subPolicyId) throws SessionExpiredException, BigBangException,
 			BigBangPolicyCalculationException;

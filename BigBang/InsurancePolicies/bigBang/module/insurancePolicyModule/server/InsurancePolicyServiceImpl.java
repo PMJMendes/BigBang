@@ -18,7 +18,6 @@ import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
-import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -31,8 +30,8 @@ import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.TipifiedListItem;
-import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
@@ -57,12 +56,9 @@ import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
-import com.premiumminds.BigBang.Jewel.Objects.Category;
-import com.premiumminds.BigBang.Jewel.Objects.Client;
-import com.premiumminds.BigBang.Jewel.Objects.Line;
+import com.premiumminds.BigBang.Jewel.Data.SubPolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
-import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateDebitNote;
@@ -70,6 +66,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateExpense;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateSubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData;
@@ -83,23 +80,6 @@ public class InsurancePolicyServiceImpl
 	implements InsurancePolicyService
 {
 	private static final long serialVersionUID = 1L;
-
-	public static FieldContainer.FieldType sGetFieldTypeByID(UUID pidFieldType)
-	{
-		if ( Constants.FieldID_Boolean.equals(pidFieldType) )
-			return FieldContainer.FieldType.BOOLEAN;
-		if ( Constants.FieldID_Date.equals(pidFieldType) )
-			return FieldContainer.FieldType.DATE;
-		if ( Constants.FieldID_List.equals(pidFieldType) )
-			return FieldContainer.FieldType.LIST;
-		if ( Constants.FieldID_Number.equals(pidFieldType) )
-			return FieldContainer.FieldType.NUMERIC;
-		if ( Constants.FieldID_Reference.equals(pidFieldType) )
-			return FieldContainer.FieldType.REFERENCE;
-		if ( Constants.FieldID_Text.equals(pidFieldType) )
-			return FieldContainer.FieldType.TEXT;
-		return null;
-	}
 
 	public SearchResult[] getExactResults(String label)
 		throws SessionExpiredException, BigBangException
@@ -117,11 +97,6 @@ public class InsurancePolicyServiceImpl
         Policy lobjPolicy;
 		IProcess lobjProc;
 		IStep lobjStep;
-		Client lobjClient;
-		SubLine lobjSubLine;
-		Line lobjLine;
-		Category lobjCategory;
-		ObjectBase lobjStatus;
 		InsurancePolicyStub lobjStub;
 
 		if ( Engine.getCurrentUser() == null )
@@ -163,47 +138,8 @@ public class InsurancePolicyServiceImpl
     					continue;
     			}
 
-    			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
-    			lobjSubLine = lobjPolicy.GetSubLine();
-    			lobjLine = lobjSubLine.getLine();
-    			lobjCategory = lobjLine.getCategory();
-    			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
-    					(UUID)lobjPolicy.getAt(13));
-
             	lobjStub = new InsurancePolicyStub();
-
-            	lobjStub.id = lobjPolicy.getKey().toString();
-            	lobjStub.processId = lobjProc.getKey().toString();
-            	lobjStub.number = (String)lobjPolicy.getAt(0);
-            	lobjStub.clientId = lobjClient.getKey().toString();
-            	lobjStub.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
-            	lobjStub.clientName = lobjClient.getLabel();
-            	lobjStub.categoryId = lobjCategory.getKey().toString();
-            	lobjStub.categoryName = lobjCategory.getLabel();
-            	lobjStub.lineId = lobjLine.getKey().toString();
-            	lobjStub.lineName = lobjLine.getLabel();
-            	lobjStub.subLineId = lobjSubLine.getKey().toString();
-            	lobjStub.subLineName = lobjSubLine.getLabel();
-        		lobjStub.insuredObject = lobjPolicy.GetObjectFootprint();
-            	lobjStub.caseStudy = (Boolean)lobjPolicy.getAt(12);
-            	lobjStub.statusId = lobjStatus.getKey().toString();
-            	lobjStub.statusText = lobjStatus.getLabel();
-        		switch ( (Integer)lobjStatus.getAt(1) )
-        		{
-        		case 0:
-        			lobjStub.statusIcon = InsurancePolicyStub.PolicyStatus.PROVISIONAL;
-        			break;
-
-        		case 1:
-        			lobjStub.statusIcon = InsurancePolicyStub.PolicyStatus.VALID;
-        			break;
-
-        		case 2:
-        			lobjStub.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
-        			break;
-        		}
-
-    			lobjStub.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
+            	ServerToClient.buildPolicyStub(lobjStub, lobjPolicy);
 
             	larrResult.add(lobjStub);
             }
@@ -319,7 +255,7 @@ public class InsurancePolicyServiceImpl
 		if ( !lobjPolicy.GetSubLine().getKey().equals(UUID.fromString(policy.subLineId)) )
 			throw new BigBangException("Erro: Não pode alterar a modalidade da apólice.");
 
-		lobjData = new ClientToServer().getDataForEdit(lobjPolicy, policy);
+		lobjData = new ClientToServer().getPDataForEdit(lobjPolicy, policy);
 
 		try
 		{
@@ -557,6 +493,45 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return transfer;
+	}
+
+	public SubPolicy createSubPolicy(SubPolicy subPolicy)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		SubPolicyData lobjData;
+		CreateSubPolicy lopCSP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(subPolicy.mainPolicyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjData = new ClientToServer().getSPDataForCreate(subPolicy);
+
+		try
+		{
+			lopCSP = new CreateSubPolicy(lobjPolicy.GetProcessID());
+			lopCSP.mobjData = lobjData;
+
+			lopCSP.mobjContactOps = null;
+			lopCSP.mobjDocOps = null;
+
+			lopCSP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return new ServerToClient().getSubPolicy(lopCSP.mobjData.mid);
 	}
 
 	public Receipt createReceipt(String policyId, Receipt receipt)
