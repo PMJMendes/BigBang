@@ -50,16 +50,25 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		tableFieldsSection.setHeaders(coverages, columns);
 	}
 
-	public void setExtraFields(FieldContainer.ExtraField[] fields){
-		extraFieldsSection.setValue(fields);
-	}
-
 	public void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages) {
 		extraFieldsSection.setCoveragesExtraFields(coverages);
 	}
 
 	public void setExerciseDetailsVisible(boolean b) {
 		exerciseDetailsSection.setVisible(b);
+	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		if(exerciseDetailsSection != null){
+			exerciseDetailsSection.setReadOnly(readOnly);
+		}
+		if(extraFieldsSection != null){
+			extraFieldsSection.setReadOnly(readOnly);
+		}
+		if(tableFieldsSection != null){
+			tableFieldsSection.setReadOnly(readOnly);
+		}
 	}
 
 }

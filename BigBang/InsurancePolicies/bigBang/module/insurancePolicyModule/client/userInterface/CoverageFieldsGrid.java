@@ -10,7 +10,6 @@ import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -87,8 +86,14 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 			fields[i][0] = new Field(TYPE.BOOLEAN);
 			fields[i][0].id = coverages[i-1].coverageId;
 			fields[i][0].setValue(coverages[i-1].mandatory ? "1" : "0");
+			fields[i][0].addValueChangeHandler(new ValueChangeHandler<String>() {
+
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					setRowEnabled(event.getSource(), event.getValue().equalsIgnoreCase("1"));
+				}
+			});
 			fields[i][0].setEditable(coverages[i-1].mandatory ? false : true);
-			fields[i][0].getElement().getStyle();
 			fields[i][1] = new Field(TYPE.TEXT);
 			fields[i][1].setEditable(false);
 			fields[i][1].setValue(coverages[i-1].coverageName);
@@ -115,6 +120,22 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 
 	}
 
+
+	protected void setRowEnabled(Object source, boolean enabled) {
+
+		for(int i = 1; i<fields.length; i++){
+			if(fields[i][0].equals(source)){
+				for(int j = 2; j<fields[0].length; j++){
+					if(fields[i][j] != null){
+						fields[i][j].clear();
+						fields[i][j].setEditable(enabled);
+					}
+				}
+				return;
+			}
+		}
+
+	}
 
 	public void fillTable(FieldContainer.ColumnField[] formFields) {
 		int row;
@@ -147,7 +168,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 			fields[row][column].setValue(formFields[i].value);
 			fields[row][column].setFieldWidth("100px");
 			fields[row][column].setWidth("130px");
-			fields[row][column].setReadOnly(formFields[i].readOnly);
+			fields[row][column].setEditable(!formFields[i].readOnly);
 			grid.setWidget(row, column, fields[row][column]);
 			grid.getCellFormatter().setHorizontalAlignment(row, column, HasHorizontalAlignment.ALIGN_CENTER);
 		}
@@ -183,10 +204,25 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 		}
 	}
 
-	@Override
-	public void fireEvent(GwtEvent<?> event) {
-		// TODO Auto-generated method stub
-		
+	public void setReadOnly(boolean readOnly) {
+
+		FieldContainer.ColumnField[] result = value;
+		if(result == null){
+			return;
+		}
+		for(int i = 0; i<fields.length; i++){
+			if(fields[result[i].coverageIndex+1][result[i].columnIndex+2] != null){
+				fields[result[i].coverageIndex+1][result[i].columnIndex+2].
+				setReadOnly(readOnly);
+			}
+		}
+		setFirstColumnReadOnly(readOnly);
+	}
+
+	private void setFirstColumnReadOnly(boolean readOnly) {
+		for(int i = 1; i<fields.length; i++){	
+			fields[i][0].setReadOnly(readOnly);
+		}
 	}
 
 }

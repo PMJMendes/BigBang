@@ -52,4 +52,9 @@ public class TableFieldsSection extends FormViewSection implements HasValue<Fiel
 		}
 	}
 	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		table.setReadOnly(readOnly);
+	}
+	
 }

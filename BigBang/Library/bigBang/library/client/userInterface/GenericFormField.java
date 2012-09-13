@@ -141,12 +141,12 @@ public class GenericFormField extends FormField<String> {
 			break;
 		case BOOLEAN:
 			@SuppressWarnings("unchecked")
-			HasValue<Boolean> booleanField = (HasValue<Boolean>) this.myField;
-			handlerRegistration = booleanField.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			HasValue<String> booleanField = (HasValue<String>) this.myField;
+			handlerRegistration = booleanField.addValueChangeHandler(new ValueChangeHandler<String>() {
 				
 				@Override
-				public void onValueChange(ValueChangeEvent<Boolean> event) {
-					handler.onValueChange(new ValueChangeEvent<String>(event.getValue() ? "1" : "0"){});
+				public void onValueChange(ValueChangeEvent<String> event) {
+					handler.onValueChange(new ValueChangeEvent<String>(event.getValue()){});
 				}
 			});
 			break;

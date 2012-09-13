@@ -15,7 +15,7 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 
 	private GenericFormField[] formFields;
 	private HeaderField[] value;
-	
+
 	public HeaderFieldsSection() {
 		super("");
 	}
@@ -28,12 +28,15 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 
 	@Override
 	public HeaderField[] getValue() {
-		HeaderField[] fields = value;
+		if(value == null)
+			return null;
 		
+		HeaderField[] fields = value;
+
 		for(int i = 0; i<fields.length; i++){
 			fields[i].value = formFields[i].getValue();
 		}
-		
+
 		return fields;
 	}
 
@@ -44,16 +47,13 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 
 	@Override
 	public void setValue(HeaderField[] value, boolean fireEvents) {
-		
-		if(formFields != null){
-			for(int i = 0; i<formFields.length ; i++){
-				formFields[i].removeFromParent();
-			}
-		}
-		
+
+		this.clear();
+		unregisterAllFormFields();
 		this.value = value;
-		formFields = new GenericFormField[value.length];
 		
+		formFields = new GenericFormField[value.length];
+
 		for(int i = 0; i<formFields.length; i++){
 			switch(value[i].type){
 			case BOOLEAN:
@@ -77,15 +77,16 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 				formFields[i] = new GenericFormField(TYPE.TEXT);
 				break;
 			}
-			
+
 			formFields[i].setValue(value[i].value);
+			formFields[i].setReadOnly(true);
 			formFields[i].setLabel(value[i].fieldName);
 			formFields[i].setUnitsLabel(value[i].unitsLabel);
-			formFields[i].setReadOnly(value[i].readOnly);
-			
+			formFields[i].setEditable(!value[i].readOnly);
 			addFormField(formFields[i], true);
+			registerFormField(formFields[i]);
 		}
-		
+
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}

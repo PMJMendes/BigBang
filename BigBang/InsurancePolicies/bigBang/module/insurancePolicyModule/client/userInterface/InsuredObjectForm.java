@@ -57,7 +57,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	protected TextBoxFormField animalElectronicTagId;
 
 	protected FormViewSection commonSection, personSection, companySection, equipmentSection, locationSection, animalSection;
-	
+
 	protected HeaderFieldsSection headerFields;
 
 	public InsuredObjectForm() {
@@ -179,9 +179,9 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.addSection(this.animalSection);
 
 		this.headerFields = new HeaderFieldsSection();
-		
+
 		addSection(headerFields);
-		
+
 		this.setValue(new InsuredObject());
 	}
 
@@ -276,9 +276,9 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		address.setValue(info.address);
 		inclusionDate.setValue(info.inclusionDate);
 		exclusionDate.setValue(info.exclusionDate);
-		
+
 		showSectionForTypeWithId(info.typeId);
-		
+
 		//person fields
 		personTaxNumber.setValue(info.taxNumberPerson);
 		personGender.setValue(info.genderId);
@@ -316,6 +316,14 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 
 		headerFields.setHeaderText(info.categoryName + " / " + info.lineName + " / " + info.subLineName);
 		headerFields.setValue(info.headerFields);
-		
+
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		if(headerFields != null){
+			headerFields.setReadOnly(readOnly);
+		}
 	}
 }

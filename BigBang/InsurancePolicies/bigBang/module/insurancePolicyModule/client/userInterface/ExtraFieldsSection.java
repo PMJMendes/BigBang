@@ -31,13 +31,17 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 
 	@Override
 	public FieldContainer.ExtraField[] getValue() {
+		if(value == null)
+			return null;
+
 		FieldContainer.ExtraField[] fields = value;
 
 		for(int i = 0; i<fields.length; i++){
 			fields[i].value = formFields[i].getValue();
 		}
 
-		return fields;	}
+		return fields;	
+		}
 
 	@Override
 	public void setValue(FieldContainer.ExtraField[] value) {
@@ -46,10 +50,11 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 
 	@Override
 	public void setValue(FieldContainer.ExtraField[] value, boolean fireEvents) {
-		
+
 		this.clear();
+		unregisterAllFormFields();
 		
-		if(coverages == null || coverages.length == 0){
+		if(coverages == null || coverages.length == 0 || value.length == 0){
 			return;
 		}
 
@@ -93,9 +98,9 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 			formFields[i].setValue(value[i].value);
 			formFields[i].setLabel(value[i].fieldName);
 			formFields[i].setUnitsLabel(value[i].unitsLabel);
-			formFields[i].setReadOnly(value[i].readOnly);
-
+			formFields[i].setEditable(!value[i].readOnly);
 			addFormField(formFields[i], (i < formFields.length - 1 && value[i+1].coverageIndex == tempIndex));
+			registerFormField(formFields[i]);
 		}
 
 		if(fireEvents){

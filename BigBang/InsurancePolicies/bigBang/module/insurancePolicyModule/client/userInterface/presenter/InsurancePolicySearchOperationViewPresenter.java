@@ -165,6 +165,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	private boolean bound;
 	private boolean onPolicy;
 	private String policyId;
+	private boolean isEditModeEnabled;
 
 	public InsurancePolicySearchOperationViewPresenter(Display view){
 		this.broker = ((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY));
@@ -321,13 +322,15 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			}
 
 		});
-		
+
 		view.getInsuredObjectsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				onObjectSelected(((ValueSelectable<InsuredObjectStub>)event.getFirstSelected()).getValue());
+				if(event.getFirstSelected() != null){
+					onObjectSelected(((ValueSelectable<InsuredObjectStub>)event.getFirstSelected()).getValue());
+				}
 			}
 		});
 
@@ -416,47 +419,33 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void onObjectSelected(InsuredObjectStub object) {
-		
-		onPolicy = true;
-		saveInternally();
-		broker.getInsuredObject(policyId, object.id, new ResponseHandler<InsuredObject>() {
-			
-			@Override
-			public void onResponse(InsuredObject response) {
-				view.getInsuredObjectHeaderForm().setValue(response);
-				view.getCommonFieldsForm().setValue(broker.getContextForInsuredObject(policyId, response.id, getCurrentExerciseId()));
-				view.showObjectForm(true);
-				view.showPolicyForm(false);
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o objecto"), TYPE.ALERT_NOTIFICATION));					
-			}
-		});
-		
+
 		if(onPolicy){
 			view.clearPolicySelection();
-			onPolicy = false;
 		}
+		saveInternally();
+		
+		fillObject(object.id);
+
+		onPolicy = false;
 	}
 
 
 	protected void onDeleteInsuredObject() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
 	protected void onNewInsuredObject() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
 	protected void onNewExercise() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
@@ -466,12 +455,12 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		saveInternally();
 		fillPolicy();
 	}
-	
+
 	private String getCurrentExerciseId() {
 		ComplexFieldContainer.ExerciseData ex = view.getExerciseForm().getValue();
 		return  ex != null ? ex.id : null;
 	}
-	
+
 	private void saveInternally() {
 		if(!onPolicy){
 			broker.updateInsuredObject(policyId, view.getInsuredObjectHeaderForm().getInfo());
@@ -485,7 +474,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					getCurrentExerciseId(),
 					view.getCommonFieldsForm().getInfo());
 		}
-		
+
 	}
 
 
@@ -561,22 +550,56 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void onEdit() {
-		// TODO Auto-generated method stub
-
+		view.setReadOnly(false);
+		isEditModeEnabled = true;
 	}
 
 
 	protected void onSave() {
 		// TODO Auto-generated method stub
-
+		isEditModeEnabled = false;
 	}
 
 
 	protected void onCancelEdit() {
-		// TODO Auto-generated method stub
+		view.setReadOnly(true);
+		broker.discardEditData(policyId);
+		revert();
+		isEditModeEnabled = false;
+	}
+
+
+
+	private void revert() {
+
+		if(onPolicy){
+			fillPolicy();
+		}
+		else{
+			fillObject(view.getInsuredObjectHeaderForm().getValue().id);
+		}
 
 	}
 
+
+	private void fillObject(String id) {
+		
+		broker.getInsuredObject(policyId, id, new ResponseHandler<InsuredObject>() {
+
+			@Override
+			public void onResponse(InsuredObject response) {
+				view.getInsuredObjectHeaderForm().setValue(response);
+				view.getCommonFieldsForm().setValue(broker.getContextForInsuredObject(policyId, response.id, getCurrentExerciseId()));
+				view.showObjectForm(true);
+				view.showPolicyForm(false);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o objecto"), TYPE.ALERT_NOTIFICATION));					
+			}
+		});
+	}
 
 
 	@Override
@@ -604,7 +627,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					}
 					view.getPolicySelector().setValue(response);
 
-					
+
 					view.setTableValues(response.coverages, response.columns);
 					view.setCoveragesExtraFields(response.coverages);
 
@@ -630,7 +653,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					view.allowCreateNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_NEGOTIATION));
 					view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
 					view.allowTransferToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT));
-				
+
 					fillPolicy();
 				}
 
@@ -651,7 +674,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.showObjectForm(false);
 		view.showPolicyForm(true);
 		onPolicy = true;
-		
+
 	}
 
 

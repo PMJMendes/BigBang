@@ -550,12 +550,12 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void showObjectForm(boolean b) {
-		objectForm.setVisible(b);
+		objectForm.getNonScrollableContent().setVisible(b);
 	}
 
 	@Override
 	public void showPolicyForm(boolean b) {
-		policyForm.setVisible(b);
+		policyForm.getNonScrollableContent().setVisible(b);
 	}
 
 	@Override
