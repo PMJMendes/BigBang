@@ -14,7 +14,6 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
-import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -139,7 +138,7 @@ public class SubPolicyInsuredObjectViewPresenter implements ViewPresenter {
 	}
 
 	private void onEdit(){
-		String objectId = view.getInsuredObjectForm().getValue().id;
+//		String objectId = view.getInsuredObjectForm().getValue().id;
 //		broker.getInsuredObject(objectId, new ResponseHandler<InsuredObject>() {
 //
 //			@Override
@@ -221,7 +220,7 @@ public class SubPolicyInsuredObjectViewPresenter implements ViewPresenter {
 	}
 
 	private void onDelete(){
-		InsuredObject object = view.getInsuredObjectForm().getValue();
+//		InsuredObject object = view.getInsuredObjectForm().getValue();
 //		if(!subPolicyBroker.isTemp(object.ownerId)){
 //			subPolicyBroker.openSubPolicyResource(object.ownerId, new ResponseHandler<SubPolicy>() {
 //
@@ -289,71 +288,71 @@ public class SubPolicyInsuredObjectViewPresenter implements ViewPresenter {
 	}
 
 	private void showCreateObject(final String ownerId) {
-		subPolicyBroker.getSubPolicy(ownerId, new ResponseHandler<SubPolicy>() {
-
-			@Override
-			public void onResponse(final SubPolicy policy) {
-				boolean hasPermissions = true; //PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT);
-
-				if(hasPermissions){
-					if(subPolicyBroker.isTemp(ownerId)){
-						broker.createInsuredObject(ownerId, new ResponseHandler<InsuredObject>() {
-
-							@Override
-							public void onResponse(InsuredObject object) {
-								view.getInsuredObjectForm().setReadOnly(false);
-								view.setSaveModeEnabled(true);
-								view.allowEdit(true);
-								view.allowDelete(true);
-								view.getSubPolicyForm().setValue(policy);
-								view.getInsuredObjectForm().setValue(object);
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								onCreateObjectFailed();
-							}
-						});
-					}else{
-						subPolicyBroker.openSubPolicyResource(ownerId, new ResponseHandler<SubPolicy>() {
-
-							@Override
-							public void onResponse(SubPolicy tempSubPolicy) {
-								broker.createInsuredObject(tempSubPolicy.id, new ResponseHandler<InsuredObject>() {
-
-									@Override
-									public void onResponse(InsuredObject object) {
-										view.getInsuredObjectForm().setReadOnly(false);
-										view.setSaveModeEnabled(true);
-										view.allowEdit(true);
-										view.allowDelete(true);
-										view.getSubPolicyForm().setValue(policy);
-										view.getInsuredObjectForm().setValue(object);
-									}
-
-									@Override
-									public void onError(Collection<ResponseError> errors) {
-										onCreateObjectFailed();
-									}
-								});
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								onOpenResourceFailed();
-							}
-						});
-					}
-				}else{
-					onUserLacksCreatePermission();
-				}
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onGetOwnerFailed();
-			}
-		});
+//		subPolicyBroker.getSubPolicy(ownerId, new ResponseHandler<SubPolicy>() {
+//
+//			@Override
+//			public void onResponse(final SubPolicy policy) {
+//				boolean hasPermissions = true; //PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT);
+//
+//				if(hasPermissions){
+//					if(subPolicyBroker.isTemp(ownerId)){
+//						broker.createInsuredObject(ownerId, new ResponseHandler<InsuredObject>() {
+//
+//							@Override
+//							public void onResponse(InsuredObject object) {
+//								view.getInsuredObjectForm().setReadOnly(false);
+//								view.setSaveModeEnabled(true);
+//								view.allowEdit(true);
+//								view.allowDelete(true);
+//								view.getSubPolicyForm().setValue(policy);
+//								view.getInsuredObjectForm().setValue(object);
+//							}
+//
+//							@Override
+//							public void onError(Collection<ResponseError> errors) {
+//								onCreateObjectFailed();
+//							}
+//						});
+//					}else{
+//						subPolicyBroker.openSubPolicyResource(ownerId, new ResponseHandler<SubPolicy>() {
+//
+//							@Override
+//							public void onResponse(SubPolicy tempSubPolicy) {
+//								broker.createInsuredObject(tempSubPolicy.id, new ResponseHandler<InsuredObject>() {
+//
+//									@Override
+//									public void onResponse(InsuredObject object) {
+//										view.getInsuredObjectForm().setReadOnly(false);
+//										view.setSaveModeEnabled(true);
+//										view.allowEdit(true);
+//										view.allowDelete(true);
+//										view.getSubPolicyForm().setValue(policy);
+//										view.getInsuredObjectForm().setValue(object);
+//									}
+//
+//									@Override
+//									public void onError(Collection<ResponseError> errors) {
+//										onCreateObjectFailed();
+//									}
+//								});
+//							}
+//
+//							@Override
+//							public void onError(Collection<ResponseError> errors) {
+//								onOpenResourceFailed();
+//							}
+//						});
+//					}
+//				}else{
+//					onUserLacksCreatePermission();
+//				}
+//			}
+//
+//			@Override
+//			public void onError(Collection<ResponseError> errors) {
+//				onGetOwnerFailed();
+//			}
+//		});
 	}
 
 	protected void saveObject(InsuredObject object) {
@@ -402,43 +401,43 @@ public class SubPolicyInsuredObjectViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	private void onCreateObjectFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Unidade de Risco no espaço de trabalho"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.popFromStackParameter("display");		item.removeParameter("objectid");
-		NavigationHistoryManager.getInstance().go(item);
-	}
+//	private void onCreateObjectFailed(){
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Unidade de Risco no espaço de trabalho"), TYPE.ALERT_NOTIFICATION));
+//		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+//		item.popFromStackParameter("display");		item.removeParameter("objectid");
+//		NavigationHistoryManager.getInstance().go(item);
+//	}
 
 	private void onSaveObjectFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a Unidade de Risco no espaço de trabalho"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	private void onUserLacksCreatePermission(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.popFromStackParameter("display");
-		item.removeParameter("objectid");
-		NavigationHistoryManager.getInstance().go(item);
-	}
+//	private void onUserLacksCreatePermission(){
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
+//		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+//		item.popFromStackParameter("display");
+//		item.removeParameter("objectid");
+//		NavigationHistoryManager.getInstance().go(item);
+//	}
 
-	private void onOpenResourceFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível editar apólice adesão, assim como as respectivas unidades de risco"), TYPE.ALERT_NOTIFICATION));
-	}
+//	private void onOpenResourceFailed(){
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível editar apólice adesão, assim como as respectivas unidades de risco"), TYPE.ALERT_NOTIFICATION));
+//	}
 
-	private void onUserLacksEditPermission(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível editar apólice adesão. Não tem as permissões necessárias"), TYPE.ALERT_NOTIFICATION));
-	}
+//	private void onUserLacksEditPermission(){
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível editar apólice adesão. Não tem as permissões necessárias"), TYPE.ALERT_NOTIFICATION));
+//	}
 
-	private void onDeleteSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Unidade de Risco foi eliminada no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.popFromStackParameter("display");
-		item.removeParameter("objectid");
-		NavigationHistoryManager.getInstance().go(item);
-	}
+//	private void onDeleteSuccess(){
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Unidade de Risco foi eliminada no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
+//		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+//		item.popFromStackParameter("display");
+//		item.removeParameter("objectid");
+//		NavigationHistoryManager.getInstance().go(item);
+//	}
 
-	private void onDeleteFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
-	}
+//	private void onDeleteFailed(){
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
+//	}
 
 }

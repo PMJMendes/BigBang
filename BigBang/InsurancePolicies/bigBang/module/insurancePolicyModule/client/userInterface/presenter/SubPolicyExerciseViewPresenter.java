@@ -92,28 +92,10 @@ public class SubPolicyExerciseViewPresenter implements ViewPresenter {
 		}else if(exerciseId.isEmpty()){
 			clearView();
 			onGetExerciseFailed();
-		}else if(subPolicyBroker.isTemp(ownerId)){
-			showScratchPadExercise(exerciseId, ownerId);
 		}
 		else{
 			showExercise(exerciseId, ownerId);
 		}
-	}
-
-	private void showScratchPadExercise(String exerciseId, String parentId){
-		subPolicyBroker.getExerciseInPad(exerciseId, new ResponseHandler<Exercise>() {
-			
-			@Override
-			public void onResponse(Exercise response) {
-				view.getExerciseForm().setValue(response);
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onGetExerciseFailed();
-			}
-		});
-		showParentSubPolicy(parentId);
 	}
 
 	private void clearView(){

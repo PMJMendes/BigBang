@@ -2,10 +2,6 @@ package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -24,6 +20,10 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
 
 public class SubPolicyVoidViewPresenter implements ViewPresenter {
 
