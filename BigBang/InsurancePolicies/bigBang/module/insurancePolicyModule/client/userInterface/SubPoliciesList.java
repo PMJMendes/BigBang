@@ -124,7 +124,7 @@ public class SubPoliciesList extends FilterableList<SubPolicyStub>  implements I
 		if(ownerId == null) {
 			clear();
 		}else{
-			if(!subPolicyBroker.isTemp(ownerId)){
+//			if(!subPolicyBroker.isTemp(ownerId)){
 				this.subPolicyBroker.getSubPoliciesForPolicy(ownerId, new ResponseHandler<Collection<SubPolicyStub>>() {
 
 					@Override
@@ -140,7 +140,7 @@ public class SubPoliciesList extends FilterableList<SubPolicyStub>  implements I
 						return;
 					}
 				});
-			}
+//			}
 		}
 	}
 

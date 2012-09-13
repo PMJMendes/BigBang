@@ -47,7 +47,7 @@ public class SubPolicyInsuredObjectsList extends FilterableList<InsuredObjectStu
 		this.ownerId = ownerId;
 		if(ownerId == null) {
 			clear();
-		}else if(!subPolicyBroker.isTemp(ownerId)){
+		}else //if(!subPolicyBroker.isTemp(ownerId)){
 			this.insuredObjectsBroker.getProcessInsuredObjects(ownerId, new ResponseHandler<Collection<InsuredObjectStub>>() {
 
 				@Override
@@ -63,7 +63,7 @@ public class SubPolicyInsuredObjectsList extends FilterableList<InsuredObjectStu
 					return;
 				}
 			});
-		}
+		//}
 	}
 
 	protected void addEntry(InsuredObjectStub object){

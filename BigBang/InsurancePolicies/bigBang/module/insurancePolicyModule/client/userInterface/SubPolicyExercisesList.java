@@ -112,8 +112,8 @@ public class SubPolicyExercisesList extends FilterableList<ExerciseStub> {
 			public void addExercise(String ownerId, Exercise exercise) {
 				if(SubPolicyExercisesList.this.ownerId == null || !SubPolicyExercisesList.this.ownerId.equalsIgnoreCase(ownerId)) { return; }
 
-				String exerciseOwnerId =insuranceSubPolicyBroker.getFinalMapping(exercise.ownerId);
-				String currentOwnerId = insuranceSubPolicyBroker.getFinalMapping(SubPolicyExercisesList.this.ownerId);
+				String exerciseOwnerId = /*insuranceSubPolicyBroker.getFinalMapping(*/exercise.ownerId/*)*/;
+				String currentOwnerId = /*insuranceSubPolicyBroker.getFinalMapping(*/SubPolicyExercisesList.this.ownerId/*)*/;
 
 				if(exercise != null && exerciseOwnerId != null && ownerId != null && exerciseOwnerId.equalsIgnoreCase(currentOwnerId)){
 					SubPolicyExercisesList.this.addEntry(exercise);

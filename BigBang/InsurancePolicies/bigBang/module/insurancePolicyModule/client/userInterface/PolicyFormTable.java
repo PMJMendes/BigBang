@@ -4,8 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TwoKeyTable.Field;
@@ -19,7 +18,7 @@ import com.google.gwt.user.client.ui.HasValue;
 
 public abstract class PolicyFormTable extends TwoKeyTableView {
 
-	protected Coverage[] coverages;
+	protected StructuredFieldContainer.Coverage[] coverages;
 	protected Map<HasValue<String>, String> coverageRadioButtons;
 
 	public PolicyFormTable(){
@@ -27,7 +26,7 @@ public abstract class PolicyFormTable extends TwoKeyTableView {
 		coverageRadioButtons = new HashMap<HasValue<String>, String>();
 	}
 
-	public void setHeaders(Coverage[] coverages, ColumnHeader[] headers){
+	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] headers){
 		this.coverages = coverages;
 
 		HeaderCell[] headerCells = new HeaderCell[headers.length];
@@ -61,7 +60,7 @@ public abstract class PolicyFormTable extends TwoKeyTableView {
 			}
 		};
 
-		Coverage[] newCoverages = getCoverages();
+		StructuredFieldContainer.Coverage[] newCoverages = getCoverages();
 		if(newCoverages != null) {
 			this.coverages = newCoverages;
 		}
@@ -174,11 +173,11 @@ public abstract class PolicyFormTable extends TwoKeyTableView {
 		onCoverageDisabled(coverageId);
 	}
 
-	public Coverage[] getCoverages(){
+	public StructuredFieldContainer.Coverage[] getCoverages(){
 		for(HasValue<?> radio : this.coverageRadioButtons.keySet()) {
 			String coverageId = coverageRadioButtons.get(radio);
 
-			for(Coverage coverage : this.coverages) {
+			for(StructuredFieldContainer.Coverage coverage : this.coverages) {
 				if(coverageId.equalsIgnoreCase(coverage.coverageId)) {
 					coverage.presentInPolicy = radio.getValue() == null ? null : radio.getValue().equals("1") ? true : false;
 					break;

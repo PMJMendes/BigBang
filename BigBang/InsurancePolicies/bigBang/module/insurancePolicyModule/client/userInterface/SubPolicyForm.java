@@ -1,36 +1,24 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.FieldContainer;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.SubPolicy;
-import bigBang.definitions.shared.SubPolicy.Coverage;
-import bigBang.definitions.shared.SubPolicy.ExtraField;
-import bigBang.definitions.shared.SubPolicy.HeaderField;
-import bigBang.definitions.shared.SubPolicy.TableSection;
-import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.ViewPresenterFactory;
-import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
-import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
-import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
-import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
 import bigBang.module.insurancePolicyModule.client.resources.Resources;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
@@ -46,74 +34,74 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 
 		public String id;
 		protected FormField<String> field;
-		protected HeaderField headerField;
+		protected FieldContainer.HeaderField headerField;
 		protected String coverageId;
 
-		public HeaderFormField(HeaderField field){
-			super();
-			this.id = field.fieldId;
-			this.headerField = field;
-
-			if(field instanceof ExtraField){
-				coverageId = ((ExtraField)field).coverageId;
-			}
-
-			switch(field.type) {
-			case LIST:
-				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(field.fieldName);
-				listField.setEditable(true);
-				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId, null);
-				this.field = listField;
-				break;
-			case REFERENCE:
-				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(field.fieldName);
-				referenceListField.setEditable(true);
-				referenceListField.setListId(field.refersToId, null);
-				this.field = referenceListField;
-				break;
-			case NUMERIC:
-				this.field = new TextBoxFormField(field.fieldName, new FieldValidator<String>() {
-
-					@Override
-					public boolean isValid(String value) {
-						try{
-							Integer.parseInt(value);
-						}catch(Exception e){
-							return false;
-						}
-						return true;
-					}
-
-					@Override
-					public boolean isMandatory() {
-						return false;
-					}
-
-					@Override
-					public String getErrorMessage() {
-						return "Apenas valores numéricos";
-					}
-				});
-				break;
-			case TEXT:
-				this.field = new TextBoxFormField(field.fieldName);
-				break;
-			case BOOLEAN:
-				RadioButtonFormField radioField = new RadioButtonFormField(field.fieldName);
-				radioField.addOption("1", "Sim");
-				radioField.addOption("0", "Não");
-				this.field = radioField;
-				break;
-			case DATE:
-				//				DatePickerFormField dateField = new DatePickerFormField(field.fieldName);
-				//				this.field = dateField;
-				break;
-			default:
-				break;
-			}
-			this.field.setUnitsLabel(field.unitsLabel);
-
-			initWidget(this.field);
+		public HeaderFormField(FieldContainer.HeaderField field){
+//			super();
+//			this.id = field.fieldId;
+//			this.headerField = field;
+//
+//			if(field instanceof ExtraField){
+//				coverageId = ((ExtraField)field).coverageId;
+//			}
+//
+//			switch(field.type) {
+//			case LIST:
+//				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(field.fieldName);
+//				listField.setEditable(true);
+//				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId, null);
+//				this.field = listField;
+//				break;
+//			case REFERENCE:
+//				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(field.fieldName);
+//				referenceListField.setEditable(true);
+//				referenceListField.setListId(field.refersToId, null);
+//				this.field = referenceListField;
+//				break;
+//			case NUMERIC:
+//				this.field = new TextBoxFormField(field.fieldName, new FieldValidator<String>() {
+//
+//					@Override
+//					public boolean isValid(String value) {
+//						try{
+//							Integer.parseInt(value);
+//						}catch(Exception e){
+//							return false;
+//						}
+//						return true;
+//					}
+//
+//					@Override
+//					public boolean isMandatory() {
+//						return false;
+//					}
+//
+//					@Override
+//					public String getErrorMessage() {
+//						return "Apenas valores numéricos";
+//					}
+//				});
+//				break;
+//			case TEXT:
+//				this.field = new TextBoxFormField(field.fieldName);
+//				break;
+//			case BOOLEAN:
+//				RadioButtonFormField radioField = new RadioButtonFormField(field.fieldName);
+//				radioField.addOption("1", "Sim");
+//				radioField.addOption("0", "Não");
+//				this.field = radioField;
+//				break;
+//			case DATE:
+//				//				DatePickerFormField dateField = new DatePickerFormField(field.fieldName);
+//				//				this.field = dateField;
+//				break;
+//			default:
+//				break;
+//			}
+//			this.field.setUnitsLabel(field.unitsLabel);
+//
+//			initWidget(this.field);
 		}
 
 		@Override
@@ -309,15 +297,15 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		result.premium = premium.getValue();
 		result.expirationDate = endDate.getStringValue();
 		
-		result.headerFields = getHeaderFieldsInfo();
-		result.tableData = new TableSection[]{this.table.getData()};
-		result.coverages = this.table.getCoveragesData();
-		result.extraData = this.extraFieldsSection.getPolicyFields();
+//		result.headerFields = getHeaderFieldsInfo();
+//		result.tableData = new TableSection[]{this.table.getData()};
+//		result.coverages = this.table.getCoveragesData();
+//		result.extraData = this.extraFieldsSection.getPolicyFields();
 
 		return result;
 	}
 
-	protected void setHeaderFields(HeaderField[] fields){
+	protected void setHeaderFields(FieldContainer.HeaderField[] fields){
 		this.headerFieldsSection.clear();
 		this.headerFields.clear();
 
@@ -331,11 +319,11 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		}
 	}
 
-	protected HeaderField[] getHeaderFieldsInfo(){
-		HeaderField[] fields = new HeaderField[this.headerFields.size()];
+	protected FieldContainer.HeaderField[] getHeaderFieldsInfo(){
+		FieldContainer.HeaderField[] fields = new FieldContainer.HeaderField[this.headerFields.size()];
 		int i = 0;
 		for(HeaderFormField f : this.headerFields.values()) {
-			HeaderField headerField = f.headerField;
+			FieldContainer.HeaderField headerField = f.headerField;
 			headerField.value = f.getValue();
 			fields[i] = headerField;
 			i++;
@@ -366,63 +354,63 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 			this.mediator.setValue(info.inheritMediatorName);
 			this.fractioning.setValue(info.fractioningId);
 
-			if(((InsuranceSubPolicyBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)).isTemp(info.id)){
-				SubPolicyTypifiedListBroker subPolicyListBroker = SubPolicyTypifiedListBroker.Util.getInstance();
-				InsuranceSubPolicyBroker subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
-				this.exercises.setTypifiedDataBroker((TypifiedListBroker) subPolicyListBroker);
-				this.exercises.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_EXERCISES+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
-
-					@Override
-					public void onResponse(Void response) {
-						return;
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						return;
-					}
-				});
-				this.insuredObjects.setTypifiedDataBroker((TypifiedListBroker) subPolicyListBroker);
-				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
-
-					@Override
-					public void onResponse(Void response) {
-						return;
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						return;
-					}
-				});
-			}else{
-				this.exercises.setTypifiedDataBroker(BigBangTypifiedListBroker.Util.getInstance());
-				this.exercises.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_EXERCISES+"/"+info.mainPolicyId, new ResponseHandler<Void>() {
-
-					@Override
-					public void onResponse(Void response) {
-						return;
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						return;
-					}
-				});
-				this.insuredObjects.setTypifiedDataBroker(BigBangTypifiedListBroker.Util.getInstance());
-				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS+"/"+info.id, new ResponseHandler<Void>() {
-
-					@Override
-					public void onResponse(Void response) {
-						return;
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						return;
-					}
-				});
-			}
+//			if(((InsuranceSubPolicyBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)).isTemp(info.id)){
+//				SubPolicyTypifiedListBroker subPolicyListBroker = SubPolicyTypifiedListBroker.Util.getInstance();
+//				InsuranceSubPolicyBroker subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+//				this.exercises.setTypifiedDataBroker((TypifiedListBroker) subPolicyListBroker);
+//				this.exercises.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_EXERCISES+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
+//
+//					@Override
+//					public void onResponse(Void response) {
+//						return;
+//					}
+//
+//					@Override
+//					public void onError(Collection<ResponseError> errors) {
+//						return;
+//					}
+//				});
+//				this.insuredObjects.setTypifiedDataBroker((TypifiedListBroker) subPolicyListBroker);
+//				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
+//
+//					@Override
+//					public void onResponse(Void response) {
+//						return;
+//					}
+//
+//					@Override
+//					public void onError(Collection<ResponseError> errors) {
+//						return;
+//					}
+//				});
+//			}else{
+//				this.exercises.setTypifiedDataBroker(BigBangTypifiedListBroker.Util.getInstance());
+//				this.exercises.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_EXERCISES+"/"+info.mainPolicyId, new ResponseHandler<Void>() {
+//
+//					@Override
+//					public void onResponse(Void response) {
+//						return;
+//					}
+//
+//					@Override
+//					public void onError(Collection<ResponseError> errors) {
+//						return;
+//					}
+//				});
+//				this.insuredObjects.setTypifiedDataBroker(BigBangTypifiedListBroker.Util.getInstance());
+//				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS+"/"+info.id, new ResponseHandler<Void>() {
+//
+//					@Override
+//					public void onResponse(Void response) {
+//						return;
+//					}
+//
+//					@Override
+//					public void onError(Collection<ResponseError> errors) {
+//						return;
+//					}
+//				});
+//			}
 
 			this.policyStatus.setValue(info.statusText);
 			Resources resources = GWT.create(Resources.class);
@@ -450,15 +438,15 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 			if(info.expirationDate != null)
 				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.expirationDate));
 			setHeaderFields(info.headerFields);
-			table.setColumnDefinitions(info.columns);
-			setCoverages(info.coverages);
-			if(info.tableData != null && info.tableData.length > 0){
-				this.table.setData(info.tableData[0]);
-			}else{
-				this.table.clear();
-			}
+//			table.setColumnDefinitions(info.columns);
+//			setCoverages(info.coverages);
+//			if(info.tableData != null && info.tableData.length > 0){
+//				this.table.setData(info.tableData[0]);
+//			}else{
+//				this.table.clear();
+//			}
 
-			this.extraFieldsSection.setPolicyFields(info.extraData, info.coverages);
+//			this.extraFieldsSection.setPolicyFields(info.extraData, info.coverages);
 		}
 	}
 
@@ -466,8 +454,8 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		return this.table;
 	}
 
-	protected void setCoverages(Coverage[] coverages){
-		this.table.setCoverages(coverages);
+	protected void setCoverages(StructuredFieldContainer.Coverage[] coverages){
+//		this.table.setCoverages(coverages);
 	}
 
 	@Override
@@ -485,7 +473,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 			}
 		}
 		if(this.table != null){
-			this.table.setReadOnly(readOnly);
+//			this.table.setReadOnly(readOnly);
 		}
 		if(this.exercises != null) {
 			this.exercises.setReadOnly(false);
@@ -505,9 +493,9 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 	
 	@Override
 	public void clearInfo() {
-		super.clearInfo();
-		this.table.clear();
-		this.extraFieldsSection.setPolicyFields(null, null);
+//		super.clearInfo();
+//		this.table.clear();
+//		this.extraFieldsSection.setPolicyFields(null, null);
 	}
 	
 }

@@ -7,12 +7,11 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-import bigBang.definitions.shared.FieldContainer.ColumnField;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
-import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
+import bigBang.definitions.shared.FieldContainer;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
-public class TableFieldsSection extends FormViewSection implements HasValue<ColumnField[]>{
+public class TableFieldsSection extends FormViewSection implements HasValue<FieldContainer.ColumnField[]>{
 
 	CoverageFieldsGrid table = new CoverageFieldsGrid();
 	
@@ -24,28 +23,28 @@ public class TableFieldsSection extends FormViewSection implements HasValue<Colu
 		addWidget(panel);
 	}
 	
-	public void setHeaders(Coverage[] coverages, ColumnHeader[] columns){
+	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns){
 		table.setHeaders(coverages, columns);
 	}
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<ColumnField[]> handler) {
+			ValueChangeHandler<FieldContainer.ColumnField[]> handler) {
 		return this.addHandler(handler, ValueChangeEvent.getType());
 	}
 
 	@Override
-	public ColumnField[] getValue() {
+	public FieldContainer.ColumnField[] getValue() {
 		return table.getValue();
 	}
 
 	@Override
-	public void setValue(ColumnField[] value) {
+	public void setValue(FieldContainer.ColumnField[] value) {
 		setValue(value, true);		
 	}
 
 	@Override
-	public void setValue(ColumnField[] value, boolean fireEvents) {
+	public void setValue(FieldContainer.ColumnField[] value, boolean fireEvents) {
 		table.setValue(value, fireEvents);
 		
 		if(fireEvents){
