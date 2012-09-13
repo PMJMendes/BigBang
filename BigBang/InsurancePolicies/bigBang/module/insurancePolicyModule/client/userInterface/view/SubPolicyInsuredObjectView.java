@@ -1,13 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.definitions.shared.InsuredObject;
-import bigBang.definitions.shared.InsuredObjectOLD;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -15,16 +8,22 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectFormOLD;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectOperationsToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyInsuredObjectViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyInsuredObjectViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 public class SubPolicyInsuredObjectView extends View implements SubPolicyInsuredObjectViewPresenter.Display {
 
 	private FormView<SubPolicy> subPolicyForm;
-	private InsuredObjectFormOLD objectForm;
+	private InsuredObjectForm objectForm;
 	private InsuredObjectOperationsToolbar toolbar;
 	private ActionInvokedEventHandler<Action> actionHandler;
 	
@@ -83,8 +82,8 @@ public class SubPolicyInsuredObjectView extends View implements SubPolicyInsured
 		};
 		objectWrapper.add(toolbar);
 		
-		objectForm = new InsuredObjectFormOLD();
-		objectForm.showTypeSection(false);
+		objectForm = new InsuredObjectForm();
+//		objectForm.showTypeSection(false);
 		objectForm.setReadOnly(true);
 		objectWrapper.add(objectForm);
 		objectWrapper.setCellHeight(objectForm, "100%");

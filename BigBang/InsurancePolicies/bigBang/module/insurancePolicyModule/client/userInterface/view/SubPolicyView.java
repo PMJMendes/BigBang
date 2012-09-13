@@ -7,10 +7,9 @@ import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsuredObjectStubOLD;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicy;
-import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -176,8 +175,8 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 			@Override
 			public void onValueChange(ValueChangeEvent<SubPolicy> event) {
-				SubPolicy subPolicy = event.getValue();
-				childrenPanel.setSubPolicy(subPolicy);
+//				SubPolicy subPolicy = event.getValue();
+//				childrenPanel.setSubPolicy(subPolicy);
 			}
 		});
 
@@ -302,7 +301,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	}
 
 	@Override
-	public HasValueSelectables<InsuredObjectStubOLD> getInsuredObjectsList() {
+	public HasValueSelectables<InsuredObjectStub> getInsuredObjectsList() {
 		return null; //childrenPanel.insuredObjectsList;
 	}
 
@@ -331,15 +330,15 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		return this.form.getExercisesField();
 	}
 
-	@Override
-	public TableSection getCurrentTableSectionInfo() {
-		return this.form.getTable().getValue();
-	}
+//	@Override
+//	public TableSection getCurrentTableSectionInfo() {
+//		return this.form.getTable().getValue();
+//	}
 	
-	@Override
-	public void setTableSectionInfo(TableSection info) {
-		this.form.getTable().setValue(info);
-	}
+//	@Override
+//	public void setTableSectionInfo(TableSection info) {
+//		this.form.getTable().setValue(info);
+//	}
 
 	@Override
 	public void clearAllowedPermissions() {
