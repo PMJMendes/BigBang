@@ -11,6 +11,6 @@ DataBrokerClient<SubPolicy> {
 
 	public void removeInsuranceSubPolicy(String subPolicyId);
 
-	public void remapItemId(String oldId, String newId);
+	public void remapItemId(String Id, String newId);
 
 }

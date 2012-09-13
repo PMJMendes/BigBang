@@ -1,7 +1,7 @@
 package bigBang.definitions.shared;
 
 public class InsurancePolicyStub
-	extends ComplexFieldContainer
+	extends StructuredFieldContainer
 {
 	private static final long serialVersionUID = 1L;
 

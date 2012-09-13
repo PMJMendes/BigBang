@@ -1,97 +1,9 @@
 package bigBang.definitions.shared;
 
-import java.io.Serializable;
-
 public class SubPolicy
 	extends SubPolicyStub
 {
 	private static final long serialVersionUID = 1L;
-
-	public static class HeaderField
-		implements Serializable
-	{
-		private static final long serialVersionUID = 1L;
-		
-		public String fieldId;
-		public String fieldName;
-		public InsurancePolicy.FieldType type;
-		public String unitsLabel;
-		public String refersToId;
-		public int order; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
-//		public boolean variesByObject; <- Not needed. Should always be false.
-//		public boolean variesByExercise; <- Not needed. Should always be false.
-
-		public String value;
-	}
-
-	public static class Coverage
-		implements Serializable
-	{
-		private static final long serialVersionUID = 1L;
-
-		public static class Variability implements Serializable
-		{
-			private static final long serialVersionUID = 1L;
-			
-			public int columnIndex;
-			public boolean variesByObject;
-			public boolean variesByExercise;
-		}
-
-		public String coverageId;
-		public String coverageName;
-		public boolean mandatory;
-		public int order; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
-		public Boolean presentInPolicy;
-		public Variability[] variability;
-	}
-
-	public static class ColumnHeader
-		implements Serializable
-	{
-		private static final long serialVersionUID = 1L;
-
-		public String label;
-		public FieldContainer.FieldType type;
-		public String unitsLabel;
-		public String refersToId;
-	}
-
-	public static class TableSection
-		implements Serializable
-	{
-		private static final long serialVersionUID = 1L;
-
-		public static class TableField
-			implements Serializable
-		{
-			private static final long serialVersionUID = 1L;
-
-			public String fieldId;
-			public String coverageId;
-			public int columnIndex;
-			public String value;
-		}
-
-		public String pageId;
-		public TableField[] data;
-
-		public TableSection()
-		{
-			pageId = null;
-		}
-	}
-
-	public static class ExtraField
-		extends HeaderField
-	{
-		private static final long serialVersionUID = 1L;
-
-		public String coverageId;
-		public String coverageName; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
-		public boolean mandatory; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
-		public int covorder; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
-	}
 
 	public String managerId;
 	public String managerName;
@@ -108,20 +20,53 @@ public class SubPolicy
 	public Contact[] contacts;
 	public Document[] documents;
 
-	public HeaderField[] headerFields;
-	public Coverage[] coverages;
-	public ColumnHeader[] columns;
-	public TableSection[] tableData;
-	public ExtraField[] extraData;
-
 	public SubPolicy()
 	{
 		contacts = new Contact[0];
 		documents = new Document[0];
 		headerFields = new HeaderField[0];
+		columnFields = new ColumnField[0];
+		extraFields = new ExtraField[0];
+		exerciseData = new ExerciseData[0];
 		coverages = new Coverage[0];
 		columns = new ColumnHeader[0];
-		tableData = new TableSection[0];
-		extraData = new ExtraField[0];
+		changedObjects = new InsuredObject[0];
+	}
+
+	public SubPolicy(SubPolicy orig)
+	{
+		super(orig);
+
+		int i;
+
+		this.managerId = orig.managerId;
+		this.managerName = orig.managerName;
+		this.startDate = orig.startDate;
+		this.fractioningId = orig.fractioningId;
+		this.expirationDate = orig.expirationDate;
+		this.notes = orig.notes;
+		this.inheritMediatorId = orig.inheritMediatorId;
+		this.inheritMediatorName = orig.inheritMediatorName;
+		this.premium = orig.premium;
+		this.docushare = orig.docushare;
+		this.inheritSubLineId = orig.inheritSubLineId;
+
+		if ( orig.contacts == null )
+			this.contacts = null;
+		else
+		{
+			this.contacts = new Contact[orig.contacts.length];
+			for ( i = 0; i < this.contacts.length; i++ )
+				this.contacts[i] = (orig.contacts[i] == null ? null : new Contact(orig.contacts[i]));
+		}
+
+		if ( orig.documents == null )
+			this.documents = null;
+		else
+		{
+			this.documents = new Document[orig.documents.length];
+			for ( i = 0; i < this.documents.length; i++ )
+				this.documents[i] = (orig.documents[i] == null ? null : new Document(orig.documents[i]));
+		}
 	}
 }

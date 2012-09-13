@@ -12,7 +12,7 @@ import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
 
-public class WorkSpace {
+public class PolicyWorkSpace {
 	private static String NEWID = "new";
 
 	protected InsurancePolicy originalPolicy;
@@ -21,7 +21,7 @@ public class WorkSpace {
 	protected List<InsuredObject> alteredObjects;
 	protected int idCounter;
 
-	public WorkSpace() {
+	public PolicyWorkSpace() {
 		this.alteredObjects = new ArrayList<InsuredObject>();
 	}
 

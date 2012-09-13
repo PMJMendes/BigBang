@@ -19,8 +19,6 @@ import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
-import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyObjectService;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyObjectServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
@@ -107,113 +105,113 @@ implements InsuredObjectDataBroker {
 	@Override
 	public void getInsuredObject(String id,
 			final ResponseHandler<InsuredObject> handler) {
-		id = getEffectiveId(id);
-		if(isTemp(id)){
-			subPolicyService.getObjectInPad(id, new BigBangAsyncCallback<InsuredObject>() {
-
-				@Override
-				public void onResponseSuccess(InsuredObject result) {
-					result.id = getFinalMapping(result.id);
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not get the requested insured object")	
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
-		}else{
-			this.service.getObject(id, new BigBangAsyncCallback<InsuredObject>() {
-
-				@Override
-				public void onResponseSuccess(InsuredObject result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not get the requested insured object")	
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
-		}
+//		id = getEffectiveId(id);
+//		if(isTemp(id)){
+//			subPolicyService.getObjectInPad(id, new BigBangAsyncCallback<InsuredObject>() {
+//
+//				@Override
+//				public void onResponseSuccess(InsuredObject result) {
+//					result.id = getFinalMapping(result.id);
+//					handler.onResponse(result);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					handler.onError(new String[]{
+//							new String("Could not get the requested insured object")	
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//
+//			});
+//		}else{
+//			this.service.getObject(id, new BigBangAsyncCallback<InsuredObject>() {
+//
+//				@Override
+//				public void onResponseSuccess(InsuredObject result) {
+//					handler.onResponse(result);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					handler.onError(new String[]{
+//							new String("Could not get the requested insured object")	
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//
+//			});
+//		}
 	}
 
 	@Override
 	public void createInsuredObject(String ownerId, final ResponseHandler<InsuredObject> handler) {
-		if(getSubPolicyBroker().isTemp(ownerId)){
-			ownerId = getSubPolicyBroker().getEffectiveId(ownerId);
-			subPolicyService.createObjectInPad(ownerId, new BigBangAsyncCallback<InsuredObject>() {
-
-				@Override
-				public void onResponseSuccess(InsuredObject result) {
-					objectsInScratchPad.put(result.id, result.id);
-					incrementDataVersion();
-					for(DataBrokerClient<InsuredObject> client : clients) {
-						((InsuredObjectDataBrokerClient)client).addInsuredObject(result);
-						((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
-					}
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not create new insured object in scratchpad")	
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
-		}else{
-			handler.onError(new String[]{
-					new String("Cannot create insured object in policy not in editable mode")	
-			});
-		}
+//		if(getSubPolicyBroker().isTemp(ownerId)){
+//			ownerId = getSubPolicyBroker().getEffectiveId(ownerId);
+//			subPolicyService.createObjectInPad(ownerId, new BigBangAsyncCallback<InsuredObject>() {
+//
+//				@Override
+//				public void onResponseSuccess(InsuredObject result) {
+//					objectsInScratchPad.put(result.id, result.id);
+//					incrementDataVersion();
+//					for(DataBrokerClient<InsuredObject> client : clients) {
+//						((InsuredObjectDataBrokerClient)client).addInsuredObject(result);
+//						((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+//					}
+//					handler.onResponse(result);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					handler.onError(new String[]{
+//							new String("Could not create new insured object in scratchpad")	
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//
+//			});
+//		}else{
+//			handler.onError(new String[]{
+//					new String("Cannot create insured object in policy not in editable mode")	
+//			});
+//		}
 	}
 
 	@Override
 	public void updateInsuredObject(InsuredObject object,
 			final ResponseHandler<InsuredObject> handler) {
-		String id = getEffectiveId(object.id);
-		if(isTemp(id)){
-			String tempId = object.id;
-			object.id = id;
-
-			subPolicyService.updateObjectInPad(object, new BigBangAsyncCallback<InsuredObject>() {
-
-				@Override
-				public void onResponseSuccess(InsuredObject result) {
-					result.id = getFinalMapping(result.id);
-					incrementDataVersion();
-					for(DataBrokerClient<InsuredObject> client : clients) {
-						((InsuredObjectDataBrokerClient)client).updateInsuredObject(result);
-						((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
-					}
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String()	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-			object.id = tempId;
-		}else{
-			handler.onError(new String[]{
-					new String("Cannot update insured object in policy not in editable mode")	
-			});
-		}
+//		String id = getEffectiveId(object.id);
+//		if(isTemp(id)){
+//			String tempId = object.id;
+//			object.id = id;
+//
+//			subPolicyService.updateObjectInPad(object, new BigBangAsyncCallback<InsuredObject>() {
+//
+//				@Override
+//				public void onResponseSuccess(InsuredObject result) {
+//					result.id = getFinalMapping(result.id);
+//					incrementDataVersion();
+//					for(DataBrokerClient<InsuredObject> client : clients) {
+//						((InsuredObjectDataBrokerClient)client).updateInsuredObject(result);
+//						((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+//					}
+//					handler.onResponse(result);
+//				}
+//
+//				@Override
+//				public void onResponseFailure(Throwable caught) {
+//					handler.onError(new String[]{
+//							new String()	
+//					});
+//					super.onResponseFailure(caught);
+//				}
+//			});
+//			object.id = tempId;
+//		}else{
+//			handler.onError(new String[]{
+//					new String("Cannot update insured object in policy not in editable mode")	
+//			});
+//		}
 	}
 
 	@Override
@@ -225,33 +223,33 @@ implements InsuredObjectDataBroker {
 			@Override
 			public void onResponse(final InsuredObject response) {
 //				String ownerId = response.ownerId;
-				if(getSubPolicyBroker().isTemp(objectId)){
-					String tempId = getEffectiveId(response.id);
-					subPolicyService.deleteObjectInPad(tempId, new BigBangAsyncCallback<Void>() {
-
-						@Override
-						public void onResponseSuccess(Void result) {
-							incrementDataVersion();
-							for(DataBrokerClient<InsuredObject> client : clients) {
-								((InsuredObjectDataBrokerClient)client).removeInsuredObject(response.id);
-								((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
-							}
-							handler.onResponse(null);
-						}
-
-						@Override
-						public void onResponseFailure(Throwable caught) {
-							handler.onError(new String[]{
-									new String("Could not delete the object")	
-							});
-							super.onResponseFailure(caught);
-						}
-					});				
-				}else{
-					handler.onError(new String[]{
-							new String("Cannot delete the object")	
-					});
-				}
+//				if(getSubPolicyBroker().isTemp(objectId)){
+//					String tempId = getEffectiveId(response.id);
+//					subPolicyService.deleteObjectInPad(tempId, new BigBangAsyncCallback<Void>() {
+//
+//						@Override
+//						public void onResponseSuccess(Void result) {
+//							incrementDataVersion();
+//							for(DataBrokerClient<InsuredObject> client : clients) {
+//								((InsuredObjectDataBrokerClient)client).removeInsuredObject(response.id);
+//								((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+//							}
+//							handler.onResponse(null);
+//						}
+//
+//						@Override
+//						public void onResponseFailure(Throwable caught) {
+//							handler.onError(new String[]{
+//									new String("Could not delete the object")	
+//							});
+//							super.onResponseFailure(caught);
+//						}
+//					});				
+//				}else{
+//					handler.onError(new String[]{
+//							new String("Cannot delete the object")	
+//					});
+//				}
 			}
 
 			@Override
@@ -266,8 +264,6 @@ implements InsuredObjectDataBroker {
 	@Override
 	public void getProcessInsuredObjects(String ownerId,
 			final ResponseHandler<Collection<InsuredObjectStub>> handler) {
-
-		ownerId = getSubPolicyBroker().getFinalMapping(ownerId);
 
 		InsuredObjectSearchParameter parameter = new InsuredObjectSearchParameter();
 		parameter.policyId = ownerId;
@@ -307,20 +303,6 @@ implements InsuredObjectDataBroker {
 		return id;
 	}
 
-	private String getFinalMapping(String tempId){
-		for(String key : objectsInScratchPad.keySet()){
-			if(objectsInScratchPad.get(key).equalsIgnoreCase(tempId)){
-				return key;
-			}
-		}
-		return tempId;
-	}
-
-	private boolean isTemp(String id){
-		id = id.toLowerCase();
-		return objectsInScratchPad.containsKey(id) || objectsInScratchPad.containsValue(id);
-	}
-
 	@Override
 	public SearchDataBroker<InsuredObjectStub> getSearchBroker() {
 		return this.searchBroker;
@@ -341,11 +323,11 @@ implements InsuredObjectDataBroker {
 		}
 	}
 
-	private InsuranceSubPolicyBroker getSubPolicyBroker(){
-		if(this.subPolicyBroker == null) {
-			this.subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
-		}
-		return this.subPolicyBroker;
-	}
+//	private InsuranceSubPolicyBroker getSubPolicyBroker(){
+//		if(this.subPolicyBroker == null) {
+//			this.subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+//		}
+//		return this.subPolicyBroker;
+//	}
 
 }

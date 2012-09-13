@@ -3,49 +3,61 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SubPolicy;
-import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.definitions.shared.SubPolicyStub;
 
 public interface InsuranceSubPolicyBroker extends
 		DataBrokerInterface<SubPolicy> {
 
-	public boolean isTemp(String subPolicyId);
+	//GET & SET
 	
 	public void getSubPolicy(String subPolicyId, ResponseHandler<SubPolicy> handler);
 
-	public void openSubPolicyResource(String subPolicyId, ResponseHandler<SubPolicy> handler);
-	
-	public void getSubPolicyDefinition(SubPolicy subPolicy, ResponseHandler<SubPolicy> handler);
+	public void getEmptySubPolicy(String policyId, ResponseHandler<SubPolicy> handler);
 
-	public void commitSubPolicy(SubPolicy subPolicy, ResponseHandler<SubPolicy> handler);
+	public SubPolicy getSubPolicyHeader(String subPolicyId);
 
-	public void closeSubPolicyResource(String subPolicyId, ResponseHandler<Void> handler);
+	public SubPolicy updateSubPolicyHeader(SubPolicy subPolicy);
 
-	public void openCoverageDetailsPage(String subPolicyId, String insuredObjectId, String exerciseId, ResponseHandler<SubPolicy.TableSection> handler);
+	public void persistSubPolicy(String subPolicyId, ResponseHandler<SubPolicy> handler);
 
-	public void saveCoverageDetailsPage(String subPolicyId, String insuredObjectId, String exerciseId, SubPolicy.TableSection data, ResponseHandler<SubPolicy.TableSection> handler);
-
-	public void updateSubPolicy(SubPolicy subPolicy, ResponseHandler<SubPolicy> handler);
+	public SubPolicy discardEditData(String subPolicyId);
 
 	public void removeSubPolicy(String subPolicyId, String reason, ResponseHandler<String> handler);
-	
-	public void createReceipt(String subPolicyId, Receipt receipt, ResponseHandler<Receipt> handler);
 
-	public void remapItemId(String oldId, String newId, boolean inScratchPad);
+	public void getInsuredObject(String subPolicyId, String objectId, ResponseHandler<InsuredObject> handler);
+
+	public InsuredObject createInsuredObject(String subPolicyId);
+
+	public InsuredObject updateInsuredObject(String subPolicyId, InsuredObject object);
+
+	public void removeInsuredObject(String subPolicyId, String objectId);
+
+	public FieldContainer getContextForSubPolicy(String subPolicyId, String exerciseId);
+	
+	public void saveContextForSubPolicy(String policyId, String exerciseId, FieldContainer contents);
+
+	public FieldContainer getContextForInsuredObject(String subPolicyId, String objectId, String exerciseId);
+
+	public void saveContextForInsuredObject(String subPolicyId, String objectId, String exerciseId, FieldContainer contents);
+
+
+	// OTHER OPS
 	
 	public SearchDataBroker<SubPolicyStub> getSearchBroker();
 
-	public void discardTemp(String subPolicyId);
-	
-	public void getPage(String subPolicyId, String insuredObjectId, String exerciseId, ResponseHandler<TableSection> handler);
+	public void getSubPoliciesForPolicy(String ownerId,
+			ResponseHandler<Collection<SubPolicyStub>> responseHandler);
 
+	void createReceipt(String subPolicyId, Receipt receipt, ResponseHandler<Receipt> handler);
+	void createReceipt(Receipt receipt, ResponseHandler<Receipt> handler);
+	
 	void validateSubPolicy(String subPolicyId, ResponseHandler<Void> handler);
 	
 	void includeInsuredObject(String subPolicyId, InsuredObject object, ResponseHandler<InsuredObject> handler);
@@ -57,21 +69,10 @@ public interface InsuranceSubPolicyBroker extends
 	void transferToInsurancePolicy(String subPolicyId, String newPolicyId, ResponseHandler<SubPolicy> handler);
 	
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, ResponseHandler<InfoOrDocumentRequest> handler);
-	
-	void createReceipt(Receipt receipt, ResponseHandler<Receipt> handler);
-	
+
 	void executeDetailedCalculations(String subPolicyId, ResponseHandler<SubPolicy> handler);
 	
 	void voidSubPolicy(PolicyVoiding voiding, ResponseHandler<SubPolicy> responseHandler);
 
-	public String getEffectiveId(String ownerId);
-
-	public String getFinalMapping(String ownerId);
-
-	public void getSubPoliciesForPolicy(String ownerId,
-			ResponseHandler<Collection<SubPolicyStub>> responseHandler);
-
 	void createExpense(Expense expense, ResponseHandler<Expense> handler);
-
-	void getExerciseInPad(String exerciseId, ResponseHandler<Exercise> handler);
 }

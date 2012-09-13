@@ -14,6 +14,7 @@ import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.SubPolicy;
 
 public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePolicy> {
 
@@ -56,11 +57,13 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	// OTHER OPS
 
+	public SearchDataBroker<InsurancePolicyStub> getSearchBroker();
+
 	public void getClientPolicies(String clientid, ResponseHandler<Collection<InsurancePolicyStub>> policies);
 
-	public void createReceipt(String policyId, Receipt receipt, ResponseHandler<Receipt> handler);
+	public void createSubPolicy(SubPolicy subPolicy, ResponseHandler<SubPolicy> handler);
 
-	public SearchDataBroker<InsurancePolicyStub> getSearchBroker();
+	public void createReceipt(String policyId, Receipt receipt, ResponseHandler<Receipt> handler);
 
 	void validatePolicy(String policyId, ResponseHandler<Void> handler);
 

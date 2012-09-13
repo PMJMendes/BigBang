@@ -30,11 +30,12 @@ import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.OperationWasExecutedEvent;
-import bigBang.module.insurancePolicyModule.client.WorkSpace;
+import bigBang.module.insurancePolicyModule.client.PolicyWorkSpace;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyObjectService;
@@ -44,11 +45,11 @@ import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
 public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy> implements InsurancePolicyBroker {
 
-	protected ClientProcessBroker clientBroker;
 	protected InsurancePolicyServiceAsync service;
-	protected PolicyObjectServiceAsync insuredObjectService;
 	protected SearchDataBroker<InsurancePolicyStub> searchBroker;
-	protected WorkSpace workspace;
+	protected ClientProcessBroker clientBroker;
+	protected PolicyObjectServiceAsync insuredObjectService;
+	protected PolicyWorkSpace workspace;
 	public boolean requiresRefresh;
 
 	public InsurancePolicyProcessBrokerImpl(){
@@ -61,7 +62,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		this.clientBroker = (ClientProcessBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CLIENT);
 		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_POLICY;
 		this.searchBroker = new InsurancePolicySearchDataBroker(this.service);
-		this.workspace = new WorkSpace();
+		this.workspace = new PolicyWorkSpace();
 	}
 
 	@Override
@@ -381,6 +382,30 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				});
 			}
 		}, true);
+	}
+
+	@Override
+	public void createSubPolicy(SubPolicy subPolicy,
+			final ResponseHandler<SubPolicy> handler) {
+		service.createSubPolicy(subPolicy, new BigBangAsyncCallback<SubPolicy>() {
+
+			@Override
+			public void onResponseSuccess(SubPolicy result) {
+				//TODO
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY, result.mainPolicyId));
+
+				handler.onResponse(result);
+				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create new SubPolicy")	
+				});
+				super.onResponseFailure(caught);			
+			}
+		});
 	}
 
 	@Override

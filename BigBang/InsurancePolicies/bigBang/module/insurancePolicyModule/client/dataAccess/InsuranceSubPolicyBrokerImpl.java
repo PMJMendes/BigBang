@@ -1,13 +1,11 @@
 package bigBang.module.insurancePolicyModule.client.dataAccess;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
-import bigBang.definitions.client.dataAccess.ExerciseDataBroker;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
+import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
@@ -16,44 +14,47 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
-import bigBang.definitions.shared.Remap;
-import bigBang.definitions.shared.Remap.RemapId;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SubPolicy;
-import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.OperationWasExecutedEvent;
-import bigBang.library.shared.CorruptedPadException;
+import bigBang.module.insurancePolicyModule.client.SubPolicyWorkSpace;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyObjectService;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyObjectServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.SubPolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.SubPolicySortParameter;
-
-import com.google.gwt.core.client.GWT;
 
 public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy>
 implements InsuranceSubPolicyBroker {
 
 	protected SubPolicyServiceAsync service;
 	protected SearchDataBroker<SubPolicyStub> searchBroker;
-	protected Map<String, String> subPoliciesInScratchPad;
+	protected InsurancePolicyBroker policyBroker = (InsurancePolicyBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+	protected SubPolicyObjectServiceAsync insuredObjectService;
 	protected InsuredObjectDataBroker insuredObjectsBroker;
-	protected ExerciseDataBroker exerciseDataBroker;
+	protected SubPolicyWorkSpace workspace;
 
-	public InsuranceSubPolicyBrokerImpl() {
+	public InsuranceSubPolicyBrokerImpl(){
+		this(SubPolicyService.Util.getInstance(), SubPolicyObjectService.Util.getInstance());
+	}
+
+	public InsuranceSubPolicyBrokerImpl(SubPolicyServiceAsync service, SubPolicyObjectServiceAsync insuredObjectService) {
+		this.service = service;
+		this.insuredObjectService = insuredObjectService;
 		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY;
-		this.service = SubPolicyService.Util.getInstance();
-		this.subPoliciesInScratchPad = new HashMap<String, String>();
 		this.searchBroker = new InsuranceSubPolicySearchDataBroker();
+		this.workspace = new SubPolicyWorkSpace();
 	}
 
 	@Override
@@ -107,336 +108,148 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public boolean isTemp(String subPolicyId) {
-		return this.subPoliciesInScratchPad.containsKey(subPolicyId) || this.subPoliciesInScratchPad.containsValue(subPolicyId);
-	}
-
-	@Override
-	public void getSubPolicy(String insuranceSubPolicyId,
+	public void getSubPolicy(String subPolicyId,
 			final ResponseHandler<SubPolicy> handler) {
-		final String subPolicyId = getEffectiveId(insuranceSubPolicyId);
-		if(isTemp(subPolicyId)){
-			this.service.getSubPolicyInPad(subPolicyId, new BigBangAsyncCallback<SubPolicy>() {
-
-				@Override
-				public void onResponseSuccess(SubPolicy result) {
-					result.id = getFinalMapping(result.id);
-					incrementDataVersion();
-					for(DataBrokerClient<SubPolicy> bc : getClients()){
-						((InsuranceSubPolicyDataBrokerClient) bc).updateInsuranceSubPolicy(result);
-						((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
-					}
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(subPolicyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not get the subpolicy")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
-			this.service.getSubPolicy(subPolicyId, new BigBangAsyncCallback<SubPolicy>() {
-
-				@Override
-				public void onResponseSuccess(SubPolicy result) {
-					incrementDataVersion();
-					for(DataBrokerClient<SubPolicy> bc : getClients()){
-						((InsuranceSubPolicyDataBrokerClient) bc).updateInsuranceSubPolicy(result);
-						((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
-					}
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not get the requested subpolicy")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}
-	}
-
-	@Override
-	public void openSubPolicyResource(final String subPolicyId,
-			final ResponseHandler<SubPolicy> handler) {
-		//NEW SUB POLICY
-		if(subPolicyId == null){
-			service.openSubPolicyScratchPad(subPolicyId, new BigBangAsyncCallback<Remap[]>() {
-
-				@Override
-				public void onResponseSuccess(Remap[] result) {
-					//If new policy
-					if(result.length == 1 && result[0].remapIds.length == 1 && result[0].remapIds[0].oldId == null){
-						SubPolicy subPolicy = new SubPolicy();
-						RemapId remapId = result[0].remapIds[0];
-						subPolicy.id = remapId.newId;
-						subPoliciesInScratchPad.put("new", subPolicy.id);
-						handler.onResponse(subPolicy);
-					}
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(subPolicyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not open the new subpolicy resource")
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
-		}else if(!isTemp(subPolicyId)){
-			//EXISTING SUB POLICY
-			service.openSubPolicyScratchPad(subPolicyId, new BigBangAsyncCallback<Remap[]>() {
-
-				@Override
-				public void onResponseSuccess(Remap[] result) {
-					doRemapping(result);
-					getSubPolicy(subPolicyId, handler);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(subPolicyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not open the subpolicy resource")
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
-		}else{
-			handler.onError(new String[]{
-					new String("Cannot open a subpolicy resource twice for the same subpolicy")	
-			});
-		}
-	}
-
-	@Override
-	public void getSubPolicyDefinition(SubPolicy subPolicy, final ResponseHandler<SubPolicy> handler){
-		String id = subPolicy.id;
-		if(isTemp(id)) {
-			service.initSubPolicyInPad(subPolicy, new BigBangAsyncCallback<SubPolicy>() {
-
-				@Override
-				public void onResponseSuccess(SubPolicy result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not get the sub policy definition")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
-			handler.onError(new String[]{
-					new String("The sub policy is not in scratch pad")	
-			});
-		}
-	}
-
-	@Override
-	public void commitSubPolicy(SubPolicy subPolicy,
-			final ResponseHandler<SubPolicy> handler) {
-		final String subPolicyId = getEffectiveId(subPolicy.id);
-		this.service.commitPad(subPolicyId, new BigBangAsyncCallback<Remap[]>() {
+		this.service.getSubPolicy(subPolicyId, new BigBangAsyncCallback<SubPolicy>() {
 
 			@Override
-			public void onResponseSuccess(Remap[] result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY, subPolicyId));
-				String subPolicyId = result[0].remapIds[0].newId;
-				doRemapping(result);
-				getSubPolicy(subPolicyId, handler);
+			public void onResponseSuccess(SubPolicy result) {
+				workspace.loadSubPolicy(result);
+
+				incrementDataVersion();
+				for(DataBrokerClient<SubPolicy> bc : getClients()){
+					((InsuranceSubPolicyDataBrokerClient) bc).updateInsuranceSubPolicy(result);
+					((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
 			}
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
-				if(caught instanceof CorruptedPadException){
-					onPadCorrupted(subPolicyId);
-				}
 				handler.onError(new String[]{
-						new String("Could not commit the scratch pad")	
+						new String("Could not get the requested subpolicy")
 				});
 				super.onResponseFailure(caught);
 			}
-
 		});
 	}
 
 	@Override
-	public void closeSubPolicyResource(final String id,
-			final ResponseHandler<Void> handler) {
-		String subPolicyId = getEffectiveId(id);
-		if(isTemp(subPolicyId)){
-			service.discardPad(subPolicyId, new BigBangAsyncCallback<Remap[]>() {
-
-				@Override
-				public void onResponseSuccess(Remap[] result) {
-					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CLOSE, id));
-					doRemapping(result);
-					handler.onResponse(null);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not close the subpolicy resource")	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
-			handler.onError(new String[]{
-					new String("Cannot close an unopened subpolicy resource")
-			});
-		}
-	}
-
-	@Override
-	public void openCoverageDetailsPage(String insuranceSubPolicyId,
-			String insuredObjectId, String exerciseId,
-			final ResponseHandler<TableSection> handler) {
-		final String subPolicyId = getEffectiveId(insuranceSubPolicyId);
-		if(isTemp(subPolicyId)){
-			service.getPageForEdit(subPolicyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<SubPolicy.TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(subPolicyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not get the requested page for edit")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
-			service.getPage(subPolicyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<SubPolicy.TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not get the requested page")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}
-	}
-
-	@Override
-	public void saveCoverageDetailsPage(String insuranceSubPolicyId,
-			String insuredObjectId, String exerciseId, TableSection data,
-			final ResponseHandler<TableSection> handler) {
-		final String subPolicyId = getEffectiveId(insuranceSubPolicyId);
-		if(isTemp(subPolicyId)){
-			this.service.savePage(data, new BigBangAsyncCallback<SubPolicy.TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(subPolicyId);
-					}
-					handler.onError(new String[]{
-							new String("Coulg not save the page")	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
-			handler.onError(new String[]{
-					new String("Could not save the page on an unopened subpolicy resource")
-			});
-		}
-	}
-
-	@Override
-	public void updateSubPolicy(SubPolicy subPolicy,
+	public void getEmptySubPolicy(String policyId,
 			final ResponseHandler<SubPolicy> handler) {
-		final String subPolicyId = getEffectiveId(subPolicy.id);
-		if(isTemp(subPolicyId)){
-			String tempSubPolicyId = subPolicy.id;
-			subPolicy.id = subPolicyId;
-			service.updateHeader(subPolicy, new BigBangAsyncCallback<SubPolicy>() {
+		this.service.getEmptySubPolicy(policyId, new BigBangAsyncCallback<SubPolicy>() {
 
-				@Override
-				public void onResponseSuccess(SubPolicy result) {
-					result.id = getFinalMapping(result.id);
-					incrementDataVersion();
-					for(DataBrokerClient<SubPolicy> bc : getClients()){
-						((InsuranceSubPolicyDataBrokerClient) bc).updateInsuranceSubPolicy(result);
-						((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
-					}
-					handler.onResponse(result);
+			@Override
+			public void onResponseSuccess(SubPolicy result) {
+				workspace.loadSubPolicy(result);
+
+				incrementDataVersion();
+				for(DataBrokerClient<SubPolicy> bc : getClients()){
+					((InsuranceSubPolicyDataBrokerClient) bc).updateInsuranceSubPolicy(result);
+					((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
 				}
+				handler.onResponse(result);
+			}
 
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(subPolicyId);
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the empty subpolicy")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public SubPolicy getSubPolicyHeader(String subPolicyId) {
+		return workspace.getSubPolicyHeader(subPolicyId);
+	}
+
+	@Override
+	public SubPolicy updateSubPolicyHeader(SubPolicy subPolicy) {
+		return workspace.updateSubPolicyHeader(subPolicy);
+	}
+
+	@Override
+	public void persistSubPolicy(String subPolicyId,
+			final ResponseHandler<SubPolicy> handler) {
+		SubPolicy subPolicy;
+
+		subPolicy = workspace.getWholeSubPolicy(subPolicyId);
+
+		if(subPolicy != null) {
+			if ( subPolicy.id == null) {
+				policyBroker.createSubPolicy(subPolicy, new ResponseHandler<SubPolicy>() {
+
+					@Override
+					public void onResponse(SubPolicy response) {
+						workspace.loadSubPolicy(response);
+
+						incrementDataVersion();
+						for(DataBrokerClient<SubPolicy> bc : getClients()) {
+							((InsuranceSubPolicyDataBrokerClient) bc).addInsuranceSubPolicy(response);
+							((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
+						}
+						handler.onResponse(response);
 					}
-					handler.onError(new String[]{
-							new String("Could not save subpolicy header")	
-					});
-					super.onResponseFailure(caught);
-				}
 
-			});
-			subPolicy.id = tempSubPolicyId;
-		}else{
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						handler.onError(errors);
+					}
+				});
+			} else {
+				this.service.editSubPolicy(subPolicy, new BigBangAsyncCallback<SubPolicy>() {
+	
+					@Override
+					public void onResponseSuccess(SubPolicy result) {
+						workspace.loadSubPolicy(result);
+
+						incrementDataVersion();
+						for(DataBrokerClient<SubPolicy> bc : getClients()){
+							((InsuranceSubPolicyDataBrokerClient) bc).updateInsuranceSubPolicy(result);
+							((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
+						}
+						handler.onResponse(result);
+					}
+	
+					@Override
+					public void onResponseFailure(Throwable caught) {
+						handler.onError(new String[]{
+								"Could not update the subpolicy"	
+						});
+						super.onResponseFailure(caught);
+					}
+				});
+			}
+		} else {
 			handler.onError(new String[]{
-					new String("Could not save the subpolicy header. The policy is not in scratch pad")
+					"Could not update the subpolicy"	
 			});
 		}
 	}
 
 	@Override
-	public void removeSubPolicy(String id, String reason,
-			final ResponseHandler<String> handler) {
-		final String subPolicyId = getFinalMapping(id);
+	public SubPolicy discardEditData(String subPolicyId) {
+		return workspace.reset(subPolicyId);
+	}
+
+	@Override
+	public void removeSubPolicy(final String subPolicyId, String reason, final ResponseHandler<String> handler) {
 		this.service.deleteSubPolicy(subPolicyId, reason, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				String finalId = getFinalMapping(subPolicyId);
+				workspace.loadSubPolicy(null);
+
 				incrementDataVersion();
 				for(DataBrokerClient<SubPolicy> bc : getClients()){
-					((InsuranceSubPolicyDataBrokerClient) bc).removeInsuranceSubPolicy(finalId);
+					((InsuranceSubPolicyDataBrokerClient) bc).removeInsuranceSubPolicy(subPolicyId);
 					((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
 				}
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY, subPolicyId));
-				handler.onResponse(finalId);
+				handler.onResponse(subPolicyId);
 			}
 
 			@Override
@@ -450,9 +263,76 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void createReceipt(String id, Receipt receipt,
+	public void getInsuredObject(final String subPolicyId, String objectId,
+			final ResponseHandler<InsuredObject> handler) {
+		InsuredObject object = workspace.getObjectHeader(subPolicyId, objectId);
+
+		if(object != null) {
+			handler.onResponse(object);
+		} else {
+			insuredObjectService.getObject(objectId, new BigBangAsyncCallback<InsuredObject>() {
+
+				@Override
+				public void onResponseSuccess(InsuredObject result) {
+					handler.onResponse(workspace.loadExistingObject(subPolicyId, result));
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not get the object")
+					});
+					super.onResponseFailure(caught);
+				}
+			});
+		}
+	}
+
+	@Override
+	public InsuredObject createInsuredObject(String subPolicyId) {
+		return workspace.createLocalObject(subPolicyId);
+	}
+
+	@Override
+	public InsuredObject updateInsuredObject(String subPolicyId, InsuredObject objectId) {
+		return workspace.updateObject(subPolicyId, objectId);
+	}
+
+	@Override
+	public void removeInsuredObject(String subPolicyId, String objectId) {
+		workspace.deleteObject(subPolicyId, objectId);
+	}
+
+	@Override
+	public FieldContainer getContextForSubPolicy(String subPolicyId, String exerciseId) {
+		return workspace.getContext(subPolicyId, null, exerciseId);
+	}
+
+	@Override
+	public void saveContextForSubPolicy(String subPolicyId, String exerciseId,
+			FieldContainer contents) {
+		workspace.updateContext(subPolicyId, null, exerciseId, contents);
+		
+	}
+
+	@Override
+	public FieldContainer getContextForInsuredObject(String subPolicyId,
+			String objectId, String exerciseId) {
+		return workspace.getContext(subPolicyId, objectId, exerciseId);
+	}
+
+	@Override
+	public void saveContextForInsuredObject(String subPolicyId, String objectId,
+			String exerciseId, FieldContainer contents) {
+		workspace.updateContext(subPolicyId, objectId, exerciseId, contents);
+	}
+
+
+	//Other operations
+
+	@Override
+	public void createReceipt(final String subPolicyId, Receipt receipt,
 			final ResponseHandler<Receipt> handler) {
-		final String subPolicyId = getFinalMapping(id);
 		this.service.createReceipt(subPolicyId, receipt, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
@@ -473,79 +353,8 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void remapItemId(String oldId, String newId, boolean newInScratchPad) {
-		oldId = oldId.toLowerCase();
-		newId = newId == null ? null : newId.toLowerCase();
-
-		if(newInScratchPad){
-			this.subPoliciesInScratchPad.put(oldId, newId);
-		} else if(newId == null){
-			discardTemp(oldId);
-		} else {
-			this.subPoliciesInScratchPad.remove(newId);
-		}
-		incrementDataVersion();
-		for(DataBrokerClient<SubPolicy> bc : getClients()){
-			((InsuranceSubPolicyDataBrokerClient) bc).remapItemId(oldId, newId);
-			((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
-		}
-	}
-
-	@Override
 	public SearchDataBroker<SubPolicyStub> getSearchBroker() {
 		return this.searchBroker;
-	}
-
-	@Override
-	public void discardTemp(String subPolicyId) {
-		this.subPoliciesInScratchPad.remove(subPolicyId);
-		String finalId = getFinalMapping(subPolicyId);
-		this.subPoliciesInScratchPad.remove(finalId);
-	}
-
-	@Override
-	public void getPage(
-			String insuranceSubPolicyId,
-			String insuredObjectId,
-			String exerciseId,
-			final ResponseHandler<TableSection> handler) {
-		final String subPolicyId = getEffectiveId(insuranceSubPolicyId);
-		if(isTemp(subPolicyId)){
-			service.getPageForEdit(subPolicyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<SubPolicy.TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(subPolicyId);
-					}
-					handler.onError(new String[]{
-							new String("Could not get the requested page")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
-			service.getPage(subPolicyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<SubPolicy.TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not get the requested page")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}
 	}
 
 	@Override
@@ -680,7 +489,6 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(SubPolicy result) {
-				result.id = getFinalMapping(result.id);
 				incrementDataVersion();
 				for(DataBrokerClient<SubPolicy> bc : getClients()){
 					((InsuranceSubPolicyDataBrokerClient) bc).updateInsuranceSubPolicy(result);
@@ -775,65 +583,6 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public String getEffectiveId(String id) {
-		if(this.subPoliciesInScratchPad.containsKey(id)){
-			return this.subPoliciesInScratchPad.get(id);
-		}
-		return id;
-	}
-
-	@Override
-	public String getFinalMapping(String tempId) {
-		for(String key : this.subPoliciesInScratchPad.keySet()){
-			if(this.subPoliciesInScratchPad.get(key).equalsIgnoreCase(tempId)){
-				return key;
-			}
-		}
-		return tempId;
-	}
-
-	protected void doRemapping(Remap[] remappings){
-		for(int i = 0; i < remappings.length; i++) {
-			Remap remap = remappings[i];
-
-			//SUBPOLICIES
-			if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
-				for(int j = 0; j < remap.remapIds.length; j++){
-					RemapId remapId = remap.remapIds[j];
-					remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
-				}
-
-				//OBJECTS
-			}else if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS)){
-				for(int j = 0; j < remap.remapIds.length; j++){
-					RemapId remapId = remap.remapIds[j];
-					this.insuredObjectsBroker.remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
-				}
-
-				//EXERCISES
-			}else if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_EXERCISE)){
-				for(int j = 0; j < remap.remapIds.length; j++){
-					RemapId remapId = remap.remapIds[j];
-					this.exerciseDataBroker.remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
-				}
-			}else{
-				GWT.log("Could not remap item id for typeId = " + remap.typeId);
-			}
-		}
-	}
-
-	protected void onPadCorrupted(String subPolicyId){
-		closeSubPolicyResource(subPolicyId, new ResponseHandler<Void>() {
-
-			@Override
-			public void onResponse(Void response) {}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {}
-		});
-	}
-
-	@Override
 	public void createExpense(Expense expense, final ResponseHandler<Expense> handler){
 		service.createExpense(expense, new BigBangAsyncCallback<Expense>() {
 
@@ -850,27 +599,6 @@ implements InsuranceSubPolicyBroker {
 						new String("Could not create the new Expense")	
 				});
 				super.onResponseFailure(caught);
-			}
-		});
-	}
-
-	@Override
-	public void getExerciseInPad(String exerciseId,
-			final ResponseHandler<Exercise> handler) {
-
-		service.getExerciseInPad(exerciseId, new BigBangAsyncCallback<Exercise>() {
-
-			@Override
-			public void onResponseSuccess(Exercise result) {
-				handler.onResponse(result);
-			}
-		
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				super.onResponseFailure(caught);
-				handler.onError(new String[]{
-						new String("Could not get the requested exercise")
-				});
 			}
 		});
 	}
