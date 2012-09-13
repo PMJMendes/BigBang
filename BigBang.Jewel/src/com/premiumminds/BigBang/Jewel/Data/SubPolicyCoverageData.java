@@ -20,6 +20,7 @@ public class SubPolicyCoverageData
 	public Boolean mbPresent;
 
 	public boolean mbNew;
+	public boolean mbDeleted;
 
 	public SubPolicyCoverageData mobjPrevValues;
 

@@ -93,6 +93,15 @@ public class SubPolicy
     	}
 	}
 
+	public Client GetClient()
+		throws BigBangJewelException
+	{
+		if ( getAt(2) == null )
+			return null;
+
+		return Client.GetInstance(getNameSpace(), (UUID)getAt(2));
+	}
+
     public Policy GetOwner()
     {
     	if ( mrefOwner == null )

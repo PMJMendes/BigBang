@@ -26,6 +26,8 @@ public class SubPolicyObject
 		}
 	}
 
+    private SubPolicy mrefOwner;
+
 	public static SubPolicyObject GetInstance(UUID pidNameSpace, ResultSet prsObject)
 		throws BigBangJewelException
 	{
@@ -42,5 +44,32 @@ public class SubPolicyObject
 	public void Initialize()
 		throws JewelEngineException
 	{
+		if ( getAt(1) != null )
+		{
+			try
+			{
+				mrefOwner = SubPolicy.GetInstance(getNameSpace(), (UUID)getAt(1));
+			}
+			catch (Throwable e)
+			{
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+		}
 	}
+
+    public SubPolicy GetOwner()
+    {
+    	if ( mrefOwner == null )
+    	{
+			try
+			{
+				Initialize();
+			}
+			catch (Throwable e)
+			{
+			}
+    	}
+
+    	return mrefOwner;
+    }
 }
