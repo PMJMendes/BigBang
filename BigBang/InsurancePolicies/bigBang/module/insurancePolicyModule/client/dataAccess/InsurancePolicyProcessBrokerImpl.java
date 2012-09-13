@@ -296,8 +296,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 				@Override
 				public void onResponseSuccess(InsuredObject result) {
-					workspace.loadExistingObject(policyId, result);
-					handler.onResponse(workspace.getObjectHeader(policyId, result.id));
+					handler.onResponse(workspace.loadExistingObject(policyId, result));
 				}
 
 				@Override
