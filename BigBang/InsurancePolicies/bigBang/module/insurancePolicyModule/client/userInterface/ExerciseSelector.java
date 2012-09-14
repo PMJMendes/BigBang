@@ -2,10 +2,11 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.library.client.userInterface.DatePickerFormField;
-import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -17,7 +18,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
-	private ExpandableListBoxFormField exercises;
+	private ListBoxFormField exercises;
 	private DatePickerFormField startDate;
 	private DatePickerFormField endDate;
 	private Button newButton;
@@ -27,12 +28,10 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
 		HorizontalPanel wrapper = new HorizontalPanel();
 		initWidget(wrapper);
-		exercises = new ExpandableListBoxFormField("Exercício");
+		exercises = new ListBoxFormField("Exercício");
 		startDate = new DatePickerFormField("Data de início");
 		endDate = new DatePickerFormField("Data de fim");
-		newButton = new Button("Novo Exercício");
-
-		exercises.setEditable(false);
+		newButton = new Button("Abrir Próximo Exercício");
 
 		wrapper.add(exercises);
 		wrapper.add(startDate);
@@ -67,12 +66,12 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 	@Override
 	public ExerciseData getValue() {
 		ExerciseData newValue = value;
-		
+
 		if(value != null){
 			newValue.startDate = startDate.getStringValue();
 			newValue.endDate = endDate.getStringValue();
 		}
-		
+
 		return newValue;
 	}
 
@@ -88,6 +87,9 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
 	@Override
 	public void setValue(ExerciseData value, boolean fireEvents) {
+		if(value == null){
+			return;
+		}
 		this.value = value;
 
 		exercises.setValue(value.id);
@@ -101,11 +103,12 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
 	public void setAvailableExercises(ExerciseData[] availableExs){
 
-		exercises.clearValues();			
+		exercises.clearValues();
 
 		for(int i = 0; i<availableExs.length; i++){
 			exercises.addItem(availableExs[i].label, availableExs[i].id);
 		}
+		
 		exercises.removeItem(0);
 
 	}
@@ -129,6 +132,10 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
 	public void allowCreateExercise(boolean allow) {
 		newButton.setEnabled(allow);
+	}
+
+	public HasClickHandlers getNewButton() {
+		return newButton;
 	}
 
 }

@@ -69,7 +69,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		CREATE_RECEIPT,
 		INCLUDE_INSURED_OBJECT,
 		CREATE_INSURED_OBJECT,
-		CREATE_EXERCISE,
 		VOID_POLICY,
 		TRANSFER_BROKERAGE,
 		CREATE_SUBSTITUTE_POLICY,
@@ -164,6 +163,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void setToolbarEditMode(boolean b);
 
 		void lockToolbar();
+
+		void setPolicyEntrySelected(boolean b);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -238,9 +239,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				case CREATE_RECEIPT:
 					item.pushIntoStackParameter("display", "createreceipt");
 					NavigationHistoryManager.getInstance().go(item);
-					break;
-				case CREATE_EXERCISE:
-					createExercise();
 					break;
 				case INCLUDE_INSURED_OBJECT:
 					item.pushIntoStackParameter("display", "includeinsuredobject");
@@ -457,8 +455,18 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void onNewExercise() {
-		// TODO Auto-generated method stub
+	
+		ExerciseData[] newArray = new ExerciseData[availableExercises.length+1];
 
+		newArray[0] = broker.createExercise(policyId);
+		
+		for(int i = 1; i<newArray.length; i++){
+			newArray[i] = availableExercises[i-1];
+		}
+		
+		availableExercises = newArray;
+		view.allowCreateNewExercise(false);
+		fillExercise(availableExercises);
 	}
 
 
@@ -563,13 +571,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		// TODO Auto-generated method stub
 
 	}
-
-
-	protected void createExercise() {
-		// TODO Auto-generated method stub
-
-	}
-
 
 	protected void onDelete() {
 		broker.removePolicy(policyId, new ResponseHandler<String>() {
@@ -679,6 +680,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					//PERMISSIONS
 					fillPolicy();
 					view.setReadOnly(true);					
+					
 				}
 
 				@Override
@@ -696,34 +698,22 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	protected void setExercises(ExerciseData[] exerciseData) {
 
-		int ammount = 0;
+		int start = exerciseData[0].isActive ? 0 : 1; //FIRST ONE IS THE NEW ONE 
 
-		for(int i = 0; i<exerciseData.length; i++){
-			if(exerciseData[i].isActive)
-				ammount++;
-		}
+		availableExercises = new ExerciseData[exerciseData.length - start];
 
-		availableExercises = new ExerciseData[ammount];
+		for(int i = start; i<exerciseData.length; i++)
+			availableExercises[i - start] = exerciseData[i];
 
-		int curr = 0;
-
-		for(int i = 0; i<exerciseData.length; i++){
-			if(exerciseData[i].isActive){
-				availableExercises[curr] = exerciseData[i];
-				curr++;
-			}
-		}
-		view.setAvailableExercises(availableExercises);
-		if(availableExercises.length > 0){
-			view.getExerciseForm().setValue(availableExercises[0]);
-			view.getExerciseSelector().setValue(availableExercises[0].id);
-		}else{
-			view.getExerciseForm().setValue(null);
-			view.getExerciseSelector().setValue(null);
-		}
+		fillExercise(availableExercises);
+	}
 
 
-
+	private void fillExercise(ExerciseData[] exercises) {
+		view.setAvailableExercises(exercises);
+		view.getExerciseForm().setValue(exercises[0]);
+		view.getExerciseSelector().setValue(exercises[0].id);
+		
 	}
 
 
@@ -739,7 +729,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.showObjectForm(false);
 		view.showPolicyForm(true);
 		view.getPolicyNotesForm().setValue(pol.notes);
-
+		view.setPolicyEntrySelected(true);
+		
 		if(pol.exerciseData == null){
 			view.setExerciseVisible(false);
 		}
@@ -748,6 +739,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.setExerciseVisible(true);
 		}
 		onPolicy = true;
+		
 
 	}
 

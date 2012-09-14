@@ -214,10 +214,9 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 		if(result == null){
 			return;
 		}
-		for(int i = 0; i<fields.length; i++){
+		for(int i = 0; i<result.length; i++){
 			if(fields[result[i].coverageIndex+1][result[i].columnIndex+2] != null){
-				fields[result[i].coverageIndex+1][result[i].columnIndex+2].
-				setReadOnly(readOnly);
+				fields[result[i].coverageIndex+1][result[i].columnIndex+2].setReadOnly(readOnly);
 			}
 		}
 		setFirstColumnReadOnly(readOnly);

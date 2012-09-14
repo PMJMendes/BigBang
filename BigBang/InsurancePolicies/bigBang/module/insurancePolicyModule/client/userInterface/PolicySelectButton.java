@@ -36,7 +36,7 @@ public class PolicySelectButton extends ListEntry<InsurancePolicyStub>{
 		}
 		if(value.id != null){
 
-			numberLabel.setText(value.id.equalsIgnoreCase("new") ? "Nova Apólice" : "#" + value.number);
+			numberLabel.setText(value.id.equalsIgnoreCase("new") ? "Nova Apólice" : "Apólice #" + value.number);
 			label.setText("(Todas as unidades de risco)");
 
 			VerticalPanel panel = new VerticalPanel();

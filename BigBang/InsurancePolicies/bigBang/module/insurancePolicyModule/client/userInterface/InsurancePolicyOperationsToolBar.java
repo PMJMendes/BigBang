@@ -303,8 +303,6 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	
 	public abstract void onIncludeInsuredObject();
 
-	public abstract void onCreateExercise();
-
 	public abstract void onCreateInsuredObjectFromClient();
 
 	public abstract void onCreateManagerTransfer();

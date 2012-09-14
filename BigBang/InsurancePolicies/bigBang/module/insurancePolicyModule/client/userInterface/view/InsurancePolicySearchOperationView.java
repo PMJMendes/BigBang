@@ -139,11 +139,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			}
 
 			@Override
-			public void onCreateExercise() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_EXERCISE));
-			}
-
-			@Override
 			public void onCreateInsuredObjectFromClient() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_INSURED_OBJECT_FROM_CLIENT));
 			}
@@ -274,6 +269,13 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		exerciseChooser = new ExerciseSelector();
 		detailTableContainer.add(exerciseChooser);
+		exerciseChooser.getNewButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.NEW_EXERCISE));
+			}
+		});
 
 		detailsForm = new CoverageExerciseDetailsForm("");
 		detailTableContainer.add(detailsForm.getNonScrollableContent());
@@ -575,6 +577,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void lockToolbar() {
 		toolbar.lockAll();
+	}
+
+	@Override
+	public void setPolicyEntrySelected(boolean b) {
+		policySelectButton.setSelected(b, false);
 	}
 
 }
