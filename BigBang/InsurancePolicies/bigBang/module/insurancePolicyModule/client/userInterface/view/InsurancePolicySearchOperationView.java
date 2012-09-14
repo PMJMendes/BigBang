@@ -35,6 +35,8 @@ import bigBang.module.insurancePolicyModule.client.userInterface.PolicySelectBut
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -129,11 +131,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			@Override
 			public void onRequestInfoFromAgency() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.REQUEST_AGENCY_INFO));
-			}
-
-			@Override
-			public void onCreateInsuredObject() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_INSURED_OBJECT));
 			}
 
 			@Override
@@ -233,6 +230,13 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		objectsPolicyContainer.add(policySelectButton);
 		objectsList = new InsuredObjectSearchPanel();
 		objectsList.showFilterField(false);
+		objectsList.getNewObjectButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.NEW_INSURED_OBJECT));
+			}
+		});
 		objectsPolicyContainer.add(objectsList);
 		objectsPolicyContainer.setCellHeight(objectsList, "100%");
 		objectsList.setSize("100%", "100%");

@@ -373,4 +373,8 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		return headerWidgetWrapper;
 	}
 	
+	public void lockSearchButton(boolean lock){
+		searchButton.setEnabled(!lock);
+	}
+	
 }

@@ -210,7 +210,6 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 
 	public void setReadOnly(boolean readOnly) {
 
-		this.readOnly = readOnly;
 		FieldContainer.ColumnField[] result = value;
 		if(result == null){
 			return;
@@ -223,6 +222,8 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 		}
 		setFirstColumnReadOnly(readOnly);
 		setEnabledRows();
+		
+		this.readOnly = readOnly;
 	}
 
 	private void setFirstColumnReadOnly(boolean readOnly) {

@@ -10,6 +10,7 @@ import org.gwt.mosaic.ui.client.util.ButtonHelper.ButtonLabelType;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -79,6 +80,7 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 
 		InsuredObjectDataBroker broker = (InsuredObjectDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT);
 		broker.registerClient(this);
+		lockSearchButton(true);
 	}
 
 	@Override
@@ -181,9 +183,12 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 	}
 
 	public void setOwner(String ownerId) {
-
+		
 		if(ownerId != null){
 			this.ownerId = ownerId;
+		}
+		else{
+			lockSearchButton(true);
 		}
 
 		InsuredObjectSearchParameter parameter = new InsuredObjectSearchParameter();
@@ -192,8 +197,12 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 		SearchParameter[] parameters = new SearchParameter[]{parameter};
 
 		doSearch(parameters, null);
+		lockSearchButton(false);
 
 	}
 
+	public HasClickHandlers getNewObjectButton(){
+		return createNew;
+	}
 
 }

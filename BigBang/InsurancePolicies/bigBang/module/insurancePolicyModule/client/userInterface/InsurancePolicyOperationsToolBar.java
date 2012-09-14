@@ -300,8 +300,6 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public abstract void onRequestInfoFromClient();
 
 	public abstract void onRequestInfoFromAgency();
-
-	public abstract void onCreateInsuredObject();
 	
 	public abstract void onIncludeInsuredObject();
 

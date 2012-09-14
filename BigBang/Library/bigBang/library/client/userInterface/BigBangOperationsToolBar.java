@@ -258,11 +258,11 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	}
 	
 	public void lockNonSaveOptions(boolean b) {
-		adminMenuItem.setEnabled(b);
-		createMenuItem.setEnabled(b);
-		dataMenuItem.setEnabled(b);
-		executeMenuItem.setEnabled(b);
-		requestMenuItem.setEnabled(b);
+		adminMenuItem.setEnabled(!b);
+		createMenuItem.setEnabled(!b);
+		dataMenuItem.setEnabled(!b);
+		executeMenuItem.setEnabled(!b);
+		requestMenuItem.setEnabled(!b);
 	}
 
 	/**
