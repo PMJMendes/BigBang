@@ -15,7 +15,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsuredObjectOLD;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
@@ -525,8 +525,8 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
-	public void insertInsuredObject(InsuredObjectOLD object,
-			ResponseHandler<InsuredObjectOLD> handler) {
+	public void insertInsuredObject(InsuredObject object,
+			ResponseHandler<InsuredObject> handler) {
 		// TODO Auto-generated method stub
 
 	}

@@ -6,7 +6,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.InsuredObject;
-import bigBang.definitions.shared.InsuredObjectStubOLD;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
@@ -101,12 +101,11 @@ public class SubPolicyObjectServiceImpl
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
-		InsuredObjectStubOLD lobjResult;
+		InsuredObjectStub lobjResult;
 
-		lobjResult = new InsuredObjectStubOLD();
+		lobjResult = new InsuredObjectStub();
 		lobjResult.id = pid.toString();
 		lobjResult.unitIdentification = (String)parrValues[0];
-		lobjResult.ownerId = ((UUID)parrValues[1]).toString();
 		lobjResult.typeId = ((UUID)parrValues[2]).toString();
 		lobjResult.typeText = (String)parrValues[3];
 		if ( (parrValues[4] != null) || (parrValues[5] != null) || (parrValues[6] != null) )
