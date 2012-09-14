@@ -300,21 +300,21 @@ public class SubPolicyWorkSpace {
 		readMergedHeaderArray(contents.headerFields, new HeaderField[][] {
 					( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].headerFields ),
 					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
-				}, new boolean[] {true, false});
+				}, new boolean[] {object != null, false});
 
 		readMergedColumnArray(contents.columnFields, new ColumnField[][] {
 					subPolicy.columnFields,
 					( object == null ? null : object.columnFields ),
 					( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].columnFields ),
 					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
-				}, new boolean[] {true, false, true, false});
+				}, new boolean[] {object != null, false, object != null, false});
 
 		readMergedExtraArray(contents.extraFields, new ExtraField[][] {
 					subPolicy.extraFields,
 					( object == null ? null : object.extraFields ),
 					( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].extraFields ),
 					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].extraFields)
-				}, new boolean[] {true, false, true, false});
+				}, new boolean[] {object != null, false, object != null, false});
 	}
 
 	private static HeaderField[] mergeHeaderArrays(HeaderField[][] source, boolean[] readOnly) throws Exception
