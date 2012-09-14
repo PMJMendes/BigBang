@@ -146,11 +146,6 @@ public class BigBang_Tests
 //		TestObjectEdit.DoTest();
 //		TestObjectDelete.DoTest();
 //
-//		TestExerciseGet.DoTest();
-//		TestExerciseCreate.DoTest();
-//		TestExerciseEdit.DoTest();
-//		TestExerciseDelete.DoTest();
-//
 //		TestSubPolicyGet.DoTest();
 //		TestSubPolicyCreate.DoTest();
 //		TestSubPolicyEdit.DoTest();
@@ -163,8 +158,6 @@ public class BigBang_Tests
 //		TestSubObjectCreate.DoTest();
 //		TestSubObjectEdit.DoTest();
 //		TestSubObjectDelete.DoTest();
-//
-//		TestSubExerciseGet.DoTest();
 //
 //		TestReceiptGet.DoTest();
 //		TestReceiptCreate.DoTest();
