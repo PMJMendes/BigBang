@@ -3,7 +3,6 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
-import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
@@ -295,10 +294,11 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		return childrenPanel.documentsList;
 	}
 
-	@Override
-	public HasValueSelectables<ExerciseStub> getExercisesList() {
-		return childrenPanel.exercisesList;
-	}
+//	@Override
+//	public HasValueSelectables<ExerciseStub> getExercisesList() {
+//		return childrenPanel.exercisesList;
+//		return null;
+//	}
 
 	@Override
 	public HasValueSelectables<InsuredObjectStub> getInsuredObjectsList() {

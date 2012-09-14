@@ -367,7 +367,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	@Override
-	public Exercise openNewExercise(String policyId, Exercise exercise)
+	public InsurancePolicy openNewExercise(String policyId, Exercise exercise)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

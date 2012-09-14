@@ -10,7 +10,6 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
-import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
@@ -56,7 +55,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 		HasValueSelectables<Document> getDocumentsList();
 
-		HasValueSelectables<ExerciseStub> getExercisesList();
+//		HasValueSelectables<ExerciseStub> getExercisesList();
 
 		HasValueSelectables<InsuredObjectStub> getInsuredObjectsList();
 
@@ -283,8 +282,8 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					showDocument((Document) value);
 				} else if (source == view.getInsuredObjectsList()) {
 					showInsuredObject((InsuredObjectStub) value);
-				} else if (source == view.getExercisesList()) {
-					showExercise((ExerciseStub) value);
+//				} else if (source == view.getExercisesList()) {
+//					showExercise((ExerciseStub) value);
 				} else if (source == view.getReceiptsList()) {
 					showReceipt((ReceiptStub) value);
 				} else if (source == view.getHistoryList()) {
@@ -303,8 +302,8 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 				selectionChangedHandler);
 		view.getInsuredObjectsList().addSelectionChangedEventHandler(
 				selectionChangedHandler);
-		view.getExercisesList().addSelectionChangedEventHandler(
-				selectionChangedHandler);
+//		view.getExercisesList().addSelectionChangedEventHandler(
+//				selectionChangedHandler);
 		view.getReceiptsList().addSelectionChangedEventHandler(
 				selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(
@@ -787,25 +786,25 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 	}
 
-	protected void showExercise(final ExerciseStub exercise) {
-		saveWorkState(new ResponseHandler<Void>() {
-
-			@Override
-			public void onResponse(Void response) {
-				NavigationHistoryItem item = NavigationHistoryManager
-						.getInstance().getCurrentState();
-				item.pushIntoStackParameter("display", "viewsubpolicyexercise");
-				item.setParameter("exerciseid", exercise.id);
-				NavigationHistoryManager.getInstance().go(item);
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onResponse(null);
-			}
-		});
-
-	}
+//	protected void showExercise(final ExerciseStub exercise) {
+//		saveWorkState(new ResponseHandler<Void>() {
+//
+//			@Override
+//			public void onResponse(Void response) {
+//				NavigationHistoryItem item = NavigationHistoryManager
+//						.getInstance().getCurrentState();
+//				item.pushIntoStackParameter("display", "viewsubpolicyexercise");
+//				item.setParameter("exerciseid", exercise.id);
+//				NavigationHistoryManager.getInstance().go(item);
+//			}
+//
+//			@Override
+//			public void onError(Collection<ResponseError> errors) {
+//				onResponse(null);
+//			}
+//		});
+//
+//	}
 
 	protected void showReceipt(final ReceiptStub receiptItem) {
 		saveWorkState(new ResponseHandler<Void>() {

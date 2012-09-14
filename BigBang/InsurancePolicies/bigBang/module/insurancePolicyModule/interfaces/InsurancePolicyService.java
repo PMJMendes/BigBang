@@ -52,7 +52,7 @@ public interface InsurancePolicyService
 	public InsuredObject includeObjectFromClient(String policyId) throws SessionExpiredException, BigBangException;
 	public void excludeObject(String policyId, String objectId) throws SessionExpiredException, BigBangException;
 
-	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy transferToClient(String policyId, String newClientId) throws SessionExpiredException, BigBangException;
 

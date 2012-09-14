@@ -17,8 +17,6 @@ public class SubPolicyChildrenPanel extends View {
 
 	public ContactsList contactsList;
 	public DocumentsList documentsList;
-	public SubPolicyInsuredObjectsList insuredObjectsList;
-	public SubPolicyExercisesList exercisesList;
 	public ReceiptsList receiptList;
 	public HistoryList historyList;
 	public SubProcessesList subProcessesList;
@@ -31,8 +29,6 @@ public class SubPolicyChildrenPanel extends View {
 
 		contactsList = new ContactsList();
 		documentsList = new DocumentsList();
-		insuredObjectsList = new SubPolicyInsuredObjectsList();
-		exercisesList = new SubPolicyExercisesList();
 		receiptList = new ReceiptsList();
 		subProcessesList = new SubProcessesList();
 		expensesList = new ExpensesList();
@@ -40,8 +36,6 @@ public class SubPolicyChildrenPanel extends View {
 
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
-		wrapper.add(insuredObjectsList, "Unidades de Risco");
-		wrapper.add(exercisesList, "Exercícios");
 		wrapper.add(receiptList, "Recibos");
 		wrapper.add(expensesList, "Despesas de Saúde");
 		wrapper.add(subProcessesList, "Sub-Processos");
@@ -62,8 +56,6 @@ public class SubPolicyChildrenPanel extends View {
 		this.documentsList.setOwner(subPolicyId);	
 		this.documentsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 		this.documentsList.allowCreation(allow);
-		this.insuredObjectsList.setOwner(subPolicyId);
-		this.exercisesList.setOwner(subPolicyId);
 		this.receiptList.setOwner(subPolicyId);
 		this.expensesList.setOwner(subPolicyId);
 		this.subProcessesList.setOwner(subPolicyId);

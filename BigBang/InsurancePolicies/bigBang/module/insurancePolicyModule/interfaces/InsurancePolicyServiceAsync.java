@@ -28,7 +28,7 @@ public interface InsurancePolicyServiceAsync
 	void includeObject(String policyId, InsuredObject object, AsyncCallback<InsuredObject> callback);
 	void includeObjectFromClient(String policyId, AsyncCallback<InsuredObject> callback);
 	void excludeObject(String policyId, String objectId, AsyncCallback<Void> callback);
-	void openNewExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
+	void openNewExercise(String policyId, Exercise exercise, AsyncCallback<InsurancePolicy> callback);
 	void transferToClient(String policyId, String newClientId, AsyncCallback<InsurancePolicy> callback);
 	void createDebitNote(String policyId, DebitNote note, AsyncCallback<Void> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);

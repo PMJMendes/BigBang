@@ -84,29 +84,8 @@ public class InsuredObjectDataBrokerImpl extends DataBroker<InsuredObject> imple
 	}
 
 	@Override
-	public void createInsuredObject(String ownerId,
-			ResponseHandler<InsuredObject> handler) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void getInsuredObject(String id,
 			ResponseHandler<InsuredObject> handler) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateInsuredObject(InsuredObject object,
-			ResponseHandler<InsuredObject> handler) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteInsuredObject(String objectId,
-			ResponseHandler<Void> handler) {
 		// TODO Auto-generated method stub
 
 	}
@@ -121,12 +100,6 @@ public class InsuredObjectDataBrokerImpl extends DataBroker<InsuredObject> imple
 	@Override
 	public SearchDataBroker<InsuredObjectStub> getSearchBroker() {
 		return searchBroker;
-	}
-
-	@Override
-	public void remapItemId(String Id, String newId, boolean newIdInScratchPad) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
