@@ -11,6 +11,7 @@ import bigBang.definitions.shared.FieldContainer.ExtraField;
 import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
 
 public class PolicyWorkSpace {
 	private static String NEWID = "new";
@@ -29,10 +30,6 @@ public class PolicyWorkSpace {
 		return (this.policy != null) && this.policy.id.equalsIgnoreCase(id);
 	}
 
-	/**
-	 * Creates the edition context
-	 * @param policy 
-	 */
 	public InsurancePolicy loadPolicy(InsurancePolicy policy) {
 		originalPolicy = policy;
 		alteredObjects.clear();
@@ -85,7 +82,7 @@ public class PolicyWorkSpace {
 		for ( InsuredObject object : originalPolicy.changedObjects )
 		{
 			object.headerFields = splitArray(object.headerFields, originalPolicy.headerFields.length);
-			if ( InsuredObject.Change.CREATED.equals(object.change) )
+			if ( InsuredObjectStub.Change.CREATED.equals(object.change) )
 				object.id = null;
 		}
 
@@ -154,6 +151,20 @@ public class PolicyWorkSpace {
 
 	//INSURED OBJECTS
 
+	public InsuredObjectStub[] getLocalObjects(String policyId) {
+		if ( !isPolicyLoaded(policyId) )
+			return null;
+
+		InsuredObjectStub[] result;
+		int i;
+
+		result = new InsuredObjectStub[alteredObjects.size()];
+		for ( i = 0; i < result.length; i++ )
+			result[i] = new InsuredObjectStub(alteredObjects.get(i));
+
+		return result;
+	}
+
 	public InsuredObject getObjectHeader(String policyId, String objectId) {
 		if ( !isPolicyLoaded(policyId) )
 			return null;
@@ -186,7 +197,7 @@ public class PolicyWorkSpace {
 			return null;
 		}
 
-		newObject.change = InsuredObject.Change.MODIFIED;
+		newObject.change = InsuredObjectStub.Change.MODIFIED;
 		if ( policy.exerciseData != null )
 			newObject.exerciseData[0].isActive = policy.exerciseData[0].isActive;
 		alteredObjects.add(newObject);
@@ -208,7 +219,7 @@ public class PolicyWorkSpace {
 			return null;
 		}
 
-		newObject.change = InsuredObject.Change.CREATED;
+		newObject.change = InsuredObjectStub.Change.CREATED;
 		newObject.id = idCounter+"";
 		idCounter++;
 		alteredObjects.add(newObject);
@@ -226,7 +237,6 @@ public class PolicyWorkSpace {
 			InsuredObject object = iterator.next();
 			if(object.id.equalsIgnoreCase(alteredObject.id)) {
 				iterator.remove();
-				alteredObject.change = InsuredObject.Change.MODIFIED;
 				iterator.add(alteredObject);
 				return alteredObject;
 			}
@@ -241,7 +251,7 @@ public class PolicyWorkSpace {
 
 		for( InsuredObject object : alteredObjects ) {
 			if(object.id.equalsIgnoreCase(objectId)) {
-				object.change = InsuredObject.Change.DELETED;
+				object.change = InsuredObjectStub.Change.DELETED;
 				break;
 			}
 		}
@@ -284,21 +294,21 @@ public class PolicyWorkSpace {
 			result.headerFields = mergeHeaderArrays(new HeaderField[][] {
 						( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].headerFields ),
 						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
-					}, new boolean[] {true, false});
+					}, new boolean[] {object != null, false});
 
 			result.columnFields = mergeColumnArrays(new ColumnField[][] {
 						policy.columnFields,
 						( object == null ? null : object.columnFields ),
 						( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].columnFields ),
 						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
-					}, new boolean[] {true, false, true, false});
+					}, new boolean[] {object != null, false, object != null, false});
 
 			result.extraFields = mergeExtraArrays(new ExtraField[][] {
 						policy.extraFields,
 						( object == null ? null : object.extraFields ),
 						( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].extraFields ),
 						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].extraFields)
-					}, new boolean[] {true, false, true, false});
+					}, new boolean[] {object != null, false, object != null, false});
 		} catch (Exception e) {
 			return null;
 		}

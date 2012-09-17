@@ -160,8 +160,6 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	public NumericTextBoxFormField(boolean isMoney){
 		this();
 		this.setAsMoney(isMoney);
-		
-
 	}
 
 	public NumericTextBoxFormField() {
@@ -229,8 +227,8 @@ public class NumericTextBoxFormField extends FormField<Double>{
 				}
 			}
 		}
-		((NumericWrapper)this.field).getField().setEnabled(!readonly);
 		((NumericWrapper)this.field).getField().setReadOnly(readonly);
+		((NumericWrapper)this.field).getField().setEnabled(!readonly);
 		((NumericWrapper)this.field).getField().getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readonly && this.isMandatory());
 	}

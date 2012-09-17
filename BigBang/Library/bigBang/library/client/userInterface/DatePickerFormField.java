@@ -6,7 +6,6 @@ import java.util.Date;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.KeyPressEvent;
@@ -124,7 +123,7 @@ public class DatePickerFormField extends FormField<Date> {
 		try{
 			this.format.parse(year+"-"+month+"-"+day);
 		}catch(Exception e){
-			GWT.log("DATA INVALIDA");
+			//GWT.log("DATA INVALIDA");
 			return false;
 		}
 		return true;

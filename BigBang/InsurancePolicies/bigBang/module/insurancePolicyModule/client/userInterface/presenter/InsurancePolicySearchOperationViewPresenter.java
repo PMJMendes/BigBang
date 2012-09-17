@@ -146,7 +146,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		void setExerciseVisible(boolean b);
 
-		void setTableValues(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns);
+		void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns);
 
 		void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages);
 
@@ -483,6 +483,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	}
 
 	private void saveInternally() {
+		if(!isEditModeEnabled){
+			return;
+		}
 		if(!onPolicy){
 			broker.updateInsuredObject(policyId, view.getInsuredObjectHeaderForm().getInfo());
 			broker.saveContextForInsuredObject(policyId, 
@@ -677,6 +680,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					view.setOwner(response.id);
 					view.setToolbarEditMode(false);
 					view.getPolicySelector().setValue(response);
+					setExercises(response.exerciseData);
+					view.setHeaders(response.coverages, response.columns);
 					//PERMISSIONS
 					fillPolicy();
 					view.setReadOnly(true);					
@@ -697,6 +702,13 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	}
 
 	protected void setExercises(ExerciseData[] exerciseData) {
+
+		if(exerciseData == null){
+			view.setExerciseVisible(false);
+			return;
+		}
+
+		view.setExerciseVisible(true);
 
 		int start = exerciseData[0].isActive ? 0 : 1; //FIRST ONE IS THE NEW ONE 
 
@@ -724,20 +736,12 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.getInsuredObjectsList().clearSelection();
 		view.getPolicyHeaderForm().setValue(pol);
 		view.setCoveragesExtraFields(pol.coverages);
-		view.setTableValues(pol.coverages, pol.columns);
 		view.getCommonFieldsForm().setValue(broker.getContextForPolicy(policyId, getCurrentExerciseId()));
 		view.showObjectForm(false);
 		view.showPolicyForm(true);
 		view.getPolicyNotesForm().setValue(pol.notes);
 		view.setPolicyEntrySelected(true);
 		
-		if(pol.exerciseData == null){
-			view.setExerciseVisible(false);
-		}
-		else{
-			setExercises(pol.exerciseData);
-			view.setExerciseVisible(true);
-		}
 		onPolicy = true;
 		
 

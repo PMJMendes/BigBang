@@ -30,6 +30,7 @@ public class StructuredFieldContainer
 			this.coverageName = orig.coverageName;
 			this.mandatory = orig.mandatory;
 			this.order = orig.order;
+			this.serverId = orig.serverId;
 			this.presentInPolicy = orig.presentInPolicy;
 		}
 	}

@@ -11,6 +11,7 @@ import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.shared.BigBangException;
@@ -403,7 +404,7 @@ public class ClientToServer
 		{
 			if ( mbForSubPolicy )
 			{
-				if ( InsuredObject.Change.DELETED.equals(mobjObject.change) )
+				if ( InsuredObjectStub.Change.DELETED.equals(mobjObject.change) )
 					readSPDeleteHeader();
 				else
 				{
@@ -416,7 +417,7 @@ public class ClientToServer
 			}
 			else
 			{
-				if ( InsuredObject.Change.DELETED.equals(mobjObject.change) )
+				if ( InsuredObjectStub.Change.DELETED.equals(mobjObject.change) )
 					readPDeleteHeader();
 				else
 				{
@@ -486,7 +487,9 @@ public class ClientToServer
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			if ( InsuredObject.Change.MODIFIED.equals(mobjObject.change) )
+			mobjOutPObject = new PolicyObjectData();
+
+			if ( InsuredObjectStub.Change.MODIFIED.equals(mobjObject.change) )
 				mobjOutPObject.mid = UUID.fromString(mobjObject.id);
 			else
 				mobjOutPObject.mid = null;
@@ -570,7 +573,9 @@ public class ClientToServer
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			if ( InsuredObject.Change.MODIFIED.equals(mobjObject.change) )
+			mobjOutSPObject = new SubPolicyObjectData();
+
+			if ( InsuredObjectStub.Change.MODIFIED.equals(mobjObject.change) )
 				mobjOutSPObject.mid = UUID.fromString(mobjObject.id);
 			else
 				mobjOutSPObject.mid = null;
@@ -644,7 +649,7 @@ public class ClientToServer
 		private ArrayList<SubPolicyCoverageData> marrSPCData;
 		private ArrayList<SubPolicyObjectData> marrSPOData;
 		private HashSet<UUID> msetCDeletia;
-		private HashSet<UUID> msetODeletia;
+		private UUID midOwner;
 
 		public StructuredReader withSource(boolean pbForSubPolicy)
 			throws BigBangException
@@ -664,7 +669,7 @@ public class ClientToServer
 				marrSPOData = null;
 			}
 			msetCDeletia = new HashSet<UUID>();
-			msetODeletia = new HashSet<UUID>();
+			midOwner = null;
 
 			getBaseReader()
 					.withSource(pbForSubPolicy);
@@ -676,13 +681,11 @@ public class ClientToServer
 			throws BigBangException
 		{
 			PolicyCoverage[] larrCovs;
-			PolicyObject[] larrObjs;
 			int i;
 
 			try
 			{
 				larrCovs = pobjPolicy.GetCurrentCoverages();
-				larrObjs = pobjPolicy.GetCurrentObjects();
 			}
 			catch (Throwable e)
 			{
@@ -692,15 +695,12 @@ public class ClientToServer
 			marrPCData = new ArrayList<PolicyCoverageData>();
 			marrPOData = new ArrayList<PolicyObjectData>();
 			msetCDeletia = new HashSet<UUID>();
-			msetODeletia = new HashSet<UUID>();
 			marrSPCData = null;
 			marrSPOData = null;
+			midOwner = pobjPolicy.getKey();
 
 			for ( i = 0; i < larrCovs.length; i++ )
 				msetCDeletia.add(larrCovs[i].getKey());
-
-			for ( i = 0; i < larrObjs.length; i++ )
-				msetODeletia.add(larrObjs[i].getKey());
 
 			getBaseReader().withSource(pobjPolicy);
 
@@ -711,13 +711,11 @@ public class ClientToServer
 			throws BigBangException
 		{
 			SubPolicyCoverage[] larrCovs;
-			SubPolicyObject[] larrObjs;
 			int i;
 
 			try
 			{
 				larrCovs = pobjSubPolicy.GetCurrentCoverages();
-				larrObjs = pobjSubPolicy.GetCurrentObjects();
 			}
 			catch (Throwable e)
 			{
@@ -727,15 +725,12 @@ public class ClientToServer
 			marrSPCData = new ArrayList<SubPolicyCoverageData>();
 			marrSPOData = new ArrayList<SubPolicyObjectData>();
 			msetCDeletia = new HashSet<UUID>();
-			msetODeletia = new HashSet<UUID>();
 			marrPCData = null;
 			marrPOData = null;
+			midOwner = pobjSubPolicy.getKey();
 
 			for ( i = 0; i < larrCovs.length; i++ )
 				msetCDeletia.add(larrCovs[i].getKey());
-
-			for ( i = 0; i < larrObjs.length; i++ )
-				msetODeletia.add(larrObjs[i].getKey());
 
 			getBaseReader().withSource(pobjSubPolicy);
 
@@ -802,33 +797,11 @@ public class ClientToServer
 
 		public PolicyObjectData[] resultPO()
 		{
-			PolicyObjectData lobjAux;
-
-			for (UUID lid: msetODeletia)
-			{
-				lobjAux = new PolicyObjectData();
-				lobjAux.mid = lid;
-				lobjAux.mbNew = false;
-				lobjAux.mbDeleted = true;
-				marrPOData.add(lobjAux);
-			}
-
 			return marrPOData.toArray(new PolicyObjectData[marrPOData.size()]);
 		}
 
 		public SubPolicyObjectData[] resultSPO()
 		{
-			SubPolicyObjectData lobjAux;
-
-			for (UUID lid: msetODeletia)
-			{
-				lobjAux = new SubPolicyObjectData();
-				lobjAux.mid = lid;
-				lobjAux.mbNew = false;
-				lobjAux.mbDeleted = true;
-				marrSPOData.add(lobjAux);
-			}
-
 			return marrSPOData.toArray(new SubPolicyObjectData[marrSPOData.size()]);
 		}
 
@@ -841,8 +814,24 @@ public class ClientToServer
 			{
 				lobjAux = new PolicyCoverageData();
 
-				if ( lobjAux != null )
-					marrPCData.add(lobjAux);
+				if ( mobjContainer.coverages[i].serverId == null )
+				{
+					lobjAux.mid = null;
+					lobjAux.mbNew = true;
+				}
+				else
+				{
+					lobjAux.mid = UUID.fromString(mobjContainer.coverages[i].serverId);
+					lobjAux.mbNew = true;
+					msetCDeletia.remove(lobjAux.mid);
+				}
+			
+				lobjAux.midOwner = midOwner;
+				lobjAux.midCoverage = UUID.fromString(mobjContainer.coverages[i].coverageId);
+				lobjAux.mbPresent = mobjContainer.coverages[i].presentInPolicy;
+				lobjAux.mbDeleted = false;
+
+				marrPCData.add(lobjAux);
 			}
 		}
 
@@ -855,8 +844,24 @@ public class ClientToServer
 			{
 				lobjAux = new SubPolicyCoverageData();
 
-				if ( lobjAux != null )
-					marrSPCData.add(lobjAux);
+				if ( mobjContainer.coverages[i].serverId == null )
+				{
+					lobjAux.mid = null;
+					lobjAux.mbNew = true;
+				}
+				else
+				{
+					lobjAux.mid = UUID.fromString(mobjContainer.coverages[i].serverId);
+					lobjAux.mbNew = true;
+					msetCDeletia.remove(lobjAux.mid);
+				}
+			
+				lobjAux.midOwner = midOwner;
+				lobjAux.midCoverage = UUID.fromString(mobjContainer.coverages[i].coverageId);
+				lobjAux.mbPresent = mobjContainer.coverages[i].presentInPolicy;
+				lobjAux.mbDeleted = false;
+
+				marrSPCData.add(lobjAux);
 			}
 		}
 

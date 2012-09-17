@@ -10,6 +10,7 @@ import bigBang.definitions.shared.FieldContainer.ColumnField;
 import bigBang.definitions.shared.FieldContainer.ExtraField;
 import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.SubPolicy;
 
 public class SubPolicyWorkSpace {
@@ -81,7 +82,7 @@ public class SubPolicyWorkSpace {
 		for ( InsuredObject object : originalSubPolicy.changedObjects )
 		{
 			object.headerFields = splitArray(object.headerFields, originalSubPolicy.headerFields.length);
-			if ( InsuredObject.Change.CREATED.equals(object.change) )
+			if ( InsuredObjectStub.Change.CREATED.equals(object.change) )
 				object.id = null;
 		}
 
@@ -119,6 +120,20 @@ public class SubPolicyWorkSpace {
 
 	//INSURED OBJECTS
 
+	public InsuredObjectStub[] getLocalObjects(String subPolicyId) {
+		if ( !isSubPolicyLoaded(subPolicyId) )
+			return null;
+
+		InsuredObjectStub[] result;
+		int i;
+
+		result = new InsuredObjectStub[alteredObjects.size()];
+		for ( i = 0; i < result.length; i++ )
+			result[i] = new InsuredObjectStub(alteredObjects.get(i));
+
+		return result;
+	}
+
 	public InsuredObject getObjectHeader(String subPolicyId, String objectId) {
 		if ( !isSubPolicyLoaded(subPolicyId) )
 			return null;
@@ -151,7 +166,7 @@ public class SubPolicyWorkSpace {
 			return null;
 		}
 
-		newObject.change = InsuredObject.Change.MODIFIED;
+		newObject.change = InsuredObjectStub.Change.MODIFIED;
 		if ( subPolicy.exerciseData != null )
 			newObject.exerciseData[0].isActive = subPolicy.exerciseData[0].isActive;
 		alteredObjects.add(newObject);
@@ -173,7 +188,7 @@ public class SubPolicyWorkSpace {
 			return null;
 		}
 
-		newObject.change = InsuredObject.Change.CREATED;
+		newObject.change = InsuredObjectStub.Change.CREATED;
 		newObject.id = idCounter+"";
 		idCounter++;
 		alteredObjects.add(newObject);
@@ -191,7 +206,6 @@ public class SubPolicyWorkSpace {
 			InsuredObject object = iterator.next();
 			if(object.id.equalsIgnoreCase(alteredObject.id)) {
 				iterator.remove();
-				alteredObject.change = InsuredObject.Change.MODIFIED;
 				iterator.add(alteredObject);
 				return alteredObject;
 			}
@@ -206,7 +220,7 @@ public class SubPolicyWorkSpace {
 
 		for( InsuredObject object : alteredObjects ) {
 			if(object.id.equalsIgnoreCase(objectId)) {
-				object.change = InsuredObject.Change.DELETED;
+				object.change = InsuredObjectStub.Change.DELETED;
 				break;
 			}
 		}
@@ -249,21 +263,21 @@ public class SubPolicyWorkSpace {
 			result.headerFields = mergeHeaderArrays(new HeaderField[][] {
 						( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].headerFields ),
 						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
-					}, new boolean[] {true, false});
+					}, new boolean[] {object != null, false});
 
 			result.columnFields = mergeColumnArrays(new ColumnField[][] {
 						subPolicy.columnFields,
 						( object == null ? null : object.columnFields ),
 						( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].columnFields ),
 						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
-					}, new boolean[] {true, false, true, false});
+					}, new boolean[] {object != null, false, object != null, false});
 
 			result.extraFields = mergeExtraArrays(new ExtraField[][] {
 						subPolicy.extraFields,
 						( object == null ? null : object.extraFields ),
 						( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].extraFields ),
 						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].extraFields)
-					}, new boolean[] {true, false, true, false});
+					}, new boolean[] {object != null, false, object != null, false});
 		} catch (Exception e) {
 			return null;
 		}

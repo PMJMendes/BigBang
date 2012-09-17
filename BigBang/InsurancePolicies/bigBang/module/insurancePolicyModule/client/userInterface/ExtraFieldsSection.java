@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.FieldContainer;
+import bigBang.definitions.shared.FieldContainer.ExtraField;
 import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
@@ -32,7 +33,7 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 	@Override
 	public FieldContainer.ExtraField[] getValue() {
 		if(value == null)
-			return null;
+			return new FieldContainer.ExtraField[0];
 
 		FieldContainer.ExtraField[] fields = value;
 
@@ -51,8 +52,8 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 	@Override
 	public void setValue(FieldContainer.ExtraField[] value, boolean fireEvents) {
 
-		this.clear();
 		unregisterAllFormFields();
+		this.clear();
 		
 		if(coverages == null || coverages.length == 0 || value.length == 0){
 			return;
@@ -99,8 +100,8 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 			formFields[i].setLabel(value[i].fieldName);
 			formFields[i].setUnitsLabel(value[i].unitsLabel);
 			formFields[i].setEditable(!value[i].readOnly);
+			formFields[i].setReadOnly(this.readOnly);
 			addFormField(formFields[i], (i < formFields.length - 1 && value[i+1].coverageIndex == tempIndex));
-			registerFormField(formFields[i]);
 		}
 
 		if(fireEvents){
@@ -112,5 +113,26 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 	public void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages){
 		this.coverages = coverages;
 	}
+	
+	public HasValue<String>[] getFormFields(){
+		return formFields;
+	}
+	
+	public ExtraField[] getExtraFields(){
+		return value;
+	}
 
+	public void enableFields(int index, boolean enable) {
+		if(value == null){
+			return;
+		}
+		for(int i = 0; i<value.length; i++){
+			if(value[i].coverageIndex == index){
+				formFields[i].setReadOnly(readOnly || !enable);
+				if(!enable){
+					formFields[i].clear();
+				}
+			}
+		}
+	}
 }

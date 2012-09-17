@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.library.client.userInterface.view.FormView;
@@ -7,7 +8,7 @@ import bigBang.library.client.userInterface.view.FormView;
 public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 
 	HeaderFieldsSection exerciseDetailsSection;
-	TableFieldsSection tableFieldsSection;
+	CoverageFieldsGrid table;
 	ExtraFieldsSection extraFieldsSection;
 
 	public CoverageExerciseDetailsForm(String sectionName) {
@@ -17,12 +18,21 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		exerciseDetailsSection.setSize("100%", "100%");
 		addSection(exerciseDetailsSection);
 
-		tableFieldsSection = new TableFieldsSection();
-		addSection(tableFieldsSection);
+		table = new CoverageFieldsGrid(){
 
+			@Override
+			public void enableExtraFields(int index, boolean enable) {
+				extraFieldsSection.enableFields(index, enable);
+			}
+		};
+		addSection("Coberturas");
+		addWidget(table);
+		
 		extraFieldsSection = new ExtraFieldsSection();
 		extraFieldsSection.setSize("100%", "100%");
 		addSection(extraFieldsSection);
+		
+		
 	}
 
 	@Override
@@ -30,24 +40,23 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		FieldContainer result = value;
 		result.headerFields = exerciseDetailsSection.getValue();
 		result.extraFields = extraFieldsSection.getValue();
-		result.columnFields = tableFieldsSection.getValue();
+		result.columnFields = table.getValue();
 		return result;	
 		}
 
 	@Override
 	public void setInfo(FieldContainer info) {
-		value = info;
 		exerciseDetailsSection.setValue(info.headerFields);
 		extraFieldsSection.setValue(info.extraFields);
-		tableFieldsSection.setValue(info.columnFields);
+		table.setValue(info.columnFields);
 	}
 
 	public void setExerciseDetailSectionName(String string) {
 		exerciseDetailsSection.setHeaderText(string);
 	}
 
-	public void fillTable(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns){
-		tableFieldsSection.setHeaders(coverages, columns);
+	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns){
+		table.setHeaders(coverages, columns);
 	}
 
 	public void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages) {
@@ -66,8 +75,8 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		if(extraFieldsSection != null){
 			extraFieldsSection.setReadOnly(readOnly);
 		}
-		if(tableFieldsSection != null){
-			tableFieldsSection.setReadOnly(readOnly);
+		if(table != null){
+			table.setReadOnly(readOnly);
 		}
 	}
 

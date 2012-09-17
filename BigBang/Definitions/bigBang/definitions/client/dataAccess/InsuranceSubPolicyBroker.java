@@ -7,6 +7,7 @@ import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SubPolicy;
@@ -30,6 +31,8 @@ public interface InsuranceSubPolicyBroker extends
 	public SubPolicy discardEditData(String subPolicyId);
 
 	public void removeSubPolicy(String subPolicyId, String reason, ResponseHandler<String> handler);
+
+	public InsuredObjectStub[] getAlteredObjects(String policyId);
 
 	public void getInsuredObject(String subPolicyId, String objectId, ResponseHandler<InsuredObject> handler);
 

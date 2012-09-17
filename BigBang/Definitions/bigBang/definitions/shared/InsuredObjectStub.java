@@ -5,12 +5,21 @@ public class InsuredObjectStub
 {
 	private static final long serialVersionUID = 1L;
 
+	public static enum Change
+	{
+		CREATED,
+		MODIFIED,
+		DELETED
+	}
+
 	public String unitIdentification;
 	public Address address;
 	public String inclusionDate;
 	public String exclusionDate;
 	public String typeId;
 	public String typeText;
+	
+	public Change change;
 	
 	public InsuredObjectStub()
 	{
@@ -30,5 +39,6 @@ public class InsuredObjectStub
 		this.exclusionDate = orig.exclusionDate;
 		this.typeId = orig.typeId;
 		this.typeText = orig.typeText;
+		this.change = orig.change;
 	}
 }

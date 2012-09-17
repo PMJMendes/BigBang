@@ -631,6 +631,7 @@ public class ServerToClient
 
 		private void buildFullHeader()
 		{
+			mobjOutExercise.id = mobjExercise.getKey().toString();
 			mobjOutExercise.label = mobjExercise.getLabel();
 			mobjOutExercise.startDate = ( mobjExercise.getAt(2) == null ? null :
 					((Timestamp)mobjExercise.getAt(2)).toString().substring(0, 10) );

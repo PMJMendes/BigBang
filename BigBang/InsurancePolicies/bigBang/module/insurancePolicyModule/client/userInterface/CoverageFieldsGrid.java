@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
-public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.ColumnField[]>{
+public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.ColumnField[]>{
 
 
 	class Field extends GenericFormField{
@@ -91,7 +91,6 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
-
 					setEnabledRows();
 				}
 			});
@@ -125,21 +124,24 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 
 	protected void setEnabledRows() {
 
+		boolean enable = false;
+
 		for(int i = 1; i<fields.length; i++){
+			enable = !fields[i][0].getValue().equalsIgnoreCase("0");
+			enableExtraFields(i-1, enable);
 			for(int j = 2; j<fields[0].length; j++){
 				if(fields[i][j] != null){
-					if(fields[i][0].getValue().equalsIgnoreCase("0")){
+					fields[i][j].setReadOnly(readOnly || !enable);
+					if(!enable){
 						fields[i][j].clear();
-						fields[i][j].setEditable(false);
-					}else{
-						fields[i][j].setEditable(true);
-						fields[i][j].setReadOnly(readOnly);
 					}
 				}
 			}
 		}
 
 	}
+
+	public abstract void enableExtraFields(int i, boolean b);
 
 	public void fillTable(FieldContainer.ColumnField[] formFields) {
 		int row;
@@ -173,6 +175,7 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 			fields[row][column].setFieldWidth("100px");
 			fields[row][column].setWidth("130px");
 			fields[row][column].setEditable(!formFields[i].readOnly);
+			fields[row][column].setReadOnly(this.readOnly);
 			grid.setWidget(row, column, fields[row][column]);
 			grid.getCellFormatter().setHorizontalAlignment(row, column, HasHorizontalAlignment.ALIGN_CENTER);
 		}
@@ -201,31 +204,36 @@ public class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.
 	@Override
 	public void setValue(FieldContainer.ColumnField[] value, boolean fireEvents) {
 		this.value = value;
+		if(fields!=null){
+			clearContent();
+		}
 		fillTable(value);
+		setEnabledRows();
 
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
 	}
 
-	public void setReadOnly(boolean readOnly) {
-
-		FieldContainer.ColumnField[] result = value;
-		if(result == null){
-			return;
-		}
-		for(int i = 0; i<result.length; i++){
-			if(fields[result[i].coverageIndex+1][result[i].columnIndex+2] != null){
-				fields[result[i].coverageIndex+1][result[i].columnIndex+2].setReadOnly(readOnly);
+	private void clearContent() {
+		for(int i = 1; i<fields.length; i++){
+			for(int j = 2; j<fields[0].length; j++){
+				if(fields[i][j] != null){
+					grid.setWidget(i, j, null);
+					fields[i][j] = null;
+				}
 			}
 		}
-		setFirstColumnReadOnly(readOnly);
-		setEnabledRows();
-		
-		this.readOnly = readOnly;
 	}
 
-	private void setFirstColumnReadOnly(boolean readOnly) {
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+
+		setFirstColumnReadOnly();
+		setEnabledRows();
+	}
+
+	private void setFirstColumnReadOnly() {
 		for(int i = 1; i<fields.length; i++){	
 			fields[i][0].setReadOnly(readOnly);
 		}

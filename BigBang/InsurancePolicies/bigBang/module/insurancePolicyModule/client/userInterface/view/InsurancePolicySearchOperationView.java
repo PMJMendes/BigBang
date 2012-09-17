@@ -20,6 +20,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.SelectedStateChangedEvent;
+import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExerciseDetailsForm;
@@ -223,6 +225,15 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		policySelectButton = new PolicySelectButton(new InsurancePolicyStub());
 		objectsPolicyContainer.setSize("100%","100%");
 		objectsPolicyContainer.add(policySelectButton);
+		policySelectButton.addSelectedStateChangedEventHandler(new SelectedStateChangedEventHandler() {
+			
+			@Override
+			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
+				if (event.getSelected()){
+					actionHandler.onActionInvoked(new  ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.ON_POLICY_SELECTED));
+				}
+			}
+		});
 		objectsList = new InsuredObjectSearchPanel();
 		objectsList.showFilterField(false);
 		objectsList.getNewObjectButton().addClickHandler(new ClickHandler() {
@@ -521,9 +532,9 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 	
 	@Override
-	public void setTableValues(	StructuredFieldContainer.Coverage[] coverages,
+	public void setHeaders(	StructuredFieldContainer.Coverage[] coverages,
 			StructuredFieldContainer.ColumnHeader[] columns){
-		detailsForm.fillTable(coverages, columns);
+		detailsForm.setHeaders(coverages, columns);
 	}
 
 	@Override

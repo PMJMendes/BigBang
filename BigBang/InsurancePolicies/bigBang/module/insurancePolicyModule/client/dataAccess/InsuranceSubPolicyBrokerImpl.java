@@ -17,6 +17,7 @@ import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SortOrder;
@@ -264,6 +265,11 @@ implements InsuranceSubPolicyBroker {
 				super.onResponseFailure(caught);
 			}
 		});
+	}
+
+	@Override
+	public InsuredObjectStub[] getAlteredObjects(String policyId) {
+		return workspace.getLocalObjects(policyId);
 	}
 
 	@Override

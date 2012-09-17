@@ -85,7 +85,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			return false;
 		}
 		if(listId.isEmpty()) {
-			GWT.log("The list id is empty");
+		//	GWT.log("The list id is empty");
 			return false;
 		}
 		StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);

@@ -11,6 +11,7 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
@@ -37,6 +38,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	public ExerciseData createExercise(String policyId);
 
 	public ExerciseData updateExercise(String policyId, ExerciseData exercise);
+
+	public InsuredObjectStub[] getAlteredObjects(String policyId);
 
 	public void getInsuredObject(String policyId, String objectId, ResponseHandler<InsuredObject> handler);
 

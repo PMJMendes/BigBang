@@ -29,7 +29,7 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 	@Override
 	public HeaderField[] getValue() {
 		if(value == null)
-			return null;
+			return new HeaderField[0];
 		
 		HeaderField[] fields = value;
 
@@ -48,8 +48,8 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 	@Override
 	public void setValue(HeaderField[] value, boolean fireEvents) {
 
-		this.clear();
 		unregisterAllFormFields();
+		this.clear();
 		this.value = value;
 		
 		formFields = new GenericFormField[value.length];
@@ -83,8 +83,8 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 			formFields[i].setLabel(value[i].fieldName);
 			formFields[i].setUnitsLabel(value[i].unitsLabel);
 			formFields[i].setEditable(!value[i].readOnly);
+			formFields[i].setReadOnly(this.readOnly);
 			addFormField(formFields[i], true);
-			registerFormField(formFields[i]);
 		}
 
 		if(fireEvents){

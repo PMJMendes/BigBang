@@ -22,6 +22,7 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -283,6 +284,11 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	@Override
 	public ExerciseData updateExercise(String policyId, ExerciseData exercise) {
 		return workspace.updateExerciseHeader(policyId, exercise);
+	}
+
+	@Override
+	public InsuredObjectStub[] getAlteredObjects(String policyId) {
+		return workspace.getLocalObjects(policyId);
 	}
 
 	@Override
