@@ -90,46 +90,50 @@ public class Payment
 		{
 			if ( marrData[0].midReceipt != null )
 				throw new JewelPetriException("Erro: Para compensar um recibo, é obrigatório especificar os valores.");
+
+			marrData[0].mdblValue = (BigDecimal)lobjReceipt.getAt(3);
 		}
-		else
+
+		ldblTotal = new BigDecimal(0);
+		for ( i = 0; i < marrData.length; i++ )
 		{
-			ldblTotal = new BigDecimal(0);
-			for ( i = 0; i < marrData.length; i++ )
-			{
-				ldblTotal = ldblTotal.add(marrData[i].mdblValue.abs());
-				if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter )
-				{
-					if ( midReceipt.equals(marrData[i].midReceipt) )
-						throw new JewelPetriException("Erro: Não pode compensar um recibo consigo próprio.");
-	
-					try
-					{
-						lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrData[i].midReceipt);
-					}
-					catch (Throwable e)
-					{
-						throw new JewelPetriException(e.getMessage(), e);
-					}
-	
-					lopRemote = new Payment(lobjReceipt.GetProcessID());
-					lopRemote.marrData = new PaymentData[] {new PaymentData()};
-					lopRemote.marrData[0].midPaymentType = marrData[i].midPaymentType;
-					lopRemote.marrData[0].mdblValue = marrData[i].mdblValue;
-					lopRemote.marrData[0].midBank = null;
-					lopRemote.marrData[0].mstrCheque = null;
-					lopRemote.marrData[0].midReceipt = midReceipt;
-					lopRemote.marrData[0].mbCreateCounter = false;
-					lopRemote.marrData[0].midLog = null;
-					lopRemote.Execute(pdb);
-					marrData[i].midLog = lopRemote.getLog().getKey();
-				}
-			}
-
+			marrData[i].mdblValue = marrData[i].mdblValue.abs();
 			if ( lobjReceipt.isReverseCircuit() )
-				ldblTotal = ldblTotal.negate();
+				marrData[i].mdblValue = marrData[i].mdblValue.negate();
 
-			if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
-				throw new JewelPetriException("Erro: Valor total dos pagamentos não está correcto.");
+			ldblTotal = ldblTotal.add(marrData[i].mdblValue);
+			if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter && midReceipt.equals(marrData[i].midReceipt) )
+					throw new JewelPetriException("Erro: Não pode compensar um recibo consigo próprio.");
+		}
+
+		if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
+			throw new JewelPetriException("Erro: Valor total dos pagamentos não está correcto.");
+
+		for ( i = 0; i < marrData.length; i++ )
+		{
+			if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter )
+			{
+				try
+				{
+					lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrData[i].midReceipt);
+				}
+				catch (Throwable e)
+				{
+					throw new JewelPetriException(e.getMessage(), e);
+				}
+
+				lopRemote = new Payment(lobjReceipt.GetProcessID());
+				lopRemote.marrData = new PaymentData[] {new PaymentData()};
+				lopRemote.marrData[0].midPaymentType = marrData[i].midPaymentType;
+				lopRemote.marrData[0].mdblValue = marrData[i].mdblValue;
+				lopRemote.marrData[0].midBank = null;
+				lopRemote.marrData[0].mstrCheque = null;
+				lopRemote.marrData[0].midReceipt = midReceipt;
+				lopRemote.marrData[0].mbCreateCounter = false;
+				lopRemote.marrData[0].midLog = null;
+				lopRemote.Execute(pdb);
+				marrData[i].midLog = lopRemote.getLog().getKey();
+			}
 		}
 
 		ldtToday = Calendar.getInstance();

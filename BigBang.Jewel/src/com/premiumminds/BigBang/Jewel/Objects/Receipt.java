@@ -24,6 +24,7 @@ import Jewel.Petri.SysObjects.ProcessData;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPayment;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPaymentAcct;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingPayment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MediatorBase;
 
@@ -87,6 +88,12 @@ public class Receipt
 		throws BigBangJewelException
 	{
 		return ReceiptHistoryPayment.doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportHistoryPaymentAcct(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return ReceiptHistoryPaymentAcct.doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)
