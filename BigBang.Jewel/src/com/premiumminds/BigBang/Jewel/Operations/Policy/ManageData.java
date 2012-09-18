@@ -313,7 +313,7 @@ public class ManageData
 
 				if ( mobjData.marrExercises != null )
 				{
-					for ( i = mobjData.marrExercises.length - 1; i <= 0 ; i-- )
+					for ( i = mobjData.marrExercises.length - 1; i >= 0 ; i-- )
 					{
 						if ( mobjData.marrExercises[i].mbDeleted )
 						{
