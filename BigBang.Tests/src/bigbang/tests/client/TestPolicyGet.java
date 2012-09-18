@@ -50,7 +50,7 @@ public class TestPolicyGet
 		};
 
 		parameter = new InsurancePolicySearchParameter();
-		parameter.freeText = "-15645.1";
+		parameter.freeText = "ct23228731";
 		sorts = new InsurancePolicySortParameter();
 		sorts.field = InsurancePolicySortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.DESC;
