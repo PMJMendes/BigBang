@@ -1,6 +1,5 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -165,6 +164,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void lockToolbar();
 
 		void setPolicyEntrySelected(boolean b);
+
+		void setExerciseFieldsHeader(String header);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -709,14 +710,14 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		}
 
 		view.setExerciseVisible(true);
-
+		
 		int start = exerciseData[0].isActive ? 0 : 1; //FIRST ONE IS THE NEW ONE 
 
 		availableExercises = new ExerciseData[exerciseData.length - start];
 
 		for(int i = start; i<exerciseData.length; i++)
 			availableExercises[i - start] = exerciseData[i];
-
+		
 		fillExercise(availableExercises);
 	}
 
@@ -725,7 +726,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.setAvailableExercises(exercises);
 		view.getExerciseForm().setValue(exercises[0]);
 		view.getExerciseSelector().setValue(exercises[0].id);
-		
+		view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label + (onPolicy ? " para a Apólice" : " Para a Unidade de Risco"));
 	}
 
 

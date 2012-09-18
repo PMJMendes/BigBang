@@ -594,5 +594,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	public void setPolicyEntrySelected(boolean b) {
 		policySelectButton.setSelected(b, false);
 	}
+	
+	@Override
+	public void setExerciseFieldsHeader(String header){
+		detailsForm.setExerciseHeader(header);
+	}
 
 }

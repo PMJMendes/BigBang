@@ -80,4 +80,8 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		}
 	}
 
+	public void setExerciseHeader(String header) {
+		exerciseDetailsSection.setHeaderText(header);
+	}
+
 }
