@@ -36,22 +36,25 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class ClientToServer
 {
-	private boolean mbForSubPolicy;
 	private UUID midOwner;
 	private UUID midParent;
+	private boolean mbForSubPolicy;
+	private Policy mobjPolicy;
+	private com.premiumminds.BigBang.Jewel.Objects.SubPolicy mobjSubPolicy;
 
 	private class FieldContainerReader
 	{
-		private FieldContainer mobjContainer;
-		private int mlngObject;
-		private int mlngExercise;
+		private boolean mbIsEmpty;
 		private ArrayList<PolicyValueData> marrPData;
 		private ArrayList<SubPolicyValueData> marrSPData;
 		private HashSet<UUID> msetDeletia;
 
-		public FieldContainerReader withSource(boolean pbForSubPolicy)
-			throws BigBangException
+		public void withOriginal(boolean pbForSubPolicy)
 		{
+			mbIsEmpty = true;
+			mobjPolicy = null;
+			mobjSubPolicy = null;
+
 			mbForSubPolicy = pbForSubPolicy;
 			if ( mbForSubPolicy )
 			{
@@ -66,15 +69,13 @@ public class ClientToServer
 			msetDeletia = new HashSet<UUID>();
 			midOwner = null;
 			midParent = null;
-
-			return this;
 		}
 		
-		public FieldContainerReader withSource(Policy pobjPolicy)
-			throws BigBangException
+		public void withOriginal(Policy pobjPolicy)
 		{
-			PolicyValue[] larrValues;
-			int i;
+			mbIsEmpty = false;
+			mobjPolicy = pobjPolicy;
+			mobjSubPolicy = null;
 
 			mbForSubPolicy = false;
 			marrPData = new ArrayList<PolicyValueData>();
@@ -83,26 +84,13 @@ public class ClientToServer
 
 			midOwner = pobjPolicy.getKey();
 			midParent = midOwner;
-			try
-			{
-				larrValues = pobjPolicy.GetCurrentValues();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
-			for ( i = 0; i < larrValues.length; i++ )
-				msetDeletia.add(larrValues[i].getKey());
-
-			return this;
 		}
 		
-		public FieldContainerReader withSource(com.premiumminds.BigBang.Jewel.Objects.SubPolicy pobjSubPolicy)
-			throws BigBangException
+		public void withOriginal(com.premiumminds.BigBang.Jewel.Objects.SubPolicy pobjSubPolicy)
 		{
-			SubPolicyValue[] larrValues;
-			int i;
+			mbIsEmpty = false;
+			mobjPolicy = null;
+			mobjSubPolicy = pobjSubPolicy;
 
 			mbForSubPolicy = true;
 			marrSPData = new ArrayList<SubPolicyValueData>();
@@ -111,43 +99,50 @@ public class ClientToServer
 
 			midOwner = pobjSubPolicy.getKey();
 			midParent = pobjSubPolicy.GetOwner().getKey();
-			try
-			{
-				larrValues = pobjSubPolicy.GetCurrentValues();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
-			for ( i = 0; i < larrValues.length; i++ )
-				msetDeletia.add(larrValues[i].getKey());
-
-			return this;
 		}
 
-		public FieldContainerReader withContainer(FieldContainer pobjContainer, int plngObject, int plngExercise)
+		public void readValues(FieldContainer pobjContainer, UUID pidObject, int plngObject,
+				UUID pidExercise, int plngExercise, boolean pbForceDelete)
+			throws BigBangException
 		{
-			mobjContainer = pobjContainer;
-			mlngObject = plngObject;
-			mlngExercise = plngExercise;
-			return this;
-		}
-
-		public FieldContainerReader read()
-		{
+			PolicyValue[] larrPValues;
+			SubPolicyValue[] larrSPValues;
 			int i;
 
-			for ( i = 0; i < mobjContainer.headerFields.length; i++ )
-				readField(mobjContainer.headerFields[i]);
+			if ( !mbIsEmpty && ((plngObject < 0) == (pidObject == null)) && ((plngExercise < 0) == (pidExercise == null)) )
+			{
+				try
+				{
+					if ( mbForSubPolicy )
+					{
+						larrSPValues = mobjSubPolicy.GetCurrentKeyedValues(pidObject, pidExercise);
+						for ( i = 0; i < larrSPValues.length; i++ )
+							msetDeletia.add(larrSPValues[i].getKey());
+					}
+					else
+					{
+						larrPValues = mobjPolicy.GetCurrentKeyedValues(pidObject, pidExercise);
+						for ( i = 0; i < larrPValues.length; i++ )
+							msetDeletia.add(larrPValues[i].getKey());
+					}
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
 
-			for ( i = 0; i < mobjContainer.columnFields.length; i++ )
-				readField(mobjContainer.columnFields[i]);
+			if ( !pbForceDelete )
+			{
+				for ( i = 0; i < pobjContainer.headerFields.length; i++ )
+					readField(pobjContainer.headerFields[i], pidObject, plngObject, pidExercise, plngExercise);
 
-			for ( i = 0; i < mobjContainer.extraFields.length; i++ )
-				readField(mobjContainer.extraFields[i]);
+				for ( i = 0; i < pobjContainer.columnFields.length; i++ )
+					readField(pobjContainer.columnFields[i], pidObject, plngObject, pidExercise, plngExercise);
 
-			return this;
+				for ( i = 0; i < pobjContainer.extraFields.length; i++ )
+					readField(pobjContainer.extraFields[i], pidObject, plngObject, pidExercise, plngExercise);
+			}
 		}
 
 		public PolicyValueData[] resultP()
@@ -182,14 +177,15 @@ public class ClientToServer
 			return marrSPData.toArray(new SubPolicyValueData[marrSPData.size()]);
 		}
 
-		private void readField(FieldContainer.HeaderField pobjField)
+		private void readField(FieldContainer.HeaderField pobjField, UUID pidObject, int plngObject, UUID pidExercise, int plngExercise)
 		{
 			if ( mbForSubPolicy )
-				readSubPolicyField(pobjField);
-			else readPolicyField(pobjField);
+				readSubPolicyField(pobjField, pidObject, plngObject, pidExercise, plngExercise);
+			else
+				readPolicyField(pobjField, pidObject, plngObject, pidExercise, plngExercise);
 		}
 
-		private void readPolicyField(FieldContainer.HeaderField pobjField)
+		private void readPolicyField(FieldContainer.HeaderField pobjField, UUID pidObject, int plngObject, UUID pidExercise, int plngExercise)
 		{
 			PolicyValueData lobjAux;
 
@@ -211,13 +207,15 @@ public class ClientToServer
 			lobjAux.mstrValue = pobjField.value;
 			lobjAux.midOwner = midOwner;
 			lobjAux.midField = UUID.fromString(pobjField.fieldId);
-			lobjAux.mlngObject = mlngObject;
-			lobjAux.mlngExercise = mlngExercise;
+			lobjAux.midObject = pidObject;
+			lobjAux.mlngObject = plngObject;
+			lobjAux.midExercise = pidExercise;
+			lobjAux.mlngExercise = plngExercise;
 
 			marrPData.add(lobjAux);
 		}
 
-		private void readSubPolicyField(FieldContainer.HeaderField pobjField)
+		private void readSubPolicyField(FieldContainer.HeaderField pobjField, UUID pidObject, int plngObject, UUID pidExercise, int plngExercise)
 		{
 			SubPolicyValueData lobjAux;
 
@@ -239,8 +237,10 @@ public class ClientToServer
 			lobjAux.mstrValue = pobjField.value;
 			lobjAux.midOwner = midOwner;
 			lobjAux.midField = UUID.fromString(pobjField.fieldId);
-			lobjAux.mlngObject = mlngObject;
-			lobjAux.mlngExercise = mlngExercise;
+			lobjAux.midObject = pidObject;
+			lobjAux.mlngObject = plngObject;
+			lobjAux.midExercise = pidExercise;
+			lobjAux.mlngExercise = plngExercise;
 
 			marrSPData.add(lobjAux);
 		}
@@ -255,122 +255,90 @@ public class ClientToServer
 		return mobjBaseReader;
 	}
 
-	private class ExerciseReader
-	{
-		private PolicyExerciseData mobjOutExercise;
-		private ComplexFieldContainer.ExerciseData mobjExercise;
-		private int mlngObject;
-		private int mlngExercise;
-
-		public ExerciseReader withContainer(ComplexFieldContainer.ExerciseData pobjExercise, int plngForObject, int plngForExercise)
-		{
-			mobjExercise = pobjExercise;
-			mlngObject = plngForObject;
-			mlngExercise = plngForExercise;
-			return this;
-		}
-
-		public ExerciseReader read()
-		{
-			if ( mlngObject < 0 )
-				readFullHeader();
-
-			getBaseReader()
-					.withContainer(mobjExercise, mlngObject, mlngExercise)
-					.read();
-
-			return this;
-		}
-
-		public PolicyExerciseData result()
-		{
-			return mobjOutExercise;
-		}
-
-		private void readFullHeader()
-		{
-			mobjOutExercise = new PolicyExerciseData();
-
-			if ( (mobjExercise.id == null) || (mobjExercise.id.equals("forced")) )
-			{
-				mobjOutExercise.mid = null;
-				mobjOutExercise.mbNew = true;
-			}
-			else
-			{
-				mobjOutExercise.mid = UUID.fromString(mobjExercise.id);
-				mobjOutExercise.mbNew = false;
-			}
-			mobjOutExercise.mbDeleted = false;
-
-			mobjOutExercise.mstrLabel = mobjExercise.label;
-			mobjOutExercise.midOwner = midParent;
-			mobjOutExercise.mdtStart = ( mobjExercise.startDate == null ? null : Timestamp.valueOf(mobjExercise.startDate + " 00:00:00.0") );
-			mobjOutExercise.mdtEnd = ( mobjExercise.endDate == null ? null : Timestamp.valueOf(mobjExercise.endDate + " 00:00:00.0") );
-		}
-	}
-
 	private class ComplexFieldContainerReader
 	{
-		private ComplexFieldContainer mobjContainer;
-		private int mlngObject;
 		private boolean[] marrActive;
 		private ArrayList<PolicyExerciseData> marrData;
+		boolean mbFirst;
 
-		public ComplexFieldContainerReader withContainer(ComplexFieldContainer pobjContainer, int plngObject)
+		public void withMaster(ComplexFieldContainer pobjContainer)
 		{
-			mobjContainer = pobjContainer;
-			mlngObject = plngObject;
-			return this;
+			int i;
+
+			if ( !pobjContainer.hasExercises )
+			{
+				marrData = null;
+				return;
+			}
+
+			marrActive = new boolean[pobjContainer.exerciseData.length];
+			marrData = new ArrayList<PolicyExerciseData>();
+
+			for ( i = 0; i < pobjContainer.exerciseData.length; i ++ )
+				marrActive[i] = pobjContainer.exerciseData[i].isActive;
+
+			mbFirst = true;
 		}
 
-		public ComplexFieldContainerReader read()
+		public void readComplex(ComplexFieldContainer pobjContainer, UUID pidObject, int plngObject, boolean pbForceDelete)
+			throws BigBangException
 		{
-			ExerciseReader lobjReader;
+			PolicyExerciseData lobjAux;
 			int i, n;
 
 			getBaseReader()
-					.withContainer(mobjContainer, mlngObject, -1)
-					.read();
+					.readValues(pobjContainer, pidObject, plngObject, null, -1, pbForceDelete);
 
-			if ( !mobjContainer.hasExercises )
-				return this;
-
-			if ( mlngObject < 0 )
-			{
-				marrActive = new boolean[mobjContainer.exerciseData.length];
-				marrData = new ArrayList<PolicyExerciseData>();
-			}
-
-			lobjReader = new ExerciseReader();
+			if ( !pobjContainer.hasExercises )
+				return;
 
 			n = 0;
-			for ( i = 0; i < mobjContainer.exerciseData.length; i ++ )
+			for ( i = 0; i < pobjContainer.exerciseData.length; i ++ )
 			{
-				if ( mlngObject < 0 )
-					marrActive[i] = mobjContainer.exerciseData[i].isActive;
-
 				if ( !marrActive[i] )
 					continue;
 
-				lobjReader
-						.withContainer(mobjContainer.exerciseData[i], mlngObject, n)
-						.read();
-				n++;
+				lobjAux = readExercise(pobjContainer.exerciseData[i], pidObject, plngObject, n, pbForceDelete);
 
-				if ( mlngObject < 0 )
-					marrData.add(lobjReader.result());
+				if ( mbFirst )
+					marrData.add(lobjAux);
+
+				n++;
 			}
 
-			return this;
+			mbFirst = false;
 		}
 
 		public PolicyExerciseData[] result()
 		{
-			if ( mlngObject < 0 )
-				return marrData.toArray(new PolicyExerciseData[marrData.size()]);
+			return (marrData == null ? null : marrData.toArray(new PolicyExerciseData[marrData.size()]));
+		}
 
-			return null;
+		private PolicyExerciseData readExercise(ComplexFieldContainer.ExerciseData pobjExercise, UUID pidObject, int plngObject,
+				int plngExercise, boolean pbForceDelete)
+			throws BigBangException
+		{
+			PolicyExerciseData lobjOutExercise;
+			UUID lidExercise;
+
+			if ( ServerToClient.FORCEDID.equals(pobjExercise.id) )
+				pobjExercise.id = null;
+			lidExercise = (pobjExercise.id == null ? null : UUID.fromString(pobjExercise.id));
+
+			getBaseReader()
+					.readValues(pobjExercise, pidObject, plngObject, lidExercise, plngExercise, pbForceDelete);
+
+			lobjOutExercise = new PolicyExerciseData();
+
+			lobjOutExercise.mid = lidExercise;
+			lobjOutExercise.mbNew = (lidExercise == null);
+			lobjOutExercise.mbDeleted = false;
+			lobjOutExercise.mstrLabel = pobjExercise.label;
+			lobjOutExercise.midOwner = midParent;
+			lobjOutExercise.mdtStart = ( pobjExercise.startDate == null ? null : Timestamp.valueOf(pobjExercise.startDate + " 00:00:00.0") );
+			lobjOutExercise.mdtEnd = ( pobjExercise.endDate == null ? null : Timestamp.valueOf(pobjExercise.endDate + " 00:00:00.0") );
+
+			return lobjOutExercise;
 		}
 	}
 
@@ -383,265 +351,8 @@ public class ClientToServer
 		return mobjComplexReader;
 	}
 
-	private class ObjectReader
-	{
-		private PolicyObjectData mobjOutPObject;
-		private SubPolicyObjectData mobjOutSPObject;
-		private InsuredObject mobjObject;
-		private int mlngObject;
-
-		public ObjectReader withContainer(InsuredObject pobjObject, int plngObject)
-		{
-			mobjObject = pobjObject;
-			mlngObject = plngObject;
-			return this;
-		}
-
-		public ObjectReader read()
-			throws BigBangException
-		{
-			if ( mbForSubPolicy )
-			{
-				if ( InsuredObjectStub.Change.DELETED.equals(mobjObject.change) )
-					readSPDeleteHeader();
-				else
-				{
-					getComplexReader()
-							.withContainer(mobjObject, mlngObject)
-							.read();
-	
-					readSPFullHeader();
-				}
-			}
-			else
-			{
-				if ( InsuredObjectStub.Change.DELETED.equals(mobjObject.change) )
-					readPDeleteHeader();
-				else
-				{
-					getComplexReader()
-							.withContainer(mobjObject, mlngObject)
-							.read();
-	
-					readPFullHeader();
-				}
-			}
-
-			return this;
-		}
-
-		public PolicyObjectData resultP()
-		{
-			return mobjOutPObject;
-		}
-
-		public SubPolicyObjectData resultSP()
-		{
-			return mobjOutSPObject;
-		}
-
-		private void readPDeleteHeader()
-		{
-			if ( mobjObject.id == null )
-				mobjOutPObject = null;
-			else
-			{
-				mobjOutPObject = new PolicyObjectData();
-				mobjOutPObject.mid = UUID.fromString(mobjObject.id);
-				mobjOutPObject.mbNew = false;
-				mobjOutPObject.mbDeleted = true;
-			}
-		}
-
-		private void readSPDeleteHeader()
-		{
-			if ( mobjObject.id == null )
-				mobjOutSPObject = null;
-			else
-			{
-				mobjOutSPObject = new SubPolicyObjectData();
-				mobjOutSPObject.mid = UUID.fromString(mobjObject.id);
-				mobjOutSPObject.mbNew = false;
-				mobjOutSPObject.mbDeleted = true;
-			}
-		}
-
-		private void readPFullHeader()
-			throws BigBangException
-		{
-			UUID lidZipCode;
-
-			try
-			{
-				if ( (mobjObject.address != null) && (mobjObject.address.zipCode != null) )
-					lidZipCode = ZipCodeBridge.GetZipCode(mobjObject.address.zipCode.code, mobjObject.address.zipCode.city,
-							mobjObject.address.zipCode.county, mobjObject.address.zipCode.district,
-							mobjObject.address.zipCode.country);
-				else
-					lidZipCode = null;
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
-			mobjOutPObject = new PolicyObjectData();
-
-			if ( InsuredObjectStub.Change.MODIFIED.equals(mobjObject.change) )
-				mobjOutPObject.mid = UUID.fromString(mobjObject.id);
-			else
-				mobjOutPObject.mid = null;
-
-			mobjOutPObject.mstrName = mobjObject.unitIdentification;
-			mobjOutPObject.midOwner = midOwner;
-			mobjOutPObject.midType = UUID.fromString(mobjObject.typeId);
-			if ( mobjObject.address != null )
-			{
-				mobjOutPObject.mstrAddress1 = mobjObject.address.street1;
-				mobjOutPObject.mstrAddress2 = mobjObject.address.street2;
-				if ( mobjObject.address.zipCode != null )
-					mobjOutPObject.midZipCode = lidZipCode;
-				else
-					mobjOutPObject.midZipCode = null;
-			}
-			else
-			{
-				mobjOutPObject.mstrAddress1 = null;
-				mobjOutPObject.mstrAddress2 = null;
-				mobjOutPObject.midZipCode = null;
-			}
-			mobjOutPObject.mdtInclusion = ( mobjObject.inclusionDate == null ? null :
-					Timestamp.valueOf(mobjObject.inclusionDate + " 00:00:00.0") );
-			mobjOutPObject.mdtExclusion = ( mobjObject.exclusionDate == null ? null :
-					Timestamp.valueOf(mobjObject.exclusionDate + " 00:00:00.0") );
-
-			mobjOutPObject.mstrFiscalI = mobjObject.taxNumberPerson;
-			mobjOutPObject.midSex = ( mobjObject.genderId == null ? null : UUID.fromString(mobjObject.genderId) );
-			mobjOutPObject.mdtDateOfBirth = ( mobjObject.birthDate == null ? null :
-					Timestamp.valueOf(mobjObject.birthDate + " 00:00:00.0") );
-			mobjOutPObject.mlngClientNumberI = ( mobjObject.clientNumberPerson == null ? null :
-					Integer.decode(mobjObject.clientNumberPerson) );
-			mobjOutPObject.mstrInsurerIDI = mobjObject.insuranceCompanyInternalIdPerson;
-
-			mobjOutPObject.mstrFiscalC = mobjObject.taxNumberCompany;
-			mobjOutPObject.midPredomCAE = ( mobjObject.caeId == null ? null : UUID.fromString(mobjObject.caeId) );
-			mobjOutPObject.midGrievousCAE = ( mobjObject.grievousCaeId == null ? null : UUID.fromString(mobjObject.grievousCaeId) );
-			mobjOutPObject.mstrActivityNotes = mobjObject.activityNotes;
-			mobjOutPObject.mstrProductNotes = mobjObject.productNotes;
-			mobjOutPObject.midSales = ( mobjObject.businessVolumeId == null ? null : UUID.fromString(mobjObject.businessVolumeId) );
-			mobjOutPObject.mstrEUEntity = mobjObject.europeanUnionEntity;
-			mobjOutPObject.mlngClientNumberC = ( mobjObject.clientNumberGroup == null ? null :
-					Integer.decode(mobjObject.clientNumberGroup) );
-
-			mobjOutPObject.mstrMakeAndModel = mobjObject.makeAndModel;
-			mobjOutPObject.mstrEquipmentNotes = mobjObject.equipmentDescription;
-			mobjOutPObject.mdtFirstRegistry = ( mobjObject.firstRegistryDate == null ? null :
-					Timestamp.valueOf(mobjObject.firstRegistryDate + " 00:00:00.0") );
-			mobjOutPObject.mlngManufactureYear = ( mobjObject.manufactureYear == null ? null :
-					Integer.decode(mobjObject.manufactureYear) );
-			mobjOutPObject.mstrClientIDE = mobjObject.clientInternalId;
-			mobjOutPObject.mstrInsurerIDE = mobjObject.insuranceCompanyInternalIdVehicle;
-
-			mobjOutPObject.mstrSiteNotes = mobjObject.siteDescription;
-
-			mobjOutPObject.mstrSpecies = mobjObject.species;
-			mobjOutPObject.mstrRace = mobjObject.race;
-			mobjOutPObject.mlngAge = ( mobjObject.birthYear == null ? null :
-					Integer.decode(mobjObject.birthYear) );
-			mobjOutPObject.mstrCityNumber = mobjObject.cityRegistryNumber;
-			mobjOutPObject.mstrElectronicIDTag = mobjObject.electronicIdTag;
-		}
-
-		private void readSPFullHeader()
-			throws BigBangException
-		{
-			UUID lidZipCode;
-
-			try
-			{
-				if ( (mobjObject.address != null) && (mobjObject.address.zipCode != null) )
-					lidZipCode = ZipCodeBridge.GetZipCode(mobjObject.address.zipCode.code, mobjObject.address.zipCode.city,
-							mobjObject.address.zipCode.county, mobjObject.address.zipCode.district,
-							mobjObject.address.zipCode.country);
-				else
-					lidZipCode = null;
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
-			mobjOutSPObject = new SubPolicyObjectData();
-
-			if ( InsuredObjectStub.Change.MODIFIED.equals(mobjObject.change) )
-				mobjOutSPObject.mid = UUID.fromString(mobjObject.id);
-			else
-				mobjOutSPObject.mid = null;
-
-			mobjOutSPObject.mstrName = mobjObject.unitIdentification;
-			mobjOutSPObject.midOwner = midOwner;
-			mobjOutSPObject.midType = UUID.fromString(mobjObject.typeId);
-			if ( mobjObject.address != null )
-			{
-				mobjOutSPObject.mstrAddress1 = mobjObject.address.street1;
-				mobjOutSPObject.mstrAddress2 = mobjObject.address.street2;
-				if ( mobjObject.address.zipCode != null )
-					mobjOutSPObject.midZipCode = lidZipCode;
-				else
-					mobjOutSPObject.midZipCode = null;
-			}
-			else
-			{
-				mobjOutSPObject.mstrAddress1 = null;
-				mobjOutSPObject.mstrAddress2 = null;
-				mobjOutSPObject.midZipCode = null;
-			}
-			mobjOutSPObject.mdtInclusion = ( mobjObject.inclusionDate == null ? null :
-					Timestamp.valueOf(mobjObject.inclusionDate + " 00:00:00.0") );
-			mobjOutSPObject.mdtExclusion = ( mobjObject.exclusionDate == null ? null :
-					Timestamp.valueOf(mobjObject.exclusionDate + " 00:00:00.0") );
-
-			mobjOutSPObject.mstrFiscalI = mobjObject.taxNumberPerson;
-			mobjOutSPObject.midSex = ( mobjObject.genderId == null ? null : UUID.fromString(mobjObject.genderId) );
-			mobjOutSPObject.mdtDateOfBirth = ( mobjObject.birthDate == null ? null :
-					Timestamp.valueOf(mobjObject.birthDate + " 00:00:00.0") );
-			mobjOutSPObject.mlngClientNumberI = ( mobjObject.clientNumberPerson == null ? null :
-					Integer.decode(mobjObject.clientNumberPerson) );
-			mobjOutSPObject.mstrInsurerIDI = mobjObject.insuranceCompanyInternalIdPerson;
-
-			mobjOutSPObject.mstrFiscalC = mobjObject.taxNumberCompany;
-			mobjOutSPObject.midPredomCAE = ( mobjObject.caeId == null ? null : UUID.fromString(mobjObject.caeId) );
-			mobjOutSPObject.midGrievousCAE = ( mobjObject.grievousCaeId == null ? null : UUID.fromString(mobjObject.grievousCaeId) );
-			mobjOutSPObject.mstrActivityNotes = mobjObject.activityNotes;
-			mobjOutSPObject.mstrProductNotes = mobjObject.productNotes;
-			mobjOutSPObject.midSales = ( mobjObject.businessVolumeId == null ? null : UUID.fromString(mobjObject.businessVolumeId) );
-			mobjOutSPObject.mstrEUEntity = mobjObject.europeanUnionEntity;
-			mobjOutSPObject.mlngClientNumberC = ( mobjObject.clientNumberGroup == null ? null :
-					Integer.decode(mobjObject.clientNumberGroup) );
-
-			mobjOutSPObject.mstrMakeAndModel = mobjObject.makeAndModel;
-			mobjOutSPObject.mstrEquipmentNotes = mobjObject.equipmentDescription;
-			mobjOutSPObject.mdtFirstRegistry = ( mobjObject.firstRegistryDate == null ? null :
-					Timestamp.valueOf(mobjObject.firstRegistryDate + " 00:00:00.0") );
-			mobjOutSPObject.mlngManufactureYear = ( mobjObject.manufactureYear == null ? null :
-					Integer.decode(mobjObject.manufactureYear) );
-			mobjOutSPObject.mstrClientIDE = mobjObject.clientInternalId;
-			mobjOutSPObject.mstrInsurerIDE = mobjObject.insuranceCompanyInternalIdVehicle;
-
-			mobjOutSPObject.mstrSiteNotes = mobjObject.siteDescription;
-
-			mobjOutSPObject.mstrSpecies = mobjObject.species;
-			mobjOutSPObject.mstrRace = mobjObject.race;
-			mobjOutSPObject.mlngAge = ( mobjObject.birthYear == null ? null :
-					Integer.decode(mobjObject.birthYear) );
-			mobjOutSPObject.mstrCityNumber = mobjObject.cityRegistryNumber;
-			mobjOutSPObject.mstrElectronicIDTag = mobjObject.electronicIdTag;
-		}
-	}
-
 	private class StructuredReader
 	{
-		private StructuredFieldContainer mobjContainer;
 		private ArrayList<PolicyCoverageData> marrPCData;
 		private ArrayList<PolicyObjectData> marrPOData;
 		private ArrayList<SubPolicyCoverageData> marrSPCData;
@@ -649,8 +360,7 @@ public class ClientToServer
 		private HashSet<UUID> msetCDeletia;
 		private UUID midOwner;
 
-		public StructuredReader withSource(boolean pbForSubPolicy)
-			throws BigBangException
+		public void withOriginal(boolean pbForSubPolicy)
 		{
 			if ( pbForSubPolicy )
 			{
@@ -670,12 +380,10 @@ public class ClientToServer
 			midOwner = null;
 
 			getBaseReader()
-					.withSource(pbForSubPolicy);
-
-			return this;
+					.withOriginal(pbForSubPolicy);
 		}
 
-		public StructuredReader withSource(Policy pobjPolicy)
+		public void withOriginal(Policy pobjPolicy)
 			throws BigBangException
 		{
 			PolicyCoverage[] larrCovs;
@@ -700,12 +408,11 @@ public class ClientToServer
 			for ( i = 0; i < larrCovs.length; i++ )
 				msetCDeletia.add(larrCovs[i].getKey());
 
-			getBaseReader().withSource(pobjPolicy);
-
-			return this;
+			getBaseReader()
+					.withOriginal(pobjPolicy);
 		}
 
-		public StructuredReader withSource(com.premiumminds.BigBang.Jewel.Objects.SubPolicy pobjSubPolicy)
+		public void withOriginal(com.premiumminds.BigBang.Jewel.Objects.SubPolicy pobjSubPolicy)
 			throws BigBangException
 		{
 			SubPolicyCoverage[] larrCovs;
@@ -730,66 +437,38 @@ public class ClientToServer
 			for ( i = 0; i < larrCovs.length; i++ )
 				msetCDeletia.add(larrCovs[i].getKey());
 
-			getBaseReader().withSource(pobjSubPolicy);
-
-			return this;
+			getBaseReader()
+					.withOriginal(pobjSubPolicy);
 		}
 
-		public StructuredReader withContainer(StructuredFieldContainer pobjContainer)
-		{
-			mobjContainer = pobjContainer;
-			return this;
-		}
-
-		public StructuredReader read()
+		public void read(StructuredFieldContainer pobjContainer)
 			throws BigBangException
 		{
-			getComplexReader()
-					.withContainer(mobjContainer, -1)
-					.read();
+			ComplexFieldContainerReader lobjReader;
+
+			lobjReader = getComplexReader();
+			lobjReader.withMaster(pobjContainer);
+			lobjReader.readComplex(pobjContainer, null, -1, false);
 
 			if ( mbForSubPolicy )
 			{
-				readSubPolicyCoverages();
-				readSubPolicyObjects();
+				readSubPolicyCoverages(pobjContainer);
+				readSubPolicyObjects(pobjContainer);
 			}
 			else
 			{
-				readPolicyCoverages();
-				readPolicyObjects();
+				readPolicyCoverages(pobjContainer);
+				readPolicyObjects(pobjContainer);
 			}
-			return this;
 		}
 
 		public PolicyCoverageData[] resultPC()
 		{
-			PolicyCoverageData lobjAux;
-
-			for (UUID lid: msetCDeletia)
-			{
-				lobjAux = new PolicyCoverageData();
-				lobjAux.mid = lid;
-				lobjAux.mbNew = false;
-				lobjAux.mbDeleted = true;
-				marrPCData.add(lobjAux);
-			}
-
 			return marrPCData.toArray(new PolicyCoverageData[marrPCData.size()]);
 		}
 
 		public SubPolicyCoverageData[] resultSPC()
 		{
-			SubPolicyCoverageData lobjAux;
-
-			for (UUID lid: msetCDeletia)
-			{
-				lobjAux = new SubPolicyCoverageData();
-				lobjAux.mid = lid;
-				lobjAux.mbNew = false;
-				lobjAux.mbDeleted = true;
-				marrSPCData.add(lobjAux);
-			}
-
 			return marrSPCData.toArray(new SubPolicyCoverageData[marrSPCData.size()]);
 		}
 
@@ -803,82 +482,94 @@ public class ClientToServer
 			return marrSPOData.toArray(new SubPolicyObjectData[marrSPOData.size()]);
 		}
 
-		private void readPolicyCoverages()
+		private void readPolicyCoverages(StructuredFieldContainer pobjContainer)
 		{
 			PolicyCoverageData lobjAux;
 			int i;
 
-			for ( i = 0; i < mobjContainer.coverages.length; i++ )
+			for ( i = 0; i < pobjContainer.coverages.length; i++ )
 			{
 				lobjAux = new PolicyCoverageData();
 
-				if ( mobjContainer.coverages[i].serverId == null )
+				if ( pobjContainer.coverages[i].serverId == null )
 				{
 					lobjAux.mid = null;
 					lobjAux.mbNew = true;
 				}
 				else
 				{
-					lobjAux.mid = UUID.fromString(mobjContainer.coverages[i].serverId);
-					lobjAux.mbNew = true;
+					lobjAux.mid = UUID.fromString(pobjContainer.coverages[i].serverId);
+					lobjAux.mbNew = false;
 					msetCDeletia.remove(lobjAux.mid);
 				}
 			
 				lobjAux.midOwner = midOwner;
-				lobjAux.midCoverage = UUID.fromString(mobjContainer.coverages[i].coverageId);
-				lobjAux.mbPresent = mobjContainer.coverages[i].presentInPolicy;
+				lobjAux.midCoverage = UUID.fromString(pobjContainer.coverages[i].coverageId);
+				lobjAux.mbPresent = pobjContainer.coverages[i].presentInPolicy;
 				lobjAux.mbDeleted = false;
 
 				marrPCData.add(lobjAux);
 			}
+
+			for (UUID lid: msetCDeletia)
+			{
+				lobjAux = new PolicyCoverageData();
+				lobjAux.mid = lid;
+				lobjAux.mbNew = false;
+				lobjAux.mbDeleted = true;
+				marrPCData.add(lobjAux);
+			}
 		}
 
-		private void readSubPolicyCoverages()
+		private void readSubPolicyCoverages(StructuredFieldContainer pobjContainer)
 		{
 			SubPolicyCoverageData lobjAux;
 			int i;
 
-			for ( i = 0; i < mobjContainer.coverages.length; i++ )
+			for ( i = 0; i < pobjContainer.coverages.length; i++ )
 			{
 				lobjAux = new SubPolicyCoverageData();
 
-				if ( mobjContainer.coverages[i].serverId == null )
+				if ( pobjContainer.coverages[i].serverId == null )
 				{
 					lobjAux.mid = null;
 					lobjAux.mbNew = true;
 				}
 				else
 				{
-					lobjAux.mid = UUID.fromString(mobjContainer.coverages[i].serverId);
+					lobjAux.mid = UUID.fromString(pobjContainer.coverages[i].serverId);
 					lobjAux.mbNew = true;
 					msetCDeletia.remove(lobjAux.mid);
 				}
 			
 				lobjAux.midOwner = midOwner;
-				lobjAux.midCoverage = UUID.fromString(mobjContainer.coverages[i].coverageId);
-				lobjAux.mbPresent = mobjContainer.coverages[i].presentInPolicy;
+				lobjAux.midCoverage = UUID.fromString(pobjContainer.coverages[i].coverageId);
+				lobjAux.mbPresent = pobjContainer.coverages[i].presentInPolicy;
 				lobjAux.mbDeleted = false;
 
 				marrSPCData.add(lobjAux);
 			}
+
+			for (UUID lid: msetCDeletia)
+			{
+				lobjAux = new SubPolicyCoverageData();
+				lobjAux.mid = lid;
+				lobjAux.mbNew = false;
+				lobjAux.mbDeleted = true;
+				marrSPCData.add(lobjAux);
+			}
 		}
 
-		private void readPolicyObjects()
+		private void readPolicyObjects(StructuredFieldContainer pobjContainer)
 			throws BigBangException
 		{
-			ObjectReader lobjReader;
 			PolicyObjectData lobjAux;
 			int i, n;
 
-			lobjReader = new ObjectReader();
-
 			n = 0;
-			for ( i = 0; i < mobjContainer.changedObjects.length; i++ )
+			for ( i = 0; i < pobjContainer.changedObjects.length; i++ )
 			{
-				lobjAux = lobjReader
-						.withContainer(mobjContainer.changedObjects[i], n)
-						.read()
-						.resultP();
+				lobjAux = readPolicyObject(pobjContainer.changedObjects[i], n);
 
 				if ( lobjAux != null )
 				{
@@ -888,22 +579,16 @@ public class ClientToServer
 			}
 		}
 
-		private void readSubPolicyObjects()
+		private void readSubPolicyObjects(StructuredFieldContainer pobjContainer)
 			throws BigBangException
 		{
-			ObjectReader lobjReader;
 			SubPolicyObjectData lobjAux;
 			int i, n;
 
-			lobjReader = new ObjectReader();
-
 			n = 0;
-			for ( i = 0; i < mobjContainer.changedObjects.length; i++ )
+			for ( i = 0; i < pobjContainer.changedObjects.length; i++ )
 			{
-				lobjAux = lobjReader
-						.withContainer(mobjContainer.changedObjects[i], n)
-						.read()
-						.resultSP();
+				lobjAux = readSubPolicyObject(pobjContainer.changedObjects[i], n);
 
 				if ( lobjAux != null )
 				{
@@ -912,106 +597,314 @@ public class ClientToServer
 				}
 			}
 		}
-	}
 
-	private StructuredReader mobjStructuredReader;
+		private PolicyObjectData readPolicyObject(InsuredObject pobjObject, int plngObject)
+			throws BigBangException
+		{
+			UUID lidObject;
 
-	private StructuredReader getStructuredReader()
-	{
-		if ( mobjStructuredReader == null )
-			mobjStructuredReader = new StructuredReader();
-		return mobjStructuredReader;
+			lidObject = (pobjObject.id == null ? null : UUID.fromString(pobjObject.id));
+
+			getComplexReader()
+					.readComplex(pobjObject, lidObject, plngObject, InsuredObjectStub.Change.DELETED.equals(pobjObject.change));
+
+			if ( InsuredObjectStub.Change.DELETED.equals(pobjObject.change) )
+				return readPDeleteHeader(pobjObject);
+
+			return readPFullHeader(pobjObject);
+		}
+
+		private SubPolicyObjectData readSubPolicyObject(InsuredObject pobjObject, int plngObject)
+			throws BigBangException
+		{
+			UUID lidObject;
+
+			lidObject = (pobjObject.id == null ? null : UUID.fromString(pobjObject.id));
+
+			getComplexReader()
+					.readComplex(pobjObject, lidObject, plngObject, InsuredObjectStub.Change.DELETED.equals(pobjObject.change));
+
+			if ( InsuredObjectStub.Change.DELETED.equals(pobjObject.change) )
+				return readSPDeleteHeader(pobjObject);
+
+			return readSPFullHeader(pobjObject);
+		}
+
+		private PolicyObjectData readPDeleteHeader(InsuredObject pobjObject)
+		{
+			PolicyObjectData lobjResult;
+
+			if ( pobjObject.id == null )
+				lobjResult = null;
+			else
+			{
+				lobjResult = new PolicyObjectData();
+				lobjResult.mid = UUID.fromString(pobjObject.id);
+				lobjResult.mbNew = false;
+				lobjResult.mbDeleted = true;
+			}
+
+			return lobjResult;
+		}
+
+		private SubPolicyObjectData readSPDeleteHeader(InsuredObject pobjObject)
+		{
+			SubPolicyObjectData lobjResult;
+
+			if ( pobjObject.id == null )
+				lobjResult = null;
+			else
+			{
+				lobjResult = new SubPolicyObjectData();
+				lobjResult.mid = UUID.fromString(pobjObject.id);
+				lobjResult.mbNew = false;
+				lobjResult.mbDeleted = true;
+			}
+
+			return lobjResult;
+		}
+
+		private PolicyObjectData readPFullHeader(InsuredObject pobjObject)
+			throws BigBangException
+		{
+			UUID lidZipCode;
+			PolicyObjectData lobjResult;
+
+			try
+			{
+				if ( (pobjObject.address != null) && (pobjObject.address.zipCode != null) )
+					lidZipCode = ZipCodeBridge.GetZipCode(pobjObject.address.zipCode.code, pobjObject.address.zipCode.city,
+							pobjObject.address.zipCode.county, pobjObject.address.zipCode.district,
+							pobjObject.address.zipCode.country);
+				else
+					lidZipCode = null;
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			lobjResult = new PolicyObjectData();
+
+			if ( InsuredObjectStub.Change.MODIFIED.equals(pobjObject.change) )
+				lobjResult.mid = UUID.fromString(pobjObject.id);
+			else
+				lobjResult.mid = null;
+
+			lobjResult.mstrName = pobjObject.unitIdentification;
+			lobjResult.midOwner = midOwner;
+			lobjResult.midType = UUID.fromString(pobjObject.typeId);
+			if ( pobjObject.address != null )
+			{
+				lobjResult.mstrAddress1 = pobjObject.address.street1;
+				lobjResult.mstrAddress2 = pobjObject.address.street2;
+				if ( pobjObject.address.zipCode != null )
+					lobjResult.midZipCode = lidZipCode;
+				else
+					lobjResult.midZipCode = null;
+			}
+			else
+			{
+				lobjResult.mstrAddress1 = null;
+				lobjResult.mstrAddress2 = null;
+				lobjResult.midZipCode = null;
+			}
+			lobjResult.mdtInclusion = ( pobjObject.inclusionDate == null ? null :
+					Timestamp.valueOf(pobjObject.inclusionDate + " 00:00:00.0") );
+			lobjResult.mdtExclusion = ( pobjObject.exclusionDate == null ? null :
+					Timestamp.valueOf(pobjObject.exclusionDate + " 00:00:00.0") );
+
+			lobjResult.mstrFiscalI = pobjObject.taxNumberPerson;
+			lobjResult.midSex = ( pobjObject.genderId == null ? null : UUID.fromString(pobjObject.genderId) );
+			lobjResult.mdtDateOfBirth = ( pobjObject.birthDate == null ? null :
+					Timestamp.valueOf(pobjObject.birthDate + " 00:00:00.0") );
+			lobjResult.mlngClientNumberI = ( pobjObject.clientNumberPerson == null ? null :
+					Integer.decode(pobjObject.clientNumberPerson) );
+			lobjResult.mstrInsurerIDI = pobjObject.insuranceCompanyInternalIdPerson;
+
+			lobjResult.mstrFiscalC = pobjObject.taxNumberCompany;
+			lobjResult.midPredomCAE = ( pobjObject.caeId == null ? null : UUID.fromString(pobjObject.caeId) );
+			lobjResult.midGrievousCAE = ( pobjObject.grievousCaeId == null ? null : UUID.fromString(pobjObject.grievousCaeId) );
+			lobjResult.mstrActivityNotes = pobjObject.activityNotes;
+			lobjResult.mstrProductNotes = pobjObject.productNotes;
+			lobjResult.midSales = ( pobjObject.businessVolumeId == null ? null : UUID.fromString(pobjObject.businessVolumeId) );
+			lobjResult.mstrEUEntity = pobjObject.europeanUnionEntity;
+			lobjResult.mlngClientNumberC = ( pobjObject.clientNumberGroup == null ? null :
+					Integer.decode(pobjObject.clientNumberGroup) );
+
+			lobjResult.mstrMakeAndModel = pobjObject.makeAndModel;
+			lobjResult.mstrEquipmentNotes = pobjObject.equipmentDescription;
+			lobjResult.mdtFirstRegistry = ( pobjObject.firstRegistryDate == null ? null :
+					Timestamp.valueOf(pobjObject.firstRegistryDate + " 00:00:00.0") );
+			lobjResult.mlngManufactureYear = ( pobjObject.manufactureYear == null ? null :
+					Integer.decode(pobjObject.manufactureYear) );
+			lobjResult.mstrClientIDE = pobjObject.clientInternalId;
+			lobjResult.mstrInsurerIDE = pobjObject.insuranceCompanyInternalIdVehicle;
+
+			lobjResult.mstrSiteNotes = pobjObject.siteDescription;
+
+			lobjResult.mstrSpecies = pobjObject.species;
+			lobjResult.mstrRace = pobjObject.race;
+			lobjResult.mlngAge = ( pobjObject.birthYear == null ? null :
+					Integer.decode(pobjObject.birthYear) );
+			lobjResult.mstrCityNumber = pobjObject.cityRegistryNumber;
+			lobjResult.mstrElectronicIDTag = pobjObject.electronicIdTag;
+
+			return lobjResult;
+		}
+
+		private SubPolicyObjectData readSPFullHeader(InsuredObject pobjObject)
+			throws BigBangException
+		{
+			UUID lidZipCode;
+			SubPolicyObjectData lobjResult;
+
+			try
+			{
+				if ( (pobjObject.address != null) && (pobjObject.address.zipCode != null) )
+					lidZipCode = ZipCodeBridge.GetZipCode(pobjObject.address.zipCode.code, pobjObject.address.zipCode.city,
+							pobjObject.address.zipCode.county, pobjObject.address.zipCode.district,
+							pobjObject.address.zipCode.country);
+				else
+					lidZipCode = null;
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			lobjResult = new SubPolicyObjectData();
+
+			if ( InsuredObjectStub.Change.MODIFIED.equals(pobjObject.change) )
+				lobjResult.mid = UUID.fromString(pobjObject.id);
+			else
+				lobjResult.mid = null;
+
+			lobjResult.mstrName = pobjObject.unitIdentification;
+			lobjResult.midOwner = midOwner;
+			lobjResult.midType = UUID.fromString(pobjObject.typeId);
+			if ( pobjObject.address != null )
+			{
+				lobjResult.mstrAddress1 = pobjObject.address.street1;
+				lobjResult.mstrAddress2 = pobjObject.address.street2;
+				if ( pobjObject.address.zipCode != null )
+					lobjResult.midZipCode = lidZipCode;
+				else
+					lobjResult.midZipCode = null;
+			}
+			else
+			{
+				lobjResult.mstrAddress1 = null;
+				lobjResult.mstrAddress2 = null;
+				lobjResult.midZipCode = null;
+			}
+			lobjResult.mdtInclusion = ( pobjObject.inclusionDate == null ? null :
+					Timestamp.valueOf(pobjObject.inclusionDate + " 00:00:00.0") );
+			lobjResult.mdtExclusion = ( pobjObject.exclusionDate == null ? null :
+					Timestamp.valueOf(pobjObject.exclusionDate + " 00:00:00.0") );
+
+			lobjResult.mstrFiscalI = pobjObject.taxNumberPerson;
+			lobjResult.midSex = ( pobjObject.genderId == null ? null : UUID.fromString(pobjObject.genderId) );
+			lobjResult.mdtDateOfBirth = ( pobjObject.birthDate == null ? null :
+					Timestamp.valueOf(pobjObject.birthDate + " 00:00:00.0") );
+			lobjResult.mlngClientNumberI = ( pobjObject.clientNumberPerson == null ? null :
+					Integer.decode(pobjObject.clientNumberPerson) );
+			lobjResult.mstrInsurerIDI = pobjObject.insuranceCompanyInternalIdPerson;
+
+			lobjResult.mstrFiscalC = pobjObject.taxNumberCompany;
+			lobjResult.midPredomCAE = ( pobjObject.caeId == null ? null : UUID.fromString(pobjObject.caeId) );
+			lobjResult.midGrievousCAE = ( pobjObject.grievousCaeId == null ? null : UUID.fromString(pobjObject.grievousCaeId) );
+			lobjResult.mstrActivityNotes = pobjObject.activityNotes;
+			lobjResult.mstrProductNotes = pobjObject.productNotes;
+			lobjResult.midSales = ( pobjObject.businessVolumeId == null ? null : UUID.fromString(pobjObject.businessVolumeId) );
+			lobjResult.mstrEUEntity = pobjObject.europeanUnionEntity;
+			lobjResult.mlngClientNumberC = ( pobjObject.clientNumberGroup == null ? null :
+					Integer.decode(pobjObject.clientNumberGroup) );
+
+			lobjResult.mstrMakeAndModel = pobjObject.makeAndModel;
+			lobjResult.mstrEquipmentNotes = pobjObject.equipmentDescription;
+			lobjResult.mdtFirstRegistry = ( pobjObject.firstRegistryDate == null ? null :
+					Timestamp.valueOf(pobjObject.firstRegistryDate + " 00:00:00.0") );
+			lobjResult.mlngManufactureYear = ( pobjObject.manufactureYear == null ? null :
+					Integer.decode(pobjObject.manufactureYear) );
+			lobjResult.mstrClientIDE = pobjObject.clientInternalId;
+			lobjResult.mstrInsurerIDE = pobjObject.insuranceCompanyInternalIdVehicle;
+
+			lobjResult.mstrSiteNotes = pobjObject.siteDescription;
+
+			lobjResult.mstrSpecies = pobjObject.species;
+			lobjResult.mstrRace = pobjObject.race;
+			lobjResult.mlngAge = ( pobjObject.birthYear == null ? null :
+					Integer.decode(pobjObject.birthYear) );
+			lobjResult.mstrCityNumber = pobjObject.cityRegistryNumber;
+			lobjResult.mstrElectronicIDTag = pobjObject.electronicIdTag;
+
+			return lobjResult;
+		}
 	}
 
 	private class PolicyReader
 	{
-		private PolicyData mobjOutPolicy;
-		private PolicyCoInsurer[] marrReference;
-		private InsurancePolicy mobjPolicy;
-
-		public PolicyReader withSource()
+		public PolicyData readPolicy(InsurancePolicy pobjPolicy, Policy pobjOriginal)
 			throws BigBangException
 		{
-			getStructuredReader().withSource(false);
-			return this;
+			StructuredReader lobjReader;
+			PolicyData lobjResult;
+
+			lobjReader = new StructuredReader();
+			if ( pobjOriginal == null )
+				lobjReader.withOriginal(false);
+			else
+				lobjReader.withOriginal(pobjOriginal);
+			lobjReader.read(pobjPolicy);
+
+			lobjResult = new PolicyData();
+
+			readHeader(lobjResult, pobjPolicy);
+
+			lobjResult.marrCoInsurers =  readCoInsurers(pobjOriginal, pobjPolicy);
+			lobjResult.marrCoverages = lobjReader.resultPC();
+			lobjResult.marrObjects = lobjReader.resultPO();
+			lobjResult.marrExercises = getComplexReader().result();
+			lobjResult.marrValues = getBaseReader().resultP();
+
+			return lobjResult;
 		}
 
-		public PolicyReader withSource(Policy pobjPolicy)
+		private void readHeader(PolicyData pobjResult, InsurancePolicy pobjPolicy)
+		{
+			pobjResult.mid = ( pobjPolicy.id == null ? null : UUID.fromString(pobjPolicy.id) );
+
+			pobjResult.midClient = ( pobjPolicy.clientId == null ? null : UUID.fromString(pobjPolicy.clientId) );
+			pobjResult.mstrNumber = pobjPolicy.number;
+			pobjResult.midCompany = UUID.fromString(pobjPolicy.insuranceAgencyId);
+			pobjResult.midSubLine = UUID.fromString(pobjPolicy.subLineId);
+			pobjResult.mdtBeginDate = ( pobjPolicy.startDate == null ? null :
+					Timestamp.valueOf(pobjPolicy.startDate + " 00:00:00.0") );
+			pobjResult.midDuration = UUID.fromString(pobjPolicy.durationId);
+			pobjResult.midFractioning = UUID.fromString(pobjPolicy.fractioningId);
+			pobjResult.mlngMaturityDay = pobjPolicy.maturityDay;
+			pobjResult.mlngMaturityMonth = pobjPolicy.maturityMonth;
+			pobjResult.mdtEndDate = ( pobjPolicy.expirationDate == null ? null :
+					Timestamp.valueOf(pobjPolicy.expirationDate + " 00:00:00.0") );
+			pobjResult.mstrNotes = pobjPolicy.notes;
+			pobjResult.midMediator = ( pobjPolicy.mediatorId == null ? null : UUID.fromString(pobjPolicy.mediatorId) );
+			pobjResult.mbCaseStudy = pobjPolicy.caseStudy;
+			pobjResult.midStatus = null;
+			pobjResult.mdblPremium = ( pobjPolicy.premium == null ? null : new BigDecimal(pobjPolicy.premium+"") );
+			pobjResult.mstrDocuShare = pobjPolicy.docushare;
+			pobjResult.midProfile = ( pobjPolicy.operationalProfileId == null ? null : UUID.fromString(pobjPolicy.operationalProfileId) );
+
+			pobjResult.midManager = ( pobjPolicy.managerId == null ? null : UUID.fromString(pobjPolicy.managerId) );
+			pobjResult.midProcess = ( pobjPolicy.processId == null ? null : UUID.fromString(pobjPolicy.processId) );
+
+			pobjResult.mbModified = true;
+		}
+
+		private PolicyCoInsurerData[] readCoInsurers(Policy pobjOriginal, InsurancePolicy pobjPolicy)
 			throws BigBangException
 		{
-			getStructuredReader().withSource(pobjPolicy);
-			return this;
-		}
-
-		public PolicyReader withContainer(InsurancePolicy pobjPolicy)
-			throws BigBangException
-		{
-			mobjPolicy = pobjPolicy;
-
-			getStructuredReader()
-					.withContainer(pobjPolicy)
-					.read();
-
-			return this;
-		}
-
-		public PolicyReader read()
-			throws BigBangException
-		{
-			readHeader();
-			readCoInsurers();
-
-			mobjOutPolicy.marrCoverages = getStructuredReader()
-					.resultPC();
-			mobjOutPolicy.marrObjects = getStructuredReader()
-					.resultPO();
-			mobjOutPolicy.marrExercises = getComplexReader()
-					.result();
-			mobjOutPolicy.marrValues = getBaseReader()
-					.resultP();
-
-			return this;
-		}
-
-		public PolicyData result()
-		{
-			return mobjOutPolicy;
-		}
-
-		private void readHeader()
-		{
-			mobjOutPolicy = new PolicyData();
-
-			mobjOutPolicy.mid = ( mobjPolicy.id == null ? null : UUID.fromString(mobjPolicy.id) );
-
-			mobjOutPolicy.midClient = ( mobjPolicy.clientId == null ? null : UUID.fromString(mobjPolicy.clientId) );
-			mobjOutPolicy.mstrNumber = mobjPolicy.number;
-			mobjOutPolicy.midCompany = UUID.fromString(mobjPolicy.insuranceAgencyId);
-			mobjOutPolicy.midSubLine = UUID.fromString(mobjPolicy.subLineId);
-			mobjOutPolicy.mdtBeginDate = ( mobjPolicy.startDate == null ? null :
-					Timestamp.valueOf(mobjPolicy.startDate + " 00:00:00.0") );
-			mobjOutPolicy.midDuration = UUID.fromString(mobjPolicy.durationId);
-			mobjOutPolicy.midFractioning = UUID.fromString(mobjPolicy.fractioningId);
-			mobjOutPolicy.mlngMaturityDay = mobjPolicy.maturityDay;
-			mobjOutPolicy.mlngMaturityMonth = mobjPolicy.maturityMonth;
-			mobjOutPolicy.mdtEndDate = ( mobjPolicy.expirationDate == null ? null :
-					Timestamp.valueOf(mobjPolicy.expirationDate + " 00:00:00.0") );
-			mobjOutPolicy.mstrNotes = mobjPolicy.notes;
-			mobjOutPolicy.midMediator = ( mobjPolicy.mediatorId == null ? null : UUID.fromString(mobjPolicy.mediatorId) );
-			mobjOutPolicy.mbCaseStudy = mobjPolicy.caseStudy;
-			mobjOutPolicy.midStatus = null;
-			mobjOutPolicy.mdblPremium = ( mobjPolicy.premium == null ? null : new BigDecimal(mobjPolicy.premium+"") );
-			mobjOutPolicy.mstrDocuShare = mobjPolicy.docushare;
-			mobjOutPolicy.midProfile = ( mobjPolicy.operationalProfileId == null ? null : UUID.fromString(mobjPolicy.operationalProfileId) );
-
-			mobjOutPolicy.midManager = ( mobjPolicy.managerId == null ? null : UUID.fromString(mobjPolicy.managerId) );
-			mobjOutPolicy.midProcess = ( mobjPolicy.processId == null ? null : UUID.fromString(mobjPolicy.processId) );
-
-			mobjOutPolicy.mbModified = true;
-		}
-
-		private void readCoInsurers()
-		{
+			PolicyCoInsurer[] larrReference;
 			HashMap<UUID, UUID> lmapCoInsurers;
 			ArrayList<PolicyCoInsurerData> larrData;
 			PolicyCoInsurerData lobjCoInsurer;
@@ -1019,22 +912,31 @@ public class ClientToServer
 
 			lmapCoInsurers = new HashMap<UUID, UUID>();
 
-			if ( marrReference != null )
+			if ( pobjOriginal != null )
 			{
-				for ( i = 0; i < marrReference.length; i++ )
-					lmapCoInsurers.put((UUID)marrReference[i].getAt(1), marrReference[i].getKey());
+				try
+				{
+					larrReference = pobjOriginal.GetCurrentCoInsurers();
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+	
+				for ( i = 0; i < larrReference.length; i++ )
+					lmapCoInsurers.put((UUID)larrReference[i].getAt(1), larrReference[i].getKey());
 			}
 
 			larrData = new ArrayList<PolicyCoInsurerData>();
 
-			if ( mobjPolicy.coInsurers != null )
+			if ( pobjPolicy.coInsurers != null )
 			{
-				for ( i = 0; i < mobjPolicy.coInsurers.length; i++ )
+				for ( i = 0; i < pobjPolicy.coInsurers.length; i++ )
 				{
 					lobjCoInsurer = new PolicyCoInsurerData();
-					lobjCoInsurer.midPolicy = mobjOutPolicy.mid;
-					lobjCoInsurer.midCompany = UUID.fromString(mobjPolicy.coInsurers[i].insuranceAgencyId);
-					lobjCoInsurer.mdblPercent = new BigDecimal(mobjPolicy.coInsurers[i].percent+"");
+					lobjCoInsurer.midPolicy = (pobjOriginal == null ? null : pobjOriginal.getKey());
+					lobjCoInsurer.midCompany = UUID.fromString(pobjPolicy.coInsurers[i].insuranceAgencyId);
+					lobjCoInsurer.mdblPercent = new BigDecimal(pobjPolicy.coInsurers[i].percent+"");
 					lobjCoInsurer.mbDeleted = false;
 
 					lobjCoInsurer.mid = lmapCoInsurers.get(lobjCoInsurer.midCompany);
@@ -1059,123 +961,82 @@ public class ClientToServer
 				larrData.add(lobjCoInsurer);
 			}
 
-			mobjOutPolicy.marrCoInsurers = larrData.toArray(new PolicyCoInsurerData[larrData.size()]);
+			return larrData.toArray(new PolicyCoInsurerData[larrData.size()]);
 		}
 	}
 
 	private class SubPolicyReader
 	{
-		private SubPolicyData mobjOutSubPolicy;
-		private SubPolicy mobjSubPolicy;
-
-		public SubPolicyReader withSource()
+		public SubPolicyData readSubPolicy(SubPolicy pobjPolicy, com.premiumminds.BigBang.Jewel.Objects.SubPolicy pobjOriginal)
 			throws BigBangException
 		{
-			getStructuredReader().withSource(true);
-			return this;
+			StructuredReader lobjReader;
+			SubPolicyData lobjResult;
+
+			lobjReader = new StructuredReader();
+			if ( pobjOriginal == null )
+				lobjReader.withOriginal(false);
+			else
+				lobjReader.withOriginal(pobjOriginal);
+			lobjReader.read(pobjPolicy);
+
+			lobjResult = new SubPolicyData();
+
+			readHeader(lobjResult, pobjPolicy);
+
+			lobjResult.marrCoverages = lobjReader.resultSPC();
+			lobjResult.marrObjects = lobjReader.resultSPO();
+			lobjResult.marrValues = getBaseReader().resultS();
+
+			return lobjResult;
 		}
 
-		public SubPolicyReader withSource(com.premiumminds.BigBang.Jewel.Objects.SubPolicy pobjSubPolicy)
-			throws BigBangException
+		private void readHeader(SubPolicyData pobjResult, SubPolicy pobjSubPolicy)
 		{
-			getStructuredReader().withSource(pobjSubPolicy);
-			return this;
-		}
+			pobjResult = new SubPolicyData();
 
-		public SubPolicyReader withContainer(SubPolicy pobjPolicy)
-			throws BigBangException
-		{
-			mobjSubPolicy = pobjPolicy;
+			pobjResult.mid = ( pobjSubPolicy.id == null ? null : UUID.fromString(pobjSubPolicy.id) );
 
-			getStructuredReader()
-					.withContainer(pobjPolicy)
-					.read();
+			pobjResult.mstrNumber = pobjSubPolicy.number;
+			pobjResult.midSubscriber = ( pobjSubPolicy.clientId == null ? null : UUID.fromString(pobjSubPolicy.clientId) );
+			pobjResult.mdtBeginDate = ( pobjSubPolicy.startDate == null ? null :
+					Timestamp.valueOf(pobjSubPolicy.startDate + " 00:00:00.0") );
+			pobjResult.midFractioning = UUID.fromString(pobjSubPolicy.fractioningId);
+			pobjResult.mdtEndDate = ( pobjSubPolicy.expirationDate == null ? null :
+					Timestamp.valueOf(pobjSubPolicy.expirationDate + " 00:00:00.0") );
+			pobjResult.mstrNotes = pobjSubPolicy.notes;
+			pobjResult.midStatus = null;
+			pobjResult.mdblPremium = ( pobjSubPolicy.premium == null ? null : new BigDecimal(pobjSubPolicy.premium+"") );
+			pobjResult.mstrDocuShare = pobjSubPolicy.docushare;
 
-			return this;
-		}
+			pobjResult.midManager = ( pobjSubPolicy.managerId == null ? null : UUID.fromString(pobjSubPolicy.managerId) );
+			pobjResult.midProcess = ( pobjSubPolicy.processId == null ? null : UUID.fromString(pobjSubPolicy.processId) );
 
-		public SubPolicyReader read()
-			throws BigBangException
-		{
-			readHeader();
-
-			mobjOutSubPolicy.marrCoverages = getStructuredReader()
-					.resultSPC();
-			mobjOutSubPolicy.marrObjects = getStructuredReader()
-					.resultSPO();
-			mobjOutSubPolicy.marrValues = getBaseReader()
-					.resultS();
-
-			return this;
-		}
-
-		public SubPolicyData result()
-		{
-			return mobjOutSubPolicy;
-		}
-
-		private void readHeader()
-		{
-			mobjOutSubPolicy = new SubPolicyData();
-
-			mobjOutSubPolicy.mid = ( mobjSubPolicy.id == null ? null : UUID.fromString(mobjSubPolicy.id) );
-
-			mobjOutSubPolicy.mstrNumber = mobjSubPolicy.number;
-			mobjOutSubPolicy.midSubscriber = ( mobjSubPolicy.clientId == null ? null : UUID.fromString(mobjSubPolicy.clientId) );
-			mobjOutSubPolicy.mdtBeginDate = ( mobjSubPolicy.startDate == null ? null :
-					Timestamp.valueOf(mobjSubPolicy.startDate + " 00:00:00.0") );
-			mobjOutSubPolicy.midFractioning = UUID.fromString(mobjSubPolicy.fractioningId);
-			mobjOutSubPolicy.mdtEndDate = ( mobjSubPolicy.expirationDate == null ? null :
-					Timestamp.valueOf(mobjSubPolicy.expirationDate + " 00:00:00.0") );
-			mobjOutSubPolicy.mstrNotes = mobjSubPolicy.notes;
-			mobjOutSubPolicy.midStatus = null;
-			mobjOutSubPolicy.mdblPremium = ( mobjSubPolicy.premium == null ? null : new BigDecimal(mobjSubPolicy.premium+"") );
-			mobjOutSubPolicy.mstrDocuShare = mobjSubPolicy.docushare;
-
-			mobjOutSubPolicy.midManager = ( mobjSubPolicy.managerId == null ? null : UUID.fromString(mobjSubPolicy.managerId) );
-			mobjOutSubPolicy.midProcess = ( mobjSubPolicy.processId == null ? null : UUID.fromString(mobjSubPolicy.processId) );
-
-			mobjOutSubPolicy.mbModified = true;
+			pobjResult.mbModified = true;
 		}
 	}
 
 	public PolicyData getPDataForCreate(InsurancePolicy pobjSource)
 		throws BigBangException
 	{
-		return new PolicyReader()
-				.withSource()
-				.withContainer(pobjSource)
-				.read()
-				.result();
+		return new PolicyReader().readPolicy(pobjSource, null);
 	}
 
 	public PolicyData getPDataForEdit(Policy pobjOriginal, InsurancePolicy pobjSource)
 		throws BigBangException
 	{
-		return new PolicyReader()
-				.withSource(pobjOriginal)
-				.withContainer(pobjSource)
-				.read()
-				.result();
+		return new PolicyReader().readPolicy(pobjSource, pobjOriginal);
 	}
 
 	public SubPolicyData getSPDataForCreate(SubPolicy pobjSource)
 		throws BigBangException
 	{
-		return new SubPolicyReader()
-				.withSource()
-				.withContainer(pobjSource)
-				.read()
-				.result();
+		return new SubPolicyReader().readSubPolicy(pobjSource, null);
 	}
 
 	public SubPolicyData getSPDataForEdit(com.premiumminds.BigBang.Jewel.Objects.SubPolicy pobjOriginal, SubPolicy pobjSource)
 		throws BigBangException
 	{
-		return new SubPolicyReader()
-				.withSource(pobjOriginal)
-				.withContainer(pobjSource)
-				.read()
-				.result();
+		return new SubPolicyReader().readSubPolicy(pobjSource, pobjOriginal);
 	}
 }

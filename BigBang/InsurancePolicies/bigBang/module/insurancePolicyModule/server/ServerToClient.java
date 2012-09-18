@@ -51,6 +51,8 @@ import com.premiumminds.BigBang.Jewel.Objects.Tax;
 
 public class ServerToClient
 {
+	public static final String FORCEDID = "forced";
+
 	public static FieldContainer.FieldType sGetFieldTypeByID(UUID pidFieldType)
 	{
 		if ( Constants.FieldID_Boolean.equals(pidFieldType) )
@@ -810,7 +812,7 @@ public class ServerToClient
 							.withContainer(true)
 							.build()
 							.result();
-					mobjContainer.exerciseData[1].id = "forced";
+					mobjContainer.exerciseData[1].id = FORCEDID;
 				}
 				else
 				{
