@@ -42,6 +42,8 @@ import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -83,7 +85,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		CREATE_NEGOTIATION, 
 		CREATE_EXPENSE,
 		CREATE_RISK_ANALISYS, 
-		TRANSFER_TO_CLIENT,
+		TRANSFER_TO_CLIENT
 	}
 	public interface Display {
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -323,10 +325,18 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					break;
 				case NEW_INSURED_OBJECT:
 					onNewInsuredObject();
-					break;
+					break;		
 				}
 			}
 
+		});
+
+		view.getExerciseSelector().addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				onExerciseChanged(event.getValue());
+			}
 		});
 
 		view.getInsuredObjectsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
@@ -422,6 +432,29 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		this.bound = true;
 	}
 
+
+
+	protected void onExerciseChanged(String string) {
+
+		if(string == null || string.isEmpty()){
+			return;
+		}
+		if(onPolicy){
+			if(isEditModeEnabled){
+				broker.saveContextForPolicy(policyId, 
+						getCurrentExerciseId(),
+						view.getCommonFieldsForm().getInfo());
+			}
+			view.getCommonFieldsForm().setValue(broker.getContextForPolicy(policyId, getCurrentExerciseId()));
+		}else{
+			if(isEditModeEnabled){
+				broker.saveContextForInsuredObject(policyId, 
+						view.getInsuredObjectHeaderForm().getValue().id, getCurrentExerciseId(), 
+						view.getCommonFieldsForm().getInfo());
+			}
+			view.getCommonFieldsForm().setValue(broker.getContextForInsuredObject(policyId, view.getInsuredObjectHeaderForm().getValue().id, string));
+		}
+	}
 
 
 	protected void onObjectSelected(InsuredObjectStub object) {
@@ -681,7 +714,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 				@Override
 				public void onResponse(InsurancePolicy response) {
-
+					isEditModeEnabled = false;
 					view.setOwner(response.id);
 					view.setToolbarEditMode(false);
 					view.getPolicySelector().setValue(response);
@@ -690,7 +723,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					//PERMISSIONS
 					setPermissions(response);
 					fillPolicy();
-					view.setReadOnly(true);					
+					view.setReadOnly(true);		
 				}
 
 				@Override
@@ -730,8 +763,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	private void fillExercise(ExerciseData[] exercises) {
 		view.setAvailableExercises(exercises);
-		view.getExerciseForm().setValue(exercises[0]);
-		view.getExerciseSelector().setValue(exercises[0].id);
+		view.getExerciseForm().setValue(exercises[0], false);
+		view.getExerciseSelector().setValue(exercises[0].id, false);
 	}
 
 

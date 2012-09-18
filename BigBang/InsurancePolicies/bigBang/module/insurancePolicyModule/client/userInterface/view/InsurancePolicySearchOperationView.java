@@ -39,6 +39,8 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Insur
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -62,6 +64,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	private CoverageExerciseDetailsForm detailsForm;
 	private PolicyNotesFormSection policyNotesForm;
 	private PolicySelectButton policySelectButton;
+	private String currentExercise;
 
 	public InsurancePolicySearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -281,7 +284,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		exerciseChooser = new ExerciseSelector();
 		detailTableContainer.add(exerciseChooser);
 		exerciseChooser.getNewButton().addClickHandler(new ClickHandler() {
-			
 			@Override
 			public void onClick(ClickEvent event) {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.NEW_EXERCISE));
@@ -541,6 +543,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	public void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages) {
 		detailsForm.setCoveragesExtraFields(coverages);
 	}
+	
 
 	@Override
 	public void setReadOnly(boolean b) {

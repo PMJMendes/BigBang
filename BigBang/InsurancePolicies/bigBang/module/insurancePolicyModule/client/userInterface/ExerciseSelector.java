@@ -93,9 +93,9 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 			return;
 		}
 
-		exercises.setValue(value.id);
-		startDate.setValue(value.startDate);
-		endDate.setValue(value.endDate);
+		exercises.setValue(value.id, fireEvents);
+		startDate.setValue(value.startDate, fireEvents);
+		endDate.setValue(value.endDate, fireEvents);
 
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
