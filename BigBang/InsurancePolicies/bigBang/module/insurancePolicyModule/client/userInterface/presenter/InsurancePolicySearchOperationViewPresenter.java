@@ -171,7 +171,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	private InsurancePolicyBroker broker;
 	private Display view;
 	private boolean bound;
-	private boolean onPolicy;
+	private boolean onPolicy = true;
 	private String policyId;
 	private boolean isEditModeEnabled;
 	private ExerciseData[] availableExercises;
@@ -456,15 +456,15 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void onNewExercise() {
-	
+
 		ExerciseData[] newArray = new ExerciseData[availableExercises.length+1];
 
 		newArray[0] = broker.createExercise(policyId);
-		
+
 		for(int i = 1; i<newArray.length; i++){
 			newArray[i] = availableExercises[i-1];
 		}
-		
+
 		availableExercises = newArray;
 		view.allowCreateNewExercise(false);
 		fillExercise(availableExercises);
@@ -624,6 +624,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.setReadOnly(true);
 		broker.discardEditData(policyId);
 		revert();
+		view.setToolbarEditMode(false);
 		isEditModeEnabled = false;
 	}
 
@@ -657,6 +658,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				view.getCommonFieldsForm().setValue(broker.getContextForInsuredObject(policyId, response.id, getCurrentExerciseId()));
 				view.showObjectForm(true);
 				view.showPolicyForm(false);
+				if(view.getExerciseSelector().getValue() != null){
+					view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
+				}
 			}
 
 			@Override
@@ -684,9 +688,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					setExercises(response.exerciseData);
 					view.setHeaders(response.coverages, response.columns);
 					//PERMISSIONS
+					setPermissions(response);
 					fillPolicy();
 					view.setReadOnly(true);					
-					
 				}
 
 				@Override
@@ -706,18 +710,20 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		if(exerciseData == null){
 			view.setExerciseVisible(false);
+			view.getExerciseForm().setValue(null);
+			view.getExerciseSelector().setValue(null);
 			return;
 		}
 
 		view.setExerciseVisible(true);
-		
+
 		int start = exerciseData[0].isActive ? 0 : 1; //FIRST ONE IS THE NEW ONE 
 
 		availableExercises = new ExerciseData[exerciseData.length - start];
 
 		for(int i = start; i<exerciseData.length; i++)
 			availableExercises[i - start] = exerciseData[i];
-		
+
 		fillExercise(availableExercises);
 	}
 
@@ -726,14 +732,12 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.setAvailableExercises(exercises);
 		view.getExerciseForm().setValue(exercises[0]);
 		view.getExerciseSelector().setValue(exercises[0].id);
-		view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label + (onPolicy ? " para a Apólice" : " Para a Unidade de Risco"));
 	}
 
 
 	private void fillPolicy() {
 
 		InsurancePolicy pol = broker.getPolicyHeader(policyId);
-		setPermissions(pol);
 		view.getInsuredObjectsList().clearSelection();
 		view.getPolicyHeaderForm().setValue(pol);
 		view.setCoveragesExtraFields(pol.coverages);
@@ -742,9 +746,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.showPolicyForm(true);
 		view.getPolicyNotesForm().setValue(pol.notes);
 		view.setPolicyEntrySelected(true);
-		
+		if(view.getExerciseSelector().getValue() != null){
+			view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Apólice");	
+		}
 		onPolicy = true;
-		
+
 
 	}
 

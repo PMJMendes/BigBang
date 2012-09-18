@@ -87,10 +87,11 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
 	@Override
 	public void setValue(ExerciseData value, boolean fireEvents) {
+		this.value = value;
 		if(value == null){
+			clear();
 			return;
 		}
-		this.value = value;
 
 		exercises.setValue(value.id);
 		startDate.setValue(value.startDate);
@@ -99,6 +100,12 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
+	}
+
+	private void clear() {
+		exercises.setValue(null);
+		startDate.clear();
+		endDate.clear();
 	}
 
 	public void setAvailableExercises(ExerciseData[] availableExs){

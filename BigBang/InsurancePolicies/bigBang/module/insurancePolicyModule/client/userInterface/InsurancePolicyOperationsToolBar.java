@@ -324,6 +324,4 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public abstract void onCreateReceipt();
 	
 	public abstract void onTransferToClient();
-
-
 }
