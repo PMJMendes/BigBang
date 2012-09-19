@@ -23,6 +23,7 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicyStub;
+import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -172,6 +173,11 @@ implements InsuranceSubPolicyBroker {
 	@Override
 	public SubPolicy updateSubPolicyHeader(SubPolicy subPolicy) {
 		return workspace.updateSubPolicyHeader(subPolicy);
+	}
+
+	@Override
+	public void updateCoverages(Coverage[] coverages) {
+		workspace.updateCoverages(coverages);
 	}
 
 	@Override

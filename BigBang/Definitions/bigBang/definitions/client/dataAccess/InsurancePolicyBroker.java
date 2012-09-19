@@ -3,7 +3,7 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
+import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
@@ -15,6 +15,7 @@ import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.SubPolicy;
 
 public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePolicy> {
@@ -28,6 +29,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	public InsurancePolicy getPolicyHeader(String policyId);
 
 	public InsurancePolicy updatePolicyHeader(InsurancePolicy policy);
+	
+	public void updateCoverages(StructuredFieldContainer.Coverage[] coverages);
 
 	public void persistPolicy(String policyId, ResponseHandler<InsurancePolicy> handler);
 
@@ -35,9 +38,9 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	public void removePolicy(String policyId, ResponseHandler<String> handler);
 
-	public ExerciseData createExercise(String policyId);
+	public ComplexFieldContainer.ExerciseData createExercise(String policyId);
 
-	public ExerciseData updateExercise(String policyId, ExerciseData exercise);
+	public ComplexFieldContainer.ExerciseData updateExercise(String policyId, ComplexFieldContainer.ExerciseData exercise);
 
 	public InsuredObjectStub[] getAlteredObjects(String policyId);
 

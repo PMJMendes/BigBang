@@ -10,6 +10,7 @@ import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicyStub;
 
@@ -25,6 +26,8 @@ public interface InsuranceSubPolicyBroker extends
 	public SubPolicy getSubPolicyHeader(String subPolicyId);
 
 	public SubPolicy updateSubPolicyHeader(SubPolicy subPolicy);
+	
+	public void updateCoverages(StructuredFieldContainer.Coverage[] coverages);
 
 	public void persistSubPolicy(String subPolicyId, ResponseHandler<SubPolicy> handler);
 

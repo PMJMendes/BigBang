@@ -31,6 +31,7 @@ import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -182,6 +183,11 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	@Override
 	public InsurancePolicy updatePolicyHeader(InsurancePolicy policy) {
 		return workspace.updatePolicyHeader(policy);
+	}
+
+	@Override
+	public void updateCoverages(Coverage[] coverages) {
+		workspace.updateCoverages(coverages);
 	}
 
 	@Override

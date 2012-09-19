@@ -11,6 +11,7 @@ import bigBang.definitions.shared.FieldContainer.ExtraField;
 import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.SubPolicy;
 
 public class SubPolicyWorkSpace {
@@ -105,6 +106,13 @@ public class SubPolicyWorkSpace {
 
 		this.subPolicy = policy;
 		return policy;
+	}
+
+	public void updateCoverages(StructuredFieldContainer.Coverage[] coverages) {
+		int i;
+
+		for ( i = 0; i < subPolicy.coverages.length; i++ )
+			subPolicy.coverages[i].presentInPolicy = coverages[i].presentInPolicy;
 	}
 
 

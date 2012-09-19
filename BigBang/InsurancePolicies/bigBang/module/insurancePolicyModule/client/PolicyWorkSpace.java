@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
+import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.FieldContainer.ColumnField;
 import bigBang.definitions.shared.FieldContainer.ExtraField;
@@ -12,6 +12,7 @@ import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.StructuredFieldContainer;
 
 public class PolicyWorkSpace {
 	private static String NEWID = "new";
@@ -73,7 +74,7 @@ public class PolicyWorkSpace {
 
 		if ( originalPolicy.exerciseData != null )
 		{
-			for ( ExerciseData exercise : originalPolicy.exerciseData )
+			for ( ComplexFieldContainer.ExerciseData exercise : originalPolicy.exerciseData )
 				if ( NEWID.equals(exercise.id) )
 					exercise.id = null;
 		}
@@ -107,17 +108,24 @@ public class PolicyWorkSpace {
 		return policy;
 	}
 
+	public void updateCoverages(StructuredFieldContainer.Coverage[] coverages) {
+		int i;
+
+		for ( i = 0; i < policy.coverages.length; i++ )
+			policy.coverages[i].presentInPolicy = coverages[i].presentInPolicy;
+	}
+
 
 	//EXERCISES
 
-	public ExerciseData[] getExercises(String policyId) {
+	public ComplexFieldContainer.ExerciseData[] getExercises(String policyId) {
 		if ( !isPolicyLoaded(policyId) )
 			return null;
 
 		return this.policy.exerciseData;
 	}
 
-	public ExerciseData createExercise(String policyId) {
+	public ComplexFieldContainer.ExerciseData createExercise(String policyId) {
 		if ( !isPolicyLoaded(policyId) )
 			return null;
 
@@ -135,13 +143,14 @@ public class PolicyWorkSpace {
 		}
 	}
 
-	public ExerciseData updateExerciseHeader(String policyId, ExerciseData alteredExercise) {
+	public ComplexFieldContainer.ExerciseData updateExerciseHeader(String policyId, ComplexFieldContainer.ExerciseData alteredExercise) {
 		if ( !isPolicyLoaded(policyId) )
 			return null;
 
 		for(int i = 0; i < policy.exerciseData.length; i++) {
 			if(policy.exerciseData[i].id.equalsIgnoreCase(alteredExercise.id)) {
-				policy.exerciseData[i] = alteredExercise;
+				policy.exerciseData[i].startDate = alteredExercise.startDate;
+				policy.exerciseData[i].endDate = alteredExercise.endDate;
 				return alteredExercise;
 			}
 		}
