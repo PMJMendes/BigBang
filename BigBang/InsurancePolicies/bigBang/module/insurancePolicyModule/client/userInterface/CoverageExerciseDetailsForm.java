@@ -3,6 +3,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer;
+import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.library.client.userInterface.view.FormView;
 
 public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
@@ -27,12 +28,12 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		};
 		addSection("Coberturas");
 		addWidget(table);
-		
+
 		extraFieldsSection = new ExtraFieldsSection();
 		extraFieldsSection.setSize("100%", "100%");
 		addSection(extraFieldsSection);
-		
-		
+
+
 	}
 
 	@Override
@@ -42,7 +43,7 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		result.extraFields = extraFieldsSection.getValue();
 		result.columnFields = table.getValue();
 		return result;	
-		}
+	}
 
 	@Override
 	public void setInfo(FieldContainer info) {
@@ -66,7 +67,7 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 	public void setExerciseDetailsVisible(boolean b) {
 		exerciseDetailsSection.setVisible(b);
 	}
-	
+
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		if(exerciseDetailsSection != null){
@@ -82,6 +83,10 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 
 	public void setExerciseHeader(String header) {
 		exerciseDetailsSection.setHeaderText(header);
+	}
+
+	public Coverage[] getPresentCoverages() {
+		return table.getPresentCoverages();	
 	}
 
 }

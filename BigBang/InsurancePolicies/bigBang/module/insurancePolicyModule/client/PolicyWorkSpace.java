@@ -148,6 +148,9 @@ public class PolicyWorkSpace {
 			return null;
 
 		for(int i = 0; i < policy.exerciseData.length; i++) {
+			if (!policy.exerciseData[i].isActive)
+				continue;
+
 			if(policy.exerciseData[i].id.equalsIgnoreCase(alteredExercise.id)) {
 				policy.exerciseData[i].startDate = alteredExercise.startDate;
 				policy.exerciseData[i].endDate = alteredExercise.endDate;
@@ -206,7 +209,7 @@ public class PolicyWorkSpace {
 			return null;
 		}
 
-		newObject.change = InsuredObjectStub.Change.MODIFIED;
+		newObject.change = InsuredObjectStub.Change.NONE;
 		if ( policy.exerciseData != null )
 			newObject.exerciseData[0].isActive = policy.exerciseData[0].isActive;
 		alteredObjects.add(newObject);
@@ -245,6 +248,8 @@ public class PolicyWorkSpace {
 		while(iterator.hasNext()) {
 			InsuredObject object = iterator.next();
 			if(object.id.equalsIgnoreCase(alteredObject.id)) {
+				if (InsuredObjectStub.Change.NONE.equals(alteredObject.change))
+					alteredObject.change = InsuredObjectStub.Change.MODIFIED;
 				iterator.remove();
 				iterator.add(alteredObject);
 				return alteredObject;

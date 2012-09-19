@@ -15,6 +15,7 @@ import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.StructuredFieldContainer;
+import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -39,8 +40,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Insur
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -64,7 +63,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	private CoverageExerciseDetailsForm detailsForm;
 	private PolicyNotesFormSection policyNotesForm;
 	private PolicySelectButton policySelectButton;
-	private String currentExercise;
 
 	public InsurancePolicySearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -601,6 +599,16 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void setExerciseFieldsHeader(String header){
 		detailsForm.setExerciseHeader(header);
+	}
+
+	@Override
+	public Coverage[] getPresentCoverages() {
+		return detailsForm.getPresentCoverages();
+	}
+
+	@Override
+	public void dealWithObject(InsuredObjectStub response) {
+		objectsList.dealWithObject(response);
 	}
 
 }

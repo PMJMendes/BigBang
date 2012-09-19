@@ -20,6 +20,7 @@ import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.InsuredObjectStub.Change;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.ValueSelectable;
@@ -51,16 +52,31 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 					setWidget(name);
 				}
 				name.setText(value.unitIdentification);
+
+				if(value != null && value.change != null){
+					switch(value.change){
+					case CREATED:
+						getElement().getStyle().setBackgroundColor("yellow");
+						break;
+					case DELETED:
+						getElement().getStyle().setBackgroundColor("red");
+						break;
+					case MODIFIED:
+						getElement().getStyle().setBackgroundColor("green");
+						break;
+					}
+				}
 			}
 		}
 	}
 
 	protected int insuredObjectDataVersion = 0;
-	protected Map<String, InsuredObjectStub> objectsToUpdate;
-	protected Map<String, Void> objectsToRemove;
+	//protected Map<String, InsuredObjectStub> objectsToUpdate;
+	//protected Map<String, Void> objectsToRemove;
 
 	private String ownerId;
 	private int insurancePolicyDataVersion = 0;
+	private Map<String, InsuredObjectStub> localObjects;
 
 	public InsuredObjectSearchPanel() { 
 		super(((InsuredObjectDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECT)).getSearchBroker());
@@ -75,8 +91,10 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 		createNew.getElement().getStyle().setMarginTop(5, Unit.PX);
 		getHeaderWidget().setCellHorizontalAlignment(createNew, HasHorizontalAlignment.ALIGN_RIGHT);
 
-		objectsToRemove = new HashMap<String, Void>();
-		objectsToUpdate = new HashMap<String, InsuredObjectStub>();
+		//objectsToRemove = new HashMap<String, Void>();
+		//objectsToUpdate = new HashMap<String, InsuredObjectStub>();
+
+		localObjects = new HashMap<String,InsuredObjectStub>();
 
 		InsuredObjectDataBroker broker = (InsuredObjectDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT);
 		broker.registerClient(this);
@@ -103,7 +121,8 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 		for(ValueSelectable<InsuredObjectStub> s : this){
 			InsuredObjectStub objectStub = s.getValue();
 			if(id.equalsIgnoreCase(objectStub.id)){
-				remove(s);
+				objectStub.change = Change.DELETED;
+				addSearchResult(objectStub);
 				return;
 			}
 		}
@@ -121,8 +140,8 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 			this.broker.disposeSearch(this.workspaceId);
 			this.workspaceId = null;
 		}
-		this.objectsToRemove.clear();
-		this.objectsToUpdate.clear();
+		//this.objectsToRemove.clear();
+		//this.objectsToUpdate.clear();
 
 		InsuredObjectSearchParameter parameter = new InsuredObjectSearchParameter();
 		parameter.freeText = this.textBoxFilter.getValue();
@@ -139,11 +158,14 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 	@Override
 	public void onResults(Collection<InsuredObjectStub> results) {
 		for(InsuredObjectStub s : results){
-			if(!objectsToRemove.containsKey(s.id)){
-				if(objectsToUpdate.containsKey(s.id)){
-					s = objectsToUpdate.get(s.id);
-				}
+
+			if(!localObjects.containsKey(s.id)){
+				//	if(!objectsToRemove.containsKey(s.id)){
+				//	if(objectsToUpdate.containsKey(s.id)){
+				//	s = objectsToUpdate.get(s.id);
+				//}
 				addSearchResult(s);
+				//}
 			}
 		}
 
@@ -183,7 +205,9 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 	}
 
 	public void setOwner(String ownerId) {
-		
+
+		localObjects.clear();
+
 		if(ownerId != null){
 			this.ownerId = ownerId;
 		}
@@ -203,6 +227,29 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 
 	public HasClickHandlers getNewObjectButton(){
 		return createNew;
+	}
+
+	public void dealWithObject(InsuredObjectStub object) {
+		localObjects.put(object.id, object);
+
+		for(ListEntry<InsuredObjectStub> s : this){
+			if(s.getValue().id.equalsIgnoreCase(object.id)){
+				s.setValue(object);
+				return;
+			}
+		}
+		clearSelection();
+		addSearchResult(object).setSelected(true, false);
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		if(localObjects != null){
+			for(InsuredObjectStub s : localObjects.values()){
+				addSearchResult(s);
+			}
+		}
 	}
 
 }

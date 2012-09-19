@@ -23,6 +23,7 @@ public class ComplexFieldContainer
 		public ExerciseData(ExerciseData orig)
 		{
 			super(orig);
+			this.isActive = orig.isActive;
 			this.label = orig.label;
 			this.startDate = orig.startDate;
 			this.endDate = orig.endDate;

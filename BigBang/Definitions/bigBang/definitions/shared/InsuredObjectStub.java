@@ -7,6 +7,7 @@ public class InsuredObjectStub
 
 	public static enum Change
 	{
+		NONE,
 		CREATED,
 		MODIFIED,
 		DELETED

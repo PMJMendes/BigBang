@@ -3,6 +3,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer;
+import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
 
@@ -45,6 +46,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	protected Grid grid;
 	private FieldContainer.ColumnField[] value;
 	private boolean readOnly;
+	private Coverage[] coverages;
 
 	public CoverageFieldsGrid() {
 		super(1,1);
@@ -58,9 +60,19 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		this.getElement().getStyle().setTableLayout(TableLayout.FIXED);
 		this.setSize("100%", "100%");
 	}
+	
+	public StructuredFieldContainer.Coverage[] getPresentCoverages(){
+		
+		for(int i = 1; i<fields.length; i++){
+			coverages[i-1].presentInPolicy = fields[i][0].getValue() == null ? null : fields[i][0].getValue().equalsIgnoreCase("1");
+		}
+		
+		return coverages;
+	}
 
 	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] headers){
 
+		this.coverages = coverages;
 		fields = new Field[coverages.length+1][headers.length+2];
 
 		grid.clear();
@@ -86,7 +98,14 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		for(int i = 1; i<fields.length; i++){
 			fields[i][0] = new Field(TYPE.BOOLEAN);
 			fields[i][0].id = coverages[i-1].coverageId;
-			fields[i][0].setValue(coverages[i-1].mandatory ? "1" : "0");
+			if(coverages[i-1].presentInPolicy == null){
+				if(coverages[i-1].mandatory){
+					fields[i][0].setValue("1");
+				}
+			}
+			else{
+				fields[i][0].setValue(coverages[i-1].presentInPolicy ? "1" : "0");
+			}
 			fields[i][0].addValueChangeHandler(new ValueChangeHandler<String>() {
 
 				@Override

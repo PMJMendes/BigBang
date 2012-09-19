@@ -196,15 +196,15 @@ public class CreatePolicy
 					    	ldtAux2.add(Calendar.DAY_OF_MONTH, 1);
 							mobjData.marrExercises[i].mdtStart = new Timestamp(ldtAux2.getTimeInMillis());
 						}
+					}
 
-						if ( Constants.ExID_Variable.equals(lobjPolicy.GetSubLine().getExerciseType()) )
-							mobjData.marrExercises[i].mstrLabel = "Prorrogação n. " + i;
-						else
-						{
-					    	ldtAux2 = Calendar.getInstance();
-					    	ldtAux2.setTimeInMillis(mobjData.marrExercises[i].mdtStart.getTime());
-							mobjData.marrExercises[i].mstrLabel = "Ano de " + ldtAux2.get(Calendar.YEAR);
-						}
+					if ( Constants.ExID_Variable.equals(lobjPolicy.GetSubLine().getExerciseType()) )
+						mobjData.marrExercises[i].mstrLabel = "Prorrogação n. " + i;
+					else
+					{
+				    	ldtAux2 = Calendar.getInstance();
+				    	ldtAux2.setTimeInMillis(mobjData.marrExercises[i].mdtStart.getTime());
+						mobjData.marrExercises[i].mstrLabel = "Ano de " + ldtAux2.get(Calendar.YEAR);
 					}
 
 					mobjData.marrExercises[i].midOwner = mobjData.mid;

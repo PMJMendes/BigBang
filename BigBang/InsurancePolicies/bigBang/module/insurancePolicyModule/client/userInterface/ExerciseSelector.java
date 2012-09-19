@@ -93,7 +93,7 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 			return;
 		}
 
-		exercises.setValue(value.id, fireEvents);
+		exercises.setValue(value.id, false);
 		startDate.setValue(value.startDate, fireEvents);
 		endDate.setValue(value.endDate, fireEvents);
 
@@ -103,7 +103,7 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 	}
 
 	private void clear() {
-		exercises.setValue(null);
+		exercises.setValue(null, false);
 		startDate.clear();
 		endDate.clear();
 	}
@@ -115,7 +115,7 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 		for(int i = 0; i<availableExs.length; i++){
 			exercises.addItem(availableExs[i].label, availableExs[i].id);
 		}
-		
+
 		exercises.removeItem(0);
 
 	}
