@@ -200,6 +200,17 @@ public class Payment
 
 		midReceipt = GetProcess().GetDataKey();
 
+		try
+		{
+			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		lobjReceipt.clearPaymentLog();
+
 		if ( (marrData != null) && (marrData.length > 0) )
 		{
 			for ( i = 0; i < marrData.length; i++ )

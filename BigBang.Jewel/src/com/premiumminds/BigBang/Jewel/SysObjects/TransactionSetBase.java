@@ -151,14 +151,16 @@ public abstract class TransactionSetBase
 	public void SettleAll(SQLServer pdb)
 		throws BigBangJewelException
 	{
+		UUID pidSet;
 		int i;
 
 		getMaps();
 
+		pidSet = createPrintSet(pdb);
 
 		for ( i = 0; i < marrMaps.length; i++ )
 			if ( !marrMaps[i].isSettled() )
-				marrMaps[i].Settle(pdb, createPrintSet(pdb));
+				marrMaps[i].Settle(pdb, pidSet);
 	}
 
 	public UUID createPrintSet(SQLServer pdb)

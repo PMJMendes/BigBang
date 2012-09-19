@@ -24,6 +24,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
 import com.premiumminds.BigBang.Jewel.Reports.InsurerAccountingReport;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
+import com.premiumminds.BigBang.Jewel.SysObjects.TransactionDetailBase;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
 
 public class InsurerAccountingMap
@@ -75,6 +76,17 @@ public class InsurerAccountingMap
 	public UUID getSubObjectType()
 	{
 		return Constants.ObjID_InsurerAccountingDetail;
+	}
+
+	public void prep()
+		throws BigBangJewelException
+	{
+		TransactionDetailBase[] larrDetails;
+		int i;
+
+		larrDetails = getCurrentDetails();
+		for ( i = 0; i < larrDetails.length; i++ )
+			((InsurerAccountingDetail)larrDetails[i]).prep();
 	}
 
 	public void Settle(SQLServer pdb, UUID pidPrintSet)

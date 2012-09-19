@@ -39,6 +39,12 @@ public class InsurerAccountingDetail
 	{
 	}
 
+	public void prep()
+		throws BigBangJewelException
+	{
+		getReceipt().getPaymentLog();
+	}
+
 	public TD[] buildRow()
 		throws BigBangJewelException
 	{
@@ -75,6 +81,7 @@ public class InsurerAccountingDetail
 		int i;
 
 		lobjLog = getReceipt().getPaymentLog();
+
 		try
 		{
 			lobjPayment = (Payment)lobjLog.GetOperationData();

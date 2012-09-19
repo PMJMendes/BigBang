@@ -729,7 +729,7 @@ public class ReceiptServiceImpl
 			{
 				lopP.marrData[i] = new PaymentData();
 				lopP.marrData[i].midPaymentType = UUID.fromString(info.payments[i].paymentTypeId);
-				lopP.marrData[i].mdblValue = new BigDecimal(info.payments[i].value+"");
+				lopP.marrData[i].mdblValue = (info.payments[i].value == null ? null : new BigDecimal(info.payments[i].value+""));
 				lopP.marrData[i].midBank = (info.payments[i].bankId == null ? null : UUID.fromString(info.payments[i].bankId));
 				lopP.marrData[i].mstrCheque = info.payments[i].chequeOrTransferNumber;
 				lopP.marrData[i].midReceipt = (info.payments[i].otherReceiptId == null ? null :
