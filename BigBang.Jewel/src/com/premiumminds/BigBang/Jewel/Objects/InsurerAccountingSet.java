@@ -39,4 +39,9 @@ public class InsurerAccountingSet
 	{
 		return Constants.ObjID_InsurerAccountingMap;
 	}
+
+	public UUID getTemplate()
+	{
+		return Constants.TID_InsurerAccounting;
+	}
 }

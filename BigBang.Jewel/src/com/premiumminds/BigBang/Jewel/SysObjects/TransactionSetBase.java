@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import org.apache.ecs.html.Table;
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.TypeDefGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
@@ -17,6 +19,7 @@ import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 
 public abstract class TransactionSetBase
 	extends ObjectBase
@@ -29,6 +32,7 @@ public abstract class TransactionSetBase
 
 	public abstract String getTitle();
 	public abstract UUID getSubObjectType();
+	public abstract UUID getTemplate();
 
 	protected TransactionMapBase[] marrMaps;
 
@@ -142,6 +146,44 @@ public abstract class TransactionSetBase
 		}
 
 		return b;
+	}
+
+	public void SettleAll(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		int i;
+
+		getMaps();
+
+
+		for ( i = 0; i < marrMaps.length; i++ )
+			if ( !marrMaps[i].isSettled() )
+				marrMaps[i].Settle(pdb, createPrintSet(pdb));
+	}
+
+	public UUID createPrintSet(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		PrintSet lobjSet;
+
+		if ( getTemplate() == null )
+			return null;
+
+		try
+		{
+			lobjSet = PrintSet.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjSet.setAt(0, getTemplate());
+			lobjSet.setAt(1, new Timestamp(new java.util.Date().getTime()));
+			lobjSet.setAt(2, Engine.getCurrentUser());
+			lobjSet.setAt(3, (Timestamp)null);
+			lobjSet.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lobjSet.getKey();
 	}
 
     public User getUser()

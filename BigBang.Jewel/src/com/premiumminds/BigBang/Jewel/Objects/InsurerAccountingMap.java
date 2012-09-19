@@ -64,9 +64,12 @@ public class InsurerAccountingMap
 		}
 	}
 
+    private transient DocOps mobjDoc;
+
 	public void Initialize()
 		throws JewelEngineException
 	{
+		mobjDoc = null;
 	}
 
 	public UUID getSubObjectType()
@@ -74,12 +77,12 @@ public class InsurerAccountingMap
 		return Constants.ObjID_InsurerAccountingDetail;
 	}
 
-	public void Settle(SQLServer pdb)
+	public void Settle(SQLServer pdb, UUID pidPrintSet)
 		throws BigBangJewelException
 	{
 		ManageInsurers lopMI;
 
-		super.Settle(pdb);
+		super.Settle(pdb, pidPrintSet);
 
 		lopMI = new ManageInsurers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 		lopMI.mobjDocOps = generateDocOp(pdb);
@@ -92,6 +95,70 @@ public class InsurerAccountingMap
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public DocOps generateDocOp(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		InsurerAccountingReport lrepIA;
+		FileXfer lobjFile;
+		DocumentData lobjDoc;
+		DocOps lobjResult;
+
+		if ( mobjDoc != null )
+			return mobjDoc;
+
+		lrepIA = new InsurerAccountingReport();
+		lrepIA.midMap = getKey();
+		lrepIA.mdb = pdb;
+		try
+		{
+			lobjFile = lrepIA.Generate();
+		}
+		finally
+		{
+			lrepIA.mdb = null;
+		}
+
+		lobjDoc = new DocumentData();
+		lobjDoc.mstrName = new Timestamp(new java.util.Date().getTime()).toString();
+		lobjDoc.midOwnerType = Constants.ObjID_Company;
+		lobjDoc.midOwnerId = (UUID)getAt(TransactionMapBase.I.OWNER);
+		lobjDoc.midDocType = Constants.DocID_InsurerReceipt;
+		lobjDoc.mstrText = null;
+		lobjDoc.mobjFile = lobjFile.GetVarData();
+		lobjDoc.marrInfo = new DocInfoData[lrepIA.mstrExtraText == null ? 6 : 7];
+		lobjDoc.marrInfo[0] = new DocInfoData();
+		lobjDoc.marrInfo[0].mstrType = "Número de Recibos";
+		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepIA.mlngCount);
+		lobjDoc.marrInfo[1] = new DocInfoData();
+		lobjDoc.marrInfo[1].mstrType = "Prémios Entregues";
+		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepIA.mdblPayables);
+		lobjDoc.marrInfo[2] = new DocInfoData();
+		lobjDoc.marrInfo[2].mstrType = "Comissões Recebidas";
+		lobjDoc.marrInfo[2].mstrValue = String.format("%,.2f", lrepIA.mdblTotalComms);
+		lobjDoc.marrInfo[3] = new DocInfoData();
+		lobjDoc.marrInfo[3].mstrType = "Saldo";
+		lobjDoc.marrInfo[3].mstrValue = String.format("%,.2f", lrepIA.mdblPreTax);
+		lobjDoc.marrInfo[4] = new DocInfoData();
+		lobjDoc.marrInfo[4].mstrType = "Imposto de Selo";
+		lobjDoc.marrInfo[4].mstrValue = String.format("%,.2f", lrepIA.mdblTax);
+		lobjDoc.marrInfo[5] = new DocInfoData();
+		lobjDoc.marrInfo[5].mstrType = "Total a Liquidar";
+		lobjDoc.marrInfo[5].mstrValue = String.format("%,.2f", lrepIA.mdblTotal);
+		if ( lrepIA.mstrExtraText != null )
+		{
+			lobjDoc.marrInfo[6] = new DocInfoData();
+			lobjDoc.marrInfo[6].mstrType = lrepIA.mstrExtraText;
+			lobjDoc.marrInfo[6].mstrValue = String.format("%,.2f", lrepIA.mdblExtraValue);
+		}
+
+		lobjResult = new DocOps();
+		lobjResult.marrCreate = new DocumentData[]{lobjDoc};
+
+		mobjDoc = lobjResult;
+
+		return lobjResult;
 	}
 
 	public TR[] buildTable(int plngNumber)
@@ -222,64 +289,5 @@ public class InsurerAccountingMap
 		larrRows[9] = ReportBuilder.constructDualRow("Saldo Total", ldblTotal, TypeDefGUIDs.T_Decimal);
 
 		return larrRows;
-	}
-
-	private DocOps generateDocOp(SQLServer pdb)
-		throws BigBangJewelException
-	{
-		InsurerAccountingReport lrepIA;
-		FileXfer lobjFile;
-		DocumentData lobjDoc;
-		DocOps lobjResult;
-
-		lrepIA = new InsurerAccountingReport();
-		lrepIA.midMap = getKey();
-		lrepIA.mdb = pdb;
-		try
-		{
-			lobjFile = lrepIA.Generate();
-		}
-		finally
-		{
-			lrepIA.mdb = null;
-		}
-
-		lobjDoc = new DocumentData();
-		lobjDoc.mstrName = new Timestamp(new java.util.Date().getTime()).toString();
-		lobjDoc.midOwnerType = Constants.ObjID_Company;
-		lobjDoc.midOwnerId = (UUID)getAt(TransactionMapBase.I.OWNER);
-		lobjDoc.midDocType = Constants.DocID_InsurerReceipt;
-		lobjDoc.mstrText = null;
-		lobjDoc.mobjFile = lobjFile.GetVarData();
-		lobjDoc.marrInfo = new DocInfoData[lrepIA.mstrExtraText == null ? 6 : 7];
-		lobjDoc.marrInfo[0] = new DocInfoData();
-		lobjDoc.marrInfo[0].mstrType = "Número de Recibos";
-		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepIA.mlngCount);
-		lobjDoc.marrInfo[1] = new DocInfoData();
-		lobjDoc.marrInfo[1].mstrType = "Prémios Entregues";
-		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepIA.mdblPayables);
-		lobjDoc.marrInfo[2] = new DocInfoData();
-		lobjDoc.marrInfo[2].mstrType = "Comissões Recebidas";
-		lobjDoc.marrInfo[2].mstrValue = String.format("%,.2f", lrepIA.mdblTotalComms);
-		lobjDoc.marrInfo[3] = new DocInfoData();
-		lobjDoc.marrInfo[3].mstrType = "Saldo";
-		lobjDoc.marrInfo[3].mstrValue = String.format("%,.2f", lrepIA.mdblPreTax);
-		lobjDoc.marrInfo[4] = new DocInfoData();
-		lobjDoc.marrInfo[4].mstrType = "Imposto de Selo";
-		lobjDoc.marrInfo[4].mstrValue = String.format("%,.2f", lrepIA.mdblTax);
-		lobjDoc.marrInfo[5] = new DocInfoData();
-		lobjDoc.marrInfo[5].mstrType = "Total a Liquidar";
-		lobjDoc.marrInfo[5].mstrValue = String.format("%,.2f", lrepIA.mdblTotal);
-		if ( lrepIA.mstrExtraText != null )
-		{
-			lobjDoc.marrInfo[6] = new DocInfoData();
-			lobjDoc.marrInfo[6].mstrType = lrepIA.mstrExtraText;
-			lobjDoc.marrInfo[6].mstrValue = String.format("%,.2f", lrepIA.mdblExtraValue);
-		}
-
-		lobjResult = new DocOps();
-		lobjResult.marrCreate = new DocumentData[]{lobjDoc};
-
-		return lobjResult;
 	}
 }

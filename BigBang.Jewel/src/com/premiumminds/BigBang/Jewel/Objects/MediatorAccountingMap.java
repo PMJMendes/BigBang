@@ -54,6 +54,8 @@ public class MediatorAccountingMap
 		}
 	}
 
+    private transient DocOps mobjDoc;
+
 	public void Initialize()
 		throws JewelEngineException
 	{
@@ -64,12 +66,12 @@ public class MediatorAccountingMap
 		return Constants.ObjID_MediatorAccountingDetail;
 	}
 
-	public void Settle(SQLServer pdb)
+	public void Settle(SQLServer pdb, UUID pidPrintSet)
 		throws BigBangJewelException
 	{
 		ManageMediators lopMM;
 
-		super.Settle(pdb);
+		super.Settle(pdb, pidPrintSet);
 
 		lopMM = new ManageMediators(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 		lopMM.mobjDocOps = generateDocOp(pdb);
@@ -82,6 +84,56 @@ public class MediatorAccountingMap
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public DocOps generateDocOp(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		MediatorAccountingReport lrepMA;
+		FileXfer lobjFile;
+		DocumentData lobjDoc;
+		DocOps lobjResult;
+
+		if ( mobjDoc != null )
+			return mobjDoc;
+
+		lrepMA = new MediatorAccountingReport();
+		lrepMA.midMap = getKey();
+		lobjFile = lrepMA.Generate();
+
+		lobjDoc = new DocumentData();
+		lobjDoc.mstrName = "Retrocessão";
+		lobjDoc.midOwnerType = Constants.ObjID_Mediator;
+		lobjDoc.midOwnerId = (UUID)getAt(TransactionMapBase.I.OWNER);
+		lobjDoc.midDocType = Constants.DocID_MediatorPayment;
+		lobjDoc.mstrText = null;
+		lobjDoc.mobjFile = lobjFile.GetVarData();
+		lobjDoc.marrInfo = new DocInfoData[6];
+		lobjDoc.marrInfo[0] = new DocInfoData();
+		lobjDoc.marrInfo[0].mstrType = "Número de Recibos";
+		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepMA.mlngCount);
+		lobjDoc.marrInfo[1] = new DocInfoData();
+		lobjDoc.marrInfo[1].mstrType = "Total de Prémios";
+		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepMA.mdblTotalPremiums);
+		lobjDoc.marrInfo[2] = new DocInfoData();
+		lobjDoc.marrInfo[2].mstrType = "Total de Comissões";
+		lobjDoc.marrInfo[2].mstrValue = String.format("%,.2f", lrepMA.mdblTotalComms);
+		lobjDoc.marrInfo[3] = new DocInfoData();
+		lobjDoc.marrInfo[3].mstrType = "Total de Retrocessões";
+		lobjDoc.marrInfo[3].mstrValue = String.format("%,.2f", lrepMA.mdblTotalRetros);
+		lobjDoc.marrInfo[4] = new DocInfoData();
+		lobjDoc.marrInfo[4].mstrType = "Retenção na Fonte";
+		lobjDoc.marrInfo[4].mstrValue = String.format("%,.2f", lrepMA.mdblRetention);
+		lobjDoc.marrInfo[5] = new DocInfoData();
+		lobjDoc.marrInfo[5].mstrType = "Total Líquido";
+		lobjDoc.marrInfo[5].mstrValue = String.format("%,.2f", lrepMA.mdblNet);
+
+		lobjResult = new DocOps();
+		lobjResult.marrCreate = new DocumentData[]{lobjDoc};
+
+		mobjDoc = lobjResult;
+
+		return lobjResult;
 	}
 
 	public TR[] buildTable(int plngNumber)
@@ -155,50 +207,5 @@ public class MediatorAccountingMap
 		larrRows[0] = ReportBuilder.constructDualRow("Total de Retrocessões", ldblTotal, TypeDefGUIDs.T_Decimal);
 
 		return larrRows;
-	}
-
-	private DocOps generateDocOp(SQLServer pdb)
-		throws BigBangJewelException
-	{
-		MediatorAccountingReport lrepMA;
-		FileXfer lobjFile;
-		DocumentData lobjDoc;
-		DocOps lobjResult;
-
-		lrepMA = new MediatorAccountingReport();
-		lrepMA.midMap = getKey();
-		lobjFile = lrepMA.Generate();
-
-		lobjDoc = new DocumentData();
-		lobjDoc.mstrName = "Retrocessão";
-		lobjDoc.midOwnerType = Constants.ObjID_Mediator;
-		lobjDoc.midOwnerId = (UUID)getAt(TransactionMapBase.I.OWNER);
-		lobjDoc.midDocType = Constants.DocID_MediatorPayment;
-		lobjDoc.mstrText = null;
-		lobjDoc.mobjFile = lobjFile.GetVarData();
-		lobjDoc.marrInfo = new DocInfoData[6];
-		lobjDoc.marrInfo[0] = new DocInfoData();
-		lobjDoc.marrInfo[0].mstrType = "Número de Recibos";
-		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepMA.mlngCount);
-		lobjDoc.marrInfo[1] = new DocInfoData();
-		lobjDoc.marrInfo[1].mstrType = "Total de Prémios";
-		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepMA.mdblTotalPremiums);
-		lobjDoc.marrInfo[2] = new DocInfoData();
-		lobjDoc.marrInfo[2].mstrType = "Total de Comissões";
-		lobjDoc.marrInfo[2].mstrValue = String.format("%,.2f", lrepMA.mdblTotalComms);
-		lobjDoc.marrInfo[3] = new DocInfoData();
-		lobjDoc.marrInfo[3].mstrType = "Total de Retrocessões";
-		lobjDoc.marrInfo[3].mstrValue = String.format("%,.2f", lrepMA.mdblTotalRetros);
-		lobjDoc.marrInfo[4] = new DocInfoData();
-		lobjDoc.marrInfo[4].mstrType = "Retenção na Fonte";
-		lobjDoc.marrInfo[4].mstrValue = String.format("%,.2f", lrepMA.mdblRetention);
-		lobjDoc.marrInfo[5] = new DocInfoData();
-		lobjDoc.marrInfo[5].mstrType = "Total Líquido";
-		lobjDoc.marrInfo[5].mstrValue = String.format("%,.2f", lrepMA.mdblNet);
-
-		lobjResult = new DocOps();
-		lobjResult.marrCreate = new DocumentData[]{lobjDoc};
-
-		return lobjResult;
 	}
 }

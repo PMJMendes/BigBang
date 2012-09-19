@@ -376,6 +376,7 @@ public class ReportServiceImpl
 		int llngCount;
 		GenericElement lobjBuffer;
 		int i;
+		boolean b;
 		Report lobjResult;
 
 		if ( Engine.getCurrentUser() == null )
@@ -400,8 +401,8 @@ public class ReportServiceImpl
 		lobjResult.sections = new Report.Section[llngCount + 1];
 		lobjResult.sections[0] = new Report.Section();
 		lobjResult.sections[0].htmlContent = lobjBuffer.toString();
-		lobjResult.sections[0].verbs = new Report.Section.Verb[0];
 
+		b = false;
 		for ( i = 1; i <= llngCount; i++ )
 		{
 			try
@@ -420,11 +421,22 @@ public class ReportServiceImpl
 				lobjResult.sections[i].verbs = new Report.Section.Verb[0];
 			else
 			{
+				b = true;
 				lobjResult.sections[i].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
 				lobjResult.sections[i].verbs[0].label = "Saldar";
 				lobjResult.sections[i].verbs[0].argument = "S:" + lobjReport.getKey().toString() + ":" +
 						lobjSet.getKey().toString() + ":" + larrMaps[i - 1].getKey().toString();
 			}
+		}
+
+		if ( !b )
+			lobjResult.sections[0].verbs = new Report.Section.Verb[0];
+		else
+		{
+			lobjResult.sections[0].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
+			lobjResult.sections[0].verbs[0].label = "Saldar Todas";
+			lobjResult.sections[0].verbs[0].argument = "T:" + lobjReport.getKey().toString() + ":" +
+					lobjSet.getKey().toString();
 		}
 
 		return lobjResult;
@@ -449,6 +461,12 @@ public class ReportServiceImpl
 		if ( "S".equals(larrAux[0]) )
 		{
 			RunSettleVerb(larrAux);
+			return;
+		}
+
+		if ( "T".equals(larrAux[0]) )
+		{
+			RunSettleAllVerb(larrAux);
 			return;
 		}
 	}
@@ -601,7 +619,69 @@ public class ReportServiceImpl
 
 		try
 		{
-			lobjMap.Settle(ldb);
+			lobjMap.Settle(ldb, null);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Rollback(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Commit();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
+	private static void RunSettleAllVerb(String[] parrArgs)
+		throws BigBangException
+	{
+		ReportDef lobjReport;
+		UUID lidTransactions;
+		TransactionSetBase lobjSet;
+		MasterDB ldb;
+
+		try
+		{
+			lobjReport = ReportDef.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(parrArgs[1]));
+			lidTransactions = Engine.FindEntity(Engine.getCurrentNameSpace(), (UUID)lobjReport.getAt(ReportDef.I.TRANSACTIONTYPE));
+			lobjSet = (TransactionSetBase)Engine.GetWorkInstance(lidTransactions, UUID.fromString(parrArgs[2]));
+
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.BeginTrans();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lobjSet.SettleAll(ldb);
 		}
 		catch (Throwable e)
 		{
