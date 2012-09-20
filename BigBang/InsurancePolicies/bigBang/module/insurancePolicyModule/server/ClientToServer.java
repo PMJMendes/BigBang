@@ -603,7 +603,14 @@ public class ClientToServer
 		{
 			UUID lidObject;
 
-			lidObject = (pobjObject.id == null ? null : UUID.fromString(pobjObject.id));
+			try
+			{
+				lidObject = UUID.fromString(pobjObject.id);
+			}
+			catch (Throwable e)
+			{
+				lidObject = null;
+			}
 
 			getComplexReader()
 					.readComplex(pobjObject, lidObject, plngObject, InsuredObjectStub.Change.DELETED.equals(pobjObject.change));
@@ -633,13 +640,23 @@ public class ClientToServer
 		private PolicyObjectData readPDeleteHeader(InsuredObject pobjObject)
 		{
 			PolicyObjectData lobjResult;
+			UUID lidObject;
 
-			if ( pobjObject.id == null )
+			try
+			{
+				lidObject = UUID.fromString(pobjObject.id);
+			}
+			catch (Throwable e)
+			{
+				lidObject = null;
+			}
+
+			if ( lidObject == null )
 				lobjResult = null;
 			else
 			{
 				lobjResult = new PolicyObjectData();
-				lobjResult.mid = UUID.fromString(pobjObject.id);
+				lobjResult.mid = lidObject;
 				lobjResult.mbNew = false;
 				lobjResult.mbDeleted = true;
 			}

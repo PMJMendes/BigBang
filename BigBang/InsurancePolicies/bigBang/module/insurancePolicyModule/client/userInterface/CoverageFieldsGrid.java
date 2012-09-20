@@ -57,18 +57,18 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		p.setWidget(grid);
 		p.getElement().getStyle().setOverflowY(Overflow.VISIBLE);
 		p.getElement().getStyle().setOverflowX(Overflow.SCROLL);
-		p.getElement().getStyle().setMarginRight(15, Unit.PX);
+		p.getElement().getStyle().setMarginRight(20, Unit.PX);
 		this.setWidget(0, 0, p);
 		this.getElement().getStyle().setTableLayout(TableLayout.FIXED);
 		this.setSize("100%", "100%");
 	}
-	
+
 	public StructuredFieldContainer.Coverage[] getPresentCoverages(){
-		
+
 		for(int i = 1; i<fields.length; i++){
 			coverages[i-1].presentInPolicy = fields[i][0].getValue() == null ? null : fields[i][0].getValue().equalsIgnoreCase("1");
 		}
-		
+
 		return coverages;
 	}
 
@@ -148,13 +148,15 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		boolean enable = false;
 
 		for(int i = 1; i<fields.length; i++){
-			enable = !fields[i][0].getValue().equalsIgnoreCase("0");
-			enableExtraFields(i-1, enable);
-			for(int j = 2; j<fields[0].length; j++){
-				if(fields[i][j] != null){
-					fields[i][j].setReadOnly(readOnly || !enable);
-					if(!enable){
-						fields[i][j].clear();
+			if(fields[i][0].getValue() != null){
+				enable = !fields[i][0].getValue().equalsIgnoreCase("0");
+				enableExtraFields(i-1, enable);
+				for(int j = 2; j<fields[0].length; j++){
+					if(fields[i][j] != null){
+						fields[i][j].setReadOnly(readOnly || !enable);
+						if(!enable){
+							fields[i][j].clear();
+						}
 					}
 				}
 			}

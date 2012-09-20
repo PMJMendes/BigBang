@@ -18,6 +18,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.InsuredObjectStub.Change;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
@@ -63,7 +64,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	public static enum Action {
 		ON_POLICY_SELECTED,
-		ON_NEW_RESULTS,
 		NEW_EXERCISE,
 		NEW_INSURED_OBJECT,
 		DELETE_INSURED_OBJECT,
@@ -177,6 +177,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void dealWithObject(InsuredObjectStub response);
 
 		HasClickHandlers getObjectDeleteButton();
+
+		void setSelectedObject(String id);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -317,9 +319,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				case TRANSFER_TO_CLIENT:
 					transferToClient();
 					break;
-				case ON_NEW_RESULTS:
-					onNewResults();
-					break;
 				case ON_POLICY_SELECTED:
 					onPolicySelected();
 					break;
@@ -351,7 +350,17 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				if(event.getFirstSelected() != null){
-					onObjectSelected(((ValueSelectable<InsuredObjectStub>)event.getFirstSelected()).getValue());
+					InsuredObjectStub stub = ((ValueSelectable<InsuredObjectStub>)event.getFirstSelected()).getValue();
+					if(stub.change != Change.DELETED){
+						onObjectSelected(stub);
+					}
+					else{
+						if(onPolicy){
+							view.getInsuredObjectsList().clearSelection();
+						}else{
+							view.setSelectedObject(view.getInsuredObjectHeaderForm().getValue().id);
+						}
+					}
 				}
 			}
 		});
@@ -434,7 +443,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			}
 		});
 		view.getObjectDeleteButton().addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				onDeleteInsuredObject();
@@ -449,11 +458,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	protected void onExerciseChanged(String string) {
 
-		if(string == null || string.isEmpty()){
+		if(string == null || string.isEmpty() || string.equals("forced")){
 			return;
 		}
 
-		
+
 		if(isEditModeEnabled){
 			broker.updateExercise(policyId, view.getExerciseForm().getValue());
 			if(onPolicy){
@@ -466,13 +475,13 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.getCommonFieldsForm().getInfo());
 			}
 		}
-		
+
 		if(onPolicy){
 			view.getCommonFieldsForm().setValue(broker.getContextForPolicy(policyId, string));
 		}else{
 			view.getCommonFieldsForm().setValue(broker.getContextForInsuredObject(policyId, view.getInsuredObjectHeaderForm().getValue().id, string));
 		}
-		
+
 		for(int i = 0; i<availableExercises.length; i++){
 			if(availableExercises[i].id.equalsIgnoreCase(getCurrentExerciseId())){
 				availableExercises[i] = view.getExerciseForm().getValue();
@@ -628,7 +637,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	protected void onVoidPolicy() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	protected void onDelete() {
 		broker.removePolicy(policyId, new ResponseHandler<String>() {
 
@@ -734,27 +743,54 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		policyId = parameterHolder.getParameter("policyid");
 
 		if(policyId != null){
-			broker.getPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
+			if(policyId.equals("new")){
+				String subLineId = parameterHolder.getParameter("sublineid");
+				String clientId = parameterHolder.getParameter("clientid");
+				broker.getEmptyPolicy(subLineId, clientId, new ResponseHandler<InsurancePolicy>() {
 
-				@Override
-				public void onResponse(InsurancePolicy response) {
-					isEditModeEnabled = false;
-					view.setOwner(response.id);
-					view.setToolbarEditMode(false);
-					view.getPolicySelector().setValue(response);
-					view.setHeaders(response.coverages, response.columns);
-					setExercises(response.exerciseData);
-					//PERMISSIONS
-					setPermissions(response);
-					fillPolicy();
-					view.setReadOnly(true);		
-				}
+					@Override
+					public void onResponse(InsurancePolicy response) {
+						isEditModeEnabled = true;
+						view.setToolbarEditMode(true);
+						view.getPolicySelector().setValue(response);
+						view.setHeaders(response.coverages, response.columns);
+						setExercises(response.exerciseData);
+						//PERMISSIONS
+						setPermissions(response);
+						fillPolicy();
+						view.setReadOnly(false);		
+						view.allowCreateNewExercise(true);
+					}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice"), TYPE.ALERT_NOTIFICATION));
-				}
-			});	
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar uma nova apólice"), TYPE.ALERT_NOTIFICATION));
+					}
+				});
+			}else{
+				broker.getPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
+
+					@Override
+					public void onResponse(InsurancePolicy response) {
+						isEditModeEnabled = false;
+						view.setOwner(response.id);
+						view.setToolbarEditMode(false);
+						view.getPolicySelector().setValue(response);
+						view.setHeaders(response.coverages, response.columns);
+						setExercises(response.exerciseData);
+						//PERMISSIONS
+						setPermissions(response);
+						fillPolicy();
+						view.setReadOnly(true);		
+						view.allowCreateNewExercise(true);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice"), TYPE.ALERT_NOTIFICATION));
+					}
+				});	
+			}
 		}
 		else{
 			view.lockToolbar();

@@ -81,7 +81,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			@Override
 			public void onResults(Collection<InsurancePolicyStub> results) {
 				super.onResults(results);
-				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.ON_NEW_RESULTS));
 			}
 		};
 
@@ -616,5 +615,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public HasClickHandlers getObjectDeleteButton(){
 		return objectForm.getDeleteButton();
+	}
+
+	@Override
+	public void setSelectedObject(String id) {
+		objectsList.setSelected(id);
 	}
 }

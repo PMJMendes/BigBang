@@ -252,4 +252,10 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 		}
 	}
 
+	public void setSelected(String id) {
+		for(ListEntry<InsuredObjectStub> s: this){
+			s.setSelected(s.getValue().id.equalsIgnoreCase(id), false);
+		}
+	}
+
 }

@@ -198,7 +198,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		policy = workspace.getWholePolicy(policyId);
 
 		if(policy != null) {
-			if ( policy.id == null) {
+			if ( policy.id == null ) {
 				clientBroker.createPolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 					@Override

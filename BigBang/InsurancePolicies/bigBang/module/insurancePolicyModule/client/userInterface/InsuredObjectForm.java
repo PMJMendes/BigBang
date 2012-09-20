@@ -332,12 +332,14 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);
-		deleteObject.setVisible(!readOnly);
+		if(deleteObject != null){
+			deleteObject.setVisible(!readOnly);
+		}
 		if(headerFields != null){
 			headerFields.setReadOnly(readOnly);
 		}
 	}
-	
+
 	public HasClickHandlers getDeleteButton(){
 		return deleteObject;
 	}
