@@ -172,7 +172,7 @@ public class InsurerAccountingReport
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][1] = lobjReceipt.getLabel();
 			larrTables[i][2] = lobjReceipt.getReceiptType();
-			larrTables[i][3] = lobjPolicy.GetSubLine().getLine().getLabel();
+			larrTables[i][3] = lobjPolicy.GetSubLine().getDescription();
 			larrTables[i][4] = String.format("%,.2f", lobjDetail.getPayablePremium());
 			larrTables[i][5] = String.format("%,.2f", lobjDetail.getCommissions());
 

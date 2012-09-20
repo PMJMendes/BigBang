@@ -15,9 +15,12 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
 public abstract class TransactionMapBase
 	extends ObjectBase
@@ -30,8 +33,24 @@ public abstract class TransactionMapBase
 	}
 
 	public abstract UUID getSubObjectType();
+	public abstract DocOps generateDocOp(SQLServer pdb) throws BigBangJewelException;
 
 	protected  TransactionDetailBase[] marrDetails;
+	protected TransactionSetBase mrefSet;
+
+	public void Initialize()
+		throws JewelEngineException
+	{
+		try
+		{
+			mrefSet = (TransactionSetBase)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					getSubObjectType()), (UUID)getAt(0));
+		}
+		catch (Throwable e)
+		{
+			throw new JewelEngineException(e.getMessage(), e);
+		}
+	}
 
 	public TransactionDetailBase[] getCurrentDetails()
 		throws BigBangJewelException
@@ -118,14 +137,28 @@ public abstract class TransactionMapBase
 		return (getAt(I.SETTLEDON) != null);
 	}
 
-	public void Settle(SQLServer pdb)
+	public void Settle(SQLServer pdb, UUID pidPrintSet)
 		throws BigBangJewelException
 	{
+		PrintSetDocument lobjSetDoc;
+
 		if ( getAt(I.SETTLEDON) != null )
 			throw new BigBangJewelException("Esta transacção já foi saldada.");
 
+		if ( pidPrintSet == null )
+			pidPrintSet = mrefSet.createPrintSet(pdb);
+
 		try
 		{
+			if ( pidPrintSet != null )
+			{
+				lobjSetDoc = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjSetDoc.setAt(0, pidPrintSet);
+				lobjSetDoc.setAt(1, generateDocOp(pdb).marrCreate[0].mobjFile);
+				lobjSetDoc.setAt(2, false);
+				lobjSetDoc.SaveToDb(pdb);
+			}
+
 			setAt(I.SETTLEDON, new Timestamp(new java.util.Date().getTime()));
 			SaveToDb(pdb);
 		}

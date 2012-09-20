@@ -10,6 +10,8 @@ import org.apache.ecs.html.Table;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.TypeDefGUIDs;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.ILog;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -68,6 +70,12 @@ public class ReceiptListingsBase
 	protected static Table buildDataSection(String pstrHeader, ArrayList<Receipt> parrReceipts)
 		throws BigBangJewelException
 	{
+		return buildDataSection(pstrHeader, parrReceipts.toArray(new Receipt[parrReceipts.size()]));
+	}
+
+	protected static Table buildDataSection(String pstrHeader, Receipt[] parrReceipts)
+		throws BigBangJewelException
+	{
 		Table ltbl;
 		TR[] larrRows;
 
@@ -79,7 +87,7 @@ public class ReceiptListingsBase
 		return ltbl;
 	}
 
-	protected static TR[] buildDataTable(String pstrHeader, ArrayList<Receipt> parrReceipts)
+	protected static TR[] buildDataTable(String pstrHeader, Receipt[] parrReceipts)
 		throws BigBangJewelException
 	{
 		BigDecimal ldblTotal;
@@ -92,14 +100,14 @@ public class ReceiptListingsBase
 		ldblTotal = new BigDecimal(0);
 		ldblTotalCom = new BigDecimal(0);
 		ldblTotalRetro = new BigDecimal(0);
-		for ( i = 0; i < parrReceipts.size(); i++ )
+		for ( i = 0; i < parrReceipts.length; i++ )
 		{
-			ldblTotal = ldblTotal.add((parrReceipts.get(i).getAt(Receipt.I.TOTALPREMIUM) == null ? new BigDecimal(0) :
-					(BigDecimal)parrReceipts.get(i).getAt(Receipt.I.TOTALPREMIUM)));
-			ldblTotalCom = ldblTotalCom.add((parrReceipts.get(i).getAt(Receipt.I.COMMISSIONS) == null ? new BigDecimal(0) :
-					(BigDecimal)parrReceipts.get(i).getAt(Receipt.I.COMMISSIONS)));
-			ldblTotalRetro = ldblTotalRetro.add((parrReceipts.get(i).getAt(Receipt.I.RETROCESSIONS) == null ? new BigDecimal(0) :
-					(BigDecimal)parrReceipts.get(i).getAt(Receipt.I.RETROCESSIONS)));
+			ldblTotal = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM) == null ? new BigDecimal(0) :
+					(BigDecimal)parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM)));
+			ldblTotalCom = ldblTotalCom.add((parrReceipts[i].getAt(Receipt.I.COMMISSIONS) == null ? new BigDecimal(0) :
+					(BigDecimal)parrReceipts[i].getAt(Receipt.I.COMMISSIONS)));
+			ldblTotalRetro = ldblTotalRetro.add((parrReceipts[i].getAt(Receipt.I.RETROCESSIONS) == null ? new BigDecimal(0) :
+					(BigDecimal)parrReceipts[i].getAt(Receipt.I.RETROCESSIONS)));
 		}
 
 		larrRows = new TR[6];
@@ -112,7 +120,7 @@ public class ReceiptListingsBase
 		ReportBuilder.styleInnerContainer(lcell);
 		larrRows[1] = ReportBuilder.buildRow(new TD[] {lcell});
 
-		larrRows[2] = ReportBuilder.constructDualRow("Nº de Recibos", parrReceipts.size(), TypeDefGUIDs.T_Integer);
+		larrRows[2] = ReportBuilder.constructDualRow("Nº de Recibos", parrReceipts.length, TypeDefGUIDs.T_Integer);
 
 		larrRows[3] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotal, TypeDefGUIDs.T_Decimal);
 
@@ -123,21 +131,21 @@ public class ReceiptListingsBase
 		return larrRows;
 	}
 
-	protected static Table buildInner(ArrayList<Receipt> parrReceipts)
+	protected static Table buildInner(Receipt[] parrReceipts)
 		throws BigBangJewelException
 	{
 		Table ltbl;
 		TR[] larrRows;
 		int i;
 
-		larrRows = new TR[parrReceipts.size() + 1];
+		larrRows = new TR[parrReceipts.length + 1];
 
 		larrRows[0] = ReportBuilder.buildRow(buildInnerHeaderRow());
 		ReportBuilder.styleRow(larrRows[0], true);
 
-		for ( i = 1; i <= parrReceipts.size(); i++ )
+		for ( i = 1; i <= parrReceipts.length; i++ )
 		{
-			larrRows[i] = ReportBuilder.buildRow(buildRow(parrReceipts.get(i - 1)));
+			larrRows[i] = ReportBuilder.buildRow(buildRow(parrReceipts[i - 1]));
 			ReportBuilder.styleRow(larrRows[i], false);
 		}
 
@@ -307,8 +315,8 @@ public class ReceiptListingsBase
 			{
 				try
 				{
-					lstrAux.append(Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PaymentType),
-							lobjPayment.marrData[i].midPaymentType).getAt(1));
+					lstrAux.append(Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+							Constants.ObjID_PaymentType), lobjPayment.marrData[i].midPaymentType).getAt(1));
 				}
 				catch (Throwable e)
 				{
@@ -316,6 +324,32 @@ public class ReceiptListingsBase
 				}
 			}
 			return lstrAux.toString();
+		}
+	}
+
+	protected static void filterByClient(StringBuilder lstrSQL, UUID pidClient)
+		throws BigBangJewelException
+	{
+		IEntity lrefProcesses;
+		IEntity lrefPolicies;
+		IEntity lrefSubPolicies;
+
+		try
+		{
+			lrefProcesses = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNProcess));
+			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+			lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+
+			lstrSQL.append(" AND ([Process] IN (SELECT [PK] FROM(")
+					.append(lrefProcesses.SQLForSelectAll()).append(") [AuxProcs] WHERE [Parent] IN (SELECT [Process] FROM (")
+					.append(lrefPolicies.SQLForSelectByMembers(new int[] {17}, new java.lang.Object[] {pidClient}, null))
+					.append(") [AuxPols]) OR [Parent] IN (SELECT [Process] FROM (")
+					.append(lrefSubPolicies.SQLForSelectByMembers(new int[] {2}, new java.lang.Object[] {pidClient}, null))
+					.append(") [AuxSPols])))");
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
 }

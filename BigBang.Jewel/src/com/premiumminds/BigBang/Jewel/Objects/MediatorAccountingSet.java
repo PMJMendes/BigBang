@@ -39,4 +39,9 @@ public class MediatorAccountingSet
 	{
 		return Constants.ObjID_MediatorAccountingMap;
 	}
+
+	public UUID getTemplate()
+	{
+		return Constants.TID_MediatorAccounting;
+	}
 }

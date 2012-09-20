@@ -92,10 +92,11 @@ public class ReceiptHistoryPayment
 			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
 
 			lstrSQL = new StringBuilder();
-			lstrSQL.append("SELECT * FROM (" +
-					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
-					lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-					new java.lang.Object[] {Constants.OPID_Receipt_Payment, false}, null) + ") [AuxLogs] WHERE 1=1");
+			lstrSQL.append("SELECT * FROM (")
+					.append(lrefReceipts.SQLForSelectAll()).append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(")
+					.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
+							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_Payment, false}, null))
+					.append(") [AuxLogs] WHERE 1=1");
 		}
 		catch (Throwable e)
 		{
@@ -103,12 +104,15 @@ public class ReceiptHistoryPayment
 		}
 
 		if ( parrParams[0] != null )
-			lstrSQL.append(" AND [Timestamp] >= '" + parrParams[0] + "'");
+			lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[0]).append("'");
 
 		if ( parrParams[1] != null )
-			lstrSQL.append(" AND [Timestamp] <= '" + parrParams[1] + "'");
+			lstrSQL.append(" AND [Timestamp] <= '").append(parrParams[1]).append("'");
 
 		lstrSQL.append(")");
+
+		if ( parrParams[2] != null )
+			filterByClient(lstrSQL, UUID.fromString(parrParams[2]));
 
 		larrAux = new ArrayList<Receipt>();
 

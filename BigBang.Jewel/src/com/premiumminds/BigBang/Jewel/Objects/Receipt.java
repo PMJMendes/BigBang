@@ -24,6 +24,7 @@ import Jewel.Petri.SysObjects.ProcessData;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPayment;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPaymentAcct;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingPayment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MediatorBase;
 
@@ -89,6 +90,12 @@ public class Receipt
 		return ReceiptHistoryPayment.doReport(parrParams);
 	}
 
+	public static GenericElement[] printReportHistoryPaymentAcct(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return ReceiptHistoryPaymentAcct.doReport(parrParams);
+	}
+
 	public static GenericElement[] printImportReport(String[] parrParams)
 		throws BigBangJewelException
 	{
@@ -102,6 +109,7 @@ public class Receipt
 	}
 
     private IProcess lrefProcess;
+    private ILog lrefPayment;
 
 	public void Initialize()
 		throws JewelEngineException
@@ -458,17 +466,16 @@ public class Receipt
     public ILog getPaymentLog()
     	throws BigBangJewelException
     {
-    	ILog lobjLog;
-
-    	lobjLog = null;
+    	if ( lrefPayment != null )
+    		return lrefPayment;
 
     	try
     	{
         	if ( isReverseCircuit() )
-        		lobjLog = getProcess().GetLiveLog(Constants.OPID_Receipt_SendPayment);
+        		lrefPayment = getProcess().GetLiveLog(Constants.OPID_Receipt_SendPayment);
         	
-        	if ( lobjLog == null )
-        		lobjLog = getProcess().GetLiveLog(Constants.OPID_Receipt_Payment);
+        	if ( lrefPayment == null )
+        		lrefPayment = getProcess().GetLiveLog(Constants.OPID_Receipt_Payment);
 		}
     	catch (BigBangJewelException e)
     	{
@@ -479,7 +486,12 @@ public class Receipt
     		throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-    	return lobjLog;
+    	return lrefPayment;
+    }
+
+    public void clearPaymentLog()
+    {
+    	lrefPayment = null;
     }
 
     public boolean doCalcRetrocession()
