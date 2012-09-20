@@ -9,6 +9,7 @@ import bigBang.library.client.userInterface.GenericFormField.TYPE;
 
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TableLayout;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -56,6 +57,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		p.setWidget(grid);
 		p.getElement().getStyle().setOverflowY(Overflow.VISIBLE);
 		p.getElement().getStyle().setOverflowX(Overflow.SCROLL);
+		p.getElement().getStyle().setMarginRight(15, Unit.PX);
 		this.setWidget(0, 0, p);
 		this.getElement().getStyle().setTableLayout(TableLayout.FIXED);
 		this.setSize("100%", "100%");

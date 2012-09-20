@@ -334,8 +334,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void removeInsuredObject(String policyId, String objectId) {
-		workspace.deleteObject(policyId, objectId);
+	public InsuredObjectStub removeInsuredObject(String policyId, String objectId) {
+		return workspace.deleteObject(policyId, objectId);
 	}
 
 	@Override

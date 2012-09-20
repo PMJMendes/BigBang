@@ -1,6 +1,5 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -39,13 +38,14 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
-import bigBang.library.client.userInterface.List;
-import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
@@ -175,6 +175,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		Coverage[] getPresentCoverages();
 
 		void dealWithObject(InsuredObjectStub response);
+
+		HasClickHandlers getObjectDeleteButton();
 	}
 
 	private InsurancePolicyBroker broker;
@@ -431,6 +433,13 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				}
 			}
 		});
+		view.getObjectDeleteButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				onDeleteInsuredObject();
+			}
+		});
 
 		//APPLICATION-WIDE EVENTS
 		this.bound = true;
@@ -488,8 +497,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void onDeleteInsuredObject() {
-		// TODO Auto-generated method stub
-
+		view.dealWithObject(broker.removeInsuredObject(policyId, view.getInsuredObjectHeaderForm().getValue().id));
+		onPolicySelected();
 	}
 
 

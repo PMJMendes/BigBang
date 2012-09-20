@@ -1,7 +1,5 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
-import com.google.gwt.dom.client.Style.Overflow;
-
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.library.client.FormField;
@@ -13,6 +11,12 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
+import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
+
 public class InsuredObjectForm extends FormView<InsuredObject> {
 
 	//common fields
@@ -20,6 +24,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	protected AddressFormField address;
 	protected DatePickerFormField inclusionDate;
 	protected DatePickerFormField exclusionDate;
+	protected Button deleteObject;
 
 	//person fields
 	protected TextBoxFormField personTaxNumber;
@@ -68,10 +73,15 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.identification.setFieldWidth("300px");
 		this.inclusionDate = new DatePickerFormField("Data de Inclusão");
 		this.exclusionDate = new DatePickerFormField("Data de Exclusão");
+		this.deleteObject = new Button("Eliminar");
 
 		this.commonSection.addFormField(this.identification, true);
 		this.commonSection.addFormField(this.inclusionDate, true);
 		this.commonSection.addFormField(this.exclusionDate, true);
+		this.commonSection.addWidget(deleteObject);
+		deleteObject.getElement().getStyle().setFloat(Float.RIGHT);
+		deleteObject.getElement().getStyle().setMarginRight(15,Unit.PX);
+		deleteObject.getElement().getStyle().setMarginTop(15, Unit.PX);
 		this.addSection(this.commonSection);
 
 		FormViewSection addressSection = new FormViewSection("Morada de Risco");
@@ -322,8 +332,13 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);
+		deleteObject.setVisible(!readOnly);
 		if(headerFields != null){
 			headerFields.setReadOnly(readOnly);
 		}
+	}
+	
+	public HasClickHandlers getDeleteButton(){
+		return deleteObject;
 	}
 }

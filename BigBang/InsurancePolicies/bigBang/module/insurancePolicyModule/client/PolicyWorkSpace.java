@@ -259,16 +259,18 @@ public class PolicyWorkSpace {
 		return null;
 	} 
 
-	public void deleteObject(String policyId, String objectId) {
+	public InsuredObjectStub deleteObject(String policyId, String objectId) {
 		if ( !isPolicyLoaded(policyId) )
-			return;
+			return null;
 
 		for( InsuredObject object : alteredObjects ) {
 			if(object.id.equalsIgnoreCase(objectId)) {
 				object.change = InsuredObjectStub.Change.DELETED;
-				break;
+				return object;
 			}
 		}
+
+		return null;
 	}
 
 

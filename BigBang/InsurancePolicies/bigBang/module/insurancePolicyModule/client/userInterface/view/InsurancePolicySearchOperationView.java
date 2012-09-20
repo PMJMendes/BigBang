@@ -38,8 +38,10 @@ import bigBang.module.insurancePolicyModule.client.userInterface.PolicySelectBut
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -265,7 +267,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		ScrollPanel scrollContainer = new ScrollPanel();
 		scrollContainer.setSize("100%", "100%");
-
+		scrollContainer.getElement().getStyle().setProperty("overflowx","hidden");
 		VerticalPanel centerWrapper = new VerticalPanel();
 
 		centerWrapper.setSize("100%", "100%");
@@ -301,7 +303,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		scrollContainer.add(centerWrapper);
 		scrollContainer.getElement().getStyle().setBackgroundColor("whiteSmoke");
-//		scrollContainer.getElement().getStyle().setOverflowX(Style.Overflow.AUTO);
+		scrollContainer.getElement().getStyle().setOverflowX(Style.Overflow.HIDDEN);
 
 		toolbarAndCenterWrapper.add(scrollContainer);
 		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
@@ -611,4 +613,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		objectsList.dealWithObject(response);
 	}
 
+	@Override
+	public HasClickHandlers getObjectDeleteButton(){
+		return objectForm.getDeleteButton();
+	}
 }

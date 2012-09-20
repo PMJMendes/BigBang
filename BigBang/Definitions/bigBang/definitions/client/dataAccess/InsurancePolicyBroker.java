@@ -50,7 +50,7 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	public InsuredObject updateInsuredObject(String policyId, InsuredObject object);
 
-	public void removeInsuredObject(String policyId, String objectId);
+	public InsuredObjectStub removeInsuredObject(String policyId, String objectId);
 
 	public FieldContainer getContextForPolicy(String policyId, String exerciseId);
 	
