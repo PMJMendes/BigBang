@@ -21,9 +21,9 @@ import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicyStub;
-import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -38,8 +38,7 @@ import bigBang.module.insurancePolicyModule.interfaces.SubPolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.SubPolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.SubPolicySortParameter;
 
-public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy>
-implements InsuranceSubPolicyBroker {
+public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implements InsuranceSubPolicyBroker {
 
 	protected SubPolicyServiceAsync service;
 	protected InsurancePolicyServiceAsync policyService;
@@ -315,8 +314,8 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void removeInsuredObject(String subPolicyId, String objectId) {
-		workspace.deleteObject(subPolicyId, objectId);
+	public InsuredObjectStub removeInsuredObject(String subPolicyId, String objectId) {
+		return workspace.deleteObject(subPolicyId, objectId);
 	}
 
 	@Override

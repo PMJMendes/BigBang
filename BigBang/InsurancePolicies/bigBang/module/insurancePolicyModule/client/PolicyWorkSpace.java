@@ -79,14 +79,14 @@ public class PolicyWorkSpace {
 		}
 
 		originalPolicy.changedObjects = alteredObjects.toArray(new InsuredObject[alteredObjects.size()]);
-					for ( InsuredObject object : originalPolicy.changedObjects )
-					{
-						object.headerFields = splitArray(object.headerFields, originalPolicy.headerFields.length);
-						if ( InsuredObjectStub.Change.CREATED.equals(object.change) )
-							object.id = null;
-					}
+		for ( InsuredObject object : originalPolicy.changedObjects )
+		{
+			object.headerFields = splitArray(object.headerFields, originalPolicy.headerFields.length);
+			if ( InsuredObjectStub.Change.CREATED.equals(object.change) )
+				object.id = null;
+		}
 
-					return originalPolicy;
+		return originalPolicy;
 	}
 
 
@@ -184,7 +184,7 @@ public class PolicyWorkSpace {
 			if(object.id.equalsIgnoreCase(objectId))
 				return object;
 
-				return null;
+		return null;
 	}
 
 	public InsuredObject loadExistingObject(String policyId, InsuredObject object) {
@@ -307,23 +307,23 @@ public class PolicyWorkSpace {
 		try
 		{
 			result.headerFields = mergeHeaderArrays(new HeaderField[][] {
-					( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].headerFields ),
-					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
-			}, new boolean[] {object != null, false});
+						( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].headerFields ),
+						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
+					}, new boolean[] {object != null, false});
 
 			result.columnFields = mergeColumnArrays(new ColumnField[][] {
-					policy.columnFields,
-					( object == null ? null : object.columnFields ),
-					( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].columnFields ),
-					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
-			}, new boolean[] {object != null, false, object != null, false});
+						policy.columnFields,
+						( object == null ? null : object.columnFields ),
+						( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].columnFields ),
+						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
+					}, new boolean[] {object != null, false, object != null, false});
 
 			result.extraFields = mergeExtraArrays(new ExtraField[][] {
-					policy.extraFields,
-					( object == null ? null : object.extraFields ),
-					( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].extraFields ),
-					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].extraFields)
-			}, new boolean[] {object != null, false, object != null, false});
+						policy.extraFields,
+						( object == null ? null : object.extraFields ),
+						( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].extraFields ),
+						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].extraFields)
+					}, new boolean[] {object != null, false, object != null, false});
 		} catch (Exception e) {
 			return null;
 		}
@@ -358,23 +358,23 @@ public class PolicyWorkSpace {
 		}
 
 		readMergedHeaderArray(contents.headerFields, new HeaderField[][] {
-				( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].headerFields ),
-				( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
-		}, new boolean[] {object != null, false});
+					( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].headerFields ),
+					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
+				}, new boolean[] {object != null, false});
 
 		readMergedColumnArray(contents.columnFields, new ColumnField[][] {
-				policy.columnFields,
-				( object == null ? null : object.columnFields ),
-				( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].columnFields ),
-				( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
-		}, new boolean[] {object != null, false, object != null, false});
+					policy.columnFields,
+					( object == null ? null : object.columnFields ),
+					( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].columnFields ),
+					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
+				}, new boolean[] {object != null, false, object != null, false});
 
 		readMergedExtraArray(contents.extraFields, new ExtraField[][] {
-				policy.extraFields,
-				( object == null ? null : object.extraFields ),
-				( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].extraFields ),
-				( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].extraFields)
-		}, new boolean[] {object != null, false, object != null, false});
+					policy.extraFields,
+					( object == null ? null : object.extraFields ),
+					( exerciseIndex < 0 ? null : policy.exerciseData[exerciseIndex].extraFields ),
+					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].extraFields)
+				}, new boolean[] {object != null, false, object != null, false});
 	}
 
 	private static HeaderField[] mergeHeaderArrays(HeaderField[][] source, boolean[] readOnly) throws Exception

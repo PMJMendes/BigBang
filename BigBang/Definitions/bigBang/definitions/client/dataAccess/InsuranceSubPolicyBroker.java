@@ -43,7 +43,7 @@ public interface InsuranceSubPolicyBroker extends
 
 	public InsuredObject updateInsuredObject(String subPolicyId, InsuredObject object);
 
-	public void removeInsuredObject(String subPolicyId, String objectId);
+	public InsuredObjectStub removeInsuredObject(String subPolicyId, String objectId);
 
 	public FieldContainer getContextForSubPolicy(String subPolicyId, String exerciseId);
 	

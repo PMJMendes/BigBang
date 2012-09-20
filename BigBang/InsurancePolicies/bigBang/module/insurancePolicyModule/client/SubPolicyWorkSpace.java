@@ -31,25 +31,24 @@ public class SubPolicyWorkSpace {
 		return (this.subPolicy != null) && this.subPolicy.id.equalsIgnoreCase(id);
 	}
 
-	public SubPolicy loadSubPolicy(SubPolicy policy) {
-		originalSubPolicy = policy;
+	public SubPolicy loadSubPolicy(SubPolicy subPolicy) {
+		originalSubPolicy = subPolicy;
 		alteredObjects.clear();
 		idCounter = 0;
 
-		if ( policy == null )
+		if ( subPolicy == null )
 			this.subPolicy = null;
 		else {
 			try {
+				if ( subPolicy.id == null )
+					originalSubPolicy.id = NEWID;
 				this.subPolicy = new SubPolicy(originalSubPolicy);
 			} catch (Exception e) {
-				policy = null;
+				this.subPolicy = null;
 			}
 		}
 
-		if ( policy.id == null )
-			policy.id = NEWID;
-
-		return policy;
+		return this.subPolicy;
 	}
 
 	public SubPolicy reset(String subPolicyId) {
@@ -174,7 +173,7 @@ public class SubPolicyWorkSpace {
 			return null;
 		}
 
-		newObject.change = InsuredObjectStub.Change.MODIFIED;
+		newObject.change = InsuredObjectStub.Change.NONE;
 		if ( subPolicy.exerciseData != null )
 			newObject.exerciseData[0].isActive = subPolicy.exerciseData[0].isActive;
 		alteredObjects.add(newObject);
@@ -213,6 +212,8 @@ public class SubPolicyWorkSpace {
 		while(iterator.hasNext()) {
 			InsuredObject object = iterator.next();
 			if(object.id.equalsIgnoreCase(alteredObject.id)) {
+				if (InsuredObjectStub.Change.NONE.equals(alteredObject.change))
+					alteredObject.change = InsuredObjectStub.Change.MODIFIED;
 				iterator.remove();
 				iterator.add(alteredObject);
 				return alteredObject;
@@ -222,16 +223,18 @@ public class SubPolicyWorkSpace {
 		return null;
 	} 
 
-	public void deleteObject(String subPolicyId, String objectId) {
+	public InsuredObjectStub deleteObject(String subPolicyId, String objectId) {
 		if ( !isSubPolicyLoaded(subPolicyId) )
-			return;
+			return null;
 
 		for( InsuredObject object : alteredObjects ) {
 			if(object.id.equalsIgnoreCase(objectId)) {
 				object.change = InsuredObjectStub.Change.DELETED;
-				break;
+				return object;
 			}
 		}
+
+		return null;
 	}
 
 
