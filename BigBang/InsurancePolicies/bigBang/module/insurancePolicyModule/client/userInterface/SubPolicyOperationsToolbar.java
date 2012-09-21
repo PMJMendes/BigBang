@@ -100,14 +100,6 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 			}
 		});
 		addItem(SUB_MENU.DATA, transferToPolicy);
-		createInsuredObject = new MenuItem("Criar Unidade de Risco", new Command() {
-
-			@Override
-			public void execute() {
-				onCreateInsuredObject();
-			}
-		});
-		addItem(SUB_MENU.DATA, createInsuredObject);
 	}
 
 	protected abstract void onCreateHealthExpense();
@@ -150,8 +142,6 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 
 	public abstract void onIncludeInsuredObjectFromClient();
 
-	public abstract void onCreateInsuredObject();
-
 	public abstract void onCreateInsuredObjectFromClient();
 
 	public abstract void onExcludeInsuredObject();
@@ -171,6 +161,25 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 	public void allowCreateHealthExpense(boolean allow) {
 		this.healthExpense.setEnabled(allow);
 	}
+
+	public void allowIncludeInsuredObject(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void allowCreateInsuredObjectFromClient(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void allowExcludeInsuredObject(boolean allow) {
+		//TODO		
+	}
+
+	public void allowIncludeInsuredObjectFromClient(boolean allow) {
+		//TODO
+		}
+
 
 
 }

@@ -309,6 +309,9 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		contentWrapper.add(toolbarAndCenterWrapper);
 		mainWrapper.add(contentWrapper);
 
+		childrenPanel.contactsList.allowCreation(true);
+		childrenPanel.documentsList.allowCreation(true);
+		
 		searchPanel.doSearch();
 
 	}

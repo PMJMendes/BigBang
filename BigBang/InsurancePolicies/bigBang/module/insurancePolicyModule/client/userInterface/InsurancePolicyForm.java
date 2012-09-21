@@ -24,7 +24,6 @@ import bigBang.library.client.userInterface.DayMonthDatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
-import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
@@ -50,7 +49,6 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 	protected Image statusIcon;
 	protected FormViewSection coInsurersSection;
 	protected CheckBoxFormField caseStudy;
-	protected TextAreaFormField notes;
 	private CheckBoxFormField coInsurance;
 	private CoInsurerSelection coInsurers;
 	private HeaderFieldsSection headerForm;
@@ -90,8 +88,6 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 		coInsurance = new CheckBoxFormField("Co-Seguro");
 		coInsurers = new CoInsurerSelection();
 
-		notes = new TextAreaFormField();
-		notes.setSize("100%", "200px");
 		policyStatus = new TextBoxFormField("Estado");
 		policyStatus.setFieldWidth("100%");
 		policyStatus.setEditable(false);
@@ -242,7 +238,6 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 			result.premium = premium.getValue();
 			result.caseStudy = caseStudy.getValue();
 			result.operationalProfileId = operationalProfile.getValue();
-			result.notes = notes.getValue();
 			
 			if(coInsurance.getValue()){
 				result.coInsurers = coInsurers.getValue();
@@ -339,7 +334,6 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 			}
 			this.caseStudy.setValue(info.caseStudy);
 			this.operationalProfile.setValue(info.operationalProfileId);
-			this.notes.setValue(info.notes);
 
 			if(info.startDate != null)
 				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate), false);
@@ -357,6 +351,10 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy>{
 		headerForm.setHeaderText(categoryLineSubLine.getValue());
 		headerForm.setValue(info.headerFields);
 		
+	}
+	
+	public void setHeaderFormVisible(boolean b){
+		headerForm.setVisible(b);
 	}
 
 }

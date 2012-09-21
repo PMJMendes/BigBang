@@ -1613,7 +1613,7 @@ public class ServerToClient
 			mobjOutPolicy.managerName = lobjManager.getDisplayName();
 			mobjOutPolicy.startDate = (mobjSubPolicy.getAt(3) == null ? null :
 				((Timestamp)mobjSubPolicy.getAt(3)).toString().substring(0, 10));
-			mobjOutPolicy.fractioningId = ((UUID)mobjPolicy.getAt(5)).toString();
+			mobjOutPolicy.fractioningId = ((UUID)mobjSubPolicy.getAt(5)).toString();
 			mobjOutPolicy.expirationDate = (mobjSubPolicy.getAt(4) == null ? null :
 				((Timestamp)mobjSubPolicy.getAt(4)).toString().substring(0, 10));
 			mobjOutPolicy.notes = (String)mobjSubPolicy.getAt(6);

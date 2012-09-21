@@ -118,7 +118,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		item.pushIntoStackParameter("display", "search");
 		item.setParameter("policyid", "new");
 		item.setParameter("subLineId", subLineId);
-		item.setParameter("clientid", item.getParameter("clientid"));
+		item.setParameter("clientid", clientId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

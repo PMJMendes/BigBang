@@ -56,7 +56,6 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		MERGE_WITH_CLIENT,
 		TRANSFER_MANAGER,
 		REQUIRE_INFO_DOCUMENT,
-
 		ON_NEW_RESULTS
 	}
 

@@ -571,19 +571,35 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void showExpense(ExpenseStub selectedValue) {
-		// TODO Auto-generated method stub		
+		NavigationHistoryItem item = new NavigationHistoryItem();
+		item.setParameter("section", "expense");
+		item.setStackParameter("display");
+		item.pushIntoStackParameter("display", "search");
+		item.setParameter("expenseid", selectedValue.id);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 
 	protected void showSubProcess(BigBangProcess selectedValue) {
-		// TODO Auto-generated method stub
+		String type = selectedValue.dataTypeId;
 
+		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.MANAGER_TRANSFER)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "viewmanagertransfer");
+			item.setParameter("transferid", selectedValue.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "viewinforequest");
+			item.setParameter("requestid", selectedValue.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}
 	}
 
 
 	protected void showHistory(HistoryItemStub selectedValue) {
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.pushIntoStackParameter("display", "policyhistory"); //TODO VERIFICAR SE ISTO ESTA BEM!
+		navItem.pushIntoStackParameter("display", "history");
 		navItem.setParameter("historyownerid", policyId);
 		navItem.setParameter("historyItemId", selectedValue.id);
 		NavigationHistoryManager.getInstance().go(navItem);
@@ -594,14 +610,19 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.setParameter("section", "receipt");
 		navItem.setStackParameter("display");
-		navItem.pushIntoStackParameter("display", "search"); //TODO VERIFICAR SE ISTO ESTA BEM!
+		navItem.pushIntoStackParameter("display", "search"); 
 		navItem.setParameter("receiptid", selectedValue.id);
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 
 	protected void showSubPolicy(SubPolicyStub selectedValue) {
-		// TODO Auto-generated method stub
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("subpolicyid", selectedValue.id);
+		navItem.setStackParameter("display");
+		navItem.pushIntoStackParameter("display","search");
+		navItem.pushIntoStackParameter("display","subpolicy");
+		NavigationHistoryManager.getInstance().go(navItem);
 
 	}
 
@@ -628,14 +649,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	}
 
 
-	protected void onNewResults() {
-		// TODO Auto-generated method stub
-
-	}
-
-
 	protected void onVoidPolicy() {
-		// TODO Auto-generated method stub
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
+		item.setParameter("show", "voidpolicy");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onDelete() {
@@ -778,7 +796,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.getPolicySelector().setValue(response);
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
-						//PERMISSIONS
 						setPermissions(response);
 						fillPolicy();
 						view.setReadOnly(true);		

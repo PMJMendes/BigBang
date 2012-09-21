@@ -1,49 +1,105 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExpenseStub;
+import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.StructuredFieldContainer;
+import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.definitions.shared.SubPolicy;
+import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.SelectedStateChangedEvent;
+import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExerciseDetailsForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseSelector;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSearchPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.PolicyNotesFormSection;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyChildrenPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyOperationsToolbar;
+import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicySelectButton;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter.Action;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class SubPolicyView extends View implements SubPolicyViewPresenter.Display {
+public class SubPolicyView extends View implements SubPolicyViewPresenter.Display{
 
 	private ActionInvokedEventHandler<Action> actionHandler;
 	private SubPolicyForm form;
 	private InsurancePolicyForm policyForm;
 	private SubPolicyOperationsToolbar toolbar;
 	private SubPolicyChildrenPanel childrenPanel;
+	private InsuredObjectSearchPanel objectsList;
+	private InsuredObjectForm objectForm;
+	private ExerciseSelector exerciseChooser;
+	private CoverageExerciseDetailsForm detailsForm;
+	private SubPolicySelectButton subPolicySelectButton;
+	private PolicyNotesFormSection subPolicyNotesForm;
+	private PolicyNotesFormSection policyNotesForm;
 
-	public SubPolicyView(){
-		SplitLayoutPanel wrapper = new SplitLayoutPanel();
-		initWidget(wrapper);
+	public SubPolicyView() {
 
-		wrapper.setSize("100%", "100%");
+		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
+		mainWrapper.setSize("100%", "100%");
+
+		VerticalPanel policyWrapper = new VerticalPanel();
+		policyWrapper.setSize("100%", "100%");
+
+		ListHeader policyHeader = new ListHeader("Apólice Principal");
+		policyHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.BACK));
+			}
+		}));
+		policyWrapper.add(policyHeader);
+
+		policyForm = new InsurancePolicyForm();
+		policyNotesForm = new PolicyNotesFormSection();
+
+		policyWrapper.add(policyForm);
+		policyWrapper.add(policyNotesForm);
+		policyWrapper.setCellHeight(policyForm, "100%");
+
+		mainWrapper.addWest(policyWrapper, 600);
+
+		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
+		contentWrapper.setSize("100%", "100%");
+
+		SimplePanel childrenPresentersPanel = new SimplePanel();
+		childrenPresentersPanel.setSize("100%", "100%");
+
+		childrenPanel = new SubPolicyChildrenPanel();
+		childrenPanel.setSize("100%", "100%");
+		contentWrapper.addEast(childrenPanel, 300);
 
 		toolbar = new SubPolicyOperationsToolbar(){
 
@@ -75,11 +131,6 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 			@Override
 			public void onIncludeInsuredObjectFromClient() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.INCLUDE_INSURED_OBJECT_FROM_CLIENT));
-			}
-
-			@Override
-			public void onCreateInsuredObject() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.CREATE_INSURED_OBJECT));
 			}
 
 			@Override
@@ -129,124 +180,136 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 		};
 
-		VerticalPanel policyFormWrapper = new VerticalPanel();
-		policyFormWrapper.setSize("100%", "100%");
+		VerticalPanel formContainer = new VerticalPanel();
+		formContainer.setSize("100%", "100%");
 
-		policyForm = new InsurancePolicyForm();
-		policyForm.setReadOnly(true);
-		policyForm.setSize("100%", "100%");
-
-		ListHeader policyFormHeader = new ListHeader("Apólice Principal");
-		policyFormHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.BACK));
-			}
-		}));
-		policyFormHeader.setHeight("30px");
-		policyFormWrapper.add(policyFormHeader);
-		policyFormWrapper.add(policyForm);
-		policyFormWrapper.setCellHeight(policyForm, "100%");
-		wrapper.addWest(policyFormWrapper, 600);
-
-		childrenPanel = new SubPolicyChildrenPanel(); 
-		
-		VerticalPanel subPolicyWrapper = new VerticalPanel();
-		subPolicyWrapper.setSize("100%", "100%");
-
-		ListHeader formHeader = new ListHeader("Apólice Adesão");
-		formHeader.setHeight("30px");
-		subPolicyWrapper.add(formHeader);
-
-		SplitLayoutPanel subPolicyLayout = new SplitLayoutPanel();
-		subPolicyLayout.setSize("100%", "100%");
-		subPolicyWrapper.add(subPolicyLayout);
-		subPolicyWrapper.setCellHeight(subPolicyLayout, "100%");
-
-		VerticalPanel formWrapper = new VerticalPanel();
-		formWrapper.setSize("100%", "100%");
+		HorizontalPanel formPanel = new HorizontalPanel();
 
 		form = new SubPolicyForm();
-		form.setSize("100%", "100%");
+		objectForm = new InsuredObjectForm();
 
-		form.addValueChangeHandler(new ValueChangeHandler<SubPolicy>() {
+		VerticalPanel objectsPolicyContainer = new VerticalPanel();
+
+		subPolicySelectButton = new SubPolicySelectButton(new SubPolicyStub());
+		objectsPolicyContainer.setSize("100%","100%");
+		objectsPolicyContainer.add(subPolicySelectButton);
+		subPolicySelectButton.addSelectedStateChangedEventHandler(new SelectedStateChangedEventHandler() {
 
 			@Override
-			public void onValueChange(ValueChangeEvent<SubPolicy> event) {
-//				SubPolicy subPolicy = event.getValue();
-//				childrenPanel.setSubPolicy(subPolicy);
+			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
+				if (event.getSelected()){
+					actionHandler.onActionInvoked(new  ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.SUB_POLICY_SELECTED));
+				}
 			}
 		});
+		objectsList = new InsuredObjectSearchPanel();
+		objectsList.showFilterField(false);
+		objectsList.getNewObjectButton().addClickHandler(new ClickHandler() {
 
-		formWrapper.add(toolbar);
-		formWrapper.add(form);
-		formWrapper.setCellHeight(form, "100%");
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.NEW_INSURED_OBJECT));
+			}
+		});
+		objectsPolicyContainer.add(objectsList);
+		objectsPolicyContainer.setCellHeight(objectsList, "100%");
+		objectsList.setSize("100%", "100%");
+		formPanel.add(objectsPolicyContainer);
+		objectsPolicyContainer.setCellWidth(objectsList, "200px");
+		formPanel.setCellWidth(objectsPolicyContainer, "200px");
+		formPanel.setCellHeight(objectsPolicyContainer, "100%");
+		formPanel.add(form.getNonScrollableContent());
+		formPanel.add(objectForm.getNonScrollableContent());
 
-		subPolicyLayout.addEast(childrenPanel, 250);
-		subPolicyLayout.add(formWrapper);
-		
-		wrapper.add(subPolicyWrapper);
+		objectForm.getNonScrollableContent().setVisible(false);
+
+		formPanel.setCellWidth(form, "100%");
+		policyForm.getNonScrollableContent().setSize("100%", "100%");
+		objectForm.getNonScrollableContent().setSize("100%", "100%");
+		formPanel.setSize("100%", "100%");
+		formContainer.add(formPanel);
+		formContainer.setCellHeight(formPanel, "100%");
+
+		ScrollPanel scrollContainer = new ScrollPanel();
+		scrollContainer.setSize("100%", "100%");
+		scrollContainer.getElement().getStyle().setProperty("overflowx","hidden");
+		VerticalPanel centerWrapper = new VerticalPanel();
+
+		centerWrapper.setSize("100%", "100%");
+
+		VerticalPanel toolbarAndCenterWrapper = new VerticalPanel();
+		toolbarAndCenterWrapper.setSize("100%", "100%");
+		toolbarAndCenterWrapper.add(toolbar);
+
+		centerWrapper.add(formContainer);
+		centerWrapper.setCellHeight(formContainer, "100%");
+		VerticalPanel detailTableContainer = new VerticalPanel();
+		detailTableContainer.setSize("100%", "100%");
+
+		exerciseChooser = new ExerciseSelector();
+		detailTableContainer.add(exerciseChooser);
+
+		detailsForm = new CoverageExerciseDetailsForm("");
+		detailTableContainer.add(detailsForm.getNonScrollableContent());
+		centerWrapper.add(detailTableContainer);
+		centerWrapper.setCellHeight(detailTableContainer, "100%");
+		centerWrapper.setCellWidth(detailTableContainer, "100%");
+
+		subPolicyNotesForm = new PolicyNotesFormSection();
+		subPolicyNotesForm.setSize("100%", "100%");
+
+		centerWrapper.add(subPolicyNotesForm);
+
+		scrollContainer.add(centerWrapper);
+		scrollContainer.getElement().getStyle().setBackgroundColor("whiteSmoke");
+		scrollContainer.getElement().getStyle().setOverflowX(Style.Overflow.HIDDEN);
+
+		toolbarAndCenterWrapper.add(scrollContainer);
+		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
+		contentWrapper.add(toolbarAndCenterWrapper);
+		mainWrapper.add(contentWrapper);
+
+		policyForm.setHeaderFormVisible(false);
+		exerciseChooser.allowCreateExercise(false);
+
+		policyForm.setReadOnly(true);
+		subPolicyNotesForm.setReadOnly(true);
+		policyNotesForm.setReadOnly(true);
+		form.setReadOnly(true);
+		exerciseChooser.setReadOnly(true);
 	}
 
 	@Override
 	protected void initializeView() {
-		return;
-	}
-
-	@Override
-	public HasEditableValue<SubPolicy> getForm() {
-		return this.form;
-	}
-
-	@Override
-	public HasValue<InsurancePolicy> getParentPolicyForm() {
-		return this.policyForm;
+		return;		
 	}
 
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
-		this.actionHandler = handler;
+		actionHandler = handler;
 	}
-
-	@Override
-	public void setSaveModeEnabled(boolean enabled) {
-		this.toolbar.setSaveModeEnabled(enabled);
-	}
-
-	//PERMISSIONS
-
-	@Override
 	public void allowEdit(boolean allow) {
 		toolbar.setEditionAvailable(allow);
 	}
 
 	@Override
 	public void allowIncludeInsuredObject(boolean allow) {
-		//TODO
+		toolbar.allowIncludeInsuredObject(allow);
 	}
 
 	@Override
 	public void allowCreateInsuredObject(boolean allow) {
-		toolbar.allowCreateInsuredObject(allow);
+		objectsList.allowCreateInsuredObject(allow);
 	}
 
 	@Override
 	public void allowIncludeInsuredObjectFromClient(boolean allow) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void allowCreateInsuredObjectFromClient(boolean allow) {
-		// TODO Auto-generated method stub
-
+		toolbar.allowIncludeInsuredObjectFromClient(allow);
 	}
 
 	@Override
 	public void allowExcludeInsuredObject(boolean allow) {
-		// TODO Auto-generated method stub
-
+		toolbar.allowExcludeInsuredObject(allow);
 	}
 
 	@Override
@@ -285,74 +348,184 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	}
 
 	@Override
-	public HasValueSelectables<Contact> getContactsList() {
-		return childrenPanel.contactsList;
+	public void allowCreateInsuredObjectFromClient(boolean allow) {
+		toolbar.allowCreateInsuredObjectFromClient(allow);
 	}
+
+	@Override
+	public HasValue<InsurancePolicy> getPolicyForm() {
+		return policyForm;
+	}
+
+	@Override
+	public HasValue<String> getSubPolicyNotesForm(){
+		return subPolicyNotesForm;
+	}
+
+	@Override
+	public HasValue<String> getPolicyNotesForm(){
+		return policyNotesForm;
+	}
+
+	@Override
+	public void setOwner(String id) {
+		objectsList.setOwner(id);
+		childrenPanel.contactsList.setOwner(id);
+		childrenPanel.documentsList.setOwner(id);
+		childrenPanel.expensesList.setOwner(id);
+		childrenPanel.historyList.setOwner(id);
+		childrenPanel.receiptList.setOwner(id);
+		childrenPanel.subProcessesList.setOwner(id);
+	}
+
+	@Override
+	public void setToolbarEditMode(boolean b) {
+		toolbar.setSaveModeEnabled(b);
+		toolbar.lockNonSaveOptions(b);		
+	}
+
+	@Override
+	public HasValue<SubPolicyStub> getSubPolicySelector() {
+		return subPolicySelectButton;
+	}
+
+	@Override
+	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns) {
+		detailsForm.setHeaders(coverages, columns);
+	}
+
+	@Override
+	public void setReadOnly(boolean b) {
+		detailsForm.setReadOnly(b);
+		form.setReadOnly(b);
+		objectForm.setReadOnly(b);
+		subPolicyNotesForm.setReadOnly(b);
+		objectsList.setReadOnly(b);
+	}
+
+	@Override
+	public HasValueSelectables<InsuredObjectStub> getInsuredObjectsList() {
+		return objectsList;
+	}
+
+	@Override
+	public void setCoveragesExtraFields(Coverage[] coverages) {
+		detailsForm.setCoveragesExtraFields(coverages);		
+	}
+
+	@Override
+	public HasEditableValue<FieldContainer> getCommonFieldsForm() {
+		return detailsForm;
+	}
+
+	@Override
+	public void showObjectForm(boolean b) {
+		objectForm.getNonScrollableContent().setVisible(b);		
+	}
+
+	@Override
+	public void showSubPolicyForm(boolean b) {
+		form.getNonScrollableContent().setVisible(b);		
+	}
+
+	@Override
+	public void setSubPolicyEntrySelected(boolean b) {
+		subPolicySelectButton.setSelected(false, false);
+	}
+
+	@Override
+	public HasValue<String> getExerciseSelector() {
+		return exerciseChooser.getExerciseSelector();
+	}
+
+	@Override
+	public HasValue<ExerciseData> getExerciseForm() {
+		return exerciseChooser;
+	}
+
+	@Override
+	public void setExerciseFieldsHeader(String string) {
+		detailsForm.setExerciseHeader(string);		
+	}
+
+	@Override
+	public void setExerciseVisible(boolean b) {
+		exerciseChooser.setVisible(b);		
+	}
+
+	@Override
+	public void setAvailableExercises(ExerciseData[] exercises) {
+		exerciseChooser.setAvailableExercises(exercises);
+	}
+
+	@Override
+	public void dealWithObject(InsuredObject info) {
+		objectsList.dealWithObject(info);
+
+	}
+
+	@Override
+	public HasEditableValue<SubPolicy> getSubPolicyForm() {
+		return form;
+	}
+
+	@Override
+	public HasEditableValue<InsuredObject> getInsuredObjectHeaderForm() {
+		return objectForm;
+	}
+
+	@Override
+	public Coverage[] getPresentCoverages() {
+		return detailsForm.getPresentCoverages();
+	}
+
+	@Override
+	public void clearPolicySelection() {
+		subPolicySelectButton.setSelected(false, false);
+
+	}
+
+	@Override
+	public void setSelectedObject(String id) {
+		objectsList.setSelected(id);		
+	}
+
+	@Override
+	public void dealWithObject(InsuredObjectStub insuredObjectStub) {
+		objectsList.dealWithObject(insuredObjectStub);		
+	}
+
+	@Override
+	public HasValueSelectables<Contact> getContactsList() {
+		return childrenPanel.contactsList;	}
 
 	@Override
 	public HasValueSelectables<Document> getDocumentsList() {
 		return childrenPanel.documentsList;
 	}
 
-//	@Override
-//	public HasValueSelectables<ExerciseStub> getExercisesList() {
-//		return childrenPanel.exercisesList;
-//		return null;
-//	}
-
-	@Override
-	public HasValueSelectables<InsuredObjectStub> getInsuredObjectsList() {
-		return null; //childrenPanel.insuredObjectsList;
-	}
-
 	@Override
 	public HasValueSelectables<ReceiptStub> getReceiptsList() {
 		return childrenPanel.receiptList;
 	}
-	
+
 	@Override
-	public HasValueSelectables<HistoryItemStub> getHistoryList() {
-		return childrenPanel.historyList;
+	public HasValueSelectables<ExpenseStub> getExpensesList() {
+		return childrenPanel.expensesList;
 	}
 
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
 		return childrenPanel.subProcessesList;
 	}
-	
+
 	@Override
-	public HasValue<String> getInsuredObjectFilter() {
-		return this.form.getInsuredObjectsField();
+	public HasValueSelectables<HistoryItemStub> getHistoryList() {
+		return childrenPanel.historyList;
 	}
 
 	@Override
-	public HasValue<String> getExerciseFilter() {
-		return this.form.getExercisesField();
+	public HasClickHandlers getObjectDeleteButton() {
+		return objectForm.getDeleteButton();
 	}
-
-//	@Override
-//	public TableSection getCurrentTableSectionInfo() {
-//		return this.form.getTable().getValue();
-//	}
-	
-//	@Override
-//	public void setTableSectionInfo(TableSection info) {
-//		this.form.getTable().setValue(info);
-//	}
-
-	@Override
-	public void clearAllowedPermissions() {
-		this.toolbar.lockAll();
-	}
-
-	@Override
-	public void allowCreateHealthExpense(boolean allow) {
-		this.toolbar.allowCreateHealthExpense(allow);
-	}
-
-	@Override
-	public HasValueSelectables<ExpenseStub> getExpensesList() {
-		return this.childrenPanel.expensesList;
-	}
-	
 }
