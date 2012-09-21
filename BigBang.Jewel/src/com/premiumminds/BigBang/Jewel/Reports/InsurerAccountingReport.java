@@ -46,6 +46,7 @@ public class InsurerAccountingReport
 	public BigDecimal mdblPreTax;
 	public BigDecimal mdblTax;
 	public BigDecimal mdblTotal;
+	public BigDecimal mdblNetComms;
 	public transient SQLServer mdb;
 
 	protected UUID GetTemplateID()
@@ -190,6 +191,7 @@ public class InsurerAccountingReport
 			mdblPreTax = mdblPreTax.subtract(mdblExtraValue);
 		mdblTax = mdblTaxableComms.multiply((new BigDecimal(2.0/102.0))).setScale(2, RoundingMode.HALF_UP);
 		mdblTotal = mdblPreTax.add(mdblTax);
+		mdblNetComms = mdblTotalComms.subtract(mdblTax);
 
 		try
 		{
@@ -217,8 +219,9 @@ public class InsurerAccountingReport
 		larrParams.put("Movement", (mdblTotal.signum() < 0 ? "receber da Seguradora" : "transferir para a Seguradora" ));
 
 		larrParams.put("RecNumber", lobjRec.getLabel());
+		larrParams.put("NetComms", String.format("%,.2f", mdblNetComms));
 		larrParams.put("NIF", (lobjInsurer.getAt(4) == null ? "-" : (String)lobjInsurer.getAt(4)));
-		larrParams.put("TextValue", TextConverter.fromCurrency(mdblTotalComms.subtract(mdblTax).doubleValue()));
+		larrParams.put("TextValue", TextConverter.fromCurrency(mdblNetComms.doubleValue()));
 
 		return Generate(larrParams, new String[][][] {larrTables});
 	}

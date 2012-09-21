@@ -700,7 +700,7 @@ public class CoveragesServiceImpl
 			larrResult[i].midExercisePeriod = (parrSubLines[i].exercisePeriodId == null ? null :
 					UUID.fromString(parrSubLines[i].exercisePeriodId));
 			larrResult[i].mdblPercent = (parrSubLines[i].commissionPercent == null ? null :
-					new BigDecimal(parrSubLines[i].commissionPercent));
+					new BigDecimal(parrSubLines[i].commissionPercent + ""));
 			larrResult[i].mbIsLife = parrSubLines[i].isLife;
 			larrResult[i].mstrDescription = parrSubLines[i].description;
 			larrResult[i].marrCoverages = (pbRecurse && parrSubLines[i].coverages != null ?

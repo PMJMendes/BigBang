@@ -49,7 +49,7 @@ public class MediatorServiceImpl
 		ArrayList<Mediator> larrAux;
 		com.premiumminds.BigBang.Jewel.Objects.Mediator lobjAux;
 		ObjectBase lobjProfile, lobjZipCode;
-		Mediator lobjTmp;
+		Mediator lobjResult;
 		MediatorDeal[] larrDeals;
 		MediatorException[] larrExceptions;
 		int i;
@@ -89,54 +89,56 @@ public class MediatorServiceImpl
 	        	lobjProfile = Engine.GetWorkInstance(lidProfiles, (UUID)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PROFILE));
 	        	lobjZipCode = (lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ZIPCODE) == null ? null :
 	        			Engine.GetWorkInstance(lidZipCodes, (UUID)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ZIPCODE)));
-	        	lobjTmp = new Mediator();
-	        	lobjTmp.id = lobjAux.getKey().toString();
-	        	lobjTmp.name = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.NAME);
-	        	lobjTmp.ISPNumber = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ISPNUMBER);
-	        	lobjTmp.taxNumber = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.FISCALNUMBER);
-	        	lobjTmp.NIB = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.BANKINGID);
-	        	lobjTmp.comissionProfile.id = ((UUID)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PROFILE)).toString();
-	        	lobjTmp.comissionProfile.value = lobjProfile.getLabel();
-	        	lobjTmp.basePercent = (lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PERCENT) == null ? null :
+
+	        	lobjResult = new Mediator();
+
+	        	lobjResult.id = lobjAux.getKey().toString();
+	        	lobjResult.name = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.NAME);
+	        	lobjResult.ISPNumber = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ISPNUMBER);
+	        	lobjResult.taxNumber = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.FISCALNUMBER);
+	        	lobjResult.NIB = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.BANKINGID);
+	        	lobjResult.comissionProfile.id = ((UUID)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PROFILE)).toString();
+	        	lobjResult.comissionProfile.value = lobjProfile.getLabel();
+	        	lobjResult.basePercent = (lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PERCENT) == null ? null :
 	        			((BigDecimal)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PERCENT)).doubleValue());
-	        	lobjTmp.hasRetention = (Boolean)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.HASRETENTION);
-	        	lobjTmp.address = new Address();
-	        	lobjTmp.address.street1 = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ADDRESS1);
-	        	lobjTmp.address.street2 = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ADDRESS2);
+	        	lobjResult.hasRetention = (Boolean)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.HASRETENTION);
+	        	lobjResult.address = new Address();
+	        	lobjResult.address.street1 = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ADDRESS1);
+	        	lobjResult.address.street2 = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ADDRESS2);
 	        	if ( lobjZipCode == null )
-	        		lobjTmp.address.zipCode = null;
+	        		lobjResult.address.zipCode = null;
 	        	else
 	        	{
-		        	lobjTmp.address.zipCode = new ZipCode();
-		        	lobjTmp.address.zipCode.code = (String)lobjZipCode.getAt(0);
-		        	lobjTmp.address.zipCode.city = (String)lobjZipCode.getAt(1);
-		        	lobjTmp.address.zipCode.county = (String)lobjZipCode.getAt(2);
-		        	lobjTmp.address.zipCode.district = (String)lobjZipCode.getAt(3);
-		        	lobjTmp.address.zipCode.country = (String)lobjZipCode.getAt(4);
+		        	lobjResult.address.zipCode = new ZipCode();
+		        	lobjResult.address.zipCode.code = (String)lobjZipCode.getAt(0);
+		        	lobjResult.address.zipCode.city = (String)lobjZipCode.getAt(1);
+		        	lobjResult.address.zipCode.county = (String)lobjZipCode.getAt(2);
+		        	lobjResult.address.zipCode.district = (String)lobjZipCode.getAt(3);
+		        	lobjResult.address.zipCode.country = (String)lobjZipCode.getAt(4);
 	        	}
 
 	        	larrDeals = lobjAux.GetCurrentDeals();
 	        	if ( larrDeals != null )
 	        		for ( i = 0; i < larrDeals.length; i++ )
-	        			lobjTmp.dealPercents.put(((UUID)larrDeals[i].getAt(MediatorDeal.I.SUBLINE)).toString(),
+	        			lobjResult.dealPercents.put(((UUID)larrDeals[i].getAt(MediatorDeal.I.SUBLINE)).toString(),
 	        					((BigDecimal)larrDeals[i].getAt(MediatorDeal.I.PERCENT)).doubleValue());
 
 	        	larrExceptions = lobjAux.GetCurrentExceptions();
 	        	if ( larrExceptions != null )
 	        	{
-	        		lobjTmp.exceptions = new Mediator.MediatorException[larrExceptions.length];
+	        		lobjResult.exceptions = new Mediator.MediatorException[larrExceptions.length];
 	        		for ( i = 0; i < larrExceptions.length; i++ )
 	        		{
-	        			lobjTmp.exceptions[i] = new Mediator.MediatorException();
-	        			lobjTmp.exceptions[i].clientId = (larrExceptions[i].getAt(MediatorException.I.CLIENT) == null ? null :
+	        			lobjResult.exceptions[i] = new Mediator.MediatorException();
+	        			lobjResult.exceptions[i].clientId = (larrExceptions[i].getAt(MediatorException.I.CLIENT) == null ? null :
 	        					((UUID)larrExceptions[i].getAt(MediatorException.I.CLIENT)).toString());
-	        			lobjTmp.exceptions[i].policyId = (larrExceptions[i].getAt(MediatorException.I.POLICY) == null ? null :
+	        			lobjResult.exceptions[i].policyId = (larrExceptions[i].getAt(MediatorException.I.POLICY) == null ? null :
         					((UUID)larrExceptions[i].getAt(MediatorException.I.POLICY)).toString());
-	        			lobjTmp.exceptions[i].percent = ((BigDecimal)larrExceptions[i].getAt(MediatorException.I.PERCENTAGE)).doubleValue();
+	        			lobjResult.exceptions[i].percent = ((BigDecimal)larrExceptions[i].getAt(MediatorException.I.PERCENTAGE)).doubleValue();
 	        		}
 	        	}
 
-	        	larrAux.add(lobjTmp);
+	        	larrAux.add(lobjResult);
 	        }
         }
         catch (Throwable e)

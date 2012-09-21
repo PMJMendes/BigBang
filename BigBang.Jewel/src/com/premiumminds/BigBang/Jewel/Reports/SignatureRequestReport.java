@@ -45,6 +45,7 @@ public class SignatureRequestReport
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
+		boolean lbCasualties;
 		int i;
 
 		lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
@@ -75,6 +76,7 @@ public class SignatureRequestReport
 		larrTables = new String[marrReceiptIDs.length][];
 		mlngCount = 0;
 		mdblTotal = new BigDecimal(0);
+		lbCasualties = true;
 		for ( i = 0; i < larrTables.length; i++ )
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
@@ -97,6 +99,9 @@ public class SignatureRequestReport
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
+			if ( lbCasualties && !Constants.RecType_Casualty.equals((UUID)lobjReceipt.getAt(Receipt.I.TYPE)) )
+				lbCasualties = false;
+
 			larrTables[i] = new String[9];
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][1] = lobjReceipt.getLabel();
@@ -108,6 +113,16 @@ public class SignatureRequestReport
 			mlngCount++;
 			mdblTotal = mdblTotal.add((BigDecimal)lobjReceipt.getAt(3));
 		}
+
+		if ( lbCasualties )
+			larrParams.put("RecType", "indemnização");
+		else
+			larrParams.put("RecType", "estorno");
+
+		if ( Constants.TypeID_Company.equals((UUID)lobjClient.getAt(6)) )
+			larrParams.put("Signature", "carimbo e assinatura");
+		else
+			larrParams.put("Signature", "assinatura");
 
 		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
 		larrParams.put("Total", mdblTotal.toPlainString());

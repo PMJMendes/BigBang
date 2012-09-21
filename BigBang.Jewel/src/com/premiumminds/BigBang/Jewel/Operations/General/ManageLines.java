@@ -1721,7 +1721,7 @@ public class ManageLines
 
 		pstrString.append(pstrPrefix);
 		pstrString.append(" Comissão de Angariação: ");
-		pstrString.append(pobjData.mdblPercent.toPlainString());
+		pstrString.append(pobjData.mdblPercent == null ? "(não definida)" : pobjData.mdblPercent.toPlainString());
 		pstrString.append(pstrLineBreak);
 
 		if ( pbRecurse && (pobjData.marrCoverages != null) && (pobjData.marrCoverages.length > 0) )
