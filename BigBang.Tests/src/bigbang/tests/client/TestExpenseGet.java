@@ -50,8 +50,8 @@ public class TestExpenseGet
 		};
 
 		parameter = new ExpenseSearchParameter();
-//		parameter.freeText = "1";
-		parameter.insuredObject = "pedro martins";
+		parameter.freeText = "isabel martins";
+//		parameter.insuredObject = "pedro martins";
 		sorts = new ExpenseSortParameter();
 		sorts.field = ExpenseSortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
