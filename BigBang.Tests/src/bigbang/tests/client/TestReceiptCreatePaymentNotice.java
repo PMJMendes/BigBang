@@ -24,7 +24,6 @@ public class TestReceiptCreatePaymentNotice
 			}
 		};
 
-		Services.receiptService.massCreatePaymentNotice(new String[] {"980104AC-B184-41CD-8312-A0BD00EE670B",
-				"B4B9E006-3BC9-4677-B410-A0BD00EE9686"}, callback);
+		Services.receiptService.massCreatePaymentNotice(new String[] {"AC53A495-C861-4B6D-BF87-A0D300F1BF0B"}, callback);
 	}
 }

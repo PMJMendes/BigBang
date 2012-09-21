@@ -26,6 +26,6 @@ public class TestReceiptValidate
 			}
 		};
 
-		Services.receiptService.validateReceipt("D8A120C8-810A-4A7B-9FC3-A02D010E8584", callback);
+		Services.receiptService.validateReceipt("AC53A495-C861-4B6D-BF87-A0D300F1BF0B", callback);
 	}
 }

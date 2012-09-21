@@ -128,7 +128,7 @@ public class ReceiptReturnLetterReport
 			larrTables[i][2] = lobjCat.getLabel();
 			larrTables[i][3] = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
 			larrTables[i][4] = (String)lobjType.getAt(1);
-			larrTables[i][5] = (lobjReceipt.getAt(15) == null ? "" : lstrText);
+			larrTables[i][5] = (lobjReceipt.getAt(15) == null ? "Falta de Pagamento" : lstrText);
 
 			mlngCount++;
 			mdblTotal = mdblTotal.add((BigDecimal)lobjReceipt.getAt(3));

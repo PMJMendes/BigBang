@@ -71,7 +71,7 @@ public class NotPayedIndication
 			mdtPrevEndDate = (Timestamp)lobjPolicy.getAt(9);
 
 			lopEAV = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternAutoVoid(GetProcess().GetParent().getKey());
-			lopEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(10);
+			lopEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(9);
 			lopEAV.midReceiptProc = GetProcess().getKey();
 			lop = lopEAV;
 
@@ -85,7 +85,7 @@ public class NotPayedIndication
 			mdtPrevEndDate = (Timestamp)lobjSubPolicy.getAt(4);
 
 			lopsEAV = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternAutoVoid(GetProcess().GetParent().getKey());
-			lopsEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(10);
+			lopsEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(9);
 			lopsEAV.midReceiptProc = GetProcess().getKey();
 			lop = lopsEAV;
 

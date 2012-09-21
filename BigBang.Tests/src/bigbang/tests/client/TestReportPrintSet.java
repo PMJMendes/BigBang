@@ -24,6 +24,6 @@ public class TestReportPrintSet
 			}
 		};
 
-		Services.reportService.RunVerb("P:1205F697-6D40-4D9B-B70E-A0BD00F29E42", callback);
+		Services.reportService.RunVerb("P:D5EB4A5E-8303-4412-8ED4-A0C2012CA66F", callback);
 	}
 }

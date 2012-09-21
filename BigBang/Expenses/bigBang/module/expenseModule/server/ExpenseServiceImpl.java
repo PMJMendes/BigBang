@@ -953,7 +953,7 @@ public class ExpenseServiceImpl
 			try
 			{
 				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{

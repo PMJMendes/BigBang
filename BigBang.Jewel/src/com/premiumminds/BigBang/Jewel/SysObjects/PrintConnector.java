@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
+import java.awt.print.Paper;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
@@ -35,7 +36,7 @@ public class PrintConnector
 	private static class InnerPrintable
 		implements Printable
 	{
-		BufferedImage mimg;
+		private BufferedImage mimg;
 
 		public InnerPrintable(BufferedImage pimg)
 		{
@@ -284,9 +285,16 @@ public class PrintConnector
 		throws BigBangJewelException
 	{
 		PrinterJob lrefPJob;
+		PageFormat lrefPF;
+		Paper lobjPaper;
 
 		lrefPJob = getPrinter();
-		lrefPJob.setPrintable(new InnerPrintable(pimg));
+		lrefPF = lrefPJob.defaultPage();
+		lobjPaper = (Paper)lrefPF.getPaper().clone();
+		lobjPaper.setImageableArea(0, 0, lobjPaper.getWidth(), lobjPaper.getHeight());
+		lrefPF.setPaper(lobjPaper);
+
+		lrefPJob.setPrintable(new InnerPrintable(pimg), lrefPF);
 
 		try
 		{

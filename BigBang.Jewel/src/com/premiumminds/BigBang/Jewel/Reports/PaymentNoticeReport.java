@@ -45,6 +45,7 @@ public class PaymentNoticeReport
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
+		boolean lbReversals;
 		int i;
 
 		lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
@@ -75,6 +76,7 @@ public class PaymentNoticeReport
 		larrTables = new String[marrReceiptIDs.length][];
 		mlngCount = 0;
 		mdblTotal = new BigDecimal(0);
+		lbReversals = true;
 		for ( i = 0; i < larrTables.length; i++ )
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
@@ -97,6 +99,9 @@ public class PaymentNoticeReport
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
+			if ( lbReversals && !Constants.RecType_Reversal.equals((UUID)lobjReceipt.getAt(Receipt.I.TYPE)) )
+				lbReversals = false;
+
 			larrTables[i] = new String[9];
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][1] = lobjReceipt.getLabel();
@@ -104,16 +109,30 @@ public class PaymentNoticeReport
 			larrTables[i][3] = (String)lobjPolicy.GetCompany().getAt(1);
 			larrTables[i][4] = (lobjReceipt.getAt(9) == null ? "" : ((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
 			larrTables[i][5] = (lobjReceipt.getAt(10) == null ? "" : ((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
-			larrTables[i][6] = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
+			larrTables[i][6] = String.format("%,.2f", (BigDecimal)lobjReceipt.getAt(3));
 			larrTables[i][7] = (lobjReceipt.getAt(11) == null ? "" : ((Timestamp)lobjReceipt.getAt(11)).toString().substring(0, 10));
-			larrTables[i][8] = (String)lobjReceipt.getAt(14);
+			larrTables[i][8] = (lobjReceipt.getAt(14) == null ? "" : (((String)lobjReceipt.getAt(14)).length() > 20 ?
+					((String)lobjReceipt.getAt(14)).substring(0, 20) : (String)lobjReceipt.getAt(14)));
 
 			mlngCount++;
 			mdblTotal = mdblTotal.add((BigDecimal)lobjReceipt.getAt(3));
 		}
 
+		if ( lbReversals )
+		{
+			larrParams.put("RecType", "recobro/reembolso");
+			larrParams.put("EndText", "Segue em anexo uma cópia da participação.");
+		}
+		else
+		{
+			larrParams.put("RecType", "prémio");
+			larrParams.put("EndText", "Por determinação legal, DL nº 72/2008, de 16 de Abril, o não cumprimento dos prazos estipulados " +
+					"obrigará à devolução dos recibos de prémio à seguradora, para actuação da parte desta de acordo com as condições " +
+					"gerais das apólices e nos termos do referido decreto lei.");
+		}
+
 		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
-		larrParams.put("Total", mdblTotal.toPlainString());
+		larrParams.put("Total", String.format("%,.2f", mdblTotal));
 
 		return Generate(larrParams, new String[][][] {larrTables});
 	}
