@@ -262,12 +262,15 @@ public class ReceiptListingsBase
 
 		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[7], true, true);
+		larrCells[7].setAlign("right");
 
 		larrCells[8] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.COMMISSIONS), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[8], true, true);
+		larrCells[8].setAlign("right");
 
 		larrCells[9] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.RETROCESSIONS), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[9], true, true);
+		larrCells[9].setAlign("right");
 
 		larrCells[10] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.ISSUEDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[10], true, true);
