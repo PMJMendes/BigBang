@@ -22,7 +22,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 public class ReceiptHistoryPayment
 	extends ReceiptListingsBase
 {
-	public static GenericElement[] doReport(String[] parrParams)
+	public GenericElement[] doReport(String[] parrParams)
 		throws BigBangJewelException
 	{
 		Receipt[] larrAux;
@@ -75,7 +75,7 @@ public class ReceiptHistoryPayment
 		return larrResult;
 	}
 
-	protected static Receipt[] getHistoryForOperation(String[] parrParams)
+	protected Receipt[] getHistoryForOperation(String[] parrParams)
 		throws BigBangJewelException
 	{
 		StringBuilder lstrSQL;

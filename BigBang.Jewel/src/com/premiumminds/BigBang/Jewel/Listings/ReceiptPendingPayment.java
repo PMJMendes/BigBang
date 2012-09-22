@@ -22,7 +22,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 public class ReceiptPendingPayment
 	extends ReceiptListingsBase
 {
-	public static GenericElement[] doReport(String[] parrParams)
+	public GenericElement[] doReport(String[] parrParams)
 		throws BigBangJewelException
 	{
 		Receipt[] larrAux;
@@ -75,7 +75,7 @@ public class ReceiptPendingPayment
 		return larrResult;
 	}
 
-	protected static Receipt[] getPendingForOperation(String[] parrParams)
+	protected Receipt[] getPendingForOperation(String[] parrParams)
 		throws BigBangJewelException
 	{
 		StringBuilder lstrSQL;

@@ -25,7 +25,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
 public class ReceiptListingsBase
 {
-	protected static Table buildHeaderSection(String pstrHeader, Receipt[] parrReceipts, int plngMapSize)
+	protected Table buildHeaderSection(String pstrHeader, Receipt[] parrReceipts, int plngMapSize)
 	{
 		BigDecimal ldblTotal;
 		BigDecimal ldblTotalCom;
@@ -67,13 +67,13 @@ public class ReceiptListingsBase
 		return ltbl;
 	}
 
-	protected static Table buildDataSection(String pstrHeader, ArrayList<Receipt> parrReceipts)
+	protected Table buildDataSection(String pstrHeader, ArrayList<Receipt> parrReceipts)
 		throws BigBangJewelException
 	{
 		return buildDataSection(pstrHeader, parrReceipts.toArray(new Receipt[parrReceipts.size()]));
 	}
 
-	protected static Table buildDataSection(String pstrHeader, Receipt[] parrReceipts)
+	protected Table buildDataSection(String pstrHeader, Receipt[] parrReceipts)
 		throws BigBangJewelException
 	{
 		Table ltbl;
@@ -87,7 +87,7 @@ public class ReceiptListingsBase
 		return ltbl;
 	}
 
-	protected static TR[] buildDataTable(String pstrHeader, Receipt[] parrReceipts)
+	protected TR[] buildDataTable(String pstrHeader, Receipt[] parrReceipts)
 		throws BigBangJewelException
 	{
 		BigDecimal ldblTotal;
@@ -131,7 +131,7 @@ public class ReceiptListingsBase
 		return larrRows;
 	}
 
-	protected static Table buildInner(Receipt[] parrReceipts)
+	protected Table buildInner(Receipt[] parrReceipts)
 		throws BigBangJewelException
 	{
 		Table ltbl;
@@ -155,7 +155,7 @@ public class ReceiptListingsBase
 		return ltbl;
 	}
 
-	protected static TD[] buildInnerHeaderRow()
+	protected TD[] buildInnerHeaderRow()
 	{
 		TD[] larrCells;
 
@@ -212,7 +212,7 @@ public class ReceiptListingsBase
 		return larrCells;
 	}
 
-	protected static TD[] buildRow(Receipt pobjReceipt)
+	protected TD[] buildRow(Receipt pobjReceipt)
 		throws BigBangJewelException
 	{
 		Policy lobjPolicy;
@@ -293,7 +293,7 @@ public class ReceiptListingsBase
 		return larrCells;
 	}
 
-	protected static String getMeans(ILog pobjLog)
+	protected String getMeans(ILog pobjLog)
 		throws BigBangJewelException
 	{
 		Payment lobjPayment;
@@ -330,7 +330,7 @@ public class ReceiptListingsBase
 		}
 	}
 
-	protected static void filterByClient(StringBuilder lstrSQL, UUID pidClient)
+	protected void filterByClient(StringBuilder lstrSQL, UUID pidClient)
 		throws BigBangJewelException
 	{
 		IEntity lrefProcesses;

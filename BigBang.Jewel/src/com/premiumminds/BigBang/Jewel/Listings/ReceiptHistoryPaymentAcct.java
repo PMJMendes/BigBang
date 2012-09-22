@@ -36,7 +36,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 public class ReceiptHistoryPaymentAcct
 	extends ReceiptListingsBase
 {
-	public static GenericElement[] doReport(String[] parrParams)
+	public GenericElement[] doReport(String[] parrParams)
 		throws BigBangJewelException
 	{
 		Receipt[] larrAux;
@@ -93,7 +93,7 @@ public class ReceiptHistoryPaymentAcct
 		return larrResult;
 	}
 
-	protected static Receipt[] getHistoryForOperation(String[] parrParams)
+	protected Receipt[] getHistoryForOperation(String[] parrParams)
 		throws BigBangJewelException
 	{
 		StringBuilder lstrSQL;
@@ -177,7 +177,7 @@ public class ReceiptHistoryPaymentAcct
 		return larrAux.toArray(new Receipt[larrAux.size()]);
 	}
 
-	protected static Table buildHeaderSection(String pstrHeader, Receipt[] parrReceipts, int plngMapSize)
+	protected Table buildHeaderSection(String pstrHeader, Receipt[] parrReceipts, int plngMapSize)
 	{
 		BigDecimal ldblTotal;
 		BigDecimal ldblTotalCom;
@@ -221,7 +221,7 @@ public class ReceiptHistoryPaymentAcct
 		return ltbl;
 	}
 
-	protected static TD[] buildInnerHeaderRow()
+	protected TD[] buildInnerHeaderRow()
 	{
 		TD[] larrCells;
 
@@ -284,7 +284,7 @@ public class ReceiptHistoryPaymentAcct
 		return larrCells;
 	}
 
-	protected static TD[] buildRow(Receipt pobjReceipt)
+	protected TD[] buildRow(Receipt pobjReceipt)
 		throws BigBangJewelException
 	{
 		Policy lobjPolicy;
@@ -359,7 +359,7 @@ public class ReceiptHistoryPaymentAcct
 		return larrCells;
 	}
 
-	protected static Table buildSummarySection(Receipt[] parrReceipts)
+	protected Table buildSummarySection(Receipt[] parrReceipts)
 		throws BigBangJewelException
 	{
 		HashMap<String, BigDecimal> larrMap;
@@ -433,7 +433,7 @@ public class ReceiptHistoryPaymentAcct
 		return ltbl;
 	}
 
-	private static GenericElement[] doNotValid()
+	private GenericElement[] doNotValid()
 	{
 		TR[] larrRows;
 		Table ltbl;
@@ -447,7 +447,7 @@ public class ReceiptHistoryPaymentAcct
 		return new GenericElement[] {ltbl};
 	}
 
-	private static void sSortSubGroup(Receipt[] parrIn)
+	private void sSortSubGroup(Receipt[] parrIn)
 	{
 		Arrays.sort(parrIn, new Comparator<Receipt>()
 		{

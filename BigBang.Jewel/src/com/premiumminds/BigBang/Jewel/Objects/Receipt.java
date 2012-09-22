@@ -81,19 +81,19 @@ public class Receipt
 	public static GenericElement[] printReportPendingPayment(String[] parrParams)
 		throws BigBangJewelException
 	{
-		return ReceiptPendingPayment.doReport(parrParams);
+		return new ReceiptPendingPayment().doReport(parrParams);
 	}
 
 	public static GenericElement[] printReportHistoryPayment(String[] parrParams)
 		throws BigBangJewelException
 	{
-		return ReceiptHistoryPayment.doReport(parrParams);
+		return new ReceiptHistoryPayment().doReport(parrParams);
 	}
 
 	public static GenericElement[] printReportHistoryPaymentAcct(String[] parrParams)
 		throws BigBangJewelException
 	{
-		return ReceiptHistoryPaymentAcct.doReport(parrParams);
+		return new ReceiptHistoryPaymentAcct().doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)
