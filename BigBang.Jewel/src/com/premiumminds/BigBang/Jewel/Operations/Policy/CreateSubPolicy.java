@@ -134,7 +134,6 @@ public class CreateSubPolicy
 					mobjData.marrValues[i].midOwner = mobjData.mid;
 					mobjData.marrValues[i].midObject = ( mobjData.marrValues[i].mlngObject < 0 ? null :
 							mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid );
-					mobjData.marrValues[i].midExercise = mobjData.marrValues[i].midExercise;
 					lobjValue = SubPolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrValues[i].ToObject(lobjValue);
 					lobjValue.SaveToDb(pdb);
