@@ -1009,7 +1009,7 @@ public class ClientToServer
 
 			lobjReader = new StructuredReader();
 			if ( pobjOriginal == null )
-				lobjReader.withOriginal(false);
+				lobjReader.withOriginal(true);
 			else
 				lobjReader.withOriginal(pobjOriginal);
 			lobjReader.read(pobjPolicy);
