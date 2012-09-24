@@ -254,7 +254,17 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrCoverages.length; i++ )
 					{
-						if ( mobjData.marrCoverages[i].mbNew )
+						if ( mobjData.marrCoverages[i].mbDeleted )
+						{
+							if ( mobjData.marrCoverages[i].mid == null )
+								continue;
+							lobjCoverage = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(),
+									mobjData.marrCoverages[i].mid);
+							mobjData.marrCoverages[i].FromObject(lobjCoverage);
+							mobjData.marrCoverages[i].mobjPrevValues = null;
+							lobjCoverage.getDefinition().Delete(pdb, lobjCoverage.getKey());
+						}
+						else if ( mobjData.marrCoverages[i].mbNew )
 						{
 							mobjData.marrCoverages[i].midOwner = mobjData.mid;
 							lobjCoverage = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
