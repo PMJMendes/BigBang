@@ -846,7 +846,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	private void fillPolicy() {
-
 		InsurancePolicy pol = broker.getPolicyHeader(policyId);
 		view.getInsuredObjectsList().clearSelection();
 		view.getPolicyHeaderForm().setValue(pol);
@@ -860,10 +859,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Apólice");	
 		}
 		onPolicy = true;
-
-
 	}
-
 
 	private void transferToClient(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -901,6 +897,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			onGetPolicyFailed();
 		}
 	}
+
 	private void onExecuteDetailedCalculationsSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os cálculos detalhados foram executados com sucesso"), TYPE.TRAY_NOTIFICATION));
 	}

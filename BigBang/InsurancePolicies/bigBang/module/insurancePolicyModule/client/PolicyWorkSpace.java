@@ -143,7 +143,7 @@ public class PolicyWorkSpace {
 	}
 
 	public ComplexFieldContainer.ExerciseData updateExerciseHeader(String policyId, ComplexFieldContainer.ExerciseData alteredExercise) {
-		if ( !isPolicyLoaded(policyId) )
+		if ( !isPolicyLoaded(policyId) || policy.exerciseData == null )
 			return null;
 
 		for(int i = 0; i < policy.exerciseData.length; i++) {
