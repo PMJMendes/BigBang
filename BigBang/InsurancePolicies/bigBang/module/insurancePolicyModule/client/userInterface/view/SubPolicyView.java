@@ -25,12 +25,12 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExerciseDetailsForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseSelector;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyFormWithNotes;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSubPolicySearchPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.PolicyNotesFormSection;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyChildrenPanel;
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyHeaderForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyOperationsToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicySelectButton;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter;
@@ -51,8 +51,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class SubPolicyView extends View implements SubPolicyViewPresenter.Display{
 
 	private ActionInvokedEventHandler<Action> actionHandler;
-	private SubPolicyForm form;
-	private InsurancePolicyFormWithNotes policyForm;
+	private SubPolicyHeaderForm form;
+	private InsurancePolicyForm policyForm;
 	private SubPolicyOperationsToolbar toolbar;
 	private SubPolicyChildrenPanel childrenPanel;
 	private InsuredObjectSubPolicySearchPanel objectsList;
@@ -81,7 +81,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		}));
 		policyWrapper.add(policyHeader);
 
-		policyForm = new InsurancePolicyFormWithNotes();
+		policyForm = new InsurancePolicyForm();
 
 		policyWrapper.add(policyForm);
 		policyWrapper.setCellHeight(policyForm, "100%");
@@ -182,7 +182,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 		HorizontalPanel formPanel = new HorizontalPanel();
 
-		form = new SubPolicyForm();
+		form = new SubPolicyHeaderForm();
 		objectForm = new InsuredObjectForm();
 
 		VerticalPanel objectsPolicyContainer = new VerticalPanel();

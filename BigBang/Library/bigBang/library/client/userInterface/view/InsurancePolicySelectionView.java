@@ -16,13 +16,13 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter.Action;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyFormWithNotes;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
 
 public class InsurancePolicySelectionView extends View implements InsurancePolicySelectionViewPresenter.Display {
 
 	private InsurancePolicySearchPanel list;
-	private InsurancePolicyFormWithNotes form;
+	private InsurancePolicyForm form;
 	private ActionInvokedEventHandler<InsurancePolicySelectionViewPresenter.Action> handler;
 	private Button confirmButton, cancelButton;
 
@@ -59,7 +59,7 @@ public class InsurancePolicySelectionView extends View implements InsurancePolic
 		ListHeader header = new ListHeader("Apólice Principal");
 		header.setRightWidget(buttonsWrapper);
 
-		form = new InsurancePolicyFormWithNotes();
+		form = new InsurancePolicyForm();
 		form.setSize("100%", "100%");
 		form.setReadOnly(true);
 

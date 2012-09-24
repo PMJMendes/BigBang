@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyFormWithNotes;
+import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyCreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyCreateReceiptViewPresenter.Action;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
@@ -21,7 +21,7 @@ import bigBang.library.client.userInterface.view.View;
 public class SubPolicyCreateReceiptView extends View implements SubPolicyCreateReceiptViewPresenter.Display {
 
 	private ReceiptForm form;
-	private SubPolicyFormWithNotes ownerForm;
+	private SubPolicyForm ownerForm;
 	private ActionInvokedEventHandler<Action> handler;
 	private BigBangOperationsToolBar toolbar;
 	
@@ -72,7 +72,7 @@ public class SubPolicyCreateReceiptView extends View implements SubPolicyCreateR
 		ownerFormHeader.setHeight("30px");
 		ownerFormWrapper.add(ownerFormHeader);
 		
-		ownerForm = new SubPolicyFormWithNotes();
+		ownerForm = new SubPolicyForm();
 		ownerForm.setReadOnly(true);
 		ownerFormWrapper.add(ownerForm);
 		ownerFormWrapper.setCellHeight(ownerForm, "100%");

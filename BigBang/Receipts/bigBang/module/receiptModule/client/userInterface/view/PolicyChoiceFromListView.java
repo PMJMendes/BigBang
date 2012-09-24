@@ -12,7 +12,7 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyFormWithNotes;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.receiptModule.client.userInterface.InsurancePolicyList;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel.Entry;
 import bigBang.module.receiptModule.client.userInterface.presenter.PolicyChoiceFromListViewPresenter;
@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PolicyChoiceFromListView extends View implements PolicyChoiceFromListViewPresenter.Display{
 
-	private InsurancePolicyFormWithNotes form;
+	private InsurancePolicyForm form;
 	private InsurancePolicyList list;
 	private ActionInvokedEventHandler<Action> actionHandler;
 	private Button confirm;
@@ -45,7 +45,7 @@ public class PolicyChoiceFromListView extends View implements PolicyChoiceFromLi
 		initWidget(wrapper);
 		wrapper.setSize("1050px", "650px");
 		list = new InsurancePolicyList();
-		form = new InsurancePolicyFormWithNotes();
+		form = new InsurancePolicyForm();
 		
 		markReceipt = new Button("Saltar");
 		

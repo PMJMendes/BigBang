@@ -9,7 +9,7 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.userInterface.ExpenseForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.CreateExpenseOperationsToolbar;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyFormWithNotes;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter.Action;
 
@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class CreateExpenseView extends View implements CreateExpenseViewPresenter.Display{
 
-	protected InsurancePolicyFormWithNotes policyForm;
+	protected InsurancePolicyForm policyForm;
 	protected ExpenseForm form;
 	protected ActionInvokedEventHandler<Action> handler;
 	protected CreateExpenseOperationsToolbar toolbar;
@@ -37,7 +37,7 @@ public class CreateExpenseView extends View implements CreateExpenseViewPresente
 		parentHeader.setHeight("30px");
 		parentWrapper.add(parentHeader);
 
-		policyForm = new InsurancePolicyFormWithNotes();
+		policyForm = new InsurancePolicyForm();
 		policyForm.setHeaderFormVisible(false);
 		policyForm.setReadOnly(true);
 		policyForm.setSize("100%", "100%");
