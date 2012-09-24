@@ -216,7 +216,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 						@Override
 						public void onResponse(SubPolicy response) {
-
+							
 							isEditModeEnabled = true;
 							view.setToolbarEditMode(true);
 							view.getSubPolicySelector().setValue(response);
@@ -709,7 +709,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		}
 		else{
 			subPolicyBroker.updateSubPolicyHeader(view.getSubPolicyForm().getInfo());
-			subPolicyBroker.saveContextForSubPolicy(policyId, 
+			subPolicyBroker.saveContextForSubPolicy(subPolicyId, 
 					getCurrentExerciseId(),
 					view.getCommonFieldsForm().getInfo());
 		}		
@@ -723,6 +723,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 			@Override
 			public void onResponse(SubPolicy response) {
 				onSavePolicySuccess(response.id);
+				isEditModeEnabled = false;
 			}
 
 			@Override
@@ -730,7 +731,6 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar a apólice"), TYPE.ALERT_NOTIFICATION));					
 			}
 		});
-		isEditModeEnabled = false;
 	}
 
 	protected void onSavePolicySuccess(String id) {

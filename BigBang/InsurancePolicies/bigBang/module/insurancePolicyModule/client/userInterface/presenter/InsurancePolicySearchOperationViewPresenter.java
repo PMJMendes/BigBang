@@ -691,6 +691,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			@Override
 			public void onResponse(InsurancePolicy response) {
 				onSavePolicySuccess(response.id);
+				isEditModeEnabled = false;
 			}
 
 			@Override
@@ -698,7 +699,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar a apólice"), TYPE.ALERT_NOTIFICATION));					
 			}
 		});
-		isEditModeEnabled = false;
 	}
 
 
