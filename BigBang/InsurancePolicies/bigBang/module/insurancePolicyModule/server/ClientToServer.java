@@ -537,7 +537,7 @@ public class ClientToServer
 					lobjAux.mbNew = true;
 					msetCDeletia.remove(lobjAux.mid);
 				}
-			
+
 				lobjAux.midOwner = midOwner;
 				lobjAux.midCoverage = UUID.fromString(pobjContainer.coverages[i].coverageId);
 				lobjAux.mbPresent = pobjContainer.coverages[i].presentInPolicy;
