@@ -91,7 +91,6 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 			result.startDate = startDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(startDate.getValue());
 			result.clientId = client.getValue();
 			result.expirationDate = endDate.getValue() == null ? null :  DateTimeFormat.getFormat("yyyy-MM-dd").format(endDate.getValue());
-
 			result.fractioningId = fractioning.getValue();
 			result.premium = premium.getValue();
 		
@@ -109,6 +108,8 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 			clearInfo();
 			clearValue();
 		}else{
+			this.startDate.setValue(info.startDate);
+			this.endDate.setValue(info.expirationDate);
 			this.number.setValue(info.number);
 			this.client.setValue(info.clientId);
 			this.fractioning.setValue(info.fractioningId);
