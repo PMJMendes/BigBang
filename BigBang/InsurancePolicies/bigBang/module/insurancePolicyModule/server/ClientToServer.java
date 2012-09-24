@@ -259,7 +259,7 @@ public class ClientToServer
 	{
 		private boolean[] marrActive;
 		private ArrayList<PolicyExerciseData> marrData;
-		boolean mbFirst;
+		private boolean mbFirst;
 
 		public void withMaster(ComplexFieldContainer pobjContainer)
 		{
@@ -358,7 +358,6 @@ public class ClientToServer
 		private ArrayList<SubPolicyCoverageData> marrSPCData;
 		private ArrayList<SubPolicyObjectData> marrSPOData;
 		private HashSet<UUID> msetCDeletia;
-		private UUID midOwner;
 
 		public void withOriginal(boolean pbForSubPolicy)
 		{
@@ -377,7 +376,6 @@ public class ClientToServer
 				marrSPOData = null;
 			}
 			msetCDeletia = new HashSet<UUID>();
-			midOwner = null;
 
 			getBaseReader()
 					.withOriginal(pbForSubPolicy);
@@ -403,7 +401,6 @@ public class ClientToServer
 			msetCDeletia = new HashSet<UUID>();
 			marrSPCData = null;
 			marrSPOData = null;
-			midOwner = pobjPolicy.getKey();
 
 			for ( i = 0; i < larrCovs.length; i++ )
 				msetCDeletia.add(larrCovs[i].getKey());
@@ -432,7 +429,6 @@ public class ClientToServer
 			msetCDeletia = new HashSet<UUID>();
 			marrPCData = null;
 			marrPOData = null;
-			midOwner = pobjSubPolicy.getKey();
 
 			for ( i = 0; i < larrCovs.length; i++ )
 				msetCDeletia.add(larrCovs[i].getKey());
