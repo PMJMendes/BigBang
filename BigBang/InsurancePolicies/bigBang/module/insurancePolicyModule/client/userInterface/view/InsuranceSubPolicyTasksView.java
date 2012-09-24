@@ -5,7 +5,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuranceSubPolicyTasksOperationsToolbar;
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyFormWithNotes;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuranceSubPolicyTasksViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuranceSubPolicyTasksViewPresenter.Action;
 
@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class InsuranceSubPolicyTasksView extends View implements InsuranceSubPolicyTasksViewPresenter.Display{
 
-	protected SubPolicyForm form;
+	protected SubPolicyFormWithNotes form;
 	protected InsuranceSubPolicyTasksOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> handler;
 	
@@ -37,7 +37,7 @@ public class InsuranceSubPolicyTasksView extends View implements InsuranceSubPol
 		};
 		wrapper.add(toolbar);
 		
-		form = new SubPolicyForm();
+		form = new SubPolicyFormWithNotes();
 		form.setReadOnly(true);
 		form.setSize("100%", "100%");
 		wrapper.add(form);

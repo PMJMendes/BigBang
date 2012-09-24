@@ -593,6 +593,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			item.pushIntoStackParameter("display", "viewinforequest");
 			item.setParameter("requestid", selectedValue.dataId);
 			NavigationHistoryManager.getInstance().go(item);
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "negotiation");
+			item.setParameter("negotiationid", selectedValue.dataId);
+			NavigationHistoryManager.getInstance().go(item);
 		}
 	}
 
@@ -715,7 +720,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	private void revert() {
 
-		if(onPolicy){
+		if(onPolicy || view.getInsuredObjectHeaderForm().getValue().change == Change.CREATED){
 			fillPolicy();
 		}
 		else{

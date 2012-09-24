@@ -1,9 +1,5 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.HasEditableValue;
@@ -13,13 +9,17 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.userInterface.ExpenseForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.CreateExpenseOperationsToolbar;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyFormWithNotes;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter.Action;
 
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 public class CreateExpenseView extends View implements CreateExpenseViewPresenter.Display{
 
-	protected InsurancePolicyForm policyForm;
+	protected InsurancePolicyFormWithNotes policyForm;
 	protected ExpenseForm form;
 	protected ActionInvokedEventHandler<Action> handler;
 	protected CreateExpenseOperationsToolbar toolbar;
@@ -37,11 +37,10 @@ public class CreateExpenseView extends View implements CreateExpenseViewPresente
 		parentHeader.setHeight("30px");
 		parentWrapper.add(parentHeader);
 
-		policyForm = new InsurancePolicyForm();
-
+		policyForm = new InsurancePolicyFormWithNotes();
+		policyForm.setHeaderFormVisible(false);
 		policyForm.setReadOnly(true);
 		policyForm.setSize("100%", "100%");
-
 		parentWrapper.add(policyForm);
 		parentWrapper.setCellHeight(policyForm, "100%");
 
@@ -84,7 +83,7 @@ public class CreateExpenseView extends View implements CreateExpenseViewPresente
 	public HasValue<InsurancePolicy> getInsuranceForm() {
 		return policyForm;
 	}
-
+	
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.handler = handler;

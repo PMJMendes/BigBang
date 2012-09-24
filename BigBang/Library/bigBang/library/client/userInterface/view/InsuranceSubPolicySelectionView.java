@@ -9,7 +9,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter.Action;
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyFormWithNotes;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicySearchPanel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class InsuranceSubPolicySelectionView extends View implements InsuranceSubPolicySelectionViewPresenter.Display {
 
 	private SubPolicySearchPanel list;
-	private SubPolicyForm form;
+	private SubPolicyFormWithNotes form;
 	private ActionInvokedEventHandler<InsuranceSubPolicySelectionViewPresenter.Action> handler;
 	private Button confirmButton, cancelButton;
 
@@ -59,7 +59,7 @@ public class InsuranceSubPolicySelectionView extends View implements InsuranceSu
 		ListHeader header = new ListHeader("Apólice Adesão");
 		header.setRightWidget(buttonsWrapper);
 
-		form = new SubPolicyForm();
+		form = new SubPolicyFormWithNotes();
 		form.setSize("100%", "100%");
 		form.setReadOnly(true);
 

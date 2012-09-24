@@ -134,5 +134,9 @@ public class SubPolicyForm extends FormView<SubPolicy>{
 		}
 
 	}
+	
+	public void setHeaderFormVisible(boolean b){
+		headerForm.setVisible(b);
+	}
 
 }

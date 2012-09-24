@@ -25,7 +25,7 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExerciseDetailsForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseSelector;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyFormWithNotes;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSubPolicySearchPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.PolicyNotesFormSection;
@@ -52,7 +52,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 	private ActionInvokedEventHandler<Action> actionHandler;
 	private SubPolicyForm form;
-	private InsurancePolicyForm policyForm;
+	private InsurancePolicyFormWithNotes policyForm;
 	private SubPolicyOperationsToolbar toolbar;
 	private SubPolicyChildrenPanel childrenPanel;
 	private InsuredObjectSubPolicySearchPanel objectsList;
@@ -61,7 +61,6 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	private CoverageExerciseDetailsForm detailsForm;
 	private SubPolicySelectButton subPolicySelectButton;
 	private PolicyNotesFormSection subPolicyNotesForm;
-	private PolicyNotesFormSection policyNotesForm;
 
 	public SubPolicyView() {
 
@@ -82,11 +81,9 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		}));
 		policyWrapper.add(policyHeader);
 
-		policyForm = new InsurancePolicyForm();
-		policyNotesForm = new PolicyNotesFormSection();
+		policyForm = new InsurancePolicyFormWithNotes();
 
 		policyWrapper.add(policyForm);
-		policyWrapper.add(policyNotesForm);
 		policyWrapper.setCellHeight(policyForm, "100%");
 
 		mainWrapper.addWest(policyWrapper, 600);
@@ -274,7 +271,6 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 		policyForm.setReadOnly(true);
 		subPolicyNotesForm.setReadOnly(true);
-		policyNotesForm.setReadOnly(true);
 		form.setReadOnly(true);
 		exerciseChooser.setReadOnly(true);
 	}
@@ -363,11 +359,6 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	}
 
 	@Override
-	public HasValue<String> getPolicyNotesForm(){
-		return policyNotesForm;
-	}
-
-	@Override
 	public void setOwner(String id) {
 		objectsList.setOwner(id);
 		childrenPanel.contactsList.setOwner(id);
@@ -430,7 +421,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 	@Override
 	public void setSubPolicyEntrySelected(boolean b) {
-		subPolicySelectButton.setSelected(false, false);
+		subPolicySelectButton.setSelected(b, false);
 	}
 
 	@Override

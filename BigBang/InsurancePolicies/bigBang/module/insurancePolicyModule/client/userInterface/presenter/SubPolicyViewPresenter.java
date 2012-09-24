@@ -111,8 +111,6 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 		HasValue<String> getSubPolicyNotesForm();
 
-		HasValue<String> getPolicyNotesForm();
-
 		void setOwner(String id);
 
 		void setToolbarEditMode(boolean b);
@@ -302,7 +300,6 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 			@Override
 			public void onResponse(InsurancePolicy response) {
 				view.getPolicyForm().setValue(response);
-				view.getPolicyNotesForm().setValue(response.notes);
 			}
 
 			@Override
@@ -857,7 +854,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 	private void revert() {
 
-		if(onPolicy){
+		if(onPolicy || view.getInsuredObjectHeaderForm().getValue().change == Change.CREATED){
 			fillPolicy();
 		}
 		else{

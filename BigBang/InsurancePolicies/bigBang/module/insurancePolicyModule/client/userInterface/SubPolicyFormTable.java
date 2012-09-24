@@ -1,25 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.FieldContainer;
-import bigBang.library.client.FieldValidator;
-import bigBang.library.client.FormField;
-import bigBang.library.client.userInterface.DatePickerFormField;
-import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.RadioButtonFormField;
-import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.View;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SubPolicyFormTable extends View /*implements HasValue<TableSection>*/ {
 //
