@@ -651,7 +651,7 @@ public class ServerToClient
 		private UUID midObject;
 		private PolicyExercise[] marrExercises;
 
-		public ComplexFieldContainerBuilder withSource(SubLine pobjSubLine, boolean pbForSubPolicy)
+		public ComplexFieldContainerBuilder withSource(SubLine pobjSubLine)
 			throws BigBangException
 		{
 			mbIsEmpty = true;
@@ -659,14 +659,14 @@ public class ServerToClient
 			midObject = null;
 			midExerciseType = pobjSubLine.getExerciseType();
 
-			getBaseBuilder().withSource(pobjSubLine, pbForSubPolicy);
+			getBaseBuilder().withSource(pobjSubLine, false);
 			return this;
 		}
 
-		public ComplexFieldContainerBuilder withSource(Policy pobjPolicy)
+		public ComplexFieldContainerBuilder withSource(Policy pobjPolicy, boolean pbForSubPolicy)
 			throws BigBangException
 		{
-			mbIsEmpty = false;
+			mbIsEmpty = pbForSubPolicy;
 			mbForObject = false;
 			midObject = null;
 			midExerciseType = pobjPolicy.GetSubLine().getExerciseType();
@@ -679,7 +679,10 @@ public class ServerToClient
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			getBaseBuilder().withSource(pobjPolicy);
+			if ( pbForSubPolicy )
+				getBaseBuilder().withSource(pobjPolicy.GetSubLine(), true);
+			else
+				getBaseBuilder().withSource(pobjPolicy);
 			return this;
 		}
 
@@ -1179,20 +1182,20 @@ public class ServerToClient
 		private StructuredFieldContainer mobjContainer;
 		private Map<UUID, CoverageContents> mmapCoverages;
 
-		public StructuredBuilder withSource(SubLine pobjSubLine, boolean pbForSubPolicy)
+		public StructuredBuilder withSource(SubLine pobjSubLine)
 			throws BigBangException
 		{
 			getComplexBuilder()
-					.withSource(pobjSubLine, pbForSubPolicy);
+					.withSource(pobjSubLine);
 
 			return this;
 		}
 
-		public StructuredBuilder withSource(Policy pobjPolicy)
+		public StructuredBuilder withSource(Policy pobjPolicy, boolean pbForSubPolicy)
 			throws BigBangException
 		{
 			getComplexBuilder()
-					.withSource(pobjPolicy);
+					.withSource(pobjPolicy, pbForSubPolicy);
 
 			return this;
 		}
@@ -1389,7 +1392,7 @@ public class ServerToClient
 			mobjClient = pobjClient;
 
 			mobjOutPolicy = (InsurancePolicy)new StructuredBuilder()
-					.withSource(pobjSubLine, false)
+					.withSource(pobjSubLine)
 					.withContainer(new InsurancePolicy())
 					.build()
 					.result();
@@ -1404,7 +1407,7 @@ public class ServerToClient
 			mobjClient = null;
 
 			mobjOutPolicy = (InsurancePolicy)new StructuredBuilder()
-					.withSource(pobjPolicy)
+					.withSource(pobjPolicy, false)
 					.withContainer(new InsurancePolicy())
 					.build()
 					.fill()
@@ -1515,7 +1518,7 @@ public class ServerToClient
 			mobjParent = pobjPolicy;
 
 			mobjOutPolicy = (SubPolicy)new StructuredBuilder()
-					.withSource(pobjPolicy.GetSubLine(), true)
+					.withSource(pobjPolicy, true)
 					.withContainer(new SubPolicy())
 					.build()
 					.result();
