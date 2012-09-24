@@ -13,7 +13,6 @@ import com.premiumminds.BigBang.Jewel.Data.SubPolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyObjectData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyValueData;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyObject;
