@@ -87,6 +87,11 @@ public class BigBang_Tests
 //
 //		TestValuesGet.DoTest();
 //
+//		TestCompanyGet.DoTest();
+//		TestCompanyCreate.DoTest();
+//		TestCompanyEdit.DoTest();
+//		TestCompanyDelete.DoTest();
+//
 //		TestUserGet.DoTest();
 //		TestUserCreate.DoTest();
 //		TestUserEdit.DoTest();
