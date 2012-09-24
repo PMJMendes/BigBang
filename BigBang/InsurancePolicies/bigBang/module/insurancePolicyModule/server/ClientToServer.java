@@ -1023,8 +1023,6 @@ public class ClientToServer
 
 		private void readHeader(SubPolicyData pobjResult, SubPolicy pobjSubPolicy)
 		{
-			pobjResult = new SubPolicyData();
-
 			pobjResult.mid = ( pobjSubPolicy.id == null ? null : UUID.fromString(pobjSubPolicy.id) );
 
 			pobjResult.mstrNumber = pobjSubPolicy.number;

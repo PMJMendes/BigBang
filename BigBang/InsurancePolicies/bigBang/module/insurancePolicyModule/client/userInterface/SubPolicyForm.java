@@ -87,6 +87,7 @@ public class SubPolicyForm extends FormView<SubPolicy>{
 		if(result != null) {
 			result.number = number.getValue();
 			result.startDate = startDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(startDate.getValue());
+			result.clientId = client.getValue();
 			result.expirationDate = endDate.getValue() == null ? null :  DateTimeFormat.getFormat("yyyy-MM-dd").format(endDate.getValue());
 
 			result.fractioningId = fractioning.getValue();
