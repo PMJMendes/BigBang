@@ -433,7 +433,7 @@ public class ContactOps
 		pobjData.mobjPrevValues.marrSubContacts = null;
 		pobjData.mobjPrevValues.mobjPrevValues = null;
 
-		larrCIAux = lobjAux.getCurrentInfo();
+		larrCIAux = lobjAux.getCurrentInfo(pdb);
 		pobjData.mobjPrevValues.marrInfo = new ContactInfoData[larrCIAux.length];
 		for ( i = 0; i < larrCIAux.length; i++ )
 		{
@@ -507,7 +507,7 @@ public class ContactOps
 				DeleteContact(pdb, pobjData.marrSubContacts[i]);
 			}
 
-			larrCIAux = lobjAux.getCurrentInfo();
+			larrCIAux = lobjAux.getCurrentInfo(pdb);
 			pobjData.marrInfo = new ContactInfoData[larrCIAux.length];
 			for ( i = 0; i < larrCIAux.length; i++ )
 			{

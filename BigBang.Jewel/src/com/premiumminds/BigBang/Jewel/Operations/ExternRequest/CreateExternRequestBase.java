@@ -413,7 +413,7 @@ public abstract class CreateExternRequestBase
 
 		for ( i = 0; i < larrContacts.length; i++ )
 		{
-			larrInfo = larrContacts[i].getCurrentInfo();
+			larrInfo = larrContacts[i].getCurrentInfo(pdb);
 			for ( j = 0; j < larrInfo.length; j++ )
 			{
 				if ( Constants.CInfoID_Email.equals(larrInfo[j].getAt(ContactInfo.I.TYPE)) &&
@@ -432,7 +432,7 @@ public abstract class CreateExternRequestBase
 				mobjContactOps.marrCreate = null;
 				mobjContactOps.marrModify = new ContactData[] {new ContactData()};
 				mobjContactOps.marrModify[0].FromObject(larrContacts[i]);
-				larrInfo = larrContacts[i].getCurrentInfo();
+				larrInfo = larrContacts[i].getCurrentInfo(pdb);
 				mobjContactOps.marrModify[0].marrInfo = new ContactInfoData[larrInfo.length + 1];
 				for ( j = 0; j < larrInfo.length; j++ )
 				{

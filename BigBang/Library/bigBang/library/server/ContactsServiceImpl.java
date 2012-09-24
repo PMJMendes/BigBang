@@ -461,7 +461,7 @@ public class ContactsServiceImpl
 		{
 			try
 			{
-				larrInfo = pobjContact.getCurrentInfo();
+				larrInfo = pobjContact.getCurrentInfo(pdb);
 			}
 			catch (Throwable e)
 			{
@@ -682,7 +682,7 @@ public class ContactsServiceImpl
 
 		try
 		{
-			larrInfo = pobjContact.getCurrentInfo();
+			larrInfo = pobjContact.getCurrentInfo(pdb);
 			larrSubs = pobjContact.getCurrentSubContacts(pdb);
 		}
 		catch (Throwable e)

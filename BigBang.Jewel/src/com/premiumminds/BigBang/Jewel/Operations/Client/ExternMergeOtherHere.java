@@ -168,7 +168,7 @@ public class ExternMergeOtherHere
 					mobjContactOps.marrModify[i] = new ContactData();
 					mobjContactOps.marrModify[i].FromObject(larrContacts[i]);
 					mobjContactOps.marrModify[i].midOwnerId = midNewClient;
-					larrCInfo = larrContacts[i].getCurrentInfo();
+					larrCInfo = larrContacts[i].getCurrentInfo(pdb);
 					if ( larrCInfo != null )
 					{
 						mobjContactOps.marrModify[i].marrInfo = new ContactInfoData[larrCInfo.length];
