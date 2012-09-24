@@ -9,7 +9,6 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyObjectData;
@@ -29,7 +28,6 @@ public class ManageData
 	public SubPolicyData mobjData;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
-	public PolicyExerciseData[] marrAuxExercises;
 
 	public transient UUID[] marrObjectIDs;
 	public transient UUID[] marrExerciseIDs;
@@ -225,8 +223,6 @@ public class ManageData
 							mobjData.marrValues[i].midOwner = mobjData.mid;
 							mobjData.marrValues[i].midObject = ( mobjData.marrValues[i].mlngObject < 0 ? null :
 									mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid );
-							mobjData.marrValues[i].midExercise = ( mobjData.marrValues[i].mlngExercise < 0 ? null :
-									marrAuxExercises[mobjData.marrValues[i].mlngExercise].mid );
 							lobjValue = SubPolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 							mobjData.marrValues[i].ToObject(lobjValue);
 							lobjValue.SaveToDb(pdb);
@@ -519,8 +515,6 @@ public class ManageData
 							lobjValue = SubPolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 							mobjData.marrValues[i].midObject = ( mobjData.marrValues[i].mlngObject < 0 ? null :
 									mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid );
-							mobjData.marrValues[i].midExercise = ( mobjData.marrValues[i].mlngExercise < 0 ? null :
-								marrAuxExercises[mobjData.marrValues[i].mlngExercise].mid );
 							mobjData.marrValues[i].ToObject(lobjValue);
 							lobjValue.SaveToDb(pdb);
 						}
