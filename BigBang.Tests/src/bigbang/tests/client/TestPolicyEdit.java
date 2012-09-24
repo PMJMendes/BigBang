@@ -26,7 +26,7 @@ public class TestPolicyEdit
 			}
 		};
 
-		Services.insurancePolicyService.getPolicy("DF5082EA-958B-4A81-8309-A0B8002EB131", callback);
+		Services.insurancePolicyService.getPolicy("AFCAA2D4-BD48-444A-88F1-A0B8000464DA", callback);
 	}
 
 	private static void DoStep2(InsurancePolicy policy)
