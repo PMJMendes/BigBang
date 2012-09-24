@@ -217,7 +217,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						@Override
 						public void onResponse(SubPolicy response) {
 							
-							isEditModeEnabled = true;
+							isEditModeEnabled = false;
+							onPolicy = true;
 							view.setToolbarEditMode(true);
 							view.getSubPolicySelector().setValue(response);
 							view.setHeaders(response.coverages, response.columns);
@@ -226,6 +227,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 							fillPolicy();
 							fillSubPolicy();
 							view.setReadOnly(false);
+							isEditModeEnabled = true;
 
 						}
 
@@ -242,6 +244,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						public void onResponse(SubPolicy response) {
 
 							isEditModeEnabled = false;
+							onPolicy = true;
 							view.setOwner(response.id);
 							view.setToolbarEditMode(false);
 							view.getSubPolicySelector().setValue(response);
@@ -791,7 +794,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 			return;
 		}
 
-		subPolicyBroker.getInsuredObject(policyId, id, new ResponseHandler<InsuredObject>() {
+		subPolicyBroker.getInsuredObject(subPolicyId, id, new ResponseHandler<InsuredObject>() {
 
 			@Override
 			public void onResponse(InsuredObject response) {

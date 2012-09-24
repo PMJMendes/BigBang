@@ -27,7 +27,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExercis
 import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseSelector;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSearchPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSubPolicySearchPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.PolicyNotesFormSection;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyChildrenPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
@@ -55,7 +55,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	private InsurancePolicyForm policyForm;
 	private SubPolicyOperationsToolbar toolbar;
 	private SubPolicyChildrenPanel childrenPanel;
-	private InsuredObjectSearchPanel objectsList;
+	private InsuredObjectSubPolicySearchPanel objectsList;
 	private InsuredObjectForm objectForm;
 	private ExerciseSelector exerciseChooser;
 	private CoverageExerciseDetailsForm detailsForm;
@@ -202,7 +202,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 				}
 			}
 		});
-		objectsList = new InsuredObjectSearchPanel();
+		objectsList = new InsuredObjectSubPolicySearchPanel();
 		objectsList.showFilterField(false);
 		objectsList.getNewObjectButton().addClickHandler(new ClickHandler() {
 

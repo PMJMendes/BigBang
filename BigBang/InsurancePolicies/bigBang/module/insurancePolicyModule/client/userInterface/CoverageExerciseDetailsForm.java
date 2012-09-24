@@ -38,11 +38,14 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 
 	@Override
 	public FieldContainer getInfo() {
+		if(value == null){
+			return new FieldContainer();
+		}
 		FieldContainer result = value;
 		result.headerFields = exerciseDetailsSection.getValue();
 		result.extraFields = extraFieldsSection.getValue();
 		result.columnFields = table.getValue();
-		return result;	
+		return result;
 	}
 
 	@Override
