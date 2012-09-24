@@ -45,11 +45,13 @@ public class SubPolicyForm extends FormView<SubPolicy>{
 		ExpandableSelectionFormFieldPanel clientSelectionPanel = (ExpandableSelectionFormFieldPanel) ViewPresenterFactory.getInstance().getViewPresenter("INSURANCE_POLICY_SUB_POLICY_CLIENT_SELECTION");
 		((ClientSelectionViewPresenter)clientSelectionPanel).go();
 		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", clientSelectionPanel); //TODO
+		client.setMandatory(true);
 		number.setFieldWidth("175px");
 		startDate = new DatePickerFormField("Data de Início");
 		startDate.setMandatory(true);
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
+		fractioning.setMandatory(true);
 		premium = new NumericTextBoxFormField("Prémio Comercial Anual", true);
 		premium.setFieldWidth("175px");
 		premium.setUnitsLabel("€");

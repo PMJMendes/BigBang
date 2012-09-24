@@ -696,7 +696,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		if(onPolicy)
 			return;
 		saveInternally();
-		fillPolicy();
+		fillSubPolicy();
 	}
 
 	private void saveInternally() {
