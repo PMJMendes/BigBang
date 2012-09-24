@@ -1033,7 +1033,7 @@ public class ClientToServer
 			pobjResult.mdtEndDate = ( pobjSubPolicy.expirationDate == null ? null :
 					Timestamp.valueOf(pobjSubPolicy.expirationDate + " 00:00:00.0") );
 			pobjResult.mstrNotes = pobjSubPolicy.notes;
-			pobjResult.midStatus = null;
+			pobjResult.midStatus = ( pobjSubPolicy.statusId == null ? null : UUID.fromString(pobjSubPolicy.statusId) );
 			pobjResult.mdblPremium = ( pobjSubPolicy.premium == null ? null : new BigDecimal(pobjSubPolicy.premium+"") );
 			pobjResult.mstrDocuShare = pobjSubPolicy.docushare;
 
