@@ -8,6 +8,7 @@ import bigBang.definitions.shared.Report;
 import bigBang.definitions.shared.Report.Section;
 import bigBang.definitions.shared.Report.Section.Verb;
 import bigBang.definitions.shared.ReportItem;
+import bigBang.definitions.shared.ReportItem.ItemType;
 import bigBang.definitions.shared.ReportParam;
 import bigBang.definitions.shared.TransactionSet;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -31,6 +32,7 @@ import bigBang.library.interfaces.ReportServiceAsync;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -42,7 +44,8 @@ public class ReportViewPresenter implements ViewPresenter {
 	public static enum Action {
 		GENERATE_REPORT, 
 		PRINT_SET_SELECTION_CHANGED, 
-		TRANSACTION_SET_SELECTION_CHANGED
+		TRANSACTION_SET_SELECTION_CHANGED,
+		PRINT_REPORT
 	}
 
 	public static interface Display {
@@ -61,6 +64,7 @@ public class ReportViewPresenter implements ViewPresenter {
 		HasValueSelectables<PrintSet> getPrintSetPanel();
 		NavigationPanel getNavigationPanel();
 		Button addVerb(String title);
+		Element getPrintFrameContent();
 	}
 
 	protected boolean bound;
@@ -118,6 +122,9 @@ public class ReportViewPresenter implements ViewPresenter {
 					break;
 				case TRANSACTION_SET_SELECTION_CHANGED:
 					onTransactionSetSelectionChanged();
+					break;
+				case PRINT_REPORT:
+					printCurrentReport();
 					break;
 				}
 			}
@@ -378,6 +385,19 @@ public class ReportViewPresenter implements ViewPresenter {
 		}
 	}
 
+	protected void printCurrentReport(){
+		if(this.currentItem != null && this.currentItem.type != ItemType.CATEGORY ) {
+			Element content = view.getPrintFrameContent();
+			content.focus();
+			printElement(content);
+			
+		}
+	}
+
+	public native void printElement(Element element) /*-{
+		element.print();
+	}-*/;
+	
 	protected void onGenerateReportSuccess(){
 		//TODO
 	}

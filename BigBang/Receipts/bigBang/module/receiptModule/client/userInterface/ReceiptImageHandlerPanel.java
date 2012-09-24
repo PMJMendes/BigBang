@@ -23,12 +23,14 @@ import com.google.gwt.user.client.ui.ToggleButton;
 
 public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 
-	protected int rectOriginX = -1;
-	protected int rectOriginY = -1;
-	protected int rectDestX = -1;
-	protected int rectDestY = -1;
+	protected class Point2D {
+		int x;
+		int y;
+	}
 
-	protected Rectangle selection;
+	protected static final int SELECTION_BORDER_WIDTH = 2;
+
+	protected Point2D selectionOrigin, selectionDestination;
 
 	protected boolean cropMode = false;
 	protected boolean cropping = false;
@@ -42,7 +44,7 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 		this.rectangle = new AbsolutePanel();
 		this.rectangle.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		this.rectangle.getElement().getStyle().setBorderColor("red");
-		this.rectangle.getElement().getStyle().setBorderWidth(2, Unit.PX);
+		this.rectangle.getElement().getStyle().setBorderWidth(SELECTION_BORDER_WIDTH, Unit.PX);
 		this.rectangle.getElement().getStyle().setBorderStyle(BorderStyle.DASHED);
 		this.rectangle.getElement().getStyle().setBackgroundColor("white");
 		this.rectangle.getElement().getStyle().setOpacity(0.5);
@@ -54,10 +56,12 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 
 			@Override
 			public void onMouseDown(MouseDownEvent event) {
-				rectOriginX = rectDestX = rectOriginY = rectDestY = -1;
+				selectionOrigin = null;
+				selectionDestination = null;
+
 				drawRect();
-				rectOriginX = event.getRelativeX(wrapper.getElement());
-				rectOriginY = event.getRelativeY(wrapper.getElement());
+
+				selectionOrigin = getProjectedPoint(event.getRelativeX(wrapper.getElement()), event.getRelativeY(wrapper.getElement()));
 				cropping = cropMode;
 			}
 		}, MouseDownEvent.getType());
@@ -65,8 +69,7 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 
 			@Override
 			public void onMouseUp(MouseUpEvent event) {
-				rectDestX = event.getRelativeX(wrapper.getElement());
-				rectDestY = event.getRelativeY(wrapper.getElement());
+				selectionDestination = getProjectedPoint(event.getRelativeX(wrapper.getElement()), event.getRelativeY(wrapper.getElement()));
 				drawRect();
 				cropping = false;
 			}
@@ -76,8 +79,7 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 			@Override
 			public void onMouseMove(MouseMoveEvent event) {
 				if(cropping){
-					rectDestX = event.getRelativeX(wrapper.getElement());
-					rectDestY = event.getRelativeY(wrapper.getElement());
+					selectionDestination = getProjectedPoint(event.getRelativeX(wrapper.getElement()), event.getRelativeY(wrapper.getElement()));
 				}
 				drawRect();
 			}
@@ -93,7 +95,10 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 				if(event.getValue()) {
 					if(currentImageItem.pageNumber == 0) {
 						cropMode = true;
-						rectOriginX = rectOriginY = rectDestX = rectDestY = -1;
+
+						selectionOrigin = null;
+						selectionDestination = null;
+
 						image.getElement().getStyle().setCursor(Cursor.CROSSHAIR);
 						fitToViewport();
 					}else{
@@ -105,7 +110,10 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 								formatButtons();
 								fitToViewport();
 								cropMode = true;
-								rectOriginX = rectOriginY = rectDestX = rectDestY = -1;
+
+								selectionOrigin = null;
+								selectionDestination = null;
+
 								image.getElement().getStyle().setCursor(Cursor.CROSSHAIR);
 							}
 
@@ -118,7 +126,10 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 				}else{
 					cropMode = false;
 					cropping = false;
-					rectOriginX = rectOriginY = rectDestX = rectDestY = -1;
+
+					selectionOrigin = null;
+					selectionDestination = null;
+
 					drawRect();
 					rectangle.setVisible(false);
 					image.getElement().getStyle().setCursor(Cursor.MOVE);
@@ -131,57 +142,35 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 	}
 
 	protected void drawRect(){
-		if(cropMode && rectOriginX >= 0 && rectOriginY >= 0 && rectDestX >= 0 && rectDestY >= 0) {
-			int originX = rectOriginX < rectDestX ? rectOriginX : rectDestX;
-			originX = originX < (image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft()) ? (image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft()) : originX;
-			originX = originX > (image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft() + image.getOffsetWidth()) ? (image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft() + image.getOffsetWidth()) : originX;
+		if(cropMode && selectionOrigin != null && selectionDestination != null) {
 
-			int destX = rectOriginX > rectDestX ? rectOriginX : rectDestX;
-			destX = destX < (image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft()) ? (image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft()) : destX;
-			destX = destX > (image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft() + image.getOffsetWidth()) ? (image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft() + image.getOffsetWidth()) : destX;
+			Point2D normalizedOrigin = new Point2D();
+			normalizedOrigin.x = Math.min(selectionOrigin.x, selectionDestination.x);
+			normalizedOrigin.y = Math.min(selectionOrigin.y, selectionDestination.y);
 
-			int originY = rectOriginY < rectDestY ? rectOriginY : rectDestY;
-			originY = originY < (image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop()) ? (image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop()) : originY;
-			originY = originY > (image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop() + image.getOffsetHeight()) ? (image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop() + image.getOffsetHeight()) : originY;
+			Point2D normalizedDestination = new Point2D();
+			normalizedDestination.x = Math.max(selectionOrigin.x, selectionDestination.x);
+			normalizedDestination.y = Math.max(selectionOrigin.y, selectionDestination.y);
 
-			int destY = rectOriginY > rectDestY ? rectOriginY : rectDestY;
-			destY = destY < (image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop()) ? (image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop()) : destY;
-			destY = destY > (image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop() + image.getOffsetHeight()) ? (image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop() + image.getOffsetHeight()) : destY;			
+			Point2D scaledSelectionOrigin = getScaledPoint(normalizedOrigin);
+			Point2D scaledSelectionDestination = getScaledPoint(normalizedDestination);
 
-			int height = Math.abs(originY - destY);
-			height = height > image.getOffsetHeight() ? image.getOffsetHeight() : height;
+			int offsetX = image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft();
+			int offsetY = image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop();
 
-			int width = Math.abs(originX - destX);
-			width = width > image.getOffsetWidth() ? image.getOffsetWidth() : width;
-
-			this.rectangle.getElement().getStyle().setTop(originY, Unit.PX);
-			this.rectangle.getElement().getStyle().setLeft(originX, Unit.PX);
-			this.rectangle.setSize(width + "px", height + "px");
-
-			int xOffset = image.getAbsoluteLeft() - wrapper.getAbsoluteLeft();
-			int yOffset = image.getAbsoluteTop() - wrapper.getAbsoluteTop();
-			this.selection = projectToRealImageCoordinates(originX - xOffset, originY - yOffset, destX - xOffset, destY - yOffset);
+			this.rectangle.getElement().getStyle().setLeft(offsetX + scaledSelectionOrigin.x, Unit.PX);
+			this.rectangle.getElement().getStyle().setTop(offsetY + scaledSelectionOrigin.y, Unit.PX);
+			this.rectangle.setSize(Math.abs(scaledSelectionDestination.x - scaledSelectionOrigin.x) + "px",
+					Math.abs(scaledSelectionDestination.y - scaledSelectionOrigin.y) + "px");
 
 			if(!this.rectangle.isVisible()) {
 				this.rectangle.setVisible(true);
 			}
-		}else if(rectOriginX != -1 && rectOriginY != -1){
+		}else if(selectionOrigin != null){
 			this.rectangle.setVisible(false);
-			rectOriginX = rectOriginY = rectDestX = rectDestY = -1;
-			selection = null;
+			selectionOrigin = null;
+			selectionDestination = null;
 		}
-	}
-
-	private Rectangle projectToRealImageCoordinates(int originX, int originY,
-			int destX, int destY) {
-		Rectangle result = new Rectangle();
-
-		double scale = originalImageHeight / image.getOffsetHeight();
-		result.x1 = (int)(((double)originX) * scale);
-		result.x2 = (int)(((double)destX) * scale);
-		result.y1 = (int)(((double)originY) * scale);
-		result.y2 = (int)(((double)destY) * scale);
-		return result;
 	}
 
 	@Override
@@ -194,18 +183,53 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 	public void zoom(double scale, int viewpointX, int viewpointY) {
 		if(!cropMode){
 			super.zoom(scale, viewpointX, viewpointY);
+		}else{
+			drawRect();
 		}
 	}
 
 	public Rectangle getSelection(){
 		if(!this.rectangle.isVisible()){
-			this.selection = null;
+			return null;
 		}
-		return this.selection;
+
+		Rectangle result = new Rectangle();
+		result.x1 = Math.min(selectionOrigin.x, selectionDestination.x);
+		result.x2 = Math.max(selectionOrigin.x, selectionDestination.x);
+		result.y1 = Math.min(selectionOrigin.y, selectionDestination.y);
+		result.y2 = Math.max(selectionOrigin.y, selectionDestination.y);
+
+		return result;
 	}
 
 	public void showCutOption(boolean show) {
 		this.cropButton.setVisible(show);
 	}
-	
+
+	protected Point2D getProjectedPoint(int x, int y) {
+		Point2D scaledPoint = new Point2D();
+
+		int offsetX = image.getElement().getAbsoluteLeft() - wrapper.getElement().getAbsoluteLeft();
+		int offsetY = image.getElement().getAbsoluteTop() - wrapper.getElement().getAbsoluteTop();
+
+		scaledPoint.x = x < offsetX ? 0 : x > offsetX + image.getOffsetWidth() ? image.getOffsetWidth() : x - offsetX;
+		scaledPoint.y = y < offsetY ? 0 : y > offsetY + image.getOffsetHeight() ? image.getOffsetHeight() : y - offsetY;
+
+		double scale = originalImageHeight / image.getOffsetHeight();
+		Point2D result = new Point2D();
+		result.x = (int)(((double)scaledPoint.x) * scale);
+		result.y = (int)(((double)scaledPoint.y) * scale);
+
+		return result;
+	}
+
+	protected Point2D getScaledPoint(Point2D originalPoint) {
+		double scale = originalImageHeight / image.getOffsetHeight();
+		Point2D result = new Point2D();
+		result.x = (int)(((double)originalPoint.x) / scale);
+		result.y = (int)(((double)originalPoint.y) / scale);
+
+		return result;
+	}
+
 }

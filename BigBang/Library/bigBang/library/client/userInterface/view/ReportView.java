@@ -5,8 +5,10 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -37,6 +39,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	protected ParamReportPanel paramPanel;
 	protected VerticalPanel sectionsContainer;
 	protected FlowPanel currentPanel;
+	protected Frame reportFrame;
 	private View panel;
 
 	public ReportView(){
@@ -50,11 +53,20 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		VerticalPanel sectionsWrapper = new VerticalPanel();
 		sectionsWrapper.setSize("100%", "100%");
 		sectionsWrapper.setStyleName("emptyContainer");
-		
+
 		wrapper.add(sectionsWrapper);
 
 		ListHeader sectionsHeader = new ListHeader("Relatório");
 		sectionsWrapper.add(sectionsHeader);
+		sectionsHeader.setRightWidget(new Button("Imprimir", new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				fireAction(Action.PRINT_REPORT);
+			}
+		}));
+
+		reportFrame = new Frame();
 
 		sectionsContainer = new VerticalPanel();
 		sectionsContainer.setWidth("100%");
@@ -139,14 +151,14 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 				fireAction(Action.PRINT_SET_SELECTION_CHANGED);
 			}
 		});
-		
+
 	}
-	
+
 	@Override
 	public HasValueSelectables<PrintSet> getPrintSetPanel(){
 		return (PrintSetReportPanel)panel;
 	}
-	
+
 
 	@Override
 	public void createAndGoToReportTransactions(TransactionSet[] transactionSets) {
@@ -159,7 +171,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		}else{
 			navigationPanel.setHomeWidget(panel);
 		}
-	
+
 		((TransactionSetReportPanel)panel).addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -188,7 +200,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	public void clearReportSections() {
 		this.sectionsContainer.clear();
 	}
-	
+
 	@Override
 	public NavigationPanel getNavigationPanel(){
 		return navigationPanel;
@@ -201,7 +213,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		panel.setWidth("100%");
 		panel.getElement().setInnerHTML(section.htmlContent);
 		sectionsContainer.add(panel);
-		
+
 		currentPanel.getElement().getStyle().setMarginBottom(50, Unit.PX);
 	}
 
@@ -211,7 +223,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 			navigationPanel.navigateToFirst();
 		}
 	}
-	
+
 	@Override
 	public Button addVerb(String title){
 		Button newB = new Button(title);
@@ -219,11 +231,24 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		currentPanel.getElement().getStyle().setMarginBottom(0, Unit.PX);
 		currentPanel.getElement().getStyle().setDisplay(Display.INLINE);
 		currentPanel.add(newB);
-		
+
 		newB.getElement().getStyle().setMarginTop(10, Unit.PX);
 		newB.getElement().getStyle().setMarginRight(5, Unit.PX);
 		newB.getElement().getStyle().setMarginBottom(50, Unit.PX);
 
 		return newB;
 	}
+
+	@Override
+	public Element getPrintFrameContent() {
+		return getPrintFrameContent(reportFrame.getElement(), this.sectionsContainer.getElement());
+	}
+
+	public native Element getPrintFrameContent(Element element, Element content) /*-{
+		element.src = 'about:blank'; 
+		element.contentWindow.document.open('text/html', 'replace');
+		element.contentWindow.document.write(content);
+		element.contentWindow.document.close();
+		return element.contentDocument;
+	}-*/;
 }

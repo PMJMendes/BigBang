@@ -119,6 +119,15 @@ public class ImageHandlerPanel extends View {
 				showLoading(false);
 			}
 		});
+		image.addLoadHandler(new LoadHandler() {
+
+			@Override
+			public void onLoad(LoadEvent event) {
+				originalImageWidth = event.getRelativeElement().getOffsetWidth();
+				originalImageHeight = event.getRelativeElement().getOffsetHeight();
+				fitToViewport();
+			}
+		});
 		image.addMouseWheelHandler(new MouseWheelHandler() {
 
 			@Override
@@ -190,15 +199,6 @@ public class ImageHandlerPanel extends View {
 		}else{
 			showLoading(true);
 			image.setUrl(GWT.getModuleBaseURL() + FileService.GET_PREFIX + url);
-			image.addLoadHandler(new LoadHandler() {
-
-				@Override
-				public void onLoad(LoadEvent event) {
-					originalImageWidth = image.getWidth();
-					originalImageHeight = image.getHeight();
-					fitToViewport();
-				}
-			});
 		}
 	}
 

@@ -182,7 +182,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		focus();
 	}
 
-	private void focus() {
+	public void focus() {
 
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 

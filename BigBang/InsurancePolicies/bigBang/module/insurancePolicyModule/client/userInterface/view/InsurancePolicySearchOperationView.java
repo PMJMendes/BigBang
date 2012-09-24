@@ -223,6 +223,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		objectForm = new InsuredObjectForm();
 
 		VerticalPanel objectsPolicyContainer = new VerticalPanel();
+		objectsPolicyContainer.getElement().getStyle().setProperty("borderRight", "1px solid #688AA2");
 
 		policySelectButton = new PolicySelectButton(new InsurancePolicyStub());
 		objectsPolicyContainer.setSize("100%","100%");
@@ -623,5 +624,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void setSelectedObject(String id) {
 		objectsList.setSelected(id);
+	}
+
+	@Override
+	public void focusInsuredObjectForm() {
+		objectForm.focus();
 	}
 }

@@ -179,6 +179,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		HasClickHandlers getObjectDeleteButton();
 
 		void setSelectedObject(String id);
+
+		void focusInsuredObjectForm();
 	}
 
 	private InsurancePolicyBroker broker;
@@ -734,29 +736,38 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		if(id == null){
 			InsuredObject newInsuredObject = broker.createInsuredObject(policyId);
-			fillObject(newInsuredObject.id);
-			return;
-		}
+			newInsuredObject.unitIdentification = "Nova Unidade de Risco";
+			view.getInsuredObjectHeaderForm().setValue(newInsuredObject);
+			view.getCommonFieldsForm().setValue(broker.getContextForInsuredObject(policyId, newInsuredObject.id, getCurrentExerciseId()));
+			view.showObjectForm(true);
+			view.showPolicyForm(false);
+			view.dealWithObject(newInsuredObject);
+			if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
+				view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
+			}
+			view.focusInsuredObjectForm();
+		}else{
 
-		broker.getInsuredObject(policyId, id, new ResponseHandler<InsuredObject>() {
+			broker.getInsuredObject(policyId, id, new ResponseHandler<InsuredObject>() {
 
-			@Override
-			public void onResponse(InsuredObject response) {
-				view.getInsuredObjectHeaderForm().setValue(response);
-				view.getCommonFieldsForm().setValue(broker.getContextForInsuredObject(policyId, response.id, getCurrentExerciseId()));
-				view.showObjectForm(true);
-				view.showPolicyForm(false);
-				view.dealWithObject(response);
-				if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
-					view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
+				@Override
+				public void onResponse(InsuredObject response) {
+					view.getInsuredObjectHeaderForm().setValue(response);
+					view.getCommonFieldsForm().setValue(broker.getContextForInsuredObject(policyId, response.id, getCurrentExerciseId()));
+					view.showObjectForm(true);
+					view.showPolicyForm(false);
+					view.dealWithObject(response);
+					if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
+						view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
+					}
 				}
-			}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o objecto"), TYPE.ALERT_NOTIFICATION));					
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o objecto"), TYPE.ALERT_NOTIFICATION));					
+				}
+			});
+		}
 	}
 
 
