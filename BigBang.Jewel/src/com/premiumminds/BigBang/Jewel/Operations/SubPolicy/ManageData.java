@@ -13,6 +13,7 @@ import com.premiumminds.BigBang.Jewel.Data.SubPolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyObjectData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyValueData;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyObject;
@@ -154,7 +155,17 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrCoverages.length; i++ )
 					{
-						if ( mobjData.marrCoverages[i].mbNew )
+						if ( mobjData.marrCoverages[i].mbDeleted )
+						{
+							if ( mobjData.marrCoverages[i].mid == null )
+								continue;
+							lobjCoverage = SubPolicyCoverage.GetInstance(Engine.getCurrentNameSpace(),
+									mobjData.marrCoverages[i].mid);
+							mobjData.marrCoverages[i].FromObject(lobjCoverage);
+							mobjData.marrCoverages[i].mobjPrevValues = null;
+							lobjCoverage.getDefinition().Delete(pdb, lobjCoverage.getKey());
+						}
+						else if ( mobjData.marrCoverages[i].mbNew )
 						{
 							mobjData.marrCoverages[i].midOwner = mobjData.mid;
 							lobjCoverage = SubPolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
