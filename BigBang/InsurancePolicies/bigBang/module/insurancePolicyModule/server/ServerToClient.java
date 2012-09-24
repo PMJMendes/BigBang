@@ -460,7 +460,7 @@ public class ServerToClient
 			FieldContents lobjAux;
 			int i;
 
-			if ( ((pidObject == null) == mbForObject) || ((pidExercise == null) == mbForExercise) )
+			if ( (mobjSubPolicy == null) || ((pidObject == null) == mbForObject) || ((pidExercise == null) == mbForExercise) )
 			{
 				mmapData = null;
 				return;
