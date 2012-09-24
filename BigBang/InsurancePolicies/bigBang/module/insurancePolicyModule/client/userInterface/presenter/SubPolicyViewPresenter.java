@@ -544,7 +544,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 	}
 
 	protected void onDeleteInsuredObject() {
-		view.dealWithObject(subPolicyBroker.removeInsuredObject(policyId, view.getInsuredObjectHeaderForm().getValue().id));
+		view.dealWithObject(subPolicyBroker.removeInsuredObject(subPolicyId, view.getInsuredObjectHeaderForm().getValue().id));
 		onSubPolicySelected();		
 	}
 
@@ -704,8 +704,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 			return;
 		}
 		if(!onPolicy){
-			subPolicyBroker.updateInsuredObject(policyId, view.getInsuredObjectHeaderForm().getInfo());
-			subPolicyBroker.saveContextForInsuredObject(policyId, 
+			subPolicyBroker.updateInsuredObject(subPolicyId, view.getInsuredObjectHeaderForm().getInfo());
+			subPolicyBroker.saveContextForInsuredObject(subPolicyId, 
 					view.getInsuredObjectHeaderForm().getValue().id, getCurrentExerciseId(), 
 					view.getCommonFieldsForm().getInfo());
 			view.dealWithObject(view.getInsuredObjectHeaderForm().getInfo());
@@ -799,7 +799,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 			@Override
 			public void onResponse(InsuredObject response) {
 				view.getInsuredObjectHeaderForm().setValue(response);
-				view.getCommonFieldsForm().setValue(subPolicyBroker.getContextForInsuredObject(policyId, response.id, getCurrentExerciseId()));
+				view.getCommonFieldsForm().setValue(subPolicyBroker.getContextForInsuredObject(subPolicyId, response.id, getCurrentExerciseId()));
 				view.showObjectForm(true);
 				view.showSubPolicyForm(false);
 				view.dealWithObject(response);
