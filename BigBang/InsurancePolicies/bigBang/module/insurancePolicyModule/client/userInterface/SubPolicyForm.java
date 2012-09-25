@@ -15,7 +15,12 @@ public class SubPolicyForm extends SubPolicyHeaderForm{
 	@Override
 	public void setValue(SubPolicy value) {
 		super.setValue(value);
+		if(value == null){
+			notesSection.clear();
+			return;
+		}
 		notesSection.setValue(value.notes);
+
 	}
 	
 	public SubPolicy getValue() {

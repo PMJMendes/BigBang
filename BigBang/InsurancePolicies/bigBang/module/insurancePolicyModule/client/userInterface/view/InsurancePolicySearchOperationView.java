@@ -28,7 +28,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.CoverageExerciseDetailsForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseSelector;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyChildrenPanel;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyHeaderForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
@@ -59,7 +59,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	protected HasWidgets childrenPresentersPanel;
 	private InsurancePolicyOperationsToolBar toolbar;
 	private InsuredObjectSearchPanel objectsList;
-	private InsurancePolicyForm policyForm;
+	private InsurancePolicyHeaderForm policyForm;
 	private InsuredObjectForm objectForm;
 	private ExerciseSelector exerciseChooser;
 	private CoverageExerciseDetailsForm detailsForm;
@@ -219,7 +219,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		HorizontalPanel formPanel = new HorizontalPanel();
 
-		policyForm = new InsurancePolicyForm();
+		policyForm = new InsurancePolicyHeaderForm();
 		objectForm = new InsuredObjectForm();
 
 		VerticalPanel objectsPolicyContainer = new VerticalPanel();
@@ -629,5 +629,15 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void focusInsuredObjectForm() {
 		objectForm.focus();
+	}
+
+	@Override
+	public void setNotesReadOnly(boolean b) {
+		policyNotesForm.setReadOnly(b);
+	}
+
+	@Override
+	public void clearObjectsList() {
+		objectsList.clear();
 	}
 }

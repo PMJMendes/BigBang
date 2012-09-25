@@ -519,4 +519,14 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	public HasClickHandlers getObjectDeleteButton() {
 		return objectForm.getDeleteButton();
 	}
+
+	@Override
+	public void setSubPolicyNotesReadOnly(boolean b) {
+		subPolicyNotesForm.setReadOnly(b);
+	}
+
+	@Override
+	public void focusInsuredObjectForm() {
+		objectForm.focus();
+	}
 }

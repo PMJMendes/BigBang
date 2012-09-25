@@ -169,6 +169,10 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 		void dealWithObject(InsuredObject info);
 
+		void setSubPolicyNotesReadOnly(boolean b);
+
+		void focusInsuredObjectForm();
+
 	}
 
 	protected Display view;
@@ -282,6 +286,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		view.showSubPolicyForm(true);
 		view.getSubPolicyNotesForm().setValue(pol.notes);
 		view.setSubPolicyEntrySelected(true);
+		view.setSubPolicyNotesReadOnly(true);
 		if(view.getExerciseSelector().getValue() != null && pol.exerciseData != null){
 			view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Apólice");	
 		}
@@ -787,7 +792,17 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 	private void fillObject(String id) {
 		if(id == null){
 			InsuredObject newInsuredObject = subPolicyBroker.createInsuredObject(subPolicyId);
-			fillObject(newInsuredObject.id);
+			newInsuredObject.unitIdentification = "Nova Unidade de Risco";
+			view.getInsuredObjectHeaderForm().setValue(newInsuredObject);
+			view.getCommonFieldsForm().setValue(subPolicyBroker.getContextForInsuredObject(subPolicyId, newInsuredObject.id, getCurrentExerciseId()));
+			view.showObjectForm(true);
+			view.showSubPolicyForm(false);
+			view.setSubPolicyNotesReadOnly(true);
+			view.dealWithObject(newInsuredObject);
+			if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
+				view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
+			}
+			view.focusInsuredObjectForm();
 			return;
 		}
 
@@ -800,6 +815,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 				view.showObjectForm(true);
 				view.showSubPolicyForm(false);
 				view.dealWithObject(response);
+				view.setSubPolicyNotesReadOnly(true);
 				if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
 					view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
 				}

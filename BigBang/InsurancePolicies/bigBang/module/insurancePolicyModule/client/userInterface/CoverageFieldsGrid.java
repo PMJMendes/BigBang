@@ -148,15 +148,13 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		boolean enable = false;
 
 		for(int i = 1; i<fields.length; i++){
-			if(fields[i][0].getValue() != null){
-				enable = !fields[i][0].getValue().equalsIgnoreCase("0");
-				enableExtraFields(i-1, enable);
-				for(int j = 2; j<fields[0].length; j++){
-					if(fields[i][j] != null){
-						fields[i][j].setReadOnly(readOnly || !enable);
-						if(!enable){
-							fields[i][j].clear();
-						}
+			enable = fields[i][0].getValue() == null ? false : !fields[i][0].getValue().equalsIgnoreCase("0");
+			enableExtraFields(i-1, enable);
+			for(int j = 2; j<fields[0].length; j++){
+				if(fields[i][j] != null){
+					fields[i][j].setReadOnly(readOnly || !enable);
+					if(!enable){
+						fields[i][j].clear();
 					}
 				}
 			}

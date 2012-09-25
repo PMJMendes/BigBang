@@ -40,7 +40,7 @@ public class InsuredObjectSubPolicySearchPanel extends SearchPanel<InsuredObject
 
 		public Entry(InsuredObjectStub object){
 			super(object);
-			setHeight("30px");
+			setHeight("25px");
 		}
 
 		public <I extends Object> void setInfo(I info){
@@ -59,10 +59,10 @@ public class InsuredObjectSubPolicySearchPanel extends SearchPanel<InsuredObject
 						getElement().getStyle().setBackgroundColor("yellow");
 						break;
 					case DELETED:
-						getElement().getStyle().setBackgroundColor("red");
+						getElement().getStyle().setBackgroundColor("#ff7e71");
 						break;
 					case MODIFIED:
-						getElement().getStyle().setBackgroundColor("green");
+						getElement().getStyle().setBackgroundColor("#a9ff63");
 						break;
 					}
 				}
@@ -83,7 +83,7 @@ public class InsuredObjectSubPolicySearchPanel extends SearchPanel<InsuredObject
 
 		Resources r = GWT.create(Resources.class);
 		createNew = new ToolButton(ButtonHelper.createButtonLabel(
-				AbstractImagePrototype.create(r.listNewIcon()), "Novo",
+				AbstractImagePrototype.create(r.listNewIcon()), "Nova Unidade de Risco",
 				ButtonLabelType.TEXT_ON_LEFT));
 
 		getHeaderWidget().insert(createNew, 0);

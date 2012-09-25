@@ -15,6 +15,10 @@ public class InsurancePolicyForm extends InsurancePolicyHeaderForm{
 	@Override
 	public void setValue(InsurancePolicy value) {
 		super.setValue(value);
+		if(value == null){
+			notesSection.clear();
+			return;
+		}
 		notesSection.setValue(value.notes);
 	}
 	

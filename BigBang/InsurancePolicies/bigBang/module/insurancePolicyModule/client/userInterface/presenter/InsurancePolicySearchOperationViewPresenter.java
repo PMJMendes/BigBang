@@ -181,6 +181,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void setSelectedObject(String id);
 
 		void focusInsuredObjectForm();
+
+		void setNotesReadOnly(boolean b);
+
+		void clearObjectsList();
 	}
 
 	private InsurancePolicyBroker broker;
@@ -564,7 +568,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.dealWithObject(view.getInsuredObjectHeaderForm().getInfo());
 		}
 		else{
-			broker.updatePolicyHeader(view.getPolicyHeaderForm().getInfo());
+			InsurancePolicy changedPolicy = view.getPolicyHeaderForm().getInfo();
+			changedPolicy.notes = view.getPolicyNotesForm().getValue();
+			broker.updatePolicyHeader(changedPolicy);
 			broker.saveContextForPolicy(policyId, 
 					getCurrentExerciseId(),
 					view.getCommonFieldsForm().getInfo());
@@ -741,6 +747,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.getCommonFieldsForm().setValue(broker.getContextForInsuredObject(policyId, newInsuredObject.id, getCurrentExerciseId()));
 			view.showObjectForm(true);
 			view.showPolicyForm(false);
+			view.setNotesReadOnly(true);
 			view.dealWithObject(newInsuredObject);
 			if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
 				view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
@@ -757,6 +764,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					view.showObjectForm(true);
 					view.showPolicyForm(false);
 					view.dealWithObject(response);
+					view.setNotesReadOnly(true);
 					if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
 						view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
 					}
@@ -789,6 +797,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.getPolicySelector().setValue(response);
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
+						view.clearObjectsList();
 						//PERMISSIONS
 						setPermissions(response);
 						fillPolicy();
@@ -869,6 +878,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.getCommonFieldsForm().setValue(broker.getContextForPolicy(policyId, getCurrentExerciseId()));
 		view.showObjectForm(false);
 		view.showPolicyForm(true);
+		view.setNotesReadOnly(false);
 		view.getPolicyNotesForm().setValue(pol.notes);
 		view.setPolicyEntrySelected(true);
 		if(view.getExerciseSelector().getValue() != null && pol.exerciseData != null){
