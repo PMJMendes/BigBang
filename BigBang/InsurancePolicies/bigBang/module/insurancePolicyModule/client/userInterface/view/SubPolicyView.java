@@ -529,4 +529,9 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	public void focusInsuredObjectForm() {
 		objectForm.focus();
 	}
+
+	@Override
+	public void clearObjectList() {
+		objectsList.clear();		
+	}
 }

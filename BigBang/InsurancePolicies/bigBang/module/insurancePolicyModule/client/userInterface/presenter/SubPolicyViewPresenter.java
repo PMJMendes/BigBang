@@ -173,6 +173,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 		void focusInsuredObjectForm();
 
+		void clearObjectList();
+
 	}
 
 	protected Display view;
@@ -228,6 +230,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 							setPermissions(response);
 							fillPolicy();
 							fillSubPolicy();
+							view.clearObjectList();
 							view.setReadOnly(false);
 							isEditModeEnabled = true;
 
@@ -672,7 +675,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onResponse(Void response) {
-
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Adesão validada com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
 			}
 
 			@Override
