@@ -44,6 +44,7 @@ import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -51,6 +52,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -962,6 +964,13 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	}
 
 	private void onValidationFailed(String message){
+//		ScrollPanel scrollable = new ScrollPanel();
+//		scrollable.setSize("100%", "350px");
+//		scrollable.getElement().getStyle().setOverflowX(Overflow.HIDDEN);
+//		scrollable.getElement().getStyle().setOverflowY(Overflow.SCROLL);
+//		scrollable.getElement().setInnerHTML("A apólice falhou a validação :<br><br>" + message);
+//		
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", scrollable.getElement().toString()), TYPE.ALERT_NOTIFICATION));
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice falhou a validação :<br><br>" + message), TYPE.ALERT_NOTIFICATION));
 	}
 

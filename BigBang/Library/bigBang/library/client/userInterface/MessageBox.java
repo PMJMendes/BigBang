@@ -1,0 +1,5 @@
+package bigBang.library.client.userInterface;
+
+public class MessageBox {
+
+}
