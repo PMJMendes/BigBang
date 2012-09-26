@@ -153,6 +153,8 @@ public class SubPolicyWorkSpace {
 	}
 
 	public InsuredObject loadExistingObject(String subPolicyId, InsuredObject object) {
+		InsuredObject newObject;
+
 		if ( !isSubPolicyLoaded(subPolicyId) )
 			return null;
 
@@ -163,41 +165,41 @@ public class SubPolicyWorkSpace {
 			}
 		}
 
-		InsuredObject newObject;
+		newObject = new InsuredObject(object);
+		newObject.change = InsuredObjectStub.Change.NONE;
+		if ( subPolicy.exerciseData != null )
+			newObject.exerciseData[0].isActive = subPolicy.exerciseData[0].isActive;
 
 		try {
-			newObject = new InsuredObject(object);
 			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {subPolicy.headerFields, object.headerFields},
 					new boolean[] {true, false});
 		} catch (Exception e) {
 			return null;
 		}
 
-		newObject.change = InsuredObjectStub.Change.NONE;
-		if ( subPolicy.exerciseData != null )
-			newObject.exerciseData[0].isActive = subPolicy.exerciseData[0].isActive;
 		alteredObjects.add(newObject);
 
 		return newObject;
 	}
 
 	public InsuredObject createLocalObject(String subPolicyId) {
+		InsuredObject newObject;
+
 		if ( !isSubPolicyLoaded(subPolicyId) )
 			return null;
 
-		InsuredObject newObject;
+		newObject = new InsuredObject(subPolicy.emptyObject);
+		newObject.change = InsuredObjectStub.Change.CREATED;
+		newObject.id = idCounter+"";
+		idCounter++;
 
 		try {
-			newObject = new InsuredObject(subPolicy.emptyObject);
 			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {subPolicy.headerFields, newObject.headerFields},
 					new boolean[] {true, false});
 		} catch (Exception e) {
 			return null;
 		}
 
-		newObject.change = InsuredObjectStub.Change.CREATED;
-		newObject.id = idCounter+"";
-		idCounter++;
 		alteredObjects.add(newObject);
 
 		return newObject;

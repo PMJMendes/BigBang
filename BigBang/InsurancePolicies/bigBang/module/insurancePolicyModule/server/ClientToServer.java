@@ -599,6 +599,9 @@ public class ClientToServer
 		{
 			UUID lidObject;
 
+			if ( InsuredObjectStub.Change.NONE.equals(pobjObject.change) )
+				return null;
+
 			try
 			{
 				lidObject = UUID.fromString(pobjObject.id);
@@ -621,6 +624,9 @@ public class ClientToServer
 			throws BigBangException
 		{
 			UUID lidObject;
+
+			if ( InsuredObjectStub.Change.NONE.equals(pobjObject.change) )
+				return null;
 
 			try
 			{

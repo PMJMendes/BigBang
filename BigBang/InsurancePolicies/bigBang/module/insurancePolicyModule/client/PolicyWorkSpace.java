@@ -130,13 +130,12 @@ public class PolicyWorkSpace {
 
 		if((policy.exerciseData != null) && (policy.exerciseData.length > 0) && !policy.exerciseData[0].isActive) {
 			policy.exerciseData[0].isActive = true;
-			policy.exerciseData[0].id = NEWID;
-
+			policy.emptyObject.exerciseData[0].isActive = true;
 			for ( InsuredObject object : alteredObjects )
 				object.exerciseData[0].isActive = true;
-					policy.emptyObject.exerciseData[0].isActive = true;
 
-					return policy.exerciseData[0];
+			policy.exerciseData[0].id = NEWID;
+			return policy.exerciseData[0];
 		} else {
 			return null;
 		}
@@ -188,6 +187,8 @@ public class PolicyWorkSpace {
 	}
 
 	public InsuredObject loadExistingObject(String policyId, InsuredObject object) {
+		InsuredObject newObject;
+
 		if ( !isPolicyLoaded(policyId) )
 			return null;
 
@@ -198,41 +199,41 @@ public class PolicyWorkSpace {
 			}
 		}
 
-		InsuredObject newObject;
+		newObject = new InsuredObject(object);
+		newObject.change = InsuredObjectStub.Change.NONE;
+		if ( policy.exerciseData != null )
+			newObject.exerciseData[0].isActive = policy.exerciseData[0].isActive;
 
 		try {
-			newObject = new InsuredObject(object);
 			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {policy.headerFields, object.headerFields},
 					new boolean[] {true, false});
 		} catch (Exception e) {
 			return null;
 		}
 
-		newObject.change = InsuredObjectStub.Change.NONE;
-		if ( policy.exerciseData != null )
-			newObject.exerciseData[0].isActive = policy.exerciseData[0].isActive;
 		alteredObjects.add(newObject);
 
 		return newObject;
 	}
 
 	public InsuredObject createLocalObject(String policyId) {
+		InsuredObject newObject;
+
 		if ( !isPolicyLoaded(policyId) )
 			return null;
 
-		InsuredObject newObject;
+		newObject = new InsuredObject(policy.emptyObject);
+		newObject.change = InsuredObjectStub.Change.CREATED;
+		newObject.id = idCounter+"";
+		idCounter++;
 
 		try {
-			newObject = new InsuredObject(policy.emptyObject);
 			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {policy.headerFields, newObject.headerFields},
 					new boolean[] {true, false});
 		} catch (Exception e) {
 			return null;
 		}
 
-		newObject.change = InsuredObjectStub.Change.CREATED;
-		newObject.id = idCounter+"";
-		idCounter++;
 		alteredObjects.add(newObject);
 
 		return newObject;
