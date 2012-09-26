@@ -117,12 +117,6 @@ public class ImageHandlerPanel extends View {
 			@Override
 			public void onLoad(LoadEvent event) {
 				showLoading(false);
-			}
-		});
-		image.addLoadHandler(new LoadHandler() {
-
-			@Override
-			public void onLoad(LoadEvent event) {
 				originalImageWidth = event.getRelativeElement().getOffsetWidth();
 				originalImageHeight = event.getRelativeElement().getOffsetHeight();
 				fitToViewport();

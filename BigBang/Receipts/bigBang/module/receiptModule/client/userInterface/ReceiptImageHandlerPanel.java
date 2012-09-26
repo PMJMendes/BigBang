@@ -215,7 +215,7 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 		scaledPoint.x = x < offsetX ? 0 : x > offsetX + image.getOffsetWidth() ? image.getOffsetWidth() : x - offsetX;
 		scaledPoint.y = y < offsetY ? 0 : y > offsetY + image.getOffsetHeight() ? image.getOffsetHeight() : y - offsetY;
 
-		double scale = originalImageHeight / image.getOffsetHeight();
+		double scale = (double)originalImageHeight / (double)image.getOffsetHeight();
 		Point2D result = new Point2D();
 		result.x = (int)(((double)scaledPoint.x) * scale);
 		result.y = (int)(((double)scaledPoint.y) * scale);
@@ -224,7 +224,7 @@ public class ReceiptImageHandlerPanel extends ImageHandlerPanel {
 	}
 
 	protected Point2D getScaledPoint(Point2D originalPoint) {
-		double scale = originalImageHeight / image.getOffsetHeight();
+		double scale = (double)originalImageHeight / (double)image.getOffsetHeight();
 		Point2D result = new Point2D();
 		result.x = (int)(((double)originalPoint.x) / scale);
 		result.y = (int)(((double)originalPoint.y) / scale);

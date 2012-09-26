@@ -5,10 +5,10 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -41,6 +41,8 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	protected FlowPanel currentPanel;
 	protected Frame reportFrame;
 	private View panel;
+	
+	protected Button printButton, exportExcelButton;
 
 	public ReportView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -58,15 +60,29 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 
 		ListHeader sectionsHeader = new ListHeader("Relatório");
 		sectionsWrapper.add(sectionsHeader);
-		sectionsHeader.setRightWidget(new Button("Imprimir", new ClickHandler() {
+		
+		this.printButton = new Button("Imprimir Relatório", new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 				fireAction(Action.PRINT_REPORT);
 			}
-		}));
+		});
+		this.exportExcelButton = new Button("Exportar para Excel", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				fireAction(Action.EXPORT_EXCEL);
+			}
+		});
+		HorizontalPanel buttonWrapper = new HorizontalPanel();
+		buttonWrapper.setSpacing(5);
+		buttonWrapper.add(exportExcelButton);
+		buttonWrapper.add(printButton);
+		sectionsHeader.setRightWidget(buttonWrapper);
 
 		reportFrame = new Frame();
+		reportFrame.setVisible(false);
 
 		sectionsContainer = new VerticalPanel();
 		sectionsContainer.setWidth("100%");
@@ -78,6 +94,8 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 
 		sectionsWrapper.add(scrollPanel);
 		sectionsWrapper.setCellHeight(scrollPanel, "100%");
+		
+		clearReportSections();
 	}
 
 	@Override
@@ -199,6 +217,8 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	@Override
 	public void clearReportSections() {
 		this.sectionsContainer.clear();
+		this.sectionsContainer.add(this.reportFrame);
+		this.sectionsContainer.setCellHeight(this.reportFrame, "100%");
 	}
 
 	@Override
@@ -227,7 +247,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	@Override
 	public Button addVerb(String title){
 		Button newB = new Button(title);
-		newB.setWidth("120px");
+		newB.setWidth("150px");
 		currentPanel.getElement().getStyle().setMarginBottom(0, Unit.PX);
 		currentPanel.getElement().getStyle().setDisplay(Display.INLINE);
 		currentPanel.add(newB);
@@ -240,15 +260,17 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	}
 
 	@Override
-	public Element getPrintFrameContent() {
-		return getPrintFrameContent(reportFrame.getElement(), this.sectionsContainer.getElement());
+	public Frame getPrintFrame() {
+		return this.reportFrame;
 	}
 
-	public native Element getPrintFrameContent(Element element, Element content) /*-{
-		element.src = 'about:blank'; 
-		element.contentWindow.document.open('text/html', 'replace');
-		element.contentWindow.document.write(content);
-		element.contentWindow.document.close();
-		return element.contentDocument;
-	}-*/;
+	@Override
+	public void allowPrintReport(boolean allow) {
+		this.printButton.setEnabled(allow);
+	}
+
+	@Override
+	public void allowExportExcel(boolean allow) {
+		this.exportExcelButton.setEnabled(allow);
+	}
 }

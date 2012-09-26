@@ -369,5 +369,14 @@ TypifiedListClient {
 		this.typifiedListBroker = broker;
 		this.managementPanel.setTypifiedDataBroker(broker);
 	}
+	
+	@Override
+	public String getValue() {
+		String superValue = super.getValue();
+		if(superValue == null || superValue.isEmpty()) {
+			return this.selectedValueId;
+		}
+		return superValue;
+	}
 
 }

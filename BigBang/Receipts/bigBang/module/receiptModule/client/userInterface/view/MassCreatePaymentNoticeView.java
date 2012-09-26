@@ -183,9 +183,6 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 			filtersPanel.setFilterValue(Filters.MANAGER, value);
 		}
 
-		public void setFilterOpen(boolean b) {
-			filterDropContainer.setOpen(b);
-		}
 	}
 
 	@Override
@@ -393,11 +390,5 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 		searchPanel.setManagerFilterValue(value);
 		searchPanel.doSearch();
 	}
-
-	@Override
-	public void setFilterPanelOpen(boolean b) {
-		searchPanel.setFilterOpen(b);
-	}
-
 
 }

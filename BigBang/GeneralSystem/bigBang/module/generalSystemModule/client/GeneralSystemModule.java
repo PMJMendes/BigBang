@@ -147,18 +147,16 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
-		//EXPANDABLE PANELS
-				MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.CLIENT, new ExpandableSelectionManagementPanelInstantiator() {
-					
-					@Override
-					public ExpandableSelectionFormFieldPanel getInstance() {
-						ClientSelectionView view = (ClientSelectionView) GWT.create(ClientSelectionView.class);
-						ClientSelectionViewPresenter presenter = new ClientSelectionViewPresenter(view);
-						presenter.go();
-						return presenter;
-					}
-				});
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.CLIENT, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				ClientSelectionView view = (ClientSelectionView) GWT.create(ClientSelectionView.class);
+				ClientSelectionViewPresenter presenter = new ClientSelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
 	}
 
 	protected void initializeProcess(){

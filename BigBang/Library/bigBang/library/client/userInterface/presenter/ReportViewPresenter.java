@@ -8,7 +8,6 @@ import bigBang.definitions.shared.Report;
 import bigBang.definitions.shared.Report.Section;
 import bigBang.definitions.shared.Report.Section.Verb;
 import bigBang.definitions.shared.ReportItem;
-import bigBang.definitions.shared.ReportItem.ItemType;
 import bigBang.definitions.shared.ReportParam;
 import bigBang.definitions.shared.TransactionSet;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -27,14 +26,19 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.event.NavigationRequestEvent.Navigation;
 import bigBang.library.client.userInterface.NavigationPanel;
+import bigBang.library.interfaces.FileService;
 import bigBang.library.interfaces.ReportService;
 import bigBang.library.interfaces.ReportServiceAsync;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -45,7 +49,8 @@ public class ReportViewPresenter implements ViewPresenter {
 		GENERATE_REPORT, 
 		PRINT_SET_SELECTION_CHANGED, 
 		TRANSACTION_SET_SELECTION_CHANGED,
-		PRINT_REPORT
+		PRINT_REPORT,
+		EXPORT_EXCEL,
 	}
 
 	public static interface Display {
@@ -64,7 +69,10 @@ public class ReportViewPresenter implements ViewPresenter {
 		HasValueSelectables<PrintSet> getPrintSetPanel();
 		NavigationPanel getNavigationPanel();
 		Button addVerb(String title);
-		Element getPrintFrameContent();
+		Frame getPrintFrame();
+		
+		void allowPrintReport(boolean allow);
+		void allowExportExcel(boolean allow);
 	}
 
 	protected boolean bound;
@@ -74,6 +82,8 @@ public class ReportViewPresenter implements ViewPresenter {
 	protected ReportItem currentItem;
 	protected ClickHandler handler;
 	protected Map<Button, Verb> buttonMap;
+
+	protected String currentPrintFileId;
 
 	public ReportViewPresenter(Display view){
 		setView((UIObject)view);
@@ -126,36 +136,42 @@ public class ReportViewPresenter implements ViewPresenter {
 				case PRINT_REPORT:
 					printCurrentReport();
 					break;
+				case EXPORT_EXCEL:
+					exportCurrentReportExcel();
+					break;
 				}
 			}
 		});
-		
+
 		view.getNavigationPanel().navBar.addNavigationEventHandler(new NavigationRequestEventHandler() {
-			
+
 			@Override
 			public void onNavigationEvent(NavigationRequestEvent event) {
 				if(event.getNavigationCommand().equals(Navigation.PREVIOUS)){
+					view.getPrintFrame().setUrl("");
 					view.clearReportSections();
+					view.allowPrintReport(false);
+					view.allowExportExcel(false);
 				}
 			}
 		});
 
 		handler = new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				final Button temp = (Button) event.getSource();
 				temp.setText("A processar");
 				temp.setEnabled(false);
-				
+
 				service.RunVerb(buttonMap.get(temp).argument, new AsyncCallback<Void>() {
-					
+
 					@Override
 					public void onSuccess(Void result) {
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Operação executada com sucesso!"), TYPE.TRAY_NOTIFICATION));
 						temp.setText(buttonMap.get(temp).label);
 					}
-					
+
 					@Override
 					public void onFailure(Throwable caught) {
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível executar a operação."), TYPE.ALERT_NOTIFICATION));
@@ -165,7 +181,26 @@ public class ReportViewPresenter implements ViewPresenter {
 				});				
 			}
 		};
-		
+
+		view.getPrintFrame().addLoadHandler(new LoadHandler() {
+
+			@Override
+			public void onLoad(LoadEvent event) {
+				FileService.Util.getInstance().Discard(currentPrintFileId, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+					}
+				});
+				currentPrintFileId = null;
+				print();
+			}
+		});
+
 		this.bound = true;
 	}
 
@@ -180,13 +215,16 @@ public class ReportViewPresenter implements ViewPresenter {
 		if(!view.getPrintSetPanel().getSelected().isEmpty()){
 			onGenerateReport();
 		}
-		
+
 	}
 
 	protected void clearView() {
 		view.goHomeAndClear();
 		currentItem = null;
+		view.getPrintFrame().setUrl("");
 		view.clearReportSections();
+		view.allowPrintReport(false);
+		view.allowExportExcel(false);
 	}
 
 	protected void showProcessReports(String processTypeId){
@@ -373,8 +411,9 @@ public class ReportViewPresenter implements ViewPresenter {
 	}
 
 	protected void showReport(Report report){
+		view.getPrintFrame().setUrl("");
 		view.clearReportSections();
-		
+
 		for(Section section : report.sections) {
 			view.addReportSection(section);
 			for(Verb verb : section.verbs){
@@ -383,23 +422,86 @@ public class ReportViewPresenter implements ViewPresenter {
 				but.addClickHandler(handler);
 			}
 		}
+		view.allowPrintReport(true);
+		view.allowExportExcel(true);
 	}
 
 	protected void printCurrentReport(){
-		if(this.currentItem != null && this.currentItem.type != ItemType.CATEGORY ) {
-			Element content = view.getPrintFrameContent();
-			content.focus();
-			printElement(content);
-			
+		BigBangAsyncCallback<String> printGenerationCallback = new BigBangAsyncCallback<String>() {
+
+			@Override
+			public void onResponseSuccess(String result) {
+				currentPrintFileId = result;
+				Frame frame = ReportViewPresenter.this.view.getPrintFrame();
+				frame.setUrl(GWT.getModuleBaseURL() + "bbfile?fileref=" + result);
+			}
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				onPrintReportFailure();
+				super.onResponseFailure(caught);
+			}
+		};
+
+		switch(currentItem.type) {
+		case PARAM:
+			service.generateParamAsHTML(currentItem.id, view.getParameters(), printGenerationCallback);
+			break;
+		case PRINTSET:
+			service.generatePrintSetAsHTML(currentItem.id, view.getSelectedPrintSet().id, printGenerationCallback);
+			break;
+		case TRANSACTIONSET:
+			service.generateTransSetAsHTML(currentItem.id, view.getSelectedTransactionSet().id, printGenerationCallback);
+			break;
+		}
+	}
+	
+	protected void exportCurrentReportExcel(){
+		BigBangAsyncCallback<String> exportExcelCallback = new BigBangAsyncCallback<String>() {
+
+			@Override
+			public void onResponseSuccess(String result) {
+//				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode(GWT.getModuleBaseURL() + "bbfile?fileref=" + result)); 
+//				builder.sendRequest(requestData, callback)
+			}
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				onExportReportFailure();
+				super.onResponseFailure(caught);
+			}
+		};
+		switch(currentItem.type) {
+		case PARAM:
+			service.generateParamAsXL(currentItem.id, view.getParameters(), exportExcelCallback);
+			break;
+		case PRINTSET:
+			service.generatePrintSetAsXL(currentItem.id, view.getSelectedPrintSet().id, exportExcelCallback);
+			break;
+		case TRANSACTIONSET:
+			service.generateTransSetAsXL(currentItem.id, view.getSelectedTransactionSet().id, exportExcelCallback);
+			break;
 		}
 	}
 
-	public native void printElement(Element element) /*-{
-		element.print();
+	protected void print(){
+		print(view.getPrintFrame().getElement());
+	}
+
+	protected native void print(Element frame) /*-{
+		 frame = frame.contentWindow;
+         frame.focus();
+         frame.print();
 	}-*/;
-	
+
 	protected void onGenerateReportSuccess(){
 		//TODO
+	}
+
+	protected void onPrintReportFailure(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível imprimir o Relatório"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	protected void onExportReportFailure(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível exportar o Relatório"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	protected void onGenerateReportFailure(){

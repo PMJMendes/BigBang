@@ -44,6 +44,8 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 		HasValueSelectables<TaskStub> getTaskList();
 		HasWidgets getOperationViewContainer();
 		Widget asWidget();
+	
+		void refreshList();
 
 		void addTaskListEntry(TaskStub task);
 		void updateTaskListEntry(TaskStub task);
@@ -240,6 +242,7 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 					item.removeParameter("taskid");
 					NavigationHistoryManager.getInstance().go(item);
+					view.refreshList();
 					break;
 				}
 			}

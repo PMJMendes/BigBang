@@ -44,7 +44,7 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 
 	public void run() {
 		this.running = true;
-		updatePendingTasksCount();
+//		updatePendingTasksCount();
 		this.schedule(this.DELAY);
 	}
 
@@ -85,6 +85,7 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 		return;
 	}
 	
+	@SuppressWarnings("unused")
 	private void updatePendingTasksCount(){
 		this.broker.getPendingTasksCount(new ResponseHandler<Integer>() {
 
@@ -137,7 +138,7 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 			
 			@Override
 			public void onOperationWasExecuted(String operationId, String processId) {
-				updatePendingTasksCount();
+//				updatePendingTasksCount(); TODO
 			}
 		});
 	}

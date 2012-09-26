@@ -69,8 +69,6 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 				ActionInvokedEventHandler<Action> actionInvokedEventHandler);
 		void allowCreation(boolean b);
 		void setManagerFilterValue(String value);
-		void setFilterPanelOpen(boolean b);
-
 	}
 
 	public enum Action{
@@ -222,10 +220,7 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 		clearView();
 		showMassCreatePaymentNoticeScreen();
 		view.setManagerFilterValue(Session.getUserId());
-		view.setFilterPanelOpen(true);
 	}
-
-
 
 	private void showMassCreatePaymentNoticeScreen() {
 		checkUserPermission(new ResponseHandler<Boolean>() {

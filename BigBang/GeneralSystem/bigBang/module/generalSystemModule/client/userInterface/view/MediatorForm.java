@@ -44,8 +44,9 @@ public class MediatorForm extends FormView<Mediator> {
 	private NewExceptionSection newException;
 
 	private Collection<MediatorCategoryFormSection> categorySections;
-
 	protected Collection<MediatorExceptionSection> exceptionsSection;
+	
+	protected ResponseHandler<Category[]> currentCategoriesRequestHandler;
 
 	public MediatorForm() {
 		addSection("Informação geral");
@@ -204,15 +205,17 @@ public class MediatorForm extends FormView<Mediator> {
 
 		CoverageBroker coverageBroker = (CoverageBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.COVERAGE);
 
-		coverageBroker.getCategories(new ResponseHandler<Category[]>() {
+		this.currentCategoriesRequestHandler = new ResponseHandler<Category[]>() {
 
 			@Override
 			public void onResponse(Category[] response) {
-				for(Category cat : response) {
-					MediatorCategoryFormSection section = new MediatorCategoryFormSection(cat, values);
-					section.collapse();
-					addSection(section);
-					categorySections.add(section);
+				if(this == currentCategoriesRequestHandler){
+					for(Category cat : response) {
+						MediatorCategoryFormSection section = new MediatorCategoryFormSection(cat, values);
+						section.collapse();
+						addSection(section);
+						categorySections.add(section);
+					}
 				}
 			}
 
@@ -220,7 +223,9 @@ public class MediatorForm extends FormView<Mediator> {
 			public void onError(Collection<ResponseError> errors) {
 				return;
 			}
-		});
+		};
+
+		coverageBroker.getCategories(this.currentCategoriesRequestHandler);
 	}
 
 	protected void addException(MediatorException exception){

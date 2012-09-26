@@ -12,7 +12,6 @@ import bigBang.module.tasksModule.client.userInterface.TaskSearchPanel.Entry;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -44,7 +43,13 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 		SimplePanel tasksListWrapper = new SimplePanel();
 		tasksListWrapper.setSize("100%", "100%");
 
-		searchPanel = new TaskSearchPanel();
+		searchPanel = new TaskSearchPanel(){
+			@Override
+			protected void onAttach() {
+				super.onAttach();
+				doSearch();
+			}
+		};
 		searchPanel.setSize("100%", "100%");
 		tasksListWrapper.setWidget(searchPanel);
 
@@ -70,16 +75,6 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 		wrapper.add(splitPanel);
 		wrapper.setCellHeight(splitPanel, "100%");
 
-		this.addAttachHandler(new AttachEvent.Handler() {
-
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()){
-					searchPanel.doSearch();
-				}
-			}
-		});
-
 		sendTask = new Button("Enviar Tarefa");
 		users = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "");
 
@@ -104,6 +99,8 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 		});
 		
 		containerHeader.setRightWidget(panel);
+		
+		searchPanel.doSearch();
 	}
 
 	@Override
@@ -174,4 +171,10 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 	public String getSelectedUserId() {
 		return users.getValue();
 	}
+
+	@Override
+	public void refreshList() {
+		searchPanel.doSearch();
+	}
+	
 }

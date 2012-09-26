@@ -177,18 +177,15 @@ public class FiltersPanel extends View {
 
 	public void setFilterValue(Enum<?> id, Object value){
 		HasValue<?> v = this.filters.get(id);
-			if(v instanceof TextBoxFormField)
-				((TextBoxFormField)v).setValue((String)value);
-			
-			else if(v instanceof DatePickerFormField)
-				((DatePickerFormField)v).setValue((String)value);
-			
-			else if(v instanceof ExpandableListBoxFormField)
-				((ExpandableListBoxFormField)v).setValue((String)value);
-			
-			else if(v instanceof CheckBoxFormField)
-				((CheckBoxFormField)v).setValue((Boolean)value);
-		
+		if(v instanceof TextBoxFormField){
+			((TextBoxFormField)v).setValue((String)value);
+		}else if(v instanceof DatePickerFormField){
+			((DatePickerFormField)v).setValue((String)value);
+		}else if(v instanceof ExpandableListBoxFormField){
+			((ExpandableListBoxFormField)v).setValue((String)value);
+		}else if(v instanceof CheckBoxFormField){
+			((CheckBoxFormField)v).setValue((Boolean)value);
+		}
 	}
 
 	public SortOrder getSortingOrder(){
@@ -207,14 +204,14 @@ public class FiltersPanel extends View {
 
 	public void setFilterVisible(Enum<?> id, boolean b) {
 		FormField<?> field =  (FormField<?>) this.filters.get(id);
-		
+
 		field.setVisible(b);
-		
+
 	}
 
 	public boolean isFilterVisible(Enum<?> id) {
 		FormField<?> field =  (FormField<?>) this.filters.get(id);
-		
+
 		return field.isVisible();
 	}
 
