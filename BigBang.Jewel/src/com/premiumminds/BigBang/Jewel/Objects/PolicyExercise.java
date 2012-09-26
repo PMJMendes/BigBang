@@ -13,6 +13,14 @@ import Jewel.Engine.SysObjects.ObjectBase;
 public class PolicyExercise
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int LABEL     = 0;
+		public static int POLICY    = 1;
+		public static int STARTDATE = 2;
+		public static int ENDDATE   = 3;
+	}
+
     public static PolicyExercise GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
