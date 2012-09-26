@@ -1,7 +1,5 @@
 package bigBang.module.mainModule.client.notifications;
 
-import org.gwt.mosaic.ui.client.MessageBox;
-
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
 import bigBang.library.client.event.NewNotificationEvent;
@@ -9,6 +7,7 @@ import bigBang.library.client.event.NewNotificationEventHandler;
 import bigBang.library.client.resources.Resources;
 import bigBang.module.mainModule.client.userInterface.InfoPanel;
 import bigBang.module.mainModule.client.userInterface.InfoPanel.InfoPanelType;
+import bigBang.module.mainModule.client.userInterface.MessageBox;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
