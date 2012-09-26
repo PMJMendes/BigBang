@@ -13,6 +13,7 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
 import bigBang.definitions.shared.PrintSet;
 import bigBang.definitions.shared.Report;
 import bigBang.definitions.shared.ReportItem;
@@ -24,6 +25,8 @@ import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.ReportDef;
+import com.premiumminds.BigBang.Jewel.SysObjects.ExcelConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.PrintConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionSetBase;
@@ -33,6 +36,60 @@ public class ReportServiceImpl
 	implements ReportService
 {
 	private static final long serialVersionUID = 1L;
+
+	public static String reportToHTML(Report pobjReport)
+		throws BigBangException
+	{
+		String[] larrContent;
+		int i;
+		FileXfer lobjFile;
+		UUID lidAux;
+
+		larrContent = new String[pobjReport.sections.length];
+		for ( i = 0; i < pobjReport.sections.length; i++ )
+			larrContent[i] = pobjReport.sections[i].htmlContent;
+
+		try
+		{
+			lobjFile = HTMLConnector.buildHTML(larrContent);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+    	lidAux = UUID.randomUUID();
+    	FileServiceImpl.GetFileXferStorage().put(lidAux, lobjFile);
+
+		return lidAux.toString();
+	}
+
+	public static String reportToXL(Report pobjReport)
+		throws BigBangException
+	{
+		String[] larrContent;
+		int i;
+		FileXfer lobjFile;
+		UUID lidAux;
+
+		larrContent = new String[pobjReport.sections.length];
+		for ( i = 0; i < pobjReport.sections.length; i++ )
+			larrContent[i] = pobjReport.sections[i].htmlContent;
+
+		try
+		{
+			lobjFile = ExcelConnector.buildExcel(larrContent);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+    	lidAux = UUID.randomUUID();
+    	FileServiceImpl.GetFileXferStorage().put(lidAux, lobjFile);
+
+		return lidAux.toString();
+	}
 
 	public ReportItem[] getProcessItems(String objectTypeId)
 		throws SessionExpiredException, BigBangException
@@ -334,18 +391,22 @@ public class ReportServiceImpl
 		return lobjResult;
 	}
 
-	@Override
 	public String generateParamAsHTML(String itemId, String[] paramValues)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return reportToHTML(generateParamReport(itemId, paramValues));
 	}
 
-	@Override
 	public String generateParamAsXL(String itemId, String[] paramValues)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return reportToXL(generateParamReport(itemId, paramValues));
 	}
 
 	public Report generatePrintSetReport(String itemId, String printSetId)
@@ -374,7 +435,7 @@ public class ReportServiceImpl
 		lobjResult.sections = new Report.Section[] {new Report.Section()};
 		lobjResult.sections[0].htmlContent = lobjBuffer.toString();
 		lobjResult.sections[0].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
-		lobjResult.sections[0].verbs[0].label = "Imprimir";
+		lobjResult.sections[0].verbs[0].label = "Imprimir Documentos";
 		lobjResult.sections[0].verbs[0].argument = "P:" + printSetId;
 
 		return lobjResult;
@@ -383,19 +444,19 @@ public class ReportServiceImpl
 	public String generatePrintSetAsHTML(String itemId, String printSetId)
 		throws SessionExpiredException, BigBangException
 	{
-		Report lobjReport;
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
-		lobjReport = generatePrintSetReport(itemId, printSetId);
-
-		// TODO Auto-generated method stub
-		return null;
+		return reportToHTML(generatePrintSetReport(itemId, printSetId));
 	}
 
-	@Override
 	public String generatePrintSetAsXL(String itemId, String printSetId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return reportToXL(generatePrintSetReport(itemId, printSetId));
 	}
 
 	public Report generateTransactionSetReport(String itemId, String transactionSetId)
@@ -474,18 +535,22 @@ public class ReportServiceImpl
 		return lobjResult;
 	}
 
-	@Override
 	public String generateTransSetAsHTML(String itemId, String transactionSetId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return reportToHTML(generateTransactionSetReport(itemId, transactionSetId));
 	}
 
-	@Override
 	public String generateTransSetAsXL(String itemId, String transactionSetId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return reportToXL(generateTransactionSetReport(itemId, transactionSetId));
 	}
 
 	public void RunVerb(String argument)
