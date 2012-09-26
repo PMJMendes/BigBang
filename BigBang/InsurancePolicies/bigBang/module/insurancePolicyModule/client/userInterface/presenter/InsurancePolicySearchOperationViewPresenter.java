@@ -44,7 +44,6 @@ import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -52,7 +51,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -150,8 +148,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		HasValue<InsurancePolicyStub> getPolicySelector();
 
-		void setExerciseVisible(boolean b);
-
 		void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns);
 
 		void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages);
@@ -187,6 +183,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void setNotesReadOnly(boolean b);
 
 		void clearObjectsList();
+
+		void clearPolicyList();
 	}
 
 	private InsurancePolicyBroker broker;
@@ -800,6 +798,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
 						view.clearObjectsList();
+						view.clearPolicyList();
 						//PERMISSIONS
 						setPermissions(response);
 						fillPolicy();
@@ -846,13 +845,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	protected void setExercises(ExerciseData[] exerciseData) {
 
 		if(exerciseData == null){
-			view.setExerciseVisible(false);
+			view.setAvailableExercises(new ExerciseData[0]);
 			view.getExerciseForm().setValue(null);
 			view.getExerciseSelector().setValue(null);
 			return;
 		}
-
-		view.setExerciseVisible(true);
 
 		int start = exerciseData[0].isActive ? 0 : 1; //FIRST ONE IS THE NEW ONE 
 

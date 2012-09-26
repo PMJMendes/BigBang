@@ -214,63 +214,55 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		policyId = parameterHolder.getParameter("policyId");
 
 		if(subPolicyId != null){
-			if(policyId != null){
-				if(subPolicyId.equals("new")){
-					subPolicyBroker.getEmptySubPolicy(policyId, new ResponseHandler<SubPolicy>() {
+			if(subPolicyId.equals("new")){
+				subPolicyBroker.getEmptySubPolicy(policyId, new ResponseHandler<SubPolicy>() {
+					@Override
+					public void onResponse(SubPolicy response) {
 
-						@Override
-						public void onResponse(SubPolicy response) {
-							
-							isEditModeEnabled = false;
-							onPolicy = true;
-							view.setToolbarEditMode(true);
-							view.getSubPolicySelector().setValue(response);
-							view.setHeaders(response.coverages, response.columns);
-							setExercises(response.exerciseData);
-							setPermissions(response);
-							fillPolicy();
-							fillSubPolicy();
-							view.clearObjectList();
-							view.setReadOnly(false);
-							isEditModeEnabled = true;
+						isEditModeEnabled = false;
+						onPolicy = true;
+						view.setToolbarEditMode(true);
+						view.getSubPolicySelector().setValue(response);
+						view.setHeaders(response.coverages, response.columns);
+						setExercises(response.exerciseData);
+						setPermissions(response);
+						fillPolicy();
+						fillSubPolicy();
+						view.clearObjectList();
+						view.setReadOnly(false);
+						isEditModeEnabled = true;
+					}
 
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							subPolicyGetError();
-						}
-					});
-				}
-				else{
-					subPolicyBroker.getSubPolicy(subPolicyId, new ResponseHandler<SubPolicy>() {
-
-						@Override
-						public void onResponse(SubPolicy response) {
-
-							isEditModeEnabled = false;
-							onPolicy = true;
-							view.setOwner(response.id);
-							view.setToolbarEditMode(false);
-							view.getSubPolicySelector().setValue(response);
-							view.setHeaders(response.coverages, response.columns);
-							setExercises(response.exerciseData);
-							setPermissions(response);
-							fillPolicy();
-							fillSubPolicy();
-							view.setReadOnly(true);
-
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							subPolicyGetError();
-						}
-					});
-				}
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						subPolicyGetError();
+					}
+				});
 			}
 			else{
-				policyGetError();
+				subPolicyBroker.getSubPolicy(subPolicyId, new ResponseHandler<SubPolicy>() {
+
+					@Override
+					public void onResponse(SubPolicy response) {
+						policyId = response.mainPolicyId;
+						isEditModeEnabled = false;
+						onPolicy = true;
+						view.setOwner(response.id);
+						view.setToolbarEditMode(false);
+						view.getSubPolicySelector().setValue(response);
+						view.setHeaders(response.coverages, response.columns);
+						setExercises(response.exerciseData);
+						setPermissions(response);
+						fillPolicy();
+						fillSubPolicy();
+						view.setReadOnly(true);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						subPolicyGetError();
+					}
+				});
 			}
 		}
 		else{
@@ -439,7 +431,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		view.getExerciseSelector().addValueChangeHandler(new ValueChangeHandler<String>() {
 
 			@Override
@@ -545,7 +537,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 		//APPLICATION-WIDE EVENTS
 		this.bound = true;
-		
+
 	}
 
 	protected void onDeleteInsuredObject() {
@@ -559,7 +551,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		navItem.setParameter("historyownerid", subPolicyId);
 		navItem.setParameter("historyItemId", selectedValue.id);
 		NavigationHistoryManager.getInstance().go(navItem);
-		
+
 	}
 
 	protected void showSubProcess(BigBangProcess selectedValue) {
@@ -615,7 +607,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		navItem.setParameter("contactid", selectedValue.id);
 		navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.INSURANCE_POLICY);
 		NavigationHistoryManager.getInstance().go(navItem);
-		
+
 	}
 
 	protected void onObjectSelected(InsuredObjectStub stub) {

@@ -69,8 +69,8 @@ public class FileImportFormViewSection extends FormViewSection {
 		form.setAction(action);
 		form.add(fileUpload);
 
-		addFormField(fileFormat, false);
-		addWidget(form, false);
+		addFormField(fileFormat);
+		addWidget(form);
 		uploadButton = new Button("Importar");
 		addWidget(uploadButton);
 

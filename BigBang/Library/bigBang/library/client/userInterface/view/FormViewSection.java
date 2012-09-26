@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import bigBang.library.client.FormField;
 
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
@@ -94,7 +95,7 @@ public class FormViewSection extends View {
 			FlowPanel wrapper = new FlowPanel();
 			addWidget(wrapper);
 			if(inline){
-				wrapper.getElement().getStyle().setFloat(Float.LEFT);
+				wrapper.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 			}
 			wrapper.add(field);
 		}
@@ -144,7 +145,7 @@ public class FormViewSection extends View {
 
 	public void addWidget(Widget w, boolean inline) {
 		if(inline){
-			w.getElement().getStyle().setFloat(Float.LEFT);
+			w.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 		}
 		content.add(w);
 	}

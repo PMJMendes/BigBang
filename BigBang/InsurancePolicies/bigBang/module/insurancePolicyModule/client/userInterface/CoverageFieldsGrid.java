@@ -56,7 +56,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		ScrollPanel p = new ScrollPanel();
 		p.setWidget(grid);
 		p.getElement().getStyle().setOverflowY(Overflow.VISIBLE);
-		p.getElement().getStyle().setOverflowX(Overflow.SCROLL);
+		p.getElement().getStyle().setOverflowX(Overflow.AUTO);
 		p.getElement().getStyle().setMarginRight(20, Unit.PX);
 		this.setWidget(0, 0, p);
 		this.getElement().getStyle().setTableLayout(TableLayout.FIXED);
@@ -225,6 +225,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	@Override
 	public void setValue(FieldContainer.ColumnField[] value, boolean fireEvents) {
 		this.value = value;
+		
 		if(fields!=null){
 			clearContent();
 		}

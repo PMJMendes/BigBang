@@ -54,8 +54,14 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 
 		unregisterAllFormFields();
 		this.clear();
+		this.value = value;
 		
-		if(coverages == null || coverages.length == 0 || value.length == 0){
+		if(value == null || value.length == 0){
+			this.setVisible(false);
+			return;
+		}
+		
+		if(coverages == null || coverages.length == 0){
 			return;
 		}
 
@@ -63,7 +69,6 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 		int tempIndex = value[0].coverageIndex;
 		temp.setText(coverages[tempIndex].coverageName);
 		addWidget(temp, false);
-		this.value = value;
 		formFields = new GenericFormField[value.length];
 
 		for(int i = 0; i<formFields.length; i++){
@@ -101,9 +106,11 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 			formFields[i].setUnitsLabel(value[i].unitsLabel);
 			formFields[i].setEditable(!value[i].readOnly);
 			formFields[i].setReadOnly(this.readOnly);
-			addFormField(formFields[i], (i < formFields.length - 1 && value[i+1].coverageIndex == tempIndex));
+			addFormField(formFields[i], true);
 		}
 
+		this.setVisible(true);
+		
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}

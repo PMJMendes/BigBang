@@ -156,7 +156,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		addFormField(hasJudicial, false);
 		addFormField(insuredObject, true);
 		addFormField(insuredObjectName, true);
-		addFormField(belongsToPolicy, false);
+		addFormField(belongsToPolicy, true);
 		
 		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
 			

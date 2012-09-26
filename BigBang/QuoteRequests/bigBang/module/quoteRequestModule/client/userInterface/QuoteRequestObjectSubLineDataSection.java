@@ -107,7 +107,7 @@ public class QuoteRequestObjectSubLineDataSection extends CollapsibleFormViewSec
 			formField.setLabel(headerField.fieldName);
 			formField.setReadOnly(this.readOnly);
 			this.headerFields.put(headerField.fieldId, formField);
-			addFormField(formField, i < (headerFields.length - 1));
+			addFormField(formField, true);
 		}
 	}
 

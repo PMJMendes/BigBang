@@ -5,12 +5,14 @@ import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.library.client.userInterface.view.FormView;
+import bigBang.library.client.userInterface.view.FormViewSection;
 
 public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 
 	HeaderFieldsSection exerciseDetailsSection;
 	CoverageFieldsGrid table;
 	ExtraFieldsSection extraFieldsSection;
+	FormViewSection coveragesSection;
 
 	public CoverageExerciseDetailsForm(String sectionName) {
 		super();
@@ -18,6 +20,7 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		exerciseDetailsSection = new HeaderFieldsSection();
 		exerciseDetailsSection.setSize("100%", "100%");
 		addSection(exerciseDetailsSection);
+		coveragesSection = new FormViewSection("Coberturas");
 
 		table = new CoverageFieldsGrid(){
 
@@ -26,8 +29,8 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 				extraFieldsSection.enableFields(index, enable);
 			}
 		};
-		addSection("Coberturas");
-		addWidget(table);
+		addSection(coveragesSection);
+		coveragesSection.addWidget(table);
 
 		extraFieldsSection = new ExtraFieldsSection();
 		extraFieldsSection.setSize("100%", "100%");
@@ -61,6 +64,7 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 
 	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] columns){
 		table.setHeaders(coverages, columns);
+		coveragesSection.setVisible(!(coverages == null || coverages.length == 0));
 	}
 
 	public void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages) {

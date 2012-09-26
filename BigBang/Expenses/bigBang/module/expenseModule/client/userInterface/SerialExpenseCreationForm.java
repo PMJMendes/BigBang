@@ -190,7 +190,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 
 		addFormField(insuredObject, true);
 		addFormField(insuredObjectName, true);
-		addFormField(belongsToPolicy, false);
+		addFormField(belongsToPolicy, true);
 
 
 		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -227,7 +227,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 			}
 		});
 
-		addWidget(settlementPanel, false);
+		addWidget(settlementPanel);
 
 
 		notes = new TextAreaFormField();

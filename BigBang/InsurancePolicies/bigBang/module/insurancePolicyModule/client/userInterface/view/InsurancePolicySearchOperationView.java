@@ -526,12 +526,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 
 	@Override
-	public void setExerciseVisible(boolean b) {
-		exerciseChooser.setVisible(b);
-		detailsForm.setExerciseDetailsVisible(b);
-	}
-
-	@Override
 	public HasValue<String> getExerciseSelector() {
 		return exerciseChooser.getExerciseSelector();
 	}
@@ -639,5 +633,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void clearObjectsList() {
 		objectsList.clear();
+	}
+
+	@Override
+	public void clearPolicyList() {
+		searchPanel.clear();
 	}
 }

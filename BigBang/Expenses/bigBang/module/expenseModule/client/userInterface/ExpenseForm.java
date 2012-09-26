@@ -109,7 +109,7 @@ public class ExpenseForm extends FormView<Expense>{
 		
 		addFormField(insuredObject, true);
 		addFormField(insuredObjectName, true);
-		addFormField(belongsToPolicy, false);
+		addFormField(belongsToPolicy, true);
 		
 		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -148,7 +148,7 @@ public class ExpenseForm extends FormView<Expense>{
 		addFormFieldGroup(new FormField<?>[]{
 				value	
 		}, false);
-		addWidget(settlementPanel, false);
+		addWidget(settlementPanel);
 
 
 		notes = new TextAreaFormField();

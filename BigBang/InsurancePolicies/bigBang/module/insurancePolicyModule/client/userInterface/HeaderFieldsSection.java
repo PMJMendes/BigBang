@@ -47,10 +47,15 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 
 	@Override
 	public void setValue(HeaderField[] value, boolean fireEvents) {
-
+		
 		unregisterAllFormFields();
 		this.clear();
 		this.value = value;
+		
+		if(value == null || value.length == 0){
+			this.setVisible(false);
+			return;
+		}
 		
 		formFields = new GenericFormField[value.length];
 
@@ -86,6 +91,8 @@ public class HeaderFieldsSection extends FormViewSection implements HasValue<Hea
 			formFields[i].setReadOnly(this.readOnly);
 			addFormField(formFields[i], true);
 		}
+		
+		this.setVisible(true);
 
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);

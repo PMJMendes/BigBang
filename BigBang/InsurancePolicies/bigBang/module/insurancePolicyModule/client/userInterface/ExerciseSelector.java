@@ -110,6 +110,12 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
 	public void setAvailableExercises(ExerciseData[] availableExs){
 
+		if(availableExs == null || availableExs.length == 0){
+			this.setVisible(false);
+			clear();
+			return;
+		}
+		
 		exercises.clearValues();
 
 		for(int i = 0; i<availableExs.length; i++){
@@ -118,6 +124,7 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
 		exercises.removeItem(0);
 
+		this.setVisible(true);
 	}
 
 	public void addAvailableExercise(ExerciseData newExercise){
