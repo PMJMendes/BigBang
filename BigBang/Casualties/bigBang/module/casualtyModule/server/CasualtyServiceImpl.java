@@ -57,12 +57,23 @@ public class CasualtyServiceImpl
 		IProcess lobjProcess;
 		Client lobjClient;
 		Casualty lobjResult;
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSub;
+		String lstrCat;
+		String lstrObj;
 
+		lstrCat = null;
+		lstrObj = null;
 		try
 		{
 			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(), pidCasualty);
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjCasualty.GetProcessID());
 			lobjClient = (Client)lobjProcess.GetParent().GetData();
+			lobjSub = lobjCasualty.GetFirstSubCasualty();
+			if ( lobjSub != null )
+			{
+				lstrCat = lobjSub.GetSubLine().getLabel();
+				lstrObj = lobjSub.GetObjectName();
+			}
 		}
 		catch (Throwable e)
 		{
@@ -77,6 +88,8 @@ public class CasualtyServiceImpl
 		lobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
 		lobjResult.clientName = lobjClient.getLabel();
 		lobjResult.casualtyDate = ((Timestamp)lobjCasualty.getAt(2)).toString().substring(0, 10);
+		lobjResult.policyCategory = lstrCat;
+		lobjResult.insuredObject = lstrObj;
 		lobjResult.caseStudy = (Boolean)lobjCasualty.getAt(5);
 		lobjResult.isOpen = lobjProcess.IsRunning();
 		lobjResult.description = (String)lobjCasualty.getAt(3);
