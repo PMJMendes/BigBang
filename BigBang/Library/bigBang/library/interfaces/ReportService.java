@@ -37,8 +37,16 @@ public interface ReportService
 	ReportItem[] getSubItems(String itemId) throws SessionExpiredException, BigBangException;
 
 	Report generateParamReport(String itemId, String[] paramValues) throws SessionExpiredException, BigBangException; //If parameter is boolean, true = "1", false="0"
+	String generateParamAsHTML(String itemId, String[] paramValues) throws SessionExpiredException, BigBangException;
+	String generateParamAsXL(String itemId, String[] paramValues) throws SessionExpiredException, BigBangException;
+
 	Report generatePrintSetReport(String itemId, String printSetId) throws SessionExpiredException, BigBangException;
+	String generatePrintSetAsHTML(String itemId, String printSetId) throws SessionExpiredException, BigBangException;
+	String generatePrintSetAsXL(String itemId, String printSetId) throws SessionExpiredException, BigBangException;
+
 	Report generateTransactionSetReport(String itemId, String transactionSetId) throws SessionExpiredException, BigBangException;
+	String generateTransSetAsHTML(String itemId, String transactionSetId) throws SessionExpiredException, BigBangException;
+	String generateTransSetAsXL(String itemId, String transactionSetId) throws SessionExpiredException, BigBangException;
 
 	void RunVerb(String argument) throws SessionExpiredException, BigBangException;
 }

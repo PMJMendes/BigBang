@@ -334,6 +334,20 @@ public class ReportServiceImpl
 		return lobjResult;
 	}
 
+	@Override
+	public String generateParamAsHTML(String itemId, String[] paramValues)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String generateParamAsXL(String itemId, String[] paramValues)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public Report generatePrintSetReport(String itemId, String printSetId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -364,6 +378,24 @@ public class ReportServiceImpl
 		lobjResult.sections[0].verbs[0].argument = "P:" + printSetId;
 
 		return lobjResult;
+	}
+
+	public String generatePrintSetAsHTML(String itemId, String printSetId)
+		throws SessionExpiredException, BigBangException
+	{
+		Report lobjReport;
+
+		lobjReport = generatePrintSetReport(itemId, printSetId);
+
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String generatePrintSetAsXL(String itemId, String printSetId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public Report generateTransactionSetReport(String itemId, String transactionSetId)
@@ -440,6 +472,20 @@ public class ReportServiceImpl
 		}
 
 		return lobjResult;
+	}
+
+	@Override
+	public String generateTransSetAsHTML(String itemId, String transactionSetId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String generateTransSetAsXL(String itemId, String transactionSetId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public void RunVerb(String argument)
