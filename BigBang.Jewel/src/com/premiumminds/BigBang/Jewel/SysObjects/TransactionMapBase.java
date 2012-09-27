@@ -186,10 +186,10 @@ public abstract class TransactionMapBase
 		ReportBuilder.styleInnerContainer(lcell);
 		larrRows[1] = ReportBuilder.buildRow(new TD[] {lcell});
 
-		larrRows[2] = ReportBuilder.constructDualRow("Nº de Recibos", marrDetails.length, TypeDefGUIDs.T_Integer);
+		larrRows[2] = ReportBuilder.constructDualRow("Nº de Recibos", marrDetails.length, TypeDefGUIDs.T_Integer, false);
 
 		if ( isSettled() )
-			larrRows[3] = ReportBuilder.constructDualRow("Saldada em", getAt(I.SETTLEDON), TypeDefGUIDs.T_Date);
+			larrRows[3] = ReportBuilder.constructDualRow("Saldada em", getAt(I.SETTLEDON), TypeDefGUIDs.T_Date, false);
 
 		return larrRows;
 	}

@@ -212,15 +212,15 @@ public abstract class TransactionSetBase
 
 		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Gestão de Transacções");
 
-		larrRows[1] = ReportBuilder.constructDualRow("Tipo de Transacção", getTitle(), TypeDefGUIDs.T_String);
+		larrRows[1] = ReportBuilder.constructDualRow("Tipo de Transacção", getTitle(), TypeDefGUIDs.T_String, false);
 
-		larrRows[2] = ReportBuilder.constructDualRow("Nº de Transacções", marrMaps.length, TypeDefGUIDs.T_Integer);
+		larrRows[2] = ReportBuilder.constructDualRow("Nº de Transacções", marrMaps.length, TypeDefGUIDs.T_Integer, false);
 
-		larrRows[3] = ReportBuilder.constructDualRow("Nº de Recibos", getTotalCount(), TypeDefGUIDs.T_Integer);
+		larrRows[3] = ReportBuilder.constructDualRow("Nº de Recibos", getTotalCount(), TypeDefGUIDs.T_Integer, false);
 
-		larrRows[4] = ReportBuilder.constructDualRow("Gerado em", getAt(I.DATE), TypeDefGUIDs.T_Date);
+		larrRows[4] = ReportBuilder.constructDualRow("Gerado em", getAt(I.DATE), TypeDefGUIDs.T_Date, false);
 
-		larrRows[5] = ReportBuilder.constructDualRow("Gerado por", getUser().getDisplayName(), TypeDefGUIDs.T_String);
+		larrRows[5] = ReportBuilder.constructDualRow("Gerado por", getUser().getDisplayName(), TypeDefGUIDs.T_String, false);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);

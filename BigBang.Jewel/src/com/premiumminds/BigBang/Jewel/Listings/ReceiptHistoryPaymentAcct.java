@@ -203,17 +203,17 @@ public class ReceiptHistoryPaymentAcct
 
 		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Folha de Caixa");
 
-		larrRows[1] = ReportBuilder.constructDualRow("Data", Timestamp.valueOf(pstrHeader + " 00:00:00.0"), TypeDefGUIDs.T_Date);
+		larrRows[1] = ReportBuilder.constructDualRow("Data", Timestamp.valueOf(pstrHeader + " 00:00:00.0"), TypeDefGUIDs.T_Date, false);
 
-		larrRows[2] = ReportBuilder.constructDualRow("Nº de Seguradoras", plngMapSize, TypeDefGUIDs.T_Integer);
+		larrRows[2] = ReportBuilder.constructDualRow("Nº de Seguradoras", plngMapSize, TypeDefGUIDs.T_Integer, false);
 
-		larrRows[3] = ReportBuilder.constructDualRow("Nº de Recibos", parrReceipts.length, TypeDefGUIDs.T_Integer);
+		larrRows[3] = ReportBuilder.constructDualRow("Nº de Recibos", parrReceipts.length, TypeDefGUIDs.T_Integer, false);
 
-		larrRows[4] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotal, TypeDefGUIDs.T_Decimal);
+		larrRows[4] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[5] = ReportBuilder.constructDualRow("Total de Comissões", ldblTotalCom, TypeDefGUIDs.T_Decimal);
+		larrRows[5] = ReportBuilder.constructDualRow("Total de Comissões", ldblTotalCom, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[6] = ReportBuilder.constructDualRow("Total de Retrocessões", ldblTotalRetro, TypeDefGUIDs.T_Decimal);
+		larrRows[6] = ReportBuilder.constructDualRow("Total de Retrocessões", ldblTotalRetro, TypeDefGUIDs.T_Decimal, false);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);
@@ -420,7 +420,7 @@ public class ReceiptHistoryPaymentAcct
 		i = 1;
 		for ( String lstr: larrMap.keySet() )
 		{
-			larrRows[i] = ReportBuilder.constructDualRow(lstr, larrMap.get(lstr), TypeDefGUIDs.T_Decimal);
+			larrRows[i] = ReportBuilder.constructDualRow(lstr, larrMap.get(lstr), TypeDefGUIDs.T_Decimal, true);
 			i++;
 		}
 

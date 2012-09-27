@@ -127,7 +127,7 @@ public class ReportBuilder
 		return lrow;
 	}
 
-	public static TR constructDualRow(String pstrHeader, java.lang.Object pobjValue, UUID pidType)
+	public static TR constructDualRow(String pstrHeader, java.lang.Object pobjValue, UUID pidType, boolean pbRightAlign)
 	{
 		TD[] larrCells;
 		TR lrow;
@@ -137,6 +137,8 @@ public class ReportBuilder
 		styleCell(larrCells[0], true, false);
 		larrCells[1] = buildCell(pobjValue, pidType);
 		styleCell(larrCells[1], true, true);
+		if ( pbRightAlign )
+			larrCells[1].setAlign("right");
 		lrow = buildRow(larrCells);
 		styleRow(lrow, false);
 

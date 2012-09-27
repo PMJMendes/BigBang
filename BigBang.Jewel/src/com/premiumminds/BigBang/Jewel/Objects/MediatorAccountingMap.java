@@ -150,7 +150,7 @@ public class MediatorAccountingMap
 		larrRows[0] = larrAux[0];
 
 		larrRows[1] = ReportBuilder.constructDualRow("Agente",
-				Mediator.GetInstance(getNameSpace(), (UUID)getAt(TransactionMapBase.I.OWNER)).getLabel(), TypeDefGUIDs.T_String);
+				Mediator.GetInstance(getNameSpace(), (UUID)getAt(TransactionMapBase.I.OWNER)).getLabel(), TypeDefGUIDs.T_String, false);
 
 		for ( i = 1; i < larrAux.length; i++ )
 			larrRows[i + 1] = larrAux[i];
@@ -204,7 +204,7 @@ public class MediatorAccountingMap
 
 		larrRows = new TR[1];
 
-		larrRows[0] = ReportBuilder.constructDualRow("Total de Retrocessões", ldblTotal, TypeDefGUIDs.T_Decimal);
+		larrRows[0] = ReportBuilder.constructDualRow("Total de Retrocessões", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 
 		return larrRows;
 	}

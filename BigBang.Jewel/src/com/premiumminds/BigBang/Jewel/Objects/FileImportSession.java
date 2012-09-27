@@ -209,15 +209,15 @@ public class FileImportSession
 
 		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Importação de Ficheiro");
 
-		larrRows[1] = ReportBuilder.constructDualRow("Nome do Ficheiro", getLabel(), TypeDefGUIDs.T_String);
+		larrRows[1] = ReportBuilder.constructDualRow("Nome do Ficheiro", getLabel(), TypeDefGUIDs.T_String, false);
 
-		larrRows[2] = ReportBuilder.constructDualRow("Importado por", getUser().getDisplayName(), TypeDefGUIDs.T_String);
+		larrRows[2] = ReportBuilder.constructDualRow("Importado por", getUser().getDisplayName(), TypeDefGUIDs.T_String, false);
 
-		larrRows[3] = ReportBuilder.constructDualRow("Importado em", getAt(I.TIMESTAMP), TypeDefGUIDs.T_Date);
+		larrRows[3] = ReportBuilder.constructDualRow("Importado em", getAt(I.TIMESTAMP), TypeDefGUIDs.T_Date, false);
 
-		larrRows[4] = ReportBuilder.constructDualRow("Formato", getFormat(), TypeDefGUIDs.T_String);
+		larrRows[4] = ReportBuilder.constructDualRow("Formato", getFormat(), TypeDefGUIDs.T_String, false);
 
-		larrRows[4] = ReportBuilder.constructDualRow("Total de Linhas", plngCount, TypeDefGUIDs.T_Integer);
+		larrRows[4] = ReportBuilder.constructDualRow("Total de Linhas", plngCount, TypeDefGUIDs.T_Integer, false);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);

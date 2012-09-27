@@ -187,7 +187,7 @@ public class InsurerAccountingMap
 		larrRows[0] = larrAux[0];
 
 		larrRows[1] = ReportBuilder.constructDualRow("Seguradora",
-				Company.GetInstance(getNameSpace(), (UUID)getAt(TransactionMapBase.I.OWNER)).getLabel(), TypeDefGUIDs.T_String);
+				Company.GetInstance(getNameSpace(), (UUID)getAt(TransactionMapBase.I.OWNER)).getLabel(), TypeDefGUIDs.T_String, false);
 
 		for ( i = 1; i < l; i++ )
 			larrRows[i + 1] = larrAux[i];
@@ -280,25 +280,25 @@ public class InsurerAccountingMap
 
 		larrRows = new TR[10];
 
-		larrRows[0] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotalPremiums, TypeDefGUIDs.T_Decimal);
+		larrRows[0] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotalPremiums, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[1] = ReportBuilder.constructDualRow(" Dos quais, pagamentos directos", ldblDirectPremiums, TypeDefGUIDs.T_Decimal);
+		larrRows[1] = ReportBuilder.constructDualRow(" Dos quais, pagamentos directos", ldblDirectPremiums, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[2] = ReportBuilder.constructDualRow(" E, prémios a entregar", ldblPayablePremiums, TypeDefGUIDs.T_Decimal);
+		larrRows[2] = ReportBuilder.constructDualRow(" E, prémios a entregar", ldblPayablePremiums, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[3] = ReportBuilder.constructDualRow("Total de Comissões", ldblTotalComms, TypeDefGUIDs.T_Decimal);
+		larrRows[3] = ReportBuilder.constructDualRow("Total de Comissões", ldblTotalComms, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[4] = ReportBuilder.constructDualRow(" Das quais, comissões vida", ldblLifeComms, TypeDefGUIDs.T_Decimal);
+		larrRows[4] = ReportBuilder.constructDualRow(" Das quais, comissões vida", ldblLifeComms, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[5] = ReportBuilder.constructDualRow(" E, comissões não vida", ldblTaxableComms, TypeDefGUIDs.T_Decimal);
+		larrRows[5] = ReportBuilder.constructDualRow(" E, comissões não vida", ldblTaxableComms, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[6] = ReportBuilder.constructDualRow(lstrExtraText, ldblExtraValue, TypeDefGUIDs.T_Decimal);
+		larrRows[6] = ReportBuilder.constructDualRow(lstrExtraText, ldblExtraValue, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[7] = ReportBuilder.constructDualRow("Saldo Bruto", ldblPreTax, TypeDefGUIDs.T_Decimal);
+		larrRows[7] = ReportBuilder.constructDualRow("Saldo Bruto", ldblPreTax, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[8] = ReportBuilder.constructDualRow("Imposto de Selo", ldblTax, TypeDefGUIDs.T_Decimal);
+		larrRows[8] = ReportBuilder.constructDualRow("Imposto de Selo", ldblTax, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[9] = ReportBuilder.constructDualRow("Saldo Total", ldblTotal, TypeDefGUIDs.T_Decimal);
+		larrRows[9] = ReportBuilder.constructDualRow("Saldo Total", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 
 		return larrRows;
 	}
