@@ -240,6 +240,10 @@ public class FilterableList<T> extends SortableList<T> {
 
 	private String normalize(String str) {
 		
+		if(str == null){
+			return null;
+		}
+		
 		str = str.toUpperCase();
 		
 		char[] array = str.toCharArray();

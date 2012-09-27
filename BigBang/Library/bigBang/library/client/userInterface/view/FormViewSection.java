@@ -10,6 +10,7 @@ import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
@@ -185,6 +186,12 @@ public class FormViewSection extends View {
 				break;
 			}
 		}
+	}
+	
+	public void addLineBreak(){
+		HTML lineBreak = new HTML();
+		lineBreak.setHeight("0px");
+		addWidget(lineBreak);
 	}
 
 }

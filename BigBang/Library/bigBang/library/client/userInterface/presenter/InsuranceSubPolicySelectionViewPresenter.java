@@ -154,7 +154,7 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 
 	@Override
 	public String getValue() {
-		return view.getForm().getValue().id;
+		return view.getForm().getValue() != null ? view.getForm().getValue().id : null;
 	}
 
 	@Override

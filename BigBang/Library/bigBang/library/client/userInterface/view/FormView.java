@@ -24,6 +24,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -173,6 +174,10 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		this.currentSection.addWidget(w, inline);
 	}
 
+	public void addLineBreak(){
+		this.currentSection.addLineBreak();
+	}
+	
 	//Disables all the input fields in the form
 	public void setReadOnly(boolean readOnly) {
 		this.isReadOnly = readOnly;

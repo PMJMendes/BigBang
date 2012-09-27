@@ -113,7 +113,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		newPanel.setSpacing(5);
 		newPanel.setHeight("55px");
 
-		addWidget(newPanel);
+		addWidget(newPanel, true);
 
 		addSection("Apólice");
 		policyNumber = new TextBoxFormField("Número da apólice");
@@ -158,7 +158,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		});
 		policyNumberProblem.getElement().getStyle().setColor("RED");
 		buttonPanel.add(policyNumberProblem);
-		addWidget(buttonPanel, false);
+		addWidget(buttonPanel, true);
 		client = new TextBoxFormField("Cliente");
 		client.setFieldWidth("400px");
 		insurer = new TextBoxFormField("Seguradora");
@@ -167,10 +167,12 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		status.setFieldWidth("175px");
 		categoryLineSubline = new TextBoxFormField( "Categoria/Ramo/Modalidade");
 		categoryLineSubline.setFieldWidth("400px");
+		addLineBreak();
 		addFormField(categoryLineSubline, true);
-		addFormField(insurer, false);
+		addFormField(insurer, true);
+		addLineBreak();
 		addFormField(client, true);
-		addFormField(status, false);
+		addFormField(status, true);
 
 		addSection("Recibo");
 
@@ -227,8 +229,8 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		addFormField(salesPremium, true);
 		addFormField(commission, true);
 		addFormField(retro, true);
-		addFormField(fat, false);
-
+		addFormField(fat, true);
+		addLineBreak();
 		addFormField(bonusMalusOption, true);
 		addFormField(bonusMalusValue, true);
 
