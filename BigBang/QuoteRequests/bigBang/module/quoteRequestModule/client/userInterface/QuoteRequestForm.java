@@ -71,8 +71,9 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 		addFormFieldGroup(new FormField<?>[]{
 				inheritedMediator,
 				policiesMediator,
-				caseStudyFlag
-		}, false);
+		}, true);
+
+		addFormField(caseStudyFlag);
 
 		this.notesSection = new FormViewSection("Notas Internas");
 		this.notesSection.addFormField(notes);
@@ -141,7 +142,7 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 			}
 
 			number.setValue(info.processNumber);
-			
+
 			NavigationHistoryItem item = new NavigationHistoryItem();
 			item.setParameter("section", "client");
 			item.setStackParameter("display");
@@ -149,7 +150,7 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 			item.setParameter("clientid", info.clientId);
 			client.setValue(item);
 			client.setValueName("#" + info.clientNumber + " - " + info.clientName);
-			
+
 			status.setValue(info.isOpen ? "Aberta" : "Fechada");
 			manager.setValue(info.managerId);
 			inheritedMediator.setValue(info.inheritMediatorName);

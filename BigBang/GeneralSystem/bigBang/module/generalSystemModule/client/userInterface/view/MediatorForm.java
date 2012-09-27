@@ -148,7 +148,7 @@ public class MediatorForm extends FormView<Mediator> {
 		}
 
 		for(MediatorExceptionSection exception : exceptionsSection){
-			exception.removeFromParent();
+			removeSection(exception);
 		}
 
 		exceptionsSection.clear();
@@ -178,6 +178,11 @@ public class MediatorForm extends FormView<Mediator> {
 		}else if(profileId.equalsIgnoreCase(BigBangConstants.TypifiedListValues.MEDIATOR_COMMISSIONING_PROFILE.PERCENTAGE)){
 			this.commissionPercentage.setVisible(true);
 			newException.setVisible(!isReadOnly());
+		}else{
+			for(MediatorExceptionSection section : exceptionsSection){
+				removeSection(section);
+			}
+			exceptionsSection.clear();
 		}
 	}
 
@@ -264,7 +269,5 @@ public class MediatorForm extends FormView<Mediator> {
 			for(MediatorExceptionSection section : exceptionsSection){
 				section.removeButton.setVisible(!readOnly);
 			}
-		if(newException != null)
-			newException.setVisible(!readOnly);
 	}
 }

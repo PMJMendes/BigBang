@@ -130,7 +130,7 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 	}
 
 	public void enableFields(int index, boolean enable) {
-		if(value == null){
+		if(value == null || formFields == null){
 			return;
 		}
 		for(int i = 0; i<value.length; i++){
