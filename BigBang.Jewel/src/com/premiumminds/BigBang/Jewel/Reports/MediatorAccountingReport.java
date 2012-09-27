@@ -59,6 +59,7 @@ public class MediatorAccountingReport
 		SubPolicy lobjSubPolicy;
 		Client lobjClient;
 		int i;
+		BigDecimal ldblAux;
 
 		lobjMap = MediatorAccountingMap.GetInstance(Engine.getCurrentNameSpace(), midMap);
 		larrDetails = lobjMap.getCurrentDetails();
@@ -117,6 +118,8 @@ public class MediatorAccountingReport
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
+			ldblAux = lobjDetail.getRetrocession();
+
 			larrTables[i] = new String[7];
 			larrTables[i][0] = lobjClient.getLabel();
 			larrTables[i][1] = lobjReceipt.getLabel();
@@ -124,12 +127,13 @@ public class MediatorAccountingReport
 			larrTables[i][3] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][4] = lobjPolicy.GetSubLine().getDescription();
 			larrTables[i][5] = String.format("%,.2f", lobjDetail.getPremium());
-			larrTables[i][6] = String.format("%,.2f", lobjDetail.getRetrocession());
+			larrTables[i][6] = ( ldblAux == null ? "-" : String.format("%,.2f", lobjDetail.getRetrocession()) );
 
 			mlngCount++;
 			mdblTotalPremiums = mdblTotalPremiums.add(lobjDetail.getPremium());
 			mdblTotalComms = mdblTotalComms.add(lobjDetail.getCommission());
-			mdblTotalRetros = mdblTotalRetros.add(lobjDetail.getRetrocession());
+			if ( ldblAux != null )
+				mdblTotalRetros = mdblTotalRetros.add(ldblAux);
 		}
 
 		if ( lobjMediator.getHasRetention() )

@@ -70,7 +70,13 @@ public class InsurerAccountingMap
 	public void Initialize()
 		throws JewelEngineException
 	{
+		super.Initialize();
 		mobjDoc = null;
+	}
+
+	public UUID getParentType()
+	{
+		return Constants.ObjID_InsurerAccountingSet;
 	}
 
 	public UUID getSubObjectType()

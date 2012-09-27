@@ -32,6 +32,7 @@ public abstract class TransactionMapBase
 		public static int SETTLEDON = 2;
 	}
 
+	public abstract UUID getParentType();
 	public abstract UUID getSubObjectType();
 	public abstract DocOps generateDocOp(SQLServer pdb) throws BigBangJewelException;
 
@@ -44,7 +45,7 @@ public abstract class TransactionMapBase
 		try
 		{
 			mrefSet = (TransactionSetBase)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					getSubObjectType()), (UUID)getAt(0));
+					getParentType()), (UUID)getAt(0));
 		}
 		catch (Throwable e)
 		{

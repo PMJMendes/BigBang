@@ -59,6 +59,12 @@ public class MediatorAccountingMap
 	public void Initialize()
 		throws JewelEngineException
 	{
+		super.Initialize();
+	}
+
+	public UUID getParentType()
+	{
+		return Constants.ObjID_MediatorAccountingSet;
 	}
 
 	public UUID getSubObjectType()
