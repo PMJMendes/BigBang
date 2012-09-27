@@ -38,6 +38,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	private TextBoxFormField categoryLineSubline;
 	private TextBoxFormField status;
 	private final static Label policyNumberProblem = new Label("A apólice pretendida não existe");
+	private final static Label imageExistantLabel = new Label("O recibo já tem imagem definida");
 	protected ExpandableListBoxFormField type;
 	protected NumericTextBoxFormField totalPremium;
 	protected NumericTextBoxFormField salesPremium;
@@ -101,6 +102,8 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		newPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		newPanel.add(verifyReceiptNumber);
 		newPanel.add(newReceiptButton);
+		imageExistantLabel.getElement().getStyle().setColor("RED");
+		newPanel.add(imageExistantLabel);
 
 		newReceiptButton.addClickHandler(new ClickHandler() {
 
@@ -475,6 +478,10 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	public void showLabel(boolean b) {
 		policyNumberProblem.setVisible(b);
+	}
+
+	public void showImageAlreadyDefineWarning(boolean hasImage) {
+		imageExistantLabel.setVisible(hasImage);
 	}
 
 }

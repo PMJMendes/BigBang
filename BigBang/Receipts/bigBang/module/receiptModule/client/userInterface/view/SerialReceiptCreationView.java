@@ -58,8 +58,6 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 			}
 		});
 
-
-
 		listWrapper.setSize("100%", "100%");
 		receiptPanel = new ReceiptImagePanel();
 		receiptPanel.getNavigationPanel().navBar.setRightWidget(hasImageButton);
@@ -106,25 +104,23 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 			@Override
 			protected void onEnterKeyReceiptNumber() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.VERIFY_RECEIPT));		
-
 			}
 
 			@Override
 			protected void onEnterKeyPolicyNumber() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.VERIFY_POLICY));
-
 			}
 
 			@Override
 			protected void onClickNewReceipt() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.NEW_RECEIPT));
-
 			}
 
 			@Override
 			protected void onChangedReceiptNumber() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.CHANGED_RECEIPT_NUMBER));
 			}
+
 			@Override
 			protected void onChangedPolicyNumber() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.CHANGED_POLICY_NUMBER));
@@ -174,6 +170,7 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	@Override
 	public void clear() {
 		form.showLabel(false);
+		form.showImageAlreadyDefineWarning(false);
 		form.clearInfo();
 		form.setReceiptReadOnly(true);
 		toolbar.setEnabled(false);
@@ -205,19 +202,16 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	@Override
 	public void hideMarkAsEnable(boolean b) {
 		form.hideMarkAsEnable(b);
-
 	}
 
 	@Override
 	public void enableToolbar(boolean b) {
 		toolbar.setEnabled(b);
-
 	}
 
 	@Override
 	public void setReceiptReadOnly(boolean b) {
 		form.setReceiptReadOnly(b);
-
 	}
 
 	@Override
@@ -262,40 +256,34 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 
 	@Override
 	public void markReceipt(DocuShareItem currentItem) {
-
 		receiptPanel.markReceipt(currentItem.handle);
-
 	}
 
 	@Override
 	public String getPolicyNumber() {
-		
 		return form.getPolicyNumber();
-		
 	}
 
 	@Override
 	public void clearPolicy() {
-		
 		form.clearPolicy();
-		
 	}
 
 	@Override
 	public void setPolicyNumber(String policyNumber, boolean keepCursorPos) {
-		
 		form.setPolicyNumber(policyNumber, keepCursorPos);
-		
 	}
 
 	@Override
 	public void enableMarkReceipt(boolean b) {
-	
 		form.enableMarkAsInvalid(b);
 		form.isPolicyNumberProblem(b);
 		form.showLabel(b);
-			
-		
+	}
+
+	@Override
+	public void showImageAlreadyDefinedWarning(boolean hasImage) {
+		this.form.showImageAlreadyDefineWarning(hasImage);
 	}
 
 }

@@ -181,14 +181,14 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.EXECUTE, sendPaymentToMediator);
 
 		//DATA
-		receivePhysicalReceipt = new MenuItem("Associar Imagem", new Command() {
+		receivePhysicalReceipt = new MenuItem("Associar Imagem", new Command() { //TODO remove or add
 
 			@Override
 			public void execute() {
 				onReceivePhysicalReceipt();
 			}
 		});
-		addItem(SUB_MENU.DATA, receivePhysicalReceipt);
+//		addItem(SUB_MENU.DATA, receivePhysicalReceipt);
 		unnecessaryDASFlag = new MenuItem("Indicar DAS Desnecessária", new Command() {
 
 			@Override

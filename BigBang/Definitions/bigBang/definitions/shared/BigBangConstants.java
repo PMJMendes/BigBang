@@ -202,6 +202,7 @@ public class BigBangConstants {
 			public static final String CREATE_DAS_REQUEST = "4CAD549D-2903-4A42-9767-A01300C98B51";
 			public static final String NOT_PAID_INDICATION = "3323CA57-827F-4EE5-94B7-A01300CDD793";
 			public static final String RETURN_PAYMENT = "C0451D21-BE44-47D7-9745-A0B000FB7C49";
+			public static final String SET_ORIGINAL_IMAGE = "E99A9029-BBF0-4E76-AC49-A01300C4FB8C";
 			
 			
 			public static class PaymentType {

@@ -106,7 +106,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSuccess(String subLineId){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A criar Apólice..."), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A criar Apólice..."), TYPE.INFO_TRAY_NOTIFICATION));
 
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");

@@ -118,6 +118,8 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 		void enableMarkReceipt(boolean b);
 
+		void showImageAlreadyDefinedWarning(boolean hasImage);
+
 	}
 
 	public SerialReceiptCreationViewPresenter(Display view){
@@ -246,16 +248,11 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 					changedPolicyNumber();
 					break;
 				}
-
-
-
 			}
 
 		});
 
 		view.getNavigationPanel().registerNavigationStateChangedHandler(new NavigationStateChangedEventHandler() {
-
-
 
 			@Override
 			public void onNavigationStateChanged(NavigationStateChangedEvent event) {
@@ -283,8 +280,6 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			editingPolicy = false;
 		}
 	}
-
-
 
 	protected void changedReceiptNumber() {
 		if(editing){
@@ -330,8 +325,6 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	}
 
 	protected void onVerifyReceipt() {
-
-
 		editing = true;
 		view.setFocusOnPolicy();
 		final String receiptId = view.getReceiptNumber();
@@ -365,11 +358,8 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os recibos."), TYPE.ALERT_NOTIFICATION));				
 			}
 		});
-
-
-
-
 	}
+
 	protected void getReceipt(String id) {
 		receiptPolicyWrapper = new ReceiptPolicyWrapper();
 		receiptBroker.getReceipt(id, new ResponseHandler<Receipt>() {
@@ -377,6 +367,11 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			@Override
 			public void onResponse(Receipt response) {
 				receiptPolicyWrapper.receipt = response;
+				
+				boolean hasImage = !PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ReceiptProcess.SET_ORIGINAL_IMAGE);
+				view.setReceiptReadOnly(hasImage);
+				view.showImageAlreadyDefinedWarning(hasImage);
+				
 				getPolicy(response.policyId);
 			}
 
@@ -385,7 +380,6 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível mostrar o recibo."), TYPE.ALERT_NOTIFICATION));
 			}
 		});
-
 	}
 
 	protected void getPolicy(String id) {
