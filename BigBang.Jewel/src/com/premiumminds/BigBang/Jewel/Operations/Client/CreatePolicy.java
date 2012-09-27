@@ -115,7 +115,7 @@ public class CreatePolicy
 			if ( mobjData.mstrNumber == null )
 				mobjData.mstrNumber = GetTmpPolicyNumber();
 			if ( mobjData.midManager == null )
-				mobjData.midManager = Engine.getCurrentUser();
+				mobjData.midManager = GetProcess().GetManagerID();
 			if ( mobjData.midMediator == null )
 				mobjData.midMediator = (UUID)GetProcess().GetData().getAt(8);
 			mobjData.midStatus = Constants.StatusID_InProgress;
