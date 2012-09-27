@@ -77,6 +77,9 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 
 	void createSignatureRequest(SignatureRequest request,
 			ResponseHandler<Receipt> handler);
+	
+	public void massCreateSignatureRequest(String[] receiptIds, int replyLimit,
+			ResponseHandler<Void> responseHandler);
 
 	void setDASNotNecessary(String receiptId, ResponseHandler<Receipt> handler);
 
@@ -90,5 +93,5 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 			ResponseHandler<ImageItem> responseHandler);
 	
 	public void returnPayment(String receiptIdm, ResponseHandler<Receipt> handler);
-	
+
 }

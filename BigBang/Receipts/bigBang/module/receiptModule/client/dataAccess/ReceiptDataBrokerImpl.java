@@ -876,6 +876,27 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		});
 
 	}
+	
+	@Override
+	public void massCreateSignatureRequest(String[] receiptIds, int replyLimit,
+			final ResponseHandler<Void> handler) {
+		service.massCreateSignatureRequest(receiptIds, replyLimit, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CREATE_SIGNATURE_REQUEST, null));
+				handler.onResponse(null);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						"Cannot create Signature requests"
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
 
 	@Override
 	public void returnPayment(String receiptId,
@@ -886,7 +907,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			public void onResponseSuccess(Receipt result) {
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -906,15 +927,16 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			public void onResponseSuccess(ImageItem result) {
 				responseHandler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
-					"Cannot get the receipt image"
+						"Cannot get the receipt image"
 				});
 				super.onResponseFailure(caught);
 			}
 		});
 	}
+
 }
 

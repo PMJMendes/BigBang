@@ -34,18 +34,19 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 
-public class MassSendReceiptViewPresenter implements ViewPresenter{
+public class MassSignatureRequestViewPresenter implements ViewPresenter{
 
 	public interface Display{
 
-		void addReceiptToSendList(ReceiptStub value);
-		void removeReceiptFromSendList(String id);
+		void addReceiptToSelectedList(ReceiptStub value);
+		void removeReceiptFromSelectedList(String id);
 		HasCheckables getCheckableSelectedList();
 		HasEditableValue<Receipt> getReceiptForm();
-
+		
 		HasValueSelectables<ReceiptStub> getMainList();
 		HasValueSelectables<ReceiptStub> getSelectedList();
 		HasCheckables getCheckableMainList();
+		HasEditableValue<Integer> getSignatureRequestForm();
 
 		void refreshMainList();
 
@@ -53,16 +54,16 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 		void markForCheck(String id);
 		void markForUncheck(String id);
 
-		void removeAllReceiptsFromMarkList();
+		void removeAllReceiptsFromSelectedList();
 		Widget asWidget();
 		void registerActionHandler(
 				ActionInvokedEventHandler<Action> actionInvokedEventHandler);
-		void allowSend(boolean b);
+		void allowSignatureRequest(boolean b);
 
 	}
 
 	public enum Action{
-		SELECT_ALL, SEND_RECEIPTS, CLEAR
+		SELECT_ALL, REQUEST_SIGNATURE, CLEAR
 
 	}
 
@@ -70,7 +71,7 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 	private boolean bound = false;
 	protected ReceiptDataBroker broker;
 
-	public MassSendReceiptViewPresenter(Display view){
+	public MassSignatureRequestViewPresenter(Display view){
 		setView((UIObject) view);
 		broker = (ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
 	}
@@ -96,10 +97,10 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case CLEAR:
-					view.removeAllReceiptsFromMarkList();
+					view.removeAllReceiptsFromSelectedList();
 					break;
-				case SEND_RECEIPTS:
-					sendReceipts(view.getSelectedList().getAll());
+				case REQUEST_SIGNATURE:
+					markReceipts(view.getSelectedList().getAll());
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();
@@ -120,15 +121,14 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 
 				if(checkable.isChecked()){
 					view.markForCheck(id);
-					view.addReceiptToSendList(entry.getValue());
+					view.addReceiptToSelectedList(entry.getValue());
 				}else{
 					view.markForUncheck(id);
-					view.removeReceiptFromSendList(id);
+					view.removeReceiptFromSelectedList(id);
 				}
 
 			}
 		});
-
 		view.getCheckableSelectedList().addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
 
 			@Override
@@ -143,12 +143,11 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 					view.markForCheck(id);
 				}else{
 					view.markForUncheck(id);
-					view.removeReceiptFromSendList(id);
+					view.removeReceiptFromSelectedList(id);
 				}
 
 			}
 		});
-		
 		view.getMainList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@Override
@@ -175,8 +174,6 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 				
 			}
 		});
-		
-		
 		view.getSelectedList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@Override
@@ -211,21 +208,21 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
 		view.refreshMainList();
-		showMassSendReceiptScreen();
+		showMassMarkReceiptScreen();
 	}
 
 
 
-	private void showMassSendReceiptScreen() {
+	private void showMassMarkReceiptScreen() {
 		checkUserPermission(new ResponseHandler<Boolean>() {
 
 			@Override
 			public void onResponse(Boolean response) {
 				if(response){
-					view.allowSend(true);
+					view.allowSignatureRequest(true);
 					view.getReceiptForm().setValue(null);
 				}else{
-					view.allowSend(false);
+					view.allowSignatureRequest(false);
 					onUserLacksPermission();
 				}
 
@@ -244,13 +241,14 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 
 	private void clearView() {
 		view.getMainList().clearSelection();
-		view.removeAllReceiptsFromMarkList();
+		view.removeAllReceiptsFromSelectedList();
 		view.getReceiptForm().setValue(null);
+		view.getSignatureRequestForm().setValue(null);
 	}
 
-	public void sendReceipts(Collection<ValueSelectable<ReceiptStub>> collection){
+	public void markReceipts(Collection<ValueSelectable<ReceiptStub>> collection){
 		String[] receiptIds = new String[collection.size()];
-
+		
 		if(receiptIds.length == 0){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhum recibo seleccionado"), TYPE.ALERT_NOTIFICATION));				
 			return;
@@ -261,24 +259,26 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 			receiptIds[i] = r.getValue().id;
 			i++;
 		}
-
-		broker.sendReceipt(receiptIds, new ResponseHandler<Void>() {
+		
+		int replyLimit = view.getSignatureRequestForm().getInfo() == null ? -1 : view.getSignatureRequestForm().getInfo();
+		
+		broker.massCreateSignatureRequest(receiptIds, replyLimit, new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {
-				onSendReceiptSuccess();
+				onCreateSignatureRequestSuccess();
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onSendReceiptFailed();
+				onCreateSignatureRequestFailed();
 			}
 		});
 
 	}
 
 	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
-		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.RECEIPT, BigBangConstants.OperationIds.ReceiptProcess.SEND_RECEIPT, new ResponseHandler<Boolean>() {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.RECEIPT, BigBangConstants.OperationIds.ReceiptProcess.NOT_PAID_INDICATION, new ResponseHandler<Boolean>() {
 
 			@Override
 			public void onResponse(Boolean response) {
@@ -292,13 +292,13 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 		});
 	}
 
-	protected void onSendReceiptSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os Recibos foram Enviados com Sucesso"), TYPE.TRAY_NOTIFICATION));
+	protected void onCreateSignatureRequestSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os Pedidos de Assinatura foram Criados com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
 	
-	protected void onSendReceiptFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Enviar os Recibos"), TYPE.ALERT_NOTIFICATION));
+	protected void onCreateSignatureRequestFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Criar os Pedidos de Assinatura"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

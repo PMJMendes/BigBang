@@ -12,6 +12,10 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 
 	//EXECUTE
 	//internal
+	protected MenuItem lackOfPaymentFlag;
+	protected MenuItem enterPayment;
+	protected MenuItem returnPayment;
+
 	protected MenuItem transferToPolicy;
 	//
 	protected MenuItem validate;
@@ -30,9 +34,6 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	//DATA
 	protected MenuItem receivePhysicalReceipt;
 	protected MenuItem associateWithDebitNote;
-	protected MenuItem enterPayment;
-	protected MenuItem returnPayment;
-	protected MenuItem lackOfPaymentFlag;
 	protected MenuItem unnecessaryDASFlag;
 
 	//REQUESTS
@@ -78,6 +79,14 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, returnPayment);
+		lackOfPaymentFlag = new MenuItem("Indicar Falta de Pagamento", new Command() {
+
+			@Override
+			public void execute() {
+				onLackOfPaymentFlag();
+			}
+		});
+		addItem(SUB_MENU.EXECUTE, lackOfPaymentFlag);
 		returnToAgency = new MenuItem("Devolução à Seguradora", new Command() {
 
 			@Override
@@ -180,14 +189,6 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.DATA, receivePhysicalReceipt);
-		lackOfPaymentFlag = new MenuItem("Indicar Falta de Pagamento", new Command() {
-
-			@Override
-			public void execute() {
-				onLackOfPaymentFlag();
-			}
-		});
-		addItem(SUB_MENU.DATA, lackOfPaymentFlag);
 		unnecessaryDASFlag = new MenuItem("Indicar DAS Desnecessária", new Command() {
 
 			@Override

@@ -14,6 +14,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/receipt.png")
 	ImageResource massCreationIcon();
 	
+	@Source("images/signatureRequest.png")
+	ImageResource signatureRequestIcon();
+	
 	@Source("images/payment.png")
 	ImageResource paymentIcon();
 	
@@ -31,5 +34,5 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/generalTasks.png")
 	ImageResource generalTasksIcon();
-	
+
 }

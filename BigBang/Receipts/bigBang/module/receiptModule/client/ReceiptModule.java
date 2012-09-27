@@ -24,6 +24,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePay
 import bigBang.module.receiptModule.client.userInterface.presenter.MassInsurerAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptOperationsViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptAssociateWithDebitNoteViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturnViewPresenter;
@@ -49,6 +50,7 @@ import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentN
 import bigBang.module.receiptModule.client.userInterface.view.MassInsurerAccountingView;
 import bigBang.module.receiptModule.client.userInterface.view.MassSendReceiptView;
 import bigBang.module.receiptModule.client.userInterface.view.MassReturnToInsurerView;
+import bigBang.module.receiptModule.client.userInterface.view.MassSignatureRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptOperationsView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptAssociateWithDebitNoteView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptReturnView;
@@ -206,6 +208,14 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				MassReturnToInsurerView view = (MassReturnToInsurerView) GWT.create(MassReturnToInsurerView.class);
 				MassReturnToInsurerViewPresenter presenter = new MassReturnToInsurerViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_SIGNATURE_REQUEST", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MassSignatureRequestView view = (MassSignatureRequestView) GWT.create(MassSignatureRequestView.class);
+				MassSignatureRequestViewPresenter presenter = new MassSignatureRequestViewPresenter(view);
 				return presenter;
 			}
 		});

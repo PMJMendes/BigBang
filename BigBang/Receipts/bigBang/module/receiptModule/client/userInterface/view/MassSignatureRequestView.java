@@ -1,7 +1,7 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
-import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter.Action;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassSignatureRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassSignatureRequestViewPresenter.Action;
 
 import java.util.Collection;
 import java.util.Date;
@@ -40,6 +40,7 @@ import bigBang.library.client.userInterface.SelectedProcessesList;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptSearchDataBroker;
+import bigBang.module.receiptModule.client.userInterface.MassSignatureRequestForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
 import bigBang.module.receiptModule.shared.ModuleConstants;
@@ -47,7 +48,7 @@ import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
 
-public class MassSendReceiptView extends View implements MassSendReceiptViewPresenter.Display{
+public class MassSignatureRequestView extends View implements MassSignatureRequestViewPresenter.Display{
 
 	protected static enum Filters {
 		TYPES,
@@ -116,7 +117,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.SEND_RECEIPT);
+			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.CREATE_SIGNATURE_REQUEST);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 			doSearch();
@@ -186,9 +187,10 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 	protected SelectedReceiptsList selectedReceipts;
 	protected ReceiptForm receiptForm;
 	protected BigBangOperationsToolBar toolbar;
-	protected Button createPNotice, clearButton;
+	protected Button createSignatureRequestButton, clearButton;
+	protected FormView<Integer> signatureRequestForm;
 
-	public MassSendReceiptView(){
+	public MassSignatureRequestView(){
 
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
@@ -213,45 +215,31 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 		searchPanelWrapper.add(selectAllButton);
 		wrapper.addWest(searchPanelWrapper, 400);
 
-		createPNotice = new Button("Confirmar");
+		createSignatureRequestButton = new Button("Confirmar");
 
 		HorizontalPanel sendClearWrapper = new HorizontalPanel();
 		sendClearWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		sendClearWrapper.setHeight("100%");
-		sendClearWrapper.add(createPNotice);
-		createPNotice.addClickHandler(new ClickHandler() {
+		sendClearWrapper.add(createSignatureRequestButton);
+		createSignatureRequestButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.SEND_RECEIPTS));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.REQUEST_SIGNATURE));
 			}
 		});
 
 		receiptForm = new ReceiptForm();
 
-		FormView<Void> applyPaymentNoticeCreationForm = new FormView<Void>() {
-
-			@Override
-			public void setInfo(Void info) {
-				return;
-			}
-
-			@Override
-			public Void getInfo() {
-				return null;
-			}
-		};
-		
-		applyPaymentNoticeCreationForm.addSection("Recibos a Enviar");
-		
+		signatureRequestForm = new MassSignatureRequestForm();
 		
 		VerticalPanel selectedListWrapper = new VerticalPanel();
-		selectedListWrapper.add(new ListHeader("Marcaçao para Envio"));
+		selectedListWrapper.add(new ListHeader("Pedidos de Assinatura"));
 		selectedListWrapper.setSize("100%", "100%");
-		applyPaymentNoticeCreationForm.addWidget(sendClearWrapper);
-		selectedListWrapper.add(applyPaymentNoticeCreationForm.getNonScrollableContent());
-		applyPaymentNoticeCreationForm.getNonScrollableContent().setSize("100%", "40px");
-		selectedListWrapper.setCellWidth(applyPaymentNoticeCreationForm, "100%");
+		signatureRequestForm.addWidget(sendClearWrapper);
+		selectedListWrapper.add(signatureRequestForm.getNonScrollableContent());
+		signatureRequestForm.getNonScrollableContent().setSize("100%", "40px");
+		selectedListWrapper.setCellWidth(signatureRequestForm, "100%");
 		clearButton = new Button("Limpar");
 		sendClearWrapper.add(clearButton);
 		sendClearWrapper.setSpacing(5);
@@ -279,13 +267,13 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 	}
 
 	@Override 
-	public void addReceiptToSendList(ReceiptStub value) {
+	public void addReceiptToSelectedList(ReceiptStub value) {
 		this.selectedReceipts.addEntry(value);
 		searchPanel.markForCheck(value.id);
 	}
 
 	@Override
-	public void removeReceiptFromSendList(String id){
+	public void removeReceiptFromSelectedList(String id){
 		for(ValueSelectable<ReceiptStub> entry : this.selectedReceipts){
 			if(id.equalsIgnoreCase(entry.getValue().id)){
 				this.selectedReceipts.remove(entry);
@@ -322,9 +310,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 
 	@Override
 	public void refreshMainList() {
-
 		searchPanel.doSearch();
-
 	}
 
 	@Override
@@ -363,7 +349,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 	}
 
 	@Override
-	public void removeAllReceiptsFromMarkList() {
+	public void removeAllReceiptsFromSelectedList() {
 		while(!this.selectedReceipts.isEmpty()){
 			this.selectedReceipts.get(0).setChecked(false, true);
 		}
@@ -376,10 +362,15 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 	}
 
 	@Override
-	public void allowSend(boolean b) {
-		createPNotice.setEnabled(b);
+	public void allowSignatureRequest(boolean b) {
+		createSignatureRequestButton.setEnabled(b);
 		clearButton.setEnabled(b);
 		searchPanel.setCheckable(b);
+	}
+
+	@Override
+	public HasEditableValue<Integer> getSignatureRequestForm() {
+		return this.signatureRequestForm;
 	}
 
 }

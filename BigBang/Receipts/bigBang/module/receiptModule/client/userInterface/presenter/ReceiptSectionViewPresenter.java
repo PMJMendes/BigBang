@@ -27,6 +27,7 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 		MASS_SEND_RECEIPT_TO_CLIENT,
 		MASS_INSURER_ACCOUNTING,
 		MASS_AGENT_ACCOUNTING,
+		MASS_SIGNATURE_REQUEST,
 		REPORT,
 		MASS_RETURN_TO_INSURER,
 		MASS_CREATE_PAYMENT_NOTICE,
@@ -109,6 +110,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 					case MASS_INSURER_ACCOUNTING:
 						item.pushIntoStackParameter("display", "massinsureraccounting");
 						break;
+					case MASS_SIGNATURE_REQUEST:
+						item.pushIntoStackParameter("display", "masssignaturerequest");
+						break;
 					case MASS_SEND_RECEIPT_TO_CLIENT:
 						item.pushIntoStackParameter("display", "masssendreceipt");
 						break;
@@ -162,6 +166,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 					}else if(display.equalsIgnoreCase("serialmarkforpayment")){
 						present("SERIAL_RECEIPT_MARK_FOR_PAYMENT", parameters);
 						view.selectOperation(SectionOperation.SERIAL_RECEIPT_MARK_FOR_PAYMENT);
+					}else if(display.equalsIgnoreCase("masssignaturerequest")){
+						present("MASS_SIGNATURE_REQUEST", parameters);
+						view.selectOperation(SectionOperation.MASS_SIGNATURE_REQUEST);
 					}else if(display.equalsIgnoreCase("masssendreceipt")){
 						view.selectOperation(SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT);
 						present("MASS_SEND_RECEIPT_TO_CLIENT", parameters);
