@@ -129,7 +129,6 @@ Este código assume bué coisas:
 		}
 
 		return OOConnector.getDocFromOODoc(lobjDoc, lobjFile.getFileName());
-		
 	}
 
 	private FileXfer GenerateAsODT(FileXfer lobjFile, HashMap<String, String> parrContents, String[][][] parrTables)
@@ -191,7 +190,6 @@ Este código assume bué coisas:
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-//		return OOConnector.getFileFromDoc(lobjDoc, lobjFile.getFileName());
 		return OOConnector.getPDFFromOODoc(lobjDoc, lobjFile.getFileName());
 	}
 

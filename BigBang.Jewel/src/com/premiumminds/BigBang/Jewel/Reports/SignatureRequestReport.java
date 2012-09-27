@@ -102,12 +102,12 @@ public class SignatureRequestReport
 			if ( lbCasualties && !Constants.RecType_Casualty.equals((UUID)lobjReceipt.getAt(Receipt.I.TYPE)) )
 				lbCasualties = false;
 
-			larrTables[i] = new String[9];
+			larrTables[i] = new String[6];
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][1] = lobjReceipt.getLabel();
 			larrTables[i][2] = lobjPolicy.GetSubLine().getLine().getCategory().getLabel();
 			larrTables[i][3] = (String)lobjPolicy.GetCompany().getAt(1);
-			larrTables[i][4] = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
+			larrTables[i][4] = String.format("%,.2f", (BigDecimal)lobjReceipt.getAt(Receipt.I.TOTALPREMIUM));
 			larrTables[i][5] = (String)lobjReceipt.getAt(14);
 
 			mlngCount++;
