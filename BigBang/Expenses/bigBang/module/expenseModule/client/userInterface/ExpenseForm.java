@@ -75,7 +75,7 @@ public class ExpenseForm extends FormView<Expense>{
 		value.setUnitsLabel("€");
 		isOpen = new TextBoxFormField("Estado");
 		isOpen.setFieldWidth("175px");
-		
+
 		insuredObject = new ExpandableListBoxFormField("Unidade de Risco");
 		insuredObject.setWidth("250px");
 		insuredObject.setFieldWidth("231px");
@@ -103,16 +103,13 @@ public class ExpenseForm extends FormView<Expense>{
 				expenseDate,	
 		}, true);
 
-		addFormFieldGroup(new FormField<?>[]{
-				
-		}, false);
-		
+
 		addFormField(insuredObject, true);
 		addFormField(insuredObjectName, true);
 		addFormField(belongsToPolicy, true);
-		
+
 		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				if(event.getValue().equalsIgnoreCase("true")){
@@ -135,6 +132,7 @@ public class ExpenseForm extends FormView<Expense>{
 		settlementVerticalPanel.add(settleLabel);
 		settlementVerticalPanel.add(settleButton);
 		settlementPanel.add(settlementVerticalPanel);
+
 		settleButton.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -145,10 +143,11 @@ public class ExpenseForm extends FormView<Expense>{
 			}
 		});
 
-		addFormFieldGroup(new FormField<?>[]{
-				value	
-		}, false);
-		addWidget(settlementPanel);
+		addLineBreak();
+
+		addFormField(value, true);
+
+		addWidget(settlementPanel, true);
 
 
 		notes = new TextAreaFormField();
@@ -163,6 +162,8 @@ public class ExpenseForm extends FormView<Expense>{
 		manager.setEditable(false);
 		settleButton.setEnabled(false);
 		initialized = true;
+
+		belongsToPolicy.setValue("true");
 	}
 
 	@Override
@@ -205,13 +206,13 @@ public class ExpenseForm extends FormView<Expense>{
 		clientItem.setParameter("clientid", info.clientId);
 		client.setValue(clientItem);
 		client.setValueName("#" + info.clientNumber + " - " + info.clientName);
-		
+
 		expenseDate.setValue(info.expenseDate);
 
 		NavigationHistoryItem referenceItem = new NavigationHistoryItem();
 		referenceItem.setParameter("section", "insurancePolicy");
 		referenceItem.setStackParameter("display");
-		
+
 		if(info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
 			referenceItem.pushIntoStackParameter("display", "search");
 			referenceItem.setParameter("policyid", info.referenceId);
@@ -241,7 +242,7 @@ public class ExpenseForm extends FormView<Expense>{
 		});
 
 		listId = BigBangConstants.EntityIds.COVERAGE+"/"+info.referenceSubLineId;
-		
+
 		coverageId.setListId(listId, new ResponseHandler<Void>() {
 
 			@Override
@@ -259,7 +260,7 @@ public class ExpenseForm extends FormView<Expense>{
 		settlement.setValue(info.settlement);
 		isOpen.setValue(info.isOpen ? "Aberta" : "Fechada");
 		value.setValue(info.value);
-		
+
 		if(info.insuredObjectName != null){
 			belongsToPolicy.setValue("false", true);
 			insuredObjectName.setValue(info.insuredObjectName);

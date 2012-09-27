@@ -110,7 +110,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 
 		policyNumberProblem.getElement().getStyle().setColor("RED");
 		buttonPanel.add(policyNumberProblem);
-		addWidget(buttonPanel, false);
+		addWidget(buttonPanel, true);
 
 		addSection("Número da apólice adesão");
 
@@ -142,7 +142,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		});
 
 		addFormField(subPolicyReference, true);
-		addFormField(subscriber, false);
+		addFormField(subscriber, true);
 		addFormField(noSubPolicy);
 
 		addSection("Despesa de Saúde");
@@ -150,7 +150,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Despesa");
 		manager.setMandatory(true);
 
-		settlement = new NumericTextBoxFormField("Indemnização", true);
+		settlement = new NumericTextBoxFormField("Indemnização", false);
 		settlement.setUnitsLabel("€");
 		settlement.setFieldWidth("175px");
 		settlement.setMandatory(true);
@@ -179,14 +179,13 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		coverageId = new ExpandableListBoxFormField("Cobertura");
 
 		addFormFieldGroup(new FormField<?>[]{
-				expenseValue,
 				manager,
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
 				coverageId,
 				expenseDate,	
-		}, false);
+		}, true);
 
 		addFormField(insuredObject, true);
 		addFormField(insuredObjectName, true);
@@ -227,7 +226,9 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 			}
 		});
 
-		addWidget(settlementPanel);
+		addLineBreak();
+		addFormField(expenseValue, true);
+		addWidget(settlementPanel, true);
 
 
 		notes = new TextAreaFormField();
@@ -237,6 +238,8 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 
 		manager.setEditable(false);
 		settleButton.setEnabled(false);
+		
+		belongsToPolicy.setValue("true");
 	}
 
 	protected abstract void noSubPolicyChangedState();

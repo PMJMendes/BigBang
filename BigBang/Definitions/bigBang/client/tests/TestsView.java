@@ -1,8 +1,8 @@
 package bigBang.client.tests;
 
-import bigBang.library.client.userInterface.FileImportFormViewSection;
-import bigBang.library.client.userInterface.TypifiedTextFormField;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.expenseModule.client.userInterface.SerialExpenseCreationForm;
+import bigBang.module.receiptModule.client.userInterface.SerialReceiptCreationForm;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -10,15 +10,45 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 
 	
 	private VerticalPanel wrapper = new VerticalPanel();
-	protected TypifiedTextFormField text;
-	
+	private SerialExpenseCreationForm form;
 	public TestsView(){
 		initWidget(wrapper);
-		wrapper.setSize("100%", "auto");
+		wrapper.setSize("100%", "100%");
+		form = new SerialExpenseCreationForm(){
+
+			@Override
+			protected void noSubPolicyChangedState() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			protected void onSubPolicyValueChanged() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			protected void onChangedPolicyNumber() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			protected void onClickVerifyPolicyNumber() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			protected void onClickMarkAsInvalid() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		};
 		
-		FileImportFormViewSection section = new FileImportFormViewSection("", "Receipt");
-		
-		wrapper.add(section);
+		wrapper.add(form.getNonScrollableContent());
 	}
 
 	@Override

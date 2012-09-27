@@ -9,6 +9,7 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -116,7 +117,7 @@ public class FormViewSection extends View {
 			wrapper.add(group[i]);
 		}
 		if(inline) {
-			wrapper.getElement().getStyle().setFloat(Float.LEFT);
+			wrapper.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 		}
 		addWidget(wrapper);
 	}
@@ -148,6 +149,8 @@ public class FormViewSection extends View {
 		if(inline){
 			w.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
 		}
+		w.getElement().getStyle().setVerticalAlign(VerticalAlign.TOP);
+
 		content.add(w);
 	}
 	

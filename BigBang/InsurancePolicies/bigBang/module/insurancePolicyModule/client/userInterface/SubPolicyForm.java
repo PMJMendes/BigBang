@@ -26,7 +26,9 @@ public class SubPolicyForm extends SubPolicyHeaderForm{
 	public SubPolicy getValue() {
 		SubPolicy value = super.getValue();
 		
-		value.notes = notesSection.getValue();
+		if(value != null){
+			value.notes = notesSection.getValue();
+		}
 		
 		return value;
 	};
