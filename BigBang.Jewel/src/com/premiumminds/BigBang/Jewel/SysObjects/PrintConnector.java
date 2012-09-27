@@ -14,6 +14,8 @@ import java.sql.Timestamp;
 
 import javax.imageio.ImageIO;
 import javax.print.PrintService;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.standard.Media;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.docx4j.convert.out.pdf.viaXSLFO.Conversion;
@@ -268,12 +270,24 @@ public class PrintConnector
 		throws BigBangJewelException
 	{
 		PrinterJob lrefPJob;
+		Media lrefMedia;
+		HashPrintRequestAttributeSet lobjSet;
 
 		try
 		{
 			lrefPJob = getPrinter();
+			lrefPJob.setPageable(pdoc);
 
-			pdoc.silentPrint(lrefPJob);
+			lrefMedia = getTray(lrefPJob);
+
+			if ( lrefMedia != null )
+			{
+				lobjSet = new HashPrintRequestAttributeSet();
+				lobjSet.add(lrefMedia);
+				lrefPJob.print(lobjSet);
+			}
+			else
+				lrefPJob.print();
 		}
 		catch (Throwable e)
 		{
@@ -343,5 +357,22 @@ public class PrintConnector
 			throw new BigBangJewelException("Impressora definida (" + lstrPrinter + ") não encontrada.");
 		
 		return lrefPJob;
+	}
+
+	private static Media getTray(PrinterJob prefJob)
+	{
+		Media[] larrMedia;
+		int i;
+
+		larrMedia = (Media[])prefJob.getPrintService().getSupportedAttributeValues(Media.class, null, null);
+
+		if ( larrMedia == null )
+			return null;
+
+		for ( i = 0; i < larrMedia.length; i++ )
+			if ( larrMedia[i].toString().contains("Tray 3") )
+				return larrMedia[i];
+
+		return null;
 	}
 }
