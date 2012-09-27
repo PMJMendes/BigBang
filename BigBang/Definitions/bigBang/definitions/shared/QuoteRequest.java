@@ -14,7 +14,7 @@ public class QuoteRequest
 		
 		public String fieldId;
 		public String fieldName;
-		public InsurancePolicy.FieldType type;
+		public FieldContainer.FieldType type;
 		public String unitsLabel;
 		public String refersToId;
 		public int order; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
