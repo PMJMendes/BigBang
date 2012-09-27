@@ -40,6 +40,7 @@ public interface ReceiptServiceAsync
 	void deleteReceipt(String receiptId, AsyncCallback<Void> callback);
 	void serialCreateReceipt(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
 	void massCreatePaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);
+	void massCreateSignatureRequest(String[] receiptIds, int replylimit, AsyncCallback<Void> callback);
 	void massSendReceipt(String[] receiptIds, AsyncCallback<Void> callback);
 	void massSendPayment(String[] receiptIds, AsyncCallback<Void> callback);
 	void massInsurerAccounting(String[] receiptIds, InsurerAccountingExtra[] extraInfo, AsyncCallback<Void> callback);

@@ -68,6 +68,7 @@ public interface ReceiptService
 
 	public Receipt serialCreateReceipt(Receipt receipt, DocuShareHandle source) throws SessionExpiredException, BigBangException;
 	public void massCreatePaymentNotice(String[] receiptIds) throws SessionExpiredException, BigBangException;
+	public void massCreateSignatureRequest(String[] receiptIds, int replylimit) throws SessionExpiredException, BigBangException;
 	public void massSendReceipt(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massSendPayment(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massInsurerAccounting(String[] receiptIds, InsurerAccountingExtra[] extraInfo) throws SessionExpiredException, BigBangException;

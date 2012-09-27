@@ -1420,6 +1420,85 @@ public class ReceiptServiceImpl
 		}
 	}
 
+	public void massCreateSignatureRequest(String[] receiptIds, int replylimit)
+		throws SessionExpiredException, BigBangException
+	{
+		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		IProcess lobjProcess;
+		UUID lidClient;
+		ArrayList<UUID> larrByClient;
+		UUID[] larrFinal;
+		UUID lidSet;
+		UUID lidSetClient;
+		DocOps lobjDocOps;
+		CreateSignatureRequest lopCSR;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		for ( i = 0; i < receiptIds.length; i++ )
+		{
+			try
+			{
+				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(receiptIds[i]));
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
+				else
+					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			larrByClient = larrReceipts.get(lidClient);
+			if ( larrByClient == null )
+			{
+				larrByClient = new ArrayList<UUID>();
+				larrReceipts.put(lidClient, larrByClient);
+			}
+			larrByClient.add(lobjReceipt.getKey());
+		}
+
+		lidSet = null;
+		for(UUID lidC : larrReceipts.keySet())
+		{
+			lidSetClient = null;
+			lobjDocOps = null;
+			larrByClient = larrReceipts.get(lidC);
+			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
+			for ( i = 0; i < larrFinal.length; i++ )
+			{
+				try
+				{
+					lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
+
+					lopCSR = new CreateSignatureRequest(lobjReceipt.GetProcessID());
+					lopCSR.marrReceiptIDs = larrFinal;
+					lopCSR.mlngDays = replylimit;
+					lopCSR.mbUseSets = true;
+					lopCSR.midSet = lidSet;
+					lopCSR.midSetDocument = lidSetClient;
+					lopCSR.mobjDocOps = lobjDocOps;
+
+					lopCSR.Execute();
+
+					lobjDocOps = lopCSR.mobjDocOps;
+					lidSetClient = lopCSR.midSetDocument;
+					lidSet = lopCSR.midSet;
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+
 	public void massSendReceipt(String[] receiptIds)
 		throws SessionExpiredException, BigBangException
 	{
