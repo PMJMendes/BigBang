@@ -213,6 +213,8 @@ public class InsuredObjectSubPolicySearchPanel extends SearchPanel<InsuredObject
 		}
 		else{
 			lockSearchButton(true);
+			clear();
+			return;
 		}
 
 		InsuredObjectSearchParameter parameter = new InsuredObjectSearchParameter();
