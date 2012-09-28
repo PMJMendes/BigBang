@@ -123,7 +123,7 @@ public class PaymentSection extends FormViewSection {
 		setForTypeNone();
 		addFormFieldGroup(new FormField[]{
 				bank, chequeOrTransferNumber
-		}, false);
+		}, true);
 		addWidget(removeButton, false);
 	}
 
@@ -146,7 +146,7 @@ public class PaymentSection extends FormViewSection {
 		setForTypeNone();
 		addFormFieldGroup(new FormField[]{
 				bank, chequeOrTransferNumber
-		}, false);
+		}, true);
 		addWidget(removeButton, false);
 	}
 
@@ -154,7 +154,7 @@ public class PaymentSection extends FormViewSection {
 		setForTypeNone();
 		addFormFieldGroup(new FormField[]{
 				otherReceiptId, markOtherAsPayed
-		}, false);
+		}, true);
 		addWidget(removeButton, false);
 	}
 
