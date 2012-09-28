@@ -554,7 +554,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void setOwner(InsurancePolicy policy) {
-		objectsList.setOwner(policy.id);
+		objectsList.setOwner(policy == null ? null : policy.id);
 		childrenPanel.setPolicy(policy);
 	}
 

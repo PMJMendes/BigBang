@@ -360,7 +360,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 	@Override
 	public void setOwner(SubPolicy subPol) {
-		objectsList.setOwner(subPol.id);
+		objectsList.setOwner(subPol == null ? null : subPol.id);
 		childrenPanel.setSubPolicy(subPol);
 	}
 
