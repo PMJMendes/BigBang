@@ -30,7 +30,7 @@ public class TestReceiptCreateDASRequest
 		};
 
 		request = new DASRequest();
-		request.receiptId = "C0DD296F-1262-42FB-8025-A021012FE728";
+		request.receiptId = "7870394D-D69A-48D9-B8A9-A0BC00B9A4BE";
 		request.replylimit = 7;
 		Services.receiptService.createDASRequest(request, callback);
 	}

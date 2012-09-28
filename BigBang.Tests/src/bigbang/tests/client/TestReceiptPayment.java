@@ -29,10 +29,9 @@ public class TestReceiptPayment
 		};
 
 		info = new Receipt.PaymentInfo();
-		info.receiptId = "CCCCBAF5-2020-4EC2-ABD6-A0210144D5EA";
+		info.receiptId = "7870394D-D69A-48D9-B8A9-A0BC00B9A4BE";
 		info.payments = new Receipt.PaymentInfo.Payment[] {new Receipt.PaymentInfo.Payment()};
 		info.payments[0].paymentTypeId = "40B9ACC7-A99A-4DC2-BAEF-A02200EB59B3";
-		info.payments[0].value = 1.0;
 		Services.receiptService.markPayed(info, callback);
 	}
 }
