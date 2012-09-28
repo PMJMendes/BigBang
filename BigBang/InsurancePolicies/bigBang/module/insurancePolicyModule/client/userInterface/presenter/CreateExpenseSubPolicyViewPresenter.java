@@ -154,6 +154,7 @@ public class CreateExpenseSubPolicyViewPresenter  implements ViewPresenter{
 		expense.referenceId = response.id;
 		expense.referenceNumber = response.number;
 		expense.referenceTypeId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY;
+		expense.referenceSubLineId = response.inheritSubLineId;
 		expense.managerId = response.managerId;
 		expense.lineName = response.inheritLineName;
 		expense.subLineName = response.inheritSubLineName;

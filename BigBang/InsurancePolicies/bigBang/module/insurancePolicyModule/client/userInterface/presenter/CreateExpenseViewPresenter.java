@@ -158,6 +158,7 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 		expense.lineName = response.lineName;
 		expense.subLineName = response.subLineName;
 		expense.categoryName = response.categoryName;
+		expense.referenceSubLineId = response.subLineId;
 		view.getForm().setValue(expense);
 		view.setFormCreateMode();
 	}
