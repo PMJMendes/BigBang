@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
+import bigBang.definitions.client.dataAccess.SignatureRequestBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -11,6 +12,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.Negotiation;
+import bigBang.definitions.shared.SignatureRequest;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -33,11 +35,13 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 	InsuranceSubPolicyBroker subPolicyBroker;
 	NegotiationBroker negotiationBroker;
 	SubCasualtyDataBroker subCasualtyBroker;
+	SignatureRequestBroker signatureBroker;
 
 	public BigBangProcessNavigationMapper() {
 		subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 		negotiationBroker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
 		subCasualtyBroker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
+		signatureBroker = (SignatureRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SIGNATURE_REQUEST);
 	}
 
 	@Override
@@ -337,12 +341,27 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 	}
 
 	private void getSignatureRequestNavigationProcessItem(String instanceId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "receipt");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("receiptid", instanceId);
-		handler.onResponse(navigationItem);
+		
+		signatureBroker.getRequest(instanceId, new ResponseHandler<SignatureRequest>() {
+			
+			@Override
+			public void onResponse(SignatureRequest response) {
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setStackParameter("display");
+				navigationItem.setParameter("section", "receipt");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.pushIntoStackParameter("display", "signaturerequest");
+				navigationItem.setParameter("receiptid", response.receiptId);
+				navigationItem.setParameter("signaturerequestid", response.id);
+				handler.onResponse(navigationItem);				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível navegar para o pedido de assinatura"), TYPE.ALERT_NOTIFICATION));
+			}
+		});
+		
 	}
 
 	private void getReceiptNavigationProcessItem(String instanceId) {
