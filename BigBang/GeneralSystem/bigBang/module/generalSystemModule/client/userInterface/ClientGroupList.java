@@ -44,7 +44,7 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements Clie
 
 	public ClientGroupList(ClientGroup currentGroup) {
 		super();
-		header = new ListHeader();
+		header = new ListHeader("Grupos de Clientes");
 
 		header.showNewButton("Novo");
 		header.showRefreshButton();

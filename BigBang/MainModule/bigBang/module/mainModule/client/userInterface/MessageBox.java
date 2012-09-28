@@ -16,28 +16,24 @@ package bigBang.module.mainModule.client.userInterface;
  * the License.
  */
 
-import java.awt.ScrollPane;
 import java.util.Date;
 
 import org.gwt.mosaic.core.client.DOM;
-import org.gwt.mosaic.core.client.UserAgent;
 import org.gwt.mosaic.ui.client.MessageBoxImages;
 import org.gwt.mosaic.ui.client.WidgetWrapper;
 import org.gwt.mosaic.ui.client.WindowPanel;
 import org.gwt.mosaic.ui.client.datepicker.DatePicker;
 import org.gwt.mosaic.ui.client.datepicker.DateTimePicker;
 import org.gwt.mosaic.ui.client.layout.BorderLayout;
+import org.gwt.mosaic.ui.client.layout.BorderLayout.Region;
 import org.gwt.mosaic.ui.client.layout.BorderLayoutData;
 import org.gwt.mosaic.ui.client.layout.BoxLayout;
-import org.gwt.mosaic.ui.client.layout.BoxLayoutData;
-import org.gwt.mosaic.ui.client.layout.LayoutPanel;
-import org.gwt.mosaic.ui.client.layout.BorderLayout.Region;
 import org.gwt.mosaic.ui.client.layout.BoxLayout.Orientation;
+import org.gwt.mosaic.ui.client.layout.BoxLayoutData;
 import org.gwt.mosaic.ui.client.layout.BoxLayoutData.FillStyle;
+import org.gwt.mosaic.ui.client.layout.LayoutPanel;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -58,6 +54,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author georgopoulos.georgios(at)gmail.com
  */
+@SuppressWarnings("deprecation")
 public abstract class MessageBox extends WindowPanel {
 
   public interface ConfirmationCallback {

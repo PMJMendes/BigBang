@@ -142,6 +142,10 @@ public class ListBoxFormField extends FormField<String> {
 
 	@Override
 	public String getValue(){
+		return getCurrentValue();
+	}
+	
+	private String getCurrentValue() {
 		return value == null ? null : value.isEmpty() ? null : value;
 	}
 
@@ -182,7 +186,7 @@ public class ListBoxFormField extends FormField<String> {
 	}
 
 	protected boolean isDifferentValue(String value) {
-		String currentValue = getValue();
+		String currentValue = getCurrentValue();
 		if(currentValue == null){
 			currentValue = new String();
 		}

@@ -186,6 +186,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		objectForm = new InsuredObjectForm();
 
 		VerticalPanel objectsPolicyContainer = new VerticalPanel();
+		objectsPolicyContainer.getElement().getStyle().setProperty("borderRight", "1px solid #688AA2");
 
 		subPolicySelectButton = new SubPolicySelectButton(new SubPolicyStub());
 		objectsPolicyContainer.setSize("100%","100%");

@@ -59,6 +59,7 @@ public class MarkForPaymentView extends View implements MarkForPaymentViewPresen
 		
 		paymentsForm.newButton.addClickHandler(clickHandler);
 		paymentsForm.confirmButton.addClickHandler(clickHandler);
+		paymentsForm.setReadOnly(false);
 
 		VerticalPanel receiptWrapper = new VerticalPanel();
 		receiptWrapper.setSize("100%", "100%");
