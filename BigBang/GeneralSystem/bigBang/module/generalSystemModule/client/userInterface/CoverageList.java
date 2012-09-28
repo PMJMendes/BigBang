@@ -223,7 +223,6 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 	public void setReadOnly(boolean readonly) {
 
 		this.readonly = readonly;
-		this.form.setReadOnly(readonly);
 		this.newButton.setEnabled(!readonly);
 		for(ListEntry<Coverage> e : entries){
 			((Entry) e).setEditable(!readonly);

@@ -219,7 +219,6 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 	public void setReadOnly(boolean readonly) {
 
 		this.readonly = readonly;
-		this.form.setReadOnly(readonly);
 		this.newButton.setEnabled(!readonly);
 		for(ListEntry<SubLine> e : entries){
 			((Entry) e).setEditable(!readonly);

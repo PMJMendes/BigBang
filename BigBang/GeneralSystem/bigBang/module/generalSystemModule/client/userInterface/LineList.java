@@ -235,7 +235,6 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 	public void setReadOnly(boolean readonly) {
 
 		this.readonly = readonly;
-		this.form.setReadOnly(readonly);
 		this.newButton.setEnabled(!readonly);
 		for(ListEntry<Line> e : entries){
 			((Entry) e).setEditable(!readonly);
