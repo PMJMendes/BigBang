@@ -79,6 +79,7 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 				}
 			}
 		});
+		
 	}
 
 	protected void createNewContact() {
@@ -185,8 +186,8 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 		}
 	}
 
-	public void setOwnerType(String client) {
-		ownerTypeId = client;
+	public void setOwnerType(String id) {
+		ownerTypeId = id;
 	}
 
 	public void allowCreation(boolean hasPermission) {

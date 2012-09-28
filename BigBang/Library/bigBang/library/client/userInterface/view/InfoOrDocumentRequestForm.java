@@ -48,8 +48,8 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		externalCCAddresses = new TextBoxFormField("CC Endereços separados por ';'");
 
 		addFormField(requestType, true);
-		addFormField(replyLimit);
-		addFormField(forwardReply);
+		addFormField(replyLimit, true);
+		addFormField(forwardReply, false);
 		
 		addSection("Detalhes da Mensagem a Enviar");
 		addFormField(to);

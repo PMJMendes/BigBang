@@ -111,8 +111,6 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 		HasValue<String> getSubPolicyNotesForm();
 
-		void setOwner(String id);
-
 		void setToolbarEditMode(boolean b);
 
 		HasValue<SubPolicyStub> getSubPolicySelector();
@@ -175,6 +173,14 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 		void clearObjectList();
 
+		void allowCreateContact(boolean hasPermission);
+
+		void allowCreateDocument(boolean hasPermission);
+
+		void lockToolbar();
+
+		void setOwner(SubPolicy subPol);
+
 	}
 
 	protected Display view;
@@ -225,6 +231,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						view.getSubPolicySelector().setValue(response);
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
+						view.setOwner(null);
 						setPermissions(response);
 						fillPolicy();
 						fillSubPolicy();
@@ -247,7 +254,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						policyId = response.mainPolicyId;
 						isEditModeEnabled = false;
 						onPolicy = true;
-						view.setOwner(response.id);
+						view.setOwner(response);
 						view.setToolbarEditMode(false);
 						view.getSubPolicySelector().setValue(response);
 						view.setHeaders(response.coverages, response.columns);
@@ -267,6 +274,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		}
 		else{
 			subPolicyGetError();
+			view.lockToolbar();
 		}
 
 	}
@@ -305,6 +313,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				policyGetError();
+				view.lockToolbar();
 			}
 		});
 
@@ -324,6 +333,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		view.allowTransferToPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.TRANSFER_TO_POLICY));
 		view.allowValidate(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VALIDATE));
 		view.allowVoid(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VOID));
+		view.allowCreateContact(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY));
+		view.allowCreateDocument(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY));
 	}
 
 	protected void setExercises(ExerciseData[] exerciseData) {
@@ -861,7 +872,6 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		revert();
 		view.setToolbarEditMode(false);
 		isEditModeEnabled = false;
-		view.setOwner(subPolicyId);
 	}
 
 	private void revert() {

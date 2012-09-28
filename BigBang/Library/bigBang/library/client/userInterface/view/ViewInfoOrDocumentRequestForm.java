@@ -32,7 +32,7 @@ public class ViewInfoOrDocumentRequestForm extends
 				
 		addSection("Detalhes do Pedido");
 		addFormField(type, true);
-		addFormField(replyLimit, false);
+		addFormField(replyLimit, true);
 		addFormField(toUserNames);
 		addFormField(internalBCCs);
 		addFormField(externalCCs);

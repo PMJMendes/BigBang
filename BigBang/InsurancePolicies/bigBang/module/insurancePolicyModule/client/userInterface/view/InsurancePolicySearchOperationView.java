@@ -553,15 +553,9 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 
 	@Override
-	public void setOwner(String id) {
-		objectsList.setOwner(id);
-		childrenPanel.contactsList.setOwner(id);
-		childrenPanel.documentsList.setOwner(id);
-		childrenPanel.expensesList.setOwner(id);
-		childrenPanel.historyList.setOwner(id);
-		childrenPanel.receiptsList.setOwner(id);
-		childrenPanel.subPoliciesList.setOwner(id);
-		childrenPanel.subProcessesList.setOwner(id);
+	public void setOwner(InsurancePolicy policy) {
+		objectsList.setOwner(policy.id);
+		childrenPanel.setPolicy(policy);
 	}
 
 	@Override

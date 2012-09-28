@@ -154,8 +154,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		void setReadOnly(boolean b);
 
-		void setOwner(String id);
-
 		void showObjectForm(boolean b);
 
 		void showPolicyForm(boolean b);
@@ -185,6 +183,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void clearObjectsList();
 
 		void clearPolicyList();
+
+		void setOwner(InsurancePolicy policy);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -721,7 +721,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		revert();
 		view.setToolbarEditMode(false);
 		isEditModeEnabled = false;
-		view.setOwner(policyId);
 	}
 
 
@@ -797,6 +796,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.getPolicySelector().setValue(response);
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
+						view.setOwner(null);
 						view.clearObjectsList();
 						view.clearPolicyList();
 						//PERMISSIONS
@@ -817,7 +817,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					@Override
 					public void onResponse(InsurancePolicy response) {
 						isEditModeEnabled = false;
-						view.setOwner(response.id);
+						view.setOwner(response);
 						view.setToolbarEditMode(false);
 						view.getPolicySelector().setValue(response);
 						view.setHeaders(response.coverages, response.columns);
@@ -837,7 +837,17 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		}
 		else{
 			view.lockToolbar();
+			view.getCommonFieldsForm().setValue(null);
+			view.getExerciseForm().setValue(null);
+			view.getExerciseSelector().setValue(null);
+			view.setOwner(null);
+			view.getPolicyHeaderForm().setValue(null);
+			view.getInsuredObjectHeaderForm().setValue(null);
+			view.clearObjectsList();
+			view.clearPolicyList();
+			view.clearPolicySelection();
 			view.setReadOnly(true);
+			view.setPolicyEntrySelected(false);
 		}
 
 	}

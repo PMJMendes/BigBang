@@ -115,7 +115,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		addFormField(salesPremium, true);
 		addFormField(commission, true);
 		addFormField(retro, true);
-		addFormField(fat, false);
+		addFormField(fat, true);
+		addLineBreak();
 		addFormField(bonusMalusOption, true);
 		addFormField(bonusMalusValue, true);
 

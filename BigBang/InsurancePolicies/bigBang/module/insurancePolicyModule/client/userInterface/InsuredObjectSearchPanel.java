@@ -213,6 +213,8 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 		}
 		else{
 			lockSearchButton(true);
+			clear();
+			return;
 		}
 
 		InsuredObjectSearchParameter parameter = new InsuredObjectSearchParameter();

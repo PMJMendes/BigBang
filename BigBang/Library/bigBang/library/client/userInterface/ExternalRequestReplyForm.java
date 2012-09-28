@@ -19,7 +19,7 @@ public class ExternalRequestReplyForm extends FormView<Outgoing> {
 		message = new OutgoingMessageFormField();
 
 		addFormField(replyLimit, true);
-		addFormField(isFinal, false);
+		addFormField(isFinal, true);
 		addSection("Detalhes da mensagem a enviar");
 		addFormField(message);
 	}

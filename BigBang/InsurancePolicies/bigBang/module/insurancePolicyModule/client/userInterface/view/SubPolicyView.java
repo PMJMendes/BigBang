@@ -359,14 +359,9 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	}
 
 	@Override
-	public void setOwner(String id) {
-		objectsList.setOwner(id);
-		childrenPanel.contactsList.setOwner(id);
-		childrenPanel.documentsList.setOwner(id);
-		childrenPanel.expensesList.setOwner(id);
-		childrenPanel.historyList.setOwner(id);
-		childrenPanel.receiptList.setOwner(id);
-		childrenPanel.subProcessesList.setOwner(id);
+	public void setOwner(SubPolicy subPol) {
+		objectsList.setOwner(subPol.id);
+		childrenPanel.setSubPolicy(subPol);
 	}
 
 	@Override
@@ -533,5 +528,23 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	@Override
 	public void clearObjectList() {
 		objectsList.clear();		
+	}
+
+	@Override
+	public void allowCreateContact(boolean hasPermission) {
+		childrenPanel.contactsList.allowCreation(hasPermission);		
+	}
+
+	@Override
+	public void allowCreateDocument(boolean hasPermission) {
+		childrenPanel.documentsList.allowCreation(hasPermission);
+		
+	}
+
+	@Override
+	public void lockToolbar() {
+		toolbar.lockAll();
+		childrenPanel.documentsList.allowCreation(false);
+		childrenPanel.contactsList.allowCreation(false);
 	}
 }
