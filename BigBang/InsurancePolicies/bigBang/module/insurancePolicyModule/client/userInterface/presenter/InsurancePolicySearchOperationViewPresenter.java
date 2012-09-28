@@ -185,6 +185,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void clearPolicyList();
 
 		void setOwner(InsurancePolicy policy);
+
+		void doSearch();
 	}
 
 	private InsurancePolicyBroker broker;
@@ -841,6 +843,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.getExerciseForm().setValue(null);
 			view.getExerciseSelector().setValue(null);
 			view.setOwner(null);
+			view.setAvailableExercises(null);
+			view.setCoveragesExtraFields(null);
+			view.getPolicySelector().setValue(null);
+			view.getPolicyNotesForm().setValue(null);
 			view.getPolicyHeaderForm().setValue(null);
 			view.getInsuredObjectHeaderForm().setValue(null);
 			view.clearObjectsList();
@@ -848,8 +854,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.clearPolicySelection();
 			view.setReadOnly(true);
 			view.setPolicyEntrySelected(false);
+			view.doSearch();
 		}
-
+		
 	}
 
 	protected void setExercises(ExerciseData[] exerciseData) {

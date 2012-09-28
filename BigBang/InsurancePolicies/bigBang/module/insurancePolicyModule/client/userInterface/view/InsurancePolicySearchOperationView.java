@@ -229,7 +229,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		objectsPolicyContainer.setSize("100%","100%");
 		objectsPolicyContainer.add(policySelectButton);
 		policySelectButton.addSelectedStateChangedEventHandler(new SelectedStateChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
 				if (event.getSelected()){
@@ -240,7 +240,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		objectsList = new InsuredObjectSearchPanel();
 		objectsList.showFilterField(false);
 		objectsList.getNewObjectButton().addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.NEW_INSURED_OBJECT));
@@ -309,11 +309,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
 		contentWrapper.add(toolbarAndCenterWrapper);
 		mainWrapper.add(contentWrapper);
-
-		childrenPanel.contactsList.allowCreation(true);
-		childrenPanel.documentsList.allowCreation(true);
-		
-		searchPanel.doSearch();
 
 	}
 
@@ -529,7 +524,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	public HasValue<String> getExerciseSelector() {
 		return exerciseChooser.getExerciseSelector();
 	}
-	
+
 	@Override
 	public void setHeaders(	StructuredFieldContainer.Coverage[] coverages,
 			StructuredFieldContainer.ColumnHeader[] columns){
@@ -540,7 +535,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	public void setCoveragesExtraFields(StructuredFieldContainer.Coverage[] coverages) {
 		detailsForm.setCoveragesExtraFields(coverages);
 	}
-	
+
 
 	@Override
 	public void setReadOnly(boolean b) {
@@ -588,7 +583,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	public void setPolicyEntrySelected(boolean b) {
 		policySelectButton.setSelected(b, false);
 	}
-	
+
 	@Override
 	public void setExerciseFieldsHeader(String header){
 		detailsForm.setExerciseHeader(header);
@@ -632,5 +627,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void clearPolicyList() {
 		searchPanel.clear();
+	}
+
+	@Override
+	public void doSearch() {
+		searchPanel.doSearch();
 	}
 }

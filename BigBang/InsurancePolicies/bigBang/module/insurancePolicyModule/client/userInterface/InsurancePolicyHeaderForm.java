@@ -259,6 +259,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		
 		if(info == null) {
 			clearInfo();
+			headerForm.setVisible(false);
 		}else{
 			this.coInsurers.clear();
 			if(info.coInsurers != null){

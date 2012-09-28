@@ -40,6 +40,17 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 	}
 
 	@Override
+	public void setValue(FieldContainer value) {
+		super.setValue(value);
+		if(value == null){
+			exerciseDetailsSection.setValue(null);
+			extraFieldsSection.setValue(null);
+			table.setValue(null);
+			coveragesSection.setVisible(false);
+		}
+	}
+
+	@Override
 	public FieldContainer getInfo() {
 		if(value == null){
 			return new FieldContainer();
@@ -48,6 +59,7 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		result.headerFields = exerciseDetailsSection.getValue();
 		result.extraFields = extraFieldsSection.getValue();
 		result.columnFields = table.getValue();
+		coveragesSection.setVisible(true);
 		return result;
 	}
 

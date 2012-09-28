@@ -167,6 +167,13 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	public void fillTable(FieldContainer.ColumnField[] formFields) {
 		int row;
 		int column;
+		
+		if(formFields == null){
+			this.setVisible(false);
+			grid.clear();
+			return;
+		}
+		
 		for(int i = 0; i<formFields.length; i++){
 			row = formFields[i].coverageIndex+1;
 			column = formFields[i].columnIndex+2;
@@ -200,6 +207,8 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 			grid.setWidget(row, column, fields[row][column]);
 			grid.getCellFormatter().setHorizontalAlignment(row, column, HasHorizontalAlignment.ALIGN_CENTER);
 		}
+		
+		this.setVisible(true);
 	}
 
 	@Override
@@ -226,15 +235,23 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	public void setValue(FieldContainer.ColumnField[] value, boolean fireEvents) {
 		this.value = value;
 		
+		if(value == null){
+			clear();
+			clearContent();
+			this.setVisible(false);
+		}
+		
 		if(fields!=null){
 			clearContent();
 		}
+		
 		fillTable(value);
 		setEnabledRows();
 
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
+		this.setVisible(true);
 	}
 
 	private void clearContent() {
