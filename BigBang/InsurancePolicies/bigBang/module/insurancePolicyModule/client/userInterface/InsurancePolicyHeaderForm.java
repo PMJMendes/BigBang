@@ -31,7 +31,7 @@ import bigBang.module.insurancePolicyModule.client.resources.Resources;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
 public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
-	
+
 	protected ExpandableListBoxFormField manager;
 	protected TextBoxFormField number;
 	protected NavigationFormField client;
@@ -52,7 +52,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 	private CheckBoxFormField coInsurance;
 	private CoInsurerSelection coInsurers;
 	private HeaderFieldsSection headerForm;
-	
+
 	public InsurancePolicyHeaderForm() {
 		addSection("Cabeçalho de Apólice");
 		number  = new TextBoxFormField("Número");
@@ -200,12 +200,12 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 				}
 			}
 		});
-	
+
 		coInsurance.setValue(false);
 		headerForm = new HeaderFieldsSection();
 		addSection(headerForm);
 	}
-	
+
 	@Override
 	public InsurancePolicy getInfo() {
 		InsurancePolicy result = this.value;
@@ -238,7 +238,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 			result.premium = premium.getValue();
 			result.caseStudy = caseStudy.getValue();
 			result.operationalProfileId = operationalProfile.getValue();
-			
+
 			if(coInsurance.getValue()){
 				result.coInsurers = coInsurers.getValue();
 			}
@@ -248,112 +248,116 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 
 			result.mediatorId = mediator.getValue();
 		}
-		
+
 		result.headerFields = headerForm.getValue();
 
 		return result;
 	}
 
 	@Override
-	public void setInfo(InsurancePolicy info) {
-		
-		if(info == null) {
-			clearInfo();
+	public void setValue(InsurancePolicy value) {
+		super.setValue(value);
+		if(value == null){
+			headerForm.clear();
 			headerForm.setVisible(false);
-		}else{
-			this.coInsurers.clear();
-			if(info.coInsurers != null){
-				this.coInsurance.setValue(true);
-				this.coInsurers.setMainCoInsuranceAgency(info.insuranceAgencyId);
-				this.coInsurers.setValue(info.coInsurers);
-				this.coInsurers.setEditable(false);
-			}
-			else{
-				this.coInsurance.setValue(false);
-				this.coInsurers.setVisible(false);
-			}
-
-			this.manager.setValue(info.managerId);
-			this.number.setValue(info.number);
-			this.insuranceAgency.setValue(info.insuranceAgencyId);
-
-			this.categoryLineSubLine.setValue(info.categoryName + " / " + info.lineName + " / " + info.subLineName);
-
-			this.mediator.setValue(info.mediatorId);
-			try{
-				this.maturityDate.setValue(DateTimeFormat.getFormat("MM-dd").parse(info.maturityDay + "-" + info.maturityMonth));
-
-			}catch (IllegalArgumentException e) {
-				maturityDate.clear();
-			}
-
-
-			this.fractioning.setValue(info.fractioningId);
-			this.premium.setValue(info.premium);
-
-			if(info.clientId != null) {
-				ClientProcessBroker clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
-				clientBroker.getClient(info.clientId, new ResponseHandler<Client>() {
-
-					@Override
-					public void onResponse(Client response) {
-						NavigationHistoryItem item = new NavigationHistoryItem();
-						item.setParameter("section", "client");
-						item.setStackParameter("display");
-						item.pushIntoStackParameter("display", "search");
-						item.setParameter("clientid", response.id);
-						InsurancePolicyHeaderForm.this.client.setValue(item);
-
-						InsurancePolicyHeaderForm.this.client.setValueName("#" + response.clientNumber + " - " + response.name);
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {}
-				});
-			}
-
-			this.policyStatus.setValue(info.statusText);
-			Resources resources = GWT.create(Resources.class);
-			if(value.statusIcon == null) {
-				statusIcon.setResource(resources.provisionalPolicyIcon());
-				statusIcon.setVisible(false);
-			}else{
-				statusIcon.setVisible(true);
-				switch(value.statusIcon){
-				case OBSOLETE:
-					statusIcon.setResource(resources.inactivePolicyIcon());
-					break;
-				case PROVISIONAL:
-					statusIcon.setResource(resources.provisionalPolicyIcon());
-					break;
-				case VALID:
-					statusIcon.setResource(resources.activePolicyIcon());
-					break;
-				default:
-					return;
-				}
-			}
-			this.caseStudy.setValue(info.caseStudy);
-			this.operationalProfile.setValue(info.operationalProfileId);
-
-			if(info.startDate != null)
-				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate), false);
-			else
-				startDate.clear();
-			
-			if(info.expirationDate != null)
-				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.expirationDate));
-			else
-				endDate.clear();
-			
-			this.duration.setValue(info.durationId);
 		}
-		
-		headerForm.setHeaderText(categoryLineSubLine.getValue());
-		headerForm.setValue(info.headerFields);
-		
 	}
 	
+	@Override
+	public void setInfo(InsurancePolicy info) {
+
+		this.coInsurers.clear();
+		if(info.coInsurers != null){
+			this.coInsurance.setValue(true);
+			this.coInsurers.setMainCoInsuranceAgency(info.insuranceAgencyId);
+			this.coInsurers.setValue(info.coInsurers);
+			this.coInsurers.setEditable(false);
+		}
+		else{
+			this.coInsurance.setValue(false);
+			this.coInsurers.setVisible(false);
+		}
+
+		this.manager.setValue(info.managerId);
+		this.number.setValue(info.number);
+		this.insuranceAgency.setValue(info.insuranceAgencyId);
+
+		this.categoryLineSubLine.setValue(info.categoryName + " / " + info.lineName + " / " + info.subLineName);
+
+		this.mediator.setValue(info.mediatorId);
+		try{
+			this.maturityDate.setValue(DateTimeFormat.getFormat("MM-dd").parse(info.maturityDay + "-" + info.maturityMonth));
+
+		}catch (IllegalArgumentException e) {
+			maturityDate.clear();
+		}
+
+
+		this.fractioning.setValue(info.fractioningId);
+		this.premium.setValue(info.premium);
+
+		if(info.clientId != null) {
+			ClientProcessBroker clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
+			clientBroker.getClient(info.clientId, new ResponseHandler<Client>() {
+
+				@Override
+				public void onResponse(Client response) {
+					NavigationHistoryItem item = new NavigationHistoryItem();
+					item.setParameter("section", "client");
+					item.setStackParameter("display");
+					item.pushIntoStackParameter("display", "search");
+					item.setParameter("clientid", response.id);
+					InsurancePolicyHeaderForm.this.client.setValue(item);
+
+					InsurancePolicyHeaderForm.this.client.setValueName("#" + response.clientNumber + " - " + response.name);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {}
+			});
+		}
+
+		this.policyStatus.setValue(info.statusText);
+		Resources resources = GWT.create(Resources.class);
+		if(value.statusIcon == null) {
+			statusIcon.setResource(resources.provisionalPolicyIcon());
+			statusIcon.setVisible(false);
+		}else{
+			statusIcon.setVisible(true);
+			switch(value.statusIcon){
+			case OBSOLETE:
+				statusIcon.setResource(resources.inactivePolicyIcon());
+				break;
+			case PROVISIONAL:
+				statusIcon.setResource(resources.provisionalPolicyIcon());
+				break;
+			case VALID:
+				statusIcon.setResource(resources.activePolicyIcon());
+				break;
+			default:
+				return;
+			}
+		}
+		this.caseStudy.setValue(info.caseStudy);
+		this.operationalProfile.setValue(info.operationalProfileId);
+
+		if(info.startDate != null)
+			startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate), false);
+		else
+			startDate.clear();
+
+		if(info.expirationDate != null)
+			endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.expirationDate));
+		else
+			endDate.clear();
+
+		this.duration.setValue(info.durationId);
+
+		headerForm.setHeaderText(categoryLineSubLine.getValue());
+		headerForm.setValue(info.headerFields);
+
+	}
+
 	public void setHeaderFormVisible(boolean b){
 		headerForm.setVisible(b);
 	}

@@ -31,8 +31,8 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 	protected NumericTextBoxFormField premium;
 	protected Image statusIcon;
 	protected TextAreaFormField notes;
-	
-	
+
+
 	private HeaderFieldsSection headerForm;
 
 
@@ -83,6 +83,12 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 	}
 
 	@Override
+	public void setValue(SubPolicy value) {
+		// TODO Auto-generated method stub
+		super.setValue(value);
+	}
+
+	@Override
 	public SubPolicy getInfo() {
 		SubPolicy result = this.value;
 
@@ -93,7 +99,7 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 			result.expirationDate = endDate.getValue() == null ? null :  DateTimeFormat.getFormat("yyyy-MM-dd").format(endDate.getValue());
 			result.fractioningId = fractioning.getValue();
 			result.premium = premium.getValue();
-		
+
 			result.headerFields = headerForm.getValue();
 
 			return result;
@@ -102,40 +108,49 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 	}
 
 	@Override
-	public void setInfo(SubPolicy info) {
-
-		if(info == null) {
-			clearInfo();
-			clearValue();
-		}else{
-			this.startDate.setValue(info.startDate);
-			this.endDate.setValue(info.expirationDate);
-			this.number.setValue(info.number);
-			this.client.setValue(info.clientId);
-			this.fractioning.setValue(info.fractioningId);
-			this.policyStatus.setValue(info.statusText);
-			Resources resources = GWT.create(Resources.class);
-			if(value.statusIcon == null) {
-				statusIcon.setResource(resources.provisionalPolicyIcon());
-			}else{
-				switch(value.statusIcon){
-				case OBSOLETE:
-					statusIcon.setResource(resources.inactivePolicyIcon());
-					break;
-				case PROVISIONAL:
-					statusIcon.setResource(resources.provisionalPolicyIcon());
-					break;
-				case VALID:
-					statusIcon.setResource(resources.activePolicyIcon());
-					break;
-				default:
-					return;
-				}
-			}
+	public void setValue(SubPolicy value, boolean fireEvents) {
+		super.setValue(value, fireEvents);
+		if(value == null){
+			headerForm.setVisible(false);
+			headerForm.clear();
 		}
-
 	}
 	
+	@Override
+	public void setInfo(SubPolicy info) {
+
+		this.startDate.setValue(info.startDate);
+		this.endDate.setValue(info.expirationDate);
+		this.number.setValue(info.number);
+		this.client.setValue(info.clientId);
+		this.fractioning.setValue(info.fractioningId);
+		this.policyStatus.setValue(info.statusText);
+		Resources resources = GWT.create(Resources.class);
+		if(value.statusIcon == null) {
+			statusIcon.setResource(resources.provisionalPolicyIcon());
+		}else{
+			switch(value.statusIcon){
+			case OBSOLETE:
+				statusIcon.setResource(resources.inactivePolicyIcon());
+				break;
+			case PROVISIONAL:
+				statusIcon.setResource(resources.provisionalPolicyIcon());
+				break;
+			case VALID:
+				statusIcon.setResource(resources.activePolicyIcon());
+				break;
+			default:
+				return;
+			}
+		}
+		
+		String categoryLineSubLine = info.inheritCategoryName + " / " + info.inheritLineName + " / " + info.inheritSubLineName;
+		
+		headerForm.setHeaderText(categoryLineSubLine);
+		headerForm.setValue(info.headerFields);
+
+	}
+
 	public void setHeaderFormVisible(boolean b){
 		headerForm.setVisible(b);
 	}
