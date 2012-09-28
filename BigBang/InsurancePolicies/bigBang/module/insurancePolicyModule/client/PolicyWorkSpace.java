@@ -59,6 +59,8 @@ public class PolicyWorkSpace {
 	}
 
 	public InsurancePolicy getWholePolicy(String policyId) {
+		int i;
+
 		if ( !isPolicyLoaded(policyId) )
 			return null;
 
@@ -78,12 +80,15 @@ public class PolicyWorkSpace {
 					exercise.id = null;
 		}
 
-		originalPolicy.changedObjects = alteredObjects.toArray(new InsuredObject[alteredObjects.size()]);
-		for ( InsuredObject object : originalPolicy.changedObjects )
+		originalPolicy.changedObjects = new InsuredObject[alteredObjects.size()];
+		i = 0;
+		for ( InsuredObject object : alteredObjects )
 		{
-			object.headerFields = splitArray(object.headerFields, originalPolicy.headerFields.length);
-			if ( InsuredObjectStub.Change.CREATED.equals(object.change) )
-				object.id = null;
+			originalPolicy.changedObjects[i] = new InsuredObject(object);
+			originalPolicy.changedObjects[i].headerFields = splitArray(originalPolicy.changedObjects[i].headerFields, originalPolicy.headerFields.length);
+			if ( InsuredObjectStub.Change.CREATED.equals(originalPolicy.changedObjects[i].change) )
+				originalPolicy.changedObjects[i].id = null;
+			i++;
 		}
 
 		return originalPolicy;
