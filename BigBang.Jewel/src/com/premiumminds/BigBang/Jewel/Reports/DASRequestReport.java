@@ -93,7 +93,7 @@ public class DASRequestReport
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		larrTables[0] = new String[9];
+		larrTables[0] = new String[6];
 		larrTables[0][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 		larrTables[0][1] = lobjReceipt.getLabel();
 		larrTables[0][2] = lobjPolicy.GetSubLine().getLine().getCategory().getLabel();
