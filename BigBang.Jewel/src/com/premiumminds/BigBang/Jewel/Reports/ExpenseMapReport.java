@@ -48,8 +48,7 @@ public class ExpenseMapReport
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
-		PolicyObject lobjObject;
-		SubPolicyObject lobjSObject;
+		String lstrObject;
 		Coverage lobjCoverage;
 		int i;
 
@@ -73,9 +72,8 @@ public class ExpenseMapReport
 				{
 					lobjPolicy = (Policy)lobjProc.GetParent().GetData();
 					lobjSubPolicy = null;
-					lobjObject = ( lobjExpense.getAt(Expense.I.POLICYOBJECT) == null ? null :
-							PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(Expense.I.POLICYOBJECT)) );
-					lobjSObject = null;
+					lstrObject = ( lobjExpense.getAt(Expense.I.POLICYOBJECT) == null ? (String)lobjExpense.getAt(Expense.I.GENERICOBJECT) :
+							PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(Expense.I.POLICYOBJECT)).getLabel() );
 					lobjCoverage = ( lobjExpense.getAt(Expense.I.POLICYCOVERAGE) == null ? null :
 							PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(),
 							(UUID)lobjExpense.getAt(Expense.I.POLICYCOVERAGE)).GetCoverage() );
@@ -84,9 +82,9 @@ public class ExpenseMapReport
 				{
 					lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
 					lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
-					lobjObject = null;
-					lobjSObject = ( lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT) == null ? null :
-							SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT)) );
+					lstrObject = null;
+					lstrObject = ( lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT) == null ? (String)lobjExpense.getAt(Expense.I.GENERICOBJECT) :
+							SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT)).getLabel() );
 					lobjCoverage = ( lobjExpense.getAt(Expense.I.POLICYCOVERAGE) == null ? null :
 							SubPolicyCoverage.GetInstance(Engine.getCurrentNameSpace(),
 							(UUID)lobjExpense.getAt(Expense.I.SUBPOLICYCOVERAGE)).GetCoverage() );
@@ -99,7 +97,7 @@ public class ExpenseMapReport
 
 			larrTables[i] = new String[5];
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
-			larrTables[i][1] = (lobjObject == null ? (lobjSObject == null ? "" : lobjSObject.getLabel()) : lobjObject.getLabel());
+			larrTables[i][1] = (lstrObject == null ? "" : lstrObject);
 			larrTables[i][2] = (lobjCoverage == null ? "" : lobjCoverage.getLabel());
 			larrTables[i][3] = ((Timestamp)lobjExpense.getAt(Expense.I.DATE)).toString().substring(0, 10);
 			larrTables[i][4] = ((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES)).toPlainString();
