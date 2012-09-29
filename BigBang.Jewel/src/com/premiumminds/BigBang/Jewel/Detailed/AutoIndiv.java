@@ -22,7 +22,13 @@ public class AutoIndiv
 	{
 		if ( (marrObjects == null) || (marrObjects.length == 0) )
 		{
-			pstrBuilder.append("Esta modalidade de apólice obriga a ter pelo menos uma unidade de risco.\n");
+			pstrBuilder.append("Esta modalidade de apólice obriga a ter uma unidade de risco.\n");
+			return;
+		}
+
+		if ( marrObjects.length > 1 )
+		{
+			pstrBuilder.append("Esta modalidade de apólice apenas permite ter uma unidade de risco.\n");
 			return;
 		}
 	}
