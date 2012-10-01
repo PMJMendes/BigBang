@@ -805,6 +805,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.clearObjectsList();
 						view.clearPolicyList();
 						//PERMISSIONS
+						view.setCoveragesExtraFields(response.coverages);
 						setPermissions(response);
 						fillPolicy();
 						view.setReadOnly(false);		
@@ -829,6 +830,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
 						setPermissions(response);
+						view.setCoveragesExtraFields(response.coverages);
+						view.getPolicyNotesForm().setValue(response.notes);
 						fillPolicy();
 						view.setReadOnly(true);		
 						view.allowCreateNewExercise(true);
@@ -894,12 +897,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		InsurancePolicy pol = broker.getPolicyHeader(policyId);
 		view.getInsuredObjectsList().clearSelection();
 		view.getPolicyHeaderForm().setValue(pol);
-		view.setCoveragesExtraFields(pol.coverages);
 		view.getCommonFieldsForm().setValue(broker.getContextForPolicy(policyId, getCurrentExerciseId()));
 		view.showObjectForm(false);
 		view.showPolicyForm(true);
 		view.setNotesReadOnly(false);
-		view.getPolicyNotesForm().setValue(pol.notes);
 		view.setPolicyEntrySelected(true);
 		if(view.getExerciseSelector().getValue() != null && pol.exerciseData != null){
 			view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Apólice");	

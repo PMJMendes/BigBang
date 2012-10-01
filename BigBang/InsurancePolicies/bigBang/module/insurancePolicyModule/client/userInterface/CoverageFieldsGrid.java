@@ -17,9 +17,10 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
-public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.ColumnField[]>{
+public abstract class CoverageFieldsGrid extends SimplePanel implements HasValue<FieldContainer.ColumnField[]>{
 
 
 	class Field extends GenericFormField{
@@ -50,7 +51,6 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	private Coverage[] coverages;
 
 	public CoverageFieldsGrid() {
-		super(1,1);
 		fields = new Field[0][0];
 		grid = new Grid();
 		ScrollPanel p = new ScrollPanel();
@@ -58,7 +58,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		p.getElement().getStyle().setOverflowY(Overflow.VISIBLE);
 		p.getElement().getStyle().setOverflowX(Overflow.AUTO);
 		p.getElement().getStyle().setMarginRight(20, Unit.PX);
-		this.setWidget(0, 0, p);
+		this.setWidget(p);
 		this.getElement().getStyle().setTableLayout(TableLayout.FIXED);
 		this.setSize("100%", "100%");
 	}
@@ -235,9 +235,9 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		this.value = value;
 
 		if(value == null){
-			clear();
 			clearContent();
-			//this.setVisible(false);
+			grid.clear();
+			grid.setVisible(false);
 			return;
 		}
 
@@ -251,7 +251,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
-		//this.setVisible(true);
+		grid.setVisible(true);
 	}
 
 	private void clearContent() {
