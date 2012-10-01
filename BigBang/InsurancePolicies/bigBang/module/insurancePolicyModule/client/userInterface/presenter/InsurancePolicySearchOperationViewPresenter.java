@@ -187,6 +187,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void setOwner(InsurancePolicy policy);
 
 		void doSearch();
+
+		void allowManagerChange(boolean b);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -795,6 +797,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					public void onResponse(InsurancePolicy response) {
 						isEditModeEnabled = true;
 						view.setToolbarEditMode(true);
+						view.allowManagerChange(true);
 						view.getPolicySelector().setValue(response);
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
@@ -821,6 +824,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						isEditModeEnabled = false;
 						view.setOwner(response);
 						view.setToolbarEditMode(false);
+						view.allowManagerChange(false);
 						view.getPolicySelector().setValue(response);
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);

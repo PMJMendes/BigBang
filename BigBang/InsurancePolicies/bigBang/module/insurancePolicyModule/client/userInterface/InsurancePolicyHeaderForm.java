@@ -362,4 +362,8 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		headerForm.setVisible(b);
 	}
 
+	public void allowManagerChange(boolean b) {
+		manager.setEditable(b);
+	}
+
 }

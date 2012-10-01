@@ -633,4 +633,9 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	public void doSearch() {
 		searchPanel.doSearch();
 	}
+
+	@Override
+	public void allowManagerChange(boolean b) {
+		policyForm.allowManagerChange(b);
+	}
 }
