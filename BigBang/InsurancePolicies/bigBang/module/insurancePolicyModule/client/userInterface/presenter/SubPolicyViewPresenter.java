@@ -232,6 +232,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
 						view.setOwner(null);
+						view.setCoveragesExtraFields(response.coverages);
 						setPermissions(response);
 						fillPolicy();
 						fillSubPolicy();
@@ -260,6 +261,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
 						setPermissions(response);
+						view.setCoveragesExtraFields(response.coverages);
+						view.getSubPolicyNotesForm().setValue(response.notes);
 						fillPolicy();
 						fillSubPolicy();
 						view.setReadOnly(true);
@@ -283,14 +286,12 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		SubPolicy pol = subPolicyBroker.getSubPolicyHeader(subPolicyId);
 		view.getInsuredObjectsList().clearSelection();
 		view.getSubPolicyForm().setValue(pol);
-		view.setCoveragesExtraFields(pol.coverages);
 		view.getCommonFieldsForm().setValue(subPolicyBroker.getContextForSubPolicy(subPolicyId, getCurrentExerciseId()));
 		view.showObjectForm(false);
 		view.showSubPolicyForm(true);
-		view.getSubPolicyNotesForm().setValue(pol.notes);
 		view.setSubPolicyEntrySelected(true);
 		view.setSubPolicyNotesReadOnly(true);
-		if(view.getExerciseSelector().getValue() != null && pol.exerciseData != null){
+		if(view.getExerciseForm().getValue() != null){
 			view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Apólice");	
 		}
 		onPolicy = true;

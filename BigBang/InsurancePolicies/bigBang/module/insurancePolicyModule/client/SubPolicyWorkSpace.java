@@ -250,7 +250,7 @@ public class SubPolicyWorkSpace {
 		int exerciseIndex = -1;
 		int i;
 
-		if(exerciseId != null) {
+		if( (exerciseId != null) && (subPolicy.exerciseData != null) ) {
 			for( i = 0; i < subPolicy.exerciseData.length; i++ ) {
 				if(exerciseId.equalsIgnoreCase(subPolicy.exerciseData[i].id)) {
 					exerciseIndex = i;
@@ -305,7 +305,7 @@ public class SubPolicyWorkSpace {
 		int exerciseIndex = -1;
 		int i;
 
-		if(exerciseId != null) {
+		if( (exerciseId != null) && (subPolicy.exerciseData != null) ) {
 			for( i = 0; i < subPolicy.exerciseData.length; i++ ) {
 				if(exerciseId.equalsIgnoreCase(subPolicy.exerciseData[i].id)) {
 					exerciseIndex = i;

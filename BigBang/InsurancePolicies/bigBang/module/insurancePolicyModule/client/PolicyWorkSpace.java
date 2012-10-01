@@ -147,19 +147,23 @@ public class PolicyWorkSpace {
 	}
 
 	public ComplexFieldContainer.ExerciseData updateExerciseHeader(String policyId, ComplexFieldContainer.ExerciseData alteredExercise) {
-		if ( !isPolicyLoaded(policyId) || policy.exerciseData == null )
+		if ( !isPolicyLoaded(policyId) )
 			return null;
 
-		for(int i = 0; i < policy.exerciseData.length; i++) {
-			if (!policy.exerciseData[i].isActive)
-				continue;
+		if (policy.exerciseData != null)
+		{
+			for(int i = 0; i < policy.exerciseData.length; i++) {
+				if (!policy.exerciseData[i].isActive)
+					continue;
 
-			if(policy.exerciseData[i].id.equalsIgnoreCase(alteredExercise.id)) {
-				policy.exerciseData[i].startDate = alteredExercise.startDate;
-				policy.exerciseData[i].endDate = alteredExercise.endDate;
-				return alteredExercise;
+				if(policy.exerciseData[i].id.equalsIgnoreCase(alteredExercise.id)) {
+					policy.exerciseData[i].startDate = alteredExercise.startDate;
+					policy.exerciseData[i].endDate = alteredExercise.endDate;
+					return alteredExercise;
+				}
 			}
 		}
+
 		return null;
 	}
 
@@ -289,7 +293,7 @@ public class PolicyWorkSpace {
 		int exerciseIndex = -1;
 		int i;
 
-		if(exerciseId != null) {
+		if( (exerciseId != null) && (policy.exerciseData != null) ) {
 			for( i = 0; i < policy.exerciseData.length; i++ ) {
 				if(exerciseId.equalsIgnoreCase(policy.exerciseData[i].id)) {
 					exerciseIndex = i;
@@ -344,7 +348,7 @@ public class PolicyWorkSpace {
 		int exerciseIndex = -1;
 		int i;
 
-		if(exerciseId != null) {
+		if( (exerciseId != null) && (policy.exerciseData != null) ) {
 			for( i = 0; i < policy.exerciseData.length; i++ ) {
 				if(exerciseId.equalsIgnoreCase(policy.exerciseData[i].id)) {
 					exerciseIndex = i;
