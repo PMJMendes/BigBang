@@ -902,7 +902,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.showPolicyForm(true);
 		view.setNotesReadOnly(false);
 		view.setPolicyEntrySelected(true);
-		if(view.getExerciseSelector().getValue() != null && pol.exerciseData != null){
+		if(view.getExerciseForm().getValue() != null){
 			view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Apólice");	
 		}
 		onPolicy = true;
