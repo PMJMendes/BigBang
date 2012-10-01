@@ -233,6 +233,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						setExercises(response.exerciseData);
 						view.setOwner(null);
 						view.setCoveragesExtraFields(response.coverages);
+						view.getSubPolicyNotesForm().setValue(response.notes);
 						setPermissions(response);
 						fillPolicy();
 						fillSubPolicy();

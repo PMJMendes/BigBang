@@ -803,7 +803,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						setExercises(response.exerciseData);
 						view.setOwner(null);
 						view.clearObjectsList();
-						view.clearPolicyList();
+				//		view.clearPolicyList();
+						view.getPolicyNotesForm().setValue(response.notes);
 						//PERMISSIONS
 						view.setCoveragesExtraFields(response.coverages);
 						setPermissions(response);
