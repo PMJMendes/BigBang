@@ -98,11 +98,11 @@ public class DASRequestReport
 		larrTables[0][1] = lobjReceipt.getLabel();
 		larrTables[0][2] = lobjPolicy.GetSubLine().getLine().getCategory().getLabel();
 		larrTables[0][3] = (String)lobjPolicy.GetCompany().getAt(1);
-		larrTables[0][4] = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
+		larrTables[0][4] = String.format("%,.2f", ((BigDecimal)lobjReceipt.getAt(3)));
 		larrTables[0][5] = (String)lobjReceipt.getAt(14);
 
 		larrParams.put("Count", "1 recibo");
-		larrParams.put("Total", ((BigDecimal)lobjReceipt.getAt(3)).toPlainString());
+		larrParams.put("Total", String.format("%,.2f", ((BigDecimal)lobjReceipt.getAt(3))));
 
 		larrParams.put("Policy", (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel()));
 		larrParams.put("Company", (String)lobjPolicy.GetCompany().getLabel());

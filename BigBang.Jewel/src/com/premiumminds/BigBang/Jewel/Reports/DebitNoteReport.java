@@ -76,7 +76,7 @@ public class DebitNoteReport
 		larrParams.put("Receipt", (mstrReceipt == null ? "(sem número)" : mstrReceipt));
 		larrParams.put("Line", lobjCategory.getLabel());
 		larrParams.put("Maturity", mdtMaturity.toString().substring(0, 10));
-		larrParams.put("Value", mdblValue.toPlainString());
+		larrParams.put("Value", String.format("%,.2f", mdblValue));
 		larrParams.put("Client", lobjClient.getLabel());
 		larrParams.put("Address1", (lobjClient.getAt(2) == null ? "" : (String)lobjClient.getAt(2)));
 		larrParams.put("Address2", (lobjClient.getAt(3) == null ? "" : (String)lobjClient.getAt(3)));

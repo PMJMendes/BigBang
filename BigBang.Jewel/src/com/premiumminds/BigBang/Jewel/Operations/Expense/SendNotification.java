@@ -145,7 +145,7 @@ public class SendNotification
 		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepEM.mlngCount);
 		lobjDoc.marrInfo[1] = new DocInfoData();
 		lobjDoc.marrInfo[1].mstrType = "Total a Reembolsar";
-		lobjDoc.marrInfo[1].mstrValue = lrepEM.mdblTotal.toPlainString();
+		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepEM.mdblTotal);
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};

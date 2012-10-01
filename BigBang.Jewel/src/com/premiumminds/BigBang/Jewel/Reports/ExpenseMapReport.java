@@ -100,14 +100,14 @@ public class ExpenseMapReport
 			larrTables[i][1] = (lstrObject == null ? "" : lstrObject);
 			larrTables[i][2] = (lobjCoverage == null ? "" : lobjCoverage.getLabel());
 			larrTables[i][3] = ((Timestamp)lobjExpense.getAt(Expense.I.DATE)).toString().substring(0, 10);
-			larrTables[i][4] = ((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES)).toPlainString();
+			larrTables[i][4] = String.format("%,.2f", ((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES)));
 
 			mlngCount++;
 			mdblTotal = mdblTotal.add((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES));
 		}
 
 		larrParams.put("Count", "" + mlngCount + " despesa" + (mlngCount == 1 ? "" : "s"));
-		larrParams.put("Total", mdblTotal.toPlainString());
+		larrParams.put("Total", String.format("%,.2f", mdblTotal));
 
 		java.util.Arrays.sort(larrTables, new Comparator<String[]>()
 		{

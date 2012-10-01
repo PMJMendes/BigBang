@@ -149,7 +149,7 @@ public class CreatePaymentNotice
 		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepPN.mlngCount);
 		lobjDoc.marrInfo[1] = new DocInfoData();
 		lobjDoc.marrInfo[1].mstrType = "Total a Liquidar";
-		lobjDoc.marrInfo[1].mstrValue = lrepPN.mdblTotal.toPlainString();
+		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepPN.mdblTotal);
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};

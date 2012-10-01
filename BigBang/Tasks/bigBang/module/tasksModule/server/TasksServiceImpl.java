@@ -325,7 +325,7 @@ public class TasksServiceImpl
 		lParam = (TaskSearchParameter)pParam;
 
 		pstrBuffer.append(" AND ([:User] = '").append(Engine.getCurrentUser().toString()).append("'");
-		pstrBuffer.append(" OR [:User] IN (SELECT [:Surrogate] FROM (");
+		pstrBuffer.append(" OR [:User] IN (SELECT [:User] FROM (");
 		try
 		{
 			lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
@@ -335,7 +335,7 @@ public class TasksServiceImpl
 		{
     		throw new BigBangException(e.getMessage(), e);
 		}
-		pstrBuffer.append(") [AuxDel] WHERE [:User] = '").append(Engine.getCurrentUser().toString()).append("'))");
+		pstrBuffer.append(") [AuxDel] WHERE [:Surrogate] = '").append(Engine.getCurrentUser().toString()).append("'))");
 
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
 		{

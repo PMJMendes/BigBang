@@ -145,7 +145,7 @@ public class ReturnToClient
 		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepER.mlngCount);
 		lobjDoc.marrInfo[1] = new DocInfoData();
 		lobjDoc.marrInfo[1].mstrType = "Valor Total";
-		lobjDoc.marrInfo[1].mstrValue = lrepER.mdblTotal.toPlainString();
+		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepER.mdblTotal);
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};

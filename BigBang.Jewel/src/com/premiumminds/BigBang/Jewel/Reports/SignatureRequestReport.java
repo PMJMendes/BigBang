@@ -125,7 +125,7 @@ public class SignatureRequestReport
 			larrParams.put("Signature", "assinatura");
 
 		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
-		larrParams.put("Total", mdblTotal.toPlainString());
+		larrParams.put("Total", String.format("%,.2f", mdblTotal));
 
 		return Generate(larrParams, new String[][][] {larrTables});
 	}

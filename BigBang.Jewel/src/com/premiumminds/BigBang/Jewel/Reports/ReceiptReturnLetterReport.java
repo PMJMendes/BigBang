@@ -126,7 +126,7 @@ public class ReceiptReturnLetterReport
 			larrTables[i][0] = lobjReceipt.getLabel();
 			larrTables[i][1] = lobjPolicy.getLabel();
 			larrTables[i][2] = lobjCat.getLabel();
-			larrTables[i][3] = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
+			larrTables[i][3] = String.format("%,.2f", ((BigDecimal)lobjReceipt.getAt(3)));
 			larrTables[i][4] = (String)lobjType.getAt(1);
 			larrTables[i][5] = (lobjReceipt.getAt(15) == null ? "Falta de Pagamento" : lstrText);
 
@@ -135,7 +135,7 @@ public class ReceiptReturnLetterReport
 		}
 
 		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
-		larrParams.put("Total", mdblTotal.toPlainString());
+		larrParams.put("Total", String.format("%,.2f", mdblTotal));
 
 		return Generate(larrParams, new String[][][] {larrTables});
 	}

@@ -121,7 +121,7 @@ public class ExpenseReturnReport
 			larrTables[i][2] = ( lobjObject == null ? "" : lobjObject.getLabel() );
 			larrTables[i][3] = ( lobjCoverage == null ? "" : lobjCoverage.getLabel() );
 			larrTables[i][4] = ((Timestamp)lobjExpense.getAt(Expense.I.DATE)).toString().substring(0, 10);
-			larrTables[i][5] = ((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES)).toPlainString();
+			larrTables[i][5] = String.format("%,.2f", ((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES)));
 			larrTables[i][6] = ( lobjExpense.getAt(Expense.I.REJECTION) == null ? "" : (String)lobjExpense.getAt(Expense.I.REJECTION) );
 
 			mlngCount++;
@@ -130,7 +130,7 @@ public class ExpenseReturnReport
 		}
 
 		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
-		larrParams.put("Total", mdblTotal.toPlainString());
+		larrParams.put("Total", String.format("%,.2f", mdblTotal));
 
 		return Generate(larrParams, new String[][][] {larrTables});
 	}

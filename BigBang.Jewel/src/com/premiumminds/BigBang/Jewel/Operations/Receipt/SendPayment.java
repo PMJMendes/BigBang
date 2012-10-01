@@ -145,7 +145,7 @@ public class SendPayment
 		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepPCL.mlngCount);
 		lobjDoc.marrInfo[1] = new DocInfoData();
 		lobjDoc.marrInfo[1].mstrType = "Total dos Pagamentos";
-		lobjDoc.marrInfo[1].mstrValue = lrepPCL.mdblTotal.negate().toPlainString();
+		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepPCL.mdblTotal.negate());
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};

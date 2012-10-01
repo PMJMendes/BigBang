@@ -137,7 +137,7 @@ public class ReturnPayment
 		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepRCL.mlngCount);
 		lobjDoc.marrInfo[1] = new DocInfoData();
 		lobjDoc.marrInfo[1].mstrType = "Total de Pagamentos Devolvidos";
-		lobjDoc.marrInfo[1].mstrValue = lrepRCL.mdblTotal.toPlainString();
+		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepRCL.mdblTotal);
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};

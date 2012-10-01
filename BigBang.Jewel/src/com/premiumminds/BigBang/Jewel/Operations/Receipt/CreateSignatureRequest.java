@@ -198,7 +198,7 @@ public class CreateSignatureRequest
 		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepSR.mlngCount);
 		lobjDoc.marrInfo[1] = new DocInfoData();
 		lobjDoc.marrInfo[1].mstrType = "Total de Prémios";
-		lobjDoc.marrInfo[1].mstrValue = lrepSR.mdblTotal.toPlainString();
+		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepSR.mdblTotal);
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};

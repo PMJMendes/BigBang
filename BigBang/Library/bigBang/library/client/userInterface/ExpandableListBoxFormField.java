@@ -372,7 +372,7 @@ TypifiedListClient {
 	
 	@Override
 	public String getValue() {
-		return selectedValueId;
+		return selectedValueId == null ? null : selectedValueId.isEmpty() ? null : selectedValueId;
 	}
 	
 }

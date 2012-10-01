@@ -98,7 +98,7 @@ public class ATFF
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-		ldblTCom = ldblTCom.multiply(new BigDecimal("1.07")).add(new BigDecimal("0.0015"));
+		ldblTCom = ldblTCom.multiply(new BigDecimal("0.0107")).add(new BigDecimal("0.0015"));
 
 		lstrBuilder = new StringBuilder();
 

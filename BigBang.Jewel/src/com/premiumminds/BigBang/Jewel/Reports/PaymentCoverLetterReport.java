@@ -137,7 +137,7 @@ public class PaymentCoverLetterReport
 			larrTables[i] = new String[6];
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][1] = lobjReceipt.getLabel();
-			larrTables[i][2] = ((BigDecimal)lobjReceipt.getAt(3)).negate().toPlainString();
+			larrTables[i][2] = String.format("%,.2f", ((BigDecimal)lobjReceipt.getAt(3)).negate());
 			larrTables[i][3] = (lobjMode == null ? "" : lobjMode.getLabel());
 			larrTables[i][4] = (lobjData == null ? "" : lobjData.mstrCheque);
 			larrTables[i][5] = (lobjBank == null ? "" : (String)lobjBank.getAt(1));
@@ -147,7 +147,7 @@ public class PaymentCoverLetterReport
 		}
 
 		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
-		larrParams.put("Total", mdblTotal.toPlainString());
+		larrParams.put("Total", String.format("%,.2f", mdblTotal));
 
 		return Generate(larrParams, new String[][][] {larrTables});
 	}

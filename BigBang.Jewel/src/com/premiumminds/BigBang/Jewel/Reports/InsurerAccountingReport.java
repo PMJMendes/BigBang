@@ -70,7 +70,7 @@ public class InsurerAccountingReport
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		InsurerReceipt lobjRec;
-		BigDecimal ldblTotalPremiums, ldblDirectPremiums, ldblLifeComms;
+		BigDecimal ldblTotalPremiums, ldblDirectPremiums, ldblLifeComms, ldblLocalTotalComms;
 		boolean lbSubtract;
 		int i;
 
@@ -86,6 +86,7 @@ public class InsurerAccountingReport
 
 		ldblTotalPremiums = new BigDecimal(0.0);
 		ldblDirectPremiums = new BigDecimal(0.0);
+		ldblLocalTotalComms = new BigDecimal(0.0);
 		lbSubtract = false;
 
 		mstrExtraText = (String)lobjMap.getAt(InsurerAccountingMap.I.EXTRATEXT);
@@ -181,6 +182,7 @@ public class InsurerAccountingReport
 			ldblTotalPremiums = ldblTotalPremiums.add(lobjDetail.getPremium());
 			ldblDirectPremiums = ldblDirectPremiums.add(lobjDetail.getDirectPremium());
 			mdblTotalComms = mdblTotalComms.add(lobjDetail.getCommissions());
+			ldblLocalTotalComms = ldblLocalTotalComms.add(lobjDetail.getCommissions());
 			ldblLifeComms = ldblLifeComms.add(lobjDetail.getLifeComms());
 		}
 
@@ -212,6 +214,7 @@ public class InsurerAccountingReport
 		larrParams.put("ExtraText", (mstrExtraText == null ? "" : mstrExtraText));
 		larrParams.put("ExtraValue", (mstrExtraText == null ? "" : String.format("%,.2f", mdblExtraValue)));
 		larrParams.put("PayablePremiums", String.format("%,.2f", mdblPayables));
+		larrParams.put("LocalTotalComms", String.format("%,.2f", ldblLocalTotalComms));
 		larrParams.put("TotalComms", String.format("%,.2f", mdblTotalComms));
 		larrParams.put("TaxableComms", String.format("%,.2f", mdblTaxableComms));
 		larrParams.put("Tax", String.format("%,.2f", mdblTax));
