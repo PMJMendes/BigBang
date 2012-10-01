@@ -49,9 +49,9 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 			coveragesSection.setVisible(false);
 		}
 		else{
-			coveragesSection.setVisible(value.columnFields.length == 0);
+			coveragesSection.setVisible(value.columnFields.length > 0);
 		}
-		}
+	}
 
 	@Override
 	public FieldContainer getInfo() {
