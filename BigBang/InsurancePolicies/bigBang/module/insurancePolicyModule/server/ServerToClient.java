@@ -1260,20 +1260,25 @@ public class ServerToClient
 
 		private void buildGrid()
 		{
-			int llngMaxCol;
+			int llngMaxCol, llngLen;
 			int i, j, k, l;
 
 			llngMaxCol = -1;
+			llngLen = 0;
 			for ( i = 0; i < marrCoverages.length; i++ )
 			{
-				for ( j = 0; j < marrFields[i].length; j++ )
+				if ( !marrCoverages[i].IsHeader() )
 				{
-					if ( marrFields[i][j].IsVisible() && (marrFields[i][j].GetColumnOrder() > llngMaxCol) )
-						llngMaxCol = marrFields[i][j].GetColumnOrder();
+					llngLen++;
+					for ( j = 0; j < marrFields[i].length; j++ )
+					{
+						if ( marrFields[i][j].IsVisible() && (marrFields[i][j].GetColumnOrder() > llngMaxCol) )
+							llngMaxCol = marrFields[i][j].GetColumnOrder();
+					}
 				}
 			}
 
-			mobjContainer.coverages = new InsurancePolicy.Coverage[marrCoverages.length - 1];
+			mobjContainer.coverages = new InsurancePolicy.Coverage[llngLen];
 			mobjContainer.columns = new InsurancePolicy.ColumnHeader[llngMaxCol + 1];
 
 			l = 0;
