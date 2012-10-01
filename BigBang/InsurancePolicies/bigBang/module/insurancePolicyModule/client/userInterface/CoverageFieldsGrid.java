@@ -74,6 +74,8 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 
 	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] headers){
 
+		//TODO VERIFICAR VISIBILIDADE AQUI
+		
 		this.coverages = coverages;
 		fields = new Field[coverages.length+1][headers.length+2];
 
@@ -167,9 +169,8 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	public void fillTable(FieldContainer.ColumnField[] formFields) {
 		int row;
 		int column;
-
+		
 		if(formFields == null){
-			grid.clear();
 			return;
 		}
 
@@ -233,10 +234,10 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	public void setValue(FieldContainer.ColumnField[] value, boolean fireEvents) {
 		this.value = value;
 
-		if(value == null || value.length == 0){
+		if(value == null){
 			clear();
 			clearContent();
-			this.setVisible(false);
+			//this.setVisible(false);
 			return;
 		}
 
@@ -250,7 +251,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
-		this.setVisible(true);
+		//this.setVisible(true);
 	}
 
 	private void clearContent() {

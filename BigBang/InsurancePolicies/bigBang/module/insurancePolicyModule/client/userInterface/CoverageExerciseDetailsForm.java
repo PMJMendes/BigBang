@@ -46,10 +46,6 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 			exerciseDetailsSection.setValue(null);
 			extraFieldsSection.setValue(null);
 			table.setValue(null);
-			coveragesSection.setVisible(false);
-		}
-		else{
-			coveragesSection.setVisible(value.columnFields.length > 0);
 		}
 	}
 
@@ -62,7 +58,6 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		result.headerFields = exerciseDetailsSection.getValue();
 		result.extraFields = extraFieldsSection.getValue();
 		result.columnFields = table.getValue();
-		coveragesSection.setVisible(true);
 		return result;
 	}
 
