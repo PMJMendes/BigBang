@@ -13,6 +13,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
@@ -226,9 +227,15 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 	
 					@Override
 					public void onResponseFailure(Throwable caught) {
-						handler.onError(new String[]{
-								"Could not update the subpolicy"	
-						});
+						if ( caught instanceof BigBangPolicyValidationException ){
+							handler.onError(ResponseError.ErrorLevel.USER, new String[] {
+									caught.getMessage()
+							});
+						} else {
+							handler.onError(new String[]{
+									"Could not update the subpolicy"	
+							});
+						}
 						super.onResponseFailure(caught);
 					}
 				});
@@ -385,9 +392,15 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						caught.getMessage()	
-				});
+				if ( caught instanceof BigBangPolicyValidationException ){
+					handler.onError(ResponseError.ErrorLevel.USER, new String[] {
+							caught.getMessage()
+					});
+				} else {
+					handler.onError(new String[]{
+							"Could not validate the subpolicy"	
+					});
+				}
 				super.onResponseFailure(caught);
 			}
 		});

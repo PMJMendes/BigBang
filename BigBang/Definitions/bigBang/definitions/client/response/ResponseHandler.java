@@ -27,6 +27,18 @@ public abstract class ResponseHandler<T> {
 		Collection<ResponseError> errors = new ArrayList<ResponseError>();
 		for(int i = 0; i < errorStrings.length; i++){
 			ResponseError error = new ResponseError();
+			error.code = ResponseError.ErrorLevel.TECHNICAL;
+			error.description = errorStrings[i];
+			errors.add(error);
+		}
+		onError(errors);
+	}
+
+	public void onError(ResponseError.ErrorLevel code, String[] errorStrings){
+		Collection<ResponseError> errors = new ArrayList<ResponseError>();
+		for(int i = 0; i < errorStrings.length; i++){
+			ResponseError error = new ResponseError();
+			error.code = code;
 			error.description = errorStrings[i];
 			errors.add(error);
 		}

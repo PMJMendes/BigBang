@@ -14,6 +14,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Expense;
@@ -236,9 +237,15 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	
 					@Override
 					public void onResponseFailure(Throwable caught) {
-						handler.onError(new String[]{
-								"Could not update the policy"	
-						});
+						if ( caught instanceof BigBangPolicyValidationException ){
+							handler.onError(ResponseError.ErrorLevel.USER, new String[] {
+									caught.getMessage()
+							});
+						} else {
+							handler.onError(new String[]{
+									"Could not update the policy"	
+							});
+						}
 						super.onResponseFailure(caught);
 					}
 				});
@@ -460,9 +467,15 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						caught.getMessage()	
-				});
+				if ( caught instanceof BigBangPolicyValidationException ){
+					handler.onError(ResponseError.ErrorLevel.USER, new String[] {
+							caught.getMessage()
+					});
+				} else {
+					handler.onError(new String[]{
+							"Could not validate the policy"	
+					});
+				}
 				super.onResponseFailure(caught);
 			}
 		});

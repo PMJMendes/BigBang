@@ -715,7 +715,12 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar a apólice"), TYPE.ALERT_NOTIFICATION));					
+				for(ResponseError error : errors){
+					if ( ResponseError.ErrorLevel.USER.equals(error.code) )
+						onValidationFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
+					else
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar a apólice"), TYPE.ALERT_NOTIFICATION));
+				}
 			}
 		});
 	}
@@ -986,7 +991,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				for(ResponseError error : errors){
-					onValidationFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
+					if ( ResponseError.ErrorLevel.USER.equals(error.code) )
+						onValidationFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
+					else
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível validar a apólice"), TYPE.ALERT_NOTIFICATION));					
 				}
 			}
 		});
