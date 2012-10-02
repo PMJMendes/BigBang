@@ -39,7 +39,7 @@ public interface SubPolicyService
 
 	public SubPolicy getSubPolicy(String subPolicyId) throws SessionExpiredException, BigBangException;
 
-	public SubPolicy editSubPolicy(SubPolicy subPolicy) throws  SessionExpiredException, BigBangException;
+	public SubPolicy editSubPolicy(SubPolicy subPolicy) throws  SessionExpiredException, BigBangException, BigBangPolicyValidationException;
 
 	public SubPolicy performCalculations(String subPolicyId) throws SessionExpiredException, BigBangException,
 			BigBangPolicyCalculationException;

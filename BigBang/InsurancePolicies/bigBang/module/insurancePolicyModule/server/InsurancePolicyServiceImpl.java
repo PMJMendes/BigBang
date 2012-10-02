@@ -234,7 +234,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public InsurancePolicy editPolicy(InsurancePolicy policy)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, BigBangPolicyValidationException
 	{
 		Policy lobjPolicy;
 		PolicyData lobjData;
@@ -266,6 +266,10 @@ public class InsurancePolicyServiceImpl
 			lopMPD.mobjDocOps = null;
 
 			lopMPD.Execute();
+		}
+		catch (PolicyValidationException e)
+		{
+			throw new BigBangPolicyValidationException(e.getMessage());
 		}
 		catch (Throwable e)
 		{

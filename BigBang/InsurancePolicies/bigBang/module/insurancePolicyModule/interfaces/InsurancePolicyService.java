@@ -42,7 +42,7 @@ public interface InsurancePolicyService
 
 	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy editPolicy(InsurancePolicy policy) throws  SessionExpiredException, BigBangException;
+	public InsurancePolicy editPolicy(InsurancePolicy policy) throws  SessionExpiredException, BigBangException, BigBangPolicyValidationException;
 
 	public InsurancePolicy performCalculations(String policyId)
 			throws SessionExpiredException, BigBangException, BigBangPolicyCalculationException;

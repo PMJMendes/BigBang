@@ -224,7 +224,7 @@ public class SubPolicyServiceImpl
 	}
 
 	public SubPolicy editSubPolicy(SubPolicy subPolicy)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, BigBangPolicyValidationException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.SubPolicy lobjSubPolicy;
 		SubPolicyData lobjData;
@@ -254,6 +254,10 @@ public class SubPolicyServiceImpl
 			lopMPD.mobjDocOps = null;
 
 			lopMPD.Execute();
+		}
+		catch (PolicyValidationException e)
+		{
+			throw new BigBangPolicyValidationException(e.getMessage());
 		}
 		catch (Throwable e)
 		{
