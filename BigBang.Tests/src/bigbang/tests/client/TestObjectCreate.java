@@ -46,8 +46,8 @@ public class TestObjectCreate
 		};
 
 		policy.changedObjects = new InsuredObject[] {new InsuredObject(policy.emptyObject)};
-		policy.changedObjects[0].unitIdentification = "TESTE";
-		policy.changedObjects[0].headerFields[1].value = "1500";
+		policy.changedObjects[0].unitIdentification = "TESTE 2";
+		policy.changedObjects[0].headerFields[1].value = "Zé";
 
 		Services.insurancePolicyService.editPolicy(policy, callback);
 	}
