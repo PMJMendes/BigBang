@@ -77,9 +77,9 @@ public class ValidatePolicy
 			lobjValidation = lobjPolicy.GetDetailedObject();
 
 			if ( lobjValidation == null )
-				DetailedBase.DefaultValidate(lobjPolicy);
+				DetailedBase.DefaultValidate(lobjPolicy, pdb);
 			else
-				lobjValidation.Validate();
+				lobjValidation.Validate(pdb);
 		}
 		catch (PolicyValidationException e)
 		{

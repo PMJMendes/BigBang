@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
@@ -294,16 +295,11 @@ public class SubPolicy
     public SubPolicyCoverage[] GetCurrentCoverages()
     	throws BigBangJewelException
     {
-		ArrayList<SubPolicyCoverage> larrAux;
-		IEntity lrefSubPolicyCoverages;
+		SubPolicyCoverage[] larrAux;
         MasterDB ldb;
-        ResultSet lrsCoverages;
-
-		larrAux = new ArrayList<SubPolicyCoverage>();
 
 		try
 		{
-			lrefSubPolicyCoverages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyCoverage)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -313,12 +309,48 @@ public class SubPolicy
 
 		try
 		{
-			lrsCoverages = lrefSubPolicyCoverages.SelectByMembers(ldb, new int[] {Constants.FKSubPolicy_In_SubPolicyCoverage},
-					new java.lang.Object[] {getKey()}, new int[0]);
+			larrAux = GetCurrentCoverages(ldb);
+		}
+		catch (BigBangJewelException e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
 		}
 		catch (Throwable e)
 		{
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux;
+    }
+
+    public SubPolicyCoverage[] GetCurrentCoverages(SQLServer pdb)
+    	throws BigBangJewelException
+    {
+		ArrayList<SubPolicyCoverage> larrAux;
+		IEntity lrefSubPolicyCoverages;
+        ResultSet lrsCoverages;
+
+		larrAux = new ArrayList<SubPolicyCoverage>();
+
+		try
+		{
+			lrefSubPolicyCoverages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyCoverage)); 
+			lrsCoverages = lrefSubPolicyCoverages.SelectByMembers(pdb, new int[] {Constants.FKSubPolicy_In_SubPolicyCoverage},
+					new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -330,29 +362,17 @@ public class SubPolicy
 		catch (BigBangJewelException e)
 		{
 			try { lrsCoverages.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw e;
 		}
 		catch (Throwable e)
 		{
 			try { lrsCoverages.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
 			lrsCoverages.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{
@@ -365,16 +385,11 @@ public class SubPolicy
     public SubPolicyObject[] GetCurrentObjects()
     	throws BigBangJewelException
     {
-		ArrayList<SubPolicyObject> larrAux;
-		IEntity lrefObjects;
+		SubPolicyObject[] larrAux;
         MasterDB ldb;
-        ResultSet lrsObjects;
-
-		larrAux = new ArrayList<SubPolicyObject>();
 
 		try
 		{
-			lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -384,12 +399,48 @@ public class SubPolicy
 
 		try
 		{
-			lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {Constants.FKSubPolicy_In_SubPolicyObject},
-					new java.lang.Object[] {getKey()}, new int[0]);
+			larrAux = GetCurrentObjects(ldb);
+		}
+		catch (BigBangJewelException e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
 		}
 		catch (Throwable e)
 		{
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux;
+    }
+
+    public SubPolicyObject[] GetCurrentObjects(SQLServer pdb)
+    	throws BigBangJewelException
+    {
+		ArrayList<SubPolicyObject> larrAux;
+		IEntity lrefObjects;
+        ResultSet lrsObjects;
+
+		larrAux = new ArrayList<SubPolicyObject>();
+
+		try
+		{
+			lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject)); 
+			lrsObjects = lrefObjects.SelectByMembers(pdb, new int[] {Constants.FKSubPolicy_In_SubPolicyObject},
+					new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -401,29 +452,17 @@ public class SubPolicy
 		catch (BigBangJewelException e)
 		{
 			try { lrsObjects.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw e;
 		}
 		catch (Throwable e)
 		{
 			try { lrsObjects.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
 			lrsObjects.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{
@@ -450,19 +489,31 @@ public class SubPolicy
 		}
     }
 
+    public PolicyExercise[] GetCurrentExercises(SQLServer pdb)
+    	throws BigBangJewelException
+    {
+    	try
+    	{
+			return GetOwner().GetCurrentExercises(pdb);
+		}
+    	catch (BigBangJewelException e)
+    	{
+    		throw e;
+		}
+    	catch (Throwable e)
+    	{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+    }
+
     public SubPolicyValue[] GetCurrentValues()
     	throws BigBangJewelException
     {
-		ArrayList<SubPolicyValue> larrAux;
-		IEntity lrefContactInfo;
+		SubPolicyValue[] larrAux;
         MasterDB ldb;
-        ResultSet lrsInfo;
-
-		larrAux = new ArrayList<SubPolicyValue>();
 
 		try
 		{
-			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyValue)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -472,12 +523,48 @@ public class SubPolicy
 
 		try
 		{
-			lrsInfo = lrefContactInfo.SelectByMembers(ldb, new int[] {Constants.FKSubPolicy_In_SubPolicyValue},
-					new java.lang.Object[] {getKey()}, new int[0]);
+			larrAux = GetCurrentValues(ldb);
+		}
+		catch (BigBangJewelException e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
 		}
 		catch (Throwable e)
 		{
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux;
+    }
+
+    public SubPolicyValue[] GetCurrentValues(SQLServer pdb)
+    	throws BigBangJewelException
+    {
+		ArrayList<SubPolicyValue> larrAux;
+		IEntity lrefContactInfo;
+        ResultSet lrsInfo;
+
+		larrAux = new ArrayList<SubPolicyValue>();
+
+		try
+		{
+			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyValue)); 
+			lrsInfo = lrefContactInfo.SelectByMembers(pdb, new int[] {Constants.FKSubPolicy_In_SubPolicyValue},
+					new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -489,29 +576,17 @@ public class SubPolicy
 		catch (BigBangJewelException e)
 		{
 			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw e;
 		}
 		catch (Throwable e)
 		{
 			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
 			lrsInfo.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{

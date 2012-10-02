@@ -44,28 +44,28 @@ public abstract class DetailedBase
 		mobjSubPolicy = pobjSubPolicy;
 	}
 
-	public static void DefaultValidate(Policy pobjPolicy)
+	public static void DefaultValidate(Policy pobjPolicy, SQLServer pdb)
 		throws BigBangJewelException, PolicyValidationException
 	{
 		StringBuilder lstrBuilder;
 		String lstrErrors;
 
 		lstrBuilder = new StringBuilder();
-		InnerDefaultValidate(lstrBuilder, pobjPolicy);
+		InnerDefaultValidate(pdb, lstrBuilder, pobjPolicy);
 		lstrErrors = lstrBuilder.toString();
 
 		if ( (lstrErrors != null) && (lstrErrors.length() != 0) )
 			throw new PolicyValidationException(lstrErrors);
 	}
 
-	public static void DefaultSubValidate(SubPolicy pobjSubPolicy)
+	public static void DefaultSubValidate(SubPolicy pobjSubPolicy, SQLServer pdb)
 		throws BigBangJewelException, PolicyValidationException
 	{
 		StringBuilder lstrBuilder;
 		String lstrErrors;
 
 		lstrBuilder = new StringBuilder();
-		InnerDefaultSubValidate(lstrBuilder, pobjSubPolicy);
+		InnerDefaultSubValidate(pdb, lstrBuilder, pobjSubPolicy);
 		lstrErrors = lstrBuilder.toString();
 
 		if ( (lstrErrors != null) && (lstrErrors.length() != 0) )
@@ -89,7 +89,7 @@ public abstract class DetailedBase
 		return mobjSubPolicy;
 	}
 
-	public void Validate()
+	public void Validate(SQLServer pdb)
 		throws BigBangJewelException, PolicyValidationException
 	{
 		StringBuilder lstrBuilder;
@@ -101,13 +101,13 @@ public abstract class DetailedBase
 		for ( i = 0; i < marrCoverageDefs.length; i++ )
 			marrFieldDefs[i] = marrCoverageDefs[i].GetCurrentTaxes();
 
-		marrCoverages = mobjPolicy.GetCurrentCoverages();
-		marrObjects = mobjPolicy.GetCurrentObjects();
-		marrExercises = mobjPolicy.GetCurrentExercises();
-		marrValues = mobjPolicy.GetCurrentValues();
+		marrCoverages = mobjPolicy.GetCurrentCoverages(pdb);
+		marrObjects = mobjPolicy.GetCurrentObjects(pdb);
+		marrExercises = mobjPolicy.GetCurrentExercises(pdb);
+		marrValues = mobjPolicy.GetCurrentValues(pdb);
 
 		lstrBuilder = new StringBuilder();
-		InnerDefaultValidate(lstrBuilder, mobjPolicy);
+		InnerDefaultValidate(pdb, lstrBuilder, mobjPolicy);
 		InnerValidate(lstrBuilder, "\n");
 		lstrErrors = lstrBuilder.toString();
 
@@ -115,14 +115,14 @@ public abstract class DetailedBase
 			throw new PolicyValidationException(lstrErrors);
 	}
 
-	public void SubValidate()
+	public void SubValidate(SQLServer pdb)
 		throws BigBangJewelException, PolicyValidationException
 	{
 		StringBuilder lstrBuilder;
 		String lstrErrors;
 
 		lstrBuilder = new StringBuilder();
-		InnerDefaultSubValidate(lstrBuilder, mobjSubPolicy);
+		InnerDefaultSubValidate(pdb, lstrBuilder, mobjSubPolicy);
 		InnerSubValidate(lstrBuilder, "\n");
 		lstrErrors = lstrBuilder.toString();
 
@@ -140,10 +140,10 @@ public abstract class DetailedBase
 		for ( i = 0; i < marrCoverageDefs.length; i++ )
 			marrFieldDefs[i] = marrCoverageDefs[i].GetCurrentTaxes();
 
-		marrCoverages = mobjPolicy.GetCurrentCoverages();
-		marrObjects = mobjPolicy.GetCurrentObjects();
-		marrExercises = mobjPolicy.GetCurrentExercises();
-		marrValues = mobjPolicy.GetCurrentValues();
+		marrCoverages = mobjPolicy.GetCurrentCoverages(pdb);
+		marrObjects = mobjPolicy.GetCurrentObjects(pdb);
+		marrExercises = mobjPolicy.GetCurrentExercises(pdb);
+		marrValues = mobjPolicy.GetCurrentValues(pdb);
 
 		return InnerDoCalc(pdb);
 	}
@@ -158,16 +158,16 @@ public abstract class DetailedBase
 		for ( i = 0; i < marrCoverageDefs.length; i++ )
 			marrFieldDefs[i] = marrCoverageDefs[i].GetCurrentTaxes();
 
-		marrExercises = mobjPolicy.GetCurrentExercises();
+		marrExercises = mobjPolicy.GetCurrentExercises(pdb);
 
-		marrSubCoverages = mobjSubPolicy.GetCurrentCoverages();
-		marrSubObjects = mobjSubPolicy.GetCurrentObjects();
-		marrSubValues = mobjSubPolicy.GetCurrentValues();
+		marrSubCoverages = mobjSubPolicy.GetCurrentCoverages(pdb);
+		marrSubObjects = mobjSubPolicy.GetCurrentObjects(pdb);
+		marrSubValues = mobjSubPolicy.GetCurrentValues(pdb);
 
 		return InnerDoSubCalc(pdb);
 	}
 
-	protected static void InnerDefaultValidate(StringBuilder pstrBuilder, Policy pobjPolicy)
+	protected static void InnerDefaultValidate(SQLServer pdb, StringBuilder pstrBuilder, Policy pobjPolicy)
 		throws BigBangJewelException
 	{
 		int i;
@@ -177,8 +177,8 @@ public abstract class DetailedBase
 
 		try
 		{
-			larrCoverages = pobjPolicy.GetCurrentCoverages();
-			larrValues = pobjPolicy.GetCurrentValues();
+			larrCoverages = pobjPolicy.GetCurrentCoverages(pdb);
+			larrValues = pobjPolicy.GetCurrentValues(pdb);
 		}
 		catch (Throwable e)
 		{
@@ -398,7 +398,7 @@ public abstract class DetailedBase
 		return -1;
 	}
 
-	protected static void InnerDefaultSubValidate(StringBuilder pstrBuilder, SubPolicy pobjSubPolicy)
+	protected static void InnerDefaultSubValidate(SQLServer pdb, StringBuilder pstrBuilder, SubPolicy pobjSubPolicy)
 		throws BigBangJewelException
 	{
 		int i;
@@ -408,8 +408,8 @@ public abstract class DetailedBase
 
 		try
 		{
-			larrCoverages = pobjSubPolicy.GetCurrentCoverages();
-			larrValues = pobjSubPolicy.GetCurrentValues();
+			larrCoverages = pobjSubPolicy.GetCurrentCoverages(pdb);
+			larrValues = pobjSubPolicy.GetCurrentValues(pdb);
 		}
 		catch (Throwable e)
 		{

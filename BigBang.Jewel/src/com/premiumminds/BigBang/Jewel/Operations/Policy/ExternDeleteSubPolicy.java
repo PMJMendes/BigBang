@@ -139,10 +139,10 @@ public class ExternDeleteSubPolicy
 				mobjDocOps.RunSubOp(pdb, null);
 			}
 
-			larrValues = lobjAux.GetCurrentValues();
-			larrExercises = lobjAux.GetCurrentExercises();
-			larrObjects = lobjAux.GetCurrentObjects();
-			larrCoverages = lobjAux.GetCurrentCoverages();
+			larrValues = lobjAux.GetCurrentValues(pdb);
+			larrExercises = lobjAux.GetCurrentExercises(pdb);
+			larrObjects = lobjAux.GetCurrentObjects(pdb);
+			larrCoverages = lobjAux.GetCurrentCoverages(pdb);
 
 			if ( (larrValues == null) || (larrValues.length == 0) )
 				mobjData.marrValues = null;

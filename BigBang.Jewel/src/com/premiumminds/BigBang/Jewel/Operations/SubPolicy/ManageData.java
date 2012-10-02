@@ -283,7 +283,7 @@ public class ManageData
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		TriggerOp(new ForceValidateSubPolicy(this.GetProcess().getKey()), pdb);
+		TriggerOp(new TriggerValidateSubPolicy(this.GetProcess().getKey()), pdb);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -568,7 +568,7 @@ public class ManageData
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		TriggerOp(new ForceValidateSubPolicy(this.GetProcess().getKey()), pdb);
+		TriggerOp(new TriggerValidateSubPolicy(this.GetProcess().getKey()), pdb);
 	}
 
 	public UndoSet[] GetSets()

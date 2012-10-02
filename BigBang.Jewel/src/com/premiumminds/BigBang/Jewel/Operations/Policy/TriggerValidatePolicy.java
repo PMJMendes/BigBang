@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.SubPolicy;
+package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
@@ -8,33 +8,33 @@ import Jewel.Petri.SysObjects.SilentOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
-import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
-public class ForceValidateSubPolicy
+public class TriggerValidatePolicy
 	extends SilentOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public ForceValidateSubPolicy(UUID pidProcess)
+	public TriggerValidatePolicy(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_SubPolicy_ForceValidateSubPolicy;
+		return Constants.OPID_Policy_ForceValidatePolicy;
 	}
 
-	protected void Run(SQLServer pdb) 
+	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		SubPolicy lobjSubPolicy;
+		Policy lobjPolicy;
 		DetailedBase lobjValidation;
 
 		try
 		{
-			lobjSubPolicy = (SubPolicy)GetProcess().GetData();
+			lobjPolicy = (Policy)GetProcess().GetData();
 		}
 		catch (Throwable e)
 		{
@@ -43,12 +43,12 @@ public class ForceValidateSubPolicy
 
 		try
 		{
-			lobjValidation = lobjSubPolicy.GetDetailedObject();
+			lobjValidation = lobjPolicy.GetDetailedObject();
 
 			if ( lobjValidation == null )
-				DetailedBase.DefaultSubValidate(lobjSubPolicy);
+				DetailedBase.DefaultValidate(lobjPolicy, pdb);
 			else
-				lobjValidation.SubValidate();
+				lobjValidation.Validate(pdb);
 		}
 		catch (PolicyValidationException e)
 		{
