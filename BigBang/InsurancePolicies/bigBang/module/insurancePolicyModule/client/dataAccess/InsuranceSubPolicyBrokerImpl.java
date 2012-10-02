@@ -407,7 +407,7 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not perform detailed calculations")
+						caught.getMessage()	
 				});
 				super.onResponseFailure(caught);
 			}

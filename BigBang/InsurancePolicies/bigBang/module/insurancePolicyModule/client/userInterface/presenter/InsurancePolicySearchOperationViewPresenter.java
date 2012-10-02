@@ -804,7 +804,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						setExercises(response.exerciseData);
 						view.setOwner(null);
 						view.clearObjectsList();
-						view.clearPolicyList();
+				//		view.clearPolicyList();
 						view.getPolicyNotesForm().setValue(response.notes);
 						//PERMISSIONS
 						view.setCoveragesExtraFields(response.coverages);
@@ -824,7 +824,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 					@Override
 					public void onResponse(InsurancePolicy response) {
-						isEditModeEnabled = false;//TODO PREENCHER UUM STUB AO EXEMPLO DO CLIENTE
+						isEditModeEnabled = false;
 						view.setOwner(response);
 						view.setToolbarEditMode(false);
 						view.allowManagerChange(false);
@@ -939,7 +939,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					onExecuteDetailedCalculationsFailed();
+					for(ResponseError error : errors){
+						onExecuteDetailedCalculationsFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
+					}
 				}
 			});
 		}else {
@@ -951,8 +953,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os cálculos detalhados foram executados com sucesso"), TYPE.TRAY_NOTIFICATION));
 	}
 
-	private void onExecuteDetailedCalculationsFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível executar os cálculos detalhados"), TYPE.ALERT_NOTIFICATION));
+	private void onExecuteDetailedCalculationsFailed(String message){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os cálculos detalhados falharam :<br><br>" + message), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void onGetPolicyFailed(){
@@ -985,13 +987,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	}
 
 	private void onValidationFailed(String message){
-//		ScrollPanel scrollable = new ScrollPanel();
-//		scrollable.setSize("100%", "350px");
-//		scrollable.getElement().getStyle().setOverflowX(Overflow.HIDDEN);
-//		scrollable.getElement().getStyle().setOverflowY(Overflow.SCROLL);
-//		scrollable.getElement().setInnerHTML("A apólice falhou a validação :<br><br>" + message);
-//		
-//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", scrollable.getElement().toString()), TYPE.ALERT_NOTIFICATION));
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice falhou a validação :<br><br>" + message), TYPE.ALERT_NOTIFICATION));
 	}
 

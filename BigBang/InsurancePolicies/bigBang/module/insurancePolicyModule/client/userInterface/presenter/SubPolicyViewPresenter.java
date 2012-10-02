@@ -771,7 +771,9 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					onExecuteDetailedCalculationsFailed();
+					for(ResponseError error : errors){
+						onExecuteDetailedCalculationsFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
+					}
 				}
 			});
 		}else {
@@ -779,9 +781,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		}
 	}
 
-	protected void onExecuteDetailedCalculationsFailed() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os cálculos detalhados foram executados com sucesso"), TYPE.TRAY_NOTIFICATION));
-
+	protected void onExecuteDetailedCalculationsFailed(String message) {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os cálculos detalhados falharam :<br><br>" + message), TYPE.ALERT_NOTIFICATION));
 	}
 
 	protected void onExecuteDetailedCalculationsSuccess() {
