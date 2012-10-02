@@ -723,9 +723,16 @@ public class ClientToServer
 			lobjResult = new PolicyObjectData();
 
 			if ( InsuredObjectStub.Change.MODIFIED.equals(pobjObject.change) )
+			{
 				lobjResult.mid = UUID.fromString(pobjObject.id);
+				lobjResult.mbNew = false;
+			}
 			else
+			{
 				lobjResult.mid = null;
+				lobjResult.mbNew = true;
+			}
+			lobjResult.mbDeleted = false;
 
 			lobjResult.mstrName = pobjObject.unitIdentification;
 			lobjResult.midOwner = midOwner;
@@ -812,9 +819,16 @@ public class ClientToServer
 			lobjResult = new SubPolicyObjectData();
 
 			if ( InsuredObjectStub.Change.MODIFIED.equals(pobjObject.change) )
+			{
 				lobjResult.mid = UUID.fromString(pobjObject.id);
+				lobjResult.mbNew = false;
+			}
 			else
+			{
 				lobjResult.mid = null;
+				lobjResult.mbNew = true;
+			}
+			lobjResult.mbDeleted = false;
 
 			lobjResult.mstrName = pobjObject.unitIdentification;
 			lobjResult.midOwner = midOwner;
