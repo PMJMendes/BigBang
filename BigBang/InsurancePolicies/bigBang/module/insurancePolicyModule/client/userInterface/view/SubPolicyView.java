@@ -361,7 +361,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 	@Override
 	public void setOwner(SubPolicy subPol) {
-		objectsList.setOwner(subPol == null ? null : subPol.id);
+		setObjectListOwner(subPol == null ? null : subPol.id);
 		childrenPanel.setSubPolicy(subPol);
 	}
 
@@ -547,5 +547,10 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		toolbar.lockAll();
 		childrenPanel.documentsList.allowCreation(false);
 		childrenPanel.contactsList.allowCreation(false);
+	}
+
+	@Override
+	public void setObjectListOwner(String subPolicyId) {
+		objectsList.setOwner(subPolicyId);
 	}
 }

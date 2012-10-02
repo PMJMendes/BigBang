@@ -549,7 +549,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void setOwner(InsurancePolicy policy) {
-		objectsList.setOwner(policy == null ? null : policy.id);
+		setObjectListOwner(policy == null ? null : policy.id);
 		childrenPanel.setPolicy(policy);
 	}
 
@@ -570,8 +570,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void setToolbarEditMode(boolean b) {
-		toolbar.setSaveModeEnabled(b);
 		toolbar.lockNonSaveOptions(b);
+		toolbar.setSaveModeEnabled(b);
 	}
 
 	@Override
@@ -637,5 +637,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void allowManagerChange(boolean b) {
 		policyForm.allowManagerChange(b);
+	}
+	
+	@Override
+	public void setObjectListOwner(String policyId){
+		objectsList.setOwner(policyId);
 	}
 }

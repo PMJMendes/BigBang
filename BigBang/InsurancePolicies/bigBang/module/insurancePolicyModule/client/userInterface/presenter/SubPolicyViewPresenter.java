@@ -181,6 +181,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 		void setOwner(SubPolicy subPol);
 
+		void setObjectListOwner(String subPolicyId);
+
 	}
 
 	protected Display view;
@@ -234,7 +236,6 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						view.setOwner(null);
 						view.setCoveragesExtraFields(response.coverages);
 						view.getSubPolicyNotesForm().setValue(response.notes);
-						setPermissions(response);
 						fillPolicy();
 						fillSubPolicy();
 						view.clearObjectList();
@@ -870,6 +871,13 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 	}
 
 	protected void onCancelEdit() {
+		if(subPolicyId.equalsIgnoreCase("new")){
+			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+			navig.popFromStackParameter("display");
+			navig.removeParameter("subpolicyid");
+			NavigationHistoryManager.getInstance().go(navig);
+			return;
+		}
 		view.setReadOnly(true);
 		subPolicyBroker.discardEditData(subPolicyId);
 		revert();
@@ -879,6 +887,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 	private void revert() {
 
+		view.setObjectListOwner(subPolicyId);
+		
 		if(onPolicy || view.getInsuredObjectHeaderForm().getValue().change == Change.CREATED){
 			fillPolicy();
 		}

@@ -189,6 +189,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void doSearch();
 
 		void allowManagerChange(boolean b);
+
+		void setObjectListOwner(String policyId);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -720,6 +722,14 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	protected void onCancelEdit() {
+		if(policyId.equalsIgnoreCase("new")){
+			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+			navig.setParameter("section", "client");
+			navig.removeParameter("policyid");
+			navig.removeParameter("sublineid");
+			NavigationHistoryManager.getInstance().go(navig);
+			return;
+		}
 		view.setReadOnly(true);
 		broker.discardEditData(policyId);
 		revert();
@@ -731,6 +741,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	private void revert() {
 
+		view.setObjectListOwner(policyId);
+		
 		if(onPolicy || view.getInsuredObjectHeaderForm().getValue().change == Change.CREATED){
 			fillPolicy();
 		}
@@ -804,11 +816,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						setExercises(response.exerciseData);
 						view.setOwner(null);
 						view.clearObjectsList();
-				//		view.clearPolicyList();
+						view.clearPolicyList();
 						view.getPolicyNotesForm().setValue(response.notes);
 						//PERMISSIONS
 						view.setCoveragesExtraFields(response.coverages);
-						setPermissions(response);
 						fillPolicy();
 						view.setReadOnly(false);		
 						view.allowCreateNewExercise(true);
@@ -824,7 +835,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 					@Override
 					public void onResponse(InsurancePolicy response) {
-						isEditModeEnabled = false;
+						isEditModeEnabled = false;//TODO PREENCHER UUM STUB AO EXEMPLO DO CLIENTE
 						view.setOwner(response);
 						view.setToolbarEditMode(false);
 						view.allowManagerChange(false);
