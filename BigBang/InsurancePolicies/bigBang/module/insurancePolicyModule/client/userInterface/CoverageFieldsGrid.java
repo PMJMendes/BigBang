@@ -17,10 +17,11 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
-public abstract class CoverageFieldsGrid extends SimplePanel implements HasValue<FieldContainer.ColumnField[]>{
+//EXTENDS GRID por causa do layout da form (de outra forma a scrollbar nao aparece)
+public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.ColumnField[]>{ 
+	
 
 
 	class Field extends GenericFormField{
@@ -51,6 +52,7 @@ public abstract class CoverageFieldsGrid extends SimplePanel implements HasValue
 	private Coverage[] coverages;
 
 	public CoverageFieldsGrid() {
+		super(1,1);
 		fields = new Field[0][0];
 		grid = new Grid();
 		ScrollPanel p = new ScrollPanel();
@@ -58,7 +60,7 @@ public abstract class CoverageFieldsGrid extends SimplePanel implements HasValue
 		p.getElement().getStyle().setOverflowY(Overflow.VISIBLE);
 		p.getElement().getStyle().setOverflowX(Overflow.AUTO);
 		p.getElement().getStyle().setMarginRight(20, Unit.PX);
-		this.setWidget(p);
+		this.setWidget(0,0,p);
 		this.getElement().getStyle().setTableLayout(TableLayout.FIXED);
 		this.setSize("100%", "100%");
 	}
