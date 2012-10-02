@@ -59,6 +59,8 @@ public class SubPolicyWorkSpace {
 	}
 
 	public SubPolicy getWholeSubPolicy(String subPolicyId) {
+		int i;
+
 		if ( !isSubPolicyLoaded(subPolicyId) )
 			return null;
 
@@ -78,12 +80,15 @@ public class SubPolicyWorkSpace {
 					exercise.id = null;
 		}
 
-		originalSubPolicy.changedObjects = alteredObjects.toArray(new InsuredObject[alteredObjects.size()]);
+		originalSubPolicy.changedObjects = new InsuredObject[alteredObjects.size()];
+		i = 0;
 		for ( InsuredObject object : originalSubPolicy.changedObjects )
 		{
-			object.headerFields = splitArray(object.headerFields, originalSubPolicy.headerFields.length);
-			if ( InsuredObjectStub.Change.CREATED.equals(object.change) )
-				object.id = null;
+			originalSubPolicy.changedObjects[i] = new InsuredObject(object);
+			originalSubPolicy.changedObjects[i].headerFields = splitArray(originalSubPolicy.changedObjects[i].headerFields, originalSubPolicy.headerFields.length);
+			if ( InsuredObjectStub.Change.CREATED.equals(originalSubPolicy.changedObjects[i].change) )
+				originalSubPolicy.changedObjects[i].id = null;
+			i++;
 		}
 
 		return originalSubPolicy;
