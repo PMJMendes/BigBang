@@ -789,6 +789,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		if(policyId != null){
 			if(policyId.equals("new")){
+				view.clearPolicyList();//TODO PREENCHER UUM STUB AO EXEMPLO DO CLIENTE
 				String subLineId = parameterHolder.getParameter("sublineid");
 				String clientId = parameterHolder.getParameter("clientid");
 				broker.getEmptyPolicy(subLineId, clientId, new ResponseHandler<InsurancePolicy>() {
@@ -803,7 +804,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						setExercises(response.exerciseData);
 						view.setOwner(null);
 						view.clearObjectsList();
-				//		view.clearPolicyList();
+						view.clearPolicyList();
 						view.getPolicyNotesForm().setValue(response.notes);
 						//PERMISSIONS
 						view.setCoveragesExtraFields(response.coverages);
@@ -823,7 +824,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 					@Override
 					public void onResponse(InsurancePolicy response) {
-						isEditModeEnabled = false;
+						isEditModeEnabled = false;//TODO PREENCHER UUM STUB AO EXEMPLO DO CLIENTE
 						view.setOwner(response);
 						view.setToolbarEditMode(false);
 						view.allowManagerChange(false);
