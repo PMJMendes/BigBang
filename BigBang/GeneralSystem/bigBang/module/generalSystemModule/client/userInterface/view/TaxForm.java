@@ -43,6 +43,7 @@ public class TaxForm extends FormView<Tax> {
 		visible = new CheckBoxFormField("Visível");
 		visible.setValue(true);
 		tag = new TextBoxFormField("Tag");
+		tag.setFieldWidth("275px");
 		columnOrder = new TextBoxFormField("Índice da coluna");
 		columnOrder.setFieldWidth("100px");
 		defaultValue = new RadioButtonFormField("Valor por defeito");
@@ -158,7 +159,9 @@ public class TaxForm extends FormView<Tax> {
 		addFormFieldGroup(new FormField<?>[]{defaultValue}, false);
 		defaultValue.setReadOnly(isReadOnly());
 
-		if(type.getValue() != null && type.getValue().equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ReferenceType)){
+		System.out.println(type.getValue() + " " + ModuleConstants.PolicyFieldTypes.ReferenceType);
+		
+		if(fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ReferenceType)){
 			refersToEntityId.setEditable(true);
 			refersToEntityId.setReadOnly(isReadOnly());
 		}else{
