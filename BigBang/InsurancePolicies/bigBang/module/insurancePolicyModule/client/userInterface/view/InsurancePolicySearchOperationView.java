@@ -84,6 +84,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			}
 		};
 
+		doSearch();
+		
 		searchPanelWrapper.add(searchPanel);
 		searchPanelWrapper.setCellHeight(searchPanel, "100%");
 

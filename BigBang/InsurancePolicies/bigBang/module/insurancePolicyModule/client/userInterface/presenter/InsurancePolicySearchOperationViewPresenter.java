@@ -770,7 +770,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.setNotesReadOnly(true);
 			view.dealWithObject(newInsuredObject);
 			if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
-				view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
+				view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco: " + newInsuredObject.unitIdentification);	
 			}
 			view.focusInsuredObjectForm();
 		}else{
@@ -786,7 +786,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					view.dealWithObject(response);
 					view.setNotesReadOnly(true);
 					if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
-						view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco");	
+						view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco: " + response.unitIdentification);	
 					}
 				}
 
@@ -806,7 +806,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		if(policyId != null){
 			if(policyId.equals("new")){
-				view.clearPolicyList();//TODO PREENCHER UUM STUB AO EXEMPLO DO CLIENTE
+				//view.clearPolicyList();//TODO PREENCHER UUM STUB AO EXEMPLO DO CLIENTE
 				String subLineId = parameterHolder.getParameter("sublineid");
 				String clientId = parameterHolder.getParameter("clientid");
 				broker.getEmptyPolicy(subLineId, clientId, new ResponseHandler<InsurancePolicy>() {
@@ -821,7 +821,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						setExercises(response.exerciseData);
 						view.setOwner(null);
 						view.clearObjectsList();
-						view.clearPolicyList();
+						//view.clearPolicyList();
 						view.getPolicyNotesForm().setValue(response.notes);
 						view.setCoveragesExtraFields(response.coverages);
 						fillPolicy();
@@ -874,7 +874,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.getPolicyHeaderForm().setValue(null);
 			view.getInsuredObjectHeaderForm().setValue(null);
 			view.clearObjectsList();
-			view.clearPolicyList();
+			//view.clearPolicyList();
 			view.clearPolicySelection();
 			view.setReadOnly(true);
 			view.setPolicyEntrySelected(false);
