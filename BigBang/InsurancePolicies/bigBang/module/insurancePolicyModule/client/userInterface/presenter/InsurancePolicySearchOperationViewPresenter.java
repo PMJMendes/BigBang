@@ -818,7 +818,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.clearObjectsList();
 						view.clearPolicyList();
 						view.getPolicyNotesForm().setValue(response.notes);
-						//PERMISSIONS
 						view.setCoveragesExtraFields(response.coverages);
 						fillPolicy();
 						view.setReadOnly(false);		

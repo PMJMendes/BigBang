@@ -263,6 +263,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		dataMenuItem.setEnabled(!b);
 		executeMenuItem.setEnabled(!b);
 		requestMenuItem.setEnabled(!b);
+		editCancelMenuItem.setEnabled(b);
 	}
 
 	/**
