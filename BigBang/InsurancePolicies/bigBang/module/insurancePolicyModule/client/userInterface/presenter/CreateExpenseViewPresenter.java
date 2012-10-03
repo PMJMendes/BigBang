@@ -130,6 +130,7 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 
 				@Override
 				public void onResponse(InsurancePolicy response) {
+					view.getForm().setReadOnly(false);
 					showExpense(response);
 					view.getInsuranceForm().setValue(response);
 					view.setToolBarSaveMode(true);
