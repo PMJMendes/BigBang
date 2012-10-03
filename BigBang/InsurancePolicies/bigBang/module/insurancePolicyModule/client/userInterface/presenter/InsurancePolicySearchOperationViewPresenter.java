@@ -40,6 +40,8 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel.Entry;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 
@@ -88,7 +90,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		CREATE_NEGOTIATION, 
 		CREATE_EXPENSE,
 		CREATE_RISK_ANALISYS, 
-		TRANSFER_TO_CLIENT
+		TRANSFER_TO_CLIENT, 
+		ON_NEW_RESULTS
 	}
 	public interface Display {
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -191,6 +194,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void allowManagerChange(boolean b);
 
 		void setObjectListOwner(String policyId);
+
+		void addEntryToList(Entry entry);
+
+		void removeElementFromList(ValueSelectable<InsurancePolicyStub> stub);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -229,10 +236,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
 				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
+				removeNewListEntry();
 				InsurancePolicyStub selectedValue = selected == null ? null : selected.getValue();
 				String selectedPolicyId = selectedValue == null ? new String() : selectedValue.id;
 				selectedPolicyId = selectedPolicyId == null ? new String() : selectedPolicyId;
-
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				if(selectedPolicyId.isEmpty()){
 					item.removeParameter("policyid");
@@ -342,8 +349,12 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					break;
 				case NEW_INSURED_OBJECT:
 					onNewInsuredObject();
-					break;		
+					break;
+				case ON_NEW_RESULTS:
+					onNewResults();
+					break;
 				}
+
 			}
 
 		});
@@ -466,6 +477,33 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		this.bound = true;
 	}
 
+
+
+	protected void onNewResults() {
+		InsurancePolicy pol = view.getPolicyHeaderForm().getInfo();
+		if(pol != null && pol.id != null) {
+			ensureListedAndSelected(pol);
+		}
+
+	}
+
+
+	private void ensureListedAndSelected(InsurancePolicy pol) {
+		boolean found = false;
+		for(ValueSelectable<InsurancePolicyStub> stub : view.getList().getAll()){
+			if(stub.getValue().id.equals(pol.id)){
+				found  = true;
+				stub.setSelected(true, false);
+			}
+			else{
+				stub.setSelected(false,false);
+			}
+		}
+		if(!found){
+			InsurancePolicySearchPanel.Entry entry = new InsurancePolicySearchPanel.Entry(pol);
+			view.addEntryToList(entry);
+		}
+	}
 
 
 	protected void onExerciseChanged(String string) {
@@ -709,6 +747,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 			@Override
 			public void onResponse(InsurancePolicy response) {
+				if(policyId.equalsIgnoreCase("new")){
+					removeNewListEntry();
+				}
 				onSavePolicySuccess(response.id);
 				isEditModeEnabled = false;
 			}
@@ -726,6 +767,18 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	}
 
 
+	protected void removeNewListEntry() {
+
+		@SuppressWarnings("unchecked")
+		ValueSelectable<InsurancePolicyStub> stub = (ValueSelectable<InsurancePolicyStub>) view.getList().getAll().toArray()[0];
+		if(stub.getValue().id.equalsIgnoreCase("new")){
+			view.removeElementFromList(stub);
+		}
+
+
+	}
+
+
 	protected void onCancelEdit() {
 		if(policyId.equalsIgnoreCase("new")){
 			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
@@ -733,6 +786,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			navig.removeParameter("policyid");
 			navig.removeParameter("sublineid");
 			NavigationHistoryManager.getInstance().go(navig);
+			removeNewListEntry();
 			return;
 		}
 		view.setReadOnly(true);
@@ -747,7 +801,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	private void revert() {
 
 		view.setObjectListOwner(policyId);
-		
+
 		if(onPolicy || view.getInsuredObjectHeaderForm().getValue().change == Change.CREATED){
 			fillPolicy();
 		}
@@ -806,7 +860,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		if(policyId != null){
 			if(policyId.equals("new")){
-				//view.clearPolicyList();//TODO PREENCHER UUM STUB AO EXEMPLO DO CLIENTE
 				String subLineId = parameterHolder.getParameter("sublineid");
 				String clientId = parameterHolder.getParameter("clientid");
 				broker.getEmptyPolicy(subLineId, clientId, new ResponseHandler<InsurancePolicy>() {
@@ -821,12 +874,12 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						setExercises(response.exerciseData);
 						view.setOwner(null);
 						view.clearObjectsList();
-						//view.clearPolicyList();
 						view.getPolicyNotesForm().setValue(response.notes);
 						view.setCoveragesExtraFields(response.coverages);
 						fillPolicy();
 						view.setReadOnly(false);		
 						view.allowCreateNewExercise(true);
+						ensureListedAndSelected(response);
 					}
 
 					@Override
@@ -839,7 +892,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 					@Override
 					public void onResponse(InsurancePolicy response) {
-						isEditModeEnabled = false;//TODO PREENCHER UUM STUB AO EXEMPLO DO CLIENTE
+						isEditModeEnabled = false;
 						view.setOwner(response);
 						view.setToolbarEditMode(false);
 						view.allowManagerChange(false);
@@ -852,6 +905,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						fillPolicy();
 						view.setReadOnly(true);		
 						view.allowCreateNewExercise(true);
+						ensureListedAndSelected(response);
 					}
 
 					@Override
@@ -874,13 +928,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.getPolicyHeaderForm().setValue(null);
 			view.getInsuredObjectHeaderForm().setValue(null);
 			view.clearObjectsList();
-			//view.clearPolicyList();
 			view.clearPolicySelection();
 			view.setReadOnly(true);
 			view.setPolicyEntrySelected(false);
-			view.doSearch();
 		}
-		
+
 	}
 
 	protected void setExercises(ExerciseData[] exerciseData) {

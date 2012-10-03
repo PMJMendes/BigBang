@@ -1,63 +1,57 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import org.gwt.mosaic.ui.client.MessageBox;
-import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
-
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.clientModule.client.userInterface.DeleteClientToolbar;
+import bigBang.module.clientModule.client.userInterface.presenter.DeleteClientViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.DeleteClientViewPresenter.Action;
 
-public abstract class DeleteClientView extends View {
+public class DeleteClientView extends View implements DeleteClientViewPresenter.Display{
 
-	protected DeleteClientForm form;
-	
+	private ActionInvokedEventHandler<Action> actionHandler;
+	private DeleteClientForm form;
+	private DeleteClientToolbar toolBar;
+
 	public DeleteClientView(){
 		VerticalPanel wrapper = new VerticalPanel();
-		
-		BigBangOperationsToolBar toolbar = new BigBangOperationsToolBar() {
-			
-			@Override
-			public void onSaveRequest() {}
-			
-			@Override
-			public void onEditRequest() {}
-			
-			@Override
-			public void onCancelRequest() {}
-		};
-		toolbar.hideAll();
-		toolbar.addItem("Eliminar", new Command() {
-			
-			@Override
-			public void execute() {
-				onDeleteButtonPressed();
-			}
-		});
-
-		wrapper.add(toolbar);
-		wrapper.setCellHeight(toolbar, "21px");
-		
-		form = new DeleteClientForm();
-		form.setSize("100%", "100%");
-		
-		wrapper.add(form);
-		wrapper.setCellHeight(form, "100%");
-		
 		initWidget(wrapper);
-	}
-	
-	public abstract void onDeleteButtonPressed();
-	
-	public void confirmDelete(final ResponseHandler<Boolean> handler){
-		MessageBox.confirm("Confirmar Eliminação de Cliente", "O cliente seleccionado será eliminado. Tem certeza que pretende prosseguir?", new ConfirmationCallback() {
-			
+		wrapper.setSize("100%", "100%");
+
+		toolBar = new DeleteClientToolbar() {
+
 			@Override
-			public void onResult(boolean result) {
-				handler.onResponse(result);
+			public void onCancelRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<DeleteClientViewPresenter.Action>(Action.CANCEL));
 			}
-		});
+
+			@Override
+			public void onDelete() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<DeleteClientViewPresenter.Action>(Action.DELETE));
+			}
+		};
+		
+		wrapper.add(toolBar);
+		form = new DeleteClientForm();
+		wrapper.add(form.getNonScrollableContent());
+		wrapper.setCellWidth(form.getNonScrollableContent(), "100%");
+	}
+
+
+	@Override
+	public HasEditableValue<String> getForm() {
+		return form;
+	}
+
+	@Override
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		this.actionHandler = handler;
+	}
+	@Override
+	protected void initializeView() {
+		return;
 	}
 }

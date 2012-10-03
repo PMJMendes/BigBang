@@ -16,6 +16,7 @@ import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionV
 import bigBang.module.clientModule.client.userInterface.presenter.CreateCasualtyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateQuoteRequestViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.DeleteClientViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.SingleClientManagerTransferViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ViewClientInfoRequestViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientInfoOrDocumentRequestView;
@@ -27,6 +28,7 @@ import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
 import bigBang.module.clientModule.client.userInterface.view.CreateCasualtyView;
 import bigBang.module.clientModule.client.userInterface.view.CreateInsurancePolicyView;
 import bigBang.module.clientModule.client.userInterface.view.CreateQuoteRequestView;
+import bigBang.module.clientModule.client.userInterface.view.DeleteClientView;
 import bigBang.module.clientModule.client.userInterface.view.SingleClientManagerTransferView;
 import bigBang.module.clientModule.client.userInterface.view.ViewClientInfoRequestView;
 
@@ -146,6 +148,15 @@ public class ClientModule implements Module {
 				CreateCasualtyView view = (CreateCasualtyView) GWT.create(CreateCasualtyView.class);
 				CreateCasualtyViewPresenter presenter = new CreateCasualtyViewPresenter(view);
 				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_DELETE", new ViewPresenterInstantiator() {
+			
+			@Override
+			public ViewPresenter getInstance() {
+				DeleteClientView deleteClientView = (DeleteClientView) GWT.create(DeleteClientView.class);
+				DeleteClientViewPresenter deleteClientViewPresenter = new DeleteClientViewPresenter(deleteClientView);
+				return deleteClientViewPresenter;
 			}
 		});
 	}

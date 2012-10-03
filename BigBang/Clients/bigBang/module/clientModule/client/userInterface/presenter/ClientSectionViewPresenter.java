@@ -172,6 +172,9 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("repeatinforequest")){
 					present("INFO_OR_DOCUMENT_REQUEST_REPEAT", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("delete")){
+					present("CLIENT_DELETE", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 

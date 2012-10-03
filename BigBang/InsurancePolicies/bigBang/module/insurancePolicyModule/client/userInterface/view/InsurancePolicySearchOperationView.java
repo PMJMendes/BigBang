@@ -19,6 +19,7 @@ import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectedStateChangedEvent;
@@ -31,6 +32,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicy
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyHeaderForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel.Entry;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSearchPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.PolicyNotesFormSection;
@@ -644,5 +646,16 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void setObjectListOwner(String policyId){
 		objectsList.setOwner(policyId);
+	}
+
+	@Override
+	public void addEntryToList(Entry entry) {
+		searchPanel.add(0, entry);
+		entry.setSelected(true, false);
+	}
+
+	@Override
+	public void removeElementFromList(ValueSelectable<InsurancePolicyStub> stub) {
+		searchPanel.remove(stub);
 	}
 }
