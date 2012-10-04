@@ -206,6 +206,8 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		coInsurance.setValue(false);
 		headerForm = new HeaderFieldsSection();
 		addSection(headerForm);
+		
+		setValidator(new InsurancePolicyHeaderFormValidator(this));
 	}
 
 	@Override

@@ -7,8 +7,8 @@ import bigBang.library.client.userInterface.view.FormView;
 
 public class CreateDebitNoteForm extends FormView<DebitNote> {
 
-	private NumericTextBoxFormField noteValue;
-	private DatePickerFormField maturityDate;
+	protected NumericTextBoxFormField noteValue;
+	protected DatePickerFormField maturityDate;
 	
 	public CreateDebitNoteForm(){
 		noteValue = new NumericTextBoxFormField("Valor", true);
@@ -19,6 +19,8 @@ public class CreateDebitNoteForm extends FormView<DebitNote> {
 		addSection("Informação Geral");
 		addFormField(noteValue);
 		addFormField(maturityDate);
+		
+		setValidator(new CreateDebitNoteFormValidator(this));
 	}
 
 	@Override

@@ -39,7 +39,7 @@ public class CoverageExerciseDetailsForm extends FormView<FieldContainer>{
 		extraFieldsSection.setSize("100%", "100%");
 		addSection(extraFieldsSection);
 
-
+		setValidator(new CoverageExerciseDetailsFormValidator(this));
 	}
 
 	@Override
