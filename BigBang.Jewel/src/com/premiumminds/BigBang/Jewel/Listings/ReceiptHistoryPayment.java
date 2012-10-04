@@ -103,15 +103,15 @@ public class ReceiptHistoryPayment
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		if ( parrParams[0] != null )
+		if ( parrParams[1] != null )
 			lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[0]).append("'");
 
-		if ( parrParams[1] != null )
+		if ( parrParams[2] != null )
 			lstrSQL.append(" AND [Timestamp] <= '").append(parrParams[1]).append("'");
 
 		lstrSQL.append(")");
 
-		if ( parrParams[2] != null )
+		if ( parrParams[0] != null )
 			filterByClient(lstrSQL, UUID.fromString(parrParams[2]));
 
 		larrAux = new ArrayList<Receipt>();
