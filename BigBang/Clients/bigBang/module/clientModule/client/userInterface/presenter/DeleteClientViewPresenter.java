@@ -106,7 +106,9 @@ public class DeleteClientViewPresenter implements ViewPresenter {
 
 		clientId = parameterHolder.getParameter("clientid");
 		if(clientId == null || clientId.isEmpty()){
-			onDeleteFailed();
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.removeParameter("show");
+			NavigationHistoryManager.getInstance().go(item);
 		}
 	}
 
@@ -116,9 +118,6 @@ public class DeleteClientViewPresenter implements ViewPresenter {
 
 	protected void onDeleteFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o Cliente"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("show");
-		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onDeleteSuccess(){
@@ -126,7 +125,6 @@ public class DeleteClientViewPresenter implements ViewPresenter {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		item.removeParameter("clientid");
-		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
