@@ -7,8 +7,8 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
-import bigBang.library.client.userInterface.ExternalInfoRequestForm;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.form.ExternalInfoRequestForm;
 import bigBang.library.client.userInterface.presenter.ExternalRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestViewPresenter.Action;
 

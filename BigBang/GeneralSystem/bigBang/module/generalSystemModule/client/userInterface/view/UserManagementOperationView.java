@@ -12,6 +12,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.UserList;
 import bigBang.module.generalSystemModule.client.userInterface.UserListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.UserOperationsToolbar;
+import bigBang.module.generalSystemModule.client.userInterface.form.UserForm;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter.Action;
 

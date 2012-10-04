@@ -29,7 +29,7 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.TaxList;
-import bigBang.module.generalSystemModule.client.userInterface.view.TaxForm;
+import bigBang.module.generalSystemModule.client.userInterface.form.TaxForm;
 import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;

@@ -5,8 +5,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.expenseModule.client.userInterface.ReceiveAcceptanceForm;
 import bigBang.module.expenseModule.client.userInterface.ReceiveResponseToolbar;
+import bigBang.module.expenseModule.client.userInterface.form.ReceiveAcceptanceForm;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter.Action;
 

@@ -6,10 +6,10 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.casualtyModule.client.userInterface.CasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.SubCasualtyChildrenPanel;
-import bigBang.module.casualtyModule.client.userInterface.SubCasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.SubCasualtyOperationsToolbar;
+import bigBang.module.casualtyModule.client.userInterface.form.CasualtyForm;
+import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter.Action;
 import bigBang.definitions.shared.BigBangProcess;

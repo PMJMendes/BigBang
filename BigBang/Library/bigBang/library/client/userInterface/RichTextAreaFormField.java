@@ -70,7 +70,7 @@ public class RichTextAreaFormField extends FormField<String> {
 	}
 
 	@Override
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnlyInternal(boolean readOnly) {
 		if(!editable)
 			return;
 		if(!field.isEnabled() != readOnly){

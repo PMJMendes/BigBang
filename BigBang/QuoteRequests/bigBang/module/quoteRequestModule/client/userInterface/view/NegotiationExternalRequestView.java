@@ -3,7 +3,7 @@ package bigBang.module.quoteRequestModule.client.userInterface.view;
 
 import bigBang.definitions.shared.Negotiation;
 import bigBang.library.client.userInterface.view.ExternalRequestView;
-import bigBang.module.quoteRequestModule.client.userInterface.NegotiationForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationForm;
 
 public class NegotiationExternalRequestView extends ExternalRequestView<Negotiation>{
 

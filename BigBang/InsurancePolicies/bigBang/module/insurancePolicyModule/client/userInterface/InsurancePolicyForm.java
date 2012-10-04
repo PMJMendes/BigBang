@@ -1,6 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyHeaderForm;
 
 public class InsurancePolicyForm extends InsurancePolicyHeaderForm{
 	

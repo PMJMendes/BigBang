@@ -11,6 +11,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.HistoryOperationsToolbar;
 import bigBang.library.client.userInterface.HistorySearchPanel;
+import bigBang.library.client.userInterface.form.HistoryItemForm;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter.Action;
 

@@ -13,8 +13,8 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.ReceiptsList;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel.Entry;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptChoiceFromListViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptChoiceFromListViewPresenter.Action;
 

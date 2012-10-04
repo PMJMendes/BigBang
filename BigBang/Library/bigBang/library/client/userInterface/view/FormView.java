@@ -3,6 +3,7 @@ package bigBang.library.client.userInterface.view;
 import java.util.ArrayList;
 
 import bigBang.library.client.FormField;
+import bigBang.library.client.FormValidator;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.Validatable;
 
@@ -24,7 +25,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -47,6 +47,8 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 
 	protected T value;
 	private boolean valueChangeHandlerInitialized;
+	
+	private FormValidator<?> validator;
 
 
 	public FormView(){
@@ -84,6 +86,10 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 
 		mainWrapper.add(topToolbar, 0, 0);
 		setReadOnly(true);
+	}
+	
+	public <T2 extends FormView<T>>void setValidator(FormValidator<T2> validator) {
+		this.validator = validator;
 	}
 
 	@Override
@@ -211,23 +217,27 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	}
 
 	public boolean validate(boolean showErrors) {
-		boolean hasErrors = false;
-		for(FormViewSection s : sections){
-			//s.clearErrorMessages();
-			for(FormField<?> f : s.getFields()){ //TODO
-//				boolean fieldHasErrors = !f.validate();
-//				hasErrors = !fieldHasErrors ? hasErrors : true;
-//				sectionHasErrors = !fieldHasErrors ? sectionHasErrors : true;
-//				if(fieldHasErrors)
-//					f.validate();//s.addErrorMessage(f.getErrorMessage());
-				
-				boolean fieldHasErrors = f.getValue() == null && f.isMandatory();
-				f.setInvalid(showErrors && fieldHasErrors);
-				hasErrors |= fieldHasErrors;
-			}
-			//s.showErrorMessages(sectionHasErrors && showErrors);
+//		boolean hasErrors = false;
+//		for(FormViewSection s : sections){
+//			//s.clearErrorMessages();
+//			for(FormField<?> f : s.getFields()){ //TODO
+////				boolean fieldHasErrors = !f.validate();
+////				hasErrors = !fieldHasErrors ? hasErrors : true;
+////				sectionHasErrors = !fieldHasErrors ? sectionHasErrors : true;
+////				if(fieldHasErrors)
+////					f.validate();//s.addErrorMessage(f.getErrorMessage());
+//				
+//				boolean fieldHasErrors = f.getValue() == null && f.isMandatory();
+//				f.setInvalid(showErrors && fieldHasErrors);
+//				hasErrors |= fieldHasErrors;
+//			}
+//			//s.showErrorMessages(sectionHasErrors && showErrors);
+//		}
+////		return !hasErrors;
+		if(this.validator != null) {
+			return this.validator.validate().valid;
+			//TODO show the error messages
 		}
-//		return !hasErrors;
 		return true; //TODO
 	}
 

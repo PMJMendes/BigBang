@@ -17,9 +17,9 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.userInterface.ExpenseChildrenPanel;
-import bigBang.module.expenseModule.client.userInterface.ExpenseForm;
 import bigBang.module.expenseModule.client.userInterface.ExpenseProcessToolBar;
 import bigBang.module.expenseModule.client.userInterface.ExpenseSearchPanel;
+import bigBang.module.expenseModule.client.userInterface.form.ExpenseForm;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter.Action;
 

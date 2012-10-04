@@ -5,6 +5,7 @@ import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.form.ManagerTransferForm;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter.Action;
 

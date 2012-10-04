@@ -245,32 +245,29 @@ public class DatePickerFormField extends FormField<Date> {
 
 		return result;
 	}
+	
+	public Date getValueForValidation() throws IllegalArgumentException {
+		String day = this.day.getValue();
+		String month = this.month.getValue();
+		String year = this.year.getValue();
+
+		if(("".equals(day) && "".equals(month) && "".equalsIgnoreCase(year)) ||
+				(EMPTY_VALUE_PLACEHOLDER.equals(day) && EMPTY_VALUE_PLACEHOLDER.equals(month) && EMPTY_VALUE_PLACEHOLDER.equalsIgnoreCase(year)))
+			return null;
+
+		Date result = null;
+		
+		result = this.format.parse(year+"-"+month+"-"+day);
+
+		return result;
+	}
 
 	public String getStringValue(){
 		return getValue() == null ? null : DateTimeFormat.getFormat(DEFAULT_FORMAT).format(getValue());
 	}
 	
 	@Override
-	public void setInvalid(boolean invalid){
-		if(field != null){
-			if(invalid && !isReadOnly()){
-				day.addStyleName("invalidFormField");
-				month.addStyleName("invalidFormField");
-				year.addStyleName("invalidFormField");
-			}else{
-				day.removeStyleName("invalidFormField");
-				month.removeStyleName("invalidFormField");
-				year.removeStyleName("invalidFormField");
-			}
-		}
-//		FieldValidator<?> validator = this.validator;
-//		String message = validator == null ? null : validator.getErrorMessage();
-//		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
-//		this.errorMessageLabel.setVisible(invalid);
-	}
-
-	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		if(!editable)
 			return;
 		if(readonly){

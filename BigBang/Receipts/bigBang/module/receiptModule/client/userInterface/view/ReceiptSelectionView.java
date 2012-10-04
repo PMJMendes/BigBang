@@ -1,7 +1,7 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 import  bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSelectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSelectionViewPresenter.Action;
 

@@ -69,7 +69,7 @@ public class CheckBoxFormField extends FormField<Boolean> {
 	}
 	
 	@Override
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnlyInternal(boolean readOnly) {
 		if(!editable)
 			return;
 		CheckBox field = ((CheckBox)this.field);

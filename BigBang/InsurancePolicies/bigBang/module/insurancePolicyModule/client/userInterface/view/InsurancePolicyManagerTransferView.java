@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
+import bigBang.module.insurancePolicyModule.client.userInterface.form.TransferInsurancePolicyManagerForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyManagerTransferViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyManagerTransferViewPresenter.Action;
 import bigBang.library.client.HasEditableValue;
@@ -7,7 +8,6 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyTransferOperationsToolbar;
-import bigBang.module.insurancePolicyModule.client.userInterface.TransferInsurancePolicyManagerForm;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 

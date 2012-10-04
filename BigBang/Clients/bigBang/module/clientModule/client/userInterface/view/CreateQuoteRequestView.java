@@ -8,9 +8,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.module.clientModule.client.userInterface.CreateQuoteRequestChildrenPanel;
 import bigBang.module.clientModule.client.userInterface.CreateQuoteRequestToolbar;
+import bigBang.module.clientModule.client.userInterface.form.ClientForm;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateQuoteRequestViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateQuoteRequestViewPresenter.Action;
-import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestForm;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObjectStub;
@@ -24,7 +25,7 @@ import bigBang.library.client.userInterface.view.View;
 
 public class CreateQuoteRequestView extends View implements CreateQuoteRequestViewPresenter.Display {
 
-	protected ClientFormView ownerForm;
+	protected ClientForm ownerForm;
 	protected QuoteRequestForm requestForm;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected CreateQuoteRequestChildrenPanel childrenPanel;
@@ -43,7 +44,7 @@ public class CreateQuoteRequestView extends View implements CreateQuoteRequestVi
 		ownerHeader.setHeight("30px");
 		ownerWrapper.add(ownerHeader);
 		
-		ownerForm = new ClientFormView();
+		ownerForm = new ClientForm();
 		ownerForm.setSize("100%", "100%");
 		ownerForm.setReadOnly(true);
 		ownerWrapper.add(ownerForm);

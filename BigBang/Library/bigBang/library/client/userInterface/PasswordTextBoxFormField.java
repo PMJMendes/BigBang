@@ -61,7 +61,7 @@ public class PasswordTextBoxFormField extends FormField<String> {
 	}
 
 	@Override
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnlyInternal(boolean readOnly) {
 		if(!editable)
 			return;
 		PasswordTextBox field = ((PasswordTextBox)this.field); 

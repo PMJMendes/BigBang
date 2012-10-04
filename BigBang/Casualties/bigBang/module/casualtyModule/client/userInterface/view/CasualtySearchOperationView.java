@@ -19,9 +19,9 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.casualtyModule.client.userInterface.CasualtyChildrenPanel;
-import bigBang.module.casualtyModule.client.userInterface.CasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.CasualtyProcessToolBar;
 import bigBang.module.casualtyModule.client.userInterface.CasualtySearchPanel;
+import bigBang.module.casualtyModule.client.userInterface.form.CasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter.Action;
 

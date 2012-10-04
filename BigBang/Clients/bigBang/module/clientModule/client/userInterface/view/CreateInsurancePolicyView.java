@@ -2,10 +2,12 @@ package bigBang.module.clientModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.clientModule.client.userInterface.CreateInsurancePolicyForm;
+import bigBang.module.clientModule.client.userInterface.form.CreateInsurancePolicyForm;
+import bigBang.module.clientModule.client.userInterface.form.CreateInsurancePolicyFormValidator;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter.Action;
 import bigBang.module.insurancePolicyModule.client.userInterface.CreateInsurancePolicyToolbar;
+import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
@@ -34,27 +36,13 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 		wrapper.add(toolbar);
 		
 		form = new CreateInsurancePolicyForm();
+		form.setValidator(new CreateInsurancePolicyFormValidator(form));
 		wrapper.add(form.getNonScrollableContent());
 	}
 	
 	@Override
 	protected void initializeView() {
 		return;
-	}
-
-	@Override
-	public String getCategory() {
-		return form.getCategory();
-	}
-
-	@Override
-	public String getLine() {
-		return form.getLine();
-	}
-
-	@Override
-	public String getSubLine() {
-		return form.getSubLine();
 	}
 
 	@Override
@@ -65,6 +53,11 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.handler = handler;
+	}
+
+	@Override
+	public HasEditableValue<String> getForm() {
+		return form;
 	}
 
 }

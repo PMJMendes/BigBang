@@ -213,7 +213,7 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 	}
 
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		readOnly = readonly;
 
 		code.setReadOnly(readonly);

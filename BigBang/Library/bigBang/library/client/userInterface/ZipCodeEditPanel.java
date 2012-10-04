@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.ZipCode;
+import bigBang.library.client.userInterface.form.ZipCodeForm;
 import bigBang.library.client.userInterface.view.View;
 
 public class ZipCodeEditPanel extends View implements HasValue<ZipCode>{

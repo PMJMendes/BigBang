@@ -3,7 +3,7 @@ package bigBang.module.receiptModule.client.userInterface.view;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.module.receiptModule.client.userInterface.SignatureRequestCreationToolbar;
-import bigBang.module.receiptModule.client.userInterface.SignatureRequestForm;
+import bigBang.module.receiptModule.client.userInterface.form.SignatureRequestForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateSignatureRequestViewPresenter.Action;
 import bigBang.definitions.shared.SignatureRequest;

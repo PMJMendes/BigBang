@@ -7,8 +7,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.expenseModule.client.userInterface.ReceiveReturnForm;
 import bigBang.module.expenseModule.client.userInterface.ReceiveResponseToolbar;
+import bigBang.module.expenseModule.client.userInterface.form.ReceiveReturnForm;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter.Action;;
 

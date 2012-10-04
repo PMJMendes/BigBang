@@ -56,14 +56,14 @@ public class OutgoingMessageFormField extends FormField<OutgoingMessage>{
 	}
 
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		
 		readOnly = readonly;
-		to.setReadOnly(readonly);
-		forwardReply.setReadOnly(readonly);
-		internalCCAddresses.setReadOnly(readonly);
-		externalCCAddresses.setReadOnly(readonly);
-		text.setReadOnly(readonly);
+		to.setReadOnlyInternal(readonly);
+		forwardReply.setReadOnlyInternal(readonly);
+		internalCCAddresses.setReadOnlyInternal(readonly);
+		externalCCAddresses.setReadOnlyInternal(readonly);
+		text.setReadOnlyInternal(readonly);
 
 	}
 

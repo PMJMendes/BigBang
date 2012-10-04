@@ -101,7 +101,7 @@ public class ExpandableSelectionFormField extends FormField<String> {
 		wrapper.add(innerWrapper);
 		
 		setValue(null, false);
-		setReadOnly(false);
+		setReadOnlyInternal(false);
 	}
 
 	public String getValue() {
@@ -148,7 +148,7 @@ public class ExpandableSelectionFormField extends FormField<String> {
 	}
 
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		this.readOnly = readonly;
 		this.selectionPanel.setReadOnly(readonly);
 		this.valueDisplayName.getElement().getStyle().setProperty("border", readonly ? "" : "1px gray dotted");

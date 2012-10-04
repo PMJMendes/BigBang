@@ -55,6 +55,8 @@ InfoOrDocumentRequestViewPresenter<Client> {
 					onSendRequestFailed();
 				}
 			});
+		}else{
+			onFormValidationFailed();
 		}
 	}
 
@@ -141,6 +143,10 @@ InfoOrDocumentRequestViewPresenter<Client> {
 		item.removeParameter("ownertypeid");
 		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	private void onFormValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}
 
 }

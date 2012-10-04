@@ -19,8 +19,8 @@ import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.module.generalSystemModule.client.userInterface.form.CoverageForm;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
-import bigBang.module.generalSystemModule.client.userInterface.view.CoverageForm;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

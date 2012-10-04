@@ -4,8 +4,9 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.casualtyModule.client.userInterface.CasualtyForm;
+import bigBang.module.casualtyModule.client.userInterface.form.CasualtyForm;
 import bigBang.module.clientModule.client.userInterface.CreateCasualtyOperationsToolbar;
+import bigBang.module.clientModule.client.userInterface.form.ClientForm;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateCasualtyViewPresenter.Action;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateCasualtyViewPresenter;
 import bigBang.definitions.shared.Casualty;
@@ -18,7 +19,7 @@ import bigBang.library.client.userInterface.view.View;
 
 public class CreateCasualtyView extends View implements CreateCasualtyViewPresenter.Display {
 
-	protected ClientFormView clientForm;
+	protected ClientForm clientForm;
 	protected CasualtyForm form;
 	protected ActionInvokedEventHandler<Action> handler;
 	protected CreateCasualtyOperationsToolbar toolbar;
@@ -36,7 +37,7 @@ public class CreateCasualtyView extends View implements CreateCasualtyViewPresen
 		parentHeader.setHeight("30px");
 		parentWrapper.add(parentHeader);
 		
-		clientForm = new ClientFormView();
+		clientForm = new ClientForm();
 		clientForm.setReadOnly(true);
 		clientForm.setSize("100%", "100%");
 		parentWrapper.add(clientForm);

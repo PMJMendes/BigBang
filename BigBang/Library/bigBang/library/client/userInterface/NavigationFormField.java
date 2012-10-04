@@ -60,7 +60,7 @@ public class NavigationFormField extends FormField<NavigationHistoryItem> {
 		wrapper.add(innerWrapper);
 
 		setValue(null, false);
-		setReadOnly(false);
+		setReadOnlyInternal(false);
 	}
 
 	public NavigationHistoryItem getValue() {
@@ -98,7 +98,7 @@ public class NavigationFormField extends FormField<NavigationHistoryItem> {
 	}
 
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		return;
 	}
 

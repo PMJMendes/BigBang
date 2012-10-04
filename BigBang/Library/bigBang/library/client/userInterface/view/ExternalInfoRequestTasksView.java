@@ -3,8 +3,8 @@ package bigBang.library.client.userInterface.view;
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ExternalInfoRequestForm;
 import bigBang.library.client.userInterface.ExternalInfoRequestTasksOperationsToolbar;
+import bigBang.library.client.userInterface.form.ExternalInfoRequestForm;
 import bigBang.library.client.userInterface.presenter.ExternalInfoRequestTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalInfoRequestTasksViewPresenter.Action;
 

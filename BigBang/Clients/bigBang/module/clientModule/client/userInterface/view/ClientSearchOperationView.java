@@ -26,6 +26,8 @@ import bigBang.module.clientModule.client.userInterface.ClientChildrenPanel;
 import bigBang.module.clientModule.client.userInterface.ClientProcessToolBar;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanelListEntry;
+import bigBang.module.clientModule.client.userInterface.form.ClientForm;
+import bigBang.module.clientModule.client.userInterface.form.ClientFormValidator;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter.Action;
 
@@ -41,7 +43,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	protected final int SEARCH_PANEL_WIDTH = 400; //minimum and starting width (px)
 
 	protected ClientSearchPanel searchPanel;
-	protected ClientFormView form;
+	protected ClientForm form;
 	protected ClientChildrenPanel childrenPanel;
 	protected ClientProcessToolBar operationsToolbar; 
 	protected ToolButton newButton;
@@ -154,7 +156,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			}
 		};
 
-		this.form = new ClientFormView();
+		this.form = new ClientForm();
 		this.form.setSize("100%", "100%");
 
 		this.form.addValueChangeHandler(new ValueChangeHandler<Client>() {
@@ -164,6 +166,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 				childrenPanel.setClient(client);
 			}
 		});
+		form.setValidator(new ClientFormValidator(form));
 
 		formWrapper.add(operationsToolbar);
 		formWrapper.setCellHeight(operationsToolbar, "21px");

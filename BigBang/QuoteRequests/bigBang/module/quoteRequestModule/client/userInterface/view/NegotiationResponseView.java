@@ -7,8 +7,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.quoteRequestModule.client.userInterface.NegotiationResponseForm;
 import bigBang.module.quoteRequestModule.client.userInterface.NegotiationResponseToolBar;
+import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationResponseForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationResponseViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationResponseViewPresenter.Action;
 

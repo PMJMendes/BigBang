@@ -72,7 +72,7 @@ public class DayMonthDatePickerFormField extends DatePickerFormField{
 	}
 	
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		if(!editable)
 			return;
 		if(readonly){

@@ -15,6 +15,7 @@ import bigBang.module.generalSystemModule.client.userInterface.MediatorChildrenP
 import bigBang.module.generalSystemModule.client.userInterface.MediatorList;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorOperationsToolbar;
+import bigBang.module.generalSystemModule.client.userInterface.form.MediatorForm;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter.Action;
 

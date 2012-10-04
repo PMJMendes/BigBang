@@ -22,8 +22,8 @@ public class NumericFormFieldWrapper extends FormField<String>{
 	}
 
 	@Override
-	public void setReadOnly(boolean readonly) {
-		field.setReadOnly(readonly);
+	public void setReadOnlyInternal(boolean readonly) {
+		field.setReadOnlyInternal(readonly);
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.InfoOrDocumentRequestChildrenPanel;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.ViewInfoOrDocumentRequestOperationsToolbar;
+import bigBang.library.client.userInterface.form.ViewInfoOrDocumentRequestForm;
 import bigBang.library.client.userInterface.presenter.ViewInfoOrDocumentRequestViewPresenter.Action;
 import bigBang.module.clientModule.client.userInterface.presenter.ViewClientInfoRequestViewPresenter;
 

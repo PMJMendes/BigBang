@@ -14,8 +14,8 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.library.shared.DocuShareItem;
 import bigBang.module.expenseModule.client.userInterface.ExpenseImagePanel;
 import bigBang.module.expenseModule.client.userInterface.ExpensePolicyWrapper;
-import bigBang.module.expenseModule.client.userInterface.SerialExpenseCreationForm;
 import bigBang.module.expenseModule.client.userInterface.SerialExpenseCreationToolbar;
+import bigBang.module.expenseModule.client.userInterface.form.SerialExpenseCreationForm;
 import bigBang.module.expenseModule.client.userInterface.presenter.SerialExpenseCreationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.SerialExpenseCreationViewPresenter.Action;
 

@@ -87,6 +87,8 @@ public class SingleClientManagerTransferViewPresenter implements ViewPresenter {
 				case TRANSFER:
 					if(view.getForm().validate()) {
 						transferClient(SingleClientManagerTransferViewPresenter.this.currentClientId, view.getForm().getInfo());
+					}else{
+						onFormValidationFailed();
 					}
 					break;
 				case CANCEL:
@@ -163,4 +165,8 @@ public class SingleClientManagerTransferViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
+	private void onFormValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
+	}
+	
 }

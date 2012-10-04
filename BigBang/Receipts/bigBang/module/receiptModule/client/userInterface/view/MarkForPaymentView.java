@@ -7,8 +7,8 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.receiptModule.client.userInterface.PaymentsForm;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.form.PaymentsForm;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter.Action;
 import bigBang.definitions.shared.Receipt;

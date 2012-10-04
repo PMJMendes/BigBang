@@ -1,5 +1,7 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
+import bigBang.module.receiptModule.client.userInterface.form.PaymentsForm;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialMarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter.Action;
@@ -14,8 +16,6 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.receiptModule.client.userInterface.PaymentsForm;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
 
 import com.google.gwt.event.dom.client.ClickEvent;

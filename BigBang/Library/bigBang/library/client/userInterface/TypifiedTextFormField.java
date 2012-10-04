@@ -77,7 +77,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 		textBody.setLabelWidth("0px");
 		textBody.setFieldWidth("100%");
 		wrapper.add(textBody);
-		setReadOnly(false);
+		setReadOnlyInternal(false);
 	}
 
 	public void setTypifiedTexts(String tag){
@@ -132,10 +132,10 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 	}
 
 	@Override
-	public void setReadOnly(boolean readonly) {
-		subject.setReadOnly(readonly);
-		textBody.setReadOnly(readonly);
-		labels.setReadOnly(readonly);
+	public void setReadOnlyInternal(boolean readonly) {
+		subject.setReadOnlyInternal(readonly);
+		textBody.setReadOnlyInternal(readonly);
+		labels.setReadOnlyInternal(readonly);
 
 	}
 

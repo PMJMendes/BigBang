@@ -5,7 +5,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.quoteRequestModule.client.userInterface.SingleQuoteRequestTransferOperationsToolbar;
-import bigBang.module.quoteRequestModule.client.userInterface.TransferQuoteRequestManagerForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.TransferQuoteRequestManagerForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.SingleQuoteRequestManagerTransferViewPresenter;
 
 import com.google.gwt.user.client.ui.VerticalPanel;

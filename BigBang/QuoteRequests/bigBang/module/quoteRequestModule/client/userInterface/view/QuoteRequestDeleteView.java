@@ -2,8 +2,8 @@ package bigBang.module.quoteRequestModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestDeleteForm;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestDeleteToolBar;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestDeleteForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestDeleteViewPresenter;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;

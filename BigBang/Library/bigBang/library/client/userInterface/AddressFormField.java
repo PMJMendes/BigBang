@@ -62,11 +62,11 @@ public class AddressFormField extends FormField<Address> {
 	};
 
 	@Override
-	public void setReadOnly(boolean readOnly) {				
+	public void setReadOnlyInternal(boolean readOnly) {				
 		
 		street1.setEnabled(!readOnly);
 		street2.setEnabled(!readOnly);
-		zipCode.setReadOnly(readOnly);
+		zipCode.setReadOnlyInternal(readOnly);
 		
 		if(readOnly){
 			street1.addStyleName("gwt-TextBox-readonly");

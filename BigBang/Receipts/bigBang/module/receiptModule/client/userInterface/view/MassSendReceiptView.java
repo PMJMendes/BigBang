@@ -1,5 +1,6 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter.Action;
 
@@ -40,7 +41,6 @@ import bigBang.library.client.userInterface.SelectedProcessesList;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptSearchDataBroker;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
 import bigBang.module.receiptModule.shared.ModuleConstants;
 import bigBang.module.receiptModule.shared.ReceiptSearchParameter;

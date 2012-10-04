@@ -257,9 +257,9 @@ TypifiedListClient {
 	}
 
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		if(editable){
-			super.setReadOnly(readonly);
+			super.setReadOnlyInternal(readonly);
 			managementPanel.setReadOnly(readonly);
 			managementPanel.getList().setSelectableEntries(!readonly);
 		}
@@ -267,7 +267,7 @@ TypifiedListClient {
 
 	public void setEditable(boolean editable){
 		if(!editable){
-			setReadOnly(true);
+			setReadOnlyInternal(true);
 		}
 		this.editable = editable;
 	}

@@ -2,7 +2,7 @@ package bigBang.module.casualtyModule.client.userInterface.view;
 
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.userInterface.view.ExternalRequestView;
-import bigBang.module.casualtyModule.client.userInterface.SubCasualtyForm;
+import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyForm;
 
 public class SubCasualtyExternalRequestView extends ExternalRequestView<SubCasualty>{
 

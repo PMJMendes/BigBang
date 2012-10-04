@@ -139,8 +139,8 @@ public class ExerciseSelector extends View implements HasValue<ExerciseData>{
 
 
 	public void setReadOnly(boolean readOnly) {
-		startDate.setReadOnly(readOnly);
-		endDate.setReadOnly(readOnly);
+		startDate.setReadOnlyInternal(readOnly);
+		endDate.setReadOnlyInternal(readOnly);
 		newButton.setVisible(!readOnly);
 	}
 

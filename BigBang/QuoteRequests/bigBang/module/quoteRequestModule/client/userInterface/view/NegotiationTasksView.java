@@ -5,8 +5,8 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.quoteRequestModule.client.userInterface.NegotiationForm;
 import bigBang.module.quoteRequestModule.client.userInterface.NegotiationTasksOperationsToolbar;
+import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationTasksViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationTasksViewPresenter.Action;
 

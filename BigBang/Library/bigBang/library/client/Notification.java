@@ -10,12 +10,15 @@ public class Notification {
 		ALERT_NOTIFICATION,
 		WARNING_NOTIFICATION,
 		INFO_NOTIFICATION,
-		LONG_ALERT_NOTIFICATION
+		LONG_ALERT_NOTIFICATION, 
+		ERROR_NOTIFICATION,
+		ERROR_TRAY_NOTIFICATION
 	} 
 
 	
 	private String caption;
 	private String content;
+	private String details;
 	private GwtEvent<?> event;
 	
 	public Notification(String caption, String content) {
@@ -28,12 +31,22 @@ public class Notification {
 		this.setEvent(event);
 	}
 	
+	public Notification(String caption, String content, String details) {
+		this(caption, content);
+		this.details = details;
+		this.setEvent(event);
+	}
+	
 	private void setEvent(GwtEvent<?> event) {
 		this.event = event;
 	}
 
 	public void setCaption(String caption) {
 		this.caption = caption;
+	}
+	
+	public void setDetails(String details) {
+		this.details = details;
 	}
 
 	public String getCaption() {
@@ -46,6 +59,10 @@ public class Notification {
 
 	public String getContent() {
 		return content;
+	}
+	
+	public String getDetails(){
+		return this.details;
 	}
 	
 	public GwtEvent<?> getEvent(){

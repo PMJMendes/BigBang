@@ -17,6 +17,7 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.TaxList;
 import bigBang.module.generalSystemModule.client.userInterface.TaxList.Entry;
+import bigBang.module.generalSystemModule.client.userInterface.form.TaxForm;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter.Action;
 

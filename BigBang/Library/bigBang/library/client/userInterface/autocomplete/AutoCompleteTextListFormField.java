@@ -175,7 +175,7 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 	}
 
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		this.itemBox.setReadOnly(readonly);
 	}
 

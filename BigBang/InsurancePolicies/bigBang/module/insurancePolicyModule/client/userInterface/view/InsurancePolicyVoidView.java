@@ -7,8 +7,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyVoidForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyVoidToolbar;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyVoidForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyVoidViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyVoidViewPresenter.Action;
 

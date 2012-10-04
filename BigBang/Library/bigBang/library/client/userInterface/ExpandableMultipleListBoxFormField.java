@@ -43,7 +43,7 @@ public class ExpandableMultipleListBoxFormField extends FormField<String[]> {
 	}
 
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		// TODO Auto-generated method stub
 		
 	}

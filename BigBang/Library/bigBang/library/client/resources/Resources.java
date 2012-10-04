@@ -59,6 +59,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/info.png")
 	ImageResource info();
 	
+	@Source("images/error.png")
+	ImageResource error();
+	
 	@Source("images/reportIcon.png")
 	ImageResource reportIcon();
 	
@@ -118,5 +121,5 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/complete.png")
 	ImageResource completeIcon();
-	
+
 }

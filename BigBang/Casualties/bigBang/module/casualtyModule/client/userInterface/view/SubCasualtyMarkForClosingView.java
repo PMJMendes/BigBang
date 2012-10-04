@@ -2,8 +2,8 @@ package bigBang.module.casualtyModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.casualtyModule.client.userInterface.SubCasualtyMarkForClosingForm;
 import bigBang.module.casualtyModule.client.userInterface.SubCasualtyMarkForClosingToolbar;
+import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyMarkForClosingForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyMarkForClosingViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyMarkForClosingViewPresenter.Action;
 import bigBang.library.client.HasEditableValue;

@@ -8,7 +8,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.CreateDebitNoteToolbar;
-import bigBang.module.insurancePolicyModule.client.userInterface.CreateDebitNoteForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.CreateDebitNoteForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateDebitNoteViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateDebitNoteViewPresenter.Action;
 

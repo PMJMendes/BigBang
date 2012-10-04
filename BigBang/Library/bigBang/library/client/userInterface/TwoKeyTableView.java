@@ -62,7 +62,7 @@ public class TwoKeyTableView extends View {
 			}else{
 				TextBoxFormField textField = new TextBoxFormField();
 				textField.setEditable(false);
-				textField.setReadOnly(false);
+				textField.setReadOnlyInternal(false);
 				this.field = textField;
 			}
 			initWidget(this.field);
@@ -74,7 +74,7 @@ public class TwoKeyTableView extends View {
 		}
 
 		@Override
-		public void setReadOnly(boolean readonly) {
+		public void setReadOnlyInternal(boolean readonly) {
 			this.field.setReadOnly(readonly);
 		}
 

@@ -12,7 +12,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter.Action;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;

@@ -16,9 +16,9 @@ import bigBang.library.client.event.FiresAsyncRequests;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestChildrenPanel;
-import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestForm;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestProcessToolBar;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearchPanel;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter.Action;
 

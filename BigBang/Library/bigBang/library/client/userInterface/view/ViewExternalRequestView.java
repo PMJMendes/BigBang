@@ -14,8 +14,8 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ExternalInfoRequestChildrenPanel;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.ViewExternalInfoRequestForm;
 import bigBang.library.client.userInterface.ViewExternalInfoRequestOperationsToolbar;
+import bigBang.library.client.userInterface.form.ViewExternalInfoRequestForm;
 import bigBang.library.client.userInterface.presenter.ViewExternalRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewExternalRequestViewPresenter.Action;
 

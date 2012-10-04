@@ -1,7 +1,7 @@
 package bigBang.module.quoteRequestModule.client.userInterface.view;
 
-import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestCloseForm;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestCloseToolBar;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestCloseForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestCloseViewPresenter;
 import com.google.gwt.user.client.ui.VerticalPanel;
 

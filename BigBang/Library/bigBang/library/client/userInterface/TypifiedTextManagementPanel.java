@@ -500,9 +500,9 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 	@Override
 	public void allowEdition(boolean editable) {
 
-		label.setReadOnly(!editable);
-		subject.setReadOnly(!editable);
-		textBody.setReadOnly(!editable);
+		label.setReadOnlyInternal(!editable);
+		subject.setReadOnlyInternal(!editable);
+		textBody.setReadOnlyInternal(!editable);
 		toolbar.setSaveModeEnabled(editable);
 	}
 

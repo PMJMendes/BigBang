@@ -8,7 +8,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.DASRequestCreationToolbar;
-import bigBang.module.receiptModule.client.userInterface.DASRequestForm;
+import bigBang.module.receiptModule.client.userInterface.form.DASRequestForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateDASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateDASRequestViewPresenter.Action;
 

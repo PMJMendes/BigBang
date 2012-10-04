@@ -1,5 +1,6 @@
 package bigBang.module.casualtyModule.client.userInterface.view;
 
+import bigBang.module.casualtyModule.client.userInterface.form.TransferCasualtyManagerForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyManagerTransferViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyManagerTransferViewPresenter.Action;
 import bigBang.library.client.HasEditableValue;
@@ -7,7 +8,6 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.casualtyModule.client.userInterface.SingleCasualtyTransferOperationsToolbar;
-import bigBang.module.casualtyModule.client.userInterface.TransferCasualtyManagerForm;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 

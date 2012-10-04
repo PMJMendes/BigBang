@@ -6,8 +6,8 @@ import bigBang.definitions.shared.ExternalInfoRequest.Incoming;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ExternalRequestContinuationForm;
 import bigBang.library.client.userInterface.ExternalRequestContinuationOperationsToolbar;
+import bigBang.library.client.userInterface.form.ExternalRequestContinuationForm;
 import bigBang.library.client.userInterface.presenter.ExternalRequestContinuationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestContinuationViewPresenter.Action;
 

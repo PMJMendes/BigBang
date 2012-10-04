@@ -1,5 +1,7 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.form.SignatureRequestForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestTasksViewPresenter.Action;
 import com.google.gwt.user.client.ui.HasValue;
@@ -15,8 +17,6 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
-import bigBang.module.receiptModule.client.userInterface.SignatureRequestForm;
 import bigBang.module.receiptModule.client.userInterface.SignatureRequestTasksOperationsToolbar;
 
 public class SignatureRequestTasksView extends View implements SignatureRequestTasksViewPresenter.Display {

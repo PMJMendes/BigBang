@@ -17,13 +17,14 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
+import bigBang.module.clientModule.client.userInterface.form.ClientForm;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter.Action;
 
 public class ClientSelectionView extends View implements ClientSelectionViewPresenter.Display {
 
 	private ClientSearchPanel list;
-	private ClientFormView form;
+	private ClientForm form;
 	private ActionInvokedEventHandler<ClientSelectionViewPresenter.Action> handler;
 	private Button confirmButton, cancelButton;
 
@@ -61,7 +62,7 @@ public class ClientSelectionView extends View implements ClientSelectionViewPres
 		ListHeader header = new ListHeader("Cliente");
 		header.setRightWidget(buttonsWrapper);
 
-		form = new ClientFormView();
+		form = new ClientForm();
 		form.setSize("100%", "100%");
 		form.setReadOnly(true);
 

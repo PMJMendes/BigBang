@@ -2,8 +2,8 @@ package bigBang.module.receiptModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.receiptModule.client.userInterface.ReceiptReturnForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptReturnToolbar;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptReturnForm;
 import  bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturnViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturnViewPresenter.Action;
 import bigBang.definitions.shared.Receipt.ReturnMessage;

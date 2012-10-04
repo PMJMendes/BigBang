@@ -7,8 +7,8 @@ import bigBang.definitions.shared.ExternalInfoRequest.Outgoing;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ExternalRequestReplyForm;
 import bigBang.library.client.userInterface.ExternalRequestReplyToolbar;
+import bigBang.library.client.userInterface.form.ExternalRequestReplyForm;
 import bigBang.library.client.userInterface.presenter.ExternalRequestReplyViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestReplyViewPresenter.Action;
 

@@ -5,9 +5,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.library.client.userInterface.DocumentsPreviewList;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.riskAnalisysModule.client.userInterface.RiskAnalisysForm;
 import bigBang.module.riskAnalisysModule.client.userInterface.RiskAnalisysProcessToolBar;
 import bigBang.module.riskAnalisysModule.client.userInterface.RiskAnalisysSearchPanel;
+import bigBang.module.riskAnalisysModule.client.userInterface.form.RiskAnalisysForm;
 import bigBang.module.riskAnalisysModule.client.userInterface.presenter.RiskAnalisysSearchOperationViewPresenter;
 
 public class RiskAnalisysSearchOperationView extends View implements RiskAnalisysSearchOperationViewPresenter.Display {

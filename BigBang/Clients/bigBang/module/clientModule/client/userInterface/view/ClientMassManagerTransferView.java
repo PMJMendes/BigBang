@@ -25,6 +25,7 @@ import bigBang.library.client.userInterface.view.MassManagerTransferView;
 import bigBang.module.clientModule.client.dataAccess.ClientSearchDataBroker;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanelListEntry;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel.Filters;
+import bigBang.module.clientModule.client.userInterface.form.ClientForm;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter;
 import bigBang.module.clientModule.shared.ModuleConstants;
@@ -130,7 +131,7 @@ public class ClientMassManagerTransferView extends MassManagerTransferView<Clien
 	}
 
 	public ClientMassManagerTransferView() {
-		super(new ClientFormView(), 
+		super(new ClientForm(), 
 				new CheckableClientsSearchPanel(), 
 				new SelectedClientsList());
 	}

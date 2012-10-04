@@ -83,10 +83,10 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		selectEmail = new Button("Seleccionar E-mail");
 		emailPanel.add(selectEmail);
 		emailPanel.add(from);
-		from.setReadOnly(true);
+		from.setReadOnlyInternal(true);
 		emailPanel.add(subject);
-		subject.setReadOnly(true);
-		body.setReadOnly(true);
+		subject.setReadOnlyInternal(true);
+		body.setReadOnlyInternal(true);
 		noteOrEmail.add(emailPanel);
 		noteOrEmail.add(notePanel);
 		noteOrEmail.add(right);
@@ -184,7 +184,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
 					for(int i = 0; i<value.upgrades.length; i++){
 						ExpandableListBoxFormField type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, value.upgrades[i].name);
-						type.setReadOnly(true);
+						type.setReadOnlyInternal(true);
 						ListEntry<AttachmentUpgrade> temp = new ListEntry<IncomingMessage.AttachmentUpgrade>(value.upgrades[i]);
 						type.setValue(value.upgrades[i].docTypeId);
 						temp.setWidget(type);
@@ -225,9 +225,9 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
 
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		readOnly = readonly;
-		notes.setReadOnly(readonly);
+		notes.setReadOnlyInternal(readonly);
 		notes.showToolbar(!readonly);
 		selectEmail.setEnabled(!readonly);
 		noteOrEmailRadioButton.setEditable(!readonly);

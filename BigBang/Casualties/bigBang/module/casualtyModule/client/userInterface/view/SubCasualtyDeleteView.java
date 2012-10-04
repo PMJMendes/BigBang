@@ -1,9 +1,9 @@
 package bigBang.module.casualtyModule.client.userInterface.view;
 
+import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyDeleteForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyDeleteViewPresenter;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.casualtyModule.client.userInterface.SubCasualtyDeleteForm;
 import bigBang.module.casualtyModule.client.userInterface.SubCasualtyDeleteToolBar;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;

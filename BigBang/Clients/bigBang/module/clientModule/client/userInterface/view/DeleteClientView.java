@@ -6,6 +6,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.clientModule.client.userInterface.form.DeleteClientForm;
+import bigBang.module.clientModule.client.userInterface.form.DeleteClientFormValidator;
 import bigBang.module.clientModule.client.userInterface.DeleteClientToolbar;
 import bigBang.module.clientModule.client.userInterface.presenter.DeleteClientViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.DeleteClientViewPresenter.Action;
@@ -36,6 +38,7 @@ public class DeleteClientView extends View implements DeleteClientViewPresenter.
 		
 		wrapper.add(toolBar);
 		form = new DeleteClientForm();
+		form.setValidator(new DeleteClientFormValidator(form));
 		wrapper.add(form.getNonScrollableContent());
 		wrapper.setCellWidth(form.getNonScrollableContent(), "100%");
 	}

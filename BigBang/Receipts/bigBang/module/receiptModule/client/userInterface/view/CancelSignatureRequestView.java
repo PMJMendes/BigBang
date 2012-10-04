@@ -7,8 +7,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.receiptModule.client.userInterface.SignatureRequestCancellationForm;
 import bigBang.module.receiptModule.client.userInterface.SignatureRequestCancellationToolbar;
+import bigBang.module.receiptModule.client.userInterface.form.SignatureRequestCancellationForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter.Action;
 

@@ -23,7 +23,7 @@ public class PaymentSection extends FormViewSection {
 	public Button removeButton;
 
 	protected ExpandableListBoxFormField type;
-	protected NumericTextBoxFormField paymentValue;
+	public NumericTextBoxFormField paymentValue;
 	protected ExpandableListBoxFormField bank;
 	protected TextBoxFormField chequeOrTransferNumber;
 	protected ExpandableSelectionFormField otherReceiptId;

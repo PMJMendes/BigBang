@@ -74,10 +74,17 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	public void setFieldWidth(String width) {
 		((Widget)this.field).setWidth(width);
 	}
+	
+	public void setReadOnly(boolean readonly){
+		setReadOnlyInternal(readonly);
+		if(readonly) {
+			setInvalid(false);
+		}
+	}
 
 	public abstract void clear();
 
-	public abstract void setReadOnly(boolean readonly);
+	protected abstract void setReadOnlyInternal(boolean readonly);
 
 	public abstract boolean isReadOnly();
 
@@ -136,7 +143,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	 */
 	public void setEditable(boolean editable) {
 		if(!editable){
-			setReadOnly(true);
+			setReadOnlyInternal(true);
 		}
 		this.editable = editable;
 	}

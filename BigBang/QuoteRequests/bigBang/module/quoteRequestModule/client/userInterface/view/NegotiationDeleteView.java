@@ -7,8 +7,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.quoteRequestModule.client.userInterface.NegotiationDeleteForm;
 import bigBang.module.quoteRequestModule.client.userInterface.NegotiationDeleteToolBar;
+import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationDeleteForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter.Action;
 

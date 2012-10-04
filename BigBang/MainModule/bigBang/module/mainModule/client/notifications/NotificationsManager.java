@@ -48,6 +48,21 @@ public class NotificationsManager {
 			return;
 		}
 	}
+	
+	public void showErrorTrayNotification(final Notification notification){
+		Resources resources = GWT.create(Resources.class);
+		if(notification.getCaption() != null || notification.getContent() != null) {
+			InfoPanel info = new InfoPanel(resources.error(), notification.getCaption(), notification.getContent(), new ClickHandler() {
+				
+				public void onClick(ClickEvent event) {
+					if(notification.getEvent() != null)
+						EventBus.getInstance().fireEvent(notification.getEvent());
+				}
+			}); 
+			InfoPanel.show(InfoPanelType.TRAY_NOTIFICATION, info);
+			return;
+		}
+	}
 
 	public void enableTrayNotifications(){
 		setTrayNotificationsEnabled(true);
@@ -65,6 +80,9 @@ public class NotificationsManager {
 					public void onNewNotification(NewNotificationEvent event) {
 						Notification notification = event.getNotification();
 						switch(event.getTYPE()){
+						case ERROR_NOTIFICATION:
+							MessageBox.detailedError(notification.getCaption(), notification.getContent(), notification.getDetails());
+							break;
 						case ALERT_NOTIFICATION:
 							MessageBox.error(notification.getCaption(), notification.getContent());
 							break;
@@ -79,6 +97,9 @@ public class NotificationsManager {
 							break;
 						case INFO_TRAY_NOTIFICATION:
 							showInfoTrayNotification(event.getNotification());
+							break;
+						case ERROR_TRAY_NOTIFICATION:
+							showErrorTrayNotification(event.getNotification());
 							break;
 						}
 					}

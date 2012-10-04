@@ -3,6 +3,7 @@ package bigBang.module.clientModule.client.userInterface.presenter;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
@@ -26,9 +27,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	public static interface Display {
-		String getCategory();
-		String getLine();
-		String getSubLine();
+		HasEditableValue<String> getForm();
 
 		void clear();
 
@@ -94,14 +93,10 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	protected void onConfirm(){
-		String categoryId = view.getCategory();
-		String lineId = view.getLine();
-		String subLineId = view.getSubLine();
-
-		if(categoryId == null || lineId == null || subLineId == null) {
-			onConfirmError();
+		if(view.getForm().validate()){
+			onSuccess(view.getForm().getValue());
 		}else{
-			onSuccess(view.getSubLine());
+			onFormValidationFailed();
 		}
 	}
 
@@ -138,5 +133,10 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	protected void onConfirmError(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os campos de Categoria, Ramo e Modalidade são necessários para a criação da Apólice"), TYPE.ALERT_NOTIFICATION));
 	}
+	
+	private void onFormValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
+	}
+
 	
 }

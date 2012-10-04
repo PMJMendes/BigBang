@@ -8,7 +8,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
-import bigBang.library.client.userInterface.InfoOrDocumentRequestReplyForm;
+import bigBang.library.client.userInterface.form.InfoOrDocumentRequestReplyForm;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter.Action;
 

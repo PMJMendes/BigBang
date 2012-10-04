@@ -8,8 +8,8 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectOperationsToolbar;
-import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestForm;
-import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestObjectForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestObjectForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestObjectViewPresenter;
 
 import com.google.gwt.user.client.ui.SplitLayoutPanel;

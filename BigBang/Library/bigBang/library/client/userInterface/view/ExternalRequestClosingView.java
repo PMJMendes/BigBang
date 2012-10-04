@@ -6,8 +6,8 @@ import bigBang.definitions.shared.ExternalInfoRequest.Closing;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ExternalRequestClosingForm;
 import bigBang.library.client.userInterface.ExternalRequestClosingToolbar;
+import bigBang.library.client.userInterface.form.ExternalRequestClosingForm;
 import bigBang.library.client.userInterface.presenter.ExternalRequestClosingViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestClosingViewPresenter.Action;
 

@@ -20,8 +20,8 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.quoteRequestModule.client.userInterface.NegotiationForm;
 import bigBang.module.quoteRequestModule.client.userInterface.NegotiationOperationsToolBar;
+import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationViewPresenter.Action;
 

@@ -6,8 +6,8 @@ import bigBang.definitions.shared.InfoOrDocumentRequest.Cancellation;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.CancelInfoOrDocumentRequestForm;
 import bigBang.library.client.userInterface.CancelInfoOrDocumentRequestToolbar;
+import bigBang.library.client.userInterface.form.CancelInfoOrDocumentRequestForm;
 import bigBang.library.client.userInterface.presenter.CancelInfoOrDocumentRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.CancelInfoOrDocumentRequestViewPresenter.Action;
 

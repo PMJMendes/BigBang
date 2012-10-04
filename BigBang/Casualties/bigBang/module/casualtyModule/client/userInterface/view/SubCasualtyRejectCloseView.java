@@ -7,8 +7,8 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.casualtyModule.client.userInterface.SubCasualtyRejectCloseForm;
 import bigBang.module.casualtyModule.client.userInterface.SubCasualtyRejectCloseToolbar;
+import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyRejectCloseForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyRejectCloseViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyRejectCloseViewPresenter.Action;
 

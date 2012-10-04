@@ -6,8 +6,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.quoteRequestModule.client.userInterface.NegotiationCancellationForm;
 import bigBang.module.quoteRequestModule.client.userInterface.NegotiationCancellationToolBar;
+import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationCancellationForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationCancellationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationCancellationViewPresenter.Action;
 

@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import bigBang.definitions.shared.Task;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.tasksModule.client.userInterface.DismissTaskForm;
+import bigBang.module.tasksModule.client.userInterface.form.DismissTaskForm;
 import bigBang.module.tasksModule.client.userInterface.presenter.DismissTaskViewPresenter;
 
 public class DismissTaskView extends View implements DismissTaskViewPresenter.Display{

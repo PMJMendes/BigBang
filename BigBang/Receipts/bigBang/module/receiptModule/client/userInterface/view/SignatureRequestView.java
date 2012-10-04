@@ -11,9 +11,9 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
-import bigBang.module.receiptModule.client.userInterface.SignatureRequestForm;
 import bigBang.module.receiptModule.client.userInterface.SignatureRequestOperationsToolbar;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.form.SignatureRequestForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter.Action;
 

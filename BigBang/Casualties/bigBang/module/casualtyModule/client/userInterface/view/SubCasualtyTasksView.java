@@ -6,8 +6,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.module.casualtyModule.client.userInterface.SubCasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.SubCasualtyTasksOperationsToolbar;
+import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyTasksViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyTasksViewPresenter.Action;
 import bigBang.definitions.shared.SubCasualty;

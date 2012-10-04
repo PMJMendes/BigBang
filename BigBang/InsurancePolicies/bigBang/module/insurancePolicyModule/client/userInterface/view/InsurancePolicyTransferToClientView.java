@@ -14,7 +14,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
-import bigBang.module.clientModule.client.userInterface.view.ClientFormView;
+import bigBang.module.clientModule.client.userInterface.form.ClientForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyTransferToClientToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTransferToClientViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTransferToClientViewPresenter.Action;
@@ -22,7 +22,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Insur
 public class InsurancePolicyTransferToClientView extends View implements InsurancePolicyTransferToClientViewPresenter.Display{
 
 	private ClientSearchPanel list;
-	private ClientFormView form;
+	private ClientForm form;
 	private ActionInvokedEventHandler<InsurancePolicyTransferToClientViewPresenter.Action> handler;
 	private InsurancePolicyTransferToClientToolbar toolbar;
 	
@@ -60,7 +60,7 @@ public class InsurancePolicyTransferToClientView extends View implements Insuran
 		
 		ListHeader header = new ListHeader("Cliente");
 		
-		form = new ClientFormView();
+		form = new ClientForm();
 		form.setSize("100%","100%");
 		form.setReadOnly(true);
 		

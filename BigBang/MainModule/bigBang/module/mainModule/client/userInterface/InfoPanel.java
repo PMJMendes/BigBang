@@ -82,10 +82,11 @@ ResizeHandler, CloseHandler<PopupPanel> {
 	private static void show(final InfoPanel infoPanel, final int delayMsec,
 			final int level) {
 		final int cw = Window.getClientWidth();
-		final int ch = Window.getClientHeight();
+//		final int ch = Window.getClientHeight();
 
 		final int left = (cw - WIDTH - 20);
-		final int top = ch - HEIGHT - 20 - (level * (HEIGHT + 20));
+//		final int top = ch - HEIGHT - 20 - (level * (HEIGHT + 20));
+		final int top = 10 + level * (HEIGHT + 20);
 
 		if (top < 0) {
 			new DelayedRunnable() {

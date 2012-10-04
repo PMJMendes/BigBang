@@ -195,7 +195,7 @@ public abstract class MassManagerTransferView<T extends ProcessBase, T2 extends 
 	public void allowTransfer(boolean allow) {
 		this.transferButton.setEnabled(allow);
 		this.clearButton.setEnabled(allow);
-		this.managerSelection.setReadOnly(!allow);
+		this.managerSelection.setReadOnlyInternal(!allow);
 		this.searchPanel.setCheckable(allow);
 	}
 

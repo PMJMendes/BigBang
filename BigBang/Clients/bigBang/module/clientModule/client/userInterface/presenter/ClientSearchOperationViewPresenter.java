@@ -197,6 +197,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 						}else{
 							saveClient(info);
 						}
+					}else{
+						onFormValidationFailed();
 					}
 					break;
 				case DELETE:
@@ -554,6 +556,10 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 	private void onSaveClientFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível guardar as alterações ao Cliente"), TYPE.ALERT_NOTIFICATION));
 		view.getForm().setReadOnly(false);
+	}
+	
+	private void onFormValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}
 
 	private void goToSubProcess(BigBangProcess process){

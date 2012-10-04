@@ -273,6 +273,8 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 					onSaveFailed();
 				}
 			});
+		}else{
+			onFormValidationFailed();
 		}
 	}
 
@@ -355,4 +357,8 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível acrescentar a Modalidade à Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
 	}
 
+	private void onFormValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
+	}
+	
 }

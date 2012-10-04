@@ -8,6 +8,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.InfoOrDocumentRequestOperationsToolbar;
+import bigBang.library.client.userInterface.form.InfoOrDocumentRequestForm;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestRepeatViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestRepeatViewPresenter.Action;
 

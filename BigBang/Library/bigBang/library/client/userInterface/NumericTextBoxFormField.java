@@ -209,7 +209,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	}
 	
 	@Override
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		if(!editable){
 			 return;
 		}

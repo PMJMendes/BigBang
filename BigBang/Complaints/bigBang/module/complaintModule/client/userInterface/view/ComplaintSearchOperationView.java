@@ -3,8 +3,8 @@ package bigBang.module.complaintModule.client.userInterface.view;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.complaintModule.client.userInterface.ComplaintForm;
 import bigBang.module.complaintModule.client.userInterface.ComplaintSearchPanel;
+import bigBang.module.complaintModule.client.userInterface.form.ComplaintForm;
 import bigBang.module.complaintModule.client.userInterface.presenter.ComplaintSearchOperationViewPresenter;
 
 public class ComplaintSearchOperationView extends View implements ComplaintSearchOperationViewPresenter.Display {

@@ -11,6 +11,7 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.InfoRequestTasksOperationsToolbar;
+import bigBang.library.client.userInterface.form.InfoOrDocumentRequestForm;
 import bigBang.library.client.userInterface.presenter.InfoRequestTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoRequestTasksViewPresenter.Action;
 

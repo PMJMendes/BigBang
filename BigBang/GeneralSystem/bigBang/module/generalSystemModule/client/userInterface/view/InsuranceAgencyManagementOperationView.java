@@ -15,6 +15,7 @@ import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyCh
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyOperationsToolbar;
+import bigBang.module.generalSystemModule.client.userInterface.form.InsuranceAgencyForm;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter.Action;
 

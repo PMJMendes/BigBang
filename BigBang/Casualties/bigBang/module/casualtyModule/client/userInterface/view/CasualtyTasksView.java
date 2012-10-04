@@ -3,8 +3,8 @@ package bigBang.module.casualtyModule.client.userInterface.view;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.casualtyModule.client.userInterface.CasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.CasualtyTasksOperationsToolbar;
+import bigBang.module.casualtyModule.client.userInterface.form.CasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyTasksViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyTasksViewPresenter.Action;
 import bigBang.definitions.shared.Casualty;

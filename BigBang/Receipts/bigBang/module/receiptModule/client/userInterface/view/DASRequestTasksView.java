@@ -6,9 +6,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.module.receiptModule.client.userInterface.DASRequestForm;
 import bigBang.module.receiptModule.client.userInterface.DASRequestTasksOperationsToolbar;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.form.DASRequestForm;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestTasksViewPresenter.Action;
 import bigBang.definitions.shared.DASRequest;

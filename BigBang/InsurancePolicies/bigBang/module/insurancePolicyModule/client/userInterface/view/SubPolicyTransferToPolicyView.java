@@ -2,7 +2,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyTransferToPolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyTransferToPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyTransferToPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyTransferToPolicyViewPresenter.Action;
 import bigBang.library.client.HasEditableValue;

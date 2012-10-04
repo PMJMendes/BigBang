@@ -7,8 +7,8 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.receiptModule.client.userInterface.DASRequestCancellationForm;
 import bigBang.module.receiptModule.client.userInterface.DASRequestCancellationToolbar;
+import bigBang.module.receiptModule.client.userInterface.form.DASRequestCancellationForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelDASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelDASRequestViewPresenter.Action;
 

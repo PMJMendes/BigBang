@@ -23,6 +23,7 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.OperationsToolBar;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
+import bigBang.module.clientModule.client.userInterface.form.ClientForm;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeViewPresenter.Action;
 import bigBang.module.clientModule.shared.ModuleConstants;
@@ -34,8 +35,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ClientMergeView extends View implements ClientMergeViewPresenter.Display {
 
-	private ClientFormView formOriginal;
-	private ClientFormView formReceptor;
+	private ClientForm formOriginal;
+	private ClientForm formReceptor;
 	private ClientSearchPanel searchPanel;
 	private ActionInvokedEventHandler<Action> actionHandler;
 
@@ -86,8 +87,8 @@ public class ClientMergeView extends View implements ClientMergeViewPresenter.Di
 				}
 			}
 		});
-		formOriginal = new ClientFormView();
-		formReceptor = new ClientFormView();
+		formOriginal = new ClientForm();
+		formReceptor = new ClientForm();
 
 		VerticalPanel originalFormWrapper = new VerticalPanel();
 		originalFormWrapper.setSize("100%", "100%");

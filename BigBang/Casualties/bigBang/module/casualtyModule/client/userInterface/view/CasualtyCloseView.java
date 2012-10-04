@@ -2,8 +2,8 @@ package bigBang.module.casualtyModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.casualtyModule.client.userInterface.CasualtyCloseForm;
 import bigBang.module.casualtyModule.client.userInterface.CasualtyCloseToolBar;
+import bigBang.module.casualtyModule.client.userInterface.form.CasualtyCloseForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyCloseViewPresenter;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;

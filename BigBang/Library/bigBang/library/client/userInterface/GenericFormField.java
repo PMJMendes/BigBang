@@ -229,7 +229,7 @@ public class GenericFormField extends FormField<String> {
 		myField.clear();
 	}
 
-	public void setReadOnly(boolean readonly) {
+	public void setReadOnlyInternal(boolean readonly) {
 		myField.setReadOnly(readonly);
 	}
 

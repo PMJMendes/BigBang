@@ -4,13 +4,13 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ContactForm;
-import bigBang.library.client.userInterface.ContactForm.ContactEntry;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationListEntry;
+import bigBang.library.client.userInterface.form.ContactForm;
+import bigBang.library.client.userInterface.form.ContactForm.ContactEntry;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter.Action;
 

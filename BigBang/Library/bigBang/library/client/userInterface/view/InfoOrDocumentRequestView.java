@@ -8,6 +8,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.InfoOrDocumentRequestOperationsToolbar;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.form.InfoOrDocumentRequestForm;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter.Action;
 

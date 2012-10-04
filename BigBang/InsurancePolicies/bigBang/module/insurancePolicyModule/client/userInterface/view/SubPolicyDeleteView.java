@@ -2,8 +2,8 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyDeleteForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyDeleteToolBar;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyDeleteForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyDeleteViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyDeleteViewPresenter.Action;
 import bigBang.library.client.HasEditableValue;

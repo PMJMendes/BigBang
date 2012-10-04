@@ -2,8 +2,8 @@ package bigBang.module.quoteRequestModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.quoteRequestModule.client.userInterface.NegotiationGrantForm;
 import bigBang.module.quoteRequestModule.client.userInterface.NegotiationGrantToolBar;
+import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationGrantForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationGrantViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationGrantViewPresenter.Action;
 import bigBang.definitions.shared.Contact;

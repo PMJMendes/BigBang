@@ -14,6 +14,7 @@ import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.form.ExchangeItemForm;
 import bigBang.library.client.userInterface.presenter.ExchangeItemSelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExchangeItemSelectionViewPresenter.Action;
 import bigBang.library.shared.AttachmentStub;
@@ -69,10 +70,10 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 			if(!initialized){
 				docName = new TextBoxFormField();
 				docName.setFieldWidth("170px");
-				docName.setReadOnly(true);
+				docName.setReadOnlyInternal(true);
 				docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "");
 				docType.showLabel(false);
-				docType.setReadOnly(true);
+				docType.setReadOnlyInternal(true);
 				mimeImg = new Image();
 				filename = getFormatedLabel();
 				filename.getElement().getStyle().setFontSize(11, Unit.PX);
@@ -104,8 +105,8 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 
 					@Override
 					public void onCheckedStateChanged(CheckedStateChangedEvent event) {
-						docName.setReadOnly(!event.getChecked());
-						docType.setReadOnly(!event.getChecked());
+						docName.setReadOnlyInternal(!event.getChecked());
+						docType.setReadOnlyInternal(!event.getChecked());
 						if(!event.getChecked()){
 							docName.clear();
 							docType.clear();

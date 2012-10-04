@@ -23,9 +23,9 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
-import bigBang.library.client.userInterface.ContactForm.ContactEntry;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.form.ContactForm.ContactEntry;
 import bigBang.library.client.userInterface.view.ContactView;
 
 import com.google.gwt.user.client.ui.HasWidgets;

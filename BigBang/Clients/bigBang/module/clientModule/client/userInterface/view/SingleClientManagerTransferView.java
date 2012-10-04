@@ -5,6 +5,8 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.SingleClientTransferOperationsToolbar;
+import bigBang.module.clientModule.client.userInterface.form.TransferClientManagerForm;
+import bigBang.module.clientModule.client.userInterface.form.TransferClientManagerFormValidator;
 import bigBang.module.clientModule.client.userInterface.presenter.SingleClientManagerTransferViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.SingleClientManagerTransferViewPresenter.Action;
 
@@ -22,6 +24,7 @@ public class SingleClientManagerTransferView extends View implements SingleClien
 		wrapper.setSize("100%", "100%");
 		
 		form = new TransferClientManagerForm();
+		form.setValidator(new TransferClientManagerFormValidator(form));
 		form.setSize("100%", "100%");
 
 		this.toolbar = new SingleClientTransferOperationsToolbar() {

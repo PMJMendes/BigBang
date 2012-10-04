@@ -7,7 +7,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.TransferToPolicyOperationsToolbar;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.receiptModule.client.userInterface.ReceiptTransferToPolicyForm;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptTransferToPolicyForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter.Action;
 

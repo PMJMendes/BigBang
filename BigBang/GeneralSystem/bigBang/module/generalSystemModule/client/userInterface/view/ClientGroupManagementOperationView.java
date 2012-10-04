@@ -12,6 +12,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.ClientGroupList;
 import bigBang.module.generalSystemModule.client.userInterface.ClientGroupListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.ClientGroupOperationsToolbar;
+import bigBang.module.generalSystemModule.client.userInterface.form.ClientGroupForm;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter.Action;
 
@@ -24,7 +25,7 @@ public class ClientGroupManagementOperationView extends View implements ClientGr
 
 	protected static final int LIST_WIDTH = 400; //PX
 	
-	protected ClientGroupFormView groupForm;
+	protected ClientGroupForm groupForm;
 	protected ClientGroupList groupList;
 	protected ClientGroupOperationsToolbar toolbar;
 	private ToolButton newButton;
@@ -84,7 +85,7 @@ public class ClientGroupManagementOperationView extends View implements ClientGr
 		formWrapper.add(toolbar);
 		formWrapper.setCellHeight(toolbar, "21px");
 
-		groupForm = new ClientGroupFormView();
+		groupForm = new ClientGroupForm();
 		formWrapper.add(groupForm);
 
 		wrapper.add(formWrapper);
