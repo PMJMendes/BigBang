@@ -8,9 +8,8 @@ public class DayMonthDatePickerFormField extends DatePickerFormField{
 	
 	public DayMonthDatePickerFormField() {
 		this("");
-		
-	
 	}
+
 	public DayMonthDatePickerFormField(String label){
 		this(label, DEFAULT_FORMAT);
 	}
@@ -42,6 +41,18 @@ public class DayMonthDatePickerFormField extends DatePickerFormField{
 	
 	@Override
 	public Date getValue(){
+		String day = this.day.getValue();
+		String month = this.month.getValue();
+		
+		if(day.equals("") || month.equals("") || day.equals("-") || month.equals("-")){
+			return null;
+		}
+		
+		return DateTimeFormat.getFormat("MM-dd").parse(month+"-"+day);
+	}
+	
+	@Override
+	public Date getValueForValidation() throws IllegalArgumentException {
 		String day = this.day.getValue();
 		String month = this.month.getValue();
 		

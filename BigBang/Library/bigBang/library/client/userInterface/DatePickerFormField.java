@@ -96,8 +96,7 @@ public class DatePickerFormField extends FormField<Date> {
 			
 			@Override
 			public void onBlur(BlurEvent event) {
-				if(validateDate())
-					ValueChangeEvent.fire(DatePickerFormField.this, DatePickerFormField.this.getValue());
+				ValueChangeEvent.fire(DatePickerFormField.this, DatePickerFormField.this.getValue());
 			}
 		};
 		

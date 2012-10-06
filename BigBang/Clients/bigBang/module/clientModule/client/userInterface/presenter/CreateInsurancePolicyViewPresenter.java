@@ -94,7 +94,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 
 	protected void onConfirm(){
 		if(view.getForm().validate()){
-			onSuccess(view.getForm().getValue());
+			onSuccess(view.getForm().getInfo());
 		}else{
 			onFormValidationFailed();
 		}

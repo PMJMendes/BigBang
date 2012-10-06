@@ -1,5 +1,8 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.form;
 
+import java.util.Date;
+
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.FormValidator;
 
 public class InsurancePolicyHeaderFormValidator extends
@@ -16,7 +19,7 @@ public class InsurancePolicyHeaderFormValidator extends
 		valid &= validateNumber();
 		valid &= validateInsuranceAgency();
 		valid &= validateMediator();
-		valid &= validateMaturiryDate();
+		valid &= validateMaturityDate();
 		valid &= validateStartDate();
 		valid &= validateEndDate();
 		valid &= validateDuration();
@@ -30,7 +33,7 @@ public class InsurancePolicyHeaderFormValidator extends
 	}
 
 	private boolean validateManager() {
-		return validateGuid(form.manager, false);
+		return validateGuid(form.manager, false); //null means same as the client's
 	}
 
 	private boolean validateNumber() {
@@ -45,48 +48,69 @@ public class InsurancePolicyHeaderFormValidator extends
 		return validateGuid(form.mediator, true); //null means same as the client's
 	}
 
-	private boolean validateMaturiryDate() {
-		return validateDate(form.maturityDate, false);
+	private boolean validateMaturityDate() {
+		if(BigBangConstants.TypifiedListValues.INSURANCE_POLICY_DURATION.TEMPORARY.equalsIgnoreCase(form.duration.getValue())) {
+			return validateDate(form.maturityDate, true);
+		}else{
+			return validateDate(form.maturityDate, false);
+		}
 	}
 
 	private boolean validateStartDate() {
-		// TODO Auto-generated method stub
-		return false;
+		return validateDate(form.startDate, false);
 	}
 
 	private boolean validateEndDate() {
-		// TODO Auto-generated method stub
-		return false;
+		if(validateDuration()){
+			Date endDate = form.endDate.getValue();
+			boolean valid = false;
+			
+			if(BigBangConstants.TypifiedListValues.INSURANCE_POLICY_DURATION.TEMPORARY.equalsIgnoreCase(form.duration.getValue())){
+				valid = validateDate(form.endDate, false);
+			}else{
+				valid = validateDate(form.endDate, true);
+			}
+			
+			if(valid) {
+				if(endDate != null){
+					valid = (validateStartDate() && form.startDate.getValue() != null &&
+							form.startDate.getValue().before(endDate));
+					form.startDate.setInvalid(!valid);
+					return valid;
+				}else{
+					return true;
+				}
+			}else{
+				return false;
+			}
+		}else{
+			form.endDate.setInvalid(true);
+			return false;
+		}
 	}
 
 	private boolean validateDuration() {
-		// TODO Auto-generated method stub
-		return false;
+		return validateGuid(form.duration, false);
 	}
 
 	private boolean validateFractioning() {
-		// TODO Auto-generated method stub
-		return false;
+		return validateGuid(form.fractioning, false);
 	}
 
 	private boolean validatePremium() {
-		// TODO Auto-generated method stub
-		return false;
+		return validateNumber(form.premium, true);
 	}
 
 	private boolean validateOperationalProfile() {
-		// TODO Auto-generated method stub
-		return false;
+		return validateGuid(form.operationalProfile, true);
 	}
 
 	private boolean validateCoInsurance() {
-		// TODO Auto-generated method stub
-		return false;
+		return true; //TODO
 	}
 
 	private boolean validateCaseStudy() {
-		// TODO Auto-generated method stub
-		return false;
+		return form.caseStudy.getValue() != null;
 	}
 
 }

@@ -33,11 +33,14 @@ public abstract class FormValidator<T extends FormView<?>> {
 	public FormValidator(T form) {
 		this.form = form;
 		this.validationMessages = new ArrayList<String>();
+		validate();
 	}
 
 	public abstract Result validate();
 
 	public boolean validateString(FormField<String> field, int minChar, int maxChar, boolean allowsNull){
+		field.setMandatory(!allowsNull);
+		
 		String text = field.getValue();
 		if(text == null) {
 			field.setInvalid(!allowsNull);
@@ -51,6 +54,8 @@ public abstract class FormValidator<T extends FormView<?>> {
 	}
 
 	public boolean validateGuid(FormField<String> field, boolean allowsNull) {
+		field.setMandatory(!allowsNull);
+		
 		String guid = field.getValue();
 		if(guid == null) {
 			boolean result = allowsNull;
@@ -65,15 +70,18 @@ public abstract class FormValidator<T extends FormView<?>> {
 	}
 
 	public boolean validateNumber(FormField<Double> field, boolean allowsNull){
+		field.setMandatory(!allowsNull);
 		return !(field.getValue() == null && !allowsNull); 
 	}
 
 	public boolean validateAddress(FormField<Address> field, boolean allowsNull){
+		field.setMandatory(!allowsNull);
 		Address address = field.getValue();
 		return !(address == null && !allowsNull); 
 	}
 
 	public boolean validateDate(DatePickerFormField field, boolean allowsNull){
+		field.setMandatory(!allowsNull);
 		Date value = null;
 		try{
 			value = field.getValueForValidation();
@@ -87,11 +95,13 @@ public abstract class FormValidator<T extends FormView<?>> {
 			field.setInvalid(!result);
 			return result;
 		}else{
+			field.setInvalid(false);
 			return true;
 		}
 	}
 
 	public boolean validateOutgoingMessage(OutgoingMessageFormField field, boolean allowsNull) {
+		field.setMandatory(!allowsNull);
 		OutgoingMessage message = field.getValue();
 		
 		if(message == null) {

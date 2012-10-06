@@ -99,7 +99,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	}
 
 	public void setInvalid(boolean invalid){
-		if(invalid)
+		if(invalid && !isReadOnly())
 			this.addStyleName("invalidFormField");
 		else
 			this.removeStyleName("invalidFormField");

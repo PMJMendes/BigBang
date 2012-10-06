@@ -194,6 +194,8 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		addSection(headerFields);
 
 		this.setValue(new InsuredObject());
+		
+		setValidator(new InsuredObjectFormValidator(this));
 	}
 
 	protected void showSectionForTypeWithId(String typeId) {
@@ -327,7 +329,6 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 
 		headerFields.setHeaderText(info.categoryName + " / " + info.lineName + " / " + info.subLineName);
 		headerFields.setValue(info.headerFields);
-
 	}
 
 	@Override

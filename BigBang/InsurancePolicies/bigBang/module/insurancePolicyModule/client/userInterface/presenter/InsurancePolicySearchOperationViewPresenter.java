@@ -743,27 +743,31 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		saveInternally();
 		broker.updateExercise(policyId, view.getExerciseForm().getValue());
 		broker.updateCoverages(view.getPresentCoverages());
-		broker.persistPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
+		if(view.getPolicyHeaderForm().validate()) {
+			broker.persistPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
 
-			@Override
-			public void onResponse(InsurancePolicy response) {
-				if(policyId.equalsIgnoreCase("new")){
-					removeNewListEntry();
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					if(policyId.equalsIgnoreCase("new")){
+						removeNewListEntry();
+					}
+					onSavePolicySuccess(response.id);
+					isEditModeEnabled = false;
 				}
-				onSavePolicySuccess(response.id);
-				isEditModeEnabled = false;
-			}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				for(ResponseError error : errors){
-					if ( ResponseError.ErrorLevel.USER.equals(error.code) )
-						onValidationFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
-					else
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar a apólice"), TYPE.ALERT_NOTIFICATION));
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					for(ResponseError error : errors){
+						if ( ResponseError.ErrorLevel.USER.equals(error.code) )
+							onValidationFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
+						else
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar a apólice"), TYPE.ALERT_NOTIFICATION));
+					}
 				}
-			}
-		});
+			});
+		}else{
+			onFormValidationFailed();
+		}
 	}
 
 
@@ -813,7 +817,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	private void fillObject(String id) {
-
 		if(id == null){
 			InsuredObject newInsuredObject = broker.createInsuredObject(policyId);
 			newInsuredObject.unitIdentification = "Nova Unidade de Risco";
@@ -827,6 +830,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco: " + newInsuredObject.unitIdentification);	
 			}
 			view.focusInsuredObjectForm();
+			view.getInsuredObjectHeaderForm().validate();
 		}else{
 
 			broker.getInsuredObject(policyId, id, new ResponseHandler<InsuredObject>() {
@@ -842,6 +846,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					if(view.getExerciseSelector().getValue() != null && view.getExerciseForm().getValue() != null){
 						view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Unidade de Risco: " + response.unitIdentification);	
 					}
+					view.getInsuredObjectHeaderForm().validate();
 				}
 
 				@Override
@@ -975,6 +980,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.setExerciseFieldsHeader("Detalhes do exercício " + view.getExerciseForm().getValue().label +" para a Apólice");	
 		}
 		onPolicy = true;
+		view.getPolicyHeaderForm().validate();
 	}
 
 	private void transferToClient(){
@@ -1097,6 +1103,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
 		view.allowTransferToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT));
 
+	}
+	
+	private void onFormValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}
 
 }

@@ -9,9 +9,9 @@ import bigBang.library.client.userInterface.view.FormView;
 
 public class InsurancePolicyVoidForm extends FormView<PolicyVoiding> {
 
-	private ExpandableListBoxFormField motive;
-	private DatePickerFormField effectiveDate;
-	private TextAreaFormField notes;
+	protected ExpandableListBoxFormField motive;
+	protected DatePickerFormField effectiveDate;
+	protected TextAreaFormField notes;
 	
 	public InsurancePolicyVoidForm(){
 		motive = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INSURANCE_POLICY_VOID_MOTIVES, "Motivo");
@@ -22,6 +22,8 @@ public class InsurancePolicyVoidForm extends FormView<PolicyVoiding> {
 		addFormField(motive);
 		addFormField(effectiveDate);
 		addFormField(notes);
+		
+		setValidator(new InsurancePolicyVoidFormValidator(this));
 	}
 	
 	@Override

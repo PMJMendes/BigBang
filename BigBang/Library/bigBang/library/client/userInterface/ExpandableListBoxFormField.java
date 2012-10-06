@@ -280,9 +280,9 @@ TypifiedListClient {
 
 		if(isDifferentValue(strValue)){
 			super.setValue(strValue, false);
+			selectedValueId = value;
 			if(fireEvents)
 				ValueChangeEvent.fire(this, value);
-			selectedValueId = value;
 		}
 	}
 

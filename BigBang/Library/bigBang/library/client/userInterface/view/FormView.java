@@ -47,8 +47,16 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 
 	protected T value;
 	private boolean valueChangeHandlerInitialized;
-	
+
 	private FormValidator<?> validator;
+
+	private ValueChangeHandler<Object> fieldChangedHandler = new ValueChangeHandler<Object>() {
+
+		@Override
+		public void onValueChange(ValueChangeEvent<Object> event) {
+			validate();
+		}
+	};
 
 
 	public FormView(){
@@ -87,7 +95,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		mainWrapper.add(topToolbar, 0, 0);
 		setReadOnly(true);
 	}
-	
+
 	public <T2 extends FormView<T>>void setValidator(FormValidator<T2> validator) {
 		this.validator = validator;
 	}
@@ -146,12 +154,16 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		this.sections.add(this.currentSection);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addSection(FormViewSection section){
 		this.currentSection = section;
 		this.panel.add(this.currentSection);
 		this.sections.add(this.currentSection);
 		section.setReadOnly(this.isReadOnly);
 		//this.panel.setCellHeight(currentSection, minHeight);
+		for(FormField<?> field : section.getFields()){
+			((FormField<Object>)field).addValueChangeHandler(this.fieldChangedHandler);
+		}
 	}
 
 	public void removeSection(FormViewSection section){
@@ -183,14 +195,17 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	public void addLineBreak(){
 		this.currentSection.addLineBreak();
 	}
-	
+
 	//Disables all the input fields in the form
 	public void setReadOnly(boolean readOnly) {
 		this.isReadOnly = readOnly;
 		for(FormViewSection s : sections){
 			s.setReadOnly(readOnly);
 		}
-		focus();
+		if(!readOnly){
+			focus();
+			validate();
+		}
 	}
 
 	public void focus() {
@@ -217,23 +232,23 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	}
 
 	public boolean validate(boolean showErrors) {
-//		boolean hasErrors = false;
-//		for(FormViewSection s : sections){
-//			//s.clearErrorMessages();
-//			for(FormField<?> f : s.getFields()){ //TODO
-////				boolean fieldHasErrors = !f.validate();
-////				hasErrors = !fieldHasErrors ? hasErrors : true;
-////				sectionHasErrors = !fieldHasErrors ? sectionHasErrors : true;
-////				if(fieldHasErrors)
-////					f.validate();//s.addErrorMessage(f.getErrorMessage());
-//				
-//				boolean fieldHasErrors = f.getValue() == null && f.isMandatory();
-//				f.setInvalid(showErrors && fieldHasErrors);
-//				hasErrors |= fieldHasErrors;
-//			}
-//			//s.showErrorMessages(sectionHasErrors && showErrors);
-//		}
-////		return !hasErrors;
+		//		boolean hasErrors = false;
+		//		for(FormViewSection s : sections){
+		//			//s.clearErrorMessages();
+		//			for(FormField<?> f : s.getFields()){ //TODO
+		////				boolean fieldHasErrors = !f.validate();
+		////				hasErrors = !fieldHasErrors ? hasErrors : true;
+		////				sectionHasErrors = !fieldHasErrors ? sectionHasErrors : true;
+		////				if(fieldHasErrors)
+		////					f.validate();//s.addErrorMessage(f.getErrorMessage());
+		//				
+		//				boolean fieldHasErrors = f.getValue() == null && f.isMandatory();
+		//				f.setInvalid(showErrors && fieldHasErrors);
+		//				hasErrors |= fieldHasErrors;
+		//			}
+		//			//s.showErrorMessages(sectionHasErrors && showErrors);
+		//		}
+		////		return !hasErrors;
 		if(this.validator != null) {
 			return this.validator.validate().valid;
 			//TODO show the error messages
@@ -243,18 +258,25 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 
 	public void addFormField(FormField<?> field) {
 		currentSection.addFormField(field);
+		registerFormField(field);
 	}
 
 	public void addFormField(FormField<?> field, boolean inline) {
 		currentSection.addFormField(field, inline);
+		registerFormField(field);
 	}
 
 	public void addFormFieldGroup(FormField<?>[] group, boolean inline){
 		currentSection.addFormFieldGroup(group, inline);
+		for(FormField<?> field : group) {
+			registerFormField(field);
+		}
 	}
 
-	public void registerFormField(FormField<?> field) {
+	@SuppressWarnings("unchecked")
+	public <T2 extends Object> void registerFormField(FormField<T2> field) {
 		currentSection.registerFormField(field);
+		field.addValueChangeHandler((ValueChangeHandler<T2>) fieldChangedHandler);
 	}
 
 	public Widget getNonScrollableContent(){
@@ -347,7 +369,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
-		
+
 		validate(false);
 	}
 
@@ -379,6 +401,6 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }
 
