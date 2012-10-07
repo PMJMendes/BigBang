@@ -79,10 +79,14 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		ListHeader searchPanelHeader = new ListHeader("Apólices");
 		searchPanelWrapper.add(searchPanelHeader);
 
+		policyForm = new InsurancePolicyHeaderForm();
+		objectForm = new InsuredObjectForm();
+		
 		searchPanel = new InsurancePolicySearchPanel(){ 
 			@Override
 			public void onResults(Collection<InsurancePolicyStub> results) {
 				super.onResults(results);
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.ON_NEW_RESULTS));
 			}
 		};
 
@@ -222,9 +226,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		formContainer.setSize("100%", "100%");
 
 		HorizontalPanel formPanel = new HorizontalPanel();
-
-		policyForm = new InsurancePolicyHeaderForm();
-		objectForm = new InsuredObjectForm();
 
 		VerticalPanel objectsPolicyContainer = new VerticalPanel();
 		objectsPolicyContainer.getElement().getStyle().setProperty("borderRight", "1px solid #688AA2");
