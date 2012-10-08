@@ -150,6 +150,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 		ReceiptDataBroker broker = ((ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT));
 		broker.registerClient(this);
+		
+		setValidator(new ReceiptFormValidator(this));
 	}
 
 	@Override

@@ -5,12 +5,14 @@ import bigBang.library.client.userInterface.view.FormView;
 
 public class SubPolicyDeleteForm extends FormView<String> {
 
-	private TextAreaFormField reason;
+	protected TextAreaFormField reason;
 	
 	public SubPolicyDeleteForm(){
 		addSection("Eliminação de Apólice Adesão");
 		reason = new TextAreaFormField("Motivo");
 		addFormField(reason);
+		
+		setValidator(new SubPolicyDeleteFormValidator(this));
 	}
 
 	@Override

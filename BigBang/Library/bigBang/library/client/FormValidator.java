@@ -33,11 +33,16 @@ public abstract class FormValidator<T extends FormView<?>> {
 	public FormValidator(T form) {
 		this.form = form;
 		this.validationMessages = new ArrayList<String>();
-		validate();
+		validateImpl();
 	}
 
-	public abstract Result validate();
+	public Result validate() {
+		this.validationMessages.clear();
+		return this.validateImpl();
+	}
 
+	public abstract Result validateImpl();
+	
 	public boolean validateString(FormField<String> field, int minChar, int maxChar, boolean allowsNull){
 		field.setMandatory(!allowsNull);
 		
@@ -71,7 +76,32 @@ public abstract class FormValidator<T extends FormView<?>> {
 
 	public boolean validateNumber(FormField<Double> field, boolean allowsNull){
 		field.setMandatory(!allowsNull);
-		return !(field.getValue() == null && !allowsNull); 
+		boolean valid = !(field.getValue() == null && !allowsNull);
+		field.setInvalid(!valid);
+		return valid; 
+	}
+	
+	public boolean validateNumber(FormField<Double> field, Double minValue, Double maxValue, boolean allowsNull){
+		field.setMandatory(!allowsNull);
+		
+		Double value = field.getValue();
+		if(value == null) {
+			boolean result = allowsNull;
+			field.setInvalid(!result);
+			return result;
+		}else{
+			if(minValue != null) {
+				boolean result = minValue <= value;
+				field.setInvalid(!result);
+				return result;
+			}
+			if(maxValue != null) {
+				boolean result = maxValue >= value;
+				field.setInvalid(!result);
+				return result;
+			}
+			return true;
+		}
 	}
 
 	public boolean validateAddress(FormField<Address> field, boolean allowsNull){

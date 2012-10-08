@@ -9,7 +9,7 @@ public class ClientFormValidator extends FormValidator<ClientForm> {
 	}
 
 	@Override
-	public bigBang.library.client.FormValidator.Result validate() {
+	public bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateTaxNumber();
@@ -59,7 +59,7 @@ public class ClientFormValidator extends FormValidator<ClientForm> {
 	}
 
 	private boolean validateManager() {
-		return validateGuid(form.clientManager, true);
+		return validateGuid(form.clientManager, false);
 	}
 
 	private boolean validateProfile() {

@@ -73,7 +73,11 @@ public class NumericTextBoxFormField extends FormField<Double>{
 						}catch(NumberFormatException e){
 							field.setValue(curr);
 						}
-					}
+					} else {
+						setValue(null);
+						curr = null;
+						ValueChangeEvent.fire(NumericTextBoxFormField.this, null);
+					} 
 				}
 			});
 

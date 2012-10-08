@@ -13,7 +13,6 @@ import bigBang.definitions.shared.Receipt.PaymentInfo.Payment;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
-import bigBang.module.receiptModule.client.userInterface.PaymentSection;
 
 public class PaymentsForm extends FormView<Payment[]> {
 
@@ -40,6 +39,8 @@ public class PaymentsForm extends FormView<Payment[]> {
 		addSection = new FormViewSection("Pagamento");
 		newButton = new Button("Novo Pagamento");
 		addSection.addWidget(newButton);
+		
+		setValidator(new PaymentsFormValidator(this));
 	}
 
 	@Override

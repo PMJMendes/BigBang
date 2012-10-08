@@ -10,7 +10,7 @@ public class CreateDebitNoteFormValidator extends
 	}
 
 	@Override
-	public bigBang.library.client.FormValidator.Result validate() {
+	public bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
 		valid &= validateValue();
 		valid &= validateMaturityDate();

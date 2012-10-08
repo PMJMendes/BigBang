@@ -10,7 +10,7 @@ public class InsuranceAgencyFormValidator extends
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateAcronym();

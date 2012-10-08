@@ -18,6 +18,8 @@ public class ReceiptTransferToPolicyForm extends FormView<String> {
 		
 		addSection("Transferência de Apólice");
 		addFormField(policy);
+		
+		setValidator(new ReceiptTransferToPolicyFormValidator(this));
 	}
 	
 	@Override

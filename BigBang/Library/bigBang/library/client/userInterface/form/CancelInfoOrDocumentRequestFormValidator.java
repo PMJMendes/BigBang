@@ -11,7 +11,7 @@ public class CancelInfoOrDocumentRequestFormValidator extends
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateMotive();
 		

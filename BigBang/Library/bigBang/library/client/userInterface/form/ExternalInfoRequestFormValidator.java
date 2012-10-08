@@ -11,7 +11,7 @@ public class ExternalInfoRequestFormValidator extends
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateSubject();
 		valid &= validateReplyLimit();

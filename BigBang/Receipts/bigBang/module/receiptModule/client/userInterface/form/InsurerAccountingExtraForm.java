@@ -39,6 +39,8 @@ public class InsurerAccountingExtraForm extends
 			}
 		});
 		isCommission.setValue(false, true);
+		
+		setValidator(new InsurerAccountingExtraFormValidator(this));
 	}
 	
 

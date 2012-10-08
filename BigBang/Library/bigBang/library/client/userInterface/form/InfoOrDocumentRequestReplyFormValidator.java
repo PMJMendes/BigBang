@@ -11,7 +11,7 @@ public class InfoOrDocumentRequestReplyFormValidator extends
 	}
 
 	@Override
-	public bigBang.library.client.FormValidator.Result validate() {
+	public bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
 		
 		return new Result(valid, this.validationMessages);

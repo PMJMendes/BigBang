@@ -9,7 +9,7 @@ public class ClientGroupFormValidator extends FormValidator<ClientGroupForm> {
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateParentGroup();

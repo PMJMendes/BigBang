@@ -3,6 +3,8 @@ package bigBang.module.insurancePolicyModule.client.userInterface.form;
 import java.util.Date;
 
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicyStub.PolicyStatus;
 import bigBang.library.client.FormValidator;
 
 public class InsurancePolicyHeaderFormValidator extends
@@ -13,7 +15,7 @@ public class InsurancePolicyHeaderFormValidator extends
 	}
 
 	@Override
-	public bigBang.library.client.FormValidator.Result validate() {
+	public bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
 		valid &= validateManager();
 		valid &= validateNumber();
@@ -37,7 +39,12 @@ public class InsurancePolicyHeaderFormValidator extends
 	}
 
 	private boolean validateNumber() {
-		return validateString(form.number, 0, 250, true);
+		InsurancePolicy currentPolicy = form.getValue();
+		if(currentPolicy != null && (currentPolicy.statusIcon == PolicyStatus.PROVISIONAL || currentPolicy.statusIcon == null)) {
+			return validateString(form.number, 0, 250, true);
+		}else{
+			return validateString(form.number, 0, 250, false);
+		}
 	}
 
 	private boolean validateInsuranceAgency() {

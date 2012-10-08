@@ -1,5 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.form;
 
+import java.util.Date;
+
 import bigBang.library.client.FormValidator;
 
 public class InsuredObjectFormValidator extends
@@ -10,13 +12,14 @@ public class InsuredObjectFormValidator extends
 	}
 
 	@Override
-	public bigBang.library.client.FormValidator.Result validate() {
+	public bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
 		//common
 		valid &= validateIdentification();
 		valid &= validateAddress();
 		valid &= validateInclusionDate();
 		valid &= validateExclusionDate();
+		valid &= validateInclusionAndExclusionDate();
 		
 		//person
 		valid &= validatePersonTaxNumber();
@@ -70,6 +73,27 @@ public class InsuredObjectFormValidator extends
 
 	private boolean validateExclusionDate() {
 		return validateDate(form.exclusionDate, true);
+	}
+	
+	private boolean validateInclusionAndExclusionDate(){
+		boolean validDates = validateInclusionDate() && validateExclusionDate();
+		if(validDates) {
+			Date inclusionDate = form.inclusionDate.getValue();
+			Date exclusionDate = form.exclusionDate.getValue();
+			if(inclusionDate != null && exclusionDate != null) {
+				if(inclusionDate.before(exclusionDate)) {
+					return true;
+				}else{
+					form.inclusionDate.setInvalid(true);
+					form.exclusionDate.setInvalid(true);
+					return false;
+				}
+			}else{
+				return true;
+			}
+		}else{
+			return false;
+		}
 	}
 
 	private boolean validatePersonTaxNumber() {

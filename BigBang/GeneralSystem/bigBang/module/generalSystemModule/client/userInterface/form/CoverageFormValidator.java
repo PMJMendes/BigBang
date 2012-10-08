@@ -9,7 +9,7 @@ public class CoverageFormValidator extends FormValidator<CoverageForm> {
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateIsMandatory();

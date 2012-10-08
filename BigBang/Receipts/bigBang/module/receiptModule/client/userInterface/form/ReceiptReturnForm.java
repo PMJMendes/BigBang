@@ -6,7 +6,7 @@ import bigBang.module.clientModule.shared.ModuleConstants;
 
 public class ReceiptReturnForm extends FormView<ReturnMessage>{
 
-	ExpandableListBoxFormField motive;
+	protected ExpandableListBoxFormField motive;
 	String id;
 	
 	public ReceiptReturnForm(){
@@ -15,6 +15,7 @@ public class ReceiptReturnForm extends FormView<ReturnMessage>{
 		addSection("Motivo");
 		addFormField(motive);
 		
+		setValidator(new ReceiptReturnFormValidator(this));		
 	}
 	
 	@Override

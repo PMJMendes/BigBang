@@ -10,7 +10,7 @@ public class InsurancePolicyVoidFormValidator extends
 	}
 
 	@Override
-	public bigBang.library.client.FormValidator.Result validate() {
+	public bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
 		valid &= validateMotive();
 		valid &= validateEffectiveDate();

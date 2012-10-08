@@ -12,7 +12,7 @@ public class ContactFormValidator extends FormValidator<ContactForm> {
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateType();

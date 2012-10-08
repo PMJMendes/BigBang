@@ -31,14 +31,14 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWrapper>{
 
-	private TextBoxFormField receiptNumber;
-	private TextBoxFormField policyNumber;
-	private TextBoxFormField client;
-	private TextBoxFormField insurer;
-	private TextBoxFormField categoryLineSubline;
-	private TextBoxFormField status;
-	private final static Label policyNumberProblem = new Label("A apólice pretendida não existe");
-	private final static Label imageExistantLabel = new Label("O recibo já tem imagem definida");
+	protected TextBoxFormField receiptNumber;
+	protected TextBoxFormField policyNumber;
+	protected TextBoxFormField client;
+	protected TextBoxFormField insurer;
+	protected TextBoxFormField categoryLineSubline;
+	protected TextBoxFormField status;
+	protected final static Label policyNumberProblem = new Label("A apólice pretendida não existe");
+	protected final static Label imageExistantLabel = new Label("O recibo já tem imagem definida");
 	protected ExpandableListBoxFormField type;
 	protected NumericTextBoxFormField totalPremium;
 	protected NumericTextBoxFormField salesPremium;
@@ -271,6 +271,8 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 		type.setMandatory(true);
 		totalPremium.setMandatory(true);
+		
+		setValidator(new SerialReceiptCreationFormValidator(this));
 	}
 
 	protected boolean isEditKey(int nativeKeyCode) {

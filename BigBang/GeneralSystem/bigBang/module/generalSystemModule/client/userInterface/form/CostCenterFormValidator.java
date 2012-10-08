@@ -9,7 +9,7 @@ public class CostCenterFormValidator extends FormValidator<CostCenterForm> {
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateCode();

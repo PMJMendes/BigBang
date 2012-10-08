@@ -9,7 +9,7 @@ public class SubLineFormValidator extends FormValidator<SubLineForm> {
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateDescription();

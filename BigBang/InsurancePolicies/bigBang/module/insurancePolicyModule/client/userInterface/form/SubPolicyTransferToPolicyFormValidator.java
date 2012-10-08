@@ -2,18 +2,24 @@ package bigBang.module.insurancePolicyModule.client.userInterface.form;
 
 import bigBang.library.client.FormValidator;
 
-public class CoverageExerciseDetailsFormValidator extends
-		FormValidator<CoverageExerciseDetailsForm> {
+public class SubPolicyTransferToPolicyFormValidator extends
+		FormValidator<SubPolicyTransferToPolicyForm> {
 
-	public CoverageExerciseDetailsFormValidator(CoverageExerciseDetailsForm form) {
+	public SubPolicyTransferToPolicyFormValidator(
+			SubPolicyTransferToPolicyForm form) {
 		super(form);
 	}
 
 	@Override
 	public bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
+		valid &= validatePolicy();
 		
 		return new Result(valid, this.validationMessages);
+	}
+
+	private boolean validatePolicy() {
+		return validateGuid(form.policy, false);
 	}
 
 }

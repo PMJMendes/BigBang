@@ -9,7 +9,7 @@ public class MediatorFormValidator extends FormValidator<MediatorForm> {
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateIspNumber();

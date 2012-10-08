@@ -12,7 +12,7 @@ public class ExternalRequestContinuationFormValidator extends
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateReplyLimit();
 		valid &= validateMessage();

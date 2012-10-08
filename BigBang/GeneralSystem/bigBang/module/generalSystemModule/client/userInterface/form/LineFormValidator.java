@@ -9,7 +9,7 @@ public class LineFormValidator extends FormValidator<LineForm> {
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateCategory();

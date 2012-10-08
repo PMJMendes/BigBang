@@ -8,13 +8,14 @@ import bigBang.library.client.userInterface.view.FormView;
 
 public class DASRequestCancellationForm extends FormView<DASRequest.Cancellation>{
 	
-	private ExpandableListBoxFormField motive;
+	protected ExpandableListBoxFormField motive;
 	
 	public DASRequestCancellationForm(){
 		addSection("Cancelamento de DAS");
 		motive = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INFO_REQUEST_CANCEL_MOTIVES, "Motivo do cancelamento");
 		addFormField(motive);
 		
+		setValidator(new DASRequestCancellationFormValidator(this));
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package bigBang.module.receiptModule.client.userInterface;
+package bigBang.module.receiptModule.client.userInterface.form;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

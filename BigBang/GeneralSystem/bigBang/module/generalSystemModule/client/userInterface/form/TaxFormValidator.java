@@ -10,7 +10,7 @@ public class TaxFormValidator extends FormValidator<TaxForm> {
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateType();
 		valid &= validateName();

@@ -12,7 +12,7 @@ public class DocumentFormValidator extends FormValidator<DocumentForm> {
 	}
 
 	@Override
-	public bigBang.library.client.FormValidator.Result validate() {
+	public bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateType();

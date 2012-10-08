@@ -13,6 +13,8 @@ public class TransferInsurancePolicyManagerForm extends FormView<String> {
 		
 		addSection("Informação da Transferência");
 		addFormField(manager);
+		
+		setValidator(new TransferInsurancePolicyManagerFormValidator(this));
 	}
 	
 	@Override

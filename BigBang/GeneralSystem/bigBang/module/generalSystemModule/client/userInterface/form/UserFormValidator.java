@@ -9,7 +9,7 @@ public class UserFormValidator extends FormValidator<UserForm> {
 	}
 
 	@Override
-	public Result validate() {
+	public Result validateImpl() {
 		boolean valid = true;
 		valid &= validateName();
 		valid &= validateUserName();

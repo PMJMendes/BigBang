@@ -18,6 +18,8 @@ public class SubPolicyTransferToPolicyForm extends FormView<String> {
 		
 		addSection("Transferência para Apólice Principal");
 		addFormField(policy);
+		
+		setValidator(new SubPolicyTransferToPolicyFormValidator(this));
 	}
 	
 	@Override
