@@ -10,7 +10,7 @@ public class ReceiveReturnForm extends FormView<ReturnEx>{
 	
 	public ReceiveReturnForm(){
 		
-		addSection("Devolução");
+		addSection("Recusa");
 		
 		reason = new TextAreaFormField("Motivo");
 		

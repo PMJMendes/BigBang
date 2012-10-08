@@ -239,7 +239,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 
 		manager.setEditable(false);
 		settleButton.setEnabled(false);
-		
+
 		belongsToPolicy.setValue("true");
 	}
 
@@ -429,14 +429,39 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		expenseValue.clear();
 		manager.setValue(null);
 		coverageId.clearValues();
+		coverageId.setListId(null, new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				return;				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;				
+			}
+		});
 		expenseDate.clear();
 		insuredObject.clearValues();
+		insuredObject.setListId(null, new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				return;
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 		settlement.clear();
 		noSubPolicy.clear();
 		settleButton.setVisible(true);
 		settleLabel.setVisible(true);
 		settlement.setReadOnlyInternal(true);
 		belongsToPolicy.setValue("true");
+		notes.setValue(null);
 	}
 
 	public void clearSubPolicy() {

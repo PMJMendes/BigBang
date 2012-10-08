@@ -257,7 +257,7 @@ public class ExpenseImagePanel extends View {
 			if(item.getValue().handle.equalsIgnoreCase(handle)){
 				item.setLeftWidget(hasProblems);
 				list.remove(item);
-				list.add(list.size()-1, item);
+				list.add(list.size(), item);
 				break;
 			}
 		}

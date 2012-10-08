@@ -47,6 +47,7 @@ public class RichTextAreaFormField extends FormField<String> {
 	
 	public RichTextAreaFormField(){
 		wrapper = new VerticalPanel();
+		wrapper.setSize("100%", "100%");
 		initWidget(wrapper);
 		this.label = new Label();
 		wrapper.add(this.label);
@@ -60,11 +61,16 @@ public class RichTextAreaFormField extends FormField<String> {
 		fieldWrapper.add(toolbar);
 		fieldWrapper.add(this.field);
 		fieldWrapper.setCellHeight(this.field, "100%");
+		fieldWrapper.setSize("100%", "100%");
+		fieldWrapper.setCellWidth(field, "100%");
 		textAndMandatory = new HorizontalPanel();
 		textAndMandatory.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		textAndMandatory.add(fieldWrapper);
 		textAndMandatory.add(mandatoryIndicatorLabel);
+		textAndMandatory.setWidth("100%");
+		textAndMandatory.setCellWidth(fieldWrapper, "100%");
 		wrapper.add(textAndMandatory);
+		wrapper.setCellWidth(textAndMandatory, "100%");
 		wrapper.add(errorMessageLabel);
 		setFieldWidth("400px");
 	}
@@ -90,6 +96,7 @@ public class RichTextAreaFormField extends FormField<String> {
 		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readOnly);
+		toolbar.setVisible(!readOnly);
 	}
 	
 	public void setFieldHeight(String height){

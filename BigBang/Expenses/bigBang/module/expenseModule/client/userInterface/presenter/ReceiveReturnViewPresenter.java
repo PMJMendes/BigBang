@@ -98,12 +98,12 @@ public class ReceiveReturnViewPresenter implements ViewPresenter{
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 					item.removeParameter("show");
 					NavigationHistoryManager.getInstance().go(item);
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Devolução recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recusa recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
 				}
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a Devolução."), TYPE.ALERT_NOTIFICATION));
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a Recusa."), TYPE.ALERT_NOTIFICATION));
 
 				}
 			});
