@@ -13,8 +13,8 @@ public class InsurancePolicyForm extends InsurancePolicyHeaderForm{
 	}
 	
 	@Override
-	public void setValue(InsurancePolicy value) {
-		super.setValue(value);
+	public void setInfo(InsurancePolicy value) {
+		super.setInfo(value);
 		if(value == null){
 			notesSection.clear();
 			return;
@@ -22,8 +22,9 @@ public class InsurancePolicyForm extends InsurancePolicyHeaderForm{
 		notesSection.setValue(value.notes);
 	}
 	
-	public InsurancePolicy getValue() {
-		InsurancePolicy value = super.getValue();
+	@Override
+	public InsurancePolicy getInfo() {
+		InsurancePolicy value = super.getInfo();
 		
 		value.notes = notesSection.getValue();
 		

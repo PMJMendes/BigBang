@@ -11,4 +11,5 @@ public class InsurancePolicyInfoRequestView extends
 		super(new InsurancePolicyForm());
 	}
 
+
 }

@@ -69,7 +69,7 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, receiveAcceptance);
-		receiveRejection = new MenuItem("Receber Devolução", new Command() {
+		receiveRejection = new MenuItem("Receber Recusa", new Command() {
 
 			@Override
 			public void execute() {

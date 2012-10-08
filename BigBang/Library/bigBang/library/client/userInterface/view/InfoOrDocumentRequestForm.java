@@ -148,4 +148,12 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 			}
 		}
 	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		if(text != null){
+			text.setReadOnly(readOnly);
+		}
+		super.setReadOnly(readOnly);
+	}
 }

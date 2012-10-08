@@ -1,5 +1,4 @@
 package bigBang.module.expenseModule.client.userInterface;
-
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseError;
@@ -22,6 +21,7 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
+import bigBang.module.expenseModule.client.userInterface.ExpensePolicyWrapper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -175,7 +175,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		expenseValue.setFieldWidth("175px");
 		expenseValue.setUnitsLabel("€");
 		expenseValue.setMandatory(true);
-
+		
 		coverageId = new ExpandableListBoxFormField("Cobertura");
 
 		addFormFieldGroup(new FormField<?>[]{
@@ -238,7 +238,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 
 		manager.setEditable(false);
 		settleButton.setEnabled(false);
-		
+
 		belongsToPolicy.setValue("true");
 	}
 
@@ -332,7 +332,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 					insuredObject.setValue(info.expense.insuredObjectId);
 				}
 
-				listId = BigBangConstants.EntityIds.COVERAGE + "/" + info.expense.referenceId;
+				listId = BigBangConstants.EntityIds.COVERAGE + "/" + info.expense.referenceSubLineId;;
 
 				coverageId.setListId(listId, new ResponseHandler<Void>() {
 
@@ -428,14 +428,39 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		expenseValue.clear();
 		manager.setValue(null);
 		coverageId.clearValues();
+		coverageId.setListId(null, new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				return;				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;				
+			}
+		});
 		expenseDate.clear();
 		insuredObject.clearValues();
+		insuredObject.setListId(null, new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				return;
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 		settlement.clear();
 		noSubPolicy.clear();
 		settleButton.setVisible(true);
 		settleLabel.setVisible(true);
 		settlement.setReadOnly(true);
 		belongsToPolicy.setValue("true");
+		notes.setValue(null);
 	}
 
 	public void clearSubPolicy() {

@@ -12,7 +12,6 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 
 	public ExternalInfoRequestForm() {
 
-		
 		requestSubject.setMandatory(true);
 		replyLimit.setMandatory(true);
 		
@@ -47,6 +46,7 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 		requestSubject.setValue(info.subject);
 		messageFormField.setValue(info.message);
 		replyLimit.setValue(info.replylimit == null ? null : (double)info.replylimit);
+		messageFormField.setValue(info.message);
 	}
 
 	@Override

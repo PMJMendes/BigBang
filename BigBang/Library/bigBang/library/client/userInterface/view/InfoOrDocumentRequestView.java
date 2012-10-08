@@ -11,6 +11,9 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -42,6 +45,15 @@ public abstract class InfoOrDocumentRequestView<T extends ProcessBase> extends V
 		VerticalPanel ownerWrapper = new VerticalPanel();
 		ownerWrapper.setSize("100%", "100%");
 		ListHeader ownerHeader = new ListHeader("Ficha de Processo");
+		ownerHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InfoOrDocumentRequestViewPresenter.Action>(Action.ON_CLICK_BACK));
+			}
+			
+		}));
+		
 		ownerHeader.setHeight("30px");
 		ownerWrapper.add(ownerHeader);
 		this.ownerForm = ownerForm;

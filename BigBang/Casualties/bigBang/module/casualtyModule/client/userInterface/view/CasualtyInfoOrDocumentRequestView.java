@@ -9,5 +9,4 @@ public class CasualtyInfoOrDocumentRequestView extends InfoOrDocumentRequestView
 	public CasualtyInfoOrDocumentRequestView() {
 		super(new CasualtyForm());
 	}
-
 }

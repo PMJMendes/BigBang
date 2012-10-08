@@ -1,7 +1,10 @@
 package bigBang.library.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -38,6 +41,16 @@ public abstract class ViewExternalRequestView<T extends ProcessBase> extends Vie
 		ownerWrapper.setSize("100%", "100%");
 		
 		ListHeader ownerFormHeader = new ListHeader("Ficha de Processo");
+		ownerFormHeader.setLeftWidget(new Button("Voltar", new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				handler.onActionInvoked(new ActionInvokedEvent<ViewExternalRequestViewPresenter.Action>(Action.ON_BACK_BUTTON));
+			}
+			
+			
+			
+		}));
 		ownerFormHeader.setHeight("30px");
 		
 		ownerWrapper.add(ownerFormHeader);

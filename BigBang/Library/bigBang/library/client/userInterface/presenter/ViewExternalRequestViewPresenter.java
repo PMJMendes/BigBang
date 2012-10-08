@@ -28,7 +28,7 @@ public abstract class ViewExternalRequestViewPresenter<T extends ProcessBase> im
 	public static enum Action {
 		REPLY,
 		CONTINUE,
-		CLOSE,
+		CLOSE, ON_BACK_BUTTON,
 	}
 	
 	public static interface Display<T> {
@@ -98,6 +98,9 @@ public abstract class ViewExternalRequestViewPresenter<T extends ProcessBase> im
 				case CLOSE:
 					onClose();
 					break;
+				case ON_BACK_BUTTON:
+					onBackButton();
+					break;
 				}
 			}
 		});
@@ -117,6 +120,13 @@ public abstract class ViewExternalRequestViewPresenter<T extends ProcessBase> im
 		bound = true;
 	}
 	
+	protected void onBackButton() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.popFromStackParameter("display");
+		item.removeParameter("viewexternalrequest");
+		NavigationHistoryManager.getInstance().go(item);	
+		}
+
 	protected void clearView(){
 		view.getForm().setValue(null);
 		view.getOwnerForm().setValue(null);

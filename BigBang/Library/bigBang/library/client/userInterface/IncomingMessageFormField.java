@@ -87,6 +87,9 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		emailPanel.add(subject);
 		subject.setReadOnly(true);
 		body.setReadOnly(true);
+		body.setWidth("100%");
+		body.field.setWidth("100%");
+		noteOrEmail.setSize("100%", "100%");
 		noteOrEmail.add(emailPanel);
 		noteOrEmail.add(notePanel);
 		noteOrEmail.add(right);
@@ -101,7 +104,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		emailPanel.setSize("100%", "100%");
 
 		attachList = new List<IncomingMessage.AttachmentUpgrade>();
-		attachList.setSize("100%", "100%");
+		attachList.setSize("250px", "100%");
 		ListHeader header = new ListHeader("Novos Documentos");
 		attachList.setHeaderWidget(header);
 		HorizontalPanel emailAndDocs = new HorizontalPanel();
@@ -109,8 +112,8 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		emailAndDocs.add(body);
 		emailAndDocs.add(attachList);
 		emailAndDocs.setCellHeight(body, "100%");
-		emailAndDocs.setCellWidth(body, "500px");
-		emailAndDocs.setCellWidth(attachList, "100%");
+		emailAndDocs.setCellWidth(body, "100%");
+		emailAndDocs.setCellWidth(attachList, "250px");
 		emailAndDocs.setCellHeight(attachList, "100%");
 		emailPanel.add(emailAndDocs);
 		wrapper.add(noteOrEmail);
@@ -173,6 +176,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		
 		noteOrEmailRadioButton.setValue(value.kind != null ? value.kind.toString() : Kind.NOTE.toString());
 		if(value.emailId != null){
+			attachList.setVisible(true);
 			service.getItem(value.emailId, new BigBangAsyncCallback<ExchangeItem>() {
 
 				@Override
@@ -202,6 +206,8 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		}
 		else{
 			notes.setValue(value.notes);
+			body.setValue(value.notes);
+			attachList.setVisible(false);
 		}
 
 	}
@@ -209,7 +215,9 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 	@Override
 	public IncomingMessage getValue() {
 		message.notes = notes.getValue();
-		message.kind = noteOrEmailRadioButton.getValue().equals(Kind.EMAIL.name()) ? Kind.EMAIL : Kind.NOTE;
+		if(message.kind != null){
+			message.kind = noteOrEmailRadioButton.getValue().equals(Kind.EMAIL.name()) ? Kind.EMAIL : Kind.NOTE;
+		}
 		return message;
 	}
 

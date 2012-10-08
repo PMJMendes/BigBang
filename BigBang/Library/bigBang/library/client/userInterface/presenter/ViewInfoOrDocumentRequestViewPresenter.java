@@ -28,7 +28,7 @@ public abstract class ViewInfoOrDocumentRequestViewPresenter<T extends ProcessBa
 	public static enum Action {
 		REPEAT_REQUEST,
 		RECEIVE_RESPONSE,
-		CANCEL_REQUEST
+		CANCEL_REQUEST, ON_CLICK_BACK
 	}
 	
 	public static interface Display<T extends ProcessBase> {
@@ -97,6 +97,9 @@ public abstract class ViewInfoOrDocumentRequestViewPresenter<T extends ProcessBa
 				case CANCEL_REQUEST:
 					onCancelRequest();
 					break;
+				case ON_CLICK_BACK:
+					onClickBack();
+					break;
 				}
 			}
 		});
@@ -104,6 +107,13 @@ public abstract class ViewInfoOrDocumentRequestViewPresenter<T extends ProcessBa
 		bound = true;
 	}
 	
+	protected void onClickBack() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.popFromStackParameter("display");
+		item.removeParameter("requestid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
 	protected void clearView(){
 		view.clearAllowedPermissions();
 		view.getParentForm().setValue(null);

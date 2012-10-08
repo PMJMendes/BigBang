@@ -322,6 +322,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 
 	protected void onVerifyPolicy() {
 		final String policyNumber = view.getPolicyNumber();
+		onPolicyNumberChanged();
 		editing = true;
 		view.clearPolicy();
 		view.enableMarkExpense(false);
