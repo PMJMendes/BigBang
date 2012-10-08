@@ -206,12 +206,13 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		coInsurance.setValue(false);
 		headerForm = new HeaderFieldsSection();
 		addSection(headerForm);
-		
+
 		setValidator(new InsurancePolicyHeaderFormValidator(this));
 	}
 
 	@Override
 	public InsurancePolicy getInfo() {
+
 		InsurancePolicy result = this.value;
 
 		if(result != null) {
@@ -251,9 +252,10 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 			}
 
 			result.mediatorId = mediator.getValue();
+			result.headerFields = headerForm.getValue();
 		}
 
-		result.headerFields = headerForm.getValue();
+
 
 		return result;
 	}
@@ -266,7 +268,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 			headerForm.setVisible(false);
 		}
 	}
-	
+
 	@Override
 	public void setInfo(InsurancePolicy info) {
 
