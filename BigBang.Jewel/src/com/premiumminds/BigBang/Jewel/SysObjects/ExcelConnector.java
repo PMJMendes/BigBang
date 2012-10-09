@@ -2,6 +2,8 @@ package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Enumeration;
 
 import org.apache.ecs.GenericElement;
@@ -123,12 +125,48 @@ public class ExcelConnector
 	private static void buildCell(Cell pobjCell, TD pobjSource, R<Integer> row, R<Integer> col, R<Integer> max)
 	{
 		GenericElement lobjAux;
+		String lstr;
+		Timestamp ldt;
+		BigDecimal ldbl;
 
 		lobjAux = pobjSource.getElement((String)pobjSource.keys().nextElement());
 
 		if ( lobjAux instanceof Table )
+		{
 			buildTable(pobjCell.getSheet(), (Table)lobjAux, row, col, max);
-		else
-			pobjCell.setCellValue(lobjAux.toString());
+			return;
+		}
+
+		lstr = lobjAux.toString();
+
+		try
+		{
+			ldt = Timestamp.valueOf(lstr + " 00:00:00.0");
+		}
+		catch (Throwable e)
+		{
+			ldt = null;
+		}
+		if ( ldt != null )
+		{
+			pobjCell.setCellValue(ldt);
+			return;
+		}
+
+		try
+		{
+			ldbl = new BigDecimal(lstr.replaceAll(",", ""));
+		}
+		catch (Throwable e)
+		{
+			ldbl = null;
+		}
+		if ( (ldbl != null) && (lstr.indexOf('.') >= 0) )
+		{
+			pobjCell.setCellValue(ldbl.doubleValue());
+			return;
+		}
+
+		pobjCell.setCellValue(lstr);
 	}
 }
