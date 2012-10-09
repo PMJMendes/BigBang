@@ -66,10 +66,17 @@ public class ExcelConnector
 
 	private static void buildSheet(Sheet pobjSheet, Table pobjSource)
 	{
-		buildTable(pobjSheet, pobjSource, new R<Integer>(0), new R<Integer>(0));
+		R<Integer> max;
+		int i;
+
+		max = new R<Integer>(0);
+		buildTable(pobjSheet, pobjSource, new R<Integer>(0), new R<Integer>(0), max);
+
+		for ( i = 0; i < max.get(); i++ )
+			pobjSheet.autoSizeColumn(i);
 	}
 
-	private static void buildTable(Sheet pobjSheet, Table pobjSource, R<Integer> row, R<Integer> col)
+	private static void buildTable(Sheet pobjSheet, Table pobjSource, R<Integer> row, R<Integer> col, R<Integer> max)
 	{
 		Enumeration<?> i;
 		Row lobjRow;
@@ -82,12 +89,12 @@ public class ExcelConnector
             if ( lobjRow == null )
                 lobjRow = pobjSheet.createRow(row.get());
 			ltr = (TR)pobjSource.getElement((String)i.nextElement());
-			buildRow(lobjRow, ltr, row, col);
+			buildRow(lobjRow, ltr, row, col, max);
 			row.set(row.get() + 1);
 		}
 	}
 
-	private static void buildRow(Row pobjRow, TR pobjSource, R<Integer> row, R<Integer> col)
+	private static void buildRow(Row pobjRow, TR pobjSource, R<Integer> row, R<Integer> col, R<Integer> max)
 	{
 		int llngStart;
 		Enumeration<?> i;
@@ -103,21 +110,24 @@ public class ExcelConnector
             if ( lobjCell == null )
             	lobjCell = pobjRow.createCell(col.get());
 			ltd = (TD)pobjSource.getElement((String)i.nextElement());
-			buildCell(lobjCell, ltd, row, col);
+			buildCell(lobjCell, ltd, row, col, max);
 			col.set(col.get() + 1);
 		}
+
+		if ( col.get() > max.get() )
+			max.set(col.get());
 
 		col.set(llngStart);
 	}
 
-	private static void buildCell(Cell pobjCell, TD pobjSource, R<Integer> row, R<Integer> col)
+	private static void buildCell(Cell pobjCell, TD pobjSource, R<Integer> row, R<Integer> col, R<Integer> max)
 	{
 		GenericElement lobjAux;
 
 		lobjAux = pobjSource.getElement((String)pobjSource.keys().nextElement());
 
 		if ( lobjAux instanceof Table )
-			buildTable(pobjCell.getSheet(), (Table)lobjAux, row, col);
+			buildTable(pobjCell.getSheet(), (Table)lobjAux, row, col, max);
 		else
 			pobjCell.setCellValue(lobjAux.toString());
 	}
