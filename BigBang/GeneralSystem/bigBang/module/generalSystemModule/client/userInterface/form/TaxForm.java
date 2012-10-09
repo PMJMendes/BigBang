@@ -2,9 +2,11 @@ package bigBang.module.generalSystemModule.client.userInterface.form;
 
 import bigBang.definitions.shared.Tax;
 import bigBang.library.client.FormField;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -119,6 +121,7 @@ public class TaxForm extends FormView<Tax> {
 		columnOrder.setValue(new Double(info.columnOrder));
 	}
 
+	@SuppressWarnings("unchecked")
 	private void prepareDefaultValue(String fieldTypeId, final String newDefaultValue){
 		if(defaultValue.isAttached()){
 			defaultValue.removeFromParent();
@@ -142,16 +145,19 @@ public class TaxForm extends FormView<Tax> {
 			((RadioButtonFormField)defaultValue).setValue(newDefaultValue);
 		}else if(fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ListType)){
 			String fieldId = this.value == null ? "" : this.value.id == null ? "" : this.value.id;
-			defaultValue = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldValues+"/"+fieldId, "Valor por defeito");
-			((ExpandableListBoxFormField)defaultValue).setValue(newDefaultValue);
+			HasParameters parameters = new HasParameters();
+			parameters.setParameter("name", "Valor por defeito");
+			defaultValue = MutableSelectionFormFieldFactory.getFormField(ModuleConstants.ListIDs.FieldValues+"/"+fieldId, parameters);
+			((FormField<String>)defaultValue).setValue(newDefaultValue);
 		}else if(fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.NumericType)){
 			defaultValue = new TextBoxFormField("Valor por defeito");
 			defaultValue.setFieldWidth("150px");
 			((TextBoxFormField)defaultValue).setValue(newDefaultValue);
 		}else if(fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ReferenceType)){
-			defaultValue = new ExpandableListBoxFormField(refersToEntityId.getValue(), "Valor por defeito");
-			((ExpandableListBoxFormField)defaultValue).setValue(newDefaultValue);
-
+			HasParameters parameters = new HasParameters();
+			parameters.setParameter("name", "Valor por defeito");
+			defaultValue = MutableSelectionFormFieldFactory.getFormField(refersToEntityId.getValue(), parameters);
+			((FormField<String>)defaultValue).setValue(newDefaultValue);
 		}else {
 			//TEXT TYPE
 			defaultValue = new TextBoxFormField("Valor por defeito");

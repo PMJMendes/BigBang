@@ -33,7 +33,7 @@ public class TaxFormValidator extends FormValidator<TaxForm> {
 
 	private boolean validateRefersToEntity() {
 		String type = form.type.getValue();
-		if(type != null && type.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ListType)) {
+		if(type != null && (type.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ReferenceType))) {
 			return validateGuid(form.refersToEntityId, false);
 		}else if(form.refersToEntityId.getValue() != null){
 			return false;

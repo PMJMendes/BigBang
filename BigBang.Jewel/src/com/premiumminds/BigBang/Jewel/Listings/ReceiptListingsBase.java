@@ -163,51 +163,67 @@ public class ReceiptListingsBase
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Recibo");
 		ReportBuilder.styleCell(larrCells[0], false, false);
+		larrCells[0].setWidth(94);
 
 		larrCells[1] = ReportBuilder.buildHeaderCell("Tipo");
 		ReportBuilder.styleCell(larrCells[1], false, true);
+		larrCells[1].setWidth(40);
 
 		larrCells[2] = ReportBuilder.buildHeaderCell("Cliente");
 		ReportBuilder.styleCell(larrCells[2], false, true);
+		larrCells[2].setWidth(351);
 
 		larrCells[3] = ReportBuilder.buildHeaderCell("Apólice");
 		ReportBuilder.styleCell(larrCells[3], false, true);
+		larrCells[3].setWidth(132);
 
 		larrCells[4] = ReportBuilder.buildHeaderCell("Companhia");
 		ReportBuilder.styleCell(larrCells[4], false, true);
+		larrCells[4].setWidth(183);
 
 		larrCells[5] = ReportBuilder.buildHeaderCell("Ramo");
 		ReportBuilder.styleCell(larrCells[5], false, true);
+		larrCells[5].setWidth(169);
 
 		larrCells[6] = ReportBuilder.buildHeaderCell("Descrição");
 		ReportBuilder.styleCell(larrCells[6], false, true);
+		larrCells[6].setWidth(136);
 
 		larrCells[7] = ReportBuilder.buildHeaderCell("Prémio");
 		ReportBuilder.styleCell(larrCells[7], false, true);
+		larrCells[7].setWidth(75);
 
 		larrCells[8] = ReportBuilder.buildHeaderCell("Comissão");
 		ReportBuilder.styleCell(larrCells[8], false, true);
+		larrCells[8].setWidth(77);
 
 		larrCells[9] = ReportBuilder.buildHeaderCell("Retrocessão");
 		ReportBuilder.styleCell(larrCells[9], false, true);
+		larrCells[9].setWidth(95);
 
 		larrCells[10] = ReportBuilder.buildHeaderCell("Emissão");
 		ReportBuilder.styleCell(larrCells[10], false, true);
+		larrCells[10].setWidth(69);
 
 		larrCells[11] = ReportBuilder.buildHeaderCell("Vencimento");
 		ReportBuilder.styleCell(larrCells[11], false, true);
+		larrCells[11].setWidth(90);
 
 		larrCells[12] = ReportBuilder.buildHeaderCell("Até");
 		ReportBuilder.styleCell(larrCells[12], false, true);
+		larrCells[12].setWidth(75);
 
 		larrCells[13] = ReportBuilder.buildHeaderCell("Data Limite");
 		ReportBuilder.styleCell(larrCells[13], false, true);
+		larrCells[13].setWidth(88);
 
 		larrCells[14] = ReportBuilder.buildHeaderCell("Data Cobrança");
 		ReportBuilder.styleCell(larrCells[14], false, true);
+		larrCells[14].setWidth(110);
 
 		larrCells[15] = ReportBuilder.buildHeaderCell("Meios");
 		ReportBuilder.styleCell(larrCells[15], false, true);
+		larrCells[15].setWidth(51);
 
 		return larrCells;
 	}
