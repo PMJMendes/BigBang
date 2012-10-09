@@ -620,6 +620,7 @@ public class Constants
 	public static final UUID TID_MediatorAccounting  = UUID.fromString("E9A0F1C0-AE70-49AD-887E-A0990128BB1E");
 	public static final UUID TID_PaymentReturnLetter = UUID.fromString("F8717681-DBC3-4186-B039-A0B0010A0B6D");
 	public static final UUID TID_Stamp               = UUID.fromString("BE3106A1-9C31-40D3-ACC2-A0B300D3E585");
+	public static final UUID TID_DASForm             = UUID.fromString("4C6C0B65-1FBA-417B-A2F5-A0E500E572B7");
 
 	// Contact Types
 	public static final UUID CtTypeID_General       = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");
@@ -646,6 +647,7 @@ public class Constants
 	public static final UUID DocID_MediatorPayment        = UUID.fromString("F6663F27-83B8-40DE-AB00-A0990123C856");
 	public static final UUID DocID_PaymentReturnLetter    = UUID.fromString("73C2A8D9-C1A9-4E4C-ACC6-A0B0010A59F7");
 	public static final UUID DocID_HealthExpenseDoc       = UUID.fromString("25469CCB-BF12-44D1-86D3-A0BC01319C41");
+	public static final UUID DocID_DASForm                = UUID.fromString("50987B3E-166D-4C22-9F91-A0E500F23F46");
 
 	// Report Types
 	public static final UUID RTypeID_Parameter   = UUID.fromString("EFF85260-CB13-4599-8EFD-A032010C4AED");

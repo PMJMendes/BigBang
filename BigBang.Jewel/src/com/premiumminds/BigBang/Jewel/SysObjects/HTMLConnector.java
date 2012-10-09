@@ -25,7 +25,7 @@ public class HTMLConnector
 		TD ltd;
 		Div ldiv;
 		int i;
-		String lstrResult;
+		byte[] larrBytes;
 		FileXfer lobjResult;
 
 		ldoc = new Document();
@@ -57,11 +57,10 @@ public class HTMLConnector
 			ldiv.addElementToRegistry(parrSource[i]);
 		}
 
-		lstrResult = ldoc.toString();
-
 		try
 		{
-			lobjResult = new FileXfer(lstrResult.length(), "text/html", "report.html", new ByteArrayInputStream(lstrResult.getBytes("UTF-8")));
+			larrBytes = ldoc.toString().getBytes("UTF-8");
+			lobjResult = new FileXfer(larrBytes.length, "text/html", "report.html", new ByteArrayInputStream(larrBytes));
 		}
 		catch (Throwable e)
 		{
