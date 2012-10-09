@@ -39,7 +39,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	protected ParamReportPanel paramPanel;
 	protected VerticalPanel sectionsContainer;
 	protected FlowPanel currentPanel;
-	protected Frame reportFrame;
+	protected Frame reportFrame, excelFrame;
 	private View panel;
 	
 	protected Button printButton, exportExcelButton;
@@ -83,6 +83,9 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 
 		reportFrame = new Frame();
 		reportFrame.setVisible(false);
+		
+		excelFrame = new Frame();
+		excelFrame.setVisible(false);
 
 		sectionsContainer = new VerticalPanel();
 		sectionsContainer.setWidth("100%");
@@ -263,6 +266,11 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	public Frame getPrintFrame() {
 		return this.reportFrame;
 	}
+	
+	@Override
+	public Frame getExcelFrame() {
+		return this.reportFrame;
+	}
 
 	@Override
 	public void allowPrintReport(boolean allow) {
@@ -273,4 +281,5 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	public void allowExportExcel(boolean allow) {
 		this.exportExcelButton.setEnabled(allow);
 	}
+
 }
