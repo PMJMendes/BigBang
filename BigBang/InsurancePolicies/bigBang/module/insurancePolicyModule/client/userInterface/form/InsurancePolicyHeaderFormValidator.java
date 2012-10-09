@@ -43,7 +43,7 @@ public class InsurancePolicyHeaderFormValidator extends
 		if(currentPolicy != null && (currentPolicy.statusIcon == PolicyStatus.PROVISIONAL || currentPolicy.statusIcon == null)) {
 			return validateString(form.number, 0, 250, true);
 		}else{
-			return validateString(form.number, 0, 250, false);
+			return validateString(form.number, 1, 250, false);
 		}
 	}
 
