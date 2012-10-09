@@ -333,7 +333,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 					insuredObject.setValue(info.expense.insuredObjectId);
 				}
 
-				listId = BigBangConstants.EntityIds.COVERAGE + "/" + info.expense.referenceId;
+				listId = BigBangConstants.EntityIds.COVERAGE+"/"+info.expense.referenceSubLineId;
 
 				coverageId.setListId(listId, new ResponseHandler<Void>() {
 

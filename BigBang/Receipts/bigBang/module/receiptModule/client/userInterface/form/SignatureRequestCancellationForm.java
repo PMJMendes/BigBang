@@ -8,14 +8,16 @@ import bigBang.library.client.userInterface.view.FormView;
 
 public class SignatureRequestCancellationForm extends FormView<SignatureRequest.Cancellation>{
 
-	private ExpandableListBoxFormField motive;
+	protected ExpandableListBoxFormField motive;
 	
 	public SignatureRequestCancellationForm() {
 		
 		addSection("Cancelamento de Pedido de Assinatura");
 		motive = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INFO_REQUEST_CANCEL_MOTIVES, "Motivo do cancelamento");
+		motive.setMandatory(true);
 		addFormField(motive);
-		
+	
+		setValidator(new SignatureRequestCancellationFormValidator(this));
 	}
 
 	@Override

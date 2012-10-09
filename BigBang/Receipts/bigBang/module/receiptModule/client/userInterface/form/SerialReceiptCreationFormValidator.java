@@ -1,9 +1,11 @@
 package bigBang.module.receiptModule.client.userInterface.form;
 
+import java.util.Date;
+
 import bigBang.library.client.FormValidator;
 
 public class SerialReceiptCreationFormValidator extends
-		FormValidator<SerialReceiptCreationForm> {
+FormValidator<SerialReceiptCreationForm> {
 
 	public SerialReceiptCreationFormValidator(SerialReceiptCreationForm form) {
 		super(form);
@@ -28,6 +30,7 @@ public class SerialReceiptCreationFormValidator extends
 		valid &= validateBonusMalusOption();
 		valid &= validateBonusMalusValue();
 		valid &= validateDueDate();
+		valid &= validateCoverageStartAndEndDate();
 		
 		return new Result(valid, this.validationMessages);
 	}
@@ -35,7 +38,7 @@ public class SerialReceiptCreationFormValidator extends
 	private boolean validateReceiptNumber() {
 		return validateString(form.receiptNumber, 1, 250, false);
 	}
-	
+
 	private boolean validatePolicyNumber() {
 		return validateString(form.policyNumber, 1, 250, false);
 	}
@@ -100,6 +103,27 @@ public class SerialReceiptCreationFormValidator extends
 			return validateNumber(form.bonusMalusValue, false);
 		}else{
 			return true;
+		}
+	}
+
+	private boolean validateCoverageStartAndEndDate(){
+		boolean validDates = validateCoverageStart() && validateCoverageEnd();
+		if(validDates){
+			Date coverageStart = form.coverageStart.getValue();
+			Date coverageEnd = form.coverageEnd.getValue();
+			if(coverageStart != null && coverageEnd != null){
+				if(coverageStart.before(coverageEnd)){
+					return true;
+				}else{
+					form.coverageStart.setInvalid(true);
+					form.coverageEnd.setInvalid(true);
+					return false;
+				}
+			}else{
+				return true;
+			}
+		}else{
+			return false;
 		}
 	}
 }

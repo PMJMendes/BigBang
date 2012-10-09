@@ -8,7 +8,7 @@ import bigBang.definitions.shared.InsurancePolicyStub.PolicyStatus;
 import bigBang.library.client.FormValidator;
 
 public class InsurancePolicyHeaderFormValidator extends
-		FormValidator<InsurancePolicyHeaderForm> {
+FormValidator<InsurancePolicyHeaderForm> {
 
 	public InsurancePolicyHeaderFormValidator(InsurancePolicyHeaderForm form) {
 		super(form);
@@ -24,14 +24,40 @@ public class InsurancePolicyHeaderFormValidator extends
 		valid &= validateMaturityDate();
 		valid &= validateStartDate();
 		valid &= validateEndDate();
+		valid &= validateStartAndEndDate();
 		valid &= validateDuration();
 		valid &= validateFractioning();
 		valid &= validatePremium();
 		valid &= validateOperationalProfile();
 		valid &= validateCoInsurance();
 		valid &= validateCaseStudy();
-				
+
 		return new Result(valid, this.validationMessages);
+	}
+
+	private boolean validateStartAndEndDate() {
+		boolean validDates = validateEndDate() && validateStartDate();
+
+		if(validDates){
+			Date startDate = form.startDate.getValue();
+			Date endDate = form.endDate.getValue();
+
+			if(startDate != null && endDate != null){
+				if(startDate.before(endDate)){
+					return true;
+				}
+				else{
+					form.startDate.setInvalid(true);
+					form.endDate.setInvalid(true);
+					return false;
+				}
+
+			}else{
+				return true;
+			}
+		}else{
+			return false;
+		}
 	}
 
 	private boolean validateManager() {
@@ -71,19 +97,16 @@ public class InsurancePolicyHeaderFormValidator extends
 		if(validateDuration()){
 			Date endDate = form.endDate.getValue();
 			boolean valid = false;
-			
+
 			if(BigBangConstants.TypifiedListValues.INSURANCE_POLICY_DURATION.TEMPORARY.equalsIgnoreCase(form.duration.getValue())){
 				valid = validateDate(form.endDate, false);
 			}else{
 				valid = validateDate(form.endDate, true);
 			}
-			
+
 			if(valid) {
 				if(endDate != null){
-					valid = (validateStartDate() && form.startDate.getValue() != null &&
-							form.startDate.getValue().before(endDate));
-					form.startDate.setInvalid(!valid);
-					return valid;
+					return (validateStartDate() && form.startDate.getValue() != null);
 				}else{
 					return true;
 				}

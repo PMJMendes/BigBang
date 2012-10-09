@@ -113,6 +113,13 @@ public class CreateSignatureRequestViewPresenter implements ViewPresenter{
 				}
 			});
 		}
+		else{
+			onFormValidationFailed();
+		}
+	}
+
+	private void onFormValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));				
 	}
 
 	protected void onCancel() {
