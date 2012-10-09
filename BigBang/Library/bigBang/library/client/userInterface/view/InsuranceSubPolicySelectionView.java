@@ -9,8 +9,8 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter.Action;
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicySearchPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyForm;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

@@ -9,7 +9,6 @@ import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
-import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
@@ -31,7 +30,6 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 	protected ExpandableListBoxFormField fractioning;
 	protected NumericTextBoxFormField premium;
 	protected Image statusIcon;
-	protected TextAreaFormField notes;
 
 
 	private HeaderFieldsSection headerForm;
@@ -80,6 +78,8 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 
 		headerForm = new HeaderFieldsSection();
 		addSection(headerForm);	
+		
+		setValidator(new SubPolicyHeaderFormValidator(this));
 
 	}
 

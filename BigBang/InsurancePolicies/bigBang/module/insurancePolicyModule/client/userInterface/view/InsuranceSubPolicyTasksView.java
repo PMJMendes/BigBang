@@ -5,7 +5,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuranceSubPolicyTasksOperationsToolbar;
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuranceSubPolicyTasksViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuranceSubPolicyTasksViewPresenter.Action;
 

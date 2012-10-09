@@ -9,7 +9,7 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter.Action;
 import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;

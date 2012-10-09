@@ -86,6 +86,9 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 					if(view.getForm().validate()) {
 						markForClosing(SubCasualtyMarkForClosingViewPresenter.this.currentSubCasualtyId, view.getForm().getInfo());
 					}
+					else{
+						onValidationFailed();
+					}
 					break;
 				case CANCEL:
 					onMarkForClosingCancelled();
@@ -97,6 +100,10 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 		//APPLICATION-WIDE EVENTS
 
 		bound = true;
+	}
+	
+	private void onValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));				
 	}
 
 	private void clearView(){

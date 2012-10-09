@@ -11,6 +11,9 @@ public class SubCasualtyDeleteForm extends FormView<String> {
 		reason = new TextAreaFormField();
 		addSection("Eliminação de Sub-Sinistro");
 		addFormField(reason);
+		reason.setMandatory(true);
+		
+		setValidator(new SubCasualtyDeleteFormValidator(this));
 	}
 	
 	@Override

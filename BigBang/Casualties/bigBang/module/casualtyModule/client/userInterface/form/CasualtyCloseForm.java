@@ -11,6 +11,8 @@ public class CasualtyCloseForm extends FormView<String> {
 		reason = new TextAreaFormField("Motivo");
 		addSection("Encerramento");
 		addFormField(reason);
+		
+		setValidator(new CasualtyCloseFormValidator(this));
 	}
 	
 	@Override

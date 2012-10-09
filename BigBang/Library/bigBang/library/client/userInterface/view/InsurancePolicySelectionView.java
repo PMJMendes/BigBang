@@ -16,8 +16,8 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter.Action;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyForm;
 
 public class InsurancePolicySelectionView extends View implements InsurancePolicySelectionViewPresenter.Display {
 

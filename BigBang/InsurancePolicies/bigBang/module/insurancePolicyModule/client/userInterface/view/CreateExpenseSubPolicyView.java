@@ -9,7 +9,7 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.userInterface.form.ExpenseForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.CreateExpenseOperationsToolbar;
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseSubPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseSubPolicyViewPresenter.Action;
 

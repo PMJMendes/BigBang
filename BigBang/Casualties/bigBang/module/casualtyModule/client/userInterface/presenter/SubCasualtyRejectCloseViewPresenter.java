@@ -131,6 +131,9 @@ public class SubCasualtyRejectCloseViewPresenter implements ViewPresenter {
 						}
 					});
 				}
+				else{
+					onValidationFailed();
+				}
 			}
 
 			@Override
@@ -138,6 +141,10 @@ public class SubCasualtyRejectCloseViewPresenter implements ViewPresenter {
 				onRejectFailed();
 			}
 		});
+	}
+	
+	private void onValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));				
 	}
 
 	protected void onCancel() {

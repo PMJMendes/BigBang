@@ -13,6 +13,8 @@ public class SubCasualtyRejectCloseForm extends FormView<String> {
 		reason.getNativeField().setSize("450px", "100px");
 		addFormField(reason);
 		
+		setValidator(new SubCasualtyRejectCloseFormValidator(this));
+		
 	}
 	
 	@Override

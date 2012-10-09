@@ -12,9 +12,9 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.receiptModule.client.userInterface.InsurancePolicyList;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel.Entry;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.PolicyChoiceFromListViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.PolicyChoiceFromListViewPresenter.Action;
 

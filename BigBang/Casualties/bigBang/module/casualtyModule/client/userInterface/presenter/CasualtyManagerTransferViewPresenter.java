@@ -88,6 +88,9 @@ public class CasualtyManagerTransferViewPresenter implements ViewPresenter {
 					if(view.getForm().validate()) {
 						transferCasualty(CasualtyManagerTransferViewPresenter.this.currentCasualtyId, view.getForm().getInfo());
 					}
+					else{
+						onValidationFailed();
+					}
 					break;
 				case CANCEL:
 					onManagerTransferCancelled();
@@ -100,6 +103,11 @@ public class CasualtyManagerTransferViewPresenter implements ViewPresenter {
 
 		bound = true;
 	}
+
+	private void onValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));				
+	}
+
 
 	private void clearView(){
 		view.allowTransfer(false);

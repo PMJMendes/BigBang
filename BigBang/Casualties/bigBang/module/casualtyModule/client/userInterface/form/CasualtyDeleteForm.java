@@ -11,6 +11,9 @@ public class CasualtyDeleteForm extends FormView<String> {
 		reason = new TextAreaFormField();
 		addSection("Eliminação de Sinistro");
 		addFormField(reason);
+		reason.setMandatory(true);
+		
+		setValidator(new CasualtyDeleteFormValidator(this));
 	}
 	
 	@Override

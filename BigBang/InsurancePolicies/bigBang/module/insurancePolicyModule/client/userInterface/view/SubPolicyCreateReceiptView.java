@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyCreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyCreateReceiptViewPresenter.Action;
 import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;

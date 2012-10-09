@@ -37,7 +37,6 @@ public class CasualtyForm extends FormView<Casualty> {
 		description = new TextAreaFormField();
 		description.setFieldWidth("600px");
 		description.setFieldHeight("250px");
-
 		notes = new TextAreaFormField();
 		notes.setFieldWidth("600px");
 		notes.setFieldHeight("250px");
@@ -66,6 +65,8 @@ public class CasualtyForm extends FormView<Casualty> {
 		addFormField(notes);
 
 		setForEdit();
+		
+		setValidator(new CasualtyFormValidator(this));
 	}
 
 	public void setForCreate(){

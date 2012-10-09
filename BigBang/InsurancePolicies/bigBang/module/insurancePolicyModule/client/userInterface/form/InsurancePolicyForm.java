@@ -1,33 +1,37 @@
-package bigBang.module.insurancePolicyModule.client.userInterface;
+package bigBang.module.insurancePolicyModule.client.userInterface.form;
 
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyHeaderForm;
+import bigBang.library.client.userInterface.TextAreaFormField;
 
 public class InsurancePolicyForm extends InsurancePolicyHeaderForm{
 	
-	PolicyNotesFormSection notesSection = new PolicyNotesFormSection();
+	protected TextAreaFormField notes;
 	
 	public InsurancePolicyForm() {
 		super();
-		this.addSection(notesSection);
+		addSection("Notas");
+		notes = new TextAreaFormField("Notas");
+		addFormField(notes);
 		this.setHeaderFormVisible(false);
+		
+		setValidator(new InsurancePolicyFormValidator(this));
 	}
 	
 	@Override
 	public void setInfo(InsurancePolicy value) {
 		super.setInfo(value);
 		if(value == null){
-			notesSection.clear();
+			notes.clear();
 			return;
 		}
-		notesSection.setValue(value.notes);
+		notes.setValue(value.notes);
 	}
 	
 	@Override
 	public InsurancePolicy getInfo() {
 		InsurancePolicy value = super.getValue();
 		
-		value.notes = notesSection.getValue();
+		value.notes = notes.getValue();
 		
 		return value;
 	};

@@ -172,7 +172,7 @@ public class CreateCasualtyViewPresenter implements ViewPresenter {
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onFormValidationFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}

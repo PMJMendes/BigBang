@@ -65,7 +65,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		void allowClose(boolean allow);
 		void allowRejectClose(boolean allow);
 		void allowMarkNotificationSent(boolean allow);
-		
+
 		Widget asWidget();
 		void allowInfoOrDocumentRequest(boolean hasPermission);
 		void allowInsurerInfoRequest(boolean hasPermission);
@@ -193,7 +193,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 	}
 
 	protected void markNotificationSent(String subCasualtyId) {
-		
+
 		broker.markNotificationSent(subCasualtyId, new ResponseHandler<SubCasualty>(){
 			@Override
 			public void onResponse(SubCasualty response) {
@@ -209,7 +209,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 
 	protected void onMarkNotificationSentFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Falhou envio da participação"), TYPE.TRAY_NOTIFICATION));
-		
+
 	}
 
 	protected void onMarkNotificationSentSuccess() {
@@ -323,38 +323,48 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSave() {
-		SubCasualty subCasualty = view.getForm().getInfo();
+		if(view.getForm().validate()){
+			SubCasualty subCasualty = view.getForm().getInfo();
 
-		if(subCasualty.id == null) {
-			CasualtyDataBroker casualtyBroker = (CasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CASUALTY);
-			casualtyBroker.createSubCasualty(subCasualty, new ResponseHandler<SubCasualty>(){
+			if(subCasualty.id == null) {
+				CasualtyDataBroker casualtyBroker = (CasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CASUALTY);
+				casualtyBroker.createSubCasualty(subCasualty, new ResponseHandler<SubCasualty>(){
 
-				@Override
-				public void onResponse(SubCasualty response) {
-					onCreateSubCasualtySuccess(response);
-				}
+					@Override
+					public void onResponse(SubCasualty response) {
+						onCreateSubCasualtySuccess(response);
+					}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onCreateSubCasualtyFailed();
-				}
-			});
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onCreateSubCasualtyFailed();
+					}
+				});
+			}else{
+				broker.updateSubCasualty(subCasualty, new ResponseHandler<SubCasualty>() {
+
+					@Override
+					public void onResponse(SubCasualty response) {
+						onSaveSuccess();
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onSaveFailed();
+					}
+				});
+			}
 		}else{
-			broker.updateSubCasualty(subCasualty, new ResponseHandler<SubCasualty>() {
-
-				@Override
-				public void onResponse(SubCasualty response) {
-					onSaveSuccess();
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onSaveFailed();
-				}
-			});
+			onValidationFailed();
 		}
 	}
 
+	private void onValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));				
+
+	}
+
+	
 	protected void onCancel(){
 		SubCasualty subCasualty = view.getForm().getValue();
 

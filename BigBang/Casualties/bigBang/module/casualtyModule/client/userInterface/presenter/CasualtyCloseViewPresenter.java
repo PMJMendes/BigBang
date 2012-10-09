@@ -115,29 +115,38 @@ public class CasualtyCloseViewPresenter implements ViewPresenter {
 	}
 
 	protected void onClose(){
-		this.broker.getCasualty(casualtyId, new ResponseHandler<Casualty>() {
+		if(view.getForm().validate()){
+			this.broker.getCasualty(casualtyId, new ResponseHandler<Casualty>() {
 
-			@Override
-			public void onResponse(Casualty response) {
-				broker.close(response.id, new ResponseHandler<Void>() {
+				@Override
+				public void onResponse(Casualty response) {
+					broker.close(response.id, new ResponseHandler<Void>() {
 
-					@Override
-					public void onResponse(Void response) {
-						onCloseSuccess();
-					}
+						@Override
+						public void onResponse(Void response) {
+							onCloseSuccess();
+						}
 
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						onCloseFailed();
-					}
-				});
-			}
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onCloseFailed();
+						}
+					});
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onCloseFailed();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onCloseFailed();
+				}
+			});
+		}
+		else{
+			onValidationFailed();
+		}
+	}
+
+	private void onValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));				
 	}
 
 	protected void onCancel() {

@@ -13,8 +13,9 @@ public class SubCasualtyMarkForClosingForm extends FormView<String> {
 		
 		addSection("Marcação para Encerramento");
 		addFormField(revisor);
+		
+		setValidator(new SubCasualtyMarkForClosingFormValidator(this));
 	}
-	
 	
 	@Override
 	public String getInfo() {

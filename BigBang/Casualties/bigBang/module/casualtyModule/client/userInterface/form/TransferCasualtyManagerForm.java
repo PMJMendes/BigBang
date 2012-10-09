@@ -13,6 +13,8 @@ public class TransferCasualtyManagerForm extends FormView<String> {
 		
 		addSection("Informação da Transferência");
 		addFormField(manager);
+		
+		setValidator(new TransferCasualtyManagerFormValidator(this));
 	}
 	
 	@Override

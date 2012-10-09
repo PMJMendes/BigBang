@@ -1,16 +1,20 @@
-package bigBang.module.insurancePolicyModule.client.userInterface;
+package bigBang.module.insurancePolicyModule.client.userInterface.form;
 
 import bigBang.definitions.shared.SubPolicy;
-import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyHeaderForm;
+import bigBang.library.client.userInterface.TextAreaFormField;
 
 public class SubPolicyForm extends SubPolicyHeaderForm{
 	
-	PolicyNotesFormSection notesSection = new PolicyNotesFormSection();
+	protected TextAreaFormField notesSection;
 
 	public SubPolicyForm() {
 		super();
-		this.addSection(notesSection);
+		notesSection = new TextAreaFormField();
+		addSection("Notas");
+		addFormField(notesSection);
 		this.setHeaderFormVisible(false);
+		
+		setValidator(new SubPolicyFormValidator(this));
 	}
 	
 	@Override

@@ -136,6 +136,9 @@ public class SubCasualtyDeleteViewPresenter implements ViewPresenter {
 							}
 						});
 					}
+					else{
+						onValidationFailed();
+					}
 				}
 			}
 
@@ -144,6 +147,10 @@ public class SubCasualtyDeleteViewPresenter implements ViewPresenter {
 				onDeleteFailed();
 			}
 		});
+	}
+
+	protected void onValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));						
 	}
 
 	protected void onCancel() {
