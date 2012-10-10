@@ -21,7 +21,7 @@ public class ViewExternalInfoRequestForm extends FormView<ExternalInfoRequest> {
 		body = new RichTextAreaFormField();
 		body.showToolbar(false);
 		body.setWidth("100%");
-		body.field.setWidth("100%");
+		body.getNativeField().setWidth("100%");
 		
 		subject.setEditable(false);
 		from.setEditable(false);

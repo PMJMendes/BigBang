@@ -169,5 +169,7 @@ public class RichTextAreaFormField extends FormField<String> {
 	public void focus() {
 		field.getElement().focus();
 	}
+	
+	
 
 }

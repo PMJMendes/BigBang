@@ -19,6 +19,7 @@ import bigBang.library.client.userInterface.InfoOrDocumentRequestChildrenPanel;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.ViewInfoOrDocumentRequestOperationsToolbar;
 import bigBang.library.client.userInterface.form.ViewInfoOrDocumentRequestForm;
+import bigBang.library.client.userInterface.presenter.ViewInfoOrDocumentRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewInfoOrDocumentRequestViewPresenter.Action;
 import bigBang.module.clientModule.client.userInterface.presenter.ViewClientInfoRequestViewPresenter;
 
@@ -43,7 +44,7 @@ public abstract class ViewInfoOrDocumentRequestView<T extends ProcessBase> exten
 
 			@Override
 			public void onClick(ClickEvent event) {
-				handler.onActionInvoked(new ActionInvokedEvent<ViewInfoOrDocumentRequestViewPresenter.Action>(Action.ON_CLICK_BACK));
+				handler.onActionInvoked(new ActionInvokedEvent<ViewInfoOrDocumentRequestViewPresenter.Action>(ViewInfoOrDocumentRequestViewPresenter.Action.ON_CLICK_BACK));
 			}
 		}));
 		ownerFormHeader.setHeight("30px");
