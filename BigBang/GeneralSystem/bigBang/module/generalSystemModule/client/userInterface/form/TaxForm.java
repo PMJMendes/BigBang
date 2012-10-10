@@ -103,6 +103,7 @@ public class TaxForm extends FormView<Tax> {
 		newTax.unitsLabel = unitsLabel.getValue();
 		newTax.variesByExercise = variesByExercise.getValue();
 		newTax.variesByObject = variesByObject.getValue();
+		newTax.visible = visible.getValue();
 
 		return newTax;
 	}
@@ -119,6 +120,7 @@ public class TaxForm extends FormView<Tax> {
 		mandatory.setValue(info.mandatory);
 		unitsLabel.setValue(info.unitsLabel);
 		columnOrder.setValue(new Double(info.columnOrder));
+		visible.setValue(info.visible);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -174,4 +174,8 @@ public class TextBoxFormField extends FormField<String> {
 	public void add(Widget widget) {
 		wrapper.add(widget);
 	}
+
+	public void setMaxCharacters(int maxChar) {
+		((TextBox)this.field).setMaxLength(maxChar);
+	}
 }

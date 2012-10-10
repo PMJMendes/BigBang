@@ -112,6 +112,8 @@ public class ExpenseDeleteViewPresenter implements ViewPresenter{
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a Despesa de Saúde."), TYPE.ALERT_NOTIFICATION));
 				}
 			});
+		}else{
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 		}
 	}
 

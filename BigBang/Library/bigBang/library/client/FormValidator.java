@@ -10,6 +10,8 @@ import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.OutgoingMessage;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.OutgoingMessageFormField;
+import bigBang.library.client.userInterface.TextAreaFormField;
+import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
 public abstract class FormValidator<T extends FormView<?>> {
@@ -42,10 +44,16 @@ public abstract class FormValidator<T extends FormView<?>> {
 	}
 
 	public abstract Result validateImpl();
-	
+
 	public boolean validateString(FormField<String> field, int minChar, int maxChar, boolean allowsNull){
 		field.setMandatory(!allowsNull);
-		
+		if(field instanceof TextAreaFormField) {
+			((TextAreaFormField)(field)).setMaxCharacters(maxChar, null);
+		}
+		if(field instanceof TextBoxFormField) {
+			((TextBoxFormField)(field)).setMaxCharacters(maxChar);
+		}
+
 		String text = field.getValue();
 		if(text == null) {
 			field.setInvalid(!allowsNull);
@@ -60,7 +68,7 @@ public abstract class FormValidator<T extends FormView<?>> {
 
 	public boolean validateGuid(FormField<String> field, boolean allowsNull) {
 		field.setMandatory(!allowsNull);
-		
+
 		String guid = field.getValue();
 		if(guid == null) {
 			boolean result = allowsNull;
@@ -80,10 +88,10 @@ public abstract class FormValidator<T extends FormView<?>> {
 		field.setInvalid(!valid);
 		return valid; 
 	}
-	
+
 	public boolean validateNumber(FormField<Double> field, Double minValue, Double maxValue, boolean allowsNull){
 		field.setMandatory(!allowsNull);
-		
+
 		Double value = field.getValue();
 		if(value == null) {
 			boolean result = allowsNull;
@@ -119,7 +127,7 @@ public abstract class FormValidator<T extends FormView<?>> {
 			field.setInvalid(true);
 			return false;
 		}
-		
+
 		if(value == null) {
 			boolean result = allowsNull;
 			field.setInvalid(!result);
@@ -133,7 +141,7 @@ public abstract class FormValidator<T extends FormView<?>> {
 	public boolean validateOutgoingMessage(OutgoingMessageFormField field, boolean allowsNull) {
 		field.setMandatory(!allowsNull);
 		OutgoingMessage message = field.getValue();
-		
+
 		if(message == null) {
 			boolean result = allowsNull;
 			field.setInvalid(!result);
@@ -146,5 +154,5 @@ public abstract class FormValidator<T extends FormView<?>> {
 			return valid;
 		}
 	}
-	
+
 }

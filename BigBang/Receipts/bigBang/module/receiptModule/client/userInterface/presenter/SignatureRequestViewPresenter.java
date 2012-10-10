@@ -140,29 +140,36 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
 				}
 			});
+		}else{
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 		}
 	}
 
 	protected void receiveReply() {
-		SignatureRequest.Response response = new SignatureRequest.Response();
-		response.requestId = view.getForm().getInfo().id;
 
-		signatureBroker.receiveResponse(response, new ResponseHandler<SignatureRequest>() {
+		if(view.getForm().validate()){
+			SignatureRequest.Response response = new SignatureRequest.Response();
+			response.requestId = view.getForm().getInfo().id;
 
-			@Override
-			public void onResponse(SignatureRequest response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.popFromStackParameter("display");
-				item.removeParameter("signaturerequestid");
-				NavigationHistoryManager.getInstance().go(item);
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
-			}
+			signatureBroker.receiveResponse(response, new ResponseHandler<SignatureRequest>() {
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao receber a resposta ao pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
-			}
-		});
+				@Override
+				public void onResponse(SignatureRequest response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.popFromStackParameter("display");
+					item.removeParameter("signaturerequestid");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao receber a resposta ao pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}else{
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
+		}
 
 	}
 

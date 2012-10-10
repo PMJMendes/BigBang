@@ -61,7 +61,7 @@ FormValidator<InsurancePolicyHeaderForm> {
 	}
 
 	private boolean validateManager() {
-		return validateGuid(form.manager, false); //null means same as the client's
+		return validateGuid(form.manager, true); //null means same as the client's
 	}
 
 	private boolean validateNumber() {

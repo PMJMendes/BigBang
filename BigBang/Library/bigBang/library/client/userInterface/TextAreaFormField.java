@@ -191,7 +191,6 @@ public class TextAreaFormField extends FormField<String> {
 			}
 		});
 
-
 	}
 
 	protected void textAreaContentChanged(int max, Label remainCharsNum) {	

@@ -110,6 +110,8 @@ public class ReceiptTransferToPolicyViewPresenter implements ViewPresenter{
 					onTransferToPolicyFailed();				
 				}
 			});
+		}else{
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 		}
 	}
 

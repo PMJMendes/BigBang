@@ -86,6 +86,8 @@ public class InsurancePolicyManagerTransferViewPresenter implements ViewPresente
 				case TRANSFER:
 					if(view.getForm().validate()) {
 						transferClient(InsurancePolicyManagerTransferViewPresenter.this.currentPolicyId, view.getForm().getInfo());
+					}else{
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 					}
 					break;
 				case CANCEL:

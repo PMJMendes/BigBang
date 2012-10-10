@@ -133,6 +133,8 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 					if(view.getForm().validate()) {
 						ExternalInfoRequest toSend = view.getForm().getInfo();
 						saveExternalInformationRequest(toSend);
+					}else{
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 					}
 				}
 

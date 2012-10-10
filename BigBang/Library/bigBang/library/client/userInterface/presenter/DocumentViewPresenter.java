@@ -181,6 +181,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				case SAVE:{
 					if(view.getForm().validate()) {
 						createUpdateDocument(view.getForm().getInfo());
+					}else{
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 					}
 					break;
 				}

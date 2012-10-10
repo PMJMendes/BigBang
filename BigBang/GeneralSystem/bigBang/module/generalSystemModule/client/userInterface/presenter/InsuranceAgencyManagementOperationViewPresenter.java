@@ -164,6 +164,8 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 							createInsuranceAgency(info);
 						else
 							saveInsuranceAgency(info);
+					}else{
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 					}
 					break;
 				case CANCEL_EDIT:

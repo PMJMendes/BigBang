@@ -148,6 +148,8 @@ public class DASRequestViewPresenter implements ViewPresenter{
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao receber a resposta à Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
 				}
 			});
+		}else{
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 		}
 	}
 

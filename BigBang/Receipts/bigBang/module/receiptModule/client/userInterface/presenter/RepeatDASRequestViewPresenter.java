@@ -108,6 +108,8 @@ public class RepeatDASRequestViewPresenter implements ViewPresenter{
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido de Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
 				}
 			});
+		}else{
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 		}
 	}
 

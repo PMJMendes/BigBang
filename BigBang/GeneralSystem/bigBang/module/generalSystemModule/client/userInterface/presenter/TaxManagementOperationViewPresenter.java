@@ -152,7 +152,9 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 
 				switch(action.getAction()){
 				case NEW_TAX: {
-					view.getForm().setValue(new Tax());
+					Tax newTax = new Tax();
+					newTax.visible = true;
+					view.getForm().setValue(newTax);
 					view.getForm().setCoverageId(coverageId);
 					view.getForm().setReadOnly(false);
 					view.getToolBar().setSaveModeEnabled(true);
@@ -261,6 +263,8 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 
 							});
 						}
+					}else{
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 					}
 					break;
 				}

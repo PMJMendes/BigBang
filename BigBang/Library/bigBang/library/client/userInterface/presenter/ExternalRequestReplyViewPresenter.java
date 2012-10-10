@@ -176,6 +176,8 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 					super.onResponseFailure(caught);
 				}
 			});
+		}else{
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 		}
 	}
 
