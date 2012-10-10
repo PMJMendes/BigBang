@@ -9,7 +9,6 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
-import Jewel.Petri.Interfaces.ILog;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 
@@ -44,7 +43,6 @@ public class DASRequestReport
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
-		ILog lobjLog;
 
 		lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
 		if ( lobjClient.getAt(4) == null )
@@ -86,7 +84,6 @@ public class DASRequestReport
 				lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
 				lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
 			}
-			lobjLog = lobjProc.GetLiveLog(Constants.OPID_Receipt_Payment);
 		}
 		catch (Throwable e)
 		{
@@ -101,13 +98,13 @@ public class DASRequestReport
 		larrTables[0][4] = String.format("%,.2f", ((BigDecimal)lobjReceipt.getAt(3)));
 		larrTables[0][5] = (String)lobjReceipt.getAt(14);
 
+		if ( Constants.TypeID_Company.equals((UUID)lobjClient.getAt(6)) )
+			larrParams.put("Signature", "carimbo e assinatura");
+		else
+			larrParams.put("Signature", "assinatura");
+
 		larrParams.put("Count", "1 recibo");
 		larrParams.put("Total", String.format("%,.2f", ((BigDecimal)lobjReceipt.getAt(3))));
-
-		larrParams.put("Policy", (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel()));
-		larrParams.put("Company", (String)lobjPolicy.GetCompany().getLabel());
-		larrParams.put("DueDate", ((Timestamp)lobjReceipt.getAt(11)).toString().substring(0, 10));
-		larrParams.put("PayDate", lobjLog.GetTimestamp().toString().substring(0, 10));
 
 		return Generate(larrParams, new String[][][] {larrTables});
 	}

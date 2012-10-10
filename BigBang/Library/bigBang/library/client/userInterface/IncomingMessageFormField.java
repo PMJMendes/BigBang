@@ -90,6 +90,9 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		body.setWidth("100%");
 		body.field.setWidth("100%");
 		noteOrEmail.setSize("100%", "100%");
+		body.setWidth("100%");
+		body.field.setWidth("100%");
+		noteOrEmail.setSize("100%", "100%");
 		noteOrEmail.add(emailPanel);
 		noteOrEmail.add(notePanel);
 		noteOrEmail.add(right);

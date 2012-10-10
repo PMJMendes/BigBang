@@ -37,7 +37,86 @@ public class ReportServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public static String reportToHTML(Report pobjReport)
+	public static GenericElement[] sGenerateParamReport(String itemId, String[] paramValues)
+		throws BigBangException
+	{
+		ReportDef lobjReport;
+		Method lrefMethod;
+		GenericElement[] larrResult;
+
+		try
+		{
+			lobjReport = ReportDef.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(itemId));
+			lrefMethod = lobjReport.getMethod();
+			larrResult = (GenericElement[])lrefMethod.invoke(null, new java.lang.Object[] {paramValues});
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrResult;
+	}
+
+	public static GenericElement[] sGeneratePrintSetReport(String itemId, String printSetId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.PrintSet lobjSet;
+		GenericElement lobjBuffer;
+
+		try
+		{
+			lobjSet = com.premiumminds.BigBang.Jewel.Objects.PrintSet.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(printSetId));
+
+			lobjBuffer = lobjSet.buildReportTable();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return new GenericElement[] { lobjBuffer };
+	}
+
+	public static GenericElement[] sGenerateTransactionSetReport(String itemId, String transactionSetId)
+		throws SessionExpiredException, BigBangException
+	{
+		ReportDef lobjReport;
+		UUID lidTransactions;
+		TransactionSetBase lobjSet;
+		TransactionMapBase[] larrMaps;
+		int llngCount;
+		GenericElement[] larrResult;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReport = ReportDef.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(itemId));
+			lidTransactions = Engine.FindEntity(Engine.getCurrentNameSpace(), (UUID)lobjReport.getAt(ReportDef.I.TRANSACTIONTYPE));
+			lobjSet = (TransactionSetBase)Engine.GetWorkInstance(lidTransactions, UUID.fromString(transactionSetId));
+			larrMaps = lobjSet.getCurrentMaps();
+			llngCount = larrMaps.length;
+
+			larrResult = new GenericElement[llngCount + 1];
+
+			larrResult[0] = lobjSet.buildHeaderSection();
+
+			for ( i = 1; i <= llngCount; i++ )
+				larrResult[i] = lobjSet.buildDataSection(i);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrResult;
+	}
+
+	public static String reportToHTML(GenericElement[] parrReport)
 		throws BigBangException
 	{
 		String[] larrContent;
@@ -45,9 +124,9 @@ public class ReportServiceImpl
 		FileXfer lobjFile;
 		UUID lidAux;
 
-		larrContent = new String[pobjReport.sections.length];
-		for ( i = 0; i < pobjReport.sections.length; i++ )
-			larrContent[i] = pobjReport.sections[i].htmlContent;
+		larrContent = new String[parrReport.length];
+		for ( i = 0; i < parrReport.length; i++ )
+			larrContent[i] = parrReport[i].toString();
 
 		try
 		{
@@ -64,21 +143,15 @@ public class ReportServiceImpl
 		return lidAux.toString();
 	}
 
-	public static String reportToXL(Report pobjReport)
+	public static String reportToXL(GenericElement[] parrReport)
 		throws BigBangException
 	{
-		String[] larrContent;
-		int i;
 		FileXfer lobjFile;
 		UUID lidAux;
 
-		larrContent = new String[pobjReport.sections.length];
-		for ( i = 0; i < pobjReport.sections.length; i++ )
-			larrContent[i] = pobjReport.sections[i].htmlContent;
-
 		try
 		{
-			lobjFile = ExcelConnector.buildExcel(larrContent);
+			lobjFile = ExcelConnector.buildExcel(parrReport);
 		}
 		catch (Throwable e)
 		{
@@ -359,25 +432,14 @@ public class ReportServiceImpl
 	public Report generateParamReport(String itemId, String[] paramValues)
 		throws SessionExpiredException, BigBangException
 	{
-		ReportDef lobjReport;
-		Report lobjResult;
-		Method lrefMethod;
 		GenericElement[] larrBuffer;
+		Report lobjResult;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		try
-		{
-			lobjReport = ReportDef.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(itemId));
-			lrefMethod = lobjReport.getMethod();
-			larrBuffer = (GenericElement[])lrefMethod.invoke(null, new java.lang.Object[] {paramValues});
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
+		larrBuffer = sGenerateParamReport(itemId, paramValues);
 
 		lobjResult = new Report();
 		lobjResult.sections = new Report.Section[larrBuffer.length];
@@ -397,7 +459,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToHTML(generateParamReport(itemId, paramValues));
+		return reportToHTML(sGenerateParamReport(itemId, paramValues));
 	}
 
 	public String generateParamAsXL(String itemId, String[] paramValues)
@@ -406,30 +468,19 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToXL(generateParamReport(itemId, paramValues));
+		return reportToXL(sGenerateParamReport(itemId, paramValues));
 	}
 
 	public Report generatePrintSetReport(String itemId, String printSetId)
 		throws SessionExpiredException, BigBangException
 	{
-		com.premiumminds.BigBang.Jewel.Objects.PrintSet lobjSet;
 		GenericElement lobjBuffer;
 		Report lobjResult;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		try
-		{
-			lobjSet = com.premiumminds.BigBang.Jewel.Objects.PrintSet.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(printSetId));
-
-			lobjBuffer = lobjSet.buildReportTable();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
+		lobjBuffer = sGeneratePrintSetReport(itemId, printSetId)[0];
 
 		lobjResult = new Report();
 		lobjResult.sections = new Report.Section[] {new Report.Section()};
@@ -447,7 +498,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToHTML(generatePrintSetReport(itemId, printSetId));
+		return reportToHTML(sGeneratePrintSetReport(itemId, printSetId));
 	}
 
 	public String generatePrintSetAsXL(String itemId, String printSetId)
@@ -456,7 +507,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToXL(generatePrintSetReport(itemId, printSetId));
+		return reportToXL(sGeneratePrintSetReport(itemId, printSetId));
 	}
 
 	public Report generateTransactionSetReport(String itemId, String transactionSetId)
@@ -467,13 +518,15 @@ public class ReportServiceImpl
 		TransactionSetBase lobjSet;
 		TransactionMapBase[] larrMaps;
 		int llngCount;
-		GenericElement lobjBuffer;
+		GenericElement[] lobjBuffer;
 		int i;
 		boolean b;
 		Report lobjResult;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
+
+		lobjBuffer = sGenerateTransactionSetReport(itemId, transactionSetId);
 
 		try
 		{
@@ -482,8 +535,6 @@ public class ReportServiceImpl
 			lobjSet = (TransactionSetBase)Engine.GetWorkInstance(lidTransactions, UUID.fromString(transactionSetId));
 			larrMaps = lobjSet.getCurrentMaps();
 			llngCount = larrMaps.length;
-
-			lobjBuffer = lobjSet.buildHeaderSection();
 		}
 		catch (Throwable e)
 		{
@@ -493,22 +544,13 @@ public class ReportServiceImpl
 		lobjResult = new Report();
 		lobjResult.sections = new Report.Section[llngCount + 1];
 		lobjResult.sections[0] = new Report.Section();
-		lobjResult.sections[0].htmlContent = lobjBuffer.toString();
+		lobjResult.sections[0].htmlContent = lobjBuffer[0].toString();
 
 		b = false;
 		for ( i = 1; i <= llngCount; i++ )
 		{
-			try
-			{
-				lobjBuffer = lobjSet.buildDataSection(i);
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
 			lobjResult.sections[i] = new Report.Section();
-			lobjResult.sections[i].htmlContent = lobjBuffer.toString();
+			lobjResult.sections[i].htmlContent = lobjBuffer[i].toString();
 
 			if ( larrMaps[i - 1].isSettled() )
 				lobjResult.sections[i].verbs = new Report.Section.Verb[0];
@@ -541,7 +583,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToHTML(generateTransactionSetReport(itemId, transactionSetId));
+		return reportToHTML(sGenerateTransactionSetReport(itemId, transactionSetId));
 	}
 
 	public String generateTransSetAsXL(String itemId, String transactionSetId)
@@ -550,7 +592,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToXL(generateTransactionSetReport(itemId, transactionSetId));
+		return reportToXL(sGenerateTransactionSetReport(itemId, transactionSetId));
 	}
 
 	public void RunVerb(String argument)

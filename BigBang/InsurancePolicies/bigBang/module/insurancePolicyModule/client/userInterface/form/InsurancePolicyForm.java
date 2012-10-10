@@ -29,7 +29,7 @@ public class InsurancePolicyForm extends InsurancePolicyHeaderForm{
 	
 	@Override
 	public InsurancePolicy getInfo() {
-		InsurancePolicy value = super.getValue();
+		InsurancePolicy value = super.getInfo();
 		
 		value.notes = notes.getValue();
 		

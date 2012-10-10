@@ -28,6 +28,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
 import com.premiumminds.BigBang.Jewel.Objects.DASRequest;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Reports.DASFormReport;
 import com.premiumminds.BigBang.Jewel.Reports.DASRequestReport;
 
 public class CreateDASRequest
@@ -84,6 +85,7 @@ public class CreateDASRequest
 		Timestamp ldtNow;
 		Calendar ldtAux;
 		Timestamp ldtLimit;
+		FileXfer lobjDASForm;
 		PrintSet lobjSet;
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
@@ -134,7 +136,7 @@ public class CreateDASRequest
 
 		try
 		{
-			generateDocOp(GetProcess().GetDataKey());
+			lobjDASForm = generateDocOp(GetProcess().GetDataKey());
 
 			lobjSet = PrintSet.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjSet.setAt(0, Constants.TID_DASRequest);
@@ -153,7 +155,7 @@ public class CreateDASRequest
 
 			lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjSetReceipt.setAt(0, lidSetDocument);
-			lobjSetReceipt.setAt(1, null);
+			lobjSetReceipt.setAt(1, (lobjDASForm == null ? null : lobjDASForm.GetVarData()));
 			lobjSetReceipt.SaveToDb(pdb);
 		}
 		catch (Throwable e)
@@ -192,28 +194,46 @@ public class CreateDASRequest
 		midExternProcess = lobjProc.getKey();
 	}
 
-	private void generateDocOp(UUID pidReceipt)
+	private FileXfer generateDocOp(UUID pidReceipt)
 		throws BigBangJewelException
 	{
-		DASRequestReport lrepDR;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DASRequestReport lrepDR;
+		DocumentData lobjCover;
+		DASFormReport lrepDF;
+		DocumentData lobjForm;
 
 		lrepDR = new DASRequestReport();
 		lrepDR.midClient = midClient;
 		lrepDR.midReceipt = pidReceipt;
 		lobjFile = lrepDR.Generate();
 
-		lobjDoc = new DocumentData();
-		lobjDoc.mstrName = "Pedido de Assinatura";
-		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
-		lobjDoc.midOwnerId = null;
-		lobjDoc.midDocType = Constants.DocID_DASRequestLetter;
-		lobjDoc.mstrText = null;
-		lobjDoc.mobjFile = lobjFile.GetVarData();
-		lobjDoc.marrInfo = new DocInfoData[0];
+		lobjCover = new DocumentData();
+		lobjCover.mstrName = "Pedido de Assinatura";
+		lobjCover.midOwnerType = Constants.ObjID_Receipt;
+		lobjCover.midOwnerId = null;
+		lobjCover.midDocType = Constants.DocID_DASRequestLetter;
+		lobjCover.mstrText = null;
+		lobjCover.mobjFile = lobjFile.GetVarData();
+		lobjCover.marrInfo = new DocInfoData[0];
+
+		lrepDF = new DASFormReport();
+		lrepDF.midClient = midClient;
+		lrepDF.midReceipt = pidReceipt;
+		lobjFile = lrepDF.Generate();
+
+		lobjForm = new DocumentData();
+		lobjForm.mstrName = "DAS para Assinar";
+		lobjForm.midOwnerType = Constants.ObjID_Receipt;
+		lobjForm.midOwnerId = null;
+		lobjForm.midDocType = Constants.DocID_DASForm;
+		lobjForm.mstrText = null;
+		lobjForm.mobjFile = lobjFile.GetVarData();
+		lobjForm.marrInfo = new DocInfoData[0];
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+		mobjDocOps.marrCreate = new DocumentData[]{lobjCover, lobjForm};
+
+		return lobjFile;
 	}
 }

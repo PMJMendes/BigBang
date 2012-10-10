@@ -12,6 +12,9 @@ import bigBang.library.client.userInterface.form.ExternalInfoRequestForm;
 import bigBang.library.client.userInterface.presenter.ExternalRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -37,6 +40,14 @@ public abstract class ExternalRequestView<T extends ProcessBase> extends View im
 		ownerHeader = new ListHeader();
 		left.add(ownerHeader);
 		left.setCellWidth(ownerHeader,"100%");
+		ownerHeader.setLeftWidget(new Button("Voltar", new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExternalRequestViewPresenter.Action>(Action.ON_CLICK_BACK));
+			}
+			
+		}));
 		left.add(ownerForm);
 		left.setCellHeight(ownerForm, "100%");
 		mainWrapper.addWest(left, 650);
@@ -77,8 +88,8 @@ public abstract class ExternalRequestView<T extends ProcessBase> extends View im
 		right.setCellHeight(form, "100%");
 		mainWrapper.add(right);
 	}
-
-	private ActionInvokedEventHandler<Action> actionHandler;
+	
+	protected ActionInvokedEventHandler<Action> actionHandler;
 
 	protected void fireAction(Action action){
 		if(this.actionHandler != null) {
@@ -90,7 +101,6 @@ public abstract class ExternalRequestView<T extends ProcessBase> extends View im
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
 	}
-
 
 
 	@SuppressWarnings("unchecked")

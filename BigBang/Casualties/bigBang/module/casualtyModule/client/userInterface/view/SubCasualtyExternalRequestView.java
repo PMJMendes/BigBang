@@ -22,7 +22,5 @@ public class SubCasualtyExternalRequestView extends ExternalRequestView<SubCasua
 	protected void initializeView() {
 		return;
 	}
-	
-	
-	
+
 }

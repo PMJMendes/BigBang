@@ -20,6 +20,8 @@ public class ViewExternalInfoRequestForm extends FormView<ExternalInfoRequest> {
 		replyLimit.setFieldWidth("72px");
 		body = new RichTextAreaFormField();
 		body.showToolbar(false);
+		body.setWidth("100%");
+		body.field.setWidth("100%");
 		
 		subject.setEditable(false);
 		from.setEditable(false);

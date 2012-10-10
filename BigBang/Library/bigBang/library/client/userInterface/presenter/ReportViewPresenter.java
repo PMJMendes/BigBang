@@ -70,6 +70,7 @@ public class ReportViewPresenter implements ViewPresenter {
 		NavigationPanel getNavigationPanel();
 		Button addVerb(String title);
 		Frame getPrintFrame();
+		Frame getExcelFrame();
 		
 		void allowPrintReport(boolean allow);
 		void allowExportExcel(boolean allow);
@@ -83,7 +84,7 @@ public class ReportViewPresenter implements ViewPresenter {
 	protected ClickHandler handler;
 	protected Map<Button, Verb> buttonMap;
 
-	protected String currentPrintFileId;
+	protected String currentPrintFileId, currentExcelFileId;
 
 	public ReportViewPresenter(Display view){
 		setView((UIObject)view);
@@ -198,6 +199,24 @@ public class ReportViewPresenter implements ViewPresenter {
 				});
 				currentPrintFileId = null;
 				print();
+			}
+		});
+		
+		view.getExcelFrame().addLoadHandler(new LoadHandler() {
+
+			@Override
+			public void onLoad(LoadEvent event) {
+				FileService.Util.getInstance().Discard(currentExcelFileId, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+					}
+				});
+				currentPrintFileId = null;
 			}
 		});
 
@@ -460,8 +479,9 @@ public class ReportViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponseSuccess(String result) {
-//				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, URL.encode(GWT.getModuleBaseURL() + "bbfile?fileref=" + result)); 
-//				builder.sendRequest(requestData, callback)
+				currentExcelFileId = result;
+				Frame frame = ReportViewPresenter.this.view.getExcelFrame();
+				frame.setUrl(GWT.getModuleBaseURL() + "bbfile?fileref=" + result);
 			}
 			@Override
 			public void onResponseFailure(Throwable caught) {

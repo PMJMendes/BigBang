@@ -60,7 +60,7 @@ public class PrintConnector
 		}
 	}
 
-	public static void printDoc(FileXfer pobjFile)
+	public static void printDoc(FileXfer pobjFile, boolean pbStationary)
 		throws BigBangJewelException
 	{
 		XTextDocument lobjDoc;
@@ -72,7 +72,7 @@ public class PrintConnector
 			lobjDoc = OOConnector.getDocFromBytes(pobjFile.getData());
 			lobjPDFFile = OOConnector.getPDFFromOODoc(lobjDoc, pobjFile.getFileName());
 			lobjPDF = PDDocument.load(new ByteArrayInputStream(lobjPDFFile.getData()));
-			finalPrint(lobjPDF);
+			finalPrint(lobjPDF, pbStationary);
 		}
 		catch (Throwable e)
 		{
@@ -80,46 +80,19 @@ public class PrintConnector
 		}
 	}
 
-	public static void printODT(FileXfer pobjFile)
+	public static void printODT(FileXfer pobjFile, boolean pbStationary)
 		throws BigBangJewelException
 	{
 		XTextDocument lobjDoc;
 		FileXfer lobjPDFFile;
 		PDDocument lobjPDF;
-//		PropertyValue[] larrProps;
-//		XPrintable lobjPrint;
-//		XCloseable lobjClose;
-//		int i;
-
-//		larrProps = new PropertyValue[] {new PropertyValue()};
-//		larrProps[0].Name = "Wait";
-//		larrProps[0].Value = new Boolean(true);
 
 		try
 		{
 			lobjDoc = OOConnector.getODTFromBytes(pobjFile.getData());
 			lobjPDFFile = OOConnector.getPDFFromOODoc(lobjDoc, pobjFile.getFileName());
 			lobjPDF = PDDocument.load(new ByteArrayInputStream(lobjPDFFile.getData()));
-			finalPrint(lobjPDF);
-
-//			lobjPrint = UnoRuntime.queryInterface(XPrintable.class, lobjDoc);
-//			larrProps = lobjPrint.getPrinter();
-//			for ( i = 0; i < larrProps.length; i++ )
-//				if ( "Name".equals(larrProps[i].Name) )
-//					larrProps[i].Value = "\\\\PM-DC\\4015";
-//			lobjPrint.setPrinter(larrProps);
-//			larrProps = new PropertyValue[] {new PropertyValue(), new PropertyValue()};
-//			larrProps[0].Name = "Wait";
-//			larrProps[0].Value = new Boolean(true);
-//			larrProps[1].Name = "Pages";
-//			larrProps[1].Value = "1-";
-//			lobjPrint.print(larrProps);
-//
-//	        lobjClose = UnoRuntime.queryInterface(XCloseable.class, lobjDoc);
-//	        if ( lobjClose == null )
-//	        	lobjDoc.dispose();
-//	        else
-//	        	lobjClose.close();
+			finalPrint(lobjPDF, pbStationary);
 		}
 		catch (Throwable e)
 		{
@@ -127,7 +100,7 @@ public class PrintConnector
 		}
 	}
 
-	public static void printDocX(FileXfer pobjFile)
+	public static void printDocX(FileXfer pobjFile, boolean pbStationary)
 		throws BigBangJewelException
 	{
 		WordprocessingMLPackage lobjDoc;
@@ -141,7 +114,7 @@ public class PrintConnector
 			lobjDoc.setFontMapper(new IdentityPlusMapper());
 			(new Conversion(lobjDoc)).output(lobjOut, null);
 			lobjPDF = PDDocument.load(new ByteArrayInputStream(lobjOut.toByteArray()));
-			finalPrint(lobjPDF);
+			finalPrint(lobjPDF, pbStationary);
 		}
 		catch (Throwable e)
 		{
@@ -149,7 +122,7 @@ public class PrintConnector
 		}
 	}
 
-	public static void printPDF(FileXfer pobjFile)
+	public static void printPDF(FileXfer pobjFile, boolean pbStationary)
 		throws BigBangJewelException
 	{
 		PDDocument lobjPDF;
@@ -157,7 +130,7 @@ public class PrintConnector
 		try
 		{
 			lobjPDF = PDDocument.load(new ByteArrayInputStream(pobjFile.getData()));
-			finalPrint(lobjPDF);
+			finalPrint(lobjPDF, pbStationary);
 		}
 		catch (Throwable e)
 		{
@@ -165,7 +138,7 @@ public class PrintConnector
 		}
 	}
 
-	public static void printPNG(FileXfer pobjFile)
+	public static void printPNG(FileXfer pobjFile, boolean pbStationary)
 		throws BigBangJewelException
 	{
 		ByteArrayInputStream lstream;
@@ -182,33 +155,33 @@ public class PrintConnector
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		finalPrint(limg);
+		finalPrint(limg, pbStationary);
 	}
 
-	public static void printFile(FileXfer pobjFile)
+	public static void printFile(FileXfer pobjFile, boolean pbStationary)
 		throws BigBangJewelException
 	{
 		if ( "application/msword".equals(pobjFile.getContentType()) )
-			printDoc(pobjFile);
+			printDoc(pobjFile, pbStationary);
 
 		if ( "application/vnd.oasis.opendocument.text".equals(pobjFile.getContentType()) )
-			printODT(pobjFile);
+			printODT(pobjFile, pbStationary);
 
 		if ( "application/vnd.openxmlformats-officedocument.wordprocessingml.document".equals(pobjFile.getContentType()) )
-			printDocX(pobjFile);
+			printDocX(pobjFile, pbStationary);
 
 		if ( "application/pdf".equals(pobjFile.getContentType()) )
-			printPDF(pobjFile);
+			printPDF(pobjFile, pbStationary);
 
 		if ( "image/png".equals(pobjFile.getContentType()) )
-			printPNG(pobjFile);
+			printPNG(pobjFile, pbStationary);
 	}
 
 	public static void printSetDetail(PrintSetDetail pobjDetail)
 		throws BigBangJewelException
 	{
 		if ( pobjDetail.getFile() != null )
-			printFile(pobjDetail.getFile());
+			printFile(pobjDetail.getFile(), false);
 	}
 
 	public static void printSetDocument(PrintSetDocument pobjDoc)
@@ -217,7 +190,7 @@ public class PrintConnector
 		PrintSetDetail[] larrDetails;
 		int i;
 
-		printFile(pobjDoc.getFile());
+		printFile(pobjDoc.getFile(), true);
 
 		larrDetails = pobjDoc.getCurrentDetails();
 		for ( i = 0; i < larrDetails.length; i++ )
@@ -266,20 +239,23 @@ public class PrintConnector
 		}
 	}
 
-	private static void finalPrint(PDDocument pdoc)
+	private static void finalPrint(PDDocument pdoc, boolean pbStationary)
 		throws BigBangJewelException
 	{
 		PrinterJob lrefPJob;
 		Media lrefMedia;
 		HashPrintRequestAttributeSet lobjSet;
 
+		lrefPJob = getPrinter();
+		lrefPJob.setPageable(pdoc);
+
+		if ( pbStationary )
+			lrefMedia = getTray(lrefPJob);
+		else
+			lrefMedia = null;
+
 		try
 		{
-			lrefPJob = getPrinter();
-			lrefPJob.setPageable(pdoc);
-
-			lrefMedia = getTray(lrefPJob);
-
 			if ( lrefMedia != null )
 			{
 				lobjSet = new HashPrintRequestAttributeSet();
@@ -295,12 +271,14 @@ public class PrintConnector
 		}
 	}
 
-	private static void finalPrint(final BufferedImage pimg)
+	private static void finalPrint(final BufferedImage pimg, boolean pbStationary)
 		throws BigBangJewelException
 	{
 		PrinterJob lrefPJob;
 		PageFormat lrefPF;
 		Paper lobjPaper;
+		Media lrefMedia;
+		HashPrintRequestAttributeSet lobjSet;
 
 		lrefPJob = getPrinter();
 		lrefPF = lrefPJob.defaultPage();
@@ -310,9 +288,21 @@ public class PrintConnector
 
 		lrefPJob.setPrintable(new InnerPrintable(pimg), lrefPF);
 
+		if ( pbStationary )
+			lrefMedia = getTray(lrefPJob);
+		else
+			lrefMedia = null;
+
 		try
 		{
-			lrefPJob.print();
+			if ( lrefMedia != null )
+			{
+				lobjSet = new HashPrintRequestAttributeSet();
+				lobjSet.add(lrefMedia);
+				lrefPJob.print(lobjSet);
+			}
+			else
+				lrefPJob.print();
 		}
 		catch (PrinterException e)
 		{

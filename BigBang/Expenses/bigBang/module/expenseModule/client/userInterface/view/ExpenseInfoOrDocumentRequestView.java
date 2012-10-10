@@ -9,5 +9,4 @@ public class ExpenseInfoOrDocumentRequestView extends InfoOrDocumentRequestView<
 	public ExpenseInfoOrDocumentRequestView(){
 		super(new ExpenseForm());
 	}
-
 }

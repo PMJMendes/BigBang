@@ -10,5 +10,4 @@ public class SubPolicyClientInfoOrDocumentRequestView extends
 	public SubPolicyClientInfoOrDocumentRequestView() {
 		super(new SubPolicyForm());
 	}
-		
 }

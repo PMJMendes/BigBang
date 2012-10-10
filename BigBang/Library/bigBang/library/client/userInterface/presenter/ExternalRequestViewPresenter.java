@@ -36,7 +36,7 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 
 	public static enum Action{
 		CANCEL,
-		CONFIRM
+		CONFIRM, ON_CLICK_BACK
 	}
 
 	public static interface Display<T extends ProcessBase>{
@@ -122,7 +122,6 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 				switch(action.getAction()){
 
 				case CANCEL:{
-
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 					navig.popFromStackParameter("display");
 					navig.removeParameter("externalrequestid");	
@@ -137,11 +136,17 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 					}
 				}
-
-
+				case ON_CLICK_BACK:{
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.popFromStackParameter("display");
+					navig.removeParameter("externalrequestid");	
+					NavigationHistoryManager.getInstance().go(navig);
+					break;
 				}
 
 
+				}
+				
 			}
 
 		});

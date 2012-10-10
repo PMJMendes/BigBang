@@ -91,7 +91,6 @@ public class ProofReceptionView extends View implements ProofReceptionViewPresen
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ExpenseProcess.SEND_NOTIFICATION);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 

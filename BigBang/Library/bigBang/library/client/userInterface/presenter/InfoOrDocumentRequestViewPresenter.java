@@ -27,7 +27,8 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 
 	public static enum Action {
 		SEND,
-		CANCEL
+		CANCEL, 
+		ON_CLICK_BACK
 	}
 	
 	public static interface Display<T extends ProcessBase>{
@@ -89,6 +90,9 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 					onSend();
 					break;
 				case CANCEL:
+					onCancel();
+					break;
+				case ON_CLICK_BACK:
 					onCancel();
 					break;
 				}
