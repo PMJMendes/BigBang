@@ -28,7 +28,7 @@ public class ExternalRequestReplyFormValidator extends
 	}
 
 	private boolean validateMessage() {
-		return validateOutgoingMessage(form.message, false);
+		return validateOutgoingMessage(form.message, true);
 	}
 
 }

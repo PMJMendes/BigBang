@@ -6,7 +6,7 @@ import bigBang.library.client.userInterface.view.FormView;
 
 public class InfoOrDocumentRequestReplyForm extends FormView<Response> {
 
-	private IncomingMessageFormField incomingMessage;
+	protected IncomingMessageFormField incomingMessage;
 	
 	public InfoOrDocumentRequestReplyForm(){
 		incomingMessage = new IncomingMessageFormField();
