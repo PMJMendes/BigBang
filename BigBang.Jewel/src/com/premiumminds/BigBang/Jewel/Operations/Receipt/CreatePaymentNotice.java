@@ -7,7 +7,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -21,7 +21,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.PaymentNoticeReport;
 
 public class CreatePaymentNotice
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -122,6 +122,26 @@ public class CreatePaymentNotice
 		}
 
 		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		return "O aviso de cobrança será cancelado. A documentação gerada será mantida, para preservar o histórico.";
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		return "O aviso de cobrança foi cancelado.";
+	}
+
+	protected void Undo(SQLServer pdb)
+		throws JewelPetriException
+	{
+	}
+
+	public UndoSet[] GetSets()
+	{
+		return new UndoSet[0];
 	}
 
 	private void generateDocOp()

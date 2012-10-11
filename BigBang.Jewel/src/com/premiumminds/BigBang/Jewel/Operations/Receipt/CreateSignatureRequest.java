@@ -11,7 +11,7 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -23,10 +23,11 @@ import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
 import com.premiumminds.BigBang.Jewel.Objects.SignatureRequest;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.SignatureRequest.ExternCancelRequest;
 import com.premiumminds.BigBang.Jewel.Reports.SignatureRequestReport;
 
 public class CreateSignatureRequest
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -171,6 +172,27 @@ public class CreateSignatureRequest
 
 		midRequestObject = lobjRequest.getKey();
 		midExternProcess = lobjProc.getKey();
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		return "O pedido de assinatura será retirado. A carta criada será mantida, para preservar o histórico.";
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		return "O pedido de assinatura foi retirado.";
+	}
+
+	protected void Undo(SQLServer pdb)
+		throws JewelPetriException
+	{
+		TriggerOp(new ExternCancelRequest(midExternProcess), pdb);
+	}
+
+	public UndoSet[] GetSets()
+	{
+		return new UndoSet[0];
 	}
 
 	private void generateDocOp()

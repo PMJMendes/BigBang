@@ -129,7 +129,7 @@ public class CreateReceipt
 			mobjData.midProcess = lobjProc.getKey();
 			mobjData.mobjPrevValues = null;
 
-			if ( "(Directo)".equals(lobjAux.getMediator().getLabel()) )
+			if ( Constants.MCPID_None.equals(lobjAux.getMediator().getProfile()) )
 				TriggerOp(new ExternBlockDirectRetrocession(lobjProc.getKey()), pdb);
 			else if ( lobjAux.doCalcRetrocession() )
 				lobjAux.SaveToDb(pdb);

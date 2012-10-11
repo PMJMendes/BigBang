@@ -403,6 +403,8 @@ public class Constants
 	public static final UUID OPID_Receipt_ExternUndoCancelDAS            = UUID.fromString("2D1A2394-6401-44F8-85C6-A0B000FB4AF9");
 	public static final UUID OPID_Receipt_ReturnPayment                  = UUID.fromString("C0451D21-BE44-47D7-9745-A0B000FB7C49");
 	public static final UUID OPID_Receipt_ExternBlockEndProcessSend      = UUID.fromString("11397F84-2A3B-4365-9F1D-A0BD01205EE0");
+	public static final UUID OPID_Receipt_CancelPaymentNotice            = UUID.fromString("0A5C1C90-E45B-4C6C-9A8E-A0E700C982EA");
+	public static final UUID OPID_Receipt_CancelSignatureRequest         = UUID.fromString("1710F073-1A8E-430E-8D75-A0E700CB2C23");
 
 	//Casualty Operations
 	public static final UUID OPID_Casualty_AutoProcessVents              = UUID.fromString("4DB7EF2A-DB71-4BF4-810B-A02E00FA9F94");
@@ -509,6 +511,7 @@ public class Constants
 	public static final UUID OPID_SigReq_RepeatRequest                   = UUID.fromString("C22398E7-D1E7-4F27-94A9-A02A01007804");
 	public static final UUID OPID_SigReq_CancelRequest                   = UUID.fromString("03E8D6B1-04B8-4B1B-9FFA-A02A01013616");
 	public static final UUID OPID_SigReq_UndoCancelRequest               = UUID.fromString("E0123F30-F89B-473F-8208-A02A0101B054");
+	public static final UUID OPID_SigReq_ExternCancelRequest             = UUID.fromString("B6B5082F-BE1A-45C9-8661-A0E700DC50C0");
 
 	// DAS Request Operations
 	public static final UUID OPID_DASRequest_ReceiveReply                = UUID.fromString("5217F6B9-7117-43CA-AA20-A03000F278C8");
