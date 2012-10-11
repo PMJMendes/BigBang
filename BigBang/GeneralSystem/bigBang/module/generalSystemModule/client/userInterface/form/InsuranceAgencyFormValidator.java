@@ -32,7 +32,7 @@ public class InsuranceAgencyFormValidator extends
 	}
 	
 	private boolean validateIspNumber(){
-		return validateString(form.ISPNumber, 1, 250, false);
+		return validateString(form.ISPNumber, 1, 250, true);
 	}
 
 	private boolean validateOwnMediatorCode(){
@@ -44,11 +44,11 @@ public class InsuranceAgencyFormValidator extends
 	}
 	
 	private boolean validateTaxNumber(){
-		return validateString(form.taxNumber, 1, 250, false);
+		return validateString(form.taxNumber, 1, 250, true);
 	}
 	
 	private boolean validateNib(){
-		return validateString(form.NIB, 1, 250, false);
+		return validateString(form.NIB, 1, 250, true);
 	}
 	
 	private boolean validateAddress(){

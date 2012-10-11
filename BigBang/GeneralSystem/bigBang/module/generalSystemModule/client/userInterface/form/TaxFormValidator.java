@@ -1,6 +1,8 @@
 package bigBang.module.generalSystemModule.client.userInterface.form;
 
+import bigBang.library.client.FormField;
 import bigBang.library.client.FormValidator;
+import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
 
 public class TaxFormValidator extends FormValidator<TaxForm> {
@@ -32,14 +34,8 @@ public class TaxFormValidator extends FormValidator<TaxForm> {
 	}
 
 	private boolean validateRefersToEntity() {
-		String type = form.type.getValue();
-		if(type != null && (type.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ReferenceType))) {
-			return validateGuid(form.refersToEntityId, false);
-		}else if(form.refersToEntityId.getValue() != null){
-			return false;
-		}else{
-			return true;
-		}
+		return validateGuid(form.refersToEntityId,
+				!ModuleConstants.PolicyFieldTypes.ReferenceType.equalsIgnoreCase(form.type.getValue()));
 	}
 
 	private boolean validateVisible() {
@@ -58,8 +54,25 @@ public class TaxFormValidator extends FormValidator<TaxForm> {
 		return form.variesByObject.getValue() != null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean validateDefaultValue() {
-		return true;
+		try {
+			if(ModuleConstants.PolicyFieldTypes.DateType.equalsIgnoreCase(form.type.getValue())){
+				return validateDate((DatePickerFormField)form.defaultValue, true);
+			} else if(ModuleConstants.PolicyFieldTypes.BooleanType.equalsIgnoreCase(form.type.getValue())){
+				return true;
+			} else if(ModuleConstants.PolicyFieldTypes.ListType.equalsIgnoreCase(form.type.getValue())){
+				return validateGuid((FormField<String>)form.defaultValue, true);
+			} else if(ModuleConstants.PolicyFieldTypes.NumericType.equalsIgnoreCase(form.type.getValue())){
+				return validateNumber((FormField<Double>)form.defaultValue, true);
+			} else if(ModuleConstants.PolicyFieldTypes.ReferenceType.equalsIgnoreCase(form.type.getValue())){
+				return validateGuid((FormField<String>)form.defaultValue, true);
+			}else {
+				return validateString((FormField<String>)form.defaultValue, 0, 250, true);
+			}
+		} catch (ClassCastException e) {
+			return false;
+		}
 	}
 
 	private boolean validateTag() {

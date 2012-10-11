@@ -34,11 +34,11 @@ public class SubLineFormValidator extends FormValidator<SubLineForm> {
 	}
 
 	private boolean validatePeriodType() {
-		return validateGuid(form.periodType, true);
+		return validateGuid(form.periodType, false);
 	}
 
 	private boolean validateObjectType() {
-		return validateGuid(form.type, true);
+		return validateGuid(form.type, false);
 	}
 
 	private boolean validateDescription() {

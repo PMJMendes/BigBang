@@ -1,5 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface.form;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.FormValidator;
 
 public class MediatorFormValidator extends FormValidator<MediatorForm> {
@@ -28,11 +29,11 @@ public class MediatorFormValidator extends FormValidator<MediatorForm> {
 	}
 	
 	private boolean validateIspNumber(){
-		return validateString(form.ISPNumber, 1, 250, false);
+		return validateString(form.ISPNumber, 1, 250, true);
 	}
 	
 	private boolean validateTaxNumber(){
-		return validateString(form.taxNumber, 1, 250, false);
+		return validateString(form.taxNumber, 1, 250, true);
 	}
 	
 	private boolean validateCommissionProfile() {
@@ -40,9 +41,10 @@ public class MediatorFormValidator extends FormValidator<MediatorForm> {
 	}
 	
 	private boolean validateCommissionPercentage(){
-		return validateNumber(form.commissionPercentage, true);
+		return validateNumber(form.commissionPercentage,
+				!BigBangConstants.TypifiedListValues.MEDIATOR_COMMISSIONING_PROFILE.PERCENTAGE.equalsIgnoreCase(form.comissionProfile.getValue()));
 	}
-	
+
 	private boolean validateAddress(){
 		return validateAddress(form.address, true);
 	}
