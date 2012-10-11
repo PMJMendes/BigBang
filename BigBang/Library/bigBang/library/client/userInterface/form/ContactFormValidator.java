@@ -31,7 +31,7 @@ public class ContactFormValidator extends FormValidator<ContactForm> {
 	}
 
 	private boolean validateAddress() {
-		return validateAddress(form.address, false);
+		return validateAddress(form.address, true);
 	}
 
 	private boolean validateInfoList() {

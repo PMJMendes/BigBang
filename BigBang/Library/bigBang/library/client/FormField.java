@@ -79,6 +79,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		setReadOnlyInternal(readonly);
 		if(readonly) {
 			setInvalid(false);
+			setWarning(false);
 		}
 	}
 
@@ -103,6 +104,17 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 			this.addStyleName("invalidFormField");
 		else
 			this.removeStyleName("invalidFormField");
+		//		FieldValidator<?> validator = this.validator; TODO
+		//		String message =  validator == null ? null : validator.getErrorMessage();
+		//		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
+		//		this.errorMessageLabel.setVisible(invalid);
+	}
+
+	public void setWarning(boolean invalid){
+		if(invalid && !isReadOnly())
+			this.addStyleName("warningFormField");
+		else
+			this.removeStyleName("warningFormField");
 		//		FieldValidator<?> validator = this.validator; TODO
 		//		String message =  validator == null ? null : validator.getErrorMessage();
 		//		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);

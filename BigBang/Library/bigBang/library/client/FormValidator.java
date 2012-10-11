@@ -115,7 +115,8 @@ public abstract class FormValidator<T extends FormView<?>> {
 	public boolean validateAddress(FormField<Address> field, boolean allowsNull){
 		field.setMandatory(!allowsNull);
 		Address address = field.getValue();
-		return !(address == null && !allowsNull); 
+		return !(address == null && !allowsNull);
+		//TODO Validate inner Address object
 	}
 
 	public boolean validateDate(DatePickerFormField field, boolean allowsNull){

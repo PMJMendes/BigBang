@@ -1,6 +1,5 @@
 package bigBang.library.client.userInterface.form;
 
-import bigBang.definitions.shared.IncomingMessage;
 import bigBang.library.client.FormValidator;
 
 public class ExternalRequestContinuationFormValidator extends
@@ -25,10 +24,8 @@ public class ExternalRequestContinuationFormValidator extends
 	}
 
 	private boolean validateMessage() {
-		IncomingMessage message = form.message.getValue();
-		boolean valid = message != null;
-		form.message.setInvalid(!valid);
-		return valid;
+		form.message.setWarning(form.message.getValue() == null);
+		return true;
 	}
 
 }
