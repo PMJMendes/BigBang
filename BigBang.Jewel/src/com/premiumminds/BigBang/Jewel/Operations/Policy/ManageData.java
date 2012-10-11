@@ -83,8 +83,8 @@ public class ManageData
 						continue;
 					}
 					lstrResult.append("- ");
-					mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
-					if ( mobjData.marrValues[i].mbNew )
+					mobjData.marrCoInsurers[i].Describe(lstrResult, pstrLineBreak);
+					if ( mobjData.marrCoInsurers[i].mbNew )
 						lstrResult.append(" (Nova)");
 					lstrResult.append(pstrLineBreak);
 				}
@@ -96,7 +96,7 @@ public class ManageData
 						if ( !mobjData.marrCoInsurers[i].mbDeleted )
 							continue;
 						lstrResult.append("- ");
-						mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
+						mobjData.marrCoInsurers[i].Describe(lstrResult, pstrLineBreak);
 						lstrResult.append(pstrLineBreak);
 					}
 				}
