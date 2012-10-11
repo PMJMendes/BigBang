@@ -9,6 +9,8 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -34,6 +36,8 @@ public class Expense
 		public static int GENERICOBJECT      = 12;
 	}
 
+    private IProcess lrefProcess;
+	
     public static Expense GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -232,4 +236,96 @@ public class Expense
 
 		return larrAux.toArray(new Document[larrAux.size()]);
     }
+    
+    public SubPolicy getSubPolicy()
+        	throws BigBangJewelException
+    {
+       	IProcess lobjProcess;
+        	try
+       	{
+        	lobjProcess = getProcess().GetParent();
+
+    	    if ( Constants.ProcID_SubPolicy.equals(lobjProcess.GetScriptID()) )
+    	    	return (SubPolicy)lobjProcess.GetData();
+    	}
+        catch (BigBangJewelException e)
+        {
+        	throw e;
+    	}
+        catch (Throwable e)
+        {
+        	throw new BigBangJewelException(e.getMessage(), e);
+    	}
+
+        return null;
+    }
+
+    public Policy getDirectPolicy()
+       	throws BigBangJewelException
+    {
+      	IProcess lobjProcess;
+
+       	try
+       	{
+    		lobjProcess = getProcess().GetParent();
+   	    	if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
+   	    		return (Policy)lobjProcess.GetData();
+    		}
+       	catch (BigBangJewelException e)
+        {
+        	throw e;
+    	}
+        catch (Throwable e)
+        {
+        	throw new BigBangJewelException(e.getMessage(), e);
+    	}
+
+        return null;
+    }
+
+    public Policy getAbsolutePolicy()
+        	throws BigBangJewelException
+    {
+       	IProcess lobjProcess;
+
+       	try
+       	{
+    		lobjProcess = getProcess().GetParent();
+
+        	if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
+        		return (Policy)lobjProcess.GetData();
+
+   	    	return (Policy)lobjProcess.GetParent().GetData();
+   		}
+       	catch (BigBangJewelException e)
+       	{
+       		throw e;
+   		}
+       	catch (Throwable e)
+       	{
+       		throw new BigBangJewelException(e.getMessage(), e);
+   		}
+    }
+        
+    public IProcess getProcess()
+    	throws BigBangJewelException
+    {
+    	if ( GetProcessID() == null )
+    		return null;
+
+    	if ( lrefProcess == null )
+    	{
+    		try
+    		{
+    			lrefProcess = PNProcess.GetInstance(getNameSpace(), GetProcessID());
+    		}
+    		catch (Throwable e)
+    		{
+    			throw new BigBangJewelException(e.getMessage(), e);
+    		}
+    	}
+
+    	return lrefProcess;
+    }
+
 }

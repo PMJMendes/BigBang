@@ -104,15 +104,15 @@ public class ReceiptHistoryPayment
 		}
 
 		if ( parrParams[1] != null )
-			lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[0]).append("'");
+			lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[1]).append("'");
 
 		if ( parrParams[2] != null )
-			lstrSQL.append(" AND [Timestamp] <= '").append(parrParams[1]).append("'");
+			lstrSQL.append(" AND [Timestamp] <= '").append(parrParams[2]).append("'");
 
 		lstrSQL.append(")");
 
 		if ( parrParams[0] != null )
-			filterByClient(lstrSQL, UUID.fromString(parrParams[2]));
+			filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
 
 		larrAux = new ArrayList<Receipt>();
 

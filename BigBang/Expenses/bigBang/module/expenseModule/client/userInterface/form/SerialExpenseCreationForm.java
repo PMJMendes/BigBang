@@ -10,6 +10,7 @@ import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
@@ -23,6 +24,8 @@ import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectio
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
 import bigBang.module.expenseModule.client.userInterface.ExpensePolicyWrapper;
+import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
+import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -333,8 +336,15 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 					insuredObject.setValue(info.expense.insuredObjectId);
 				}
 
-				listId = BigBangConstants.EntityIds.COVERAGE+"/"+info.expense.referenceSubLineId;
+				listId = BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(info.expense.referenceTypeId) ?
+						BigBangConstants.TypifiedListIds.POLICY_COVERAGE + "/" + info.expense.referenceId : 
+							BigBangConstants.TypifiedListIds.SUB_POLICY_COVERAGE + "/" + info.expense.referenceId;
 
+				TypifiedListBroker coverageListBroker = BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(info.expense.referenceTypeId) ? 
+						PolicyTypifiedListBroker.Util.getInstance() :
+						SubPolicyTypifiedListBroker.Util.getInstance();
+				coverageId.setTypifiedDataBroker(coverageListBroker);
+				
 				coverageId.setListId(listId, new ResponseHandler<Void>() {
 
 					@Override

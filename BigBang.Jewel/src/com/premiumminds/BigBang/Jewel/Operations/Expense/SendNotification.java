@@ -30,7 +30,7 @@ public class SendNotification
 	public UUID midSetDocument;
 	public UUID midSetDetail;
 	public DocOps mobjDocOps;
-	private UUID midCompany;
+	public UUID midPolicy;
 //	private OutgoingMessageData mobjMessage;
 
 	public SendNotification(UUID pidProcess)
@@ -71,11 +71,6 @@ public class SendNotification
 		PrintSet lobjSet;
 		PrintSetDocument lobjSetCompany;
 		PrintSetDetail lobjSetExpense;
-
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			midCompany = (UUID)GetProcess().GetParent().GetData().getAt(2);
-		else
-			midCompany = (UUID)GetProcess().GetParent().GetParent().GetData().getAt(2);
 
 		try
 		{
@@ -128,7 +123,7 @@ public class SendNotification
 		DocumentData lobjDoc;
 
 		lrepEM = new ExpenseMapReport();
-		lrepEM.midCompany = midCompany;
+		lrepEM.midPolicy = midPolicy;
 		lrepEM.marrExpenseIDs = marrExpenseIDs;
 		lobjFile = lrepEM.Generate();
 

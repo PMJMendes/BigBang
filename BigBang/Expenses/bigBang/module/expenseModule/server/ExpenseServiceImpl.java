@@ -594,12 +594,11 @@ public class ExpenseServiceImpl
 	{
 		Hashtable<UUID, ArrayList<UUID>> larrExpenses;
 		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
-		IProcess lobjProcess;
-		UUID lidCompany;
-		ArrayList<UUID> larrByCompany;
+		UUID lidPolicy;
+		ArrayList<UUID> larrByPolicy;
 		UUID[] larrFinal;
 		UUID lidSet;
-		UUID lidSetCompany;
+		UUID lidSetPolicy;
 		DocOps lobjDocOps;
 		SendNotification lopSN;
 		int i;
@@ -614,32 +613,28 @@ public class ExpenseServiceImpl
 			{
 				lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(expenseIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjExpense.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					lidCompany = (UUID)lobjProcess.GetParent().GetData().getAt(2);
-				else
-					lidCompany = (UUID)lobjProcess.GetParent().GetParent().GetData().getAt(2);
+				lidPolicy = (UUID)lobjExpense.getAbsolutePolicy().getKey();
 			}
 			catch (Throwable e)
 			{
 				throw new BigBangException(e.getMessage(), e);
 			}
-			larrByCompany = larrExpenses.get(lidCompany);
-			if ( larrByCompany == null )
+			larrByPolicy = larrExpenses.get(lidPolicy);
+			if ( larrByPolicy == null )
 			{
-				larrByCompany = new ArrayList<UUID>();
-				larrExpenses.put(lidCompany, larrByCompany);
+				larrByPolicy = new ArrayList<UUID>();
+				larrExpenses.put(lidPolicy, larrByPolicy);
 			}
-			larrByCompany.add(lobjExpense.getKey());
+			larrByPolicy.add(lobjExpense.getKey());
 		}
 
 		lidSet = null;
-		for(UUID lidC : larrExpenses.keySet())
+		for(UUID lidP : larrExpenses.keySet())
 		{
-			lidSetCompany = null;
+			lidSetPolicy = null;
 			lobjDocOps = null;
-			larrByCompany = larrExpenses.get(lidC);
-			larrFinal = larrByCompany.toArray(new UUID[larrByCompany.size()]);
+			larrByPolicy = larrExpenses.get(lidP);
+			larrFinal = larrByPolicy.toArray(new UUID[larrByPolicy.size()]);
 			for ( i = 0; i < larrFinal.length; i++ )
 			{
 				try
@@ -650,13 +645,14 @@ public class ExpenseServiceImpl
 					lopSN.marrExpenseIDs = larrFinal;
 					lopSN.mbUseSets = true;
 					lopSN.midSet = lidSet;
-					lopSN.midSetDocument = lidSetCompany;
+					lopSN.midSetDocument = lidSetPolicy;
 					lopSN.mobjDocOps = lobjDocOps;
+					lopSN.midPolicy = lidP;
 
 					lopSN.Execute();
 
 					lobjDocOps = lopSN.mobjDocOps;
-					lidSetCompany = lopSN.midSetDocument;
+					lidSetPolicy = lopSN.midSetDocument;
 					lidSet = lopSN.midSet;
 				}
 				catch (Throwable e)

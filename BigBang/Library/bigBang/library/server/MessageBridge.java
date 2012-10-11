@@ -164,7 +164,7 @@ public class MessageBridge
 				lobjResult.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(lobMessage.upgrades[i].docTypeId);
 				lobjResult.mobjDocOps.marrCreate[i].mstrText = null;
 
-				lidFile = UUID.fromString(lobMessage.upgrades[i].storageId);
+				lidFile = lobMessage.upgrades[i].storageId == null ? null : UUID.fromString(lobMessage.upgrades[i].storageId);
 				lobjResult.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
 				FileServiceImpl.GetFileXferStorage().remove(lidFile);
 

@@ -27,7 +27,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ReportBase;
 public class ExpenseMapReport
 	extends ReportBase
 {
-	public UUID midCompany;
+	public UUID midPolicy;
 	public UUID[] marrExpenseIDs;
 	public BigDecimal mdblTotal;
 	public int mlngCount;
@@ -50,9 +50,11 @@ public class ExpenseMapReport
 		SubPolicy lobjSubPolicy;
 		String lstrObject;
 		Coverage lobjCoverage;
+		UUID lidCompany;
 		int i;
 
-		lobjCompany = Company.GetInstance(Engine.getCurrentNameSpace(), midCompany);
+		lidCompany = (UUID)Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy).getAt(2);
+		lobjCompany = Company.GetInstance(Engine.getCurrentNameSpace(), lidCompany);
 		ldtAux = new Timestamp(new java.util.Date().getTime());
 
 		larrParams = new HashMap<String, String>();

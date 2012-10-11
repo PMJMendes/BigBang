@@ -225,6 +225,9 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 			view.enableToolbar(true);
 		}else{
 			expensePolicyWrapper.expense = new Expense();
+			expensePolicyWrapper.expense.managerId = expensePolicyWrapper.subPolicy.managerId;
+			expensePolicyWrapper.expense.referenceId = expensePolicyWrapper.subPolicy.id;
+			expensePolicyWrapper.expense.referenceTypeId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY;
 			view.enableToolbar(false);
 		}
 		view.getForm().setValue(expensePolicyWrapper);

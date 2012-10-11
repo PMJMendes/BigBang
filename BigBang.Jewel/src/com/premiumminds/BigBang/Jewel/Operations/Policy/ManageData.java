@@ -359,7 +359,7 @@ public class ManageData
 							}
 
 							if ( Constants.ExID_Variable.equals(lobjAux.GetSubLine().getExerciseType()) )
-								mobjData.marrExercises[i].mstrLabel = "Prorrogação n. " + i;
+								mobjData.marrExercises[i].mstrLabel = "Prorrogação n. " + (i + 1);
 							else
 							{
 						    	ldtAux2 = Calendar.getInstance();

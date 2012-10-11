@@ -18,7 +18,7 @@ public class ContactFormValidator extends FormValidator<ContactForm> {
 		valid &= validateType();
 		valid &= validateAddress();
 		valid &= validateInfoList();
-		
+
 		return new Result(valid, this.validationMessages);		
 	}
 
@@ -38,8 +38,12 @@ public class ContactFormValidator extends FormValidator<ContactForm> {
 		boolean valid = true;
 		for(ListEntry<ContactInfo> entry : form.contactIL) {
 			ContactEntry contactEntry = (ContactEntry) entry;
-			valid &= validateGuid(contactEntry.type, false);
-			valid &= validateString(contactEntry.infoValue, 1, 250, false);
+			if(contactEntry.type != null) {
+				valid &= validateGuid(contactEntry.type, false);
+			}
+			if(contactEntry.infoValue != null) {
+				valid &= validateString(contactEntry.infoValue, 1, 250, false);
+			}
 		}
 		return valid;
 	}
