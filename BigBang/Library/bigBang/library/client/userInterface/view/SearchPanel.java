@@ -1,6 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
@@ -61,6 +62,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	protected int numberOfResults = 0;
 	protected boolean requestedNextPage = false;
 	protected String operationId = null;
+	private HashSet<String> currentIds;
 
 	private VerticalPanel headerWidgetWrapper;
 
@@ -71,9 +73,11 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	public SearchPanel(SearchDataBroker<T> broker) {
 		super();
 
+		currentIds = new HashSet<String>();
+
 		super.liveSearch = false;
 		this.broker = broker;
-		
+
 		this.searchButton = new Button("Pesquisar");
 		this.searchButton.setSize("80px", "100%");
 		this.setLiveSearch(this.liveSearch);
@@ -108,15 +112,15 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		});
 
 		ListHeader header = new ListHeader();
-		
+
 		Widget textFieldOldParent = textBoxFilter.getParent();
-		
+
 		HorizontalPanel searchFieldWrapper = new HorizontalPanel();
 		searchFieldWrapper.setSize("100%", "40px");
 		searchFieldWrapper
-				.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		searchFieldWrapper
-				.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		searchFieldWrapper.add(textBoxFilter);
 		searchFieldWrapper.setCellWidth(textBoxFilter, "100%");
 		searchFieldWrapper.add(searchButton);
@@ -129,15 +133,15 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 
 		headerWidgetWrapper.setSize("100%", "100%");
 		headerWidgetWrapper.add(searchFieldWrapper);
-		
+
 		header.setWidget(headerWidgetWrapper);
 		textFieldOldParent.removeFromParent();
-		
+
 		this.setHeaderWidget(headerWidgetWrapper);
-		
+
 		this.textBoxFilter.setFocus(true);
 	}
-	
+
 	/**
 	 * Sets live search on or off
 	 * @param liveSearch If true, live search is turned on
@@ -171,7 +175,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		int nEntries = this.numberOfResults;
 		this.setFooterText((nEntries == 0 ? "Sem" : nEntries) + " resultados");
 	}
-	
+
 	/**
 	 * Sets the id of the Operation for which the results should be open to execution 
 	 * @param operationId The id of the operation
@@ -179,12 +183,20 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	public void setOperationId(String operationId) {
 		this.operationId = operationId;
 	}
-	
+
 	/**
 	 * Queries the search service for elements that match a number of search parameters 
 	 * @param parameters The search parameters to be matched
 	 */
 	public void doSearch(SearchParameter[] parameters, SortParameter[] sorts) {
+		doSearch(parameters, sorts, false);
+	}
+
+	/**
+	 * Queries the search service for elements that match a number of search parameters 
+	 * @param parameters The search parameters to be matched
+	 */
+	public void doSearch(SearchParameter[] parameters, SortParameter[] sorts, final boolean keepSelected) {
 
 		try {
 			if (workspaceId == null) {
@@ -193,7 +205,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 					@Override
 					public void onResponse(Search<T> result) {
 						workspaceId = result.getWorkspaceId();
-						clear();
+						clear(keepSelected);
 						scrollPanel.scrollToTop();
 						requestedNextPage = false;
 						nextResultIndex = result.getResults().size();
@@ -222,7 +234,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 
 					@Override
 					public void onResponse(Search<T> result) {
-						clear();
+						clear(keepSelected);
 						SearchPanel.this.workspaceId = result.getWorkspaceId();
 						scrollPanel.scrollToTop();
 						requestedNextPage = false;
@@ -271,7 +283,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		}
 		requestedNextPage = true;
 		this.broker.getResults(this.workspaceId, this.nextResultIndex, this.pageSize, new ResponseHandler<Search<T>>() {
-			
+
 			@Override
 			public void onResponse(Search<T> result) {
 				nextResultIndex += result.getResults().size();
@@ -280,7 +292,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 				requestedNextPage = false;
 				showLoading(false);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				requestedNextPage = false;
@@ -289,7 +301,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 			}
 		});
 	}
-	
+
 	protected boolean hasResultsLeft(){
 		return this.nextResultIndex <= this.numberOfResults;
 	}
@@ -301,7 +313,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	public int getPageSize() {
 		return this.pageSize;
 	}
-	
+
 	/**
 	 * Returns the text inserted into the free text field
 	 * @return the free text string
@@ -309,32 +321,39 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	protected String getFreeText(){
 		return this.textBoxFilter.getText();
 	}
-	
+
 	public void clearFreeTextField(){
 		this.textBoxFilter.setValue("");
 	}
-	
+
 	@Override
 	public ListEntry<T> remove(int index) {
 		ListEntry<T> result = super.remove(index);
+		currentIds.remove(result.getValue().id);
 		checkScrollPosition();
 		return result;		
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean remove(Object o) {
 		boolean result = super.remove(o);
+		currentIds.remove(((ListEntry<T>) o).getValue().id);
 		checkScrollPosition();
 		return result;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean removeAll(Collection<?> c) {
+		for(Object stub : c){
+			currentIds.remove(((ListEntry<T>) stub).getValue().id);
+		}
 		boolean result = super.removeAll(c);
 		checkScrollPosition();
 		return result;
 	}
-	
+
 	protected void checkScrollPosition(){
 		if (((this.getScrollable().getMaximumVerticalScrollPosition() - this.getScrollable()
 				.getVerticalScrollPosition()) < 300) && !SearchPanel.this.requestedNextPage) {
@@ -345,19 +364,23 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 			showLoading(true);
 		}
 	}
-	
+
 	public SearchDataBroker<T> getSearchBroker(){
 		return this.broker;
 	}
-	
+
 	public String getWorkspaceId(){
 		return workspaceId;
 	}
-	
+
+	public void doSearch() {
+		doSearch(false);
+	}
+
 	/**
 	 * Performs A search query to the class' defined search service
 	 */
-	public abstract void doSearch();
+	public abstract void doSearch(boolean keepSelected);
 
 	/**
 	 * This function is invoked when results are received after a query.
@@ -368,13 +391,90 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	protected void onGenericError() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível completar a pesquisa"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	public VerticalPanel getHeaderWidget(){
 		return headerWidgetWrapper;
 	}
-	
+
 	public void lockSearchButton(boolean lock){
 		searchButton.setEnabled(!lock);
 	}
-	
+
+	@Override
+	public void clear(boolean keepSelected) {
+
+		super.clear(keepSelected);
+
+		if(currentIds != null){
+			currentIds.clear();
+			if(keepSelected){
+				for(ListEntry<T> stub : entries){
+					currentIds.add(stub.getValue().id);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void add(int index, ListEntry<T> element) {
+		if(currentIds.contains(element.getValue().id)){
+			for(ListEntry<T> entry : entries){
+				if(element.getValue().id.equals(entry.getValue().id)){
+					entry.setValue(element.getValue());
+					break;
+				}
+			}
+		}
+		else{
+			super.add(index, element);
+			currentIds.add(element.getValue().id);
+		}
+	}
+
+	@Override
+	public boolean add(ListEntry<T> e) {
+		if(currentIds.contains(e.getValue().id)){
+			for(ListEntry<T> entry : entries){
+				if(e.getValue().id.equals(entry.getValue().id)){
+					entry.setValue(e.getValue());
+					break;
+				}
+
+			}
+			return true;
+		}
+		else{
+			currentIds.add(e.getValue().id);
+			return super.add(e);
+		}
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends ListEntry<T>> c) {
+		for(ListEntry<T> stub : c){
+			add(stub);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends ListEntry<T>> c) {
+		int currIndex = index;
+		for(ListEntry<T> stub : c){
+			add(currIndex, stub);
+			if(!entries.contains(stub.getValue().id)){
+				currIndex++;
+			}
+		}
+		return true;
+
+	}
+	@Override
+	public void clear() {
+		if(currentIds != null){
+			currentIds.clear();
+		}
+		super.clear();
+	}
+
 }

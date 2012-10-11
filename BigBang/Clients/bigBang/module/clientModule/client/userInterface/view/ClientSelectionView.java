@@ -79,7 +79,7 @@ public class ClientSelectionView extends View implements ClientSelectionViewPres
 		wrapper.addWest(listWrapper, 300);
 		wrapper.add(formWrapper);
 		
-		list.doSearch();
+		list.doSearch(true);
 	}
 
 	@Override

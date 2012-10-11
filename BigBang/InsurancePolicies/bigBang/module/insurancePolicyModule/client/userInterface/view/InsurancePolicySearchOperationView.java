@@ -90,7 +90,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			}
 		};
 
-		doSearch();
+		doSearch(true);
 		
 		searchPanelWrapper.add(searchPanel);
 		searchPanelWrapper.setCellHeight(searchPanel, "100%");
@@ -635,8 +635,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 
 	@Override
-	public void doSearch() {
-		searchPanel.doSearch();
+	public void doSearch(boolean b) {
+		searchPanel.doSearch(b);
 	}
 
 	@Override

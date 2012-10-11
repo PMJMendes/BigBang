@@ -224,7 +224,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 		mainWrapper.add(contentWrapper);
 
 		if(!bigBang.definitions.client.Constants.DEBUG){
-			searchPanel.doSearch();
+			searchPanel.doSearch(true);
 		}
 		
 		form.addValueChangeHandler(new ValueChangeHandler<Receipt>() {

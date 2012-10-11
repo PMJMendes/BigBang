@@ -109,7 +109,7 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 
 			@Override
 			public void onClick(ClickEvent event) {
-				doSearch();
+				doSearch(false);
 			}
 		});
 
@@ -159,7 +159,7 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 	}
 
 	@Override
-	public void doSearch() {
+	public void doSearch(boolean keepState) {
 		if(this.workspaceId != null){
 			this.broker.getSearchBroker().disposeSearch(this.workspaceId);
 			this.workspaceId = null;
@@ -177,7 +177,7 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 		SortParameter[] sorts = new SortParameter[] {
 				new TaskSortParameter((SortableField) filtersPanel.getSelectedSortableField(), filtersPanel.getSortingOrder())
 		};
-		doSearch(parameters, sorts);
+		doSearch(parameters, sorts, keepState);
 	}
 
 	@Override

@@ -12,7 +12,7 @@ public class RiskAnalisysSearchPanel extends SearchPanel<RiskAnalysisStub> {
 	}
 
 	@Override
-	public void doSearch() {
+	public void doSearch(boolean keepState) {
 		// TODO Auto-generated method stub
 
 	}

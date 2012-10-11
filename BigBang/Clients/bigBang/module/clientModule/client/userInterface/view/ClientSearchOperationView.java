@@ -177,7 +177,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		wrapper.add(contentWrapper);
 		form.lock(true);
 		
-		searchPanel.doSearch();
+		searchPanel.doSearch(true);
 	}
 
 	@Override

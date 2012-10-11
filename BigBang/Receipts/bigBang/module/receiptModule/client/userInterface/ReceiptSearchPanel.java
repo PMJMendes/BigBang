@@ -216,7 +216,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				doSearch();
+				doSearch(false);
 			}
 		});
 		
@@ -228,7 +228,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 	}
 
 	@Override
-	public void doSearch() {
+	public void doSearch(boolean keepState) {
 		ReceiptSearchParameter parameter = new ReceiptSearchParameter();
 		parameter.freeText = this.getFreeText();
 		String type = (String) filtersPanel.getFilterValue(Filters.TYPES);
@@ -262,7 +262,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 				sortParameter
 		};
 		
-		doSearch(parameters, sorts);
+		doSearch(parameters, sorts, keepState);
 	}
 
 	@Override

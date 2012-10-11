@@ -125,7 +125,7 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 			}
 		});
 		
-		searchPanel.doSearch();
+		searchPanel.doSearch(true);
 	}
 
 	@Override

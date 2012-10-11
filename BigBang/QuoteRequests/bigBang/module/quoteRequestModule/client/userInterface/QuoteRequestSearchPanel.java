@@ -137,7 +137,7 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 
 			@Override
 			public void onClick(ClickEvent event) {
-				doSearch();
+				doSearch(false);
 			}
 		});
 
@@ -149,7 +149,7 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 	}
 
 	@Override
-	public void doSearch() {
+	public void doSearch(boolean keepState) {
 		if(this.workspaceId != null){
 			this.broker.disposeSearch(this.workspaceId);
 			this.workspaceId = null;
@@ -179,7 +179,7 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 				sort
 		};
 
-		doSearch(parameters, sorts);
+		doSearch(parameters, sorts, keepState);
 	}
 
 	@Override

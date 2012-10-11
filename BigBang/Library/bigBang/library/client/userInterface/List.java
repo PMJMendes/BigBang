@@ -618,14 +618,28 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		return result;
 	}
 
-	@Override
-	public void clear() {
-		boolean hadElements = !entries.isEmpty();
-		this.clearSelection();
+	public void clear(boolean keepSelection) {
+		if(!keepSelection){
+			this.clearSelection();
+		}
+		
+		Collection<ValueSelectable<T>> selected = this.getSelected();
+		
+		boolean elementCountChanged = keepSelection ? selected.size() != entries.size() : !entries.isEmpty();
 		this.listPanel.clear();
 		this.entries.clear();
-		if(hadElements)
+		
+		for(ValueSelectable<T> stub : selected){
+			this.entries.add((ListEntry<T>)stub);
+			this.listPanel.add((Widget) stub);
+		}
+		if(elementCountChanged)
 			onSizeChanged();
+	}
+	
+	@Override
+	public void clear() {
+		clear(false);
 	}
 
 	@Override

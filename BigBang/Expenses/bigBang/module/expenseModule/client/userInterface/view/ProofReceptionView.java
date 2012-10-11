@@ -87,14 +87,14 @@ public class ProofReceptionView extends View implements ProofReceptionViewPresen
 
 				@Override
 				public void onClick(ClickEvent event) {
-					doSearch();
+					doSearch(false);
 				}
 			});
 
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 
-			doSearch();
+			doSearch(false);
 		}
 
 		@Override
@@ -105,7 +105,7 @@ public class ProofReceptionView extends View implements ProofReceptionViewPresen
 		}
 
 		@Override
-		public void doSearch() {
+		public void doSearch(boolean keepState) {
 
 			if(this.workspaceId != null){
 				this.broker.disposeSearch(this.workspaceId);
@@ -128,7 +128,7 @@ public class ProofReceptionView extends View implements ProofReceptionViewPresen
 					new ExpenseSortParameter((SortableField) filtersPanel.getSelectedSortableField(), filtersPanel.getSortingOrder())
 			};
 
-			doSearch(parameters, sorts);
+			doSearch(parameters, sorts, keepState);
 		}
 
 	}

@@ -89,7 +89,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 
 				@Override
 				public void onClick(ClickEvent event) {
-					doSearch();
+					doSearch(false);
 				}
 			});
 
@@ -97,7 +97,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 
-			doSearch();
+			doSearch(false);
 		}
 
 		@Override
@@ -108,7 +108,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 		}
 
 		@Override
-		public void doSearch() {
+		public void doSearch(boolean keepState) {
 			if(this.workspaceId != null){
 				this.broker.disposeSearch(this.workspaceId);
 				this.workspaceId = null;
@@ -130,7 +130,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 					new ExpenseSortParameter((SortableField) filtersPanel.getSelectedSortableField(), filtersPanel.getSortingOrder())
 			};
 			
-			doSearch(parameters, sorts);
+			doSearch(parameters, sorts, keepState);
 		}
 
 	}
@@ -278,7 +278,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 
 	@Override
 	public void refreshMainList() {
-		searchPanel.doSearch();
+		searchPanel.doSearch(false);
 	}
 
 	@Override

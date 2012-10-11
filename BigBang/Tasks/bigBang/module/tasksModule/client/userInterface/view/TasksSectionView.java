@@ -100,7 +100,7 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 		
 		containerHeader.setRightWidget(panel);
 		
-		searchPanel.doSearch();
+		searchPanel.doSearch(true);
 	}
 
 	@Override

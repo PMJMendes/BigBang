@@ -112,14 +112,14 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 
 				@Override
 				public void onClick(ClickEvent event) {
-					doSearch();
+					doSearch(false);
 				}
 			});
 
 			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
-			doSearch();
+			doSearch(false);
 
 		}
 
@@ -131,7 +131,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 		}
 
 		@Override
-		public void doSearch() {
+		public void doSearch(boolean keepState) {
 
 			if(this.workspaceId != null){
 				this.broker.disposeSearch(this.workspaceId);

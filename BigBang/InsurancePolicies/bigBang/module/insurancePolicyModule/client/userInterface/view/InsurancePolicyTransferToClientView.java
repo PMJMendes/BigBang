@@ -82,7 +82,7 @@ public class InsurancePolicyTransferToClientView extends View implements Insuran
 		outsidewrapper.add(wrapper);
 		outsidewrapper.setCellHeight(wrapper, "100%");
 		
-		list.doSearch();
+		list.doSearch(true);
 		
 		
 	}

@@ -12,7 +12,7 @@ public class ComplaintSearchPanel extends SearchPanel<ComplaintStub> {
 	}
 	
 	@Override
-	public void doSearch() {
+	public void doSearch(boolean keepState) {
 		// TODO Auto-generated method stub
 
 	}

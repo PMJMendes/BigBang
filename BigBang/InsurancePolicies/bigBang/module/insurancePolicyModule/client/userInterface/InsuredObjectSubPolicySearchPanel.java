@@ -134,7 +134,7 @@ public class InsuredObjectSubPolicySearchPanel extends SearchPanel<InsuredObject
 	}
 
 	@Override
-	public void doSearch() {
+	public void doSearch(boolean keepState) {
 
 		if(this.workspaceId != null){
 			this.broker.disposeSearch(this.workspaceId);
@@ -151,7 +151,7 @@ public class InsuredObjectSubPolicySearchPanel extends SearchPanel<InsuredObject
 				parameter
 		};
 
-		doSearch(parameters, null);
+		doSearch(parameters, null, keepState);
 
 	}
 

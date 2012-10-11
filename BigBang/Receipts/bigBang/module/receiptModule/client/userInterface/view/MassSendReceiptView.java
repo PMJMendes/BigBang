@@ -112,14 +112,14 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 
 				@Override
 				public void onClick(ClickEvent event) {
-					doSearch();
+					doSearch(false);
 				}
 			});
 
 			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.SEND_RECEIPT);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
-			doSearch();
+			doSearch(false);
 
 		}
 
@@ -131,7 +131,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 		}
 
 		@Override
-		public void doSearch() {
+		public void doSearch(boolean keepState) {
 
 			if(this.workspaceId != null){
 				this.broker.disposeSearch(this.workspaceId);
@@ -171,7 +171,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 					sortParameter
 			};
 
-			doSearch(parameters, sorts);
+			doSearch(parameters, sorts, keepState);
 		}
 
 	}

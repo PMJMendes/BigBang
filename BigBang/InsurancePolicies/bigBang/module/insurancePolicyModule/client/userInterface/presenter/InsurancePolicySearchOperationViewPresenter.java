@@ -189,8 +189,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		void setOwner(InsurancePolicy policy);
 
-		void doSearch();
-
 		void allowManagerChange(boolean b);
 
 		void setObjectListOwner(String policyId);
@@ -198,6 +196,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void addEntryToList(Entry entry);
 
 		void removeElementFromList(ValueSelectable<InsurancePolicyStub> stub);
+
+		void doSearch(boolean b);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -484,7 +484,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		if(pol != null && pol.id != null) {
 			ensureListedAndSelected(pol);
 		}
-
 	}
 
 

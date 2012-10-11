@@ -74,7 +74,7 @@ public class HistorySearchPanel extends SearchPanel<HistoryItemStub>  implements
 	}
 
 	@Override
-	public void doSearch() {
+	public void doSearch(boolean keepState) {
 		if(currentObjectId != null){
 			HistorySearchParameter parameter = new HistorySearchParameter();
 			parameter.dataObjectId = this.currentObjectId;
@@ -83,7 +83,7 @@ public class HistorySearchPanel extends SearchPanel<HistoryItemStub>  implements
 			
 			HistorySortParameter sort = new HistorySortParameter((SortableField) filtersPanel.getSelectedSortableField(), filtersPanel.getSortingOrder());
 
-			doSearch(new HistorySearchParameter[]{parameter}, new SortParameter[]{sort});
+			doSearch(new HistorySearchParameter[]{parameter}, new SortParameter[]{sort}, keepState);
 		}
 		itemIdToSelect = null;
 	}

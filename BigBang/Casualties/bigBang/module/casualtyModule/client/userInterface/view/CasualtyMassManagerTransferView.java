@@ -58,7 +58,7 @@ public class CasualtyMassManagerTransferView extends
 
 				@Override
 				public void onClick(ClickEvent event) {
-					doSearch();
+					doSearch(false);
 				}
 			});
 
@@ -76,7 +76,8 @@ public class CasualtyMassManagerTransferView extends
 		}
 
 		@Override
-		public void doSearch() {
+		public void doSearch(boolean keepSelected) {
+			
 			if(this.workspaceId != null){
 				this.broker.disposeSearch(this.workspaceId);
 				this.workspaceId = null;
@@ -100,7 +101,7 @@ public class CasualtyMassManagerTransferView extends
 					new CasualtySortParameter((SortableField) filtersPanel.getSelectedSortableField(), filtersPanel.getSortingOrder())
 			};
 
-			doSearch(parameters, sorts);
+			doSearch(parameters, sorts, keepSelected);
 		}
 
 	}

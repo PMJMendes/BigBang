@@ -141,7 +141,7 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 		mainWrapper.add(contentWrapper);
 
 		if(!bigBang.definitions.client.Constants.DEBUG){
-			searchPanel.doSearch();
+			searchPanel.doSearch(true);
 		}
 
 		form.addValueChangeHandler(new ValueChangeHandler<Expense>() {

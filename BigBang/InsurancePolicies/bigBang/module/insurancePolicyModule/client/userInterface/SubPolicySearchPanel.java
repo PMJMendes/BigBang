@@ -104,7 +104,7 @@ public class SubPolicySearchPanel extends SearchPanel<SubPolicyStub> implements 
 	}
 
 	@Override
-	public void doSearch() {
+	public void doSearch(boolean keepState) {
 		if(this.workspaceId != null){
 			this.broker.disposeSearch(this.workspaceId);
 			this.workspaceId = null;
@@ -120,7 +120,7 @@ public class SubPolicySearchPanel extends SearchPanel<SubPolicyStub> implements 
 				parameter
 		};
 		
-		doSearch(parameters, null);
+		doSearch(parameters, null, keepState);
 	}
 
 	@Override
@@ -201,7 +201,7 @@ public class SubPolicySearchPanel extends SearchPanel<SubPolicyStub> implements 
 				parameter
 		};
 		
-		doSearch(parameters, null);
+		doSearch(parameters, null, false);
 	}
 	
 }
