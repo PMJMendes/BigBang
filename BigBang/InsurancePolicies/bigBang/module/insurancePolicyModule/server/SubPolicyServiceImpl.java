@@ -187,7 +187,7 @@ public class SubPolicyServiceImpl
 				larrResult = new ArrayList<TipifiedListItem>();
 				for ( i = 0; i < larrCoverages.length; i++ )
 				{
-					if ( (larrCoverages[i].GetCoverage().IsHeader()) || (larrCoverages[i].IsPresent() == null) || !larrCoverages[i].IsPresent() )
+					if ( larrCoverages[i].GetCoverage().IsHeader() /*|| (larrCoverages[i].IsPresent() == null) || !larrCoverages[i].IsPresent()*/ )
 						continue;
 					lobjAux = new TipifiedListItem();
 					lobjAux.id = larrCoverages[i].getKey().toString();
