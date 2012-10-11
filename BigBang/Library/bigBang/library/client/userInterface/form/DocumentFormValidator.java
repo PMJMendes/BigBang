@@ -1,8 +1,6 @@
 package bigBang.library.client.userInterface.form;
 
-import bigBang.definitions.shared.DocInfo;
 import bigBang.library.client.FormValidator;
-import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.form.DocumentForm.DocumentDetailEntry;
 
 public class DocumentFormValidator extends FormValidator<DocumentForm> {
@@ -17,7 +15,7 @@ public class DocumentFormValidator extends FormValidator<DocumentForm> {
 		valid &= validateName();
 		valid &= validateType();
 		valid &= validateInfoList();
-	
+
 		return new Result(valid, this.validationMessages);
 	}
 
@@ -31,13 +29,13 @@ public class DocumentFormValidator extends FormValidator<DocumentForm> {
 
 	private boolean validateInfoList() {
 		boolean valid = true;
-		for(ListEntry<DocInfo> entry : form.details) {
-			DocumentDetailEntry documentEntry = (DocumentDetailEntry) entry;
-			valid &= validateGuid(documentEntry.info, false);
+		for(int i = 0; i< form.details.size()-1; i++) {//O ÚLTIMO É SEMPRE O BOTÃO DE ADICIONAR
+			DocumentDetailEntry documentEntry = (DocumentDetailEntry) form.details.get(i);
+			valid &= validateString(documentEntry.info, 1, 250, false);
 			valid &= validateString(documentEntry.infoValue, 1, 250, false);
 		}
 		return valid;
 	}
 
-	
+
 }

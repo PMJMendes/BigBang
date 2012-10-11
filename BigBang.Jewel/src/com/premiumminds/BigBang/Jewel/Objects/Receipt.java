@@ -25,7 +25,18 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPayment;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPaymentAcct;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingCreateDASRequest;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingCreateSignatureRequest;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingImage;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingInsurerAccounting;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingMediatorAccounting;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingPayment;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingPendingPaymentReturn;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingReturnToInsurer;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingSendPayment;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingSendPaymentNotice;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingSendReceipt;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingValidation;
 import com.premiumminds.BigBang.Jewel.SysObjects.MediatorBase;
 
 public class Receipt
@@ -83,7 +94,76 @@ public class Receipt
 	{
 		return new ReceiptPendingPayment().doReport(parrParams);
 	}
+	
+	public static GenericElement[] printReportPendingValidation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ReceiptPendingValidation().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportPendingImage(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptPendingImage().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportPendingCreateSignatureRequest(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptPendingCreateSignatureRequest().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportPendingCreateDASRequest(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptPendingCreateDASRequest().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportPendingPaymentReturn(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptPendingPendingPaymentReturn().doReport(parrParams);
+	}
 
+	public static GenericElement[] printReportPendingReturnToInsurer(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptPendingReturnToInsurer().doReport(parrParams);
+	}
+	
+	
+	public static GenericElement[] printReportPendingSendPaymentNotice(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptPendingSendPaymentNotice().doReport(parrParams);
+	}
+	
+	
+	public static GenericElement[] printReportPendingSendPayment(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptPendingSendPayment().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportPendingMediatorAccounting(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptPendingMediatorAccounting().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportPendingInsurerAccounting(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptPendingInsurerAccounting().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportPendingSendReceipt(String[] parrParams)
+			throws BigBangJewelException
+		{
+			return new ReceiptPendingSendReceipt().doReport(parrParams);
+		}
+
+	
 	public static GenericElement[] printReportHistoryPayment(String[] parrParams)
 		throws BigBangJewelException
 	{
