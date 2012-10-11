@@ -1,6 +1,7 @@
 package bigBang.module.clientModule.client.userInterface.form;
 
 import bigBang.library.client.FormValidator;
+import bigBang.module.clientModule.shared.ModuleConstants;
 
 public class ClientFormValidator extends FormValidator<ClientForm> {
 
@@ -39,11 +40,15 @@ public class ClientFormValidator extends FormValidator<ClientForm> {
 	}
 
 	private boolean validateTaxNumber() {
+		form.taxNumber.setWarning((form.clientType.getValue() == null) || (form.taxNumber.getValue() == null) || form.taxNumber.getValue().isEmpty() ||
+				!specialValidateTaxNumberFormat());
 		return validateString(form.taxNumber, 0, 250, true);
 	}
 
 	private boolean validateAddress() {
-		return validateAddress(form.address, true);
+		form.address.setWarning((form.address.getValue() == null) || (form.address.getValue().zipCode == null) ||
+				(form.address.getValue().zipCode.code == null) || form.address.getValue().zipCode.code.isEmpty());
+		return validateAddress(form.address, false);
 	}
 
 	private boolean validateGroup() {
@@ -103,11 +108,45 @@ public class ClientFormValidator extends FormValidator<ClientForm> {
 	}
 
 	private boolean validateOtherClientType() {
-		return validateGuid(form.otherClientType, true);
+		return validateGuid(form.otherClientType,
+				!ModuleConstants.ClientTypeIDs.Other.equalsIgnoreCase(form.clientType.getValue()));
 	}
 
 	private boolean validateClientType() {
 		return validateString(form.clientType, 1, 250, false);
+	}
+
+	private boolean specialValidateTaxNumberFormat() {
+		String nif;
+		String type;
+		char c;
+		int checkDigit;
+		int i;
+
+		nif = form.taxNumber.getValue();
+		type = form.clientType.getValue();
+
+		if (nif != null)
+		{
+			if (nif.matches("([0-9]*)") && nif.length() == 9)
+			{
+				c = nif.charAt(0);
+				if ( ((c == '1' || c == '2') && ModuleConstants.ClientTypeIDs.Person.equalsIgnoreCase(type)) ||
+						((c == '5' || c == '6') && !ModuleConstants.ClientTypeIDs.Person.equalsIgnoreCase(type)) ) 
+				{
+					checkDigit = Character.digit(c, 10) * 9;
+					for ( i = 2; i <= 8; i++ )
+						checkDigit += (Character.digit(nif.charAt(i - 1), 10) * (10 - i));
+					checkDigit = 11 - (checkDigit % 11);
+					if ( checkDigit >= 10 )
+						checkDigit = 0;
+					if ( checkDigit == Character.digit(nif.charAt(8), 10) )
+						return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 }
