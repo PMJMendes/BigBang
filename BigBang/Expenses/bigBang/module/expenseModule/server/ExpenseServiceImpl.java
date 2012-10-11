@@ -647,7 +647,6 @@ public class ExpenseServiceImpl
 					lopSN.midSet = lidSet;
 					lopSN.midSetDocument = lidSetPolicy;
 					lopSN.mobjDocOps = lobjDocOps;
-					lopSN.midPolicy = lidP;
 
 					lopSN.Execute();
 

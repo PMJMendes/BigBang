@@ -13,6 +13,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Objects.Expense;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
@@ -30,7 +31,7 @@ public class SendNotification
 	public UUID midSetDocument;
 	public UUID midSetDetail;
 	public DocOps mobjDocOps;
-	public UUID midPolicy;
+	private UUID midPolicy;
 //	private OutgoingMessageData mobjMessage;
 
 	public SendNotification(UUID pidProcess)
@@ -69,11 +70,13 @@ public class SendNotification
 		throws JewelPetriException
 	{
 		PrintSet lobjSet;
-		PrintSetDocument lobjSetCompany;
+		PrintSetDocument lobjSetPolicy;
 		PrintSetDetail lobjSetExpense;
 
 		try
 		{
+			midPolicy = ((Expense)GetProcess().GetData()).getAbsolutePolicy().getKey();
+
 			if ( mobjDocOps == null )
 				generateDocOp();
 
@@ -92,12 +95,12 @@ public class SendNotification
 
 				if ( midSetDocument == null )
 				{
-					lobjSetCompany = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					lobjSetCompany.setAt(0, midSet);
-					lobjSetCompany.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
-					lobjSetCompany.setAt(2, false);
-					lobjSetCompany.SaveToDb(pdb);
-					midSetDocument = lobjSetCompany.getKey();
+					lobjSetPolicy = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					lobjSetPolicy.setAt(0, midSet);
+					lobjSetPolicy.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetPolicy.setAt(2, false);
+					lobjSetPolicy.SaveToDb(pdb);
+					midSetDocument = lobjSetPolicy.getKey();
 				}
 
 				lobjSetExpense = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);

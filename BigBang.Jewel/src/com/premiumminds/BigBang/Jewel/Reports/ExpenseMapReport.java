@@ -50,11 +50,9 @@ public class ExpenseMapReport
 		SubPolicy lobjSubPolicy;
 		String lstrObject;
 		Coverage lobjCoverage;
-		UUID lidCompany;
 		int i;
 
-		lidCompany = (UUID)Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy).getAt(2);
-		lobjCompany = Company.GetInstance(Engine.getCurrentNameSpace(), lidCompany);
+		lobjCompany = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy).GetCompany();
 		ldtAux = new Timestamp(new java.util.Date().getTime());
 
 		larrParams = new HashMap<String, String>();
