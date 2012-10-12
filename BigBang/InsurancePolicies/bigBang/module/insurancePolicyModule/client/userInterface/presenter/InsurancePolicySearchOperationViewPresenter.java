@@ -198,6 +198,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void removeElementFromList(ValueSelectable<InsurancePolicyStub> stub);
 
 		void doSearch(boolean b);
+
+		void setInvalidObjectEntry(ValueSelectable<InsuredObjectStub> entry,
+				boolean validate);
+
+		void setInvalidPolicySelector(boolean b);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -372,6 +377,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
+				validateCurrentObject();
+				validateCurrentPolicy();
 				if(event.getFirstSelected() != null){
 					InsuredObjectStub stub = ((ValueSelectable<InsuredObjectStub>)event.getFirstSelected()).getValue();
 					if(stub.change != Change.DELETED){
@@ -870,6 +877,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		policyId = parameterHolder.getParameter("policyid");
 
 		if(policyId != null){
+			view.setInvalidPolicySelector(false);
 			if(policyId.equals("new")){
 				String subLineId = parameterHolder.getParameter("sublineid");
 				String clientId = parameterHolder.getParameter("clientid");
@@ -1111,6 +1119,25 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	}
 
+	private void validateCurrentObject(){
+		if(!this.onPolicy){
+			InsuredObject object = view.getInsuredObjectHeaderForm().getInfo();
+			
+			for(ValueSelectable<InsuredObjectStub> entry : view.getInsuredObjectsList().getAll()){
+				if(entry.getValue().id.equalsIgnoreCase(object.id)) {
+					view.setInvalidObjectEntry(entry, !view.getInsuredObjectHeaderForm().validate() && !(object.change == Change.DELETED));
+					break;
+				}
+			}
+		}
+	}
+	
+	private void validateCurrentPolicy(){
+		if(this.onPolicy){
+			view.setInvalidPolicySelector(!view.getPolicyHeaderForm().validate());
+		}
+	}
+	
 	private void onFormValidationFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}

@@ -146,8 +146,9 @@ FormValidator<InsurancePolicyHeaderForm> {
 				}
 			}
 			form.coInsurers.setInvalid(!valid);
+			return valid;
 		}
-		return valid;
+		return true;
 	}
 
 }

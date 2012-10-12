@@ -37,6 +37,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.PolicySelectBut
 import bigBang.module.insurancePolicyModule.client.userInterface.form.CoverageExerciseDetailsForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyHeaderForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsuredObjectForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.PolicyAndObjectCrossFormValidator;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
 
@@ -81,6 +82,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		policyForm = new InsurancePolicyHeaderForm();
 		objectForm = new InsuredObjectForm();
+		new PolicyAndObjectCrossFormValidator(policyForm, objectForm);
 		
 		searchPanel = new InsurancePolicySearchPanel(){ 
 			@Override
@@ -658,5 +660,17 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void removeElementFromList(ValueSelectable<InsurancePolicyStub> stub) {
 		searchPanel.remove(stub);
+	}
+
+	@Override
+	public void setInvalidObjectEntry(ValueSelectable<InsuredObjectStub> entry,
+			boolean invalid) {
+		InsuredObjectSearchPanel.Entry objectEntry = (InsuredObjectSearchPanel.Entry) entry;
+		objectEntry.setInvalid(invalid);
+	}
+
+	@Override
+	public void setInvalidPolicySelector(boolean b) {
+		this.policySelectButton.setInvalid(b);
 	}
 }

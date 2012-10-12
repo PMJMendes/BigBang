@@ -38,6 +38,10 @@ public abstract class FormValidator<T extends FormView<?>> {
 		validateImpl();
 	}
 
+	public T getForm(){
+		return this.form;
+	}
+	
 	public Result validate() {
 		this.validationMessages.clear();
 		return this.validateImpl();
@@ -155,5 +159,5 @@ public abstract class FormValidator<T extends FormView<?>> {
 			return valid;
 		}
 	}
-
+	
 }

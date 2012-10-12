@@ -13,6 +13,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
@@ -34,9 +35,10 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 
 	protected ToolButton createNew;
 
-	public static class Entry extends ListEntry<InsuredObjectStub>{
+	public class Entry extends ListEntry<InsuredObjectStub>{
 
 		protected Label name;
+		protected Image invalidIcon;
 
 		public Entry(InsuredObjectStub object){
 			super(object);
@@ -46,6 +48,13 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 		public <I extends Object> void setInfo(I info){
 			InsuredObjectStub value = (InsuredObjectStub) info;
 
+			if(invalidIcon == null) {
+				Resources resources = GWT.create(Resources.class);
+				invalidIcon = new Image(resources.invalidEntry());
+				setLeftWidget(invalidIcon);
+				setInvalid(false);
+			}
+			
 			if(value.id != null){
 				if(name == null){
 					name = getFormatedLabel();
@@ -67,6 +76,10 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 					}
 				}
 			}
+		}
+
+		public void setInvalid(boolean b) {
+			this.invalidIcon.setVisible(b);
 		}
 	}
 

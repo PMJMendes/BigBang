@@ -122,4 +122,7 @@ public interface Resources extends ClientBundle {
 	@Source("images/complete.png")
 	ImageResource completeIcon();
 
+	@Source("images/invalidEntry.png")
+	ImageResource invalidEntry();
+
 }

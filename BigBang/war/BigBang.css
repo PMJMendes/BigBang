@@ -352,6 +352,10 @@ li.token-input-input-token-facebook {
 	background-color: #FFDADA;
 }
 
+.warningFormField {
+	background-color: #FFFAA3;
+}
+
 /* Badge */
 .badge {
 	

@@ -2,6 +2,7 @@ package bigBang.library.client.userInterface.view;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
@@ -62,7 +63,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	protected int numberOfResults = 0;
 	protected boolean requestedNextPage = false;
 	protected String operationId = null;
-	private HashSet<String> currentIds;
+	private Set<String> currentIds = new HashSet<String>();
 
 	private VerticalPanel headerWidgetWrapper;
 
@@ -338,7 +339,9 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	@Override
 	public boolean remove(Object o) {
 		boolean result = super.remove(o);
-		currentIds.remove(((ListEntry<T>) o).getValue().id);
+		if(result) {
+			currentIds.remove(((ListEntry<T>) o).getValue().id);
+		}
 		checkScrollPosition();
 		return result;
 	}
@@ -346,8 +349,8 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		for(Object stub : c){
-			currentIds.remove(((ListEntry<T>) stub).getValue().id);
+		for(Object entry : c){
+			currentIds.remove(((ListEntry<T>) entry).getValue().id);
 		}
 		boolean result = super.removeAll(c);
 		checkScrollPosition();
@@ -402,15 +405,12 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 
 	@Override
 	public void clear(boolean keepSelected) {
-
 		super.clear(keepSelected);
 
 		if(currentIds != null){
 			currentIds.clear();
-			if(keepSelected){
-				for(ListEntry<T> stub : entries){
-					currentIds.add(stub.getValue().id);
-				}
+			for(ListEntry<T> stub : entries){
+				currentIds.add(stub.getValue().id);
 			}
 		}
 	}
@@ -471,7 +471,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	}
 	@Override
 	public void clear() {
-		if(currentIds != null){
+		if(currentIds != null) {
 			currentIds.clear();
 		}
 		super.clear();

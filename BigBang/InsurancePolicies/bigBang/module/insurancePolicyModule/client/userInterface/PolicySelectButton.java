@@ -1,17 +1,20 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.ListEntry;
 
 public class PolicySelectButton extends ListEntry<InsurancePolicyStub>{
 
 	protected Label numberLabel;
 	protected Label label;
-
+	protected Image invalidIcon;
 
 	public PolicySelectButton(InsurancePolicyStub value) {
 		super(value);
@@ -33,6 +36,10 @@ public class PolicySelectButton extends ListEntry<InsurancePolicyStub>{
 			label.getElement().getStyle().setFontSize(11, Unit.PX);
 			label.getElement().getStyle().setProperty("whiteSpace", "");
 			label.setHeight("1.2em");
+			Resources resource = GWT.create(Resources.class);
+			invalidIcon = new Image(resource.invalidEntry());
+			setLeftWidget(invalidIcon);
+			setInvalid(false);
 		}
 		if(value.id != null){
 
@@ -49,5 +56,9 @@ public class PolicySelectButton extends ListEntry<InsurancePolicyStub>{
 			numberLabel.setText("");
 			label.setText("");
 		}
+	}
+
+	public void setInvalid(boolean b) {
+		this.invalidIcon.setVisible(b);
 	}
 }
