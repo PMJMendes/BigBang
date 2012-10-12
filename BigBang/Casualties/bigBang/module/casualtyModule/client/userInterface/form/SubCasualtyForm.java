@@ -42,7 +42,6 @@ import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
 import bigBang.module.casualtyModule.client.resources.Resources;
 import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyItemSection;
-import bigBang.module.casualtyModule.client.userInterface.SubCasualtyItemSection;
 
 public class SubCasualtyForm extends FormView<SubCasualty> {
 

@@ -1,4 +1,4 @@
-package bigBang.module.casualtyModule.client.userInterface;
+package bigBang.module.casualtyModule.client.userInterface.form;
 
 import java.util.Collection;
 

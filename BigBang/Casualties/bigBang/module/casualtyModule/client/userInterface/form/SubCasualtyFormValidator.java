@@ -20,8 +20,31 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validateInsuredObjectInList();
 		valid &= validateInsuredObjectInText();
 		valid &= validatePresentInPolicy();
+		valid &= validateDetails();
 
 		return new Result(valid, this.validationMessages);
+	}
+
+	private boolean validateDetails() {
+		boolean valid = true;
+		for(SubCasualtyItemSection section : form.subCasualtyItemSections){
+			valid &= validateDetailSection(section);
+		}
+		
+		return valid;
+	}
+
+	private boolean validateDetailSection(SubCasualtyItemSection section) {
+		boolean valid = true;
+		
+		valid &= validateGuid(section.coverage, true);
+		valid &= validateNumber(section.damages, 1.0, null, true);
+		valid &= validateNumber(section.settlement, 1.0, null, true);
+		valid &= validateNumber(section.deductible, 1.0, null, true);
+		valid &= validateNumber(section.itemValue, 1.0, null, true);
+		valid &= validateGuid(section.damageType, true);
+		
+		return valid;
 	}
 
 	private boolean validatePresentInPolicy() {
