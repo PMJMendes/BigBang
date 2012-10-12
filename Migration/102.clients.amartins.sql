@@ -245,9 +245,10 @@ inner join amartins.tblContacts c on c.FKOwner=l.PK
 where c.FKContactType='04F6BC3C-0283-47F0-9670-9EEE013350D9' and ContactName=N'Profissional'
 and r.ProfTelefone is not null and r.ProfTelefone<>'';
 
-insert into amartins.tblBBDocuments (PK, DocName, FKOwnerType, FKOwner, FKDocType)
+insert into amartins.tblBBDocuments (PK, DocName, FKOwnerType, FKOwner, FKDocType, RefDate)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-N'Carta de Condução' DocName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner, '5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A' FKDocType
+N'Carta de Condução' DocName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner,
+'5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A' FKDocType, GetDate()
 from amartins.tblBBClients l
 inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
 where r.NOME<>'' and ((r.CartaCondNum is not null and r.CartaCondNum<>'') or (r.CartaCondData is not null and r.CartaCondData<>''));
