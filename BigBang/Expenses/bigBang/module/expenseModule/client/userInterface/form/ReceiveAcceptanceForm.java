@@ -6,7 +6,7 @@ import bigBang.library.client.userInterface.view.FormView;
 
 public class ReceiveAcceptanceForm extends FormView<Acceptance>{
 
-	private NumericTextBoxFormField value;
+	protected NumericTextBoxFormField value;
 	
 	public ReceiveAcceptanceForm(){
 		
@@ -18,6 +18,8 @@ public class ReceiveAcceptanceForm extends FormView<Acceptance>{
 		value.setUnitsLabel("€");
 		
 		addFormField(value);
+		
+		setValidator(new ReceiveAcceptanceFormValidator(this));
 	}
 	
 	@Override

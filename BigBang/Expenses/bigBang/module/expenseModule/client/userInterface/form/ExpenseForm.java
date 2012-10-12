@@ -36,20 +36,20 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ExpenseForm extends FormView<Expense>{
 
-	private ExpandableListBoxFormField manager;
-	private NumericTextBoxFormField settlement;
-	private Label settleLabel;
-	private Button settleButton;
-	private TextAreaFormField notes;
-	private NavigationFormField client;
-	private DatePickerFormField expenseDate;
-	private ExpandableListBoxFormField coverageId;
-	private NumericTextBoxFormField value;
-	private TextBoxFormField isOpen;
-	private NavigationFormField reference;
-	private TextBoxFormField number;
+	protected ExpandableListBoxFormField manager;
+	protected NumericTextBoxFormField settlement;
+	protected Label settleLabel;
+	protected Button settleButton;
+	protected TextAreaFormField notes;
+	protected NavigationFormField client;
+	protected DatePickerFormField expenseDate;
+	protected ExpandableListBoxFormField coverageId;
+	protected NumericTextBoxFormField value;
+	protected TextBoxFormField isOpen;
+	protected NavigationFormField reference;
+	protected TextBoxFormField number;
 	private boolean initialized;
-	private boolean tempIsManual;
+	protected boolean tempIsManual;
 	protected ExpandableListBoxFormField insuredObject;
 	protected RadioButtonFormField belongsToPolicy;
 	protected TextBoxFormField insuredObjectName; 
@@ -167,6 +167,8 @@ public class ExpenseForm extends FormView<Expense>{
 		initialized = true;
 
 		belongsToPolicy.setValue("true");
+		
+		setValidator(new ExpenseFormValidator(this));
 	}
 
 	@Override

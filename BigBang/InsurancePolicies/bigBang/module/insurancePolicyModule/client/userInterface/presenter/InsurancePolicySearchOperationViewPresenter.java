@@ -488,6 +488,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 	private void ensureListedAndSelected(InsurancePolicy pol) {
+
 		boolean found = false;
 		for(ValueSelectable<InsurancePolicyStub> stub : view.getList().getAll()){
 			if(stub.getValue().id.equals(pol.id)){
@@ -502,6 +503,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			InsurancePolicySearchPanel.Entry entry = new InsurancePolicySearchPanel.Entry(pol);
 			view.addEntryToList(entry);
 		}
+
+		if(view.getList().getAll().size() > 0){
+			removeNewListEntry();
+		}
+
 	}
 
 
@@ -772,10 +778,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	protected void removeNewListEntry() {
 
-		@SuppressWarnings("unchecked")
-		ValueSelectable<InsurancePolicyStub> stub = (ValueSelectable<InsurancePolicyStub>) view.getList().getAll().toArray()[0];
-		if(stub.getValue().id.equalsIgnoreCase("new")){
-			view.removeElementFromList(stub);
+		for(ValueSelectable<InsurancePolicyStub> stub : view.getList().getAll()){
+			if(stub.getValue().id.equalsIgnoreCase("new")){
+				view.removeElementFromList(stub);
+				return;
+			}
 		}
 
 
@@ -1103,7 +1110,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.allowTransferToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT));
 
 	}
-	
+
 	private void onFormValidationFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}

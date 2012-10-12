@@ -5,16 +5,15 @@ import bigBang.library.client.userInterface.view.FormView;
 
 public class DeleteExpenseForm extends FormView<String>{
 
-	private TextAreaFormField reason;
+	protected TextAreaFormField reason;
 	
 	public DeleteExpenseForm(){
 		
 		addSection("Eliminar Despesa de Saúde");
-		
 		reason = new TextAreaFormField("Motivo");
-		
 		addFormField(reason);
 		
+		setValidator(new DeleteExpenseFormValidator(this));
 	}
 
 	@Override

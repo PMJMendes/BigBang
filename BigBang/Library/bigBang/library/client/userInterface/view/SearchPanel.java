@@ -476,5 +476,5 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		}
 		super.clear();
 	}
-
+	
 }

@@ -43,25 +43,25 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyWrapper>{
 
-	private TextBoxFormField policyNumber;
+	protected TextBoxFormField policyNumber;
 	private Button verifyPolicyNumber;
 	private final static Label policyNumberProblem = new Label("A apólice pretendida não existe");
 	private Button markAsInvalid;
 
-	private TextBoxFormField subscriber;
-	private CheckBoxFormField noSubPolicy;
-	private ExpandableSelectionFormField subPolicyReference;
-	private InsuranceSubPolicySelectionViewPresenter subPolicySelectionPanel;
+	protected TextBoxFormField subscriber;
+	protected CheckBoxFormField noSubPolicy;
+	protected ExpandableSelectionFormField subPolicyReference;
+	protected InsuranceSubPolicySelectionViewPresenter subPolicySelectionPanel;
 
-	private ExpandableListBoxFormField manager;
-	private NumericTextBoxFormField settlement;
-	private Label settleLabel;
+	protected ExpandableListBoxFormField manager;
+	protected NumericTextBoxFormField settlement;
+	protected Label settleLabel;
 	private Button settleButton;
-	private TextAreaFormField notes;
-	private DatePickerFormField expenseDate;
-	private ExpandableListBoxFormField coverageId;
-	private NumericTextBoxFormField expenseValue;
-	private boolean tempIsManual;
+	protected TextAreaFormField notes;
+	protected DatePickerFormField expenseDate;
+	protected ExpandableListBoxFormField coverageId;
+	protected NumericTextBoxFormField expenseValue;
+	protected boolean tempIsManual;
 
 	protected ExpandableListBoxFormField insuredObject;
 	protected RadioButtonFormField belongsToPolicy;
@@ -244,6 +244,8 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		settleButton.setEnabled(false);
 
 		belongsToPolicy.setValue("true");
+		
+		this.setValidator(new SerialExpenseCreationFormValidator(this));
 	}
 
 	protected abstract void noSubPolicyChangedState();
