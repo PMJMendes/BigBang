@@ -197,6 +197,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 				infoValue.setReadOnlyInternal(!b);
 				if(!b){
 					infoValue.setValue(null);
+					refreshPercentageValues();
 				}
 			}
 		}
