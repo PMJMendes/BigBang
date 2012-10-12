@@ -25,13 +25,14 @@ FormValidator<SerialReceiptCreationForm> {
 		valid &= validateIssueDate();
 		valid &= validateCoverageStart();
 		valid &= validateCoverageEnd();
+		valid &= validateStartAndEndDate();
+		valid &= validateDueDate();
 		valid &= validateDescription();
 		valid &= validateNotes();
 		valid &= validateBonusMalusOption();
 		valid &= validateBonusMalusValue();
-		valid &= validateDueDate();
-		valid &= validateCoverageStartAndEndDate();
-		
+		valid &= validateValues();
+
 		return new Result(valid, this.validationMessages);
 	}
 
@@ -52,7 +53,7 @@ FormValidator<SerialReceiptCreationForm> {
 	}
 
 	private boolean validateSalesPremium() {
-		return validateNumber(form.salesPremium, true);
+		return validateNumber(form.salesPremium, form.bonusMalusValue.getValue() == null);
 	}
 
 	private boolean validateCommission() {
@@ -72,12 +73,36 @@ FormValidator<SerialReceiptCreationForm> {
 	}
 
 	private boolean validateCoverageStart() {
-		return validateDate(form.coverageStart, true); ///TODO
+		return validateDate(form.coverageStart, true);
 	}
 
 	private boolean validateCoverageEnd() {
-		return validateDate(form.coverageEnd, true); ///TODO
+		return validateDate(form.coverageEnd, true);
+	}
 
+	private boolean validateStartAndEndDate() {
+		boolean validDates = validateCoverageStart() && validateCoverageEnd();
+
+		if(validDates){
+			Date startDate = form.coverageStart.getValue();
+			Date endDate = form.coverageEnd.getValue();
+
+			if(startDate != null && endDate != null){
+				if(startDate.before(endDate)){
+					return true;
+				}
+				else{
+					form.coverageStart.setInvalid(true);
+					form.coverageEnd.setInvalid(true);
+					return false;
+				}
+
+			}else{
+				return true;
+			}
+		}else{
+			return false;
+		}
 	}
 
 	private boolean validateDueDate() {
@@ -102,23 +127,37 @@ FormValidator<SerialReceiptCreationForm> {
 		}else if("Malus".equalsIgnoreCase(form.bonusMalusOption.getValue())) {
 			return validateNumber(form.bonusMalusValue, false);
 		}else{
+			form.bonusMalusValue.setWarning(form.bonusMalusValue.getValue() != null);
 			return true;
 		}
 	}
 
-	private boolean validateCoverageStartAndEndDate(){
-		boolean validDates = validateCoverageStart() && validateCoverageEnd();
-		if(validDates){
-			Date coverageStart = form.coverageStart.getValue();
-			Date coverageEnd = form.coverageEnd.getValue();
-			if(coverageStart != null && coverageEnd != null){
-				if(coverageStart.before(coverageEnd)){
+	private boolean validateValues() {
+		boolean validValues = validateTotalPremium() && validateSalesPremium() && validateBonusMalusValue();
+
+		if(validValues){
+			Double totalPremium = form.totalPremium.getValue();
+			Double salesPremium = form.salesPremium.getValue();
+			Double bonusMalusValue = form.bonusMalusValue.getValue();
+
+			if ( bonusMalusValue == null )
+				bonusMalusValue = 0.0;
+			bonusMalusValue = Math.abs(bonusMalusValue);
+			if ( "Bonus".equalsIgnoreCase(form.bonusMalusOption.getValue()) )
+				bonusMalusValue = -bonusMalusValue;
+
+			if(totalPremium != null && salesPremium != null){
+				if(totalPremium >= salesPremium + bonusMalusValue){
 					return true;
-				}else{
-					form.coverageStart.setInvalid(true);
-					form.coverageEnd.setInvalid(true);
+				}
+				else{
+					form.totalPremium.setInvalid(true);
+					form.salesPremium.setInvalid(true);
+					if ( form.bonusMalusValue.getValue() != null )
+						form.bonusMalusValue.setInvalid(true);
 					return false;
 				}
+
 			}else{
 				return true;
 			}

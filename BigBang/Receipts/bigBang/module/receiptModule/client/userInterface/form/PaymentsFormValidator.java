@@ -43,6 +43,11 @@ public class PaymentsFormValidator extends FormValidator<PaymentsForm> {
 	}
 
 	private boolean validateValue(PaymentSection section) {
+		if ( form.sections.size() == 1 )
+		{
+			section.paymentValue.setWarning(section.paymentValue.getValue() == null);
+			return validateNumber(section.paymentValue, true);
+		}
 		return validateNumber(section.paymentValue, false);
 	}
 

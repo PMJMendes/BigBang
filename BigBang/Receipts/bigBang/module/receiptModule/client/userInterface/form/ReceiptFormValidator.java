@@ -1,5 +1,7 @@
 package bigBang.module.receiptModule.client.userInterface.form;
 
+import java.util.Date;
+
 import bigBang.library.client.FormValidator;
 
 public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
@@ -21,12 +23,14 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 		valid &= validateIssueDate();
 		valid &= validateCoverageStart();
 		valid &= validateCoverageEnd();
+		valid &= validateStartAndEndDate();
 		valid &= validateDueDate();
 		valid &= validateDescription();
 		valid &= validateNotes();
 		valid &= validateBonusMalusOption();
 		valid &= validateBonusMalusValue();
-		
+		valid &= validateValues();
+
 		return new Result(valid, this.validationMessages);
 	}
 
@@ -43,7 +47,7 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 	}
 
 	private boolean validateSalesPremium() {
-		return validateNumber(form.salesPremium, true);
+		return validateNumber(form.salesPremium, form.bonusMalusValue.getValue() == null);
 	}
 
 	private boolean validateCommission() {
@@ -63,11 +67,36 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 	}
 
 	private boolean validateCoverageStart() {
-		return validateDate(form.coverageStart, true); ///TODO
+		return validateDate(form.coverageStart, true);
 	}
 
 	private boolean validateCoverageEnd() {
-		return validateDate(form.coverageEnd, true); ///TODO
+		return validateDate(form.coverageEnd, form.coverageStart.getValue() == null);
+	}
+
+	private boolean validateStartAndEndDate() {
+		boolean validDates = validateCoverageStart() && validateCoverageEnd();
+
+		if(validDates){
+			Date startDate = form.coverageStart.getValue();
+			Date endDate = form.coverageEnd.getValue();
+
+			if(startDate != null && endDate != null){
+				if(startDate.before(endDate)){
+					return true;
+				}
+				else{
+					form.coverageStart.setInvalid(true);
+					form.coverageEnd.setInvalid(true);
+					return false;
+				}
+
+			}else{
+				return true;
+			}
+		}else{
+			return false;
+		}
 	}
 
 	private boolean validateDueDate() {
@@ -92,7 +121,42 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 		}else if("Malus".equalsIgnoreCase(form.bonusMalusOption.getValue())) {
 			return validateNumber(form.bonusMalusValue, false);
 		}else{
+			form.bonusMalusValue.setWarning(form.bonusMalusValue.getValue() != null);
 			return true;
+		}
+	}
+
+	private boolean validateValues() {
+		boolean validValues = validateTotalPremium() && validateSalesPremium() && validateBonusMalusValue();
+
+		if(validValues){
+			Double totalPremium = form.totalPremium.getValue();
+			Double salesPremium = form.salesPremium.getValue();
+			Double bonusMalusValue = form.bonusMalusValue.getValue();
+
+			if ( bonusMalusValue == null )
+				bonusMalusValue = 0.0;
+			bonusMalusValue = Math.abs(bonusMalusValue);
+			if ( "Bonus".equalsIgnoreCase(form.bonusMalusOption.getValue()) )
+				bonusMalusValue = -bonusMalusValue;
+
+			if(totalPremium != null && salesPremium != null){
+				if(totalPremium >= salesPremium + bonusMalusValue){
+					return true;
+				}
+				else{
+					form.totalPremium.setInvalid(true);
+					form.salesPremium.setInvalid(true);
+					if ( form.bonusMalusValue.getValue() != null )
+						form.bonusMalusValue.setInvalid(true);
+					return false;
+				}
+
+			}else{
+				return true;
+			}
+		}else{
+			return false;
 		}
 	}
 
