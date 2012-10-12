@@ -19,7 +19,7 @@ FormValidator<CasualtyDeleteForm> {
 	}
 
 	private boolean validateReason() {
-		return validateString(form.reason, 1, 256, false);
+		return validateString(form.reason, 1, 250, false);
 	}
 
 }

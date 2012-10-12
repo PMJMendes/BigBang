@@ -21,24 +21,24 @@ public class CasualtyFormValidator extends FormValidator<CasualtyForm> {
 		return new Result(valid, this.validationMessages);
 	}
 
-	private boolean validCaseStudy() {
-		return form.caseStudy.getValue() != null;
-	}
-
-	private boolean validateNotes() {
-		return validateString(form.notes, 0, 250, true);
-	}
-
-	private boolean validateDescription() {
-		return validateString(form.notes, 0, 250, true);
+	private boolean validateNumber() {
+		return validateString(form.number, 0, 250, true);
 	}
 
 	private boolean validateDate() {
 		return validateDate(form.date, false);
 	}
 
-	private boolean validateNumber() {
-		return validateString(form.number, 0, 250, true);
+	private boolean validateDescription() {
+		return validateString(form.notes, 0, 250, true);
+	}
+
+	private boolean validateNotes() {
+		return validateString(form.notes, 0, 250, true);
+	}
+
+	private boolean validCaseStudy() {
+		return form.caseStudy.getValue() != null;
 	}
 
 }
