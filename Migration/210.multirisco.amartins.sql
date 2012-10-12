@@ -689,3 +689,36 @@ inner join amartins.tblExercises x on x.FKPolicy=p.PK
 inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='4FB1D6A8-045E-4C11-9DCB-A05700E3FE39' and c.BPresent=1
 and p.FKSubLine='9F79A559-E805-4238-8EC0-9EE90119D1A4';
+
+/**  350 **/
+
+insert into amartins.tblBBPolicies (PK, PolicyNumber, FKProcess, FKCompany, FKSubLine, BeginDate, FKDuration, FKFractioning, MaturityDay, MaturityMonth, EndDate,
+PolicyNotes, FKMediator, BCaseStudy, FKStatus, Premium, DShareFolder, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+s.apolice PolicyNumber, null FKProcess, c.PK FKCompany, '0FA90AF3-A0F9-434D-AA41-A0E40119165B' FKSubLine, s.datini BeginDate, d.PK FKDuration, f.PK FKFractioning,
+s.diainicio MaturityDay, s.mesinicio MaturityMonth, s.datfim EndDate, substring(s.observ, 1, 250) PolicyNotes, m.PK FKMediator, 0 BCaseStudy, case s.situacao
+when 'P' then '6489D7DF-A090-40B9-BD5E-9F98012C8BED' when 'A' then '4F115B5C-0E23-444F-AA68-9F98012CA192'
+when 'U' then 'FCE79588-054B-458D-9515-9F98012CB80E' else '421E16B3-BE47-4D9C-9011-9F98012C945E' end FKStatus,
+round(case isnull(s.moeda, 1) when 2 then s.vpremio else s.vpremio/200.482 end, 2) Premium, s.DocuShare DShareFolder, s.MigrationID MigrationID
+from amartins..empresa.apolice s
+inner join amartins.tblcompanies c on c.MigrationID=s.comseg
+inner join bigbang.tblDurationProfiles d on left(d.Duration, 1) COLLATE DATABASE_DEFAULT = s.duracao COLLATE DATABASE_DEFAULT
+inner join bigbang.tblFractioning f on left(f.Fractioning, 1) COLLATE DATABASE_DEFAULT = s.fpagamento COLLATE DATABASE_DEFAULT
+left outer join amartins.tblmediators m on m.MigrationID=s.MEDIAPOL
+where s.ramo=350 and (s.situacao in ('P', 'N') or (s.situacao in ('A', 'U') and (s.datfim is null or s.datfim>'2009-12-31')))
+and s.cliente in (select MigrationID from amartins.tblBBClients);
+
+insert into amartins.tblInsuredObjects (PK, ObjName, FKPolicy, FKObjType, Address1, Address2, FKZipCode, InclusionDate, ExclusionDate, SiteDescription)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+isnull(s.texto1, 'Desconhecida') ObjName, p.PK FKPolicy, 'CD709854-DB59-424B-904A-9F9501403847' FKObjType,
+s.texto3 Address1, NULL Address2, NULL FKZipCode, NULL InclusionDate, NULL ExclusionDate, s.texto2 SiteDescription
+from amartins..empresa.apolice s
+inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
+where p.FKSubLine='0FA90AF3-A0F9-434D-AA41-A0E40119165B';
+
+insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+cast(s.vcapital as nvarchar(250)) Value, p.PK FKPolicy, '3DF5E059-804A-419A-943D-A0E4011A68C7' FKField, NULL FKObject, NULL FKExercise
+from amartins..empresa.apolice s
+inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
+where p.FKSubLine='0FA90AF3-A0F9-434D-AA41-A0E40119165B';
