@@ -575,8 +575,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void setToolbarEditMode(boolean b) {
-		toolbar.lockNonSaveOptions(b);
 		toolbar.setSaveModeEnabled(b);
+		toolbar.lockNonSaveOptions(b);
 	}
 
 	@Override
