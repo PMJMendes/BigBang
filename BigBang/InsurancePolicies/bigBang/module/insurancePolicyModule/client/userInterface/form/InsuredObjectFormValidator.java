@@ -64,7 +64,7 @@ public class InsuredObjectFormValidator extends
 	}
 
 	private boolean validateAddress() {
-		return validateAddress(form.address, true);
+		return validateAddress(form.address, false);
 	}
 
 	private boolean validateInclusionDate() {

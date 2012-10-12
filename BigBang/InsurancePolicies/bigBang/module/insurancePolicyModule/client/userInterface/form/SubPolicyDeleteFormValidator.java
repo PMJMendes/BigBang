@@ -18,7 +18,7 @@ public class SubPolicyDeleteFormValidator extends
 	}
 
 	private boolean validateReason() {
-		return validateString(form.reason, 0, 250, true);
+		return validateString(form.reason, 0, 250, false);
 	}
 
 }
