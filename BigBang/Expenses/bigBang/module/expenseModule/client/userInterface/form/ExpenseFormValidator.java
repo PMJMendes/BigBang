@@ -37,11 +37,14 @@ public class ExpenseFormValidator extends FormValidator<ExpenseForm> {
 	}
 
 	private boolean validateInsuredObject() {
+		if(form.belongsToPolicy.getValue() == null){
+			return false;
+		}
 		return validateInsuredObjectInList() || validateInsuredObjectInText();
 	}
 
 	private boolean validateInsuredObjectInList() {
-		if ( form.belongsToPolicy.getValue().equalsIgnoreCase("true") )
+		if (form.belongsToPolicy.getValue().equalsIgnoreCase("true") )
 			return validateGuid(form.insuredObject, false);
 		return true;
 	}

@@ -129,6 +129,7 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 
 		form = new ExpenseForm();
 		formWrapper.add(form);
+		form.setReadOnly(true);
 
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");

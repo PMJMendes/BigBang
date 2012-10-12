@@ -94,7 +94,6 @@ public class SerialExpenseCreationView extends View implements SerialExpenseCrea
 		toolbar.setEnabled(false);
 		form.setReadOnly(true);
 		expensePanel.navigateToDirectoryList(null);
-
 		wrapper.add(right);
 
 	}

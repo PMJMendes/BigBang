@@ -129,22 +129,24 @@ FormValidator<InsurancePolicyHeaderForm> {
 	private boolean validateCoInsurance() {
 		boolean valid = true;
 		CoInsurer[] value = form.coInsurers.getValue();
-		double total = 0;
-		for ( int i = 0; i < value.length; i++ )
-		{
-			if ( (value[i].percent == null) || (value[i].percent < 0) || (value[i].percent >= 100) )
+		if(value != null){
+			double total = 0;
+			for ( int i = 0; i < value.length; i++ )
 			{
-				valid = false;
-				break;
+				if ( (value[i].percent == null) || (value[i].percent < 0) || (value[i].percent >= 100) )
+				{
+					valid = false;
+					break;
+				}
+				total += value[i].percent;
+				if ( total >= 100 )
+				{
+					valid = false;
+					break;
+				}
 			}
-			total += value[i].percent;
-			if ( total >= 100 )
-			{
-				valid = false;
-				break;
-			}
+			form.coInsurers.setInvalid(!valid);
 		}
-		form.coInsurers.setInvalid(!valid);
 		return valid;
 	}
 

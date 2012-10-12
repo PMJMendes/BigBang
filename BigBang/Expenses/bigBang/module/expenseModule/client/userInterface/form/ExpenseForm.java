@@ -87,7 +87,7 @@ public class ExpenseForm extends FormView<Expense>{
 		belongsToPolicy = new RadioButtonFormField(true);
 		belongsToPolicy.addOption("true", "Presente na apólice");
 		belongsToPolicy.addOption("false", "Outra");
-
+		
 		coverageId = new ExpandableListBoxFormField("Cobertura");
 		coverageId.setMandatory(true);
 
@@ -166,7 +166,7 @@ public class ExpenseForm extends FormView<Expense>{
 		settleButton.setEnabled(false);
 		initialized = true;
 
-		belongsToPolicy.setValue("true");
+		belongsToPolicy.setValue("true", false);
 		
 		setValidator(new ExpenseFormValidator(this));
 	}
