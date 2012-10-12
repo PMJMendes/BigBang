@@ -51,7 +51,7 @@ public class ExpenseReturnReport
 		Policy lobjPolicy;
 		Company lobjCompany;
 		Coverage lobjCoverage;
-		ObjectBase lobjObject;
+		String lstrObject;
 		int i;
 
 		lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
@@ -91,22 +91,20 @@ public class ExpenseReturnReport
 				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
 				{
 					lobjPolicy = (Policy)lobjProc.GetParent().GetData();
+					lstrObject = ( lobjExpense.getAt(Expense.I.POLICYOBJECT) == null ? (String)lobjExpense.getAt(Expense.I.GENERICOBJECT) :
+							PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(Expense.I.POLICYOBJECT)).getLabel() );
 					lobjCoverage = ( lobjExpense.getAt(Expense.I.POLICYCOVERAGE) == null ? null :
 							PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(),
 							(UUID)lobjExpense.getAt(Expense.I.POLICYCOVERAGE)).GetCoverage() );
-					lobjObject = ( lobjExpense.getAt(Expense.I.POLICYOBJECT) == null ? null :
-						PolicyObject.GetInstance(Engine.getCurrentNameSpace(),
-						(UUID)lobjExpense.getAt(Expense.I.POLICYOBJECT)) );
 				}
 				else
 				{
 					lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
+					lstrObject = ( lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT) == null ? (String)lobjExpense.getAt(Expense.I.GENERICOBJECT) :
+							SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT)).getLabel() );
 					lobjCoverage = ( lobjExpense.getAt(Expense.I.SUBPOLICYCOVERAGE) == null ? null :
 							SubPolicyCoverage.GetInstance(Engine.getCurrentNameSpace(),
 							(UUID)lobjExpense.getAt(Expense.I.SUBPOLICYCOVERAGE)).GetCoverage() );
-					lobjObject = ( lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT) == null ? null :
-						SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(),
-						(UUID)lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT)) );
 				}
 				lobjCompany = lobjPolicy.GetCompany();
 			}
@@ -118,7 +116,7 @@ public class ExpenseReturnReport
 			larrTables[i] = new String[7];
 			larrTables[i][0] = lobjCompany.getLabel();
 			larrTables[i][1] = lobjPolicy.getLabel();
-			larrTables[i][2] = ( lobjObject == null ? "" : lobjObject.getLabel() );
+			larrTables[i][2] = ( lstrObject == null ? "" : lstrObject );
 			larrTables[i][3] = ( lobjCoverage == null ? "" : lobjCoverage.getLabel() );
 			larrTables[i][4] = ((Timestamp)lobjExpense.getAt(Expense.I.DATE)).toString().substring(0, 10);
 			larrTables[i][5] = String.format("%,.2f", ((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES)));
@@ -129,7 +127,7 @@ public class ExpenseReturnReport
 					mdblTotal.add((BigDecimal)lobjExpense.getAt(Expense.I.SETTLEMENT)) );
 		}
 
-		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
+		larrParams.put("Count", "" + mlngCount + " despesa" + (mlngCount == 1 ? "" : "s"));
 		larrParams.put("Total", String.format("%,.2f", mdblTotal));
 
 		return Generate(larrParams, new String[][][] {larrTables});
