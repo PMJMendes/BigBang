@@ -14,8 +14,8 @@ public class ExpenseFormValidator extends FormValidator<ExpenseForm> {
 
 		valid &= validateExpenseNumber();
 		valid &= validateCoverage();
-		valid &= validateInsuredObject();
 		valid &= validateBelongsToPolicy();
+		valid &= validateInsuredObject();
 		valid &= validateExpenseDate();
 		valid &= validateManager();
 		valid &= validateValue();
@@ -24,20 +24,12 @@ public class ExpenseFormValidator extends FormValidator<ExpenseForm> {
 		return new Result(valid, this.validationMessages);
 	}
 
-	private boolean validateSettlement() {
-		return validateNumber(form.settlement, 0.0, null, !form.tempIsManual);
+	private boolean validateExpenseNumber() {
+		return validateString(form.number, 0, 250, true);
 	}
 
-	private boolean validateValue() {
-		return validateNumber(form.value, 0.0, null, true);
-	}
-
-	private boolean validateManager() {
-		return validateGuid(form.manager, true);
-	}
-
-	private boolean validateExpenseDate() {
-		return validateDate(form.expenseDate, false);
+	private boolean validateCoverage() {
+		return validateGuid(form.coverageId, false);
 	}
 
 	private boolean validateBelongsToPolicy() {
@@ -50,22 +42,30 @@ public class ExpenseFormValidator extends FormValidator<ExpenseForm> {
 
 	private boolean validateInsuredObjectInList() {
 		if ( form.belongsToPolicy.getValue().equalsIgnoreCase("true") )
-			return validateGuid(form.insuredObject, true);
+			return validateGuid(form.insuredObject, false);
 		return true;
 	}
 
 	private boolean validateInsuredObjectInText() {
 		if ( !form.belongsToPolicy.getValue().equalsIgnoreCase("true") )
-			return validateString(form.insuredObjectName, 0, 250, true);
+			return validateString(form.insuredObjectName, 1, 250, false);
 		return true;
 	}
 
-	private boolean validateCoverage() {
-		return validateGuid(form.coverageId, true);
+	private boolean validateExpenseDate() {
+		return validateDate(form.expenseDate, false);
 	}
 
-	private boolean validateExpenseNumber() {
-		return validateString(form.number, 0, 250, true);
+	private boolean validateManager() {
+		return validateGuid(form.manager, true);
+	}
+
+	private boolean validateValue() {
+		return validateNumber(form.value, 0.0, null, true);
+	}
+
+	private boolean validateSettlement() {
+		return validateNumber(form.settlement, 0.0, null, !form.tempIsManual);
 	}
 
 }
