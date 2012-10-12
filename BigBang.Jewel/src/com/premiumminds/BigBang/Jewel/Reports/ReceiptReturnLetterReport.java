@@ -39,7 +39,6 @@ public class ReceiptReturnLetterReport
 	{
 		Company lobjCompany;
 		ObjectBase lobjZipCode, lobjType;
-		Contact[] larrContacts;
 		Contact lobjContact;
 		Timestamp ldtAux;
 		HashMap<String, String> larrParams;
@@ -53,16 +52,7 @@ public class ReceiptReturnLetterReport
 		int i;
 
 		lobjCompany = Company.GetInstance(Engine.getCurrentNameSpace(), midInsurer);
-		larrContacts = lobjCompany.GetCurrentContacts();
-		lobjContact = null;
-		for ( i = 0; i < larrContacts.length; i++ )
-		{
-			if ( Constants.CtTypeID_ReceiptReturn.equals(larrContacts[i].getAt(6)) )
-			{
-				lobjContact = larrContacts[i];
-				break;
-			}
-		}
+		lobjContact = lobjCompany.GetContactByType(Constants.CtTypeID_ReceiptReturn);
 		lbUseContact = (lobjContact != null) &&
 				((lobjContact.getAt(3) != null) || (lobjContact.getAt(4) != null) || (lobjContact.getAt(5) != null));
 		if ( (lbUseContact ? lobjContact.getAt(5) : lobjCompany.getAt(8)) == null )

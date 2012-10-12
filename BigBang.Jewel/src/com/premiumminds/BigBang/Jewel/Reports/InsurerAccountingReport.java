@@ -140,10 +140,10 @@ public class InsurerAccountingReport
 
 		larrParams = new HashMap<String, String>();
 		larrParams.put("InsurerName", (String)lobjInsurer.getAt(0));
-		larrParams.put("InsurerAddress1", (lobjInsurer.getAt(2) == null ? "" : (String)lobjInsurer.getAt(2)));
-		larrParams.put("InsurerAddress2", (lobjInsurer.getAt(3) == null ? "" : (String)lobjInsurer.getAt(3)));
+		larrParams.put("InsurerAddress1", (lobjInsurer.getAt(6) == null ? "" : (String)lobjInsurer.getAt(6)));
+		larrParams.put("InsurerAddress2", (lobjInsurer.getAt(7) == null ? "" : (String)lobjInsurer.getAt(7)));
 		larrParams.put("InsurerZipCode", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(0)));
-		larrParams.put("InsurerZipLocal", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(1)));
+		larrParams.put("InsurerZipLocal", ((lobjZipCode == null) || (lobjZipCode.getAt(1) == null) ? "" : (String)lobjZipCode.getAt(1)));
 		larrParams.put("Date", ldtAux.toString().substring(0, 10));
 
 		larrTables = new String[larrDetails.length][];

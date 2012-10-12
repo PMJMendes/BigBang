@@ -628,6 +628,7 @@ public class Constants
 	// Contact Types
 	public static final UUID CtTypeID_General       = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");
 	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
+	public static final UUID CtTypeID_ExpenseMaps   = UUID.fromString("1607EEDB-C9C2-4E1A-B453-A03D00BEAB18");
 
 	// Contact Info Types
 	public static final UUID CInfoID_Email = UUID.fromString("96467849-6FE1-4113-928C-9EDF00F40FB9");
@@ -664,6 +665,7 @@ public class Constants
 	public static final int FKOwner_In_ContactInfo = 0;
 	public static final int FKOwnerType_In_Contact = 1;
 	public static final int FKOwner_In_Contact = 2;
+	public static final int FKType_In_Contact = 6;
 	public static final int FKOwner_In_DocInfo = 0;
 	public static final int FKOwnerType_In_Document = 1;
 	public static final int FKOwner_In_Document = 2;
