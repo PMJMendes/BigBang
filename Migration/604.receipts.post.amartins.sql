@@ -16,7 +16,7 @@ amartins.tblMediators m
 where (p.PK=p2.FKData or p.PK=p3.FKData)
 and (m.PK=r.FKMediator or (r.FKMediator is null and m.PK=p.FKMediator) or
 (r.FKMediator is null and p.FKMediator is null and m.PK=c.FKMediator))
-and m.MediatorName='(Directo)')
+and m.FKProfile='F60BB994-3E08-47C2-9CC3-9EFC013D35BE')
 and n.FKController='2FE06BB6-4858-473A-B15B-A01300D76C71')
 
 /** Perfil simples (AMartins) **/
