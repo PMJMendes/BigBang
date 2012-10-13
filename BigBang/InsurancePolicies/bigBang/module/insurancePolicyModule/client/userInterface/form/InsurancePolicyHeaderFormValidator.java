@@ -74,21 +74,15 @@ FormValidator<InsurancePolicyHeaderForm> {
 	}
 
 	private boolean validateEndDate() {
-		if(validateDuration()){
-			if(BigBangConstants.TypifiedListValues.INSURANCE_POLICY_DURATION.TEMPORARY.equalsIgnoreCase(form.duration.getValue())){
-				return validateDate(form.endDate, false);
-			}else{
-				return validateDate(form.endDate, true);
-			}
-
+		if(BigBangConstants.TypifiedListValues.INSURANCE_POLICY_DURATION.TEMPORARY.equalsIgnoreCase(form.duration.getValue())){
+			return validateDate(form.endDate, false);
+		}else{
+			return validateDate(form.endDate, true);
 		}
-		return true;
 	}
 
 	private boolean validateStartAndEndDate() {
-		boolean validDates = validateEndDate() && validateStartDate();
-
-		if(validDates){
+		if(validateEndDate() && validateStartDate()){
 			Date startDate = form.startDate.getValue();
 			Date endDate = form.endDate.getValue();
 
