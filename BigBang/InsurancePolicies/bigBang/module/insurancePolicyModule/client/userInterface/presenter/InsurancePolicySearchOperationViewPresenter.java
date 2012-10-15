@@ -890,6 +890,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					public void onResponse(InsurancePolicy response) {
 						isEditModeEnabled = true;
 						view.setToolbarEditMode(true);
+						view.allowEdit(true);
 						view.allowManagerChange(true);
 						view.getPolicySelector().setValue(response);
 						view.setHeaders(response.coverages, response.columns);
