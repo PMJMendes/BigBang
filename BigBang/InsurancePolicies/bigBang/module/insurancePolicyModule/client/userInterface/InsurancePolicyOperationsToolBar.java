@@ -203,7 +203,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 			
 		});
-		addItem(SUB_MENU.EXECUTE, clientTransfer);
+		addItem(SUB_MENU.DATA, clientTransfer);
 		
 	}
 	

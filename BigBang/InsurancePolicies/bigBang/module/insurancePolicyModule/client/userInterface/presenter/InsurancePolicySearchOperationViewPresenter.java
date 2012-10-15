@@ -239,6 +239,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
+				if(policyId.equals("new")){
+					return;
+				}
 				@SuppressWarnings("unchecked")
 				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
 				removeNewListEntry();
@@ -511,7 +514,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.addEntryToList(entry);
 		}
 
-		if(view.getList().getAll().size() > 0){
+		if(view.getList().getAll().size() > 0 && !policyId.equals("new")){
 			removeNewListEntry();
 		}
 
