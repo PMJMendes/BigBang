@@ -153,18 +153,21 @@ public class ExcelConnector
 			return;
 		}
 
-		try
+		if ( lstr.indexOf(',') >= 0 )
 		{
-			ldbl = new BigDecimal(lstr.replaceAll(",", ""));
-		}
-		catch (Throwable e)
-		{
-			ldbl = null;
-		}
-		if ( (ldbl != null) && (lstr.indexOf('.') >= 0) )
-		{
-			pobjCell.setCellValue(ldbl.doubleValue());
-			return;
+			try
+			{
+				ldbl = new BigDecimal(lstr.replaceAll(".", "").replaceAll(",", "."));
+			}
+			catch (Throwable e)
+			{
+				ldbl = null;
+			}
+			if ( ldbl != null )
+			{
+				pobjCell.setCellValue(ldbl.doubleValue());
+				return;
+			}
 		}
 
 		pobjCell.setCellValue(lstr);
