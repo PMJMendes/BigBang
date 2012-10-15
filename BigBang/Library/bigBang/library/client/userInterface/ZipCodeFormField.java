@@ -220,6 +220,7 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		expandImage.setVisible(!readonly);
 
 		code.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
+		code.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
 
 	}
 

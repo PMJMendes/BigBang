@@ -34,9 +34,7 @@ public class ZipCodeForm extends FormView<ZipCode>{
 		wrapper.setWidget(0, 0, new Label("Código postal:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 		wrapper.setWidget(0, 1, code);
-		code.setReadOnly(true);
-		code.addStyleName("readonly");
-
+		
 		wrapper.setWidget(1, 0, new Label("Localidade:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 		wrapper.setWidget(1, 1, city);
@@ -54,7 +52,6 @@ public class ZipCodeForm extends FormView<ZipCode>{
 		wrapper.setWidget(4, 1, country);
 		country.getElement().getStyle().setMargin(0, Unit.PX);
 	
-		
 		addWidget(wrapper);
 	}
 	
