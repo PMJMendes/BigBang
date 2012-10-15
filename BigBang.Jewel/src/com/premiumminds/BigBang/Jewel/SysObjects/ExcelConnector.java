@@ -2,7 +2,6 @@ package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Enumeration;
 
@@ -11,6 +10,7 @@ import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -127,7 +127,8 @@ public class ExcelConnector
 		GenericElement lobjAux;
 		String lstr;
 		Timestamp ldt;
-		BigDecimal ldbl;
+		Double ldbl;
+		CellStyle lst;
 
 		lobjAux = pobjSource.getElement((String)pobjSource.keys().nextElement());
 
@@ -149,7 +150,11 @@ public class ExcelConnector
 		}
 		if ( ldt != null )
 		{
+			lst = pobjCell.getSheet().getWorkbook().createCellStyle();
+			lst.setDataFormat(pobjCell.getSheet().getWorkbook().getCreationHelper().createDataFormat()
+					.getFormat("dd-mm-yyyy"));
 			pobjCell.setCellValue(ldt);
+			pobjCell.setCellStyle(lst);
 			return;
 		}
 
@@ -157,7 +162,7 @@ public class ExcelConnector
 		{
 			try
 			{
-				ldbl = new BigDecimal(lstr.replaceAll(".", "").replaceAll(",", "."));
+				ldbl = Double.valueOf(lstr.replace(".", "").replace(",", "."));
 			}
 			catch (Throwable e)
 			{
