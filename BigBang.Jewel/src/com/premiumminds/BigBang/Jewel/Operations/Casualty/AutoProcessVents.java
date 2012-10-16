@@ -39,7 +39,7 @@ public class AutoProcessVents
 		b = false;
 		for ( i = 0; i < larrSubs.length; i++ )
 		{
-			if ( larrSubs[i].GetScript().IsTopLevel() && larrSubs[i].IsRunning() )
+			if ( Constants.ProcID_SubCasualty.equals(larrSubs[i].GetScriptID()) && larrSubs[i].IsRunning() )
 			{
 				b = true;
 				break;
