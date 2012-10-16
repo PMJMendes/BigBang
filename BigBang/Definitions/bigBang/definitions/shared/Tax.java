@@ -18,8 +18,8 @@ public class Tax
 	public String refersToEntityId;
 	public int columnOrder;
 	public boolean mandatory;
-	public String tag; //Novo!
-	public boolean visible; //Novo!
+	public String tag;
+	public boolean visible;
 
 	public Tax(){}
 	

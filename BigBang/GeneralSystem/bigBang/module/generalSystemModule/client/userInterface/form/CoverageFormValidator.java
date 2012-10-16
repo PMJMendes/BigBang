@@ -32,7 +32,7 @@ public class CoverageFormValidator extends FormValidator<CoverageForm> {
 	}
 	
 	private boolean validateOrder(){
-		return validateNumber(form.order, false);
+		return validateNumber(form.order, true);
 	}
 
 }

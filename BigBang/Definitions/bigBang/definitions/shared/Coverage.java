@@ -12,6 +12,7 @@ public class Coverage
 	public String subLineId;
 	public boolean isMandatory;
 	public boolean isHeader;
+	public String tag; //Novo!
 	public Integer order;
 	public Tax[] taxes;
 
@@ -26,6 +27,8 @@ public class Coverage
 		this.subLineId = original.subLineId;
 		this.isMandatory = original.isMandatory;
 		this.isHeader = original.isHeader;
+		this.tag = original.tag;
+		this.order = original.order;
 		this.taxes = original.taxes;
 	}
 }
