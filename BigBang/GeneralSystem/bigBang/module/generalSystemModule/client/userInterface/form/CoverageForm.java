@@ -23,6 +23,7 @@ public class CoverageForm extends FormView<Coverage> {
 		isMandatory = new CheckBoxFormField("Obrigatória");
 		isHeader = new CheckBoxFormField("Cabeçalho");
 		order = new NumericTextBoxFormField("Índice", false);
+		tag = new TextBoxFormField("Tag");
 		
 		addFormField(name, false);
 		addFormFieldGroup(new FormField[]{
@@ -30,7 +31,7 @@ public class CoverageForm extends FormView<Coverage> {
 				isHeader
 		}, true);
 		addFormFieldGroup(new FormField[]{
-				order
+				order, tag
 		}, true);
 		setValidator(new CoverageFormValidator(this));
 	}
