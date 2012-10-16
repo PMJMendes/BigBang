@@ -74,7 +74,7 @@ from credegs..empresa.bancos;
 /*insert into bigbang.tblProfiles (PK, PfName) values ('258A1C88-C916-40CB-8CD5-9EB8007F2AEB', N'Sem Perfil');*/
 insert into bigbang.tblWorkspaces (PK, FKProfile, FKNameSpace) values ('28A44306-131C-4A18-BCF2-9EB000685EEA', '061388D9-16A6-443F-A69E-9EB000685026', 'C37B81F0-860F-4868-9177-9E15008B3EFD');
 insert into bigbang.tblUsers (PK, FullName, Username, Passwd, FKProfile) values ('091B8442-B7B0-40FA-B517-9EB00068A390', N'Administrator', N'root', 'C5-06-09-A7-D7-96-23-72-F0-C6-F4-F3-10-DD-88-CA', '061388D9-16A6-443F-A69E-9EB000685026');
-insert into bigbang.tblBBCostCenters (PK, CCCode, CCName, MigrationID) values ('FC6BB26D-90E2-46C9-9C79-9ED900C124AE', N'INF', N'Informática', 13);
+insert into bigbang.tblBBCostCenters (PK, CCCode, CCName, MigrationID) values ('FC6BB26D-90E2-46C9-9C79-9ED900C124AE', N'005', N'Informática', 13);
 insert into bigbang.tblUser2 (PK, FKUser, FKCostCenter, MigrationID) values ('ABD75E9E-FB45-4E47-A261-9ED900C2ABBD', '091B8442-B7B0-40FA-B517-9EB00068A390', 'FC6BB26D-90E2-46C9-9C79-9ED900C124AE', 91);
 
 insert into bigbang.tblLineCategories (PK, LineCatName) values ('53DB03E7-F423-4656-A23A-9EE9010A5B87', N'Acidentes de Trabalho');
