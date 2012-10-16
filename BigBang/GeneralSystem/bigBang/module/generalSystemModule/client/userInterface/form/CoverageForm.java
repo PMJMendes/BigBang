@@ -13,8 +13,8 @@ public class CoverageForm extends FormView<Coverage> {
 	protected CheckBoxFormField isMandatory;
 	protected CheckBoxFormField isHeader;
 	protected NumericTextBoxFormField order;
-	
 	private Coverage coverage;
+	protected TextBoxFormField tag;
 	
 	public CoverageForm(){
 		addSection("Detalhes da cobertura");
@@ -42,9 +42,10 @@ public class CoverageForm extends FormView<Coverage> {
 		coverage.name = name.getValue();
 		coverage.isMandatory = isMandatory.getValue();
 		coverage.isHeader = isHeader.getValue();
-		
 		Double orderValue = order.getValue();
 		coverage.order = orderValue == null ? null : orderValue.intValue();
+		coverage.tag = tag.getValue();
+		
 		return coverage;
 	}
 
@@ -55,6 +56,8 @@ public class CoverageForm extends FormView<Coverage> {
 		this.isHeader.setValue(info.isHeader);
 		this.isMandatory.setValue(info.isMandatory);
 		this.order.setValue(info.order == null ? null : info.order.doubleValue());
+		this.tag.setValue(info.tag);
+
 	}
 
 	@Override

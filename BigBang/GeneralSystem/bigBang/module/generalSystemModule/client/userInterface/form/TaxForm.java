@@ -104,6 +104,7 @@ public class TaxForm extends FormView<Tax> {
 		newTax.variesByExercise = variesByExercise.getValue();
 		newTax.variesByObject = variesByObject.getValue();
 		newTax.visible = visible.getValue();
+		newTax.tag = tag.getValue();
 
 		return newTax;
 	}
@@ -121,6 +122,7 @@ public class TaxForm extends FormView<Tax> {
 		unitsLabel.setValue(info.unitsLabel);
 		columnOrder.setValue(new Double(info.columnOrder));
 		visible.setValue(info.visible);
+		tag.setValue(info.tag);
 	}
 
 	@SuppressWarnings("unchecked")

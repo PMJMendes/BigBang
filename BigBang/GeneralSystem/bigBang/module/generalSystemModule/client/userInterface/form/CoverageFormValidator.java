@@ -15,6 +15,7 @@ public class CoverageFormValidator extends FormValidator<CoverageForm> {
 		valid &= validateIsMandatory();
 		valid &= validateIsHeader();
 		valid &= validateOrder();
+		valid &= validateTag();
 		
 		return new Result(valid, this.validationMessages);
 	}
@@ -33,6 +34,10 @@ public class CoverageFormValidator extends FormValidator<CoverageForm> {
 	
 	private boolean validateOrder(){
 		return validateNumber(form.order, true);
+	}
+	
+	private boolean validateTag() {
+		return validateString(form.tag, 0, 250, true);
 	}
 
 }
