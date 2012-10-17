@@ -26,6 +26,6 @@ public class TestSubCasualtyCloseProcess
 			}
 		};
 
-		Services.subCasualtyService.closeProcess("8C85AB5C-9C90-404D-B1F3-A03C0116BCD9", callback );
+		Services.subCasualtyService.closeProcess("A3381236-4356-49E1-A000-A0E900648C5F", callback );
 	}
 }
