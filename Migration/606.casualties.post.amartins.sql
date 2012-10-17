@@ -6,6 +6,12 @@ inner join amartins.tblBBCasualties c on c.PK=p.FKData
 inner join amartins..empresa.sinistros x on x.ordem=c.CNumber
 where x.estado='F' and x.datafecho is not null;
 
+update amartins.tblPNProcesses set IsRunning=0
+from amartins.tblPNProcesses p
+inner join amartins.tblBBSubCasualties c on c.PK=p.FKData
+inner join amartins..empresa.sinistros x on x.ordem + 0.1 = c.SCNumber
+where x.estado='F' and x.datafecho is not null;
+
 /** Fechados **/
 
 update amartins.tblPNNodes set NodeCount=0 where PK in
