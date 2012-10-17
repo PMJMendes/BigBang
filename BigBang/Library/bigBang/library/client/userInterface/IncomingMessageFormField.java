@@ -236,7 +236,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
 
 	@Override
-	public void setReadOnlyInternal(boolean readonly) {
+	protected void setReadOnlyInternal(boolean readonly) {
 		readOnly = readonly;
 		notes.setReadOnlyInternal(readonly);
 		notes.showToolbar(!readonly);

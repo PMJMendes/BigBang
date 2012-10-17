@@ -165,7 +165,7 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 	}
 
 	public void showLoading(boolean show) {
-		this.domainList.setReadOnlyInternal(show);
+		this.domainList.setReadOnly(show);
 		this.usernameField.setEnabled(!show);
 		this.passwordField.setEnabled(!show);
 		this.submitButton.setEnabled(!show && (this.passwordField.getText().length() > 0 && this.usernameField.getText().length() > 0));

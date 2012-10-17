@@ -96,7 +96,7 @@ public class RadioButtonFormField extends FormField<String> {
 	}
 
 	@Override
-	public void setReadOnlyInternal(boolean readOnly) {
+	protected void setReadOnlyInternal(boolean readOnly) {
 		if(!editable)
 			return;
 		for(RadioButton r : this.radioButtons.keySet()){

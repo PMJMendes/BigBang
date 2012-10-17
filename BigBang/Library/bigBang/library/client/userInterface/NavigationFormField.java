@@ -98,7 +98,7 @@ public class NavigationFormField extends FormField<NavigationHistoryItem> {
 	}
 
 	@Override
-	public void setReadOnlyInternal(boolean readonly) {
+	protected void setReadOnlyInternal(boolean readonly) {
 		return;
 	}
 

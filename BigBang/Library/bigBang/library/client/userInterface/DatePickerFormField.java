@@ -266,7 +266,7 @@ public class DatePickerFormField extends FormField<Date> {
 	}
 	
 	@Override
-	public void setReadOnlyInternal(boolean readonly) {
+	protected void setReadOnlyInternal(boolean readonly) {
 		if(!editable)
 			return;
 		if(readonly){

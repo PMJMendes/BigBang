@@ -141,7 +141,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				bonusMalusValue.setEditable(event.getValue() != null && !event.getValue().isEmpty());
-				bonusMalusValue.setReadOnlyInternal(isReadOnly());
+				bonusMalusValue.setReadOnly(isReadOnly());
 				bonusMalusValue.setValue(null);
 			}
 		});
@@ -158,8 +158,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);
 		if(mediator != null && manager != null){
-			mediator.setReadOnlyInternal(true);
-			manager.setReadOnlyInternal(true);
+			mediator.setReadOnly(true);
+			manager.setReadOnly(true);
 		}
 	}
 

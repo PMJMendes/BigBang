@@ -74,7 +74,7 @@ public class TwoKeyTableView extends View {
 		}
 
 		@Override
-		public void setReadOnlyInternal(boolean readonly) {
+		protected void setReadOnlyInternal(boolean readonly) {
 			this.field.setReadOnly(readonly);
 		}
 

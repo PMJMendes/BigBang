@@ -141,7 +141,7 @@ public class ExpenseForm extends FormView<Expense>{
 			@Override
 			public void onClick(ClickEvent event) {
 				settlement.setEditable(true);
-				settlement.setReadOnlyInternal(false);
+				settlement.setReadOnly(false);
 				setManualSettlement(true);
 			}
 		});
@@ -289,7 +289,7 @@ public class ExpenseForm extends FormView<Expense>{
 		settlement.setEditable(isManual);
 		settlement.setMandatory(isManual);
 		if(isReadOnly()){
-			settlement.setReadOnlyInternal(true);
+			settlement.setReadOnly(true);
 		}
 	}
 

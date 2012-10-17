@@ -80,7 +80,7 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 		CAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE");
 		CAE.setFieldWidth("400px");
 		CAE.setPopupWidth("600px");
-		CAE.setReadOnlyInternal(true);
+		CAE.setReadOnly(true);
 		activityObservations = new TextBoxFormField("Observações sobre actividade");
 		numberOfWorkers = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CompanySizes, "Número de trabalhadores");
 		gender = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.GENDERS, "Sexo");
@@ -330,7 +330,7 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 
 	public void setForCreate(){
 		this.clientManager.setEditable(true);
-		this.clientManager.setReadOnlyInternal(false);
+		this.clientManager.setReadOnly(false);
 		this.name.getNativeField().selectAll();
 	}
 

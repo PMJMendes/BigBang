@@ -70,10 +70,10 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 			if(!initialized){
 				docName = new TextBoxFormField();
 				docName.setFieldWidth("170px");
-				docName.setReadOnlyInternal(true);
+				docName.setReadOnly(true);
 				docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "");
 				docType.showLabel(false);
-				docType.setReadOnlyInternal(true);
+				docType.setReadOnly(true);
 				mimeImg = new Image();
 				filename = getFormatedLabel();
 				filename.getElement().getStyle().setFontSize(11, Unit.PX);
@@ -105,8 +105,8 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 
 					@Override
 					public void onCheckedStateChanged(CheckedStateChangedEvent event) {
-						docName.setReadOnlyInternal(!event.getChecked());
-						docType.setReadOnlyInternal(!event.getChecked());
+						docName.setReadOnly(!event.getChecked());
+						docType.setReadOnly(!event.getChecked());
 						if(!event.getChecked()){
 							docName.clear();
 							docType.clear();

@@ -105,7 +105,7 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 			formFields[i].setLabel(value[i].fieldName);
 			formFields[i].setUnitsLabel(value[i].unitsLabel);
 			formFields[i].setEditable(!value[i].readOnly);
-			formFields[i].setReadOnlyInternal(this.readOnly);
+			formFields[i].setReadOnly(this.readOnly);
 			addFormField(formFields[i], true);
 		}
 
@@ -135,7 +135,7 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 		}
 		for(int i = 0; i<value.length; i++){
 			if(value[i].coverageIndex == index){
-				formFields[i].setReadOnlyInternal(readOnly || !enable);
+				formFields[i].setReadOnly(readOnly || !enable);
 				if(!enable){
 					formFields[i].clear();
 				}

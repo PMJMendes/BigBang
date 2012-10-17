@@ -206,6 +206,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 			public void onNavigationStateChanged(NavigationStateChangedEvent event) {
 				if(event.getObject() instanceof ImageHandlerPanel){
 					view.enablePolicyNumber(true);
+					view.getForm().validate();
 				}
 				else{
 					view.clear();
@@ -385,6 +386,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 					expensePolicyWrapper.policy = response;
 					view.setSubPolicies(response.id);
 					view.setSubPolicyEnabled(true);
+					view.getForm().validate();
 				}
 				else{
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Esta apólice não permite a criação de despesas de saúde."), TYPE.ALERT_NOTIFICATION));

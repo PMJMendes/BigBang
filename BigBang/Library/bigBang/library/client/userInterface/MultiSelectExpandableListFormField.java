@@ -104,7 +104,7 @@ public class MultiSelectExpandableListFormField extends FormField<String[]> {
 	}
 
 	@Override
-	public void setReadOnlyInternal(boolean readonly) {
+	protected void setReadOnlyInternal(boolean readonly) {
 		// TODO Auto-generated method stub
 
 	}

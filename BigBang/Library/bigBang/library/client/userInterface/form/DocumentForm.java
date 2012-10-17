@@ -116,8 +116,8 @@ public abstract class DocumentForm extends FormView<Document>{
 				this.setVisible(editable);
 				return;
 			}
-			getInfo().setReadOnlyInternal(!editable);
-			getInfoValue().setReadOnlyInternal(!editable);
+			getInfo().setReadOnly(!editable);
+			getInfoValue().setReadOnly(!editable);
 			remove.setVisible(editable);
 			add.setVisible(editable);
 		}
@@ -456,7 +456,7 @@ public abstract class DocumentForm extends FormView<Document>{
 		docuShareFileButton.setVisible(!b);
 		removeFile.setVisible(b);
 		filename.setVisible(b);
-		note.setReadOnlyInternal(b);
+		note.setReadOnly(b);
 		mimeImageFileName.setVisible(b);
 
 		if(b){
@@ -541,7 +541,7 @@ public abstract class DocumentForm extends FormView<Document>{
 	public void setReadOnly(boolean readOnly) {
 
 		if(initialized){
-			note.setReadOnlyInternal(readOnly);
+			note.setReadOnly(readOnly);
 			removeFile.setEnabled(!readOnly);
 			docuShareFileButton.setEnabled(!readOnly);
 			fileButton.setEnabled(!readOnly);

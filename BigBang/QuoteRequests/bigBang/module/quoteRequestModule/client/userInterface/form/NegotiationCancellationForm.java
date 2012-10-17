@@ -27,10 +27,10 @@ public class NegotiationCancellationForm extends FormView<Cancellation>{
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
 				if(event.getValue()){
-					message.setReadOnlyInternal(false);
+					message.setReadOnly(false);
 				}
 				else{
-					message.setReadOnlyInternal(true);
+					message.setReadOnly(true);
 				}
 			}
 		});

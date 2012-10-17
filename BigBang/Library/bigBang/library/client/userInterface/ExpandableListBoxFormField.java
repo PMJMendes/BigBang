@@ -257,7 +257,7 @@ TypifiedListClient {
 	}
 
 	@Override
-	public void setReadOnlyInternal(boolean readonly) {
+	protected void setReadOnlyInternal(boolean readonly) {
 		if(editable){
 			super.setReadOnlyInternal(readonly);
 			managementPanel.setReadOnly(readonly);

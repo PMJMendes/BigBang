@@ -22,7 +22,7 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 		addFormField(requestSubject);
 		addFormField(replyLimit);
 		
-		messageFormField.setReadOnlyInternal(false);
+		messageFormField.setReadOnly(false);
 		addFormField(messageFormField);
 		replyLimit.setFieldWidth("50px");
 
@@ -58,9 +58,9 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 		if(requestSubject == null){
 			return;
 		}
-		requestSubject.setReadOnlyInternal(readOnly);
-		replyLimit.setReadOnlyInternal(readOnly);
-		messageFormField.setReadOnlyInternal(readOnly);
+		requestSubject.setReadOnly(readOnly);
+		replyLimit.setReadOnly(readOnly);
+		messageFormField.setReadOnly(readOnly);
 	}
 
 	public IncomingMessageFormField getIncomingMessageFormField(){

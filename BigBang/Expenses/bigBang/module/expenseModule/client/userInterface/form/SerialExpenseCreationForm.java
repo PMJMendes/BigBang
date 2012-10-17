@@ -121,7 +121,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		subPolicySelectionPanel = new InsuranceSubPolicySelectionViewPresenter((InsuranceSubPolicySelectionView) GWT.create(InsuranceSubPolicySelectionView.class));
 		subPolicySelectionPanel.go();
 		subPolicyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, "Apólice Adesão", subPolicySelectionPanel);
-		subPolicyReference.setReadOnlyInternal(false);
+		subPolicyReference.setReadOnly(false);
 
 		subPolicyReference.addValueChangeHandler(new ValueChangeHandler<String>() {
 
@@ -225,7 +225,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 			@Override
 			public void onClick(ClickEvent event) {
 				settlement.setEditable(true);
-				settlement.setReadOnlyInternal(false);
+				settlement.setReadOnly(false);
 				setManualSettlement(true);
 			}
 		});
@@ -255,7 +255,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 	protected void onNoSubPolicyChange(boolean b){
 		clearSubPolicy();
 		setSubPolicyEnabled(!b);
-		noSubPolicy.setReadOnlyInternal(false);
+		noSubPolicy.setReadOnly(false);
 		clearExpense();
 		noSubPolicy.setValue(b, false);
 		if(b)
@@ -400,7 +400,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 	}
 
 	public void enablePolicy(boolean b) {
-		policyNumber.setReadOnlyInternal(!b);
+		policyNumber.setReadOnly(!b);
 		verifyPolicyNumber.setEnabled(b);
 
 		if(b){
@@ -417,8 +417,8 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 	}
 
 	public void setSubPolicyEnabled(boolean b) {
-		noSubPolicy.setReadOnlyInternal(!b);
-		subPolicyReference.setReadOnlyInternal(!b);
+		noSubPolicy.setReadOnly(!b);
+		subPolicyReference.setReadOnly(!b);
 		subPolicySelectionPanel.setReadOnly(!b);
 	}
 
@@ -427,14 +427,14 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 	}
 
 	public void setExpenseEnabled(boolean b) {
-		expenseValue.setReadOnlyInternal(!b);
-		coverageId.setReadOnlyInternal(!b);
-		expenseDate.setReadOnlyInternal(!b);
-		insuredObject.setReadOnlyInternal(!b);
-		insuredObjectName.setReadOnlyInternal(!b);
-		belongsToPolicy.setReadOnlyInternal(!b);
+		expenseValue.setReadOnly(!b);
+		coverageId.setReadOnly(!b);
+		expenseDate.setReadOnly(!b);
+		insuredObject.setReadOnly(!b);
+		insuredObjectName.setReadOnly(!b);
+		belongsToPolicy.setReadOnly(!b);
 		settleButton.setEnabled(b);
-		notes.setReadOnlyInternal(!b);
+		notes.setReadOnly(!b);
 	}
 
 	public void clearExpense() {
@@ -471,7 +471,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		noSubPolicy.clear();
 		settleButton.setVisible(true);
 		settleLabel.setVisible(true);
-		settlement.setReadOnlyInternal(true);
+		settlement.setReadOnly(true);
 		belongsToPolicy.setValue("true");
 		notes.setValue(null);
 	}

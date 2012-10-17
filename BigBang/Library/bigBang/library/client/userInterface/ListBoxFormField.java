@@ -89,7 +89,7 @@ public class ListBoxFormField extends FormField<String> {
 	}
 
 	@Override
-	public void setReadOnlyInternal(boolean readonly) {
+	protected void setReadOnlyInternal(boolean readonly) {
 		if(!editable)
 			return;
 		this.listBox.setEnabled(!readonly);

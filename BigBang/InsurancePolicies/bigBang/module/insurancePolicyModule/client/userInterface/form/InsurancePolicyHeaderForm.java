@@ -196,7 +196,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 						endDate.setMandatory(true);
 					}else{
 						maturityDate.setEditable(true);
-						maturityDate.setReadOnlyInternal(isReadOnly());
+						maturityDate.setReadOnly(isReadOnly());
 						endDate.setMandatory(false);
 					}
 				}

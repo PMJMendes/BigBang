@@ -95,7 +95,7 @@ public class TextAreaFormField extends FormField<String> {
 	}
 
 	@Override
-	public void setReadOnlyInternal(boolean readOnly) {
+	protected void setReadOnlyInternal(boolean readOnly) {
 		if(!editable)
 			return;
 		TextArea field = ((TextArea)this.field);

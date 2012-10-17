@@ -119,8 +119,8 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 				this.setVisible(editable);
 				return;
 			}
-			agency.setReadOnlyInternal(!editable);
-			infoValue.setReadOnlyInternal(!editable);
+			agency.setReadOnly(!editable);
+			infoValue.setReadOnly(!editable);
 			remove.setVisible(editable);
 
 		}
@@ -194,7 +194,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 
 		protected void setPercentageEditable(boolean b) {
 			if(!agency.isReadOnly()){
-				infoValue.setReadOnlyInternal(!b);
+				infoValue.setReadOnly(!b);
 				if(!b){
 					infoValue.setValue(null);
 					refreshPercentageValues();
@@ -314,7 +314,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 	}
 
 	@Override
-	public void setReadOnlyInternal(boolean readonly) {
+	protected void setReadOnlyInternal(boolean readonly) {
 
 		readOnly = readonly;
 

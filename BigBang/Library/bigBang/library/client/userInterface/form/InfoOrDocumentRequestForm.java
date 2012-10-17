@@ -63,10 +63,10 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				if(!event.getValue().isEmpty()){
-					text.setReadOnlyInternal(false);
+					text.setReadOnly(false);
 				}
 				else{
-					text.setReadOnlyInternal(true);
+					text.setReadOnly(true);
 				}
 				text.setTypifiedTexts(event.getValue());
 			}
@@ -89,7 +89,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 			}
 		});
 
-		text.setReadOnlyInternal(true);
+		text.setReadOnly(true);
 		
 		setValidator(new InfoOrDocumentRequestFormValidator(this));
 	}

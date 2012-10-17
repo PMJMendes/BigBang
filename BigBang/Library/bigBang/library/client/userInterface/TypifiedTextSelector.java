@@ -132,7 +132,7 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 	}
 
 	@Override
-	public void setReadOnlyInternal(boolean readonly) {
+	protected void setReadOnlyInternal(boolean readonly) {
 		subject.setReadOnlyInternal(readonly);
 		textBody.setReadOnlyInternal(readonly);
 		labels.setReadOnlyInternal(readonly);

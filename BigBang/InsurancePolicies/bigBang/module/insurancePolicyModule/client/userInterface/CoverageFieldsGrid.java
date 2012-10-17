@@ -156,7 +156,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 			enableExtraFields(i-1, enable);
 			for(int j = 2; j<fields[0].length; j++){
 				if(fields[i][j] != null){
-					fields[i][j].setReadOnlyInternal(readOnly || !enable);
+					fields[i][j].setReadOnly(readOnly || !enable);
 					if(!enable){
 						fields[i][j].clear();
 					}
@@ -205,7 +205,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 			fields[row][column].setFieldWidth("100px");
 			fields[row][column].setWidth("130px");
 			fields[row][column].setEditable(!formFields[i].readOnly);
-			fields[row][column].setReadOnlyInternal(this.readOnly);
+			fields[row][column].setReadOnly(this.readOnly);
 			grid.setWidget(row, column, fields[row][column]);
 			grid.getCellFormatter().setHorizontalAlignment(row, column, HasHorizontalAlignment.ALIGN_CENTER);
 		}
@@ -276,7 +276,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 
 	private void setFirstColumnReadOnly() {
 		for(int i = 1; i<fields.length; i++){	
-			fields[i][0].setReadOnlyInternal(readOnly);
+			fields[i][0].setReadOnly(readOnly);
 		}
 	}
 

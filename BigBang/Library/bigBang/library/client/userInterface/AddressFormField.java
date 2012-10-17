@@ -62,7 +62,7 @@ public class AddressFormField extends FormField<Address> {
 	};
 
 	@Override
-	public void setReadOnlyInternal(boolean readOnly) {				
+	protected void setReadOnlyInternal(boolean readOnly) {				
 		
 		street1.setEnabled(!readOnly);
 		street2.setEnabled(!readOnly);

@@ -264,7 +264,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				bonusMalusValue.setEditable(event.getValue() != null && !event.getValue().isEmpty());
-				bonusMalusValue.setReadOnlyInternal(bonusMalusOption.isReadOnly());
+				bonusMalusValue.setReadOnly(bonusMalusOption.isReadOnly());
 				bonusMalusValue.setValue(null);
 			}
 		});
@@ -367,20 +367,20 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	}
 
 	public void setReceiptNumberReadOnly(boolean readOnly){
-		receiptNumber.setReadOnlyInternal(readOnly);
+		receiptNumber.setReadOnly(readOnly);
 		verifyReceiptNumber.setEnabled(!readOnly);
 	}
 
 	public void setPolicyNumberReadOnly(boolean readOnly){
-		policyNumber.setReadOnlyInternal(readOnly);
+		policyNumber.setReadOnly(readOnly);
 		verifyPolicyNumber.setEnabled(!readOnly);
 	}
 
 	public void setPolicyReadOnly(boolean readOnly){
-		categoryLineSubline.setReadOnlyInternal(readOnly);
-		insurer.setReadOnlyInternal(readOnly);
-		client.setReadOnlyInternal(readOnly);
-		status.setReadOnlyInternal(readOnly);
+		categoryLineSubline.setReadOnly(readOnly);
+		insurer.setReadOnly(readOnly);
+		client.setReadOnly(readOnly);
+		status.setReadOnly(readOnly);
 	}
 
 	public void enableMarkAsInvalid(boolean enabled){
@@ -388,20 +388,20 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	}
 
 	public void setReceiptReadOnly(boolean readonly){
-		type.setReadOnlyInternal(readonly);
-		totalPremium.setReadOnlyInternal(readonly);
-		salesPremium.setReadOnlyInternal(readonly);
-		commission.setReadOnlyInternal(readonly);
-		retro.setReadOnlyInternal(readonly);
-		fat.setReadOnlyInternal(readonly);
-		dueDate.setReadOnlyInternal(readonly);
-		coverageEnd.setReadOnlyInternal(readonly);
-		coverageStart.setReadOnlyInternal(readonly);
-		issueDate.setReadOnlyInternal(readonly);
-		description.setReadOnlyInternal(readonly);
-		notes.setReadOnlyInternal(readonly);
-		bonusMalusOption.setReadOnlyInternal(readonly);
-		bonusMalusValue.setReadOnlyInternal(readonly);
+		type.setReadOnly(readonly);
+		totalPremium.setReadOnly(readonly);
+		salesPremium.setReadOnly(readonly);
+		commission.setReadOnly(readonly);
+		retro.setReadOnly(readonly);
+		fat.setReadOnly(readonly);
+		dueDate.setReadOnly(readonly);
+		coverageEnd.setReadOnly(readonly);
+		coverageStart.setReadOnly(readonly);
+		issueDate.setReadOnly(readonly);
+		description.setReadOnly(readonly);
+		notes.setReadOnly(readonly);
+		bonusMalusOption.setReadOnly(readonly);
+		bonusMalusValue.setReadOnly(readonly);
 
 		if(!readonly){
 			type.focus();
@@ -429,7 +429,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	}
 
 	public void enablePolicy(boolean b) {
-		policyNumber.setReadOnlyInternal(!b);
+		policyNumber.setReadOnly(!b);
 		verifyPolicyNumber.setEnabled(b);
 
 		if(b){

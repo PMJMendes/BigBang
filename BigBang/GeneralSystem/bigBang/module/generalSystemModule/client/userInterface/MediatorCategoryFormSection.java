@@ -71,7 +71,7 @@ public class MediatorCategoryFormSection extends CollapsibleFormViewSection {
 	protected void addSubLine(SubLine subLine){
 		NumericTextBoxFormField field = new NumericTextBoxFormField(subLine.name, false);
 		field.setUnitsLabel("%");
-		field.setReadOnlyInternal(this.readOnly);
+		field.setReadOnly(this.readOnly);
 		addFormField(field, true);
 		this.valueFields.put(subLine.id, field);
 	}

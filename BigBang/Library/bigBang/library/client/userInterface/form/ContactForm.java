@@ -89,8 +89,8 @@ public class ContactForm extends FormView<Contact> {
 				this.setVisible(editable);
 				return;
 			}
-			type.setReadOnlyInternal(!editable);
-			infoValue.setReadOnlyInternal(!editable);
+			type.setReadOnly(!editable);
+			infoValue.setReadOnly(!editable);
 			remove.setVisible(editable);
 		}
 
@@ -210,10 +210,10 @@ public class ContactForm extends FormView<Contact> {
 
 	public void setEditable(boolean editable) {
 
-		this.name.setReadOnlyInternal(!editable);
-		this.type.setReadOnlyInternal(!editable);
-		this.type.setReadOnlyInternal(!editable);
-		this.address.setReadOnlyInternal(!editable);
+		this.name.setReadOnly(!editable);
+		this.type.setReadOnly(!editable);
+		this.type.setReadOnly(!editable);
+		this.address.setReadOnly(!editable);
 		int i;
 		ContactEntry temp;
 		for(i=0; i<contactIL.size(); i++){

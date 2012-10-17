@@ -22,7 +22,7 @@ public class NumericFormFieldWrapper extends FormField<String>{
 	}
 
 	@Override
-	public void setReadOnlyInternal(boolean readonly) {
+	protected void setReadOnlyInternal(boolean readonly) {
 		field.setReadOnlyInternal(readonly);
 	}
 	

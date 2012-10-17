@@ -877,6 +877,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
+		view.getList().clearSelection();
 		policyId = parameterHolder.getParameter("policyid");
 
 		if(policyId != null){
