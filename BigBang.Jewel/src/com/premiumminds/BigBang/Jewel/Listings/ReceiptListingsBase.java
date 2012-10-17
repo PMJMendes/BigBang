@@ -163,47 +163,47 @@ public class ReceiptListingsBase
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Recibo");
 		ReportBuilder.styleCell(larrCells[0], false, false);
-		larrCells[0].setWidth(94);
+		larrCells[0].setWidth(100);
 
-		larrCells[1] = ReportBuilder.buildHeaderCell("Tipo");
+		larrCells[1] = ReportBuilder.buildHeaderCell("T");
 		ReportBuilder.styleCell(larrCells[1], false, true);
-		larrCells[1].setWidth(40);
+		larrCells[1].setWidth(20);
 
 		larrCells[2] = ReportBuilder.buildHeaderCell("Cliente");
 		ReportBuilder.styleCell(larrCells[2], false, true);
-		larrCells[2].setWidth(351);
+		larrCells[2].setWidth(350);
 
 		larrCells[3] = ReportBuilder.buildHeaderCell("Apólice");
 		ReportBuilder.styleCell(larrCells[3], false, true);
-		larrCells[3].setWidth(132);
+		larrCells[3].setWidth(130);
 
-		larrCells[4] = ReportBuilder.buildHeaderCell("Companhia");
+		larrCells[4] = ReportBuilder.buildHeaderCell("Comp");
 		ReportBuilder.styleCell(larrCells[4], false, true);
-		larrCells[4].setWidth(183);
+		larrCells[4].setWidth(60);
 
 		larrCells[5] = ReportBuilder.buildHeaderCell("Ramo");
 		ReportBuilder.styleCell(larrCells[5], false, true);
-		larrCells[5].setWidth(169);
+		larrCells[5].setWidth(170);
 
 		larrCells[6] = ReportBuilder.buildHeaderCell("Descrição");
 		ReportBuilder.styleCell(larrCells[6], false, true);
-		larrCells[6].setWidth(136);
+		larrCells[6].setWidth(140);
 
 		larrCells[7] = ReportBuilder.buildHeaderCell("Prémio");
 		ReportBuilder.styleCell(larrCells[7], false, true);
-		larrCells[7].setWidth(75);
+		larrCells[7].setWidth(80);
 
 		larrCells[8] = ReportBuilder.buildHeaderCell("Comissão");
 		ReportBuilder.styleCell(larrCells[8], false, true);
-		larrCells[8].setWidth(77);
+		larrCells[8].setWidth(80);
 
 		larrCells[9] = ReportBuilder.buildHeaderCell("Retrocessão");
 		ReportBuilder.styleCell(larrCells[9], false, true);
-		larrCells[9].setWidth(95);
+		larrCells[9].setWidth(80);
 
 		larrCells[10] = ReportBuilder.buildHeaderCell("Emissão");
 		ReportBuilder.styleCell(larrCells[10], false, true);
-		larrCells[10].setWidth(69);
+		larrCells[10].setWidth(70);
 
 		larrCells[11] = ReportBuilder.buildHeaderCell("Vencimento");
 		ReportBuilder.styleCell(larrCells[11], false, true);
@@ -223,7 +223,7 @@ public class ReceiptListingsBase
 
 		larrCells[15] = ReportBuilder.buildHeaderCell("Meios");
 		ReportBuilder.styleCell(larrCells[15], false, true);
-		larrCells[15].setWidth(51);
+		larrCells[15].setWidth(50);
 
 		return larrCells;
 	}
@@ -267,7 +267,7 @@ public class ReceiptListingsBase
 		larrCells[3] = ReportBuilder.buildCell(lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(lobjPolicy.GetCompany().getLabel(), TypeDefGUIDs.T_String);
+		larrCells[4] = ReportBuilder.buildCell(lobjPolicy.GetCompany().getAt(1), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[4], true, true);
 
 		larrCells[5] = ReportBuilder.buildCell(lobjPolicy.GetSubLine().getDescription(), TypeDefGUIDs.T_String);

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import org.apache.ecs.html.Div;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
@@ -54,7 +55,16 @@ public class ReportBuilder
 
 	public static TD buildCell(java.lang.Object pobjValue, UUID pidType)
 	{
-		return new TD(BuildValue(pidType, pobjValue));
+		Div ldiv;
+		TD ltd;
+
+		ldiv = new Div(BuildValue(pidType, pobjValue));
+		ldiv.setStyle("width:100%;");
+
+		ltd = new TD();
+		ltd.addElementToRegistry(ldiv);
+
+		return ltd;
 	}
 
 	public static TD buildHeaderCell(String pstrTitle)

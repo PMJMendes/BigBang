@@ -5,9 +5,6 @@ import java.io.ByteArrayInputStream;
 import org.apache.ecs.Document;
 import org.apache.ecs.html.Div;
 import org.apache.ecs.html.Style;
-import org.apache.ecs.html.TD;
-import org.apache.ecs.html.TR;
-import org.apache.ecs.html.Table;
 
 import Jewel.Engine.SysObjects.FileXfer;
 
@@ -20,9 +17,6 @@ public class HTMLConnector
 	{
 		Document ldoc;
 		Style lstyle;
-		Table ltbl;
-		TR ltr;
-		TD ltd;
 		Div ldiv;
 		int i;
 		byte[] larrBytes;
@@ -32,27 +26,14 @@ public class HTMLConnector
 		ldoc.appendHead("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
 
 		lstyle = new Style();
-		lstyle.addElementToRegistry("body, table td, select {font-family: Arial Unicode MS, Arial, sans-serif; font-size: small;}");
+		lstyle.addElementToRegistry("body, table, td, div, select {font-family: Arial Unicode MS, Arial, sans-serif; font-size: small;}");
 		ldoc.appendHead(lstyle);
-
-		ltbl = new Table();
-		ltbl.setCellPadding(0);
-		ltbl.setCellSpacing(0);
-		ldoc.appendBody(ltbl);
 
 		for ( i = 0; i < parrSource.length; i++ )
 		{
-			ltr = new TR();
-			ltbl.addElementToRegistry(ltr);
-
-			ltd = new TD();
-			ltd.setAlign("left");
-			ltd.setVAlign("top");
-			ltr.addElementToRegistry(ltd);
-
 			ldiv = new Div();
-			ldiv.setStyle("width: 100%; margin-bottom: 50px;");
-			ltd.addElementToRegistry(ldiv);
+			ldiv.setStyle("width: 100%; margin-bottom: 50px;" + (i > 0 ? "page-break-before:always;" : ""));
+			ldoc.appendBody(ldiv);
 
 			ldiv.addElementToRegistry(parrSource[i]);
 		}

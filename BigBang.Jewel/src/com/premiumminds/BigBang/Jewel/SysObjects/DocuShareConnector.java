@@ -434,7 +434,7 @@ public class DocuShareConnector
 	{
 		DSSession lrefSession;
 
-		if ( pstrItem == null ) //TODO Tirar isto
+		if ( itemIsDelete(pstrItem) ) //TODO Tirar isto
 		{
 			lrefSession = GetSession();
 			if ( lrefSession == null )
@@ -450,79 +450,6 @@ public class DocuShareConnector
 			}
 		}
 	}
-
-//	public static String getItemAsImage(String pstrItem)
-//		throws SessionExpiredException, BigBangJewelException
-//	{
-//		DSSession lrefSession;
-//		DSDocument lobjAux;
-//		DSContentElement[] larrAux;
-//		PDDocument lobjDocument;
-//		PDPage lobjPage;
-//		BufferedImage lobjImage;
-//		ByteArrayOutputStream lstreamOutput;
-//		byte[] larrBuffer;
-//		ByteArrayInputStream lstreamInput;
-//		FileXfer lobjFile;
-//		UUID lidKey;
-//
-//		lrefSession = GetSession();
-//		if ( lrefSession == null )
-//			return null;
-//
-//		try
-//		{
-//			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
-//			larrAux = lobjAux.getContentElements();
-//			larrAux[0].open();
-//			try
-//			{
-//				lobjDocument = PDDocument.load(larrAux[0]);
-//			}
-//			catch (Throwable e1)
-//			{
-//				try { larrAux[0].close(); } catch (Throwable e2) {}
-//				throw e1;
-//			}
-//			try
-//			{
-//				larrAux[0].close();
-//			}
-//			catch (Throwable e1)
-//			{
-//				try { lobjDocument.close(); } catch (Throwable e2) {}
-//				throw e1;
-//			}
-//			lobjPage = (PDPage)lobjDocument.getDocumentCatalog().getAllPages().get(0);
-//			try
-//			{
-//				lobjImage = lobjPage.convertToImage(BufferedImage.TYPE_INT_ARGB, 200);
-//			}
-//			catch (Throwable e1)
-//			{
-//				try { lobjDocument.close(); } catch (Throwable e2) {}
-//				throw e1;
-//			}
-//			lobjDocument.close();
-//
-//			lstreamOutput = new ByteArrayOutputStream();
-//			ImageIO.write(lobjImage, "png", lstreamOutput);
-////			ImageIO.write(lobjImage, "jpg", lstreamOutput);
-//			larrBuffer = lstreamOutput.toByteArray();
-//			lstreamInput = new ByteArrayInputStream(larrBuffer);
-//			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
-////			lobjFile = new FileXfer(larrBuffer.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
-//		}
-//		catch (Throwable e)
-//		{
-//			throw new BigBangJewelException(e.getMessage(), e);
-//		}
-//
-//		lidKey = UUID.randomUUID();
-//		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
-//
-//		return lidKey.toString();
-//	}
 
 	private static DSObject[] getItemsContext(String pstrFolder, boolean pbInjectTSR)
 		throws BigBangJewelException
@@ -575,5 +502,11 @@ public class DocuShareConnector
 		larrFolders.addAll(larrItems);
 
 		return larrFolders.toArray(new DSObject[larrFolders.size()]);
+	}
+
+	private static boolean itemIsDelete(String pstrItem)
+		throws BigBangJewelException
+	{
+		return getItemTitle(pstrItem).startsWith("recibos-3ac");
 	}
 }
