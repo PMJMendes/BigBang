@@ -195,6 +195,9 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 				}else if(show.equalsIgnoreCase("transfermanager")){
 					present("INSURANCE_POLICY_MANAGER_TRANSFER", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("replyinforequest")){
+					present("INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 			

@@ -387,7 +387,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 				switch(action.getAction()){
 				case BACK:
-					onBack();
+					onBack(view.getSubPolicyForm().getValue().mainPolicyId);
 					break;
 				case CANCEL_EDIT:
 					onCancelEdit();
@@ -905,11 +905,12 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		}
 	}
 
-	protected void onBack() {
+	protected void onBack(String policyId) {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
 				.getCurrentState();
 		item.removeParameter("subpolicyid");
 		item.popFromStackParameter("display");
+		item.setParameter("policyid", policyId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

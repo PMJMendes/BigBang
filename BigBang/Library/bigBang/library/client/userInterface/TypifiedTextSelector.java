@@ -22,7 +22,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class TypifiedTextFormField extends FormField<TypifiedText> implements TypifiedTextClient{
+public class TypifiedTextSelector extends FormField<TypifiedText> implements TypifiedTextClient{
 
 	private TypifiedTextBroker broker;
 	private ExpandableListBoxFormField labels;
@@ -32,7 +32,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 	private HorizontalPanel labelPanel = new HorizontalPanel();
 	private String tag;
 
-	public TypifiedTextFormField(){
+	public TypifiedTextSelector(){
 
 		labels  = new ExpandableListBoxFormField(null,"Modelo", ManagementPanelType.TYPIFIED_TEXT);
 		broker = (TypifiedTextBroker)DataBrokerManager.staticGetBroker(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT);

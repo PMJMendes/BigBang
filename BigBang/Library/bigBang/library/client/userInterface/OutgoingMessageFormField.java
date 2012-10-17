@@ -13,7 +13,7 @@ import bigBang.library.client.userInterface.autocomplete.AutoCompleteTextListFor
 
 public class OutgoingMessageFormField extends FormField<OutgoingMessage>{
 
-	protected TypifiedTextFormField text;
+	protected TypifiedTextSelector text;
 	protected ListBoxFormField to;
 	protected AutoCompleteTextListFormField forwardReply;
 	protected TextBoxFormField internalCCAddresses;
@@ -31,7 +31,7 @@ public class OutgoingMessageFormField extends FormField<OutgoingMessage>{
 		forwardReply = new AutoCompleteTextListFormField("Utilizadores a envolver no processo");
 		internalCCAddresses = new TextBoxFormField("BCC Endereços separados por ';'");
 		externalCCAddresses = new TextBoxFormField("CC Endereços separados por ';'");
-		text = new TypifiedTextFormField();
+		text = new TypifiedTextSelector();
 		text.setTypifiedTexts("OUTGOING_MESSAGE");
 		text.setHeight("300px");
 		

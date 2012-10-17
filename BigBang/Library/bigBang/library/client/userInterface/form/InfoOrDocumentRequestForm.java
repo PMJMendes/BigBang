@@ -18,7 +18,7 @@ import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
-import bigBang.library.client.userInterface.TypifiedTextFormField;
+import bigBang.library.client.userInterface.TypifiedTextSelector;
 import bigBang.library.client.userInterface.autocomplete.AutoCompleteTextListFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
@@ -28,7 +28,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 
 	protected ExpandableListBoxFormField requestType;
-	protected TypifiedTextFormField text;
+	protected TypifiedTextSelector text;
 	protected ListBoxFormField to;
 	protected NumericTextBoxFormField replyLimit;
 	protected AutoCompleteTextListFormField forwardReply;
@@ -39,7 +39,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		addSection("Detalhes do Processo de Pedido de Informação");
 
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Pedido");
-		text = new TypifiedTextFormField();
+		text = new TypifiedTextSelector();
 		to = new ListBoxFormField("Destinatário");
 		to.setFieldWidth("400px");
 		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)", false);
@@ -51,7 +51,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		addFormField(requestType, true);
 		addFormField(replyLimit, true);
 		addFormField(forwardReply, false);
-		
+
 		addSection("Detalhes da Mensagem a Enviar");
 		addFormField(to);
 		addFormField(internalCCAddresses);
@@ -62,12 +62,18 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
+				if(!event.getValue().isEmpty()){
+					text.setReadOnlyInternal(false);
+				}
+				else{
+					text.setReadOnlyInternal(true);
+				}
 				text.setTypifiedTexts(event.getValue());
 			}
 		});
-		
+
 		((UserBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.USER)).getUsers(new ResponseHandler<User[]>() {
-			
+
 			@Override
 			public void onResponse(User[] response) {
 				List<String> suggestions = new ArrayList<String>();
@@ -76,12 +82,14 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 				}
 				forwardReply.setSuggestions(suggestions);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
 			}
 		});
+
+		text.setReadOnlyInternal(true);
 		
 		setValidator(new InfoOrDocumentRequestFormValidator(this));
 	}
@@ -96,7 +104,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		TypifiedText requestText = text.getValue();
 		request.message.toContactInfoId = to.getValue();
 		try{
-		request.replylimit = replyLimit.getValue().intValue();
+			request.replylimit = replyLimit.getValue().intValue();
 		}catch(Exception e){
 			request.replylimit = null;
 		}
@@ -107,7 +115,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 			users[i] = user;
 			i++;
 		}
-		
+
 		request.message.forwardUserFullNames = users;
 		request.message.internalBCCs = internalCCAddresses.getValue();
 		request.message.externalCCs = externalCCAddresses.getValue();
@@ -129,7 +137,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		requestText.text = info.message.text;
 		text.setValue(requestText);
 		replyLimit.setValue(info.replylimit == null ? null : (double)info.replylimit);
-		
+
 		List<String> users = new ArrayList<String>();
 		int nUsers = info.message.forwardUserFullNames == null ? 0 : info.message.forwardUserFullNames.length;
 		for(int i = 0; i < nUsers; i++) {
@@ -151,12 +159,16 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 			}
 		}
 	}
-	
+
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		if(text != null){
-			text.setReadOnlyInternal(readOnly);
-		}
 		super.setReadOnly(readOnly);
+		if(text != null){
+			if(requestType != null && requestType.getValue()!= null && !requestType.getValue().isEmpty()){
+				text.setReadOnly(readOnly);
+			}else{
+				text.setReadOnly(true);
+			}
+		}
 	}
 }
