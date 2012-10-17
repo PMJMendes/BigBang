@@ -166,7 +166,8 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 		otherSection = new FormViewSection("Informação Específica");
 		addSection(otherSection);
 		otherSection.addFormField(otherClientType);
-
+		registerFormField(otherClientType);
+		
 		clientType.setValue(ModuleConstants.ClientTypeIDs.Person, true);
 
 		addSection("Morada");

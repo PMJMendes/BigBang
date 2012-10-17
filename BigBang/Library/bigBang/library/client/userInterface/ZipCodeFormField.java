@@ -85,6 +85,7 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
+				ValueChangeEvent.fire(ZipCodeFormField.this, ZipCodeFormField.this.getValue());
 				searchForCode();
 			}
 

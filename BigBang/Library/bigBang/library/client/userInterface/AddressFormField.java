@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
@@ -7,6 +9,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.Address;
+import bigBang.definitions.shared.ZipCode;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
@@ -42,6 +45,14 @@ public class AddressFormField extends FormField<Address> {
 		street2 = new TextBox();
 		
 		zipCode = new ZipCodeFormField();
+		
+		zipCode.addValueChangeHandler(new ValueChangeHandler<ZipCode>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<ZipCode> event) {
+				ValueChangeEvent.fire(AddressFormField.this, AddressFormField.this.getValue());
+			}
+		});
 		
 		street1.setWidth("100%");
 		street2.setWidth("100%");
