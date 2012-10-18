@@ -68,8 +68,7 @@ public class InsurancePolicyNegotiationViewPresenter extends NegotiationViewPres
 			public void onResponse(Negotiation response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Negociação criada com sucesso."), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-				navig.popFromStackParameter("display");
-				navig.removeParameter("negotiationid");
+				navig.setParameter("negotiationid", response.id);
 				NavigationHistoryManager.getInstance().go(navig);
 			}
 

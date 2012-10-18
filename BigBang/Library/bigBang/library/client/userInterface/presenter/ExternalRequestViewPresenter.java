@@ -135,6 +135,7 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 					}else{
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 					}
+					break;
 				}
 				case ON_CLICK_BACK:{
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
@@ -144,9 +145,8 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 					break;
 				}
 
-
 				}
-				
+
 			}
 
 		});
