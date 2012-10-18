@@ -102,7 +102,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void allowDeleteInsuredObject(boolean allow);
 		HasEditableValue<FieldContainer> getCommonFieldsForm();
 
-		HasValue<ComplexFieldContainer.ExerciseData> getExerciseForm();
+		HasEditableValue<ComplexFieldContainer.ExerciseData> getExerciseForm();
 		HasValue<String> getExerciseSelector();
 		void allowCreateNewExercise(boolean allow);
 
@@ -203,6 +203,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				boolean validate);
 
 		void setInvalidPolicySelector(boolean b);
+
+		void showExerciseForm(boolean b);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -529,7 +531,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 
 		if(isEditModeEnabled){
-			broker.updateExercise(policyId, view.getExerciseForm().getValue());
+			broker.updateExercise(policyId, view.getExerciseForm().getInfo());
 			if(onPolicy){
 				broker.saveContextForPolicy(policyId, 
 						getCurrentExerciseId(),
@@ -549,7 +551,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 		for(int i = 0; i<availableExercises.length; i++){
 			if(availableExercises[i].id.equalsIgnoreCase(getCurrentExerciseId())){
-				availableExercises[i] = view.getExerciseForm().getValue();
+				availableExercises[i] = view.getExerciseForm().getInfo();
 			}else if(availableExercises[i].id.equalsIgnoreCase(string)){
 				view.getExerciseForm().setValue(availableExercises[i]);
 			}
@@ -746,17 +748,15 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		});
 	}
 
-
 	protected void onEdit() {
 		view.setReadOnly(false);
 		isEditModeEnabled = true;
 		view.setToolbarEditMode(true);
 	}
 
-
 	protected void onSave() {
 		saveInternally();
-		broker.updateExercise(policyId, view.getExerciseForm().getValue());
+		broker.updateExercise(policyId, view.getExerciseForm().getInfo());
 		broker.updateCoverages(view.getPresentCoverages());
 		if(view.getPolicyHeaderForm().validate()) {
 			broker.persistPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
@@ -785,51 +785,47 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		}
 	}
 
-
 	protected void removeNewListEntry() {
-
 		for(ValueSelectable<InsurancePolicyStub> stub : view.getList().getAll()){
 			if(stub.getValue().id.equalsIgnoreCase("new")){
 				view.removeElementFromList(stub);
 				return;
 			}
 		}
-
-
 	}
 
-//
-//	protected void onCancelEdit() {
-//		if(policyId.equalsIgnoreCase("new")){
-//			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-//			navig.setParameter("section", "client");
-//			navig.removeParameter("policyid");
-//			navig.removeParameter("sublineid");
-//			NavigationHistoryManager.getInstance().go(navig);
-//			removeNewListEntry();
-//			return;
-//		}
-//		view.setReadOnly(true);
-//		broker.discardEditData(policyId);
-//		revert();
-//		view.setToolbarEditMode(false);
-//		isEditModeEnabled = false;
-//	}
-//
-//
-//
-//	private void revert() {
-//
-//		view.setObjectListOwner(policyId);
-//
-//		if(onPolicy || view.getInsuredObjectHeaderForm().getValue().change == Change.CREATED){
-//			fillPolicy();
-//		}
-//		else{
-//			fillObject(view.getInsuredObjectHeaderForm().getValue().id);
-//		}
-//
-//	}
+	//
+	//	protected void onCancelEdit() {
+	//		if(policyId.equalsIgnoreCase("new")){
+	//			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+	//			navig.setParameter("section", "client");
+	//			navig.removeParameter("policyid");
+	//			navig.removeParameter("sublineid");
+	//			NavigationHistoryManager.getInstance().go(navig);
+	//			removeNewListEntry();
+	//			return;
+	//		}
+	//		view.setReadOnly(true);
+	//		broker.discardEditData(policyId);
+	//		revert();
+	//		view.setToolbarEditMode(false);
+	//		isEditModeEnabled = false;
+	//	}
+	//
+	//
+	//
+	//	private void revert() {
+	//
+	//		view.setObjectListOwner(policyId);
+	//
+	//		if(onPolicy || view.getInsuredObjectHeaderForm().getValue().change == Change.CREATED){
+	//			fillPolicy();
+	//		}
+	//		else{
+	//			fillObject(view.getInsuredObjectHeaderForm().getValue().id);
+	//		}
+	//
+	//	}
 
 
 	private void fillObject(String id) {
@@ -877,9 +873,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
-		
 		policyId = parameterHolder.getParameter("policyid");
-		
+
 		clearListSelectionNoFireEvent();
 
 		if(policyId != null){
@@ -948,6 +943,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			view.getExerciseSelector().setValue(null);
 			view.setOwner(null);
 			view.setAvailableExercises(null);
+			view.showExerciseForm(false);
 			view.setCoveragesExtraFields(null);
 			view.getPolicySelector().setValue(null);
 			view.getPolicyNotesForm().setValue(null);
@@ -980,6 +976,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		if(exerciseData == null){
 			view.setAvailableExercises(new ExerciseData[0]);
 			view.getExerciseForm().setValue(null);
+			view.showExerciseForm(false);
 			view.getExerciseSelector().setValue(null);
 			return;
 		}
@@ -998,6 +995,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	private void fillExercise(ExerciseData[] exercises) {
 		view.setAvailableExercises(exercises);
 		view.getExerciseForm().setValue(exercises[0], false);
+		view.showExerciseForm(true);
 		view.getExerciseSelector().setValue(exercises[0].id, false);
 	}
 
