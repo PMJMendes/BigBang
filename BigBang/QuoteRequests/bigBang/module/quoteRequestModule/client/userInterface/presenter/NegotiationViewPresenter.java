@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 	public static enum Action{
-		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT, CANCEL_NEGOTIATION, EXTERNAL_REQUEST, GRANT, RESPONSE
+		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT, CANCEL_NEGOTIATION, EXTERNAL_REQUEST, GRANT, RESPONSE, BACK
 
 	}
 
@@ -57,9 +57,9 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		HasValueSelectables<Contact> getContactList();
 
 		HasValueSelectables<Document> getDocumentList();
-		
+
 		HasValueSelectables<HistoryItemStub> getHistoryList();
-		
+
 		HasValueSelectables<BigBangProcess> getSubProcessList();
 
 		HasEditableValue<Negotiation> getForm();
@@ -73,7 +73,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void allowEdit(boolean b);
 
 		void allowDelete(boolean b);
-		
+
 		void allowCancelNegotiation(boolean b);
 
 		void applyOwnerToList(String negotiationId);
@@ -81,7 +81,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void allowExternalRequest(boolean hasPermission);
 
 		void allowGrant(boolean hasPermission);
-		
+
 		void allowResponse(boolean hasPermission);
 
 		HasSelectables<ValueSelectable<Document>> getDocumentsList();
@@ -198,29 +198,33 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 				case EXTERNAL_REQUEST:
 					receiveExternalRequest();
 					break;
-					
+
 				case GRANT:{
 					grant();
 					break;
 				}
-				
+
 				case RESPONSE:{
 					response();
 					break;
 				}
+				case BACK:{
+					onBack();
+					break;
 				}
-				
+				}
+
 			}
 		});
-		
+
 		SelectionChangedEventHandler selectionChangedHandler = new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				ValueSelectable<?> selectable = (ValueSelectable<?>) event.getFirstSelected();
-				
+
 				if(selectable != null) {
-					
+
 					if(event.getSource() == view.getHistoryList()){ //HISTORY
 						showHistory(view.getForm().getValue().id, ((HistoryItemStub) selectable.getValue()).id);
 					} else if(event.getSource() == view.getSubProcessList()){ //SUB PROCESSES
@@ -269,11 +273,18 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessList().addSelectionChangedEventHandler(selectionChangedHandler);
-		
+
 		bound = true;
+	}
+
+	protected void onBack() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.popFromStackParameter("display");
+		item.removeParameter("negotiationid");
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	protected void response() {
@@ -320,7 +331,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			view.allowGrant(false);
 			view.allowResponse(false);
 			view.allowResponse(false);
-			
+
 		}else{
 
 			negotiationBroker.getNegotiation(negotiationId, new ResponseHandler<Negotiation>() {
@@ -379,7 +390,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		item.setParameter("show", "deletenegotiation");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	protected void cancelNegotiation() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "cancelnegotiation");
@@ -406,9 +417,9 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 	private void showSubProcess(String subProcessId){
 		SubProcessesBroker subProcessBroker = (SubProcessesBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.PROCESS);
-		
+
 		subProcessBroker.getSubProcess(subProcessId, new ResponseHandler<BigBangProcess>() {
-			
+
 			@Override
 			public void onResponse(BigBangProcess response) {
 				String type = response.dataTypeId;
@@ -416,21 +427,21 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					showExternalRequest(response.dataId);
 				}
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				view.getSubProcessList().clearSelection();
 			}
 		});
 	}
-	
+
 	private void showExternalRequest(String requestId){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "viewnegotiationexternalrequest");
 		item.setParameter("externalrequestid", requestId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void showHistory(String ownerId, String itemId){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "history");

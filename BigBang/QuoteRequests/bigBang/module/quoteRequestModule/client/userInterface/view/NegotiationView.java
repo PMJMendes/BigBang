@@ -25,6 +25,9 @@ import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationFo
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackPanel;
@@ -96,6 +99,14 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		ownerHeader = new ListHeader();
 		ownerHeader.setHeight("30px");
 		ownerWrapper.add(ownerHeader);
+		ownerHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				handler.onActionInvoked(new ActionInvokedEvent<NegotiationViewPresenter.Action>(Action.BACK));
+			}
+		}));
+
 		this.ownerForm = ownerForm;
 		ownerForm.setReadOnly(true);
 		ownerWrapper.add(ownerForm);

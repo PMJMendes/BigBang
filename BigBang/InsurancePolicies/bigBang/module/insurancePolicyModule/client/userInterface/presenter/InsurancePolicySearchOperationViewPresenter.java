@@ -269,7 +269,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					onEdit();
 					break;
 				case CANCEL_EDIT:
-					onCancelEdit();
+					NavigationHistoryManager.getInstance().reload();
 					break;
 				case SAVE:
 					onSave();
@@ -798,38 +798,38 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	}
 
-
-	protected void onCancelEdit() {
-		if(policyId.equalsIgnoreCase("new")){
-			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-			navig.setParameter("section", "client");
-			navig.removeParameter("policyid");
-			navig.removeParameter("sublineid");
-			NavigationHistoryManager.getInstance().go(navig);
-			removeNewListEntry();
-			return;
-		}
-		view.setReadOnly(true);
-		broker.discardEditData(policyId);
-		revert();
-		view.setToolbarEditMode(false);
-		isEditModeEnabled = false;
-	}
-
-
-
-	private void revert() {
-
-		view.setObjectListOwner(policyId);
-
-		if(onPolicy || view.getInsuredObjectHeaderForm().getValue().change == Change.CREATED){
-			fillPolicy();
-		}
-		else{
-			fillObject(view.getInsuredObjectHeaderForm().getValue().id);
-		}
-
-	}
+//
+//	protected void onCancelEdit() {
+//		if(policyId.equalsIgnoreCase("new")){
+//			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+//			navig.setParameter("section", "client");
+//			navig.removeParameter("policyid");
+//			navig.removeParameter("sublineid");
+//			NavigationHistoryManager.getInstance().go(navig);
+//			removeNewListEntry();
+//			return;
+//		}
+//		view.setReadOnly(true);
+//		broker.discardEditData(policyId);
+//		revert();
+//		view.setToolbarEditMode(false);
+//		isEditModeEnabled = false;
+//	}
+//
+//
+//
+//	private void revert() {
+//
+//		view.setObjectListOwner(policyId);
+//
+//		if(onPolicy || view.getInsuredObjectHeaderForm().getValue().change == Change.CREATED){
+//			fillPolicy();
+//		}
+//		else{
+//			fillObject(view.getInsuredObjectHeaderForm().getValue().id);
+//		}
+//
+//	}
 
 
 	private void fillObject(String id) {
@@ -963,7 +963,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	private void clearListSelectionNoFireEvent() {
 
-		if(view.getPolicyHeaderForm().getValue() != null && view.getPolicyHeaderForm().getValue().id != null){
+		if(view.getPolicyHeaderForm() != null && view.getPolicyHeaderForm().getValue() != null && view.getPolicyHeaderForm().getValue().id != null){
 			for(ValueSelectable<InsurancePolicyStub> stub : view.getList().getSelected()){
 				if(!stub.getValue().id.equals(policyId)){
 					stub.setSelected(false, false);
