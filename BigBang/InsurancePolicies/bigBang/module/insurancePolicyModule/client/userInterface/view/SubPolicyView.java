@@ -23,13 +23,13 @@ import bigBang.library.client.event.SelectedStateChangedEvent;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseSelector;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSubPolicySearchPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.PolicyNotesFormSection;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyChildrenPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyOperationsToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicySelectButton;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.CoverageExerciseDetailsForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.ExerciseSelectorForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyHeaderForm;
@@ -57,7 +57,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	private SubPolicyChildrenPanel childrenPanel;
 	private InsuredObjectSubPolicySearchPanel objectsList;
 	private InsuredObjectForm objectForm;
-	private ExerciseSelector exerciseChooser;
+	private ExerciseSelectorForm exerciseChooser;
 	private CoverageExerciseDetailsForm detailsForm;
 	private SubPolicySelectButton subPolicySelectButton;
 	private PolicyNotesFormSection subPolicyNotesForm;
@@ -244,7 +244,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		VerticalPanel detailTableContainer = new VerticalPanel();
 		detailTableContainer.setSize("100%", "100%");
 
-		exerciseChooser = new ExerciseSelector();
+		exerciseChooser = new ExerciseSelectorForm();
 		detailTableContainer.add(exerciseChooser);
 
 		detailsForm = new CoverageExerciseDetailsForm("");

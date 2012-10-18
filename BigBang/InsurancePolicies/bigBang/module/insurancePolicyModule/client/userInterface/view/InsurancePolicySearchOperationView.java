@@ -26,7 +26,6 @@ import bigBang.library.client.event.SelectedStateChangedEvent;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseSelector;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyChildrenPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
@@ -35,6 +34,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectSe
 import bigBang.module.insurancePolicyModule.client.userInterface.PolicyNotesFormSection;
 import bigBang.module.insurancePolicyModule.client.userInterface.PolicySelectButton;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.CoverageExerciseDetailsForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.ExerciseSelectorForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyHeaderForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.PolicyAndObjectCrossFormValidator;
@@ -64,7 +64,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	private InsuredObjectSearchPanel objectsList;
 	private InsurancePolicyHeaderForm policyForm;
 	private InsuredObjectForm objectForm;
-	private ExerciseSelector exerciseChooser;
+	private ExerciseSelectorForm exerciseChooser;
 	private CoverageExerciseDetailsForm detailsForm;
 	private PolicyNotesFormSection policyNotesForm;
 	private PolicySelectButton policySelectButton;
@@ -82,7 +82,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		policyForm = new InsurancePolicyHeaderForm();
 		objectForm = new InsuredObjectForm();
-		new PolicyAndObjectCrossFormValidator(policyForm, objectForm);
 		
 		searchPanel = new InsurancePolicySearchPanel(){ 
 			@Override
@@ -228,6 +227,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		formContainer.setSize("100%", "100%");
 
 		HorizontalPanel formPanel = new HorizontalPanel();
+		formPanel.getElement().getStyle().setProperty("borderBottom", "1px solid #688AA2");
 
 		VerticalPanel objectsPolicyContainer = new VerticalPanel();
 		objectsPolicyContainer.getElement().getStyle().setProperty("borderRight", "1px solid #688AA2");
@@ -288,8 +288,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		VerticalPanel detailTableContainer = new VerticalPanel();
 		detailTableContainer.setSize("100%", "100%");
 
-		exerciseChooser = new ExerciseSelector();
-		detailTableContainer.add(exerciseChooser);
+		exerciseChooser = new ExerciseSelectorForm();
+		detailTableContainer.add(exerciseChooser.getNonScrollableContent());
 		exerciseChooser.getNewButton().addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -316,7 +316,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
 		contentWrapper.add(toolbarAndCenterWrapper);
 		mainWrapper.add(contentWrapper);
-
+		
+		new PolicyAndObjectCrossFormValidator(policyForm, objectForm, exerciseChooser);
 	}
 
 	@Override
@@ -353,7 +354,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 
 	@Override
-	public HasValue<ExerciseData> getExerciseForm() {
+	public HasEditableValue<ExerciseData> getExerciseForm() {
 		return exerciseChooser;
 	}
 
@@ -672,5 +673,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void setInvalidPolicySelector(boolean b) {
 		this.policySelectButton.setInvalid(b);
+	}
+
+	@Override
+	public void showExerciseForm(boolean b) {
+		this.exerciseChooser.getNonScrollableContent().setVisible(b);
 	}
 }

@@ -8,10 +8,14 @@ public class PolicyAndObjectCrossFormValidator extends CrossFormValidator {
 
 	private InsurancePolicyHeaderFormValidator policyValidator;
 	private InsuredObjectFormValidator objectValidator;
+	private ExerciseSelectorFormValidator exerciseValidator;
 	
-	public PolicyAndObjectCrossFormValidator(InsurancePolicyHeaderForm policyForm, InsuredObjectForm objectForm) {
+	public PolicyAndObjectCrossFormValidator(InsurancePolicyHeaderForm policyForm, InsuredObjectForm objectForm, ExerciseSelectorForm exerciseForm) {
+		exerciseValidator = getNewExerciseValidator(exerciseForm);
 		policyValidator = getNewPolicyValidator(policyForm);
 		objectValidator = getNewObjectValidator(objectForm);
+		
+		exerciseForm.setValidator(exerciseValidator);
 		policyForm.setValidator(policyValidator);
 		objectForm.setValidator(objectValidator);
 	}
@@ -20,17 +24,33 @@ public class PolicyAndObjectCrossFormValidator extends CrossFormValidator {
 		return new InsurancePolicyHeaderFormValidator(form) {
 			@Override
 			public bigBang.library.client.FormValidator.Result validateImpl() {
-				return super.validateImpl(); //TODO possibly add additional validation logic
+				Result policyResult = super.validateImpl();
+				Result exerciseResult = exerciseValidator.validateImpl();
+				policyResult.messages.addAll(exerciseResult.messages);
+
+				return new Result(policyResult.valid && exerciseResult.valid, policyResult.messages);
 			}
 		};
 	}
-	
+
 	private InsuredObjectFormValidator getNewObjectValidator(InsuredObjectForm form) {
 		return new InsuredObjectFormValidator(form) {
 			@Override
 			public bigBang.library.client.FormValidator.Result validateImpl() {
 				Result result = super.validateImpl();
 				result.valid &= validateInsuredObjectHeaderDates();
+				
+				return result;
+			}
+		};
+	}
+	
+	private ExerciseSelectorFormValidator getNewExerciseValidator(ExerciseSelectorForm form) {
+		return new ExerciseSelectorFormValidator(form){
+			@Override
+			public bigBang.library.client.FormValidator.Result validate() {
+				Result result = super.validateImpl();
+				result.valid &= validateExerciseDates();
 				
 				return result;
 			}
@@ -52,4 +72,10 @@ public class PolicyAndObjectCrossFormValidator extends CrossFormValidator {
 		return true;
 	}
 
+	protected boolean validateExerciseDates(){
+		InsurancePolicy policy = policyValidator.getForm().getInfo();
+		//TODO
+		return true;
+	}
+	
 }
