@@ -239,7 +239,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				if(policyId.equals("new")){
+				if(policyId != null && policyId.equals("new")){
 					return;
 				}
 				@SuppressWarnings("unchecked")
@@ -877,8 +877,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
-		view.getList().clearSelection();
+		
 		policyId = parameterHolder.getParameter("policyid");
+		
+		clearListSelectionNoFireEvent();
 
 		if(policyId != null){
 			view.setInvalidPolicySelector(false);
@@ -958,6 +960,20 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		}
 
 	}
+
+	private void clearListSelectionNoFireEvent() {
+
+		if(view.getPolicyHeaderForm().getValue() != null && view.getPolicyHeaderForm().getValue().id != null){
+			for(ValueSelectable<InsurancePolicyStub> stub : view.getList().getSelected()){
+				if(!stub.getValue().id.equals(policyId)){
+					stub.setSelected(false, false);
+					return;
+				}
+
+			}
+		}
+	}
+
 
 	protected void setExercises(ExerciseData[] exerciseData) {
 
@@ -1127,7 +1143,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	private void validateCurrentObject(){
 		if(!this.onPolicy){
 			InsuredObject object = view.getInsuredObjectHeaderForm().getInfo();
-			
+
 			for(ValueSelectable<InsuredObjectStub> entry : view.getInsuredObjectsList().getAll()){
 				if(entry.getValue().id.equalsIgnoreCase(object.id)) {
 					view.setInvalidObjectEntry(entry, !view.getInsuredObjectHeaderForm().validate() && !(object.change == Change.DELETED));
@@ -1136,13 +1152,13 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			}
 		}
 	}
-	
+
 	private void validateCurrentPolicy(){
 		if(this.onPolicy){
 			view.setInvalidPolicySelector(!view.getPolicyHeaderForm().validate());
 		}
 	}
-	
+
 	private void onFormValidationFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}
