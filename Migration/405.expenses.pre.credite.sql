@@ -1,6 +1,6 @@
-insert into credite_egs.tblBBExpenses (PK, ENumber, FKProcess, ExpenseDate, FKPolicyObject, FKSubPolicyObject, FKPolicyCoverage, Damages, Settlement, BManual, Notes, Rejection)
+insert into credite_egs.tblBBExpenses (PK, ENumber, FKProcess, ExpenseDate, FKPolicyObject, FKSubPolicyObject, FKPolicyCoverage, FKSubPolicyCoverage, Damages, Settlement, BManual, Notes, Rejection)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-e.IDDesp ENumber, NULL FKProcess, e.DataDesp ExpenseDate, o.PK FKPolicyObject, NULL FKSubPolicyObject, c.PK FKPolicyCoverage,
+e.IDDesp ENumber, NULL FKProcess, e.DataDesp ExpenseDate, o.PK FKPolicyObject, NULL FKSubPolicyObject, c.PK FKPolicyCoverage, NULL FKSubPolicyCoverage
 e.Valor Damages, e.ValorComp Settlement, 1 BManual, NULL Notes, Null Rejection
 from credegs..empresa.saudedespesas e
 inner join credegs..empresa.apolice a on a.cliente=e.cliente and a.apolice=e.apolice and a.ramo=e.ramo and a.comseg=e.comseg
@@ -16,18 +16,15 @@ inner join credite_egs.tblInsuredObjects o on o.FKPolicy=p.PK and o.ObjName=CAST
 where e.FKSt<4 or e.DataDesp>'2010-12-31' or e.IDDesp in
 (select FKDesp from credegs..empresa.saudehistorico where MvtDate>'2010-12-31');
 
-insert into credite_egs.tblBBExpenses (PK, ENumber, FKProcess, ExpenseDate, FKPolicyObject, FKSubPolicyObject, FKPolicyCoverage, Damages, Settlement, BManual, Notes, Rejection)
+insert into credite_egs.tblBBExpenses (PK, ENumber, FKProcess, ExpenseDate, FKPolicyObject, FKSubPolicyObject, FKPolicyCoverage, FKSubPolicyCoverage, Damages, Settlement, BManual, Notes, Rejection)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-e.IDDesp ENumber, NULL FKProcess, e.DataDesp ExpenseDate, NULL FKPolicyObject, o.PK FKSubPolicyObject, c.PK FKPolicyCoverage,
+e.IDDesp ENumber, NULL FKProcess, e.DataDesp ExpenseDate, NULL FKPolicyObject, o.PK FKSubPolicyObject, NULL  FKPolicyCoverage, c.PK FKSubPolicyCoverage,
 e.Valor Damages, e.ValorComp Settlement, 1 BManual, NULL Notes, Null Rejection
 from credegs..empresa.saudedespesas e
 inner join credegs..empresa.apolice a on a.cliente=e.cliente and a.apolice=e.apolice and a.ramo=e.ramo and a.comseg=e.comseg
 inner join credite_egs.tblBBSubPolicies s on s.MigrationID=a.MigrationID
 inner join credite_egs.tblSubPolicyObjects o on o.FKSubPolicy=s.PK and o.MigrationAux=e.NumObjecto
-inner join credite_egs.tblPNProcesses ps on ps.PK=s.FKProcess
-inner join credite_egs.tblPNProcesses pp on pp.PK=ps.FKParent
-inner join credite_egs.tblBBPolicies p on p.PK=pp.FKData
-inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK and c.FKCoverage=case
+inner join credite_egs.tblBBSubPolicyCoverages c on c.FKSubPolicy=s.PK and c.FKCoverage=case
 when e.FKCob=1 then '93CF04E9-8966-436F-9FD0-9F9100FD05A9'
 when e.FKCob=2 then '8813E06E-47EF-4045-A518-9F9100FD15A4'
 when e.FKCob=3 then '416992A3-83F2-4A03-BE3D-9F9100FD24CA'
