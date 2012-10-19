@@ -17,10 +17,8 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validatePolicyAndSubPolicyNumber();
 		valid &= validateProcessNumber();
 		valid &= validateHasJudicialProcess();
-		valid &= validateIsListOrTextInsuredObject();
 		valid &= validatePresentInPolicy();
-		valid &= validateInsuredObjectInList();
-		valid &= validateInsuredObjectInText();
+		valid &= validateInsuredObject();
 		valid &= validateDetails();
 
 		return new Result(valid, this.validationMessages);
@@ -31,18 +29,18 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 	}
 
 	private boolean validatePolicyAndSubPolicyNumber() {
-		if ( BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(form.referenceType.getValue()) )
+		if ( BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(form.referenceType.getValue()))
 			return validateSubPolicyNumber();
 		else
 			return validatePolicyNumber();
 	}
 
 	private boolean validatePolicyNumber() {
-		return validateGuid(form.subPolicyReference, false);
+		return validateGuid(form.policyReference, false);
 	}
 
 	private boolean validateSubPolicyNumber() {
-		return validateGuid(form.policyReference, false);
+		return validateGuid(form.subPolicyReference, false);
 	}
 
 	private boolean validateProcessNumber() {
@@ -52,24 +50,32 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 	private boolean validateHasJudicialProcess() {
 		return form.hasJudicial != null;
 	}
-
-	private boolean validateIsListOrTextInsuredObject() {
-		return validateInsuredObjectInList() || validateInsuredObjectInText();
+	
+	private boolean validateInsuredObject() {
+		if(!validatePresentInPolicy()){
+			return false;
+		}
+		
+		boolean valid = validateInsuredObjectInList();
+		
+		valid |= validateInsuredObjectInText();
+		
+		return valid;
 	}
 
 	private boolean validatePresentInPolicy() {
-		return form.belongsToPolicy != null;
+		return form.belongsToPolicy.getValue() != null;
 	}
 
 	private boolean validateInsuredObjectInList() {
-		if ( form.belongsToPolicy.getValue().equalsIgnoreCase("true") )
-			return validateGuid(form.insuredObject, true);
+		if (form.belongsToPolicy.getValue().equalsIgnoreCase("true") )
+			return validateGuid(form.insuredObject, false);
 		return true;
 	}
 
 	private boolean validateInsuredObjectInText() {
-		if ( !form.belongsToPolicy.getValue().equalsIgnoreCase("true") )
-			return validateString(form.insuredObjectName, 0, 250, true);
+		if (!form.belongsToPolicy.getValue().equalsIgnoreCase("true"))
+			return validateString(form.insuredObjectName, 1, 250, false);
 		return true;
 	}
 

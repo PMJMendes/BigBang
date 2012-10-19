@@ -60,14 +60,19 @@ public class SerialExpenseCreationFormValidator extends FormValidator<SerialExpe
 	}
 
 	private boolean validateBelongsToPolicy() {
-		return form.belongsToPolicy != null;
+		return form.belongsToPolicy.getValue() != null;
 	}
 
 	private boolean validateInsuredObject() {
-		if(form.belongsToPolicy.getValue() == null){
+		if(!validateBelongsToPolicy()){
 			return false;
 		}
-		return validateInsuredObjectInList() || validateInsuredObjectInText();
+		
+		boolean valid = validateInsuredObjectInList();
+		
+		valid |= validateInsuredObjectInText();
+		
+		return valid;
 	}
 
 	private boolean validateInsuredObjectInList() {
