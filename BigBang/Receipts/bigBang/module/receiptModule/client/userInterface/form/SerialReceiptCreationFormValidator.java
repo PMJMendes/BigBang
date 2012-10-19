@@ -69,7 +69,7 @@ FormValidator<SerialReceiptCreationForm> {
 	}
 
 	private boolean validateIssueDate() {
-		return validateDate(form.issueDate, true);
+		return validateDate(form.issueDate, false);
 	}
 
 	private boolean validateCoverageStart() {

@@ -63,7 +63,7 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 	}
 
 	private boolean validateIssueDate() {
-		return validateDate(form.issueDate, true);
+		return validateDate(form.issueDate, false);
 	}
 
 	private boolean validateCoverageStart() {
