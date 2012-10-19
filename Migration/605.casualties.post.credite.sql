@@ -12,6 +12,16 @@ inner join credite_egs.tblBBSubCasualties c on c.PK=p.FKData
 inner join credegs..empresa.sinistros x on x.ordem + 0.1 = c.SCNumber
 where x.estado='F' and x.datafecho is not null;
 
+/** Abertos **/
+
+update credite_egs.tblPNNodes set NodeCount=1 where PK in
+(select n.PK
+from credite_egs.tblPNNodes n
+inner join credite_egs.tblPNProcesses p on p.PK=n.FKProcess
+inner join credite_egs.tblBBCasualties c on c.PK=p.FKData
+inner join credite_egs.tblBBSubCasualties s on s.FKCasualty=c.PK
+where n.FKController='9B9889F7-270F-4A04-B5A3-A03C0111966B')
+
 /** Fechados **/
 
 update credite_egs.tblPNNodes set NodeCount=0 where PK in
