@@ -5,6 +5,7 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -14,6 +15,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.ReceiptChildrenPanel;
 import bigBang.module.receiptModule.client.userInterface.ReceiptProcessToolBar;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
+import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel.Entry;
 import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter.Action;
@@ -243,7 +245,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	}
 
 	@Override
-	public HasValueSelectables<?> getList() {
+	public HasValueSelectables<ReceiptStub> getList() {
 		return this.searchPanel;
 	}
 
@@ -394,6 +396,12 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowReturnPayment(boolean hasPermission) {
 		operationsToolbar.allowReturnPayment(hasPermission);
+	}
+
+	@Override
+	public void addEntryToList(Entry entry) {
+		searchPanel.add(0, entry);
+		entry.setSelected(true, false);
 	}
 
 }

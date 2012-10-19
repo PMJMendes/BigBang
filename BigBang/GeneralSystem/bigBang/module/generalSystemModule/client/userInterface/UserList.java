@@ -1,19 +1,15 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import java.util.Collection;
-
-import com.google.gwt.event.dom.client.HasClickHandlers;
-
 import bigBang.definitions.client.dataAccess.UserBroker;
 import bigBang.definitions.client.dataAccess.UserDataBrokerClient;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.User;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListHeader;
+
+import com.google.gwt.event.dom.client.HasClickHandlers;
 
 public class UserList extends FilterableList<User> implements UserDataBrokerClient {
 	
@@ -118,22 +114,22 @@ public class UserList extends FilterableList<User> implements UserDataBrokerClie
 		return header.getRefreshButton();
 	}
 	
-	@Override
-	protected void onAttach() {
-		super.onAttach();
-		userBroker.requireDataRefresh();
-		userBroker.getUsers(new ResponseHandler<User[]>() {
-			
-			@Override
-			public void onResponse(User[] response) {
-				return;
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				return;
-			}
-		});
-	}
+//	@Override
+//	protected void onAttach() {
+//		super.onAttach();
+//		userBroker.requireDataRefresh();
+//		userBroker.getUsers(new ResponseHandler<User[]>() {
+//			
+//			@Override
+//			public void onResponse(User[] response) {
+//				return;
+//			}
+//			
+//			@Override
+//			public void onError(Collection<ResponseError> errors) {
+//				return;
+//			}
+//		});
+//	}
 	
 }

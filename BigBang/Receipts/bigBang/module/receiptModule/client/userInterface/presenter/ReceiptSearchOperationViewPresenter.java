@@ -30,6 +30,8 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
+import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel.Entry;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -52,7 +54,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	public interface Display {
 		//List
-		HasValueSelectables<?> getList();
+		HasValueSelectables<ReceiptStub> getList();
 
 		//Form
 		HasEditableValue<Receipt> getForm();
@@ -96,6 +98,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 
 		void allowRequestDAS(boolean hasPermission);
+
+		void addEntryToList(Entry entry);
 
 	}
 
@@ -476,6 +480,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);
 				view.scrollFormToTop();
+				ensureListedAndSelected(value);
 			}
 
 			@Override
@@ -483,6 +488,24 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				onGetReceiptFailed();
 			}
 		});
+	}
+
+	protected void ensureListedAndSelected(Receipt value) {
+		boolean found = false;
+		for(ValueSelectable<ReceiptStub> stub : view.getList().getAll()){
+			if(stub.getValue().id.equals(value.id)){
+				found  = true;
+				stub.setSelected(true, false);
+			}
+			else{
+				stub.setSelected(false,false);
+			}
+		}
+		
+		if(!found){
+			ReceiptSearchPanel.Entry entry = new ReceiptSearchPanel.Entry(value);
+			view.addEntryToList(entry);
+		}
 	}
 
 	protected void onEdit(){

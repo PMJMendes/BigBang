@@ -9,6 +9,7 @@ import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -19,6 +20,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.userInterface.ExpenseChildrenPanel;
 import bigBang.module.expenseModule.client.userInterface.ExpenseProcessToolBar;
 import bigBang.module.expenseModule.client.userInterface.ExpenseSearchPanel;
+import bigBang.module.expenseModule.client.userInterface.ExpenseSearchPanel.Entry;
 import bigBang.module.expenseModule.client.userInterface.form.ExpenseForm;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter.Action;
@@ -162,7 +164,7 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	}
 
 	@Override
-	public HasValueSelectables<?> getList(){
+	public HasValueSelectables<ExpenseStub> getList(){
 		return searchPanel;
 	}
 
@@ -278,5 +280,11 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	@Override
 	public void setEditMode() {
 		form.setUpdateMode();
+	}
+
+	@Override
+	public void addEntryToList(Entry entry) {
+		searchPanel.add(0, entry);
+		entry.setSelected(true, false);
 	}
 }

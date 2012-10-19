@@ -23,6 +23,7 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
@@ -66,6 +67,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 		void setSaveModeEnabled(boolean enabled);
 
 		Widget asWidget();
+		void addUserToList(ListEntry<User> response);
 	}
 
 	private Display view;
@@ -87,11 +89,14 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 		bind();
 		container.clear();
 		container.add(this.view.asWidget());
-		setup();
+		if(view.getList().getAll().size() == 0){
+			setup();
+		}
 	}
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
+
 		String userId = parameterHolder.getParameter("userid");
 		userId = userId == null ? new String() : userId;
 
@@ -199,6 +204,12 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 		});
 	}
 
+
+	private void onGetUserListFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a lista de utilizadores"), TYPE.ALERT_NOTIFICATION));
+	}
+
+
 	private void clearView(){
 		view.setSaveModeEnabled(false);
 		view.clearAllowedPermissions();
@@ -276,6 +287,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 				view.setSaveModeEnabled(false);
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
+				ensureListedAndSelected(response);
 			}
 
 			@Override
@@ -283,6 +295,17 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 				onGetUserFailed();
 			}
 		});
+	}
+
+	protected void ensureListedAndSelected(User response) {
+		for(ValueSelectable<User> stub : view.getList().getAll()){
+			if(stub.getValue().id.equals(response.id)){
+				stub.setSelected(true, false);
+			}
+			else{
+				stub.setSelected(false,false);
+			}
+		}
 	}
 
 	public void createUser(User c) {
@@ -365,10 +388,6 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("userid");
 		NavigationHistoryManager.getInstance().go(item);
-	}
-
-	private void onGetUserListFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a lista de utilizadores"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void onCreateUserFailed(){

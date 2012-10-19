@@ -8,6 +8,7 @@ import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.UserList;
 import bigBang.module.generalSystemModule.client.userInterface.UserListEntry;
@@ -164,6 +165,11 @@ public class UserManagementOperationView extends View implements UserManagementO
 	@Override
 	public void allowDelete(boolean allow) {
 		this.toolbar.allowDelete(allow);
+	}
+
+	@Override
+	public void addUserToList(ListEntry<User> response) {
+		userList.add(0, response);
 	}
 
 }

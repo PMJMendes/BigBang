@@ -21,6 +21,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.casualtyModule.client.userInterface.CasualtyChildrenPanel;
 import bigBang.module.casualtyModule.client.userInterface.CasualtyProcessToolBar;
 import bigBang.module.casualtyModule.client.userInterface.CasualtySearchPanel;
+import bigBang.module.casualtyModule.client.userInterface.CasualtySearchPanelListEntry;
 import bigBang.module.casualtyModule.client.userInterface.form.CasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter.Action;
@@ -211,6 +212,12 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	@Override
 	public void allowInfoOrDocumentRequest(boolean hasPermission) {
 		operationsToolbar.allowInfoOrDocumentRequest(hasPermission);
+	}
+
+	@Override
+	public void addEntryToList(CasualtySearchPanelListEntry entry) {
+		searchPanel.add(0, entry);
+		entry.setSelected(true, false);
 	}
 
 }

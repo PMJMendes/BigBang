@@ -30,6 +30,9 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.expenseModule.client.userInterface.ExpenseSearchPanel;
+import bigBang.module.expenseModule.client.userInterface.ExpenseSearchPanel.Entry;
+
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,7 +47,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 	public interface Display {
 		Widget asWidget();
-		HasValueSelectables<?> getList();
+		HasValueSelectables<ExpenseStub> getList();
 		HasEditableValue<Expense> getForm();
 		boolean isFormValid();
 		void clearAllowedPermissions();
@@ -66,6 +69,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 		void allowReturnToClient(boolean allow);
 		void allowReceiveRejection(boolean hasPermission);
 		void setEditMode();
+		void addEntryToList(Entry entry);
 	}
 
 	protected boolean bound = false;
@@ -147,6 +151,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(response);
+				ensureListedAndSelected(response);
 			}
 
 			@Override
@@ -159,6 +164,24 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 		});
 
 
+	}
+
+	protected void ensureListedAndSelected(Expense response) {
+		boolean found = false;
+		for(ValueSelectable<ExpenseStub> stub : view.getList().getAll()){
+			if(stub.getValue().id.equals(response.id)){
+				found = true;
+				stub.setSelected(true, false);
+			}
+			else{
+				stub.setSelected(false, false);
+			}
+		}
+		
+		if(!found){
+			ExpenseSearchPanel.Entry entry = new ExpenseSearchPanel.Entry(response);
+			view.addEntryToList(entry);
+		}
 	}
 
 	public void bind() {

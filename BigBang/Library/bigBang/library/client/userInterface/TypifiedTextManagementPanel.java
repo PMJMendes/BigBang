@@ -280,6 +280,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			return;
 		}
 		form.revert();
+		form.setReadOnly(true);
 	}
 
 	protected void saveItem() {

@@ -31,6 +31,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.casualtyModule.client.userInterface.CasualtySearchPanelListEntry;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -71,6 +72,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
 		void allowInfoOrDocumentRequest(boolean hasPermission);
+		void addEntryToList(CasualtySearchPanelListEntry entry);
 	}
 
 	protected CasualtyDataBroker broker;
@@ -252,6 +254,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 				view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER));
 				view.allowInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST));
 				view.getForm().setValue(response);
+				ensureListedAndSelected(response);
 			}
 
 			@Override
@@ -259,6 +262,24 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 				onGetCasualtyFailed();
 			}
 		});
+	}
+
+	protected void ensureListedAndSelected(Casualty response) {
+		boolean found = false;
+		for(ValueSelectable<CasualtyStub> stub : view.getList().getAll()){
+			if(stub.getValue().id.equals(response.id)){
+				found = true;
+				stub.setSelected(true, false);
+			}
+			else{
+				stub.setSelected(false, false);
+			}
+		}
+		
+		if(!found){
+			CasualtySearchPanelListEntry entry = new CasualtySearchPanelListEntry(response);
+			view.addEntryToList(entry);
+		}
 	}
 
 	protected void onEdit() {
