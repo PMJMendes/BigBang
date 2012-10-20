@@ -73,7 +73,7 @@ public class PolicyAndObjectCrossFormValidator extends CrossFormValidator {
 	}
 
 	protected boolean validateExerciseDates(){
-		InsurancePolicy policy = policyValidator.getForm().getInfo();
+//		InsurancePolicy policy = policyValidator.getForm().getInfo();
 		//TODO
 		return true;
 	}
