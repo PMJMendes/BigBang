@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
 import javax.mail.Address;
@@ -9,8 +10,10 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import microsoft.exchange.webservices.data.Attachment;
 import microsoft.exchange.webservices.data.BasePropertySet;
 import microsoft.exchange.webservices.data.ExchangeService;
+import microsoft.exchange.webservices.data.FileAttachment;
 import microsoft.exchange.webservices.data.Folder;
 import microsoft.exchange.webservices.data.FolderView;
 import microsoft.exchange.webservices.data.Item;
@@ -19,6 +22,7 @@ import microsoft.exchange.webservices.data.ItemView;
 import microsoft.exchange.webservices.data.PropertySet;
 import microsoft.exchange.webservices.data.WellKnownFolderName;
 import Jewel.Engine.Engine;
+import Jewel.Engine.SysObjects.FileXfer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 
@@ -280,5 +284,39 @@ public class MailConnector
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public static FileXfer DoGetAttachment(String pstrEmailId, String pstrAttachmentId)
+		throws BigBangJewelException
+	{
+		Item lobjItem;
+		byte[] larrBytes;
+		FileXfer lobjFile;
+
+		try
+		{
+			lobjItem = DoGetItem(pstrEmailId);
+			lobjItem.load();
+
+			for ( Attachment lobjAtt: lobjItem.getAttachments() )
+			{
+				if ( !lobjAtt.getId().equals(pstrAttachmentId) )
+					continue;
+
+				((FileAttachment)lobjAtt).load();
+
+				larrBytes = ((FileAttachment)lobjAtt).getContent();
+				lobjFile = new FileXfer(larrBytes.length, ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() ),
+						((FileAttachment)lobjAtt).getName(), new ByteArrayInputStream(larrBytes));
+
+				return lobjFile;
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		throw new BigBangJewelException("Erro: Anexo não encontrado na mensagem indicada.");
 	}
 }

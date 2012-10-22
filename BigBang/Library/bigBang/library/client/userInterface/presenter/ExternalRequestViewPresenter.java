@@ -14,11 +14,8 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
-import bigBang.library.interfaces.ExchangeService;
-import bigBang.library.interfaces.ExchangeServiceAsync;
 import bigBang.library.interfaces.ExternRequestService;
 import bigBang.library.interfaces.ExternRequestServiceAsync;
-import bigBang.library.shared.Attachment;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -31,8 +28,8 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 	protected String ownerTypeId;
 	private String externalRequestId;
 	private ExternRequestServiceAsync service;
-	private ExchangeServiceAsync exchangeService;
-	protected int counter;
+//	private ExchangeServiceAsync exchangeService;
+//	protected int counter;
 
 	public static enum Action{
 		CANCEL,
@@ -91,7 +88,7 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 	public ExternalRequestViewPresenter(Display<T> view){
 		setView((UIObject)view);
 		service = ExternRequestService.Util.getInstance();
-		exchangeService = ExchangeService.Util.getInstance();
+//		exchangeService = ExchangeService.Util.getInstance();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -156,48 +153,49 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 	protected void saveExternalInformationRequest(final ExternalInfoRequest toSend) {
 		toSend.parentDataObjectId = ownerId;
 		toSend.parentDataTypeId = ownerTypeId;
+		createExternalInfoRequest(toSend);
 
-		counter = 0;
-
-		if(toSend.message.upgrades != null && toSend.message.upgrades.length > 0){
-			for(int i = 0; i<toSend.message.upgrades.length; i++){
-
-				exchangeService.getAttachment(toSend.message.emailId, toSend.message.upgrades[i].attachmentId, new BigBangAsyncCallback<Attachment>() {
-
-					public void onResponseSuccess(Attachment result) {
-
-						for(int k = 0; k<toSend.message.upgrades.length; k++){
-							if(toSend.message.upgrades[k].attachmentId.equals(result.id)){
-								toSend.message.upgrades[k].storageId = result.storageId;
-								break;
-							}
-						}
-
-						counter++;
-						if(counter == toSend.message.upgrades.length){
-
-							createExternalInfoRequest(toSend);
-
-						}
-
-					};
-
-
-					public void onResponseFailure(Throwable caught) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o Pedido de Informação Externo."), TYPE.ALERT_NOTIFICATION));
-						super.onResponseFailure(caught);
-
-					};
-				});
-
-			}
-
-
-		}
-
-		else{
-			createExternalInfoRequest(toSend);
-		}
+//		counter = 0;
+//
+//		if(toSend.message.upgrades != null && toSend.message.upgrades.length > 0){
+//			for(int i = 0; i<toSend.message.upgrades.length; i++){
+//
+//				exchangeService.getAttachment(toSend.message.emailId, toSend.message.upgrades[i].attachmentId, new BigBangAsyncCallback<Attachment>() {
+//
+//					public void onResponseSuccess(Attachment result) {
+//
+//						for(int k = 0; k<toSend.message.upgrades.length; k++){
+//							if(toSend.message.upgrades[k].attachmentId.equals(result.id)){
+//								toSend.message.upgrades[k].storageId = result.storageId;
+//								break;
+//							}
+//						}
+//
+//						counter++;
+//						if(counter == toSend.message.upgrades.length){
+//
+//							createExternalInfoRequest(toSend);
+//
+//						}
+//
+//					};
+//
+//
+//					public void onResponseFailure(Throwable caught) {
+//						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o Pedido de Informação Externo."), TYPE.ALERT_NOTIFICATION));
+//						super.onResponseFailure(caught);
+//
+//					};
+//				});
+//
+//			}
+//
+//
+//		}
+//
+//		else{
+//			createExternalInfoRequest(toSend);
+//		}
 	}
 
 	protected abstract void createExternalInfoRequest(ExternalInfoRequest toSend);

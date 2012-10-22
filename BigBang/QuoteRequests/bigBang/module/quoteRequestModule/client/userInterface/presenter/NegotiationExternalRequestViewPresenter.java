@@ -68,13 +68,13 @@ public class NegotiationExternalRequestViewPresenter extends ExternalRequestView
 				navig.popFromStackParameter("display");
 				navig.removeParameter("externalrequestid");	
 				NavigationHistoryManager.getInstance().go(navig);
-				counter = 0;
+//				counter = 0;
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o Pedido de Informação Externo."), TYPE.ALERT_NOTIFICATION));
-				counter = 0;
+//				counter = 0;
 			}
 		});	
 		

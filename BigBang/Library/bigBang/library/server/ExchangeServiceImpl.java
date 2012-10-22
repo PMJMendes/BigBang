@@ -1,9 +1,7 @@
 package bigBang.library.server;
 
-import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import microsoft.exchange.webservices.data.Attachment;
 import microsoft.exchange.webservices.data.EmailAddress;
@@ -11,7 +9,6 @@ import microsoft.exchange.webservices.data.EmailMessage;
 import microsoft.exchange.webservices.data.FileAttachment;
 import microsoft.exchange.webservices.data.Item;
 import Jewel.Engine.Engine;
-import Jewel.Engine.SysObjects.FileXfer;
 import bigBang.library.interfaces.ExchangeService;
 import bigBang.library.shared.AttachmentStub;
 import bigBang.library.shared.BigBangException;
@@ -138,50 +135,35 @@ public class ExchangeServiceImpl
 		return lobjResult;
 	}
 
-	public bigBang.library.shared.Attachment getAttachment(String emailId, String attachmentId)
-		throws SessionExpiredException, BigBangException
-	{
-		Item lobjItem;
-		bigBang.library.shared.Attachment lobjResult;
-		byte[] larrBytes;
-		FileXfer lobjFile;
-		UUID lidKey;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjItem = MailConnector.DoGetItem(emailId);
-			lobjItem.load();
-
-			for ( Attachment lobjAtt: lobjItem.getAttachments() )
-			{
-				if ( !lobjAtt.getId().equals(attachmentId) )
-					continue;
-
-				lobjResult = new bigBang.library.shared.Attachment();
-				((FileAttachment)lobjAtt).load();
-				lobjResult.id = lobjAtt.getId();
-				lobjResult.fileName = ((FileAttachment)lobjAtt).getName();
-				lobjResult.mimeType = ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() );
-				lobjResult.size = ((FileAttachment)lobjAtt).getContent().length;
-
-				larrBytes = ((FileAttachment)lobjAtt).getContent();
-				lobjFile = new FileXfer(larrBytes.length, lobjResult.mimeType, lobjResult.fileName,
-						new ByteArrayInputStream(larrBytes));
-				lidKey = UUID.randomUUID();
-				FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
-				lobjResult.storageId = lidKey.toString();
-
-				return lobjResult;
-			}
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		throw new BigBangException("Erro: Anexo não encontrado na mensagem indicada.");
-	}
+//	public bigBang.library.shared.Attachment getAttachment(String emailId, String attachmentId)
+//		throws SessionExpiredException, BigBangException
+//	{
+//		FileXfer lobjFile;
+//		bigBang.library.shared.Attachment lobjResult;
+//		UUID lidKey;
+//
+//		if ( Engine.getCurrentUser() == null )
+//			throw new SessionExpiredException();
+//
+//		try
+//		{
+//			lobjFile = MailConnector.DoGetAttachment(emailId, attachmentId);
+//		}
+//		catch (BigBangJewelException e)
+//		{
+//			throw new BigBangException(e.getMessage(), e);
+//		}
+//
+//		lobjResult = new bigBang.library.shared.Attachment();
+//		lobjResult.id = attachmentId;
+//		lobjResult.fileName = lobjFile.getFileName();
+//		lobjResult.mimeType = lobjFile.getContentType();
+//		lobjResult.size = lobjFile.getLength();
+//
+//		lidKey = UUID.randomUUID();
+//		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
+//		lobjResult.storageId = lidKey.toString();
+//
+//		return lobjResult;
+//	}
 }

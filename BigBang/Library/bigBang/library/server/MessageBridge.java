@@ -17,6 +17,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.IncomingMessageData;
 import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class MessageBridge
 {
@@ -136,6 +137,7 @@ public class MessageBridge
 	}
 
 	public static IncomingMessageData incomingToServer(IncomingMessage lobMessage, UUID pidDocOwnerType)
+		throws BigBangException
 	{
 		IncomingMessageData lobjResult;
 		int i;
@@ -164,9 +166,24 @@ public class MessageBridge
 				lobjResult.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(lobMessage.upgrades[i].docTypeId);
 				lobjResult.mobjDocOps.marrCreate[i].mstrText = null;
 
-				lidFile = lobMessage.upgrades[i].storageId == null ? null : UUID.fromString(lobMessage.upgrades[i].storageId);
-				lobjResult.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
-				FileServiceImpl.GetFileXferStorage().remove(lidFile);
+				if ( lobMessage.upgrades[i].storageId != null )
+				{
+					lidFile = lobMessage.upgrades[i].storageId == null ? null : UUID.fromString(lobMessage.upgrades[i].storageId);
+					lobjResult.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
+					FileServiceImpl.GetFileXferStorage().remove(lidFile);
+				}
+				else if ( lobMessage.upgrades[i].attachmentId != null )
+				{
+					try
+					{
+						lobjResult.mobjDocOps.marrCreate[i].mobjFile = MailConnector.DoGetAttachment(lobMessage.emailId,
+								lobMessage.upgrades[i].attachmentId).GetVarData();
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangException(e.getMessage(), e);
+					}
+				}
 
 				lobjResult.mobjDocOps.marrCreate[i].marrInfo = null;
 				lobjResult.mobjDocOps.marrCreate[i].mobjPrevValues = null;

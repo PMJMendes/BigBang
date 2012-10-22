@@ -8,7 +8,6 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Negotiation.Response;
-import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -23,7 +22,6 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.interfaces.ExchangeService;
 import bigBang.library.interfaces.ExchangeServiceAsync;
-import bigBang.library.shared.Attachment;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -34,7 +32,7 @@ public class NegotiationResponseViewPresenter implements ViewPresenter {
 	private NegotiationBroker broker;
 	private Display view;
 	private boolean bound;
-	private int counter = 0;
+//	private int counter = 0;
 	ExchangeServiceAsync exchangeService;
 	
 	public enum Action{
@@ -134,50 +132,51 @@ public class NegotiationResponseViewPresenter implements ViewPresenter {
 	
 	protected void onResponse() {
 		final Response toSend = view.getForm().getInfo();
+		onResponse(toSend);
 		
-		counter = 0;
-		if(toSend.message.upgrades != null && toSend.message.upgrades.length > 0){
-			for(int i = 0; i<toSend.message.upgrades.length; i++){
-
-				exchangeService.getAttachment(toSend.message.emailId, toSend.message.upgrades[i].attachmentId, new BigBangAsyncCallback<Attachment>() {
-
-
-
-
-					public void onResponseSuccess(Attachment result) {
-
-						for(int k = 0; k<toSend.message.upgrades.length; k++){
-							if(toSend.message.upgrades[k].attachmentId.equals(result.id)){
-								toSend.message.upgrades[k].storageId = result.storageId;
-								break;
-							}
-						}
-
-						counter++;
-						if(counter == toSend.message.upgrades.length){
-							
-							onResponse(toSend);
-
-						}
-
-					};
-
-
-					public void onResponseFailure(Throwable caught) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a resposta ao pedido."), TYPE.ALERT_NOTIFICATION));
-						super.onResponseFailure(caught);
-
-					};
-				});
-
-			}
-
-
-		}
-
-		else{
-			onResponse(toSend);
-		}
+//		counter = 0;
+//		if(toSend.message.upgrades != null && toSend.message.upgrades.length > 0){
+//			for(int i = 0; i<toSend.message.upgrades.length; i++){
+//
+//				exchangeService.getAttachment(toSend.message.emailId, toSend.message.upgrades[i].attachmentId, new BigBangAsyncCallback<Attachment>() {
+//
+//
+//
+//
+//					public void onResponseSuccess(Attachment result) {
+//
+//						for(int k = 0; k<toSend.message.upgrades.length; k++){
+//							if(toSend.message.upgrades[k].attachmentId.equals(result.id)){
+//								toSend.message.upgrades[k].storageId = result.storageId;
+//								break;
+//							}
+//						}
+//
+//						counter++;
+//						if(counter == toSend.message.upgrades.length){
+//							
+//							onResponse(toSend);
+//
+//						}
+//
+//					};
+//
+//
+//					public void onResponseFailure(Throwable caught) {
+//						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a resposta ao pedido."), TYPE.ALERT_NOTIFICATION));
+//						super.onResponseFailure(caught);
+//
+//					};
+//				});
+//
+//			}
+//
+//
+//		}
+//
+//		else{
+//			onResponse(toSend);
+//		}
 	}
 
 }

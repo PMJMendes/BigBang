@@ -1,6 +1,5 @@
 package bigBang.library.interfaces;
 
-import bigBang.library.shared.Attachment;
 import bigBang.library.shared.ExchangeItem;
 import bigBang.library.shared.ExchangeItemStub;
 
@@ -11,5 +10,5 @@ public interface ExchangeServiceAsync
 {
 	void getItems(AsyncCallback<ExchangeItemStub[]> callback);
 	void getItem(String id, AsyncCallback<ExchangeItem> callback);
-	void getAttachment(String emailId, String attachmentId, AsyncCallback<Attachment> callback);
+//	void getAttachment(String emailId, String attachmentId, AsyncCallback<Attachment> callback);
 }
