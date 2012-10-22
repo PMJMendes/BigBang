@@ -26,6 +26,7 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 			@Override
 			public bigBang.library.client.FormValidator.Result validateImpl() {
 				Result result = super.validateImpl();
+				result.valid &= validateExerciseDates();
 
 				return result;
 			}
@@ -38,6 +39,7 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 			public bigBang.library.client.FormValidator.Result validateImpl() {
 				Result result = super.validateImpl();
 				result.valid &= validateInsuredObjectHeaderDates();
+				result.valid &= validateExerciseDates();
 
 				return result;
 			}
@@ -83,7 +85,7 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 					exerciseValidator.getForm().startDate.setInvalid(true);
 				}
 				if((exerciseValidator.getForm().endDate.getValue() != null) && (policyValidator.getForm().endDate.getValue() != null) &&
-						(exerciseValidator.getForm().endDate.getValue().before(policyValidator.getForm().endDate.getValue()))) {
+						(exerciseValidator.getForm().endDate.getValue().after(policyValidator.getForm().endDate.getValue()))) {
 					valid = false;
 					exerciseValidator.getForm().endDate.setInvalid(true);
 				}
