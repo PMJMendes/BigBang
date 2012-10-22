@@ -4,13 +4,13 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub.PolicyStatus;
 import bigBang.library.client.CrossFormValidator;
 
-public class PolicyAndObjectCrossFormValidator extends CrossFormValidator {
+public class PolicyCrossFormValidator extends CrossFormValidator {
 
 	private InsurancePolicyHeaderFormValidator policyValidator;
 	private InsuredObjectFormValidator objectValidator;
 	private ExerciseSelectorFormValidator exerciseValidator;
 	
-	public PolicyAndObjectCrossFormValidator(InsurancePolicyHeaderForm policyForm, InsuredObjectForm objectForm, ExerciseSelectorForm exerciseForm) {
+	public PolicyCrossFormValidator(InsurancePolicyHeaderForm policyForm, InsuredObjectForm objectForm, ExerciseSelectorForm exerciseForm) {
 		exerciseValidator = getNewExerciseValidator(exerciseForm);
 		policyValidator = getNewPolicyValidator(policyForm);
 		objectValidator = getNewObjectValidator(objectForm);

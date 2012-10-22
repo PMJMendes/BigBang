@@ -37,7 +37,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.form.CoverageEx
 import bigBang.module.insurancePolicyModule.client.userInterface.form.ExerciseSelectorForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyHeaderForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsuredObjectForm;
-import bigBang.module.insurancePolicyModule.client.userInterface.form.PolicyAndObjectCrossFormValidator;
+import bigBang.module.insurancePolicyModule.client.userInterface.form.PolicyCrossFormValidator;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
 
@@ -317,7 +317,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		contentWrapper.add(toolbarAndCenterWrapper);
 		mainWrapper.add(contentWrapper);
 		
-		new PolicyAndObjectCrossFormValidator(policyForm, objectForm, exerciseChooser);
+		new PolicyCrossFormValidator(policyForm, objectForm, exerciseChooser);
 	}
 
 	@Override
