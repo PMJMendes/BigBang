@@ -59,13 +59,15 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 	//Add cross-form validations here
 	
 	protected boolean validateInsuredObjectHeaderDates() {
-		InsurancePolicy policy = policyValidator.getForm().getInfo();
-		if(policy != null && policy.statusIcon != null && policy.statusIcon == PolicyStatus.PROVISIONAL) {
-			if(objectValidator.getForm().inclusionDate.getValue() != null) {
-				objectValidator.getForm().inclusionDate.setWarning(true);
-			}
-			if(objectValidator.getForm().exclusionDate.getValue() != null) {
-				objectValidator.getForm().exclusionDate.setWarning(true);
+		if ( (policyValidator != null) && (objectValidator != null) && (policyValidator.getForm() != null) ) {
+			InsurancePolicy policy = policyValidator.getForm().getInfo();
+			if(policy != null && policy.statusIcon != null && policy.statusIcon == PolicyStatus.PROVISIONAL) {
+				if(objectValidator.getForm().inclusionDate.getValue() != null) {
+					objectValidator.getForm().inclusionDate.setWarning(true);
+				}
+				if(objectValidator.getForm().exclusionDate.getValue() != null) {
+					objectValidator.getForm().exclusionDate.setWarning(true);
+				}
 			}
 		}
 		return true;
@@ -73,16 +75,18 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 
 	protected boolean validateExerciseDates() {
 		boolean valid = true;
-		if((policyValidator.getForm() != null) && (exerciseValidator.getForm() != null)) {
-			if((exerciseValidator.getForm().startDate.getValue() != null) && (policyValidator.getForm().startDate.getValue() != null) &&
-					(exerciseValidator.getForm().startDate.getValue().before(policyValidator.getForm().startDate.getValue()))) {
-				valid = false;
-				exerciseValidator.getForm().startDate.setInvalid(true);
-			}
-			if((exerciseValidator.getForm().endDate.getValue() != null) && (policyValidator.getForm().endDate.getValue() != null) &&
-					(exerciseValidator.getForm().endDate.getValue().before(policyValidator.getForm().endDate.getValue()))) {
-				valid = false;
-				exerciseValidator.getForm().endDate.setInvalid(true);
+		if ( (policyValidator != null) && (exerciseValidator != null) ) {
+			if((policyValidator.getForm() != null) && (exerciseValidator.getForm() != null)) {
+				if((exerciseValidator.getForm().startDate.getValue() != null) && (policyValidator.getForm().startDate.getValue() != null) &&
+						(exerciseValidator.getForm().startDate.getValue().before(policyValidator.getForm().startDate.getValue()))) {
+					valid = false;
+					exerciseValidator.getForm().startDate.setInvalid(true);
+				}
+				if((exerciseValidator.getForm().endDate.getValue() != null) && (policyValidator.getForm().endDate.getValue() != null) &&
+						(exerciseValidator.getForm().endDate.getValue().before(policyValidator.getForm().endDate.getValue()))) {
+					valid = false;
+					exerciseValidator.getForm().endDate.setInvalid(true);
+				}
 			}
 		}
 		return valid;
