@@ -95,7 +95,7 @@ public class ReceiptHistorySendPaymentNotice
 			lstrSQL.append("SELECT * FROM (")
 					.append(lrefReceipts.SQLForSelectAll()).append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(")
 					.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
-							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_SendPayment, false}, null))
+							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_CreatePaymentNotice, false}, null))
 					.append(") [AuxLogs] WHERE 1=1");
 		}
 		catch (Throwable e)
