@@ -23,8 +23,13 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryImage;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryInsurerAccounting;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryMediatorAccounting;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPayment;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPaymentAcct;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistorySendPaymentNotice;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryValidation;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingCreateDASRequest;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingCreateSignatureRequest;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingImage;
@@ -169,11 +174,41 @@ public class Receipt
 	{
 		return new ReceiptHistoryPayment().doReport(parrParams);
 	}
+	
+	public static GenericElement[] printReportHistoryImage(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptHistoryImage().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportHistoryInsurerAccounting(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptHistoryInsurerAccounting().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportHistoryMediatorAccounting(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptHistoryMediatorAccounting().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportHistorySendPaymentNotice(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptHistorySendPaymentNotice().doReport(parrParams);
+	}
 
 	public static GenericElement[] printReportHistoryPaymentAcct(String[] parrParams)
 		throws BigBangJewelException
 	{
 		return new ReceiptHistoryPaymentAcct().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportHistoryValidation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ReceiptHistoryValidation().doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)
