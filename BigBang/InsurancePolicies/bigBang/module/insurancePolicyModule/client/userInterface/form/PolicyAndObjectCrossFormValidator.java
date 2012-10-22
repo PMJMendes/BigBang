@@ -48,7 +48,7 @@ public class PolicyAndObjectCrossFormValidator extends CrossFormValidator {
 	private ExerciseSelectorFormValidator getNewExerciseValidator(ExerciseSelectorForm form) {
 		return new ExerciseSelectorFormValidator(form){
 			@Override
-			public bigBang.library.client.FormValidator.Result validate() {
+			public bigBang.library.client.FormValidator.Result validateImpl() {
 				Result result = super.validateImpl();
 				result.valid &= validateExerciseDates();
 				
