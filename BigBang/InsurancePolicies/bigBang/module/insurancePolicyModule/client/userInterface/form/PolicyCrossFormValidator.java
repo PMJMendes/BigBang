@@ -24,11 +24,9 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 		return new InsurancePolicyHeaderFormValidator(form) {
 			@Override
 			public bigBang.library.client.FormValidator.Result validateImpl() {
-				Result policyResult = super.validateImpl();
-				Result exerciseResult = exerciseValidator.validateImpl();
-				policyResult.messages.addAll(exerciseResult.messages);
+				Result result = super.validateImpl();
 
-				return new Result(policyResult.valid && exerciseResult.valid, policyResult.messages);
+				return result;
 			}
 		};
 	}
@@ -39,7 +37,7 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 			public bigBang.library.client.FormValidator.Result validateImpl() {
 				Result result = super.validateImpl();
 				result.valid &= validateInsuredObjectHeaderDates();
-				
+
 				return result;
 			}
 		};
@@ -51,7 +49,7 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 			public bigBang.library.client.FormValidator.Result validateImpl() {
 				Result result = super.validateImpl();
 				result.valid &= validateExerciseDates();
-				
+
 				return result;
 			}
 		};
@@ -72,10 +70,21 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 		return true;
 	}
 
-	protected boolean validateExerciseDates(){
-//		InsurancePolicy policy = policyValidator.getForm().getInfo();
-		//TODO
-		return true;
+	protected boolean validateExerciseDates() {
+		boolean valid = true;
+		if(policyValidator.getForm() != null) {
+			if((exerciseValidator.getForm().startDate.getValue() != null) && (policyValidator.getForm().startDate.getValue() != null) &&
+					(exerciseValidator.getForm().startDate.getValue().before(policyValidator.getForm().startDate.getValue()))) {
+				valid = false;
+				exerciseValidator.getForm().startDate.setInvalid(true);
+			}
+			if((exerciseValidator.getForm().endDate.getValue() != null) && (policyValidator.getForm().endDate.getValue() != null) &&
+					(exerciseValidator.getForm().endDate.getValue().before(policyValidator.getForm().endDate.getValue()))) {
+				valid = false;
+				exerciseValidator.getForm().endDate.setInvalid(true);
+			}
+		}
+		return valid;
 	}
 	
 }
