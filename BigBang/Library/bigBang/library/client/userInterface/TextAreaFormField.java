@@ -10,6 +10,8 @@ import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -77,6 +79,14 @@ public class TextAreaFormField extends FormField<String> {
 
 		setFieldWidth("400px");
 		setFieldHeight("100px");
+		
+		field.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				setValue(event.getValue(), true);
+			}
+		});
 	}
 
 	@Override

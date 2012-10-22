@@ -47,7 +47,7 @@ public abstract class FormValidator<T extends FormView<?>> {
 		return this.validateImpl();
 	}
 
-	public abstract Result validateImpl();
+	protected abstract Result validateImpl();
 
 	public boolean validateString(FormField<String> field, int minChar, int maxChar, boolean allowsNull){
 		field.setMandatory(!allowsNull);

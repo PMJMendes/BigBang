@@ -20,7 +20,7 @@ public class ReceiveReturnFormValidator extends
 	}
 
 	private boolean validateReason() {
-		return validateString(form.reason, 0, 250, false);
+		return validateString(form.reason, 1, 250, false);
 	}
 
 }
