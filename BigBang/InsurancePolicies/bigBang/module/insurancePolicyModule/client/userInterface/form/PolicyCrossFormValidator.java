@@ -11,13 +11,14 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 	private ExerciseSelectorFormValidator exerciseValidator;
 	
 	public PolicyCrossFormValidator(InsurancePolicyHeaderForm policyForm, InsuredObjectForm objectForm, ExerciseSelectorForm exerciseForm) {
-		exerciseValidator = getNewExerciseValidator(exerciseForm);
 		policyValidator = getNewPolicyValidator(policyForm);
-		objectValidator = getNewObjectValidator(objectForm);
-		
-		exerciseForm.setValidator(exerciseValidator);
 		policyForm.setValidator(policyValidator);
+
+		objectValidator = getNewObjectValidator(objectForm);
 		objectForm.setValidator(objectValidator);
+
+		exerciseValidator = getNewExerciseValidator(exerciseForm);
+		exerciseForm.setValidator(exerciseValidator);
 	}
 	
 	private InsurancePolicyHeaderFormValidator getNewPolicyValidator(InsurancePolicyHeaderForm form) {
@@ -72,7 +73,7 @@ public class PolicyCrossFormValidator extends CrossFormValidator {
 
 	protected boolean validateExerciseDates() {
 		boolean valid = true;
-		if(policyValidator.getForm() != null) {
+		if((policyValidator.getForm() != null) && (exerciseValidator.getForm() != null)) {
 			if((exerciseValidator.getForm().startDate.getValue() != null) && (policyValidator.getForm().startDate.getValue() != null) &&
 					(exerciseValidator.getForm().startDate.getValue().before(policyValidator.getForm().startDate.getValue()))) {
 				valid = false;
