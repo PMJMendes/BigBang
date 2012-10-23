@@ -229,57 +229,47 @@ public class ReceiptHistoryPaymentAcct
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Recibo");
 		ReportBuilder.styleCell(larrCells[0], false, false);
-		larrCells[0].setWidth(80);
 
 		larrCells[1] = ReportBuilder.buildHeaderCell("Tipo");
 		ReportBuilder.styleCell(larrCells[1], false, true);
 
 		larrCells[2] = ReportBuilder.buildHeaderCell("Cliente");
 		ReportBuilder.styleCell(larrCells[2], false, true);
-		larrCells[2].setWidth(300);
 
 		larrCells[3] = ReportBuilder.buildHeaderCell("Apólice");
 		ReportBuilder.styleCell(larrCells[3], false, true);
-		larrCells[3].setWidth(110);
 
 		larrCells[4] = ReportBuilder.buildHeaderCell("Ramo");
 		ReportBuilder.styleCell(larrCells[4], false, true);
-		larrCells[4].setWidth(140);
 
 		larrCells[5] = ReportBuilder.buildHeaderCell("Descrição");
 		ReportBuilder.styleCell(larrCells[5], false, true);
-		larrCells[5].setWidth(100);
 
 		larrCells[6] = ReportBuilder.buildHeaderCell("Prémio");
 		ReportBuilder.styleCell(larrCells[6], false, true);
-		larrCells[6].setWidth(90);
 
 		larrCells[7] = ReportBuilder.buildHeaderCell("Comissão");
 		ReportBuilder.styleCell(larrCells[7], false, true);
-		larrCells[7].setWidth(90);
 
 		larrCells[8] = ReportBuilder.buildHeaderCell("Retrocessão");
 		ReportBuilder.styleCell(larrCells[8], false, true);
-		larrCells[8].setWidth(90);
 
 		larrCells[9] = ReportBuilder.buildHeaderCell("Emissão");
 		ReportBuilder.styleCell(larrCells[9], false, true);
-		larrCells[9].setWidth(90);
 
 		larrCells[10] = ReportBuilder.buildHeaderCell("Vencimento");
 		ReportBuilder.styleCell(larrCells[10], false, true);
-		larrCells[10].setWidth(90);
 
 		larrCells[11] = ReportBuilder.buildHeaderCell("Até");
 		ReportBuilder.styleCell(larrCells[11], false, true);
-		larrCells[11].setWidth(90);
 
 		larrCells[12] = ReportBuilder.buildHeaderCell("Data Limite");
 		ReportBuilder.styleCell(larrCells[12], false, true);
-		larrCells[12].setWidth(90);
 
 		larrCells[13] = ReportBuilder.buildHeaderCell("Meios");
 		ReportBuilder.styleCell(larrCells[13], false, true);
+
+		setWidths(larrCells);
 
 		return larrCells;
 	}
@@ -309,7 +299,7 @@ public class ReceiptHistoryPaymentAcct
 
 		lobjLog = pobjReceipt.getPaymentLog();
 
-		larrCells = new TD[15];
+		larrCells = new TD[14];
 
 		larrCells[0] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.NUMBER), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -329,17 +319,14 @@ public class ReceiptHistoryPaymentAcct
 		larrCells[5] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DESCRIPTION), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
-		larrCells[6] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
+		larrCells[6] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal, true);
 		ReportBuilder.styleCell(larrCells[6], true, true);
-		larrCells[6].setAlign("right");
 
-		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.COMMISSIONS), TypeDefGUIDs.T_Decimal);
+		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.COMMISSIONS), TypeDefGUIDs.T_Decimal, true);
 		ReportBuilder.styleCell(larrCells[7], true, true);
-		larrCells[7].setAlign("right");
 
-		larrCells[8] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.RETROCESSIONS), TypeDefGUIDs.T_Decimal);
+		larrCells[8] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.RETROCESSIONS), TypeDefGUIDs.T_Decimal, true);
 		ReportBuilder.styleCell(larrCells[8], true, true);
-		larrCells[8].setAlign("right");
 
 		larrCells[9] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.ISSUEDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[9], true, true);
@@ -356,7 +343,27 @@ public class ReceiptHistoryPaymentAcct
 		larrCells[13] = ReportBuilder.buildCell((lobjLog == null ? null : getMeans(lobjLog)), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[13], true, true);
 
+		setWidths(larrCells);
+
 		return larrCells;
+	}
+
+	protected void setWidths(TD[] parrCells)
+	{
+		parrCells[ 0].setWidth( 80);
+		parrCells[ 1].setWidth( 20);
+		parrCells[ 2].setWidth(300);
+		parrCells[ 3].setWidth(110);
+		parrCells[ 4].setWidth(140);
+		parrCells[ 5].setWidth(100);
+		parrCells[ 6].setWidth( 90);
+		parrCells[ 7].setWidth( 90);
+		parrCells[ 8].setWidth( 90);
+		parrCells[ 9].setWidth( 90);
+		parrCells[10].setWidth( 90);
+		parrCells[11].setWidth( 90);
+		parrCells[12].setWidth( 90);
+		parrCells[13].setWidth( 50);
 	}
 
 	protected Table buildSummarySection(Receipt[] parrReceipts)

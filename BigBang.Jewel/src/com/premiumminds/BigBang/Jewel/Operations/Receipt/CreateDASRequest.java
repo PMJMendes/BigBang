@@ -209,7 +209,7 @@ public class CreateDASRequest
 		lobjFile = lrepDR.Generate();
 
 		lobjCover = new DocumentData();
-		lobjCover.mstrName = "Pedido de Assinatura";
+		lobjCover.mstrName = "Pedido de DAS";
 		lobjCover.midOwnerType = Constants.ObjID_Receipt;
 		lobjCover.midOwnerId = null;
 		lobjCover.midDocType = Constants.DocID_DASRequestLetter;

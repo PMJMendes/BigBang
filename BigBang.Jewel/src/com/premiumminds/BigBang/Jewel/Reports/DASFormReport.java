@@ -26,7 +26,7 @@ public class DASFormReport
 
 	protected UUID GetTemplateID()
 	{
-		return Constants.TID_DASRequest;
+		return Constants.TID_DASForm;
 	}
 
 	public FileXfer Generate()

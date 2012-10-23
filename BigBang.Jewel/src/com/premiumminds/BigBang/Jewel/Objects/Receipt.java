@@ -32,6 +32,7 @@ import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryMediatorAccounting;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPayment;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryPaymentAcct;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistorySendPaymentNotice;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistorySendReceipt;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryValidation;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryAutoValidation;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingCreateDASRequest;
@@ -111,66 +112,66 @@ public class Receipt
 	}
 	
 	public static GenericElement[] printReportPendingImage(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptPendingImage().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportPendingCreateSignatureRequest(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptPendingCreateSignatureRequest().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportPendingCreateDASRequest(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptPendingCreateDASRequest().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportPendingPaymentReturn(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptPendingPendingPaymentReturn().doReport(parrParams);
 	}
 
 	public static GenericElement[] printReportPendingReturnToInsurer(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptPendingReturnToInsurer().doReport(parrParams);
 	}
 	
 	
 	public static GenericElement[] printReportPendingSendPaymentNotice(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptPendingSendPaymentNotice().doReport(parrParams);
 	}
 	
 	
 	public static GenericElement[] printReportPendingSendPayment(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptPendingSendPayment().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportPendingMediatorAccounting(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptPendingMediatorAccounting().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportPendingInsurerAccounting(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptPendingInsurerAccounting().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportPendingSendReceipt(String[] parrParams)
-			throws BigBangJewelException
-		{
-			return new ReceiptPendingSendReceipt().doReport(parrParams);
-		}
+		throws BigBangJewelException
+	{
+		return new ReceiptPendingSendReceipt().doReport(parrParams);
+	}
 
 	
 	public static GenericElement[] printReportHistoryPayment(String[] parrParams)
@@ -180,25 +181,25 @@ public class Receipt
 	}
 	
 	public static GenericElement[] printReportHistoryImage(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptHistoryImage().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportHistoryInsurerAccounting(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptHistoryInsurerAccounting().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportHistoryMediatorAccounting(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptHistoryMediatorAccounting().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportHistorySendPaymentNotice(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptHistorySendPaymentNotice().doReport(parrParams);
 	}
@@ -216,13 +217,19 @@ public class Receipt
 	}
 	
 	public static GenericElement[] printReportHistoryAutoValidation(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptHistoryAutoValidation().doReport(parrParams);
 	}
+	
+	public static GenericElement[] printReportHistorySendReceipt(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ReceiptHistorySendReceipt().doReport(parrParams);
+	}
 
 	public static GenericElement[] printReportExternPendingPayment(String[] parrParams)
-			throws BigBangJewelException
+		throws BigBangJewelException
 	{
 		return new ReceiptExternPendingPayment().doReport(parrParams);
 	}

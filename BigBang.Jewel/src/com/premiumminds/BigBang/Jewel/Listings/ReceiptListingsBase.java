@@ -163,67 +163,53 @@ public class ReceiptListingsBase
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Recibo");
 		ReportBuilder.styleCell(larrCells[0], false, false);
-		larrCells[0].setWidth(100);
 
 		larrCells[1] = ReportBuilder.buildHeaderCell("T");
 		ReportBuilder.styleCell(larrCells[1], false, true);
-		larrCells[1].setWidth(20);
 
 		larrCells[2] = ReportBuilder.buildHeaderCell("Cliente");
 		ReportBuilder.styleCell(larrCells[2], false, true);
-		larrCells[2].setWidth(350);
 
 		larrCells[3] = ReportBuilder.buildHeaderCell("Apólice");
 		ReportBuilder.styleCell(larrCells[3], false, true);
-		larrCells[3].setWidth(130);
 
 		larrCells[4] = ReportBuilder.buildHeaderCell("Comp");
 		ReportBuilder.styleCell(larrCells[4], false, true);
-		larrCells[4].setWidth(60);
 
 		larrCells[5] = ReportBuilder.buildHeaderCell("Ramo");
 		ReportBuilder.styleCell(larrCells[5], false, true);
-		larrCells[5].setWidth(170);
 
 		larrCells[6] = ReportBuilder.buildHeaderCell("Descrição");
 		ReportBuilder.styleCell(larrCells[6], false, true);
-		larrCells[6].setWidth(140);
 
 		larrCells[7] = ReportBuilder.buildHeaderCell("Prémio");
 		ReportBuilder.styleCell(larrCells[7], false, true);
-		larrCells[7].setWidth(80);
 
 		larrCells[8] = ReportBuilder.buildHeaderCell("Comissão");
 		ReportBuilder.styleCell(larrCells[8], false, true);
-		larrCells[8].setWidth(80);
 
 		larrCells[9] = ReportBuilder.buildHeaderCell("Retrocessão");
 		ReportBuilder.styleCell(larrCells[9], false, true);
-		larrCells[9].setWidth(80);
 
 		larrCells[10] = ReportBuilder.buildHeaderCell("Emissão");
 		ReportBuilder.styleCell(larrCells[10], false, true);
-		larrCells[10].setWidth(70);
 
 		larrCells[11] = ReportBuilder.buildHeaderCell("Vencimento");
 		ReportBuilder.styleCell(larrCells[11], false, true);
-		larrCells[11].setWidth(90);
 
 		larrCells[12] = ReportBuilder.buildHeaderCell("Até");
 		ReportBuilder.styleCell(larrCells[12], false, true);
-		larrCells[12].setWidth(75);
 
 		larrCells[13] = ReportBuilder.buildHeaderCell("Data Limite");
 		ReportBuilder.styleCell(larrCells[13], false, true);
-		larrCells[13].setWidth(88);
 
 		larrCells[14] = ReportBuilder.buildHeaderCell("Data Cobrança");
 		ReportBuilder.styleCell(larrCells[14], false, true);
-		larrCells[14].setWidth(110);
 
 		larrCells[15] = ReportBuilder.buildHeaderCell("Meios");
 		ReportBuilder.styleCell(larrCells[15], false, true);
-		larrCells[15].setWidth(50);
+
+		setWidths(larrCells);
 
 		return larrCells;
 	}
@@ -276,17 +262,14 @@ public class ReceiptListingsBase
 		larrCells[6] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DESCRIPTION), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[6], true, true);
 
-		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
+		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal, true);
 		ReportBuilder.styleCell(larrCells[7], true, true);
-		larrCells[7].setAlign("right");
 
-		larrCells[8] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.COMMISSIONS), TypeDefGUIDs.T_Decimal);
+		larrCells[8] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.COMMISSIONS), TypeDefGUIDs.T_Decimal, true);
 		ReportBuilder.styleCell(larrCells[8], true, true);
-		larrCells[8].setAlign("right");
 
-		larrCells[9] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.RETROCESSIONS), TypeDefGUIDs.T_Decimal);
+		larrCells[9] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.RETROCESSIONS), TypeDefGUIDs.T_Decimal, true);
 		ReportBuilder.styleCell(larrCells[9], true, true);
-		larrCells[9].setAlign("right");
 
 		larrCells[10] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.ISSUEDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[10], true, true);
@@ -306,7 +289,29 @@ public class ReceiptListingsBase
 		larrCells[15] = ReportBuilder.buildCell((lobjLog == null ? null : getMeans(lobjLog)), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[15], true, true);
 
+		setWidths(larrCells);
+
 		return larrCells;
+	}
+
+	protected void setWidths(TD[] parrCells)
+	{
+		parrCells[ 0].setWidth(100);
+		parrCells[ 1].setWidth( 20);
+		parrCells[ 2].setWidth(350);
+		parrCells[ 3].setWidth(130);
+		parrCells[ 4].setWidth( 60);
+		parrCells[ 5].setWidth(170);
+		parrCells[ 6].setWidth(140);
+		parrCells[ 7].setWidth( 80);
+		parrCells[ 8].setWidth( 80);
+		parrCells[ 9].setWidth( 80);
+		parrCells[10].setWidth( 70);
+		parrCells[11].setWidth( 90);
+		parrCells[12].setWidth( 75);
+		parrCells[13].setWidth( 88);
+		parrCells[14].setWidth(110);
+		parrCells[15].setWidth( 50);
 	}
 
 	protected String getMeans(ILog pobjLog)

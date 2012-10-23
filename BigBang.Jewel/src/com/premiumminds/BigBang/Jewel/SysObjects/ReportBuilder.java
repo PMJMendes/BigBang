@@ -55,14 +55,21 @@ public class ReportBuilder
 
 	public static TD buildCell(java.lang.Object pobjValue, UUID pidType)
 	{
+		return buildCell(pobjValue, pidType, false);
+	}
+
+	public static TD buildCell(java.lang.Object pobjValue, UUID pidType, boolean pbRight)
+	{
 		Div ldiv;
 		TD ltd;
 
 		ldiv = new Div(BuildValue(pidType, pobjValue));
-		ldiv.setStyle("width:100%;");
+		ldiv.setStyle("width:100%;" + (pbRight ? "text-align:right;" : ""));
 
 		ltd = new TD();
 		ltd.addElementToRegistry(ldiv);
+		if ( pbRight )
+			ltd.setAlign("right");
 
 		return ltd;
 	}

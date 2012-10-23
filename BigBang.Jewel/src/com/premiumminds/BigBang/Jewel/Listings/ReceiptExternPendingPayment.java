@@ -234,36 +234,30 @@ public class ReceiptExternPendingPayment
 		larrCells = new TD[8];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Apólice");
-		ReportBuilder.styleCell(larrCells[3], false, false);
-		larrCells[0].setWidth(130);
+		ReportBuilder.styleCell(larrCells[0], false, false);
 
 		larrCells[1] = ReportBuilder.buildHeaderCell("Recibo");
-		ReportBuilder.styleCell(larrCells[0], false, true);
-		larrCells[1].setWidth(100);
+		ReportBuilder.styleCell(larrCells[1], false, true);
 
 		larrCells[2] = ReportBuilder.buildHeaderCell("Comp");
-		ReportBuilder.styleCell(larrCells[4], false, true);
-		larrCells[2].setWidth(60);
+		ReportBuilder.styleCell(larrCells[2], false, true);
 
 		larrCells[3] = ReportBuilder.buildHeaderCell("Ramo");
-		ReportBuilder.styleCell(larrCells[5], false, true);
-		larrCells[3].setWidth(170);
+		ReportBuilder.styleCell(larrCells[3], false, true);
 
 		larrCells[4] = ReportBuilder.buildHeaderCell("Prémio");
-		ReportBuilder.styleCell(larrCells[7], false, true);
-		larrCells[4].setWidth(80);
+		ReportBuilder.styleCell(larrCells[4], false, true);
 
 		larrCells[5] = ReportBuilder.buildHeaderCell("Data Limite");
-		ReportBuilder.styleCell(larrCells[13], false, true);
-		larrCells[5].setWidth(88);
+		ReportBuilder.styleCell(larrCells[5], false, true);
 
 		larrCells[6] = ReportBuilder.buildHeaderCell("Data Aviso");
-		ReportBuilder.styleCell(larrCells[14], false, true);
-		larrCells[6].setWidth(110);
+		ReportBuilder.styleCell(larrCells[6], false, true);
 
 		larrCells[7] = ReportBuilder.buildHeaderCell("Descrição");
-		ReportBuilder.styleCell(larrCells[6], false, true);
-		larrCells[7].setWidth(140);
+		ReportBuilder.styleCell(larrCells[7], false, true);
+
+		setWidths(larrCells);
 
 		return larrCells;
 	}
@@ -311,9 +305,8 @@ public class ReceiptExternPendingPayment
 		larrCells[3] = ReportBuilder.buildCell(lobjPolicy.GetSubLine().getDescription(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
+		larrCells[4] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal, true);
 		ReportBuilder.styleCell(larrCells[4], true, true);
-		larrCells[4].setAlign("right");
 
 		larrCells[5] = ReportBuilder.buildCell(pobjReceipt.getExternalDueDate(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[5], true, true);
@@ -324,7 +317,21 @@ public class ReceiptExternPendingPayment
 		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DESCRIPTION), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[7], true, true);
 
+		setWidths(larrCells);
+
 		return larrCells;
+	}
+
+	protected void setWidths(TD[] parrCells)
+	{
+		parrCells[ 0].setWidth(130);
+		parrCells[ 1].setWidth(100);
+		parrCells[ 2].setWidth( 60);
+		parrCells[ 3].setWidth(170);
+		parrCells[ 4].setWidth( 80);
+		parrCells[ 5].setWidth( 90);
+		parrCells[ 6].setWidth(110);
+		parrCells[ 7].setWidth(140);
 	}
 
 	private GenericElement[] doNotValid()
