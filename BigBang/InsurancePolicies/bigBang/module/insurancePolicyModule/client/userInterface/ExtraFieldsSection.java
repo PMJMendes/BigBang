@@ -57,6 +57,7 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 		this.value = value;
 		
 		if(value == null || value.length == 0){
+			formFields = new GenericFormField[0];
 			this.setVisible(false);
 			return;
 		}

@@ -891,12 +891,12 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.allowEdit(true);
 						view.allowManagerChange(true);
 						view.getPolicySelector().setValue(response);
+						view.setCoveragesExtraFields(response.coverages);
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
 						view.setOwner(null);
 						view.clearObjectsList();
 						view.getPolicyNotesForm().setValue(response.notes);
-						view.setCoveragesExtraFields(response.coverages);
 						fillPolicy();
 						view.setReadOnly(false);		
 						view.allowCreateNewExercise(true);
@@ -918,10 +918,10 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 						view.setToolbarEditMode(false);
 						view.allowManagerChange(false);
 						view.getPolicySelector().setValue(response);
+						view.setCoveragesExtraFields(response.coverages);
 						view.setHeaders(response.coverages, response.columns);
 						setExercises(response.exerciseData);
 						setPermissions(response);
-						view.setCoveragesExtraFields(response.coverages);
 						view.getPolicyNotesForm().setValue(response.notes);
 						fillPolicy();
 						view.setReadOnly(true);		
