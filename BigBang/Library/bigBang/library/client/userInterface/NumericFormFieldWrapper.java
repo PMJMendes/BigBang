@@ -75,7 +75,8 @@ public class NumericFormFieldWrapper extends FormField<String>{
 	public void setUnitsLabel(String label) {
 		field.setUnitsLabel(label);
 	}
-	
-	
-	
+
+	public void setAsMoney(boolean b) {
+		field.setAsMoney(b);
+	}
 }

@@ -189,6 +189,9 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	public void setAsMoney(boolean isMoney){
 		if(isMoney){
 			nf = NumberFormat.getFormat("#,##0.00");
+			if(field.getValue()!= null){
+				field.setValue(nf.parse(field.getValue()+""));
+			}
 		}
 		else{
 			nf = NumberFormat.getDecimalFormat();

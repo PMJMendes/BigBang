@@ -263,6 +263,15 @@ public class GenericFormField extends FormField<String> {
 
 	public void setUnitsLabel(String label){
 		myField.setUnitsLabel(label);
+		if(myField instanceof NumericFormFieldWrapper){
+			if(label.equals("€")){
+				setAsMoney(true);
+			}
+		}
+	}
+
+	public void setAsMoney(boolean b) {
+		((NumericFormFieldWrapper)myField).setAsMoney(true);		
 	}
 
 	public void setLabelWidth(String width) {

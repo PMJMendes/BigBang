@@ -50,6 +50,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	private FieldContainer.ColumnField[] value;
 	private boolean readOnly;
 	private Coverage[] coverages;
+	private String[] labels;
 
 	public CoverageFieldsGrid() {
 		super(1,1);
@@ -75,12 +76,10 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	}
 
 	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] headers){
-
-		//TODO VERIFICAR VISIBILIDADE AQUI
 		
 		this.coverages = coverages;
 		fields = new Field[coverages.length+1][headers.length+2];
-
+		labels = new String[headers.length];
 		grid.clear();
 		grid.resize(coverages.length+1, headers.length+2);
 
@@ -137,6 +136,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 		for(int j = 2; j<fields[0].length; j++){
 			fields[0][j] = new Field(TYPE.TEXT);
 			fields[0][j].setValue(headers[j-2].label + (headers[j-2].unitsLabel == null ? "" : " ("+headers[j-2].unitsLabel+")"));
+			labels[j-2] = headers[j-2].unitsLabel;
 			fields[0][j].setEditable(false);
 			fields[0][j].setTextAlignment(TextAlignment.CENTER);
 			fields[0][j].setFieldWidth("140px");
@@ -192,6 +192,9 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 				break;
 			case NUMERIC:
 				fields[row][column] = new Field(TYPE.NUMBER);
+				if(labels[column-2].equals("€")){
+					fields[row][column].setAsMoney(true);
+				}
 				break;
 			case REFERENCE:
 				fields[row][column] = new Field(TYPE.REFERENCE);
