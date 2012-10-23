@@ -81,7 +81,7 @@ public class ExpenseNoticeReport
 
 		larrTables = new String[marrExpenseIDs.length][];
 		mlngCount = 0;
-		mdblTotal = new BigDecimal(0);
+		mdblTotal = BigDecimal.ZERO;
 		for ( i = 0; i < larrTables.length; i++ )
 		{
 			lobjExpense = Expense.GetInstance(Engine.getCurrentNameSpace(), marrExpenseIDs[i]);

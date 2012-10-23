@@ -4,7 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 import org.apache.ecs.GenericElement;
@@ -23,6 +25,7 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptExternPendingPayment;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryImage;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryInsurerAccounting;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryMediatorAccounting;
@@ -216,6 +219,12 @@ public class Receipt
 			throws BigBangJewelException
 	{
 		return new ReceiptHistoryAutoValidation().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportExternPendingPayment(String[] parrParams)
+			throws BigBangJewelException
+	{
+		return new ReceiptExternPendingPayment().doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)
@@ -703,6 +712,37 @@ public class Receipt
 
 		return lobjFile;
     }
+
+    public String getExternalDueDate()
+    {
+    	String lstrDtAux;
+    	Timestamp ldtAux;
+    	Calendar ldtAux2;
+
+		if ( Constants.RecType_New.equals((UUID)getAt(I.TYPE)) ||
+				Constants.RecType_Adjustment.equals((UUID)getAt(I.TYPE)) )
+		{
+			lstrDtAux = "Imediata";
+		}
+		else if ( getAt(I.DUEDATE) == null )
+		{
+			lstrDtAux = "";
+		}
+		else
+		{
+			ldtAux = (Timestamp)getAt(I.DUEDATE);
+			if ( Constants.RecType_Continuing.equals((UUID)getAt(Receipt.I.TYPE)) )
+			{
+		    	ldtAux2 = Calendar.getInstance();
+		    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+		    	ldtAux2.add(Calendar.DAY_OF_MONTH, -5);
+		    	ldtAux = new Timestamp(ldtAux2.getTimeInMillis());
+			}
+			lstrDtAux = ldtAux.toString().substring(0, 10);
+		}
+
+		return lstrDtAux;
+	}
 
     private BigDecimal internalCalcRetrocession()
     	throws BigBangJewelException

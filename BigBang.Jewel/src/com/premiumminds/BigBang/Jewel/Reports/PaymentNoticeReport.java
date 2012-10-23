@@ -2,7 +2,6 @@ package com.premiumminds.BigBang.Jewel.Reports;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -47,8 +46,6 @@ public class PaymentNoticeReport
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		boolean lbReversals;
-		String lstrDtAux;
-		Calendar ldtAux2;
 		int i;
 
 		lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
@@ -78,7 +75,7 @@ public class PaymentNoticeReport
 
 		larrTables = new String[marrReceiptIDs.length][];
 		mlngCount = 0;
-		mdblTotal = new BigDecimal(0);
+		mdblTotal = BigDecimal.ZERO;
 		lbReversals = true;
 		for ( i = 0; i < larrTables.length; i++ )
 		{
@@ -105,28 +102,6 @@ public class PaymentNoticeReport
 			if ( lbReversals && !Constants.RecType_Reversal.equals((UUID)lobjReceipt.getAt(Receipt.I.TYPE)) )
 				lbReversals = false;
 
-			if ( Constants.RecType_New.equals((UUID)lobjReceipt.getAt(Receipt.I.TYPE)) ||
-					Constants.RecType_Adjustment.equals((UUID)lobjReceipt.getAt(Receipt.I.TYPE)) )
-			{
-				lstrDtAux = "Imediata";
-			}
-			else if ( lobjReceipt.getAt(11) == null )
-			{
-				lstrDtAux = "";
-			}
-			else
-			{
-				ldtAux = (Timestamp)lobjReceipt.getAt(11);
-				if ( Constants.RecType_Continuing.equals((UUID)lobjReceipt.getAt(Receipt.I.TYPE)) )
-				{
-			    	ldtAux2 = Calendar.getInstance();
-			    	ldtAux2.setTimeInMillis(ldtAux.getTime());
-			    	ldtAux2.add(Calendar.DAY_OF_MONTH, -5);
-			    	ldtAux = new Timestamp(ldtAux2.getTimeInMillis());
-				}
-				lstrDtAux = ldtAux.toString().substring(0, 10);
-			}
-
 			larrTables[i] = new String[9];
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][1] = lobjReceipt.getLabel();
@@ -135,7 +110,7 @@ public class PaymentNoticeReport
 			larrTables[i][4] = (lobjReceipt.getAt(9) == null ? "" : ((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
 			larrTables[i][5] = (lobjReceipt.getAt(10) == null ? "" : ((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
 			larrTables[i][6] = String.format("%,.2f", (BigDecimal)lobjReceipt.getAt(3));
-			larrTables[i][7] = lstrDtAux;
+			larrTables[i][7] = lobjReceipt.getExternalDueDate();
 			larrTables[i][8] = (lobjReceipt.getAt(14) == null ? "" : (((String)lobjReceipt.getAt(14)).length() > 20 ?
 					((String)lobjReceipt.getAt(14)).substring(0, 20) : (String)lobjReceipt.getAt(14)));
 

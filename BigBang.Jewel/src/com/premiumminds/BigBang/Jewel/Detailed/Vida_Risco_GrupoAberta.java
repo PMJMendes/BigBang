@@ -49,7 +49,7 @@ public class Vida_Risco_GrupoAberta
 			if ( (lobjPERCEM.GetValue() == null) || !CheckFormat(pstrBuilder, lobjPERCEM, false) )
 				return;
 
-			if ( new BigDecimal(0).compareTo(new BigDecimal(lobjPERCEM.GetValue().replaceAll("\\.", "").replaceAll(",", "."))) >= 0 )
+			if ( BigDecimal.ZERO.compareTo(new BigDecimal(lobjPERCEM.GetValue().replaceAll("\\.", "").replaceAll(",", "."))) >= 0 )
 				pstrBuilder.append("O campo 'Percentagem por Filho' da cobertura 'Majoração do Capital por Filhos Menores'")
 						.append(" tem que ter valor maior que zero.\n");
 		}
@@ -81,7 +81,7 @@ public class Vida_Risco_GrupoAberta
 			if ( (lobjPERCEM.GetValue() == null) || !CheckSubFormat(pstrBuilder, lobjPERCEM, false) )
 				return;
 
-			if ( new BigDecimal(0).compareTo(new BigDecimal(lobjPERCEM.GetValue().replaceAll("\\.", "").replaceAll(",", "."))) >= 0 )
+			if ( BigDecimal.ZERO.compareTo(new BigDecimal(lobjPERCEM.GetValue().replaceAll("\\.", "").replaceAll(",", "."))) >= 0 )
 				pstrBuilder.append("O campo 'Percentagem por Filho' da cobertura 'Majoração do Capital por Filhos Menores'")
 						.append(" tem que ter valor maior que zero.\n");
 		}

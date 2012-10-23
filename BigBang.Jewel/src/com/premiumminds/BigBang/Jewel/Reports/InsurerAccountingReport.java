@@ -79,10 +79,10 @@ public class InsurerAccountingReport
 
 		mlngCount = 0;
 		mdblPayables = new BigDecimal(0.0);
-		mdblTaxableComms = new BigDecimal(0);
-		mdblPreTax = new BigDecimal(0);
-		mdblTax = new BigDecimal(0);
-		mdblTotal = new BigDecimal(0);
+		mdblTaxableComms = BigDecimal.ZERO;
+		mdblPreTax = BigDecimal.ZERO;
+		mdblTax = BigDecimal.ZERO;
+		mdblTotal = BigDecimal.ZERO;
 
 		ldblTotalPremiums = new BigDecimal(0.0);
 		ldblDirectPremiums = new BigDecimal(0.0);

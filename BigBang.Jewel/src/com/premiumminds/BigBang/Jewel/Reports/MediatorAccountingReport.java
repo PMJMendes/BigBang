@@ -91,9 +91,9 @@ public class MediatorAccountingReport
 
 		larrTables = new String[larrDetails.length][];
 		mlngCount = 0;
-		mdblTotalPremiums = new BigDecimal(0);
-		mdblTotalComms = new BigDecimal(0);
-		mdblTotalRetros = new BigDecimal(0);
+		mdblTotalPremiums = BigDecimal.ZERO;
+		mdblTotalComms = BigDecimal.ZERO;
+		mdblTotalRetros = BigDecimal.ZERO;
 		for ( i = 0; i < larrDetails.length; i++ )
 		{
 			lobjDetail = (MediatorAccountingDetail)larrDetails[i];

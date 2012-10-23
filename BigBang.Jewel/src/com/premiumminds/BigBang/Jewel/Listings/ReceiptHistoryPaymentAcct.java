@@ -186,16 +186,16 @@ public class ReceiptHistoryPaymentAcct
 		Table ltbl;
 		TR[] larrRows;
 
-		ldblTotal = new BigDecimal(0);
-		ldblTotalCom = new BigDecimal(0);
-		ldblTotalRetro = new BigDecimal(0);
+		ldblTotal = BigDecimal.ZERO;
+		ldblTotalCom = BigDecimal.ZERO;
+		ldblTotalRetro = BigDecimal.ZERO;
 		for ( i = 0; i < parrReceipts.length; i++ )
 		{
-			ldblTotal = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM) == null ? new BigDecimal(0) :
+			ldblTotal = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM) == null ? BigDecimal.ZERO :
 					(BigDecimal)parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM)));
-			ldblTotalCom = ldblTotalCom.add((parrReceipts[i].getAt(Receipt.I.COMMISSIONS) == null ? new BigDecimal(0) :
+			ldblTotalCom = ldblTotalCom.add((parrReceipts[i].getAt(Receipt.I.COMMISSIONS) == null ? BigDecimal.ZERO :
 					(BigDecimal)parrReceipts[i].getAt(Receipt.I.COMMISSIONS)));
-			ldblTotalRetro = ldblTotalRetro.add((parrReceipts[i].getAt(Receipt.I.RETROCESSIONS) == null ? new BigDecimal(0) :
+			ldblTotalRetro = ldblTotalRetro.add((parrReceipts[i].getAt(Receipt.I.RETROCESSIONS) == null ? BigDecimal.ZERO :
 					(BigDecimal)parrReceipts[i].getAt(Receipt.I.RETROCESSIONS)));
 		}
 
@@ -393,7 +393,7 @@ public class ReceiptHistoryPaymentAcct
 
 					ldblAux = larrMap.get(lstrType);
 					if ( ldblAux == null )
-						ldblAux = new BigDecimal(0);
+						ldblAux = BigDecimal.ZERO;
 
 					ldblAux2 = lrefPayment.marrData[j].mdblValue;
 					if ( ldblAux2 == null )

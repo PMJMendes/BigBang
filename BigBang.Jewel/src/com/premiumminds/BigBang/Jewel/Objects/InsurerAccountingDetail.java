@@ -91,7 +91,7 @@ public class InsurerAccountingDetail
 			lobjPayment = null;
 		}
 
-		ldblResult = new BigDecimal(0);
+		ldblResult = BigDecimal.ZERO;
 
 		if ( lobjPayment != null )
 		{

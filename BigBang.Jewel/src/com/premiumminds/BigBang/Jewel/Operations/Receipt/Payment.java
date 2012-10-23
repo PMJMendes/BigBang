@@ -94,7 +94,7 @@ public class Payment
 			marrData[0].mdblValue = (BigDecimal)lobjReceipt.getAt(3);
 		}
 
-		ldblTotal = new BigDecimal(0);
+		ldblTotal = BigDecimal.ZERO;
 		for ( i = 0; i < marrData.length; i++ )
 		{
 			marrData[i].mdblValue = marrData[i].mdblValue.abs();

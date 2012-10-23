@@ -487,7 +487,7 @@ public class SubPolicyServiceImpl
 			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
 			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
 			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium));
-			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions));
+			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? BigDecimal.ZERO : new BigDecimal(receipt.comissions));
 			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions));
 			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
 			lopCR.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus));

@@ -119,7 +119,7 @@ public class ATFF
 
 			larrMonths = new BigDecimal[12];
 
-			ldblTotal = new BigDecimal(0);
+			ldblTotal = BigDecimal.ZERO;
 			llngNum = 0;
 			llngLast = -1;
 			for ( i = 0; i < 12; i++ )

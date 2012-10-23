@@ -75,7 +75,7 @@ public class SignatureRequestReport
 
 		larrTables = new String[marrReceiptIDs.length][];
 		mlngCount = 0;
-		mdblTotal = new BigDecimal(0);
+		mdblTotal = BigDecimal.ZERO;
 		lbCasualties = true;
 		for ( i = 0; i < larrTables.length; i++ )
 		{

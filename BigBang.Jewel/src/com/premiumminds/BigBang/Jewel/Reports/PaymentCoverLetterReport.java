@@ -83,7 +83,7 @@ public class PaymentCoverLetterReport
 
 		larrTables = new String[marrReceiptIDs.length][];
 		mlngCount = 0;
-		mdblTotal = new BigDecimal(0);
+		mdblTotal = BigDecimal.ZERO;
 		for ( i = 0; i < larrTables.length; i++ )
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
