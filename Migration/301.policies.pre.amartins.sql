@@ -1,3 +1,15 @@
+update amartins.tblbbpolicyvalues
+set value=replace(replace(value, ',', ''), '.', ',')
+where fkfield in
+(select pk from bigbang.tblbbtaxes where fkfieldtype='4D82EE91-0A9E-415E-9003-9F9601404007')
+and value like '%.[0-9][0-9]' and value not like '%[a-z]%' and value not like '%€%';
+
+update amartins.tblbbsubpolicyvalues
+set value=replace(replace(value, ',', ''), '.', ',')
+where fkfield in
+(select pk from bigbang.tblbbtaxes where fkfieldtype='4D82EE91-0A9E-415E-9003-9F9601404007')
+and value like '%.[0-9][0-9]' and value not like '%[a-z]%' and value not like '%€%';
+
 insert into amartins.tblPolicyCoInsurers (PK, FKPolicy, FKCompany, [Percent])
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 p.PK FKPolicy, c.PK FKCompany, cs.[percent] [Percent]

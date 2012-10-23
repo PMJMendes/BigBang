@@ -169,7 +169,7 @@ and p.FKSubLine='E91E32C6-0C55-4F49-BA88-9F340153FD6D';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-ox.Texto2 Value, p.PK FKPolicy, 'BF80A9FC-AD3F-4630-8DD3-9F9601565146' FKField, o.PK FKObject, NULL FKExercise
+replace(ox.Texto2, '.', ',') Value, p.PK FKPolicy, 'BF80A9FC-AD3F-4630-8DD3-9F9601565146' FKField, o.PK FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join credite_egs.tblInsuredObjects o on o.FKPolicy=p.PK
