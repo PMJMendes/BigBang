@@ -170,6 +170,7 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	@Override
 	public void clear() {
 		form.showLabel(false);
+		form.showNotAvailableLabel(false);
 		form.showImageAlreadyDefineWarning(false);
 		form.clearInfo();
 		form.setReceiptReadOnly(true);
