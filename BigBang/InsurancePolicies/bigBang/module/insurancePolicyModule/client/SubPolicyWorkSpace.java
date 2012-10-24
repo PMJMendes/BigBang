@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
+import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.FieldContainer;
-import bigBang.definitions.shared.FieldContainer.ColumnField;
-import bigBang.definitions.shared.FieldContainer.ExtraField;
-import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.StructuredFieldContainer;
@@ -75,14 +72,14 @@ public class SubPolicyWorkSpace {
 
 		if ( originalSubPolicy.exerciseData != null )
 		{
-			for ( ExerciseData exercise : originalSubPolicy.exerciseData )
+			for ( ComplexFieldContainer.ExerciseData exercise : originalSubPolicy.exerciseData )
 				if ( NEWID.equals(exercise.id) )
 					exercise.id = null;
 		}
 
 		originalSubPolicy.changedObjects = new InsuredObject[alteredObjects.size()];
 		i = 0;
-		for ( InsuredObject object : originalSubPolicy.changedObjects )
+		for ( InsuredObject object : alteredObjects )
 		{
 			originalSubPolicy.changedObjects[i] = new InsuredObject(object);
 			originalSubPolicy.changedObjects[i].headerFields = splitArray(originalSubPolicy.changedObjects[i].headerFields, originalSubPolicy.headerFields.length);
@@ -122,7 +119,7 @@ public class SubPolicyWorkSpace {
 
 	//EXERCISES
 
-	public ExerciseData[] getExercises(String subPolicyId) {
+	public ComplexFieldContainer.ExerciseData[] getExercises(String subPolicyId) {
 		if ( !isSubPolicyLoaded(subPolicyId) )
 			return null;
 
@@ -176,7 +173,7 @@ public class SubPolicyWorkSpace {
 			newObject.exerciseData[0].isActive = subPolicy.exerciseData[0].isActive;
 
 		try {
-			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {subPolicy.headerFields, object.headerFields},
+			newObject.headerFields = mergeHeaderArrays(new FieldContainer.HeaderField[][] {subPolicy.headerFields, object.headerFields},
 					new boolean[] {true, false});
 		} catch (Exception e) {
 			return null;
@@ -199,7 +196,7 @@ public class SubPolicyWorkSpace {
 		idCounter++;
 
 		try {
-			newObject.headerFields = mergeHeaderArrays(new HeaderField[][] {subPolicy.headerFields, newObject.headerFields},
+			newObject.headerFields = mergeHeaderArrays(new FieldContainer.HeaderField[][] {subPolicy.headerFields, newObject.headerFields},
 					new boolean[] {true, false});
 		} catch (Exception e) {
 			return null;
@@ -278,19 +275,19 @@ public class SubPolicyWorkSpace {
 
 		try
 		{
-			result.headerFields = mergeHeaderArrays(new HeaderField[][] {
+			result.headerFields = mergeHeaderArrays(new FieldContainer.HeaderField[][] {
 						( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].headerFields ),
 						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
 					}, new boolean[] {object != null, false});
 
-			result.columnFields = mergeColumnArrays(new ColumnField[][] {
+			result.columnFields = mergeColumnArrays(new FieldContainer.ColumnField[][] {
 						subPolicy.columnFields,
 						( object == null ? null : object.columnFields ),
 						( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].columnFields ),
 						( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
 					}, new boolean[] {object != null, false, object != null, false});
 
-			result.extraFields = mergeExtraArrays(new ExtraField[][] {
+			result.extraFields = mergeExtraArrays(new FieldContainer.ExtraField[][] {
 						subPolicy.extraFields,
 						( object == null ? null : object.extraFields ),
 						( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].extraFields ),
@@ -329,19 +326,19 @@ public class SubPolicyWorkSpace {
 			}
 		}
 
-		readMergedHeaderArray(contents.headerFields, new HeaderField[][] {
+		readMergedHeaderArray(contents.headerFields, new FieldContainer.HeaderField[][] {
 					( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].headerFields ),
 					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].headerFields )
 				}, new boolean[] {object != null, false});
 
-		readMergedColumnArray(contents.columnFields, new ColumnField[][] {
+		readMergedColumnArray(contents.columnFields, new FieldContainer.ColumnField[][] {
 					subPolicy.columnFields,
 					( object == null ? null : object.columnFields ),
 					( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].columnFields ),
 					( (exerciseIndex < 0) || (object == null) ? null : object.exerciseData[exerciseIndex].columnFields)
 				}, new boolean[] {object != null, false, object != null, false});
 
-		readMergedExtraArray(contents.extraFields, new ExtraField[][] {
+		readMergedExtraArray(contents.extraFields, new FieldContainer.ExtraField[][] {
 					subPolicy.extraFields,
 					( object == null ? null : object.extraFields ),
 					( exerciseIndex < 0 ? null : subPolicy.exerciseData[exerciseIndex].extraFields ),
@@ -349,9 +346,9 @@ public class SubPolicyWorkSpace {
 				}, new boolean[] {object != null, false, object != null, false});
 	}
 
-	private static HeaderField[] mergeHeaderArrays(HeaderField[][] source, boolean[] readOnly) throws Exception
+	private static FieldContainer.HeaderField[] mergeHeaderArrays(FieldContainer.HeaderField[][] source, boolean[] readOnly) throws Exception
 	{
-		HeaderField[] result;
+		FieldContainer.HeaderField[] result;
 		int len;
 		int start;
 		int i, j;
@@ -363,7 +360,7 @@ public class SubPolicyWorkSpace {
 				len += source[i].length;
 		}
 
-		result = new HeaderField[len];
+		result = new FieldContainer.HeaderField[len];
 
 		start = 0;
 		for ( i = 0; i < source.length; i++ )
@@ -372,7 +369,7 @@ public class SubPolicyWorkSpace {
 			{
 				for ( j = 0; j < source[i].length; j++ )
 				{
-					result[start + j] = new HeaderField(source[i][j]);
+					result[start + j] = new FieldContainer.HeaderField(source[i][j]);
 					result[start + j].readOnly = readOnly[i];
 				}
 				start += source[i].length;
@@ -382,9 +379,9 @@ public class SubPolicyWorkSpace {
 		return result;
 	}
 
-	private static ColumnField[] mergeColumnArrays(ColumnField[][] source, boolean[] readOnly) throws Exception
+	private static FieldContainer.ColumnField[] mergeColumnArrays(FieldContainer.ColumnField[][] source, boolean[] readOnly) throws Exception
 	{
-		ColumnField[] result;
+		FieldContainer.ColumnField[] result;
 		int len;
 		int start;
 		int i, j;
@@ -396,7 +393,7 @@ public class SubPolicyWorkSpace {
 				len += source[i].length;
 		}
 
-		result = new ColumnField[len];
+		result = new FieldContainer.ColumnField[len];
 
 		start = 0;
 		for ( i = 0; i < source.length; i++ )
@@ -405,7 +402,7 @@ public class SubPolicyWorkSpace {
 			{
 				for ( j = 0; j < source[i].length; j++ )
 				{
-					result[start + j] = new ColumnField(source[i][j]);
+					result[start + j] = new FieldContainer.ColumnField(source[i][j]);
 					result[start + j].readOnly = readOnly[i];
 				}
 				start += source[i].length;
@@ -415,9 +412,9 @@ public class SubPolicyWorkSpace {
 		return result;
 	}
 
-	private static ExtraField[] mergeExtraArrays(ExtraField[][] source, boolean[] readOnly) throws Exception
+	private static FieldContainer.ExtraField[] mergeExtraArrays(FieldContainer.ExtraField[][] source, boolean[] readOnly) throws Exception
 	{
-		ExtraField[] result;
+		FieldContainer.ExtraField[] result;
 		int len;
 		int[] at;
 		int currentCoverage;
@@ -432,7 +429,7 @@ public class SubPolicyWorkSpace {
 				len += source[i].length;
 		}
 
-		result = new ExtraField[len];
+		result = new FieldContainer.ExtraField[len];
 
 		currentCoverage = 0;
 		i = 0;
@@ -444,7 +441,7 @@ public class SubPolicyWorkSpace {
 				{
 					while ( (at[j] < source[j].length) && (source[j][at[j]].coverageIndex == currentCoverage) )
 					{
-						result[i] = new ExtraField(source[j][at[j]]);
+						result[i] = new FieldContainer.ExtraField(source[j][at[j]]);
 						result[i].readOnly = readOnly[j];
 						at[j]++;
 						i++;
@@ -457,12 +454,12 @@ public class SubPolicyWorkSpace {
 		return result;
 	}
 
-	private static HeaderField[] splitArray(HeaderField[] source, int start)
+	private static FieldContainer.HeaderField[] splitArray(FieldContainer.HeaderField[] source, int start)
 	{
-		HeaderField[] result;
+		FieldContainer.HeaderField[] result;
 		int i;
 
-		result = new HeaderField[source.length - start];
+		result = new FieldContainer.HeaderField[source.length - start];
 
 		for ( i = start; i < source.length; i++ )
 			result[i - start] = source[i];
@@ -470,7 +467,7 @@ public class SubPolicyWorkSpace {
 		return result;
 	}
 
-	private static void readMergedHeaderArray(HeaderField[] source, HeaderField[][] dest, boolean[] ignore)
+	private static void readMergedHeaderArray(FieldContainer.HeaderField[] source, FieldContainer.HeaderField[][] dest, boolean[] ignore)
 	{
 		int start;
 		int i, j;
@@ -490,7 +487,7 @@ public class SubPolicyWorkSpace {
 		}
 	}
 
-	private static void readMergedColumnArray(ColumnField[] source, ColumnField[][] dest, boolean[] ignore)
+	private static void readMergedColumnArray(FieldContainer.ColumnField[] source, FieldContainer.ColumnField[][] dest, boolean[] ignore)
 	{
 		int start;
 		int i, j;
@@ -510,7 +507,7 @@ public class SubPolicyWorkSpace {
 		}
 	}
 
-	private static void readMergedExtraArray(ExtraField[] source, ExtraField[][] dest, boolean[] ignore)
+	private static void readMergedExtraArray(FieldContainer.ExtraField[] source, FieldContainer.ExtraField[][] dest, boolean[] ignore)
 	{
 		int[] at;
 		int currentCoverage;
