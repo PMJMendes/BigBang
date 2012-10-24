@@ -101,7 +101,7 @@ FormValidator<SerialReceiptCreationForm> {
 				return true;
 			}
 		}else{
-			return false;
+			return true;
 		}
 	}
 
@@ -162,7 +162,7 @@ FormValidator<SerialReceiptCreationForm> {
 				return true;
 			}
 		}else{
-			return false;
+			return true;
 		}
 	}
 }

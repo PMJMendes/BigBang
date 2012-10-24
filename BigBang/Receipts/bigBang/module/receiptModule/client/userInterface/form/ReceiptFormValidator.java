@@ -95,7 +95,7 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 				return true;
 			}
 		}else{
-			return false;
+			return true;
 		}
 	}
 
@@ -156,7 +156,7 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 				return true;
 			}
 		}else{
-			return false;
+			return true;
 		}
 	}
 
