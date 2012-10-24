@@ -231,10 +231,10 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						onPolicy = true;
 						view.setToolbarEditMode(true);
 						view.getSubPolicySelector().setValue(response);
-						view.setHeaders(response.coverages, response.columns);
-						setExercises(response.exerciseData);
 						view.setOwner(null);
 						view.setCoveragesExtraFields(response.coverages);
+						view.setHeaders(response.coverages, response.columns);
+						setExercises(response.exerciseData);
 						view.getSubPolicyNotesForm().setValue(response.notes);
 						fillPolicy();
 						fillSubPolicy();
@@ -260,10 +260,10 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 						view.setOwner(response);
 						view.setToolbarEditMode(false);
 						view.getSubPolicySelector().setValue(response);
-						view.setHeaders(response.coverages, response.columns);
-						setExercises(response.exerciseData);
 						setPermissions(response);
 						view.setCoveragesExtraFields(response.coverages);
+						view.setHeaders(response.coverages, response.columns);
+						setExercises(response.exerciseData);
 						view.getSubPolicyNotesForm().setValue(response.notes);
 						fillPolicy();
 						fillSubPolicy();

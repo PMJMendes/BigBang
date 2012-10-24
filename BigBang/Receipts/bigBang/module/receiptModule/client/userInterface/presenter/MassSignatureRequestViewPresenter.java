@@ -20,6 +20,7 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
 import bigBang.library.client.PermissionChecker;
+import bigBang.library.client.Session;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -59,6 +60,7 @@ public class MassSignatureRequestViewPresenter implements ViewPresenter{
 		void registerActionHandler(
 				ActionInvokedEventHandler<Action> actionInvokedEventHandler);
 		void allowSignatureRequest(boolean b);
+		void setManagerFilterValue(String value);
 
 	}
 
@@ -207,8 +209,8 @@ public class MassSignatureRequestViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
-		view.refreshMainList();
 		showMassMarkReceiptScreen();
+		view.setManagerFilterValue(Session.getUserId());
 	}
 
 

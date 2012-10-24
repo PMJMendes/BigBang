@@ -275,15 +275,25 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public void enableMarkReceipt(boolean b) {
-		form.enableMarkAsInvalid(b);
+	public void enablePolicyProblem(boolean b){
 		form.isPolicyNumberProblem(b);
 		form.showLabel(b);
+	}
+	
+	@Override
+	public void enableMarkReceipt(boolean b) {
+		form.enableMarkAsInvalid(b);
 	}
 
 	@Override
 	public void showImageAlreadyDefinedWarning(boolean hasImage) {
 		this.form.showImageAlreadyDefineWarning(hasImage);
+	}
+
+	@Override
+	public void setPolicyNotAvailable(boolean b) {
+		form.isPolicyNumberProblem(b);
+		form.showNotAvailableLabel(b);
 	}
 
 }

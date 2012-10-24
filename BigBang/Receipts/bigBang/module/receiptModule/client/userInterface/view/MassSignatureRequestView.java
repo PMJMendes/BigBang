@@ -4,7 +4,6 @@ import bigBang.module.receiptModule.client.userInterface.form.MassSignatureReque
 import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSignatureRequestViewPresenter.Action;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -173,6 +172,10 @@ public class MassSignatureRequestView extends View implements MassSignatureReque
 			};
 
 			doSearch(parameters, sorts, keepState);
+		}
+
+		public void setManagerFilterValue(String value) {
+			filtersPanel.setFilterValue(Filters.MANAGER, value);			
 		}
 
 	}
@@ -371,6 +374,12 @@ public class MassSignatureRequestView extends View implements MassSignatureReque
 	@Override
 	public HasEditableValue<Integer> getSignatureRequestForm() {
 		return this.signatureRequestForm;
+	}
+	
+	@Override
+	public void setManagerFilterValue(String value){
+		searchPanel.setManagerFilterValue(value);
+		searchPanel.doSearch();
 	}
 
 }

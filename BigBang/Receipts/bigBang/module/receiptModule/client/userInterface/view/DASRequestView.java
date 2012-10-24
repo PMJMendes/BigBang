@@ -1,5 +1,8 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -64,6 +67,14 @@ public class DASRequestView extends View implements DASRequestViewPresenter.Disp
 		ownerForm = new ReceiptForm();
 		ownerWrapper.add(ownerForm);
 		ownerWrapper.setCellHeight(ownerForm, "100%");
+		Button backButton = new Button("Voltar", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				handler.onActionInvoked(new ActionInvokedEvent<DASRequestViewPresenter.Action>(Action.BACK));
+			}
+		});
+		ownerHeader.setLeftWidget(backButton);
 		mainWrapper.addWest(ownerWrapper, 665);
 		
 		VerticalPanel dasRequestPanel = new VerticalPanel();

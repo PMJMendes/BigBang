@@ -264,7 +264,7 @@ public class GenericFormField extends FormField<String> {
 	public void setUnitsLabel(String label){
 		myField.setUnitsLabel(label);
 		if(myField instanceof NumericFormFieldWrapper){
-			if(label.equals("€")){
+			if(label != null && label.equals("€")){
 				setAsMoney(true);
 			}
 		}

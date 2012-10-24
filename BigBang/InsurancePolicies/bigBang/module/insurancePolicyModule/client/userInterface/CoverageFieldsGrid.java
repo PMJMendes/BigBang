@@ -192,7 +192,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 				break;
 			case NUMERIC:
 				fields[row][column] = new Field(TYPE.NUMBER);
-				if(labels[column-2].equals("€")){
+				if(labels[column-2] != null && labels[column-2].equals("€")){
 					fields[row][column].setAsMoney(true);
 				}
 				break;

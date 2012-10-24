@@ -120,6 +120,10 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 		void showImageAlreadyDefinedWarning(boolean hasImage);
 
+		void enablePolicyProblem(boolean b);
+
+		void setPolicyNotAvailable(boolean b);
+
 	}
 
 	public SerialReceiptCreationViewPresenter(Display view){
@@ -313,6 +317,8 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		view.hideMarkAsEnable(true);
 		view.setFocusOnReceipt();
 		policyPresenter.enableMarkReceipt(false);
+		view.enablePolicyProblem(false);
+		view.setPolicyNotAvailable(false);
 	}
 
 	protected void onHasImage() {
@@ -446,7 +452,12 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 					});
 
 				} else {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar Recibos para a Apólice Especificada"), TYPE.ALERT_NOTIFICATION));
+					if(popupPolicy.isAttached()){
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar Recibos para a Apólice Especificada"), TYPE.ALERT_NOTIFICATION));
+					}
+					else{
+						view.setPolicyNotAvailable(true);
+					}
 					view.enableMarkReceipt(true);
 				}
 
@@ -456,6 +467,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice."), TYPE.ALERT_NOTIFICATION));
 				view.enableMarkReceipt(true);
+				view.enablePolicyProblem(true);
 			}
 		});
 
@@ -467,6 +479,8 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		final String policyNumber = view.getPolicyNumber();
 		view.clearPolicy();
 		view.enableMarkReceipt(false);
+		view.enablePolicyProblem(false);
+		view.setPolicyNotAvailable(false);
 		view.setPolicyNumber(policyNumber, true);
 
 		policyBroker.getInsurancePoliciesWithNumber(policyNumber, new ResponseHandler<Collection<InsurancePolicyStub>>() {
@@ -483,6 +497,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 				}
 				else{
 					view.enableMarkReceipt(true);
+					view.enablePolicyProblem(true);
 				}
 
 			}
@@ -548,13 +563,13 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		}
 	}
 
-
 	protected void onMarkReceipt() {
 
 		DocuShareItem currentItem = view.getSelectedDocuShareItem();
 		view.enableReceiptNumber(false);
 		view.markReceipt(currentItem);
 		view.enableMarkReceipt(false);
+		view.enablePolicyProblem(false);
 		view.clear();
 		if(popupPolicy.isAttached()){
 			popupPolicy.hidePopup();

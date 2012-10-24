@@ -37,7 +37,7 @@ public class DASRequestViewPresenter implements ViewPresenter{
 	public static enum Action{
 		CANCEL,
 		REPEAT_DAS_REQUEST,
-		RECEIVE_REPLY,
+		RECEIVE_REPLY, BACK,
 	}
 
 	protected Display view;
@@ -97,6 +97,9 @@ public class DASRequestViewPresenter implements ViewPresenter{
 				case REPEAT_DAS_REQUEST:
 					repeatReceiveRequest();
 					break;
+				case BACK:
+					onBack();
+					break;
 				}
 			}
 		});
@@ -115,6 +118,13 @@ public class DASRequestViewPresenter implements ViewPresenter{
 
 		bound = true;
 
+	}
+
+	protected void onBack() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("dasrequestid");
+		item.popFromStackParameter("display");
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	private void showHistory(final HistoryItemStub historyItem) {

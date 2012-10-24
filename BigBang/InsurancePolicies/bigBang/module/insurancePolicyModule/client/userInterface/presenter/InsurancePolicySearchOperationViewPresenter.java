@@ -241,11 +241,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				if(policyId != null && policyId.equals("new")){
-					return;
-				}
 				@SuppressWarnings("unchecked")
 				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
+				if(selected != null && selected.getValue().id.equals("new")){
+					return;
+				}
 				removeNewListEntry();
 				InsurancePolicyStub selectedValue = selected == null ? null : selected.getValue();
 				String selectedPolicyId = selectedValue == null ? new String() : selectedValue.id;
