@@ -59,7 +59,7 @@ public class ReportServiceImpl
 	}
 
 	public static GenericElement[] sGeneratePrintSetReport(String itemId, String printSetId)
-		throws SessionExpiredException, BigBangException
+		throws BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.PrintSet lobjSet;
 		GenericElement lobjBuffer;
@@ -80,7 +80,7 @@ public class ReportServiceImpl
 	}
 
 	public static GenericElement[] sGenerateTransactionSetReport(String itemId, String transactionSetId)
-		throws SessionExpiredException, BigBangException
+		throws BigBangException
 	{
 		ReportDef lobjReport;
 		UUID lidTransactions;
@@ -89,9 +89,6 @@ public class ReportServiceImpl
 		int llngCount;
 		GenericElement[] larrResult;
 		int i;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
 
 		try
 		{

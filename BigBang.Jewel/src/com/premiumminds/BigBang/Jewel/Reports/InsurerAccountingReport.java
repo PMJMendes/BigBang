@@ -78,15 +78,15 @@ public class InsurerAccountingReport
 		larrDetails = lobjMap.getCurrentDetails();
 
 		mlngCount = 0;
-		mdblPayables = new BigDecimal(0.0);
+		mdblPayables = BigDecimal.ZERO;
 		mdblTaxableComms = BigDecimal.ZERO;
 		mdblPreTax = BigDecimal.ZERO;
 		mdblTax = BigDecimal.ZERO;
 		mdblTotal = BigDecimal.ZERO;
 
-		ldblTotalPremiums = new BigDecimal(0.0);
-		ldblDirectPremiums = new BigDecimal(0.0);
-		ldblLocalTotalComms = new BigDecimal(0.0);
+		ldblTotalPremiums = BigDecimal.ZERO;
+		ldblDirectPremiums = BigDecimal.ZERO;
+		ldblLocalTotalComms = BigDecimal.ZERO;
 		lbSubtract = false;
 
 		mstrExtraText = (String)lobjMap.getAt(InsurerAccountingMap.I.EXTRATEXT);
@@ -97,9 +97,9 @@ public class InsurerAccountingReport
 			mstrExtraText = null;
 		if ( mstrExtraText == null )
 		{
-			mdblExtraValue = new BigDecimal(0.0);
-			mdblTotalComms = new BigDecimal(0.0);
-			ldblLifeComms = new BigDecimal(0.0);
+			mdblExtraValue = BigDecimal.ZERO;
+			mdblTotalComms = BigDecimal.ZERO;
+			ldblLifeComms = BigDecimal.ZERO;
 		}
 		else
 		{

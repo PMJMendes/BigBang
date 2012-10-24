@@ -146,11 +146,15 @@ public abstract class TransactionMapBase
 		if ( getAt(I.SETTLEDON) != null )
 			throw new BigBangJewelException("Esta transacção já foi saldada.");
 
-		if ( pidPrintSet == null )
-			pidPrintSet = mrefSet.createPrintSet(pdb);
-
 		try
 		{
+			if ( pidPrintSet == null )
+			{
+				if ( mrefSet == null )
+					Initialize();
+				pidPrintSet = mrefSet.createPrintSet(pdb);
+			}
+
 			if ( pidPrintSet != null )
 			{
 				lobjSetDoc = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
