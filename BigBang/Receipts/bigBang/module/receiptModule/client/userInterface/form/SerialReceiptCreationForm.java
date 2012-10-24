@@ -27,8 +27,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
-
-
 public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWrapper>{
 
 	protected TextBoxFormField receiptNumber;
@@ -476,9 +474,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		}
 		else{
 			policyNumber.getNativeField().getElement().getStyle().setColor("BLACK");
-
 		}
-
 	}
 
 	public void showLabel(boolean b) {

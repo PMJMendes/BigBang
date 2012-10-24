@@ -69,7 +69,7 @@ public class ExpenseFormValidator extends FormValidator<ExpenseForm> {
 	}
 
 	private boolean validateValue() {
-		return validateNumber(form.value, 0.0, null, true);
+		return validateNumber(form.value, 0.0, null, false);
 	}
 
 	private boolean validateSettlement() {
