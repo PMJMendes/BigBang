@@ -26,7 +26,6 @@ public class TestReceiptInsurerAccounting
 			}
 		};
 
-		Services.receiptService.massInsurerAccounting(new String[] {"6E2B850B-877D-4D8A-9D72-A02101388CE1",
-				"E33B3E31-38B0-4898-9773-A0210138BCEC", "B585A918-FD63-4E07-931B-A0210138DAAC"}, new InsurerAccountingExtra[0], callback);
+		Services.receiptService.massInsurerAccounting(new String[] {"E62C9524-408F-4A78-916F-A0E90057A04D"}, new InsurerAccountingExtra[0], callback);
 	}
 }
