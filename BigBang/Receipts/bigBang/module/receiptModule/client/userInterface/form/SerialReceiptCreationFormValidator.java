@@ -79,7 +79,9 @@ public class SerialReceiptCreationFormValidator extends FormValidator<SerialRece
 				((BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CONTINUING.equals(form.type.getValue())) ||
 				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.NEW.equals(form.type.getValue())) ||
 				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.REVERSAL.equals(form.type.getValue())) ||
-				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.ADJUSTMENT.equals(form.type.getValue()))) ) )
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.ADJUSTMENT.equals(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.OTHER.equals(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.SUPLEMENTAL.equals(form.type.getValue()))) ) )
 			return false;
 
 		if ( (form.coverageStart.getValue() != null) && (form.getValue() != null) && (form.getValue().policy != null) &&
