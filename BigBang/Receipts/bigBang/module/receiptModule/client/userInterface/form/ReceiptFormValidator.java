@@ -71,12 +71,12 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 
 	private boolean validateCoverageStart() {
 		if ( !validateDate(form.coverageStart, !
-				((BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CONTINUING.equals(form.type.getValue())) ||
-				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.NEW.equals(form.type.getValue())) ||
-				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.REVERSAL.equals(form.type.getValue())) ||
-				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.ADJUSTMENT.equals(form.type.getValue())) ||
-				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.OTHER.equals(form.type.getValue())) ||
-				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.SUPLEMENTAL.equals(form.type.getValue()))) ) )
+				((BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CONTINUING.equalsIgnoreCase(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.NEW.equalsIgnoreCase(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.REVERSAL.equalsIgnoreCase(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.ADJUSTMENT.equalsIgnoreCase(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.OTHER.equalsIgnoreCase(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.SUPLEMENTAL.equalsIgnoreCase(form.type.getValue()))) ) )
 			return false;
 
 		if ( (form.coverageStart.getValue() != null) && (form.getValue() != null) && (form.getValue().inheritEndDate != null) ) {
@@ -123,9 +123,9 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 
 	private boolean validateDueDate() {
 		return validateDate(form.dueDate, !
-				((BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CONTINUING.equals(form.type.getValue())) ||
-				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.NEW.equals(form.type.getValue())) ||
-				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.ADJUSTMENT.equals(form.type.getValue()))) );
+				((BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CONTINUING.equalsIgnoreCase(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.NEW.equalsIgnoreCase(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.ADJUSTMENT.equalsIgnoreCase(form.type.getValue()))) );
 	}
 
 	private boolean validateDescription() {
