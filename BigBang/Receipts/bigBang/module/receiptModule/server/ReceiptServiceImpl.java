@@ -190,7 +190,7 @@ public class ReceiptServiceImpl
 		}
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.salesPremium = (lobjReceipt.getAt(4) == null ? null : ((BigDecimal)lobjReceipt.getAt(4)).doubleValue());
-		lobjResult.comissions = ((BigDecimal)lobjReceipt.getAt(5)).doubleValue();
+		lobjResult.comissions = (lobjReceipt.getAt(5) == null ? null : ((BigDecimal)lobjReceipt.getAt(5)).doubleValue());
 		lobjResult.retrocessions = (lobjReceipt.getAt(6) == null ? null : ((BigDecimal)lobjReceipt.getAt(6)).doubleValue());
 		lobjResult.FATValue = (lobjReceipt.getAt(7) == null ? null : ((BigDecimal)lobjReceipt.getAt(7)).doubleValue());
 		lobjResult.bonusMalus = (lobjReceipt.getAt(17) == null ? null : ((BigDecimal)lobjReceipt.getAt(17)).doubleValue());
