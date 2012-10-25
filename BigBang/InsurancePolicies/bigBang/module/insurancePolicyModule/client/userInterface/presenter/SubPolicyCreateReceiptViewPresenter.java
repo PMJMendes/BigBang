@@ -114,6 +114,7 @@ public class SubPolicyCreateReceiptViewPresenter implements ViewPresenter {
 				receipt.clientName = response.clientName;
 				receipt.clientNumber = response.clientNumber;
 				receipt.clientId = response.clientId;
+				receipt.inheritEndDate = response.expirationDate;
 				view.getForm().setValue(receipt);
 			}
 

@@ -101,6 +101,7 @@ public class ReceiptServiceImpl
 		SubPolicy lobjSubPolicy;
 		Company lobjCompany;
 		Client lobjClient;
+		Timestamp ldtEndDate;
 		Mediator lobjMed;
 		SubLine lobjSubLine;
 		Line lobjLine;
@@ -120,12 +121,14 @@ public class ReceiptServiceImpl
 				lobjPolicy = (Policy)lobjProc.GetParent().GetData();
 				lobjSubPolicy = null;
 				lobjClient = (Client)lobjProc.GetParent().GetParent().GetData();
+				ldtEndDate = (Timestamp)lobjPolicy.getAt(9);
 			}
 			else
 			{
 				lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
 				lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();;
 				lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
+				ldtEndDate = (Timestamp)lobjSubPolicy.getAt(4);
 			}
 			lobjCompany = lobjPolicy.GetCompany();
 			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(),
@@ -201,6 +204,8 @@ public class ReceiptServiceImpl
 		lobjResult.notes = (String)lobjReceipt.getAt(13);
 
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
+
+		lobjResult.inheritEndDate = (ldtEndDate == null ? null : ldtEndDate.toString().substring(0, 10));
 
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 

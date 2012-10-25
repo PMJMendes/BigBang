@@ -40,6 +40,8 @@ public class Receipt
 		public Payment[] payments;
 	}
 
+	public String inheritEndDate;
+
 	public Double salesPremium;
 	public Double comissions;
 	public Double retrocessions;
