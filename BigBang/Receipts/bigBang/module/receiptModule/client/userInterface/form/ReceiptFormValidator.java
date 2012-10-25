@@ -2,6 +2,7 @@ package bigBang.module.receiptModule.client.userInterface.form;
 
 import java.util.Date;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.FormValidator;
 
 public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
@@ -67,7 +68,11 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 	}
 
 	private boolean validateCoverageStart() {
-		return validateDate(form.coverageStart, true);
+		return validateDate(form.coverageStart, !
+				((BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CONTINUING.equals(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.NEW.equals(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.REVERSAL.equals(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.ADJUSTMENT.equals(form.type.getValue()))) );
 	}
 
 	private boolean validateCoverageEnd() {
@@ -100,7 +105,10 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 	}
 
 	private boolean validateDueDate() {
-		return validateDate(form.dueDate, true);
+		return validateDate(form.dueDate, !
+				((BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CONTINUING.equals(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.NEW.equals(form.type.getValue())) ||
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.ADJUSTMENT.equals(form.type.getValue()))) );
 	}
 
 	private boolean validateDescription() {

@@ -203,8 +203,18 @@ public class BigBangConstants {
 			public static final String NOT_PAID_INDICATION = "3323CA57-827F-4EE5-94B7-A01300CDD793";
 			public static final String RETURN_PAYMENT = "C0451D21-BE44-47D7-9745-A0B000FB7C49";
 			public static final String SET_ORIGINAL_IMAGE = "E99A9029-BBF0-4E76-AC49-A01300C4FB8C";
-			
-			
+
+			public static class ReceiptType {
+				public static final String CONTINUING = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";
+				public static final String NEW = "36564F0F-2180-4794-B0EC-9F900111D2A8";
+				public static final String REVERSAL = "BFC1AE6D-53E8-41AF-84BE-9F900111D967";
+				public static final String CASUALTY = "91E07F5F-56BA-4A65-9659-9F900111DF95";
+				public static final String BACKCHARGE = "4775B720-B90B-4279-B008-9F900111E6AD";
+				public static final String ADJUSTMENT = "3B127029-C133-4EB4-AD1E-9F900111EF2A";
+				public static final String OTHER = "B3FD4D99-FEB2-4885-9F00-A074010CD52F";
+				public static final String SUPLEMENTAL = "382ABABA-5A0A-4E88-B5D1-A09E00EE2006";
+			}
+
 			public static class PaymentType {
 				public static final String CHEQUE = "06EA2F87-BB0C-4B02-BCDB-A02200EB462D";
 				public static final String CURRENT_ACCOUNT = "637DBB57-3EFE-4728-BAB8-A02200EB4EC9";
