@@ -1,8 +1,5 @@
 package bigBang.module.loginModule.client;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
-
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -14,13 +11,15 @@ import bigBang.library.client.event.LogoutEvent;
 import bigBang.library.client.event.LogoutEventHandler;
 import bigBang.library.client.event.SessionExpiredEvent;
 import bigBang.library.client.event.SessionExpiredEventHandler;
-import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.loginModule.client.userInterface.presenter.ChangePasswordViewPresenter;
 import bigBang.module.loginModule.client.userInterface.presenter.LoginViewPresenter;
 import bigBang.module.loginModule.client.userInterface.view.ChangePasswordView;
 import bigBang.module.loginModule.client.userInterface.view.LoginView;
 import bigBang.module.loginModule.interfaces.AuthenticationService;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 
 public class LoginModule implements Module {
 
@@ -69,9 +68,10 @@ public class LoginModule implements Module {
 
 						@Override
 						public void onResponseSuccess(String result) {
+							String domain = Session.getDomain();
 							GWT.log("logout");
 							Session.invalidate();
-							Window.Location.replace(GWT.getHostPageBaseURL());
+							Window.Location.replace(GWT.getHostPageBaseURL() + "?domain=" + domain);
 						}
 					});
 				}
@@ -84,8 +84,7 @@ public class LoginModule implements Module {
 				GWT.log("Session expired");
 				Session.invalidate();
 				EventBus.getInstance().fireEvent(new LogoutEvent());
-				NavigationHistoryManager.getInstance().reload();
-			}
+				Window.Location.reload();			}
 		});
 	}
 

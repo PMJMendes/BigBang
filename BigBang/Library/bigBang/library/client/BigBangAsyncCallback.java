@@ -23,17 +23,14 @@ public abstract class BigBangAsyncCallback<T> implements AsyncCallback<T> {
 	@Override
 	public void onFailure(Throwable caught) {
 		release();
-		onResponseFailure(caught);
+		if ( caught instanceof SessionExpiredException )
+			onSessionExpiredException();
+		else
+			onResponseFailure(caught);
 	}
 
 	public void onResponseFailure(Throwable caught) {
-		try{
-			throw(caught);
-		}catch(SessionExpiredException see){
-			onSessionExpiredException();
-		} catch (Throwable e) {
-			GWT.log("Erro: " + e.getMessage());
-		}
+		GWT.log("Erro: " + caught.getMessage());
 	}
 
 	public abstract void onResponseSuccess(T result);
