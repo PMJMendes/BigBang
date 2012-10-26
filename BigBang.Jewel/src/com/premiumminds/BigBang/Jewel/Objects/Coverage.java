@@ -16,6 +16,16 @@ import Jewel.Engine.SysObjects.ObjectBase;
 public class Coverage
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int NAME      = 0;
+		public static int SUBLINE   = 1;
+		public static int MANDATORY = 2;
+		public static int ISHEADER  = 3;
+		public static int TAG       = 4;
+		public static int ORDER     = 5;
+	}
+
     public static Coverage GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
