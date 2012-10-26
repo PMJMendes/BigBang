@@ -1,14 +1,33 @@
-update credite_egs.tblbbpolicyvalues
-set value=replace(replace(value, ',', ''), '.', ',')
-where fkfield in
-(select pk from bigbang.tblbbtaxes where fkfieldtype='4D82EE91-0A9E-415E-9003-9F9601404007')
-and value like '%.[0-9][0-9]' and value not like '%[a-z]%' and value not like '%€%';
+update credite_egs.tblBBPolicyValues
+set Value=replace(replace(Value, ',', ''), '.', ',')
+where FKField in
+(select PK from bigbang.tblBBTaxes where FKFieldType='4D82EE91-0A9E-415E-9003-9F9601404007')
+and Value like '%.[0-9][0-9]' and Value not like '%[a-z]%' and Value not like '%€%';
 
-update credite_egs.tblbbsubpolicyvalues
-set value=replace(replace(value, ',', ''), '.', ',')
-where fkfield in
-(select pk from bigbang.tblbbtaxes where fkfieldtype='4D82EE91-0A9E-415E-9003-9F9601404007')
-and value like '%.[0-9][0-9]' and value not like '%[a-z]%' and value not like '%€%';
+update credite_egs.tblBBSubPolicyValues
+set Value=replace(replace(Value, ',', ''), '.', ',')
+where FKField in
+(select PK from bigbang.tblBBTaxes where FKFieldType='4D82EE91-0A9E-415E-9003-9F9601404007')
+and Value like '%.[0-9][0-9]' and Value not like '%[a-z]%' and Value not like '%€%';
+
+insert into credite_egs.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+p.PK FKPolicy, c.PK FKCoverage, NULL BPresent
+from credite_egs.tblBBPolicies p
+inner join bigbang.tblBBCoverages c on c.FKSubLine=p.FKSubLine
+left outer join credite_egs.tblBBPolicyCoverages v on v.FKCoverage=c.PK and v.FKPolicy=p.PK
+where c.BHeader=0 and v.PK is null;
+
+insert into credite_egs.tblBBSubPolicyCoverages (PK, FKSubPolicy, FKCoverage, BPresent)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+s.PK FKSubPolicy, c.PK FKCoverage, NULL BPresent
+from credite_egs.tblBBSubPolicies s
+inner join credite_egs.tblPNProcesses sp on sp.PK=s.FKProcess
+inner join credite_egs.tblPNProcesses pp on pp.PK=sp.FKParent
+inner join credite_egs.tblBBPolicies p on p.PK=pp.FKData
+inner join bigbang.tblBBCoverages c on c.FKSubLine=p.FKSubLine
+left outer join credite_egs.tblBBSubPolicyCoverages v on v.FKCoverage=c.PK and v.FKSubPolicy=s.PK
+where c.BHeader=0 and v.PK is null
 
 insert into credite_egs.tblPolicyCoInsurers (PK, FKPolicy, FKCompany, [Percent])
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
