@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.Enumeration;
 
 import org.apache.ecs.GenericElement;
+import org.apache.ecs.StringElement;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
@@ -61,7 +62,8 @@ public class ExcelConnector
 			ltr = (TR)ltbl.getElement((String)ltbl.keys().nextElement());
 			ltd = (TD)ltr.getElement((String)ltr.keys().nextElement());
 			lobjAux = ltd.getElement((String)ltd.keys().nextElement());
-            buildSheet(pobjWBook.createSheet(lobjAux.toString()), ltbl);
+			if ( lobjAux instanceof StringElement )
+				buildSheet(pobjWBook.createSheet(lobjAux.toString()), ltbl);
 		}
 		
 	}

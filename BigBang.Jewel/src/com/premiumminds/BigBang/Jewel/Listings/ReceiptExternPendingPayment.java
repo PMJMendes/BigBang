@@ -24,7 +24,6 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.Interfaces.ILog;
-import Jewel.Petri.SysObjects.JewelPetriException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -306,14 +305,7 @@ public class ReceiptExternPendingPayment
 			lobjSubPolicy = null;
 		}
 
-		try
-		{
-			lobjLog = pobjReceipt.getProcess().GetLiveLog(Constants.OPID_Receipt_CreatePaymentNotice);
-		}
-		catch (JewelPetriException e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
+		lobjLog = pobjReceipt.getNoticeLog();
 
 		larrCells = new TD[8];
 
@@ -338,7 +330,7 @@ public class ReceiptExternPendingPayment
 		larrCells[6] = ReportBuilder.buildCell((lobjLog == null ? null : lobjLog.GetTimestamp()), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[6], true, true);
 
-		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DESCRIPTION), TypeDefGUIDs.T_String);
+		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DESCRIPTION) == null ? "" : pobjReceipt.getAt(Receipt.I.DESCRIPTION), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[7], true, true);
 
 		setWidths(larrCells);

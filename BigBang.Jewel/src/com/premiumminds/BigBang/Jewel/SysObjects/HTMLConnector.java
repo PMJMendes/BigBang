@@ -32,7 +32,7 @@ public class HTMLConnector
 		for ( i = 0; i < parrSource.length; i++ )
 		{
 			ldiv = new Div();
-			ldiv.setStyle("width: 100%; margin-bottom: 50px;" + (i > 0 ? "page-break-before:always;" : ""));
+			ldiv.setStyle("width: 100%; margin-bottom: 50px;" + (((i > 0) && (parrSource.length > 2)) ? "page-break-before:always;" : ""));
 			ldoc.appendBody(ldiv);
 
 			ldiv.addElementToRegistry(parrSource[i]);

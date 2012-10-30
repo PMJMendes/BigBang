@@ -246,8 +246,9 @@ public class Receipt
 		return lobjSession.printReport(parrParams);
 	}
 
-    private IProcess lrefProcess;
-    private ILog lrefPayment;
+    private IProcess mrefProcess;
+    private ILog mrefPayment;
+    private ILog mrefNotice;
 
 	public void Initialize()
 		throws JewelEngineException
@@ -270,11 +271,11 @@ public class Receipt
 		if ( GetProcessID() == null )
 			return null;
 
-		if ( lrefProcess == null )
+		if ( mrefProcess == null )
 		{
 			try
 			{
-				lrefProcess = PNProcess.GetInstance(getNameSpace(), GetProcessID());
+				mrefProcess = PNProcess.GetInstance(getNameSpace(), GetProcessID());
 			}
 			catch (Throwable e)
 			{
@@ -282,7 +283,7 @@ public class Receipt
 			}
 		}
 
-		return lrefProcess;
+		return mrefProcess;
 	}
 
     public Contact[] GetCurrentContacts()
@@ -604,16 +605,16 @@ public class Receipt
     public ILog getPaymentLog()
     	throws BigBangJewelException
     {
-    	if ( lrefPayment != null )
-    		return lrefPayment;
+    	if ( mrefPayment != null )
+    		return mrefPayment;
 
     	try
     	{
         	if ( isReverseCircuit() )
-        		lrefPayment = getProcess().GetLiveLog(Constants.OPID_Receipt_SendPayment);
+        		mrefPayment = getProcess().GetLiveLog(Constants.OPID_Receipt_SendPayment);
         	
-        	if ( lrefPayment == null )
-        		lrefPayment = getProcess().GetLiveLog(Constants.OPID_Receipt_Payment);
+        	if ( mrefPayment == null )
+        		mrefPayment = getProcess().GetLiveLog(Constants.OPID_Receipt_Payment);
 		}
     	catch (BigBangJewelException e)
     	{
@@ -624,12 +625,42 @@ public class Receipt
     		throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-    	return lrefPayment;
+    	return mrefPayment;
+    }
+
+    public ILog getNoticeLog()
+    	throws BigBangJewelException
+    {
+    	if ( mrefNotice != null )
+    		return mrefNotice;
+
+    	try
+    	{
+        	if ( isReverseCircuit() )
+        		mrefNotice = getProcess().GetLiveLog(Constants.OPID_Receipt_CreateSignatureRequest);
+        	else
+        		mrefNotice = getProcess().GetLiveLog(Constants.OPID_Receipt_CreatePaymentNotice);
+		}
+    	catch (BigBangJewelException e)
+    	{
+    		throw e;
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	return mrefNotice;
     }
 
     public void clearPaymentLog()
     {
-    	lrefPayment = null;
+    	mrefPayment = null;
+    }
+
+    public void clearNoticeLog()
+    {
+    	mrefNotice = null;
     }
 
     public boolean doCalcRetrocession()

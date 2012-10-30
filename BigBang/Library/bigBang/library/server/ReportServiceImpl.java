@@ -113,7 +113,7 @@ public class ReportServiceImpl
 		return larrResult;
 	}
 
-	public static String reportToHTML(GenericElement[] parrReport)
+	public static String sReportToHTML(GenericElement[] parrReport)
 		throws BigBangException
 	{
 		String[] larrContent;
@@ -140,7 +140,7 @@ public class ReportServiceImpl
 		return lidAux.toString();
 	}
 
-	public static String reportToXL(GenericElement[] parrReport)
+	public static String sReportToXL(GenericElement[] parrReport)
 		throws BigBangException
 	{
 		FileXfer lobjFile;
@@ -456,7 +456,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToHTML(sGenerateParamReport(itemId, paramValues));
+		return sReportToHTML(sGenerateParamReport(itemId, paramValues));
 	}
 
 	public String generateParamAsXL(String itemId, String[] paramValues)
@@ -465,7 +465,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToXL(sGenerateParamReport(itemId, paramValues));
+		return sReportToXL(sGenerateParamReport(itemId, paramValues));
 	}
 
 	public Report generatePrintSetReport(String itemId, String printSetId)
@@ -495,7 +495,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToHTML(sGeneratePrintSetReport(itemId, printSetId));
+		return sReportToHTML(sGeneratePrintSetReport(itemId, printSetId));
 	}
 
 	public String generatePrintSetAsXL(String itemId, String printSetId)
@@ -504,7 +504,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToXL(sGeneratePrintSetReport(itemId, printSetId));
+		return sReportToXL(sGeneratePrintSetReport(itemId, printSetId));
 	}
 
 	public Report generateTransactionSetReport(String itemId, String transactionSetId)
@@ -580,7 +580,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToHTML(sGenerateTransactionSetReport(itemId, transactionSetId));
+		return sReportToHTML(sGenerateTransactionSetReport(itemId, transactionSetId));
 	}
 
 	public String generateTransSetAsXL(String itemId, String transactionSetId)
@@ -589,7 +589,7 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return reportToXL(sGenerateTransactionSetReport(itemId, transactionSetId));
+		return sReportToXL(sGenerateTransactionSetReport(itemId, transactionSetId));
 	}
 
 	public void RunVerb(String argument)
