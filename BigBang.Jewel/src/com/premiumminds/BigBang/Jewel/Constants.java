@@ -626,6 +626,7 @@ public class Constants
 	public static final UUID TID_PaymentReturnLetter = UUID.fromString("F8717681-DBC3-4186-B039-A0B0010A0B6D");
 	public static final UUID TID_Stamp               = UUID.fromString("BE3106A1-9C31-40D3-ACC2-A0B300D3E585");
 	public static final UUID TID_DASForm             = UUID.fromString("4C6C0B65-1FBA-417B-A2F5-A0E500E572B7");
+	public static final UUID TID_Logo                = UUID.fromString("73297AD9-2741-4EFC-87D7-A0FA011A93F5");
 
 	// Contact Types
 	public static final UUID CtTypeID_General       = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");

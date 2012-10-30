@@ -7,8 +7,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.ecs.GenericElement;
 import org.apache.ecs.html.BR;
+import org.apache.ecs.html.Div;
 import org.apache.ecs.html.IMG;
 import org.apache.ecs.html.Strong;
 import org.apache.ecs.html.TD;
@@ -20,6 +22,7 @@ import Jewel.Engine.Constants.TypeDefGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.Interfaces.ILog;
 import Jewel.Petri.SysObjects.JewelPetriException;
 
@@ -29,6 +32,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
+import com.premiumminds.BigBang.Jewel.Objects.Template;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
 public class ReceiptExternPendingPayment
@@ -149,30 +153,50 @@ public class ReceiptExternPendingPayment
 	}
 
 	protected Table buildHeaderSection()
+		throws BigBangJewelException
 	{
 		Table ltbl;
 		TR[] larrRows;
 		TD[] larrCells;
+		Template lobjLogo;
+		FileXfer lobjFile;
+		String lstr64;
 		IMG lobjImg;
-		Strong lobjStrong;
-		BR lobjBR;
+		Div lobjDiv;
+
+		try
+		{
+			lobjLogo = Template.GetInstance(Engine.getCurrentNameSpace(), Constants.TID_Logo);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 
 		larrRows = new TR[1];
 
 		larrCells = new TD[2];
 
 		larrCells[0] = new TD();
-		lobjImg = new IMG("images/credite_egs.jpg");
-		lobjImg.setNeedClosingTag(true);
-		larrCells[0].addElementToRegistry(lobjImg);
+		if ( lobjLogo.getAt(1) != null )
+		{
+			if ( lobjLogo.getAt(1) instanceof FileXfer )
+				lobjFile = (FileXfer)lobjLogo.getAt(1);
+			else
+				lobjFile = new FileXfer((byte[])lobjLogo.getAt(1));
+			lstr64 = Base64.encodeBase64String(lobjFile.getData());
+			lobjImg = new IMG();
+			lobjImg.setSrc("data:" + lobjFile.getContentType() + ";base64," + lstr64);
+			larrCells[0].addElementToRegistry(lobjImg);
+		}
 
 		larrCells[1] = new TD();
-		lobjStrong = new Strong("Recibos Pendentes de Pagamento");
-		larrCells[0].addElementToRegistry(lobjStrong);
-		lobjBR = new BR();
-		lobjBR.setNeedClosingTag(true);
-		larrCells[0].addElementToRegistry(lobjBR);
-		larrCells[0].addElementToRegistry(ReportBuilder.BuildValue(TypeDefGUIDs.T_Date, new Timestamp(new java.util.Date().getTime())));
+		lobjDiv = new Div();
+		larrCells[1].addElementToRegistry(lobjDiv);
+		larrCells[1].setAlign("right");
+		lobjDiv.addElementToRegistry(new Strong("Recibos Pendentes de Pagamento"));
+		lobjDiv.addElementToRegistry(new BR());
+		lobjDiv.addElementToRegistry(ReportBuilder.BuildValue(TypeDefGUIDs.T_Date, new Timestamp(new java.util.Date().getTime())));
 
 		larrRows[0] = ReportBuilder.buildRow(larrCells);
 
