@@ -30,7 +30,7 @@ public class TestUserDelete
 				{
 					for ( i = 0; i < result.length; i++ )
 					{
-						if ( "57ef9286-9ee4-4257-89e0-9fdc0105c990".equalsIgnoreCase(result[i].id) )
+						if ( "0EADB2DD-CD98-4E3D-ACFF-A0E8018488BD".equalsIgnoreCase(result[i].id) )
 						{
 							DoStep2(result[i]);
 							break;
