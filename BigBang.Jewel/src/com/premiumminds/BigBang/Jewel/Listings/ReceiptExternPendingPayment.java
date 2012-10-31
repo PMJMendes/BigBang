@@ -200,6 +200,7 @@ public class ReceiptExternPendingPayment
 		larrRows[0] = ReportBuilder.buildRow(larrCells);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
+		ltbl.setWidth("100%");
 
 		return ltbl;
 	}
