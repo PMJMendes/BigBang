@@ -26,7 +26,8 @@ public class HTMLConnector
 		ldoc.appendHead("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
 
 		lstyle = new Style();
-		lstyle.addElementToRegistry("body, table, td, div, select {font-family: Arial Unicode MS, Arial, sans-serif; font-size: small;}");
+		lstyle.addElementToRegistry("body, table, td, div, select {font-family: Arial Unicode MS, Arial, sans-serif; font-size: xx-small;}");
+		lstyle.addElementToRegistry("tr {height: 20px !important;}");
 		ldoc.appendHead(lstyle);
 
 		for ( i = 0; i < parrSource.length; i++ )

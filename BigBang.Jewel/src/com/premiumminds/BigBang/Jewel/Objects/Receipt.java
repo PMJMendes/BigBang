@@ -760,7 +760,7 @@ public class Receipt
 		if ( Constants.RecType_New.equals((UUID)getAt(I.TYPE)) ||
 				Constants.RecType_Adjustment.equals((UUID)getAt(I.TYPE)) )
 		{
-			lstrDtAux = "Imediata";
+			lstrDtAux = "Imediata*";
 		}
 		else if ( getAt(I.DUEDATE) == null )
 		{
