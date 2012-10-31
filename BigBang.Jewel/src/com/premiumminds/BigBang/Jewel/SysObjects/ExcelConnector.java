@@ -7,6 +7,7 @@ import java.util.Enumeration;
 
 import org.apache.ecs.GenericElement;
 import org.apache.ecs.StringElement;
+import org.apache.ecs.html.Div;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
@@ -133,6 +134,9 @@ public class ExcelConnector
 		CellStyle lst;
 
 		lobjAux = pobjSource.getElement((String)pobjSource.keys().nextElement());
+
+		while ( lobjAux instanceof Div )
+			lobjAux = ((Div)lobjAux).getElement((String)pobjSource.keys().nextElement());
 
 		if ( lobjAux instanceof Table )
 		{
