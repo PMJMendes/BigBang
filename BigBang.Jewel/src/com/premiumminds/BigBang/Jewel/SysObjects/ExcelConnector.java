@@ -136,7 +136,7 @@ public class ExcelConnector
 		lobjAux = pobjSource.getElement((String)pobjSource.keys().nextElement());
 
 		while ( lobjAux instanceof Div )
-			lobjAux = ((Div)lobjAux).getElement((String)pobjSource.keys().nextElement());
+			lobjAux = ((Div)lobjAux).getElement((String)((Div)lobjAux).keys().nextElement());
 
 		if ( lobjAux instanceof Table )
 		{
