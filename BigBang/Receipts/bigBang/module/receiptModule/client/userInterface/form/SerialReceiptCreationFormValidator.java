@@ -172,7 +172,7 @@ public class SerialReceiptCreationFormValidator extends FormValidator<SerialRece
 				bonusMalusValue = -bonusMalusValue;
 
 			if(totalPremium != null && salesPremium != null){
-				if(totalPremium >= salesPremium + bonusMalusValue){
+				if(Math.abs(totalPremium) >= Math.abs(salesPremium) + bonusMalusValue){
 					return true;
 				}
 				else{

@@ -166,7 +166,7 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 				bonusMalusValue = -bonusMalusValue;
 
 			if(totalPremium != null && salesPremium != null){
-				if(totalPremium >= salesPremium + bonusMalusValue){
+				if(Math.abs(totalPremium) >= Math.abs(salesPremium) + bonusMalusValue){
 					return true;
 				}
 				else{
