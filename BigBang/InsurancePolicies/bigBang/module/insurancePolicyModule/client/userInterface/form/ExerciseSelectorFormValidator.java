@@ -28,7 +28,7 @@ FormValidator<ExerciseSelectorForm> {
 
 	private boolean validateStartDate() {
 		if(form.exercises.getValue() != null) {
-			return validateDate(form.startDate, false);
+			return validateDate(form.startDate, true);
 		}else{
 			return true;
 		}
@@ -36,7 +36,7 @@ FormValidator<ExerciseSelectorForm> {
 
 	private boolean validateEndDate() {
 		if(form.exercises.getValue() != null) {
-			return validateDate(form.endDate, false);
+			return validateDate(form.endDate, true);
 		}else{
 			return true;
 		}
@@ -60,7 +60,7 @@ FormValidator<ExerciseSelectorForm> {
 					return true;
 				}
 			}else{
-				return false;
+				return true;
 			}
 		}else{
 			return true;
