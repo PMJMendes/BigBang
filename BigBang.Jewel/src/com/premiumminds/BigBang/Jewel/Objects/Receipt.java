@@ -587,6 +587,30 @@ public class Receipt
 		}
     }
 
+    public Client getClient()
+        throws BigBangJewelException
+    {
+    	IProcess lobjProcess;
+
+    	try
+    	{
+			lobjProcess = getProcess().GetParent();
+
+	    	if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
+	    		return (Client)lobjProcess.GetParent().GetData();
+
+	    	return ((SubPolicy)lobjProcess.GetData()).GetClient();
+		}
+    	catch (BigBangJewelException e)
+    	{
+    		throw e;
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+    }
+
     public Mediator getMediator()
     	throws BigBangJewelException
     {

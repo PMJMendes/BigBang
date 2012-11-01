@@ -136,13 +136,16 @@ public class Payment
 			}
 		}
 
-		ldtToday = Calendar.getInstance();
-		ldtToday.set(Calendar.HOUR_OF_DAY, 0);
-		ldtToday.set(Calendar.MINUTE, 0);
-		ldtToday.set(Calendar.SECOND, 0);
-		ldtToday.set(Calendar.MILLISECOND, 0);
-		if ( ldtToday.getTime().getTime() > ((Timestamp)lobjReceipt.getAt(11)).getTime() )
-			TriggerOp(new TriggerForceDAS(GetProcess().getKey()), pdb);
+		if ( !lobjReceipt.isReverseCircuit() )
+		{
+			ldtToday = Calendar.getInstance();
+			ldtToday.set(Calendar.HOUR_OF_DAY, 0);
+			ldtToday.set(Calendar.MINUTE, 0);
+			ldtToday.set(Calendar.SECOND, 0);
+			ldtToday.set(Calendar.MILLISECOND, 0);
+			if ( ldtToday.getTime().getTime() > ((Timestamp)lobjReceipt.getAt(11)).getTime() )
+				TriggerOp(new TriggerForceDAS(GetProcess().getKey()), pdb);
+		}
 	}
 
 	public String UndoDesc(String pstrLineBreak)

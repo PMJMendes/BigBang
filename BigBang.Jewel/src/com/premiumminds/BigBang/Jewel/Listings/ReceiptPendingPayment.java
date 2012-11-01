@@ -3,6 +3,8 @@ package com.premiumminds.BigBang.Jewel.Listings;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -59,7 +61,23 @@ public class ReceiptPendingPayment
 		{
 			try
 			{
-				larrResult[i] = buildDataSection(User.GetInstance(Engine.getCurrentNameSpace(), lid).getDisplayName(), larrMap.get(lid));
+				larrAux = larrMap.get(lid).toArray(new Receipt[larrMap.get(lid).size()]);
+				Arrays.sort(larrAux, new Comparator<Receipt>()
+				{
+					public int compare(Receipt o1, Receipt o2)
+					{
+						try
+						{
+							return o1.getClient().getLabel().compareTo(o2.getClient().getLabel());
+						}
+						catch (Throwable e)
+						{
+							return 0;
+						}
+					}
+				});
+
+				larrResult[i] = buildDataSection(User.GetInstance(Engine.getCurrentNameSpace(), lid).getDisplayName(), larrAux);
 			}
 			catch (BigBangJewelException e)
 			{

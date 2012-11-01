@@ -110,6 +110,39 @@ public class CreateDebitNote
 		}
 	}
 
+	public String UndoDesc(String pstrLineBreak)
+	{
+		return "A nota de débito será eliminada.";
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		return "A nota de débito criada foi eliminada.";
+	}
+
+	protected void Undo(SQLServer pdb)
+		throws JewelPetriException
+	{
+		DebitNote lobjNote;
+
+		mobjDocOps.UndoSubOp(pdb, null);
+
+		try
+		{
+			lobjNote = DebitNote.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			lobjNote.getDefinition().Delete(pdb, lobjNote.getKey());
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	public UndoSet[] GetSets()
+	{
+		return new UndoSet[0];
+	}
+
 	private String GetDebitNoteNumber(SQLServer pdb)
 		throws BigBangJewelException
 	{
@@ -162,38 +195,5 @@ public class CreateDebitNote
 		}
 
 		return lstrFilter.substring(0, lstrFilter.length() - 1) + llngResult;
-	}
-
-	public String UndoDesc(String pstrLineBreak)
-	{
-		return "A nota de débito será eliminada.";
-	}
-
-	public String UndoLongDesc(String pstrLineBreak)
-	{
-		return "A nota de débito criada foi eliminada.";
-	}
-
-	protected void Undo(SQLServer pdb)
-		throws JewelPetriException
-	{
-		DebitNote lobjNote;
-
-		mobjDocOps.UndoSubOp(pdb, null);
-
-		try
-		{
-			lobjNote = DebitNote.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
-			lobjNote.getDefinition().Delete(pdb, lobjNote.getKey());
-		}
-		catch (Throwable e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-	}
-
-	public UndoSet[] GetSets()
-	{
-		return new UndoSet[0];
 	}
 }

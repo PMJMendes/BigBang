@@ -71,7 +71,7 @@ public class CasualtyServiceImpl
 			lobjSub = lobjCasualty.GetFirstSubCasualty();
 			if ( lobjSub != null )
 			{
-				lstrCat = lobjSub.GetSubLine().getLabel();
+				lstrCat = lobjSub.GetSubLine().getDescription();
 				lstrObj = lobjSub.GetObjectName();
 			}
 		}
@@ -625,7 +625,7 @@ public class CasualtyServiceImpl
 			lobjSub = ((com.premiumminds.BigBang.Jewel.Objects.Casualty)lobjProcess.GetData()).GetFirstSubCasualty();
 			if ( lobjSub != null )
 			{
-				lstrCat = lobjSub.GetSubLine().getLabel();
+				lstrCat = lobjSub.GetSubLine().getDescription();
 				lstrObj = lobjSub.GetObjectName();
 			}
 		}
