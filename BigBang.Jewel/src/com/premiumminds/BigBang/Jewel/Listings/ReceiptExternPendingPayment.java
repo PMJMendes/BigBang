@@ -191,7 +191,7 @@ public class ReceiptExternPendingPayment
 
 		larrCells[1] = new TD();
 		lobjDiv = new Div();
-		lobjDiv.setStyle("font-size: medium;");
+		lobjDiv.setStyle("font-size: small;");
 		larrCells[1].addElementToRegistry(lobjDiv);
 		larrCells[1].setAlign("right");
 		lobjDiv.addElementToRegistry(new Strong("Recibos Pendentes de Pagamento"));
@@ -233,7 +233,7 @@ public class ReceiptExternPendingPayment
 			}
 		}
 
-		larrRows = new TR[6];
+		larrRows = new TR[7];
 
 		larrRows[0] = ReportBuilder.constructDualHeaderRowCell(pstrHeader);
 
@@ -243,17 +243,23 @@ public class ReceiptExternPendingPayment
 		ReportBuilder.styleInnerContainer(lcell);
 		larrRows[1] = ReportBuilder.buildRow(new TD[] {lcell});
 
-		larrRows[2] = ReportBuilder.constructDualRow("Total de Recibos", ldblTotal, TypeDefGUIDs.T_Decimal, false);
+		lcell = ReportBuilder.buildHeaderCell("");
+		lcell.setColSpan(2);
+		ReportBuilder.styleCell(lcell, true, false);
+		larrRows[2] = ReportBuilder.buildRow(new TD[] {lcell});
+		ReportBuilder.styleRow(larrRows[2], false);
 
-		larrRows[3] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotalPos, TypeDefGUIDs.T_Decimal, false);
+		larrRows[3] = ReportBuilder.constructDualRow("Total de Recibos", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[4] = ReportBuilder.constructDualRow("Total de Estornos", ldblTotalNeg, TypeDefGUIDs.T_Decimal, false);
+		larrRows[4] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotalPos, TypeDefGUIDs.T_Decimal, false);
+
+		larrRows[5] = ReportBuilder.constructDualRow("Total de Estornos", ldblTotalNeg, TypeDefGUIDs.T_Decimal, false);
 
 		lcell = ReportBuilder.buildHeaderCell("(*) O pagamento dos prémios de Recibos Novos e Actas é devido no acto da contratação.");
 		lcell.setColSpan(2);
 		ReportBuilder.styleCell(lcell, true, false);
-		larrRows[5] = ReportBuilder.buildRow(new TD[] {lcell});
-		ReportBuilder.styleRow(larrRows[5], false);
+		larrRows[6] = ReportBuilder.buildRow(new TD[] {lcell});
+		ReportBuilder.styleRow(larrRows[6], false);
 
 		return larrRows;
 	}

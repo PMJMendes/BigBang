@@ -64,7 +64,9 @@ public class ReportBuilder
 		TD ltd;
 
 		ldiv = new Div(BuildValue(pidType, pobjValue));
-		ldiv.setStyle("width:100%;" + (pbRight ? "text-align:right;" : ""));
+		ldiv.setStyle("width:100%;" + (pbRight ? "text-align:right;" : "") + 
+				((TypeDefGUIDs.T_Decimal.equals(pidType) && (((BigDecimal)pobjValue).compareTo(BigDecimal.ZERO) < 0)) ?
+						"color:red;" : "") );
 
 		ltd = new TD();
 		ltd.addElementToRegistry(ldiv);
