@@ -191,6 +191,7 @@ public class ReceiptExternPendingPayment
 
 		larrCells[1] = new TD();
 		lobjDiv = new Div();
+		lobjDiv.setStyle("font-size: medium;");
 		larrCells[1].addElementToRegistry(lobjDiv);
 		larrCells[1].setAlign("right");
 		lobjDiv.addElementToRegistry(new Strong("Recibos Pendentes de Pagamento"));
