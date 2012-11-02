@@ -117,6 +117,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 				receipt.clientName = response.clientName;
 				receipt.clientNumber = response.clientNumber;
 				receipt.clientId = response.clientId;
+				//receipt.insurerName = response. TODO Colocar o insurer acronym no stub da apólice
 				receipt.inheritEndDate = response.expirationDate;
 				view.getForm().setValue(receipt);
 			}

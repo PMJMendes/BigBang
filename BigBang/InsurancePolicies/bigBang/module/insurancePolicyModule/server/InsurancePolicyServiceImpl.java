@@ -558,12 +558,12 @@ public class InsurancePolicyServiceImpl
 
 			lopCR.mobjData.mstrNumber = receipt.number;
 			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
-			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
-			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium));
-			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? BigDecimal.ZERO : new BigDecimal(receipt.comissions));
-			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions));
-			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
-			lopCR.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus));
+			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium + "");
+			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium + ""));
+			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? null : new BigDecimal(receipt.comissions + ""));
+			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions + ""));
+			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue + ""));
+			lopCR.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
 			lopCR.mobjData.mbIsMalus = receipt.isMalus;
 			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
 			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
@@ -638,8 +638,8 @@ public class InsurancePolicyServiceImpl
 		lopCE.mobjData.midPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
 		lopCE.mobjData.midSubPolicyCoverage = null;
 		lopCE.mobjData.mstrGenericObject = (expense.insuredObjectId == null ? expense.insuredObjectName : null);
-		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value+"");
-		lopCE.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
+		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value + "");
+		lopCE.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement + ""));
 		lopCE.mobjData.mbIsManual = expense.isManual;
 		lopCE.mobjData.mstrNotes = expense.notes;
 		lopCE.mobjData.midManager = null;
