@@ -869,8 +869,16 @@ public class Policy
     }
 
     public BigDecimal getPercentOverride()
+    	throws BigBangJewelException
     {
-    	return (BigDecimal)getAt(18);
+    	BigDecimal ldblResult;
+
+    	ldblResult = getMediator().GetCurrentPolicyException(getKey());
+
+    	if ( ldblResult == null )
+    		ldblResult = getMediator().GetCurrentClientException(GetClient().getKey());
+
+    	return ldblResult;
     }
 
     public DetailedBase GetDetailedObject()

@@ -459,6 +459,146 @@ public class Mediator
 		return (BigDecimal)lobjAux.getAt(MediatorDeal.I.PERCENT);
     }
 
+    public BigDecimal GetCurrentPolicyException(UUID pidPolicy)
+        throws BigBangJewelException
+    {
+		IEntity lrefExceptions;
+        MasterDB ldb;
+        ResultSet lrsExceptions;
+        BigDecimal ldblResult;
+
+		try
+		{
+			lrefExceptions = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MediatorException)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsExceptions = lrefExceptions.SelectByMembers(ldb, new int[] {MediatorException.I.MEDIATOR, MediatorException.I.POLICY},
+					new java.lang.Object[] {getKey(), pidPolicy}, null);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		ldblResult = null;
+		try
+		{
+			if ( lrsExceptions.next() )
+				ldblResult = (BigDecimal)MediatorException.GetInstance(getNameSpace(), lrsExceptions).getAt(MediatorException.I.PERCENTAGE);
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsExceptions.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsExceptions.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsExceptions.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return ldblResult;
+    }
+
+    public BigDecimal GetCurrentClientException(UUID pidClient)
+        throws BigBangJewelException
+    {
+		IEntity lrefExceptions;
+        MasterDB ldb;
+        ResultSet lrsExceptions;
+        BigDecimal ldblResult;
+
+		try
+		{
+			lrefExceptions = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MediatorException)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsExceptions = lrefExceptions.SelectByMembers(ldb, new int[] {MediatorException.I.MEDIATOR, MediatorException.I.CLIENT},
+					new java.lang.Object[] {getKey(), pidClient}, null);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		ldblResult = null;
+		try
+		{
+			if ( lrsExceptions.next() )
+				ldblResult = (BigDecimal)MediatorException.GetInstance(getNameSpace(), lrsExceptions).getAt(MediatorException.I.PERCENTAGE);
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsExceptions.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsExceptions.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsExceptions.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return ldblResult;
+    }
+
     public MediatorBase GetDetailedObject(Receipt pobjReceipt)
     	throws BigBangJewelException
     {
