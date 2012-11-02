@@ -29,12 +29,15 @@ public class TestReceiptCreate
 		};
 
 		receipt = new Receipt();
-		receipt.number = "E001";
-		receipt.typeId = "BFC1AE6D-53E8-41AF-84BE-9F900111D967";
-		receipt.totalPremium = 153.42;
-		receipt.comissions = 13.2;
-		receipt.retrocessions = 0.0;
-		receipt.issueDate = "2011-11-30";
-		Services.insurancePolicyService.createReceipt("01B7B31C-0EFF-4A93-84EE-A02000F26B1F", receipt, callback);
+		receipt.number = "333333";
+		receipt.typeId = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";
+		receipt.totalPremium = 100.0;
+		receipt.salesPremium = 80.0;
+		receipt.comissions = 8.33;
+		receipt.issueDate = "2012-11-30";
+		receipt.dueDate = "2012-12-10";
+		receipt.maturityDate = "2012-12-01";
+		receipt.endDate = "2013-03-01";
+		Services.insurancePolicyService.createReceipt("6ddf2dd1-c3e3-4906-9322-a0e9000f2290", receipt, callback);
 	}
 }
