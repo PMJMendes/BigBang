@@ -151,6 +151,7 @@ public class ReportBuilder
 
 		larrCells = new TD[2];
 		larrCells[0] = buildHeaderCell(pstrHeader);
+		larrCells[0].setWidth("0px");
 		styleCell(larrCells[0], true, false);
 		larrCells[1] = buildCell(pobjValue, pidType);
 		styleCell(larrCells[1], true, true);

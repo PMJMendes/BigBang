@@ -248,7 +248,11 @@ public class ReceiptExternPendingPayment
 
 		larrRows[4] = ReportBuilder.constructDualRow("Total de Estornos", ldblTotalNeg, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[5] = ReportBuilder.constructDualHeaderRowCell("(*) O pagamento dos prémios de Recibos Novos e Actas é devido no acto da contratação.");
+		lcell = ReportBuilder.buildHeaderCell("(*) O pagamento dos prémios de Recibos Novos e Actas é devido no acto da contratação.");
+		lcell.setColSpan(2);
+		ReportBuilder.styleCell(lcell, true, false);
+		larrRows[5] = ReportBuilder.buildRow(new TD[] {lcell});
+		ReportBuilder.styleRow(larrRows[5], false);
 
 		return larrRows;
 	}
