@@ -1,6 +1,6 @@
 insert into credite_egs.tblBBExpenses (PK, ENumber, FKProcess, ExpenseDate, FKPolicyObject, FKSubPolicyObject, FKPolicyCoverage, FKSubPolicyCoverage, Damages, Settlement, BManual, Notes, Rejection)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-e.IDDesp ENumber, NULL FKProcess, e.DataDesp ExpenseDate, o.PK FKPolicyObject, NULL FKSubPolicyObject, c.PK FKPolicyCoverage, NULL FKSubPolicyCoverage
+e.IDDesp ENumber, NULL FKProcess, e.DataDesp ExpenseDate, o.PK FKPolicyObject, NULL FKSubPolicyObject, c.PK FKPolicyCoverage, NULL FKSubPolicyCoverage,
 e.Valor Damages, e.ValorComp Settlement, 1 BManual, NULL Notes, Null Rejection
 from credegs..empresa.saudedespesas e
 inner join credegs..empresa.apolice a on a.cliente=e.cliente and a.apolice=e.apolice and a.ramo=e.ramo and a.comseg=e.comseg
