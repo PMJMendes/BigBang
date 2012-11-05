@@ -74,6 +74,8 @@ public class MediatorCategoryFormSection extends CollapsibleFormViewSection {
 		field.setReadOnly(this.readOnly);
 		addFormField(field, true);
 		this.valueFields.put(subLine.id, field);
+		if ( this.values != null )
+			field.setValue(this.values.get(subLine.id));
 	}
 	
 	public Map<String, Double> getValues(){
