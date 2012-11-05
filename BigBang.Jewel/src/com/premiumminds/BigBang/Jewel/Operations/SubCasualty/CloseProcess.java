@@ -189,6 +189,12 @@ public class CloseProcess
 		try
 		{
 			lobjSubCasualty = (SubCasualty)GetProcess().GetData();
+
+			if ( midReviewer == null )
+				midReviewer = (UUID)lobjSubCasualty.getAt(SubCasualty.I.REVIEWER);
+			if ( midReviewer == null )
+				midReviewer = GetProcess().GetManagerID();
+
 			lobjSubCasualty.setAt(SubCasualty.I.REVIEWER, midReviewer);
 			lobjSubCasualty.setAt(SubCasualty.I.REVIEWDATE, mdtReviewDate);
 			lobjSubCasualty.SaveToDb(pdb);

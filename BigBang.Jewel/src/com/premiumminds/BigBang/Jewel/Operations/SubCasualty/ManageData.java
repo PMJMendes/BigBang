@@ -88,6 +88,8 @@ public class ManageData
 				mobjData.mobjPrevValues.FromObject(lobjAux);
 
 				mobjData.midManager = GetProcess().GetManagerID();
+				mobjData.midReviewer = mobjData.mobjPrevValues.midReviewer;
+				mobjData.mdtReviewDate = mobjData.mobjPrevValues.mdtReviewDate;
 				mobjData.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
 
