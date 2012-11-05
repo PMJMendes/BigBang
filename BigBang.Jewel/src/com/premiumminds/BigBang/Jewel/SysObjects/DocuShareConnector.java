@@ -434,20 +434,17 @@ public class DocuShareConnector
 	{
 		DSSession lrefSession;
 
-		if ( itemIsDelete(pstrItem) ) //TODO Tirar isto
-		{
-			lrefSession = GetSession();
-			if ( lrefSession == null )
-				return;
+		lrefSession = GetSession();
+		if ( lrefSession == null )
+			return;
 
-			try
-			{
-				lrefSession.deleteObject(new DSHandle(pstrItem), new DSSelectSet(), true);
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
+		try
+		{
+			lrefSession.deleteObject(new DSHandle(pstrItem), new DSSelectSet(), true);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
 
@@ -502,11 +499,5 @@ public class DocuShareConnector
 		larrFolders.addAll(larrItems);
 
 		return larrFolders.toArray(new DSObject[larrFolders.size()]);
-	}
-
-	private static boolean itemIsDelete(String pstrItem)
-		throws BigBangJewelException
-	{
-		return getItemTitle(pstrItem).startsWith("recibos-3ac");
 	}
 }

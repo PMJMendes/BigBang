@@ -46,11 +46,11 @@ public class AutoProcessSubs
 			b = false;
 			for ( i = 0; i < larrSubs.length; i++ )
 			{
-//				if ( larrSubs[i].IsRunning() || !larrSubs[i].GetScript().IsTopLevel() )
-//				{
+				if ( larrSubs[i].IsRunning() || !larrSubs[i].GetScript().IsTopLevel() )
+				{
 					b = true;
 					break;
-//				}
+				}
 			}
 		}
 
