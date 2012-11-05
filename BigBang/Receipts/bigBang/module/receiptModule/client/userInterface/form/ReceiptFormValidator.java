@@ -104,7 +104,7 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 			Date endDate = form.coverageEnd.getValue();
 
 			if(startDate != null && endDate != null){
-				if(startDate.before(endDate)){
+				if(!startDate.after(endDate)){
 					return true;
 				}
 				else{

@@ -110,7 +110,7 @@ public class SerialReceiptCreationFormValidator extends FormValidator<SerialRece
 			Date endDate = form.coverageEnd.getValue();
 
 			if(startDate != null && endDate != null){
-				if(startDate.before(endDate)){
+				if(!startDate.after(endDate)){
 					return true;
 				}
 				else{
