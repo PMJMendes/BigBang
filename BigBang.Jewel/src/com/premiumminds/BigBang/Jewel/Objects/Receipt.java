@@ -833,7 +833,7 @@ public class Receipt
     		return null;
 
     	if ( Constants.MCPID_None.equals(lidProfile) )
-			return new BigDecimal(0.00);
+			return BigDecimal.ZERO;
 
 		ldblPercent = null;
 		ldblBase = null;

@@ -234,16 +234,16 @@ public class InsurerAccountingMap
 		boolean lbSubtract;
 		int i;
 
-		ldblTotalPremiums = new BigDecimal(0.0);
-		ldblDirectPremiums = new BigDecimal(0.0);
+		ldblTotalPremiums = BigDecimal.ZERO;
+		ldblDirectPremiums = BigDecimal.ZERO;
 		lbSubtract = false;
 
 		if ( (getAt(I.EXTRATEXT) == null) || (getAt(I.EXTRAVALUE) == null) )
 		{
 			lstrExtraText = "-";
-			ldblExtraValue = new BigDecimal(0.0);
-			ldblTotalComms = new BigDecimal(0.0);
-			ldblLifeComms = new BigDecimal(0.0);
+			ldblExtraValue = BigDecimal.ZERO;
+			ldblTotalComms = BigDecimal.ZERO;
+			ldblLifeComms = BigDecimal.ZERO;
 		}
 		else
 		{
@@ -252,8 +252,8 @@ public class InsurerAccountingMap
 			if ( (getAt(I.ISCOMMISSION) == null)  || !((Boolean)getAt(I.ISCOMMISSION)) )
 			{
 				lbSubtract = true;
-				ldblTotalComms = new BigDecimal(0.0);
-				ldblLifeComms = new BigDecimal(0.0);
+				ldblTotalComms = BigDecimal.ZERO;
+				ldblLifeComms = BigDecimal.ZERO;
 			}
 			else
 			{
@@ -261,7 +261,7 @@ public class InsurerAccountingMap
 				if ( (getAt(I.HASTAX) == null) || !((Boolean)getAt(I.HASTAX)) )
 					ldblLifeComms = ldblExtraValue;
 				else
-					ldblLifeComms = new BigDecimal(0.0);
+					ldblLifeComms = BigDecimal.ZERO;
 			}
 		}
 

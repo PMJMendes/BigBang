@@ -523,7 +523,7 @@ public class ExpenseServiceImpl
 		lobjData.midSubPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
 		lobjData.mstrGenericObject = (expense.insuredObjectId == null ? expense.insuredObjectName : null);
 		lobjData.mdblDamages = new BigDecimal(expense.value+"");
-		lobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
+		lobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement + ""));
 		lobjData.mbIsManual = expense.isManual;
 		lobjData.mstrNotes = expense.notes;
 		lobjData.midManager = null;

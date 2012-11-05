@@ -1721,7 +1721,7 @@ public class ReceiptServiceImpl
 					if ( lidI.equals(UUID.fromString(extraInfo[i].insurerId)) )
 					{
 						lstrExtraText = extraInfo[i].text;
-						ldblExtraValue = ( extraInfo[i].value == null ? null : new BigDecimal(extraInfo[i].value) );
+						ldblExtraValue = ( extraInfo[i].value == null ? null : new BigDecimal(extraInfo[i].value + "") );
 						lbIsCommissions = extraInfo[i].isCommissions;
 						lbHasTax = extraInfo[i].hasTax;
 						break;

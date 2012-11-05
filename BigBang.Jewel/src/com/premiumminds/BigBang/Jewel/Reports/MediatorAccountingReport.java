@@ -147,7 +147,7 @@ public class MediatorAccountingReport
 		}
 		else
 		{
-			mdblRetention = new BigDecimal(0.0);
+			mdblRetention = BigDecimal.ZERO;
 			mdblNet = mdblTotalRetros;
 			larrParams.put("TaxText", "");
 			larrParams.put("TaxValue", "");

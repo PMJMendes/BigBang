@@ -108,8 +108,8 @@ public class InsurerAccountingReport
 			if ( (lobjMap.getAt(InsurerAccountingMap.I.ISCOMMISSION) == null)  || !((Boolean)lobjMap.getAt(InsurerAccountingMap.I.ISCOMMISSION)) )
 			{
 				lbSubtract = true;
-				mdblTotalComms = new BigDecimal(0.0);
-				ldblLifeComms = new BigDecimal(0.0);
+				mdblTotalComms = BigDecimal.ZERO;
+				ldblLifeComms = BigDecimal.ZERO;
 			}
 			else
 			{
@@ -117,7 +117,7 @@ public class InsurerAccountingReport
 				if ( (lobjMap.getAt(InsurerAccountingMap.I.HASTAX) == null) || !((Boolean)lobjMap.getAt(InsurerAccountingMap.I.HASTAX)) )
 					ldblLifeComms = mdblExtraValue;
 				else
-					ldblLifeComms = new BigDecimal(0.0);
+					ldblLifeComms = BigDecimal.ZERO;
 			}
 		}
 

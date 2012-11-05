@@ -263,14 +263,14 @@ public class CasualtyServiceImpl
 				lopCSC.mobjData.marrItems[i].midType = ( subCasualty.items[i].damageTypeId == null ? null :
 						UUID.fromString(subCasualty.items[i].damageTypeId) );
 				lopCSC.mobjData.marrItems[i].mdblDamages = ( subCasualty.items[i].damages == null ? null :
-						new BigDecimal(subCasualty.items[i].damages) );
+						new BigDecimal(subCasualty.items[i].damages + "") );
 				lopCSC.mobjData.marrItems[i].mdblSettlement = ( subCasualty.items[i].settlement == null ? null :
-						new BigDecimal(subCasualty.items[i].settlement) );
+						new BigDecimal(subCasualty.items[i].settlement + "") );
 				lopCSC.mobjData.marrItems[i].mbIsManual = subCasualty.items[i].isManual;
 				lopCSC.mobjData.marrItems[i].mdblCapital = ( subCasualty.items[i].value == null ? null :
-						new BigDecimal(subCasualty.items[i].value) );
+						new BigDecimal(subCasualty.items[i].value + "") );
 				lopCSC.mobjData.marrItems[i].mdblDeductible = ( subCasualty.items[i].deductible == null ? null :
-						new BigDecimal(subCasualty.items[i].deductible) );
+						new BigDecimal(subCasualty.items[i].deductible + "") );
 
 				lopCSC.mobjData.marrItems[i].mbNew = !subCasualty.items[i].deleted;
 				lopCSC.mobjData.marrItems[i].mbDeleted = subCasualty.items[i].deleted;

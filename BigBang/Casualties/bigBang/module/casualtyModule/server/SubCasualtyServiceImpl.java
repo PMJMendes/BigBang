@@ -211,9 +211,9 @@ public class SubCasualtyServiceImpl
 						new BigDecimal(subCasualty.items[i].settlement+"") );
 				lopMD.mobjData.marrItems[i].mbIsManual = subCasualty.items[i].isManual;
 				lopMD.mobjData.marrItems[i].mdblCapital = ( subCasualty.items[i].value == null ? null :
-						new BigDecimal(subCasualty.items[i].value) );
+						new BigDecimal(subCasualty.items[i].value + "") );
 				lopMD.mobjData.marrItems[i].mdblDeductible = ( subCasualty.items[i].deductible == null ? null :
-						new BigDecimal(subCasualty.items[i].deductible) );
+						new BigDecimal(subCasualty.items[i].deductible + "") );
 
 				lopMD.mobjData.marrItems[i].mbNew = ( !subCasualty.items[i].deleted && (subCasualty.items[i].id == null) );
 				lopMD.mobjData.marrItems[i].mbDeleted = subCasualty.items[i].deleted;

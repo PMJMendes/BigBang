@@ -196,7 +196,7 @@ public class MediatorAccountingMap
 		BigDecimal ldblRetro;
 		int i;
 
-		ldblTotal = new BigDecimal(0.0);
+		ldblTotal = BigDecimal.ZERO;
 
 		getDetails();
 		for ( i = 0; i < marrDetails.length; i++ )

@@ -195,7 +195,7 @@ public class MediatorServiceImpl
 			else
 				lopMM.marrCreate[0].mobjMainValues.midProfile = null;
 			lopMM.marrCreate[0].mobjMainValues.mdblPercent = (mediator.basePercent == null ? null :
-					new BigDecimal(mediator.basePercent));
+					new BigDecimal(mediator.basePercent + ""));
 			lopMM.marrCreate[0].mobjMainValues.mbHasRetention = mediator.hasRetention;
 			if ( mediator.address != null )
 			{
@@ -223,7 +223,7 @@ public class MediatorServiceImpl
 				{
 					lopMM.marrCreate[0].mobjMainValues.marrDeals[i] = new MediatorDealData();
 					lopMM.marrCreate[0].mobjMainValues.marrDeals[i].midSubLine = UUID.fromString(str);
-					lopMM.marrCreate[0].mobjMainValues.marrDeals[i].mdblPercent = new BigDecimal(mediator.dealPercents.get(str));
+					lopMM.marrCreate[0].mobjMainValues.marrDeals[i].mdblPercent = new BigDecimal(mediator.dealPercents.get(str) + "");
 					i++;
 				}
 			}
@@ -240,7 +240,7 @@ public class MediatorServiceImpl
 							UUID.fromString(mediator.exceptions[i].clientId) );
 					lopMM.marrCreate[0].mobjMainValues.marrExceptions[i].midPolicy = ( mediator.exceptions[i].policyId == null ? null :
 						UUID.fromString(mediator.exceptions[i].policyId) );
-					lopMM.marrCreate[0].mobjMainValues.marrExceptions[i].mdblPercent = new BigDecimal(mediator.exceptions[i].percent);
+					lopMM.marrCreate[0].mobjMainValues.marrExceptions[i].mdblPercent = new BigDecimal(mediator.exceptions[i].percent + "");
 				}
 			}
 			else
@@ -308,7 +308,7 @@ public class MediatorServiceImpl
 			else
 				lopMM.marrModify[0].mobjMainValues.midProfile = null;
 			lopMM.marrModify[0].mobjMainValues.mdblPercent = (mediator.basePercent == null ? null :
-				new BigDecimal(mediator.basePercent));
+				new BigDecimal(mediator.basePercent + ""));
 			lopMM.marrModify[0].mobjMainValues.mbHasRetention = mediator.hasRetention;
 			if ( mediator.address != null )
 			{
@@ -336,7 +336,7 @@ public class MediatorServiceImpl
 				{
 					lopMM.marrModify[0].mobjMainValues.marrDeals[i] = new MediatorDealData();
 					lopMM.marrModify[0].mobjMainValues.marrDeals[i].midSubLine = UUID.fromString(str);
-					lopMM.marrModify[0].mobjMainValues.marrDeals[i].mdblPercent = new BigDecimal(mediator.dealPercents.get(str));
+					lopMM.marrModify[0].mobjMainValues.marrDeals[i].mdblPercent = new BigDecimal(mediator.dealPercents.get(str) + "");
 					i++;
 				}
 			}
@@ -353,7 +353,7 @@ public class MediatorServiceImpl
 							UUID.fromString(mediator.exceptions[i].clientId) );
 					lopMM.marrModify[0].mobjMainValues.marrExceptions[i].midPolicy = ( mediator.exceptions[i].policyId == null ? null :
 						UUID.fromString(mediator.exceptions[i].policyId) );
-					lopMM.marrModify[0].mobjMainValues.marrExceptions[i].mdblPercent = new BigDecimal(mediator.exceptions[i].percent);
+					lopMM.marrModify[0].mobjMainValues.marrExceptions[i].mdblPercent = new BigDecimal(mediator.exceptions[i].percent + "");
 				}
 			}
 			else
