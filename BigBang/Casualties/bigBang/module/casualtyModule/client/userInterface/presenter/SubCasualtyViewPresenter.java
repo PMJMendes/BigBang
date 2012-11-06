@@ -45,7 +45,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		MARK_FOR_CLOSING,
 		CLOSE,
 		REJECT_CLOSE,
-		DELETE, INFO_OR_DOCUMENT_REQUEST, EXTERNAL_REQUEST, MARK_NOTIFICATION_SENT
+		DELETE, INFO_OR_DOCUMENT_REQUEST, EXTERNAL_REQUEST, MARK_NOTIFICATION_SENT, BACK
 	}
 
 	public static interface Display {
@@ -159,6 +159,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 				case MARK_NOTIFICATION_SENT:
 					markNotificationSent(view.getForm().getInfo().id);
 					break;
+				case BACK:
+					onBack(view.getParentForm().getValue().id);
+					break;
 				}
 			}
 		});
@@ -190,6 +193,15 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		view.getDocumentsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+	}
+
+	protected void onBack(String id) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("subcasualtyid");
+		item.removeParameter("ownerid");
+		item.popFromStackParameter("display");
+		item.setParameter("casualtyid", id);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void markNotificationSent(String subCasualtyId) {

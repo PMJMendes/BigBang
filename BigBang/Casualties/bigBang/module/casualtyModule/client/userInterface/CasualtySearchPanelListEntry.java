@@ -79,7 +79,18 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 			rightContainer.setCellVerticalAlignment(openImage, HasVerticalAlignment.ALIGN_MIDDLE);
 
 			((UIObject) rightWidgetContainer).setSize("100%", "100%");
+			
 			setRightWidget(rightContainer);
+			
+			setMetaData(new String[]{
+					value.processId,
+					value.casualtyDate,
+					value.clientName,
+					value.insuredObject,
+					value.policyCategory,
+					value.clientNumber,
+				});
+			
 		}
 
 		CasualtyStub c = (CasualtyStub) info;

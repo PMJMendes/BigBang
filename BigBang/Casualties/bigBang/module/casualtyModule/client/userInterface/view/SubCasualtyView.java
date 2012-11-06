@@ -1,7 +1,10 @@
 package bigBang.module.casualtyModule.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -44,6 +47,13 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 		wrapper.addWest(parentWrapper, 600);
 
 		ListHeader parentHeader = new ListHeader("Sinistro");
+		parentHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.BACK));
+			}
+		}));
 		parentWrapper.add(parentHeader);
 
 		parentForm = new CasualtyForm();

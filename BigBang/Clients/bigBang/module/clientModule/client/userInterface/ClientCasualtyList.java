@@ -56,6 +56,7 @@ public class ClientCasualtyList extends FilterableList<CasualtyStub> implements 
 
 				@Override
 				public void onResponse(Collection<CasualtyStub> response) {
+					clear();
 					for(CasualtyStub s : response){
 						addEntry(s);
 					}
