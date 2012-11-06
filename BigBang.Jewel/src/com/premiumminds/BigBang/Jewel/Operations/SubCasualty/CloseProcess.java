@@ -195,6 +195,9 @@ public class CloseProcess
 			if ( midReviewer == null )
 				midReviewer = GetProcess().GetManagerID();
 
+			if ( mdtReviewDate == null )
+				mdtReviewDate = new Timestamp(new java.util.Date().getTime());
+
 			lobjSubCasualty.setAt(SubCasualty.I.REVIEWER, midReviewer);
 			lobjSubCasualty.setAt(SubCasualty.I.REVIEWDATE, mdtReviewDate);
 			lobjSubCasualty.SaveToDb(pdb);
