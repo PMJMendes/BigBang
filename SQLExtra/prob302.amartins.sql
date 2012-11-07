@@ -179,7 +179,7 @@ where FKField in
 and Value like '%.[0-9][0-9]' and Value not like '%[a-z]%' and Value not like '%€%'
 and FKPolicy in
 (select PK from amartins.tblbbPolicies
-where FKSubLine='9B46DDFE-3EA5-49E3-B5EA-9EE90119C19A' and p._tscreate>='2012-11-04');
+where FKSubLine='9B46DDFE-3EA5-49E3-B5EA-9EE90119C19A' and _tscreate>='2012-11-04');
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -384,7 +384,7 @@ insert into amartins.tblBBSubCasualties (PK, SCNumber, FKProcess, FKPolicy, FKSu
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 s.ordem+0.1 SCNumber, NULL FKProcess, p.PK FKPolicy, z.PK FKSubPolicy, NULL ExternProcess, NULL Description, substring(s.obsint, 1, 250) Notes, 0 BHasJudicial, s.sinistrado, c.PK
 from amartins..empresa.sinistros s
-inner join credite_egs.tblBBCasualties c on c.CNumber=s.ordem
+inner join amartins.tblBBCasualties c on c.CNumber=s.ordem
 inner join amartins..empresa.apolice a on a.cliente=s.cliente and a.apolice=s.apolice and a.ramo=s.ramo and a.comseg=s.comseg
 left outer join amartins.tblBBPolicies p on p.MigrationID=a.MigrationID
 left outer join amartins.tblBBSubPolicies z on z.MigrationID=a.MigrationID
