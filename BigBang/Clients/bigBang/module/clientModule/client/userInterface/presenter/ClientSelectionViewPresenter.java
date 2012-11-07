@@ -42,6 +42,7 @@ public class ClientSelectionViewPresenter extends ExpandableSelectionFormFieldPa
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
+		void setOperationId(String opId);
 	}
 
 	private Display view;
@@ -73,8 +74,9 @@ public class ClientSelectionViewPresenter extends ExpandableSelectionFormFieldPa
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		// TODO Auto-generated method stub
 		clearView();
+		String opId = parameterHolder == null ? null : parameterHolder.getParameter("operationId");
+		view.setOperationId(opId);
 	}
 	
 	private void clearView() {

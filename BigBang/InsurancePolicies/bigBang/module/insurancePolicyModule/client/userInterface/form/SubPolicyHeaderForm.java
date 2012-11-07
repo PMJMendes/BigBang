@@ -3,15 +3,13 @@ package bigBang.module.insurancePolicyModule.client.userInterface.form;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.FormField;
-import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ExpandableSelectionFormField;
-import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
+import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.resources.Resources;
 import bigBang.module.insurancePolicyModule.client.userInterface.HeaderFieldsSection;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
@@ -23,7 +21,7 @@ import com.google.gwt.user.client.ui.Image;
 public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 
 	protected TextBoxFormField number;
-	protected ExpandableSelectionFormField client;
+	protected FormField<String> client;
 	protected TextBoxFormField policyStatus;
 	protected DatePickerFormField startDate;
 	protected DatePickerFormField endDate;
@@ -41,9 +39,13 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 		number  = new TextBoxFormField("Número");
 		number.setFieldWidth("175px");
 
-		ExpandableSelectionFormFieldPanel clientSelectionPanel = (ExpandableSelectionFormFieldPanel) ViewPresenterFactory.getInstance().getViewPresenter("INSURANCE_POLICY_SUB_POLICY_CLIENT_SELECTION");
-		((ClientSelectionViewPresenter)clientSelectionPanel).go();
-		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", clientSelectionPanel); //TODO
+		HasParameters params = new HasParameters();
+		params.setParameter("name", "Cliente Aderente");
+		params.setParameter("operationId", BigBangConstants.OperationIds.ClientProcess.CREATE_POLICY);
+		client = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.CLIENT, params);
+//		ExpandableSelectionFormFieldPanel clientSelectionPanel = (ExpandableSelectionFormFieldPanel) ViewPresenterFactory.getInstance().getViewPresenter("INSURANCE_POLICY_SUB_POLICY_CLIENT_SELECTION");
+//		((ClientSelectionViewPresenter)clientSelectionPanel).go();
+//		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", clientSelectionPanel); //TODO
 		client.setMandatory(true);
 		number.setFieldWidth("175px");
 		startDate = new DatePickerFormField("Data de Início");

@@ -1,13 +1,5 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.library.client.HasEditableValue;
@@ -20,6 +12,13 @@ import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.form.ClientForm;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter.Action;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ClientSelectionView extends View implements ClientSelectionViewPresenter.Display {
 
@@ -34,7 +33,6 @@ public class ClientSelectionView extends View implements ClientSelectionViewPres
 		wrapper.setSize("100%", "100%");
 
 		list = new ClientSearchPanel();
-		list.setOperationId(BigBangConstants.OperationIds.ClientProcess.CREATE_POLICY);
 
 		confirmButton = new Button("Confirmar", new ClickHandler() {
 
@@ -79,7 +77,6 @@ public class ClientSelectionView extends View implements ClientSelectionViewPres
 		wrapper.addWest(listWrapper, 300);
 		wrapper.add(formWrapper);
 		
-		list.doSearch(true);
 	}
 
 	@Override
@@ -105,5 +102,11 @@ public class ClientSelectionView extends View implements ClientSelectionViewPres
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.handler = handler;
+	}
+
+	@Override
+	public void setOperationId(String opId) {
+		list.setOperationId(opId);
+		list.doSearch(true);
 	}
 }
