@@ -72,6 +72,7 @@ public class Payment
 		int i;
 		Calendar ldtToday;
 		boolean lbDirect;
+		UUID lidProfile;
 
 		if ( (marrData == null) || (marrData.length == 0) )
 			throw new JewelPetriException("Erro: Deve especificar o(s) meio(s) de pagamento.");
@@ -141,7 +142,16 @@ public class Payment
 			}
 		}
 
-		if ( !lobjReceipt.isReverseCircuit() && !lbDirect )
+		try
+		{
+			lidProfile = lobjReceipt.getAbsolutePolicy().getProfile();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		if ( !lobjReceipt.isReverseCircuit() && !lbDirect && !Constants.ProfID_VIPNoDAS.equals(lidProfile))
 		{
 			ldtToday = Calendar.getInstance();
 			ldtToday.set(Calendar.HOUR_OF_DAY, 0);

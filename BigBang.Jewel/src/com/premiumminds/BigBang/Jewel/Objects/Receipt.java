@@ -451,7 +451,7 @@ public class Receipt
     	IProcess lobjProcess;
     	Client lobjClient;
 
-    	lidProfile = (UUID)getAbsolutePolicy().getProfile();
+    	lidProfile = getAbsolutePolicy().getProfile();
 
     	if ( lidProfile == null )
     	{
@@ -471,7 +471,7 @@ public class Receipt
 	    	lidProfile = (UUID)lobjClient.getAt(9);
     	}
 
-    	if ( Constants.ProfID_VIP.equals(lidProfile) )
+    	if ( Constants.ProfID_VIP.equals(lidProfile) || Constants.ProfID_VIPNoDAS.equals(lidProfile) )
     		return false;
 
     	if ( Constants.RecType_Continuing.equals(getAt(1)) )

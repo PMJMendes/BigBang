@@ -552,7 +552,8 @@ public class Constants
 	public static final UUID ProfID_Normal   = UUID.fromString("9F871430-9BBC-449F-B125-9EE600BE5A9A");
 	public static final UUID ProfID_VIP      = UUID.fromString("63114D11-6087-4EFE-9A7E-9EE600BE52DA");
 	public static final UUID ProfID_Simple   = UUID.fromString("51ED12A4-95A9-44B0-928D-A01500DC83EB");
-	public static final UUID ProfID_External = UUID.fromString("8641B5C6-CABE-4260-AD70-A0A2010A028F"); 
+	public static final UUID ProfID_External = UUID.fromString("8641B5C6-CABE-4260-AD70-A0A2010A028F");
+	public static final UUID ProfID_VIPNoDAS = UUID.fromString("624A580F-F961-457A-A699-A10301134BE0");
 
 	// Object Types
 	public static final UUID ObjTypeID_Person    = UUID.fromString("EDD94689-EFED-4B50-AA6E-9F9501402700");
