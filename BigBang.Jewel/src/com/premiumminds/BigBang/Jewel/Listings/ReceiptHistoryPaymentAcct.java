@@ -62,9 +62,9 @@ public class ReceiptHistoryPaymentAcct
 			larrMap.get(lidCompany).add(larrAux[i]);
 		}
 
-		larrResult = new GenericElement[larrMap.size() + 2];
+		larrResult = new GenericElement[larrMap.size() + 1];
 
-		larrResult[0] = buildHeaderSection(parrParams[0], larrAux, larrMap.size());
+		larrResult[0] = buildSummarySection(parrParams[0], larrAux, larrMap.size());
 
 		i = 1;
 		for ( UUID lid: larrMap.keySet() )
@@ -88,7 +88,7 @@ public class ReceiptHistoryPaymentAcct
 			i++;
 		}
 
-		larrResult[i] = buildSummarySection(larrAux);
+		larrResult[i] = buildSummarySection(parrParams[0], larrAux, larrMap.size());
 
 		return larrResult;
 	}
@@ -175,50 +175,6 @@ public class ReceiptHistoryPaymentAcct
 		}
 
 		return larrAux.toArray(new Receipt[larrAux.size()]);
-	}
-
-	protected Table buildHeaderSection(String pstrHeader, Receipt[] parrReceipts, int plngMapSize)
-	{
-		BigDecimal ldblTotal;
-		BigDecimal ldblTotalCom;
-		BigDecimal ldblTotalRetro;
-		int i;
-		Table ltbl;
-		TR[] larrRows;
-
-		ldblTotal = BigDecimal.ZERO;
-		ldblTotalCom = BigDecimal.ZERO;
-		ldblTotalRetro = BigDecimal.ZERO;
-		for ( i = 0; i < parrReceipts.length; i++ )
-		{
-			ldblTotal = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM) == null ? BigDecimal.ZERO :
-					(BigDecimal)parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM)));
-			ldblTotalCom = ldblTotalCom.add((parrReceipts[i].getAt(Receipt.I.COMMISSIONS) == null ? BigDecimal.ZERO :
-					(BigDecimal)parrReceipts[i].getAt(Receipt.I.COMMISSIONS)));
-			ldblTotalRetro = ldblTotalRetro.add((parrReceipts[i].getAt(Receipt.I.RETROCESSIONS) == null ? BigDecimal.ZERO :
-					(BigDecimal)parrReceipts[i].getAt(Receipt.I.RETROCESSIONS)));
-		}
-
-		larrRows = new TR[7];
-
-		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Folha de Caixa");
-
-		larrRows[1] = ReportBuilder.constructDualRow("Data", Timestamp.valueOf(pstrHeader + " 00:00:00.0"), TypeDefGUIDs.T_Date, false);
-
-		larrRows[2] = ReportBuilder.constructDualRow("Nº de Seguradoras", plngMapSize, TypeDefGUIDs.T_Integer, false);
-
-		larrRows[3] = ReportBuilder.constructDualRow("Nº de Recibos", parrReceipts.length, TypeDefGUIDs.T_Integer, false);
-
-		larrRows[4] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotal, TypeDefGUIDs.T_Decimal, false);
-
-		larrRows[5] = ReportBuilder.constructDualRow("Total de Comissões", ldblTotalCom, TypeDefGUIDs.T_Decimal, false);
-
-		larrRows[6] = ReportBuilder.constructDualRow("Total de Retrocessões", ldblTotalRetro, TypeDefGUIDs.T_Decimal, false);
-
-		ltbl = ReportBuilder.buildTable(larrRows);
-		ReportBuilder.styleTable(ltbl, false);
-
-		return ltbl;
 	}
 
 	protected TD[] buildInnerHeaderRow()
@@ -366,27 +322,40 @@ public class ReceiptHistoryPaymentAcct
 		parrCells[13].setWidth( 50);
 	}
 
-	protected Table buildSummarySection(Receipt[] parrReceipts)
+	protected Table buildSummarySection(String pstrHeader, Receipt[] parrReceipts, int plngMapSize)
 		throws BigBangJewelException
 	{
 		HashMap<String, BigDecimal> larrMap;
-		Payment lrefPayment;
+		BigDecimal ldblTotal;
+		BigDecimal ldblTotalCom;
+		BigDecimal ldblTotalRetro;
 		boolean b;
 		int i, j;
+		Payment lrefPayment;
 		String lstrType;
 		BigDecimal ldblAux, ldblAux2;
 		Table ltbl;
 		TR[] larrRows;
 
 		larrMap = new HashMap<String, BigDecimal>();
+		ldblTotal = BigDecimal.ZERO;
+		ldblTotalCom = BigDecimal.ZERO;
+		ldblTotalRetro = BigDecimal.ZERO;
+		b = false;
 
 		try
 		{
-			b = false;
 			for ( i = 0; i < parrReceipts.length; i++ )
 			{
+				ldblTotal = ldblTotal.add((parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM) == null ? BigDecimal.ZERO :
+						(BigDecimal)parrReceipts[i].getAt(Receipt.I.TOTALPREMIUM)));
+				ldblTotalCom = ldblTotalCom.add((parrReceipts[i].getAt(Receipt.I.COMMISSIONS) == null ? BigDecimal.ZERO :
+						(BigDecimal)parrReceipts[i].getAt(Receipt.I.COMMISSIONS)));
+				ldblTotalRetro = ldblTotalRetro.add((parrReceipts[i].getAt(Receipt.I.RETROCESSIONS) == null ? BigDecimal.ZERO :
+						(BigDecimal)parrReceipts[i].getAt(Receipt.I.RETROCESSIONS)));
+
 				lrefPayment = (Payment)parrReceipts[i].getPaymentLog().GetOperationData();
-	
+
 				if ( (lrefPayment == null) || (lrefPayment.marrData == null) || (lrefPayment.marrData.length == 0) )
 				{
 					b = true;
@@ -417,22 +386,36 @@ public class ReceiptHistoryPaymentAcct
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		larrRows = new TR[larrMap.size() + (b ? 2 : 1)];
+		larrRows = new TR[7 + larrMap.size() + (b ? 2 : 1)];
+
+		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Folha de Caixa");
+
+		larrRows[1] = ReportBuilder.constructDualRow("Data", Timestamp.valueOf(pstrHeader + " 00:00:00.0"), TypeDefGUIDs.T_Date, false);
+
+		larrRows[2] = ReportBuilder.constructDualRow("Nº de Seguradoras", plngMapSize, TypeDefGUIDs.T_Integer, false);
+
+		larrRows[3] = ReportBuilder.constructDualRow("Nº de Recibos", parrReceipts.length, TypeDefGUIDs.T_Integer, false);
+
+		larrRows[4] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotal, TypeDefGUIDs.T_Decimal, false);
+
+		larrRows[5] = ReportBuilder.constructDualRow("Total de Comissões", ldblTotalCom, TypeDefGUIDs.T_Decimal, false);
+
+		larrRows[6] = ReportBuilder.constructDualRow("Total de Retrocessões", ldblTotalRetro, TypeDefGUIDs.T_Decimal, false);
 
 		if ( larrMap.size() == 0 )
-			larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Informação sobre tipos de pagamento não disponível.");
+			larrRows[7] = ReportBuilder.constructDualHeaderRowCell("Informação sobre tipos de pagamento não disponível.");
 		else
-			larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Sumário de Tipos de Pagamento");
+			larrRows[7] = ReportBuilder.constructDualHeaderRowCell("Sumário de Tipos de Pagamento");
 
 		i = 1;
 		for ( String lstr: larrMap.keySet() )
 		{
-			larrRows[i] = ReportBuilder.constructDualRow(lstr, larrMap.get(lstr), TypeDefGUIDs.T_Decimal, true);
+			larrRows[7 + i] = ReportBuilder.constructDualRow(lstr, larrMap.get(lstr), TypeDefGUIDs.T_Decimal, true);
 			i++;
 		}
 
 		if ( b )
-			larrRows[i] = ReportBuilder.constructDualHeaderRowCell("(Informação incompleta.)");
+			larrRows[7 + i] = ReportBuilder.constructDualHeaderRowCell("(Informação incompleta.)");
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);
