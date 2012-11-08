@@ -534,7 +534,7 @@ public class ClientToServer
 				else
 				{
 					lobjAux.mid = UUID.fromString(pobjContainer.coverages[i].serverId);
-					lobjAux.mbNew = true;
+					lobjAux.mbNew = false;
 					msetCDeletia.remove(lobjAux.mid);
 				}
 
