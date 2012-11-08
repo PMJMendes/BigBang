@@ -11,4 +11,5 @@ public class DSBridgeData
 	public String mstrDSLoc;
 	public String mstrDSTitle;
 	public boolean mbDelete;
+	public boolean mbHandled;
 }

@@ -717,7 +717,7 @@ public class ExpenseServiceImpl
 				lopRR.mobjImage = lobjImage;
 				lopRR.mobjDocOps = lobjDocOps;
 
-				lopRR.Execute();
+				lopRR.Execute(ldb);
 			}
 			catch (Throwable e)
 			{

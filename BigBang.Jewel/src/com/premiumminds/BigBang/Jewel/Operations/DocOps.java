@@ -341,7 +341,7 @@ public class DocOps
 		DocInfo lobjAuxInfo;
 		int i;
 
-		if ( pobjData.mobjDSBridge != null )
+		if ( (pobjData.mobjDSBridge != null) && !pobjData.mobjDSBridge.mbHandled )
 		{
 			pobjData.mobjFile = DocuShareConnector.getItemAsFile(pobjData.mobjDSBridge.mstrDSHandle).GetVarData();
 			pobjData.mobjDSBridge.mstrDSTitle = DocuShareConnector.getItemTitle(pobjData.mobjDSBridge.mstrDSHandle);
@@ -383,12 +383,13 @@ public class DocOps
 
 		pobjData.mobjPrevValues = null;
 
-		if ( pobjData.mobjDSBridge != null )
+		if ( (pobjData.mobjDSBridge != null)  && !pobjData.mobjDSBridge.mbHandled )
 		{
 			if ( pobjData.mobjDSBridge.mbDelete )
 				DocuShareConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
 			else
 				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null);
+			pobjData.mobjDSBridge.mbHandled = true;
 		}
 	}
 
