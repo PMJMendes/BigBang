@@ -71,6 +71,7 @@ public class Payment
 		BigDecimal ldblTotal;
 		int i;
 		Calendar ldtToday;
+		boolean lbDirect;
 
 		if ( (marrData == null) || (marrData.length == 0) )
 			throw new JewelPetriException("Erro: Deve especificar o(s) meio(s) de pagamento.");
@@ -95,6 +96,7 @@ public class Payment
 		}
 
 		ldblTotal = BigDecimal.ZERO;
+		lbDirect = false;
 		for ( i = 0; i < marrData.length; i++ )
 		{
 			marrData[i].mdblValue = marrData[i].mdblValue.abs();
@@ -104,6 +106,9 @@ public class Payment
 			ldblTotal = ldblTotal.add(marrData[i].mdblValue);
 			if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter && midReceipt.equals(marrData[i].midReceipt) )
 					throw new JewelPetriException("Erro: Não pode compensar um recibo consigo próprio.");
+
+			if ( Constants.PayID_DirectToInsurer.equals(marrData[i].midPaymentType) )
+				lbDirect = true;
 		}
 
 		if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
@@ -136,7 +141,7 @@ public class Payment
 			}
 		}
 
-		if ( !lobjReceipt.isReverseCircuit() )
+		if ( !lobjReceipt.isReverseCircuit() && !lbDirect )
 		{
 			ldtToday = Calendar.getInstance();
 			ldtToday.set(Calendar.HOUR_OF_DAY, 0);
