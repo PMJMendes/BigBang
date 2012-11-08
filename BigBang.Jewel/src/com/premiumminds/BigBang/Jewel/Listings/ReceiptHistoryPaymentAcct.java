@@ -88,8 +88,6 @@ public class ReceiptHistoryPaymentAcct
 			i++;
 		}
 
-		larrResult[i] = buildSummarySection(parrParams[0], larrAux, larrMap.size());
-
 		return larrResult;
 	}
 
