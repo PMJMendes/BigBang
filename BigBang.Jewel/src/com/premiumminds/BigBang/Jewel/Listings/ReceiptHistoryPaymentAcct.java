@@ -48,7 +48,7 @@ public class ReceiptHistoryPaymentAcct
 		int i;
 
 		if ( (parrParams[0] == null) || "".equals(parrParams[0]) )
-			return doNotValid();
+			parrParams[0] = new Timestamp(new java.util.Date().getTime()).toString().substring(0, 10);
 
 		larrAux = getHistoryForOperation(parrParams);
 
@@ -421,20 +421,6 @@ public class ReceiptHistoryPaymentAcct
 		ReportBuilder.styleTable(ltbl, false);
 
 		return ltbl;
-	}
-
-	private GenericElement[] doNotValid()
-	{
-		TR[] larrRows;
-		Table ltbl;
-
-		larrRows = new TR[1];
-		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Tem que indicar a data da Folha de Caixa pretendida.");
-
-		ltbl = ReportBuilder.buildTable(larrRows);
-		ReportBuilder.styleTable(ltbl, false);
-
-		return new GenericElement[] {ltbl};
 	}
 
 	private void sSortSubGroup(Receipt[] parrIn)
