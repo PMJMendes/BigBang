@@ -51,6 +51,7 @@ public class TestCasualtyGet
 
 		parameter = new CasualtySearchParameter();
 		parameter.includeClosed = false;
+		parameter.insuredObject = "fabio";
 		sorts = new CasualtySortParameter();
 		sorts.field = CasualtySortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
