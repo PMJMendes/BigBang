@@ -67,7 +67,7 @@ public class CasualtyServiceImpl
 		{
 			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(), pidCasualty);
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjCasualty.GetProcessID());
-			lobjClient = (Client)lobjProcess.GetParent().GetData();
+			lobjClient = lobjCasualty.GetClient();
 			lobjSub = lobjCasualty.GetFirstSubCasualty();
 			if ( lobjSub != null )
 			{
@@ -378,7 +378,7 @@ public class CasualtyServiceImpl
 
 	protected String[] getColumns()
 	{
-		return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]"};
+		return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Client]", "[:Client:Name]", "[:Client:Number]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -386,10 +386,7 @@ public class CasualtyServiceImpl
 	{
 		CasualtySearchParameter lParam;
 		String lstrAux;
-		IEntity lrefClients;
 		IEntity lrefSubCasualties;
-		IEntity lrefPolicies;
-		IEntity lrefSubPolicies;
 		IEntity lrefPolObjects;
 		IEntity lrefSubPolObjects;
         Calendar ldtAux;
@@ -408,19 +405,9 @@ public class CasualtyServiceImpl
 			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
 			pstrBuffer.append(" AND ([:Number] LIKE N'%").append(lstrAux).append("%'")
 					.append(" OR (LEFT(CONVERT(NVARCHAR, [:Date], 120), 10) LIKE N'%").append(lstrAux).append("%')")
-					.append(" OR [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE [:Name] LIKE N'%").append(lstrAux).append("%'")
-					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
-			pstrBuffer.append(" OR [:Process] IN (SELECT [:Process:Parent] FROM (");
+					.append(" OR ([:Client:Name] LIKE N'%").append(lstrAux).append("%')")
+					.append(" OR ([:Client:Number] LIKE N'%").append(lstrAux).append("%')")
+					.append(" OR [:Process] IN (SELECT [:Process:Parent] FROM (");
 			try
 			{
 				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
@@ -431,28 +418,8 @@ public class CasualtyServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxSubCasualties] WHERE ([:Insurer Process] LIKE '%").append(lstrAux).append("%'")
-					.append(" OR [:Policy] IN (SELECT [PK] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPolicies] WHERE [:Number] LIKE '%").append(lstrAux).append("%')")
-					.append(" OR [:Sub Policy] IN (SELECT [PK] FROM (");
-			try
-			{
-				lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
-				pstrBuffer.append(lrefSubPolicies.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxSubPolicies] WHERE [:Number] LIKE '%").append(lstrAux).append("%'))))");
+					.append(" OR [:Policy:Number] LIKE '%").append(lstrAux).append("%'")
+					.append(" OR [:Sub Policy:Number] LIKE '%").append(lstrAux).append("%')))");
 		}
 
 		if ( lParam.dateFrom != null )
@@ -481,17 +448,7 @@ public class CasualtyServiceImpl
 
 		if ( lParam.ownerId != null )
 		{
-			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+			pstrBuffer.append(" AND [:Client] = '").append(lParam.ownerId).append("'");
 		}
 
 		if ( lParam.insuredObject != null )
@@ -603,25 +560,16 @@ public class CasualtyServiceImpl
 	{
 		IProcess lobjProcess;
 		CasualtyStub lobjResult;
-		Client lobjClient;
 		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSub;
 		String lstrCat;
 		String lstrObj;
 
 		lobjProcess = null;
-		lobjClient = null;
 		lstrCat = null;
 		lstrObj = null;
 		try
 		{
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
-			try
-			{
-				lobjClient = (Client)lobjProcess.GetParent().GetData();
-			}
-			catch (Throwable e)
-			{
-			}
 			lobjSub = ((com.premiumminds.BigBang.Jewel.Objects.Casualty)lobjProcess.GetData()).GetFirstSubCasualty();
 			if ( lobjSub != null )
 			{
@@ -637,9 +585,9 @@ public class CasualtyServiceImpl
 
 		lobjResult.id = pid.toString();
 		lobjResult.processNumber = (String)parrValues[0];
-		lobjResult.clientId = (lobjClient == null ? null : lobjClient.getKey().toString());
-		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(1)).toString());
-		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
+		lobjResult.clientId = ((UUID)parrValues[4]).toString();
+		lobjResult.clientNumber = ((Integer)parrValues[6]).toString();
+		lobjResult.clientName = (String)parrValues[5];
 		lobjResult.casualtyDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		lobjResult.caseStudy = (Boolean)parrValues[3];
 		lobjResult.isOpen = lobjProcess.IsRunning();

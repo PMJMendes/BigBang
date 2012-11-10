@@ -347,4 +347,10 @@ public class SubCasualty
 
 		return larrAux.toArray(new SubCasualtyItem[larrAux.size()]);
     }
+
+    public Casualty GetCasualty()
+    	throws BigBangJewelException
+    {
+    	return Casualty.GetInstance(getNameSpace(), (UUID)getAt(I.CASUALTY));
+    }
 }

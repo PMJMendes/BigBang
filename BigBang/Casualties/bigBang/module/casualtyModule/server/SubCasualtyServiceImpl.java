@@ -68,7 +68,7 @@ public class SubCasualtyServiceImpl
 		{
 			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(), pidSubCasualty);
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjSubCasualty.GetProcessID());
-			lobjCasualty = (com.premiumminds.BigBang.Jewel.Objects.Casualty)lobjProcess.GetParent().GetData();
+			lobjCasualty = lobjSubCasualty.GetCasualty();
 			lobjOwner = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICY) == null ?
 					SubPolicy.GetInstance(Engine.getCurrentNameSpace(),
 							(UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SUBPOLICY)) :
@@ -570,7 +570,7 @@ public class SubCasualtyServiceImpl
 		try
 		{
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
-			lobjCasualty = (com.premiumminds.BigBang.Jewel.Objects.Casualty)lobjProcess.GetParent().GetData();
+			lobjCasualty = lobjSubCasualty.GetCasualty();
 		}
 		catch (Throwable e)
 		{

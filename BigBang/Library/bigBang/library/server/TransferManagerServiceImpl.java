@@ -501,17 +501,26 @@ public class TransferManagerServiceImpl
 		lobjAuxClient = null;
 		lstrCat = null;
 		lstrObj = null;
+
 		try
 		{
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pobjCasualty.GetProcessID());
-			try
-			{
-				lobjAuxClient = (Client)lobjProcess.GetParent().GetData();
-			}
-			catch (Throwable e)
-			{
-			}
-			lobjSub = ((com.premiumminds.BigBang.Jewel.Objects.Casualty)lobjProcess.GetData()).GetFirstSubCasualty();
+		}
+		catch (Throwable e)
+		{
+		}
+
+		try
+		{
+			lobjAuxClient = pobjCasualty.GetClient();
+		}
+		catch (Throwable e)
+		{
+		}
+
+		try
+		{
+			lobjSub = pobjCasualty.GetFirstSubCasualty();
 			if ( lobjSub != null )
 			{
 				lstrCat = lobjSub.GetSubLine().getLabel();

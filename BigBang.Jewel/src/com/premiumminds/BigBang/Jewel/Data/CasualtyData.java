@@ -6,6 +6,7 @@ import java.util.UUID;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 
 public class CasualtyData
 	implements DataBridge
@@ -19,6 +20,7 @@ public class CasualtyData
 	public String mstrDescription;
 	public String mstrNotes;
 	public Boolean mbCaseStudy;
+	public UUID midClient;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -29,12 +31,13 @@ public class CasualtyData
 	{
 		mid = pobjSource.getKey();
 
-		mstrNumber = (String)pobjSource.getAt(0);
-		midProcess = (UUID)pobjSource.getAt(1);
-		mdtCasualtyDate = (Timestamp)pobjSource.getAt(2);
-		mstrDescription = (String)pobjSource.getAt(3);
-		mstrNotes = (String)pobjSource.getAt(4);
-		mbCaseStudy = (Boolean)pobjSource.getAt(5);
+		mstrNumber =      (String)   pobjSource.getAt(Casualty.I.NUMBER);
+		midProcess =      (UUID)     pobjSource.getAt(Casualty.I.PROCESS);
+		mdtCasualtyDate = (Timestamp)pobjSource.getAt(Casualty.I.DATE);
+		mstrDescription = (String)   pobjSource.getAt(Casualty.I.DESCRIPTION);
+		mstrNotes =       (String)   pobjSource.getAt(Casualty.I.NOTES);
+		mbCaseStudy =     (Boolean)  pobjSource.getAt(Casualty.I.CASESTUDY);
+		midClient =       (UUID)     pobjSource.getAt(Casualty.I.CLIENT);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -42,12 +45,13 @@ public class CasualtyData
 	{
 		try
 		{
-			pobjDest.setAt(0, mstrNumber);
-			pobjDest.setAt(1, midProcess);
-			pobjDest.setAt(2, mdtCasualtyDate);
-			pobjDest.setAt(3, mstrDescription);
-			pobjDest.setAt(4, mstrNotes);
-			pobjDest.setAt(5, mbCaseStudy);
+			pobjDest.setAt(Casualty.I.NUMBER,      mstrNumber);
+			pobjDest.setAt(Casualty.I.PROCESS,     midProcess);
+			pobjDest.setAt(Casualty.I.DATE,        mdtCasualtyDate);
+			pobjDest.setAt(Casualty.I.DESCRIPTION, mstrDescription);
+			pobjDest.setAt(Casualty.I.NOTES,       mstrNotes);
+			pobjDest.setAt(Casualty.I.CASESTUDY,   mbCaseStudy);
+			pobjDest.setAt(Casualty.I.CLIENT,      midClient);
 		}
 		catch (Throwable e)
 		{

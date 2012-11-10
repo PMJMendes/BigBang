@@ -83,6 +83,7 @@ public class ManageData
 				mobjData.mobjPrevValues = new CasualtyData();
 				mobjData.mobjPrevValues.FromObject(lobjAux);
 
+				mobjData.midClient = mobjData.mobjPrevValues.midClient;
 				mobjData.midManager = GetProcess().GetManagerID();
 				mobjData.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);

@@ -17,6 +17,17 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class Casualty
 	extends ProcessData
 {
+	public static class I
+	{
+		public static int NUMBER      = 0;
+		public static int PROCESS     = 1;
+		public static int DATE        = 2;
+		public static int DESCRIPTION = 3;
+		public static int NOTES       = 4;
+		public static int CASESTUDY   = 5;
+		public static int CLIENT      = 6;
+	}
+
     public static Casualty GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -50,12 +61,12 @@ public class Casualty
 
 	public UUID GetProcessID()
 	{
-		return (UUID)getAt(1);
+		return (UUID)getAt(I.PROCESS);
 	}
 
 	public void SetProcessID(UUID pidProcess)
 	{
-		internalSetAt(1, pidProcess);
+		internalSetAt(I.PROCESS, pidProcess);
 	}
 
     public SubCasualty GetFirstSubCasualty()
@@ -284,5 +295,11 @@ public class Casualty
 		}
 
 		return larrAux.toArray(new Document[larrAux.size()]);
+    }
+
+    public Client GetClient()
+    	throws BigBangJewelException
+    {
+    	return Client.GetInstance(getNameSpace(), (UUID)getAt(I.CLIENT));
     }
 }

@@ -84,6 +84,7 @@ public class CreateCasualty
 		try
 		{
 			mobjData.mstrNumber = GetNewCasualtyNumber();
+			mobjData.midClient = GetProcess().GetDataKey();
 
 			lobjAux = Casualty.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
