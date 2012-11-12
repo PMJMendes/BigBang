@@ -288,6 +288,26 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 
 		});
 	}
+	
+	@Override
+	public void createDocumentSerial(Document document, final ResponseHandler<Document> handler){
+		service.createDocument(document, new BigBangAsyncCallback<Document>() {
+
+			@Override
+			public void onResponseSuccess(Document result) {
+				handler.onResponse(result);				
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create the document")
+				});
+				super.onResponseFailure(caught);
+			}
+		
+		});
+	}
 
 
 	@Override

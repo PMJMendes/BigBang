@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SubCasualtyList extends FilterableList<SubCasualtyStub> implements SubCasualtyDataBrokerClient {
+
 	public static class Entry extends ListEntry<SubCasualtyStub> {
 
 		protected Label numberLabel;

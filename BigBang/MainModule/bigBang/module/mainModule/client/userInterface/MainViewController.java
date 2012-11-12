@@ -29,7 +29,7 @@ public class MainViewController extends ViewPresenterController {
 			return;
 		}
 
-		if(section.equalsIgnoreCase("tasks")){
+		if(section.equalsIgnoreCase("personal")){
 			mainViewPresenter.setParameters(historyItem);
 			present("TASKS_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("generalsystem")){
@@ -77,7 +77,7 @@ public class MainViewController extends ViewPresenterController {
 
 	private void goToDefault(){
 		NavigationHistoryItem item = navigationManager.getCurrentState();
-		item.setParameter("section", "tasks");
+		item.setParameter("section", "personal");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	

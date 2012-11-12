@@ -95,7 +95,7 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 				item.setStackParameter("display");
 
 				if(action.getAction() == null) {
-					item.pushIntoStackParameter("display", "search");
+					item.pushIntoStackParameter("display", "history");
 				}else{
 					switch(action.getAction()) {
 					case HISTORY:

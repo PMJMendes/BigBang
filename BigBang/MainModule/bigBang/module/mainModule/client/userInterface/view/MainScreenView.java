@@ -148,7 +148,7 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	}
 	
 	private void buildTabBar(){
-		this.tabBar.addTab("Agenda");
+		this.tabBar.addTab("Pessoal");
 		this.tabBar.addTab("Sistema Geral");
 		this.tabBar.addTab("Clientes");
 		this.tabBar.addTab("C. de Mercado");
@@ -200,7 +200,7 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	@Override
 	public void showSection(Section section) {
 		switch(section) {
-		case TASKS:
+		case PERSONAL:
 			this.tabBar.selectTab(0, false);
 			break;
 		case GENERAL_SYSTEM:

@@ -13,9 +13,17 @@ import bigBang.library.client.event.LoginSuccessEventHandler;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
+import bigBang.library.client.userInterface.presenter.CasualtySelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.ExpenseSelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.SubCasualtySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.CasualtySelectionView;
+import bigBang.library.client.userInterface.view.ExpenseSelectionView;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
+import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
+import bigBang.library.client.userInterface.view.SubCasualtySelectionView;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientSelectionView;
 import bigBang.module.generalSystemModule.client.dataAccess.ClientGroupBrokerImpl;
@@ -43,6 +51,8 @@ import bigBang.module.generalSystemModule.client.userInterface.view.UserManageme
 import bigBang.module.generalSystemModule.interfaces.GeneralSystemService;
 import bigBang.module.generalSystemModule.shared.GeneralSystem;
 import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSelectionViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptSelectionView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -153,6 +163,61 @@ public class GeneralSystemModule implements Module {
 			public ExpandableSelectionFormFieldPanel getInstance() {
 				ClientSelectionView view = (ClientSelectionView) GWT.create(ClientSelectionView.class);
 				ClientSelectionViewPresenter presenter = new ClientSelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				InsuranceSubPolicySelectionView view = (InsuranceSubPolicySelectionView) GWT.create(InsuranceSubPolicySelectionView.class);
+				InsuranceSubPolicySelectionViewPresenter presenter = new InsuranceSubPolicySelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.RECEIPT, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				ReceiptSelectionView view = (ReceiptSelectionView) GWT.create(ReceiptSelectionView.class);
+				ReceiptSelectionViewPresenter presenter = new ReceiptSelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.CASUALTY, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				CasualtySelectionView view = (CasualtySelectionView) GWT.create(CasualtySelectionView.class);
+				CasualtySelectionViewPresenter presenter = new CasualtySelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.SUB_CASUALTY, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				SubCasualtySelectionView view = (SubCasualtySelectionView) GWT.create(SubCasualtySelectionView.class);
+				SubCasualtySelectionViewPresenter presenter = new SubCasualtySelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.EXPENSE, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				ExpenseSelectionView view = (ExpenseSelectionView) GWT.create(ExpenseSelectionView.class);
+				ExpenseSelectionViewPresenter presenter = new ExpenseSelectionViewPresenter(view);
 				presenter.go();
 				return presenter;
 			}

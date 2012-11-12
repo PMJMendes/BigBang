@@ -1,106 +1,85 @@
 package bigBang.module.tasksModule.client.userInterface.view;
 
-import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.TaskStub;
-import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.module.tasksModule.client.userInterface.TaskSearchPanel;
-import bigBang.module.tasksModule.client.userInterface.TaskSearchPanel.Entry;
-import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
+import org.gwt.mosaic.ui.client.MessageBox;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.DockItem;
+import bigBang.library.client.userInterface.DockPanel;
+import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.library.client.userInterface.view.View;
+import bigBang.module.tasksModule.client.resources.Resources;
+import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
+import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter.Action;
+import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter.SectionOperation;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class TasksSectionView extends View implements TasksSectionViewPresenter.Display {
 
-	private final int LIST_WIDTH = 400; //px
-
-	protected HasWidgets container;
-	protected TaskSearchPanel searchPanel;
-	protected ListHeader containerHeader;
-	protected ExpandableListBoxFormField users;
-	protected Button sendTask;
+	private ActionInvokedEventHandler<SectionOperation> operationSelectionHandler;
+	private DockPanel operationDock;
+	private ActionInvokedEventHandler<TasksSectionViewPresenter.Action> actionHandler;
+	private SimplePanel operationViewContainer;
+	private SimplePanel overlayContainer;
+	private PopupPanel popupPanel;
 
 	public TasksSectionView() {
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
-		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
-		splitPanel.setSize("100%", "100%");
+		this.operationDock = new DockPanel();
+		wrapper.add(this.operationDock);
+		initializeDock();
+		this.operationDock.addValueChangeHandler(new ValueChangeHandler<Object>() {
 
-		SimplePanel tasksListWrapper = new SimplePanel();
-		tasksListWrapper.setSize("100%", "100%");
 
-		searchPanel = new TaskSearchPanel(){
 			@Override
-			protected void onAttach() {
-				super.onAttach();
-				doSearch();
-			}
-		};
-		searchPanel.setSize("100%", "100%");
-		tasksListWrapper.setWidget(searchPanel);
-
-		splitPanel.addWest(tasksListWrapper, LIST_WIDTH);
-
-		VerticalPanel contentWrapper = new VerticalPanel();
-		contentWrapper.setSize("100%", "100%");
-
-		containerHeader = new ListHeader();
-
-		contentWrapper.add(this.containerHeader);
-
-		SimplePanel previewPanel = new SimplePanel();
-		previewPanel.setSize("100%", "100%");
-		contentWrapper.add(previewPanel);
-		contentWrapper.setCellHeight(previewPanel, "100%");
-
-		previewPanel.setStyleName("emptyContainer");
-		container = previewPanel;
-
-		splitPanel.add(contentWrapper);
-
-		wrapper.add(splitPanel);
-		wrapper.setCellHeight(splitPanel, "100%");
-
-		sendTask = new Button("Enviar Tarefa");
-		users = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "");
-
-		HorizontalPanel panel = new HorizontalPanel();
-
-		panel.add(users);
-		panel.add(sendTask);
-
-		users.setVisible(false);
-		sendTask.setVisible(false);
-		panel.setCellVerticalAlignment(users, HasVerticalAlignment.ALIGN_MIDDLE);	
-		panel.setCellVerticalAlignment(sendTask, HasVerticalAlignment.ALIGN_MIDDLE);		
-		
-		sendTask.setEnabled(false);
-		
-		users.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				sendTask.setEnabled(users.getValue() != null);
+			public void onValueChange(ValueChangeEvent<Object> event) {
+				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<TasksSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
 			}
 		});
-		
-		containerHeader.setRightWidget(panel);
-		
-		searchPanel.doSearch(true);
+
+		operationViewContainer = new SimplePanel();
+		this.operationViewContainer.setSize("100%", "100%");
+		wrapper.add(operationViewContainer);
+		wrapper.setCellHeight(operationViewContainer, "100%");
+
+		overlayContainer = new SimplePanel();
+	}
+
+	private void initializeDock() {
+		Resources r = GWT.create(Resources.class);
+
+		addDockItem("Agenda", r.agendaIcon(), SectionOperation.AGENDA, "100px");
+		addDockItem("Organizar Correio", r.mailIcon(), SectionOperation.MAIL_ORGANIZER);
+
+	}
+
+	private void addDockItem(String text, ImageResource icon, final TasksSectionViewPresenter.SectionOperation action, String width) {
+		DockItem item = null;
+		if(icon == null){
+			item = new DockItem(text, MessageBox.MESSAGEBOX_IMAGES.dialogInformation(), action);
+		}else{
+			item = new DockItem(text, icon, action);
+		}
+		item.setTitle(text);
+		if(width != null){
+			item.setWidth(width);
+		}
+		this.operationDock.addItem(item);		
+	}
+
+	protected void addDockItem(String text, ImageResource icon, final TasksSectionViewPresenter.SectionOperation action){
+		addDockItem(text, icon, action, null);
 	}
 
 	@Override
@@ -110,71 +89,56 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 
 	@Override
 	public HasWidgets getOperationViewContainer() {
-		return container;
+		return operationViewContainer;
 	}
 
-	@Override
-	public HasValueSelectables<TaskStub> getTaskList() {
-		return this.searchPanel;
-	}
+
 
 	@Override
-	public void clear() {
-		this.container.clear();
-		this.containerHeader.setText("");
-		users.clear();
-	}
+	public void showOverlayViewContainer(boolean show) {
+		if(show && this.popupPanel == null){
+			this.popupPanel = new PopupPanel(){
+				@Override
+				protected void onDetach() {
+					super.onDetach();
+					actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.ON_OVERLAY_CLOSED));
+					TasksSectionView.this.popupPanel = null;
+				}
+			};
+			this.popupPanel.add((Widget)this.overlayContainer);
+		}
 
-	@Override
-	public void addTaskListEntry(TaskStub task) {
-		TaskSearchPanel.Entry entry = new Entry(task);
-		searchPanel.add(0, entry);
-	}
-
-	@Override
-	public void updateTaskListEntry(TaskStub task) {
-		for(ValueSelectable<TaskStub> entry : searchPanel){
-			if(entry.getValue().id.equalsIgnoreCase(task.id)){
-				entry.setValue(task);
-				break;
+		if(this.popupPanel != null){
+			if(show && !this.popupPanel.isAttached()){
+				this.popupPanel.center();
+			}else if(this.popupPanel.isAttached() && !show){
+				this.popupPanel.hidePopup();
+				this.popupPanel.remove((Widget)this.overlayContainer);
+				this.popupPanel = null;
 			}
 		}
 	}
 
 	@Override
-	public void removeTaskListEntry(String taskId) {
-		for(ValueSelectable<TaskStub> entry : searchPanel){
-			if(entry.getValue().id.equalsIgnoreCase(taskId)){
-				searchPanel.remove(entry);
-				break;
-			}
-		}
+	public void registerActionHandler(
+			ActionInvokedEventHandler<bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter.Action> actionInvokedEventHandler) {
+		this.actionHandler = actionInvokedEventHandler;
 	}
 
 	@Override
-	public void setScreenDescription(String description) {
-		this.containerHeader.setText(description);
+	public void registerOperationSelectionHandler(
+			ActionInvokedEventHandler<SectionOperation> actionInvokedEventHandler) {
+		this.operationSelectionHandler = actionInvokedEventHandler;
 	}
 
 	@Override
-	public void setSendToUserVisible(boolean b){
-		this.users.setVisible(b);
-		this.sendTask.setVisible(b);
+	public void selectOperation(SectionOperation operation) {
+		this.operationDock.setValue(operation, false);		
 	}
 
 	@Override
-	public HasClickHandlers getSendTaskButton() {
-		return sendTask;
+	public HasWidgets getOverlayViewContainer() {
+		return overlayContainer;
 	}
 
-	@Override
-	public String getSelectedUserId() {
-		return users.getValue();
-	}
-
-	@Override
-	public void refreshList() {
-		searchPanel.doSearch();
-	}
-	
 }

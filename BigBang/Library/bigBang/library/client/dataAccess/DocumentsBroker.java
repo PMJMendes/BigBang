@@ -77,5 +77,8 @@ public interface DocumentsBroker extends DataBrokerInterface<Document>{
 	public void updateDocument(Document document, ResponseHandler<Document> handler);
 	public void deleteDocument(String documentId, ResponseHandler<Void> handler);
 	public void closeDocumentResource(String ownerId, String documentId, ResponseHandler<Void> handler);
+
+	void createDocumentSerial(Document document,
+			ResponseHandler<Document> handler);
 	
 }

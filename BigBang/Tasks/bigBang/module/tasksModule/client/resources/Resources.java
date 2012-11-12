@@ -21,5 +21,11 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/urgentSmall.png")
 	ImageResource urgentSmallIcon();
+	
+	@Source("images/email.png")
+	ImageResource mailIcon();
+	
+	@Source("images/todo.png")
+	ImageResource agendaIcon();
 
 }

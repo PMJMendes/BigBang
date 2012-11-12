@@ -36,7 +36,6 @@ public class MainScreenViewPresenter implements ViewPresenter {
 	}
 
 	public enum Section {
-		TASKS,
 		GENERAL_SYSTEM,
 		CLIENT,
 		RISK_ANALISYS,
@@ -45,7 +44,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		QUOTE_REQUEST,
 		CASUALTY,
 		EXPENSE,
-		COMPLAINT
+		COMPLAINT, PERSONAL
 	}
 
 	public interface Display {
@@ -123,7 +122,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 					break;
 
 				case SHOW_SECTION_TASKS:
-					item.setParameter("section", "tasks");
+					item.setParameter("section", "agenda");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case SHOW_SECTION_GENERAL_SYSTEM:
@@ -181,8 +180,8 @@ public class MainScreenViewPresenter implements ViewPresenter {
 				String section = parameters.getParameter("section");
 				section = section == null ? new String() : section;
 
-				if(section.equalsIgnoreCase("tasks")){
-					view.showSection(Section.TASKS);
+				if(section.equalsIgnoreCase("agenda")){
+					view.showSection(Section.PERSONAL);
 				}else if(section.equalsIgnoreCase("generalsystem")){
 					view.showSection(Section.GENERAL_SYSTEM);
 				}else if(section.equalsIgnoreCase("client")){
