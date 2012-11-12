@@ -388,7 +388,7 @@ public class DocOps
 			if ( pobjData.mobjDSBridge.mbDelete )
 				DocuShareConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
 			else
-				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null);
+				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null, false);
 			pobjData.mobjDSBridge.mbHandled = true;
 		}
 	}
@@ -476,7 +476,7 @@ public class DocOps
 			if ( pobjData.mobjDSBridge.mbDelete )
 				DocuShareConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
 			else
-				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null);
+				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null, false);
 		}
 	}
 
@@ -532,7 +532,7 @@ public class DocOps
 				DocuShareConnector.createItem(new FileXfer(pobjData.mobjFile), pobjData.mobjDSBridge.mstrDSTitle,
 						pobjData.mobjDSBridge.mstrDSLoc);
 			else
-				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc);
+				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc, true);
 		}
 
 		try
@@ -572,7 +572,7 @@ public class DocOps
 				DocuShareConnector.createItem(new FileXfer(pobjData.mobjFile), pobjData.mobjDSBridge.mstrDSTitle,
 						pobjData.mobjDSBridge.mstrDSLoc);
 			else
-				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc);
+				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc, true);
 		}
 
 		try

@@ -403,7 +403,7 @@ public class DocuShareConnector
 		}
 	}
 
-	public static void moveItem(String pstrItem, String pstrFrom, String pstrTo)
+	public static void moveItem(String pstrItem, String pstrFrom, String pstrTo, boolean pbIsUndo)
 		throws BigBangJewelException
 	{
 		DSSession lrefSession;
@@ -414,8 +414,12 @@ public class DocuShareConnector
 		if ( lrefSession == null )
 			return;
 
-		lhFrom = ( pstrFrom == null ? REMOVED_ITEM_REPOSITORY : new DSHandle(pstrFrom) );
-		lhTo = ( pstrTo == null ? REMOVED_ITEM_REPOSITORY : new DSHandle(pstrTo) );
+		lhFrom = ( pstrFrom == null ?
+				( pbIsUndo ? REMOVED_ITEM_REPOSITORY : TEMPORARY_SCAN_REPOSITORY ) :
+				new DSHandle(pstrFrom) );
+		lhTo = ( pstrTo == null ?
+				( pbIsUndo ? TEMPORARY_SCAN_REPOSITORY : REMOVED_ITEM_REPOSITORY ) :
+				new DSHandle(pstrTo) );
 
 		try
 		{
