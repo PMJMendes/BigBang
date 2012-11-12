@@ -103,14 +103,7 @@ public class LoginViewPresenter implements ViewPresenter {
 			@Override
 			public void onResponseSuccess(LoginResponse loginResponse) {
 				if(loginResponse != null){
-					//LOGIN SUCCESS
-					Session.setUserId(loginResponse.userId);
-					Session.setUsername(loginResponse.userName);
-					Session.setDisplayName("TODO");
-					Session.setDomain(loginResponse.domain);
-					Session.setIsRoot(loginResponse.isSU);
-					
-					onLoginSuccess();
+					onLoginSuccess(loginResponse);
 					handler.onResponse(true);
 				}else{
 					handler.onResponse(false);
@@ -135,14 +128,7 @@ public class LoginViewPresenter implements ViewPresenter {
 					LoginViewPresenter.this.view.showErrorMessage("Não foi possível autenticar automaticamente.");
 					handler.onResponse(false);
 				} else {
-					//LOGIN SUCCESS
-					Session.setUserId(loginResponse.userId);
-					Session.setUsername(loginResponse.userName);
-					Session.setDisplayName("TODO");
-					Session.setDomain(domain);
-					Session.setIsRoot(loginResponse.isSU);
-					
-					onLoginSuccess();
+					onLoginSuccess(loginResponse);
 				}
 			}
 
@@ -157,14 +143,7 @@ public class LoginViewPresenter implements ViewPresenter {
 		service.login(username, password, domain, new BigBangAsyncCallback<LoginResponse>() {
 
 			public void onResponseSuccess(LoginResponse loginResponse) {
-				//LOGIN SUCCESS
-				Session.setUserId(loginResponse.userId);
-				Session.setUsername(loginResponse.userName);
-				Session.setDisplayName("TODO");
-				Session.setDomain(domain);
-				Session.setIsRoot(loginResponse.isSU);
-
-				onLoginSuccess();
+				onLoginSuccess(loginResponse);
 			}
 
 			public void onResponseFailure(Throwable caught) {
@@ -206,7 +185,16 @@ public class LoginViewPresenter implements ViewPresenter {
 		return;
 	}
 	
-	private void onLoginSuccess(){
+	private void onLoginSuccess(LoginResponse loginResponse){
+		if ( Window.Location.getParameter("domain") != null )
+			Window.Location.replace(GWT.getHostPageBaseURL());
+
+		Session.setUserId(loginResponse.userId);
+		Session.setUsername(loginResponse.userName);
+		Session.setDisplayName("TODO");
+		Session.setDomain(loginResponse.domain);
+		Session.setIsRoot(loginResponse.isSU);
+
 		this.view.showLoading(false);
 		GWT.log("Authentication success for " + Session.getUsername());
 		EventBus.getInstance().fireEvent(new LoginSuccessEvent());
