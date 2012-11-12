@@ -4,6 +4,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.UUID;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -20,8 +22,10 @@ import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
+import com.xerox.docushare.DSAuthorizationException;
 import com.xerox.docushare.DSClass;
 import com.xerox.docushare.DSContentElement;
+import com.xerox.docushare.DSException;
 import com.xerox.docushare.DSFactory;
 import com.xerox.docushare.DSHandle;
 import com.xerox.docushare.DSObject;
@@ -36,7 +40,8 @@ import com.xerox.docushare.property.DSProperties;
 
 public class DocuShareConnector
 {
-	private static DSHandle TEMPORARY_SCAN_REPOSITORY = new DSHandle("Collection-59066");
+	private static String TEMPORARY_SCAN_REPOSITORY_NAME = "Collection-59066";
+	private static DSHandle TEMPORARY_SCAN_REPOSITORY = new DSHandle(TEMPORARY_SCAN_REPOSITORY_NAME);
 	private static DSHandle REMOVED_ITEM_REPOSITORY = new DSHandle("Collection-116558");
 
 	private static DSServer GetServer()
@@ -126,6 +131,7 @@ public class DocuShareConnector
 		DSObject lobjAux;
 		ArrayList<DSObject> larrFolders;
 		ArrayList<DSObject> larrItems;
+		DSObject[] larrResult;
 
 		if ( pbWithFolders )
 			return getItemsContext(pstrFolder, false);
@@ -160,7 +166,24 @@ public class DocuShareConnector
 
 		larrFolders.addAll(larrItems);
 
-		return larrFolders.toArray(new DSObject[larrFolders.size()]);
+		larrResult = larrFolders.toArray(new DSObject[larrFolders.size()]);
+
+		Arrays.sort(larrResult, new Comparator<DSObject>()
+		{
+			public int compare(DSObject o1, DSObject o2)
+			{
+				try
+				{
+					return o1.getTitle().compareTo(o2.getTitle());
+				}
+				catch (Throwable e)
+				{
+					return 0;
+				}
+			}
+		});
+
+		return larrResult;
 	}
 
 	public static DSObject[] getContext(String ownerId, String ownerTypeId)
@@ -462,6 +485,7 @@ public class DocuShareConnector
 		ArrayList<DSObject> larrFolders;
 		ArrayList<DSObject> larrItems;
 		DSObject lobjTmp;
+		DSObject[] larrResult;
 
 		lrefSession = GetSession();
 		if ( lrefSession == null )
@@ -481,7 +505,7 @@ public class DocuShareConnector
 		try
 		{
 			if ( pbInjectTSR )
-				larrFolders.add(lrefSession.getObject(new DSHandle("Collection-59066")));
+				larrFolders.add(lrefSession.getObject(TEMPORARY_SCAN_REPOSITORY));
 
 			lobjFolder = (DSCollection)lrefSession.getObject(lhFolder);
 			i = lobjFolder.children(null);
@@ -502,6 +526,40 @@ public class DocuShareConnector
 
 		larrFolders.addAll(larrItems);
 
-		return larrFolders.toArray(new DSObject[larrFolders.size()]);
+		larrResult = larrFolders.toArray(new DSObject[larrFolders.size()]);
+
+		Arrays.sort(larrResult, new Comparator<DSObject>()
+		{
+			public int compare(DSObject o1, DSObject o2)
+			{
+				try {
+					if ( TEMPORARY_SCAN_REPOSITORY_NAME.equals(o1.getTitle()) )
+					{
+						if ( TEMPORARY_SCAN_REPOSITORY_NAME.equals(o2.getTitle()) )
+							return 0;
+						return -1;
+					}
+					if ( TEMPORARY_SCAN_REPOSITORY_NAME.equals(o2.getTitle()) )
+						return 1;
+
+					if ( o1 instanceof DSCollection )
+					{
+						if ( o2 instanceof DSCollection )
+							return o1.getTitle().compareTo(o2.getTitle());
+						return -1;
+					}
+					if ( o2 instanceof DSCollection )
+						return 1;
+
+					return o1.getTitle().compareTo(o2.getTitle());
+				}
+				catch (Throwable e)
+				{
+					return 0;
+				}
+			}
+		});
+
+		return larrResult;
 	}
 }
