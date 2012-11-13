@@ -143,7 +143,6 @@ public class MailOrganizerViewPresenter implements ViewPresenter{
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o documento."), TYPE.ALERT_NOTIFICATION));					
-					view.panelNavigateBack();
 					reSet();				
 				}
 			});
@@ -151,13 +150,13 @@ public class MailOrganizerViewPresenter implements ViewPresenter{
 	}
 
 	protected void reSet() {
-		view.panelNavigateBack();
 		view.clear();
 		view.setReadOnly(true);
 	}
 
 	protected void onCancel() {
 		reSet();
+		view.panelNavigateBack();
 		}
 
 	@Override
