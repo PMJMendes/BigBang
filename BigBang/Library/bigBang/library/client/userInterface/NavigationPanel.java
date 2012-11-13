@@ -267,4 +267,34 @@ public class NavigationPanel extends View implements HasNavigationStateChangedHa
 	public Widget getNext() {
 		return iterator.next();
 	}
+
+	public void navigateToSlideRight(final Widget w) {
+		//Removes all the next items
+				while(iterator.hasNext()){
+					iterator.next();
+					iterator.remove();
+				}
+
+				//if(this.navigatables.contains(w))
+				//	throw new RuntimeException("The navigation item is already inserted in the flow.");
+
+				iterator.add(w);
+
+				disableToolbarItems(true);
+				this.slide.slideInto(w, Direction.RIGHT, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("The animation has failed");
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						disableToolbarItems(false);
+						checkToolbarItems();
+						NavigationPanel.this.fireEvent(new NavigationStateChangedEvent(w));
+					}
+				});
+				
+	}
 }

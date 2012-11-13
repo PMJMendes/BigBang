@@ -219,7 +219,6 @@ public class DocumentImagePanel extends View{
 
 
 		DocumentNavigationList list = (DocumentNavigationList) o;
-		navigationPanel.navigateToFirst();
 
 		for(ListEntry<DocuShareItem> item : list){
 			if(item.getValue().handle.equalsIgnoreCase(handler)){
@@ -227,7 +226,8 @@ public class DocumentImagePanel extends View{
 				break;
 			}
 		}
-
+		
+		navigationPanel.navigateToSlideRight(list);
 	}
 
 	public void markDocument(String handle) {
