@@ -131,6 +131,7 @@ public class SubCasualtyServiceImpl
 					((BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.CAPITAL)).doubleValue() );
 			lobjResult.items[i].deductible = ( larrItems[i].getAt(SubCasualtyItem.I.DEDUCTIBLE) == null ? null :
 					((BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.DEDUCTIBLE)).doubleValue() );
+			lobjResult.items[i].notes = (String)larrItems[i].getAt(SubCasualtyItem.I.NOTES);
 
 			ldblTotal = ( ldblTotal == null ? ldblLocal : (ldblLocal == null ? ldblTotal : ldblTotal.add(ldblLocal)) );
 		}
@@ -214,6 +215,7 @@ public class SubCasualtyServiceImpl
 						new BigDecimal(subCasualty.items[i].value + "") );
 				lopMD.mobjData.marrItems[i].mdblDeductible = ( subCasualty.items[i].deductible == null ? null :
 						new BigDecimal(subCasualty.items[i].deductible + "") );
+				lopMD.mobjData.marrItems[i].mstrNotes = subCasualty.items[i].notes;
 
 				lopMD.mobjData.marrItems[i].mbNew = ( !subCasualty.items[i].deleted && (subCasualty.items[i].id == null) );
 				lopMD.mobjData.marrItems[i].mbDeleted = subCasualty.items[i].deleted;

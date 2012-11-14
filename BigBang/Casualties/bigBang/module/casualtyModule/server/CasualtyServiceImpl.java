@@ -94,6 +94,9 @@ public class CasualtyServiceImpl
 		lobjResult.isOpen = lobjProcess.IsRunning();
 		lobjResult.description = (String)lobjCasualty.getAt(3);
 		lobjResult.internalNotes = (String)lobjCasualty.getAt(4);
+		lobjResult.percentFault = (lobjCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.Casualty.I.PERCENTFAULT)
+				== null ? null : ((BigDecimal)lobjCasualty.getAt(
+				com.premiumminds.BigBang.Jewel.Objects.Casualty.I.PERCENTFAULT)).doubleValue());
 		lobjResult.managerId = lobjProcess.GetManagerID().toString();
 
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
@@ -135,6 +138,7 @@ public class CasualtyServiceImpl
 		lopMD.mobjData.mdtCasualtyDate = Timestamp.valueOf(casualty.casualtyDate + " 00:00:00.0");
 		lopMD.mobjData.mstrDescription = casualty.description;
 		lopMD.mobjData.mstrNotes = casualty.internalNotes;
+		lopMD.mobjData.mdblPercentFault = new BigDecimal(casualty.percentFault + "");
 		lopMD.mobjData.mbCaseStudy = casualty.caseStudy;
 		lopMD.mobjData.midProcess = lobjCasualty.GetProcessID();
 		lopMD.mobjData.midManager = null;
@@ -271,6 +275,7 @@ public class CasualtyServiceImpl
 						new BigDecimal(subCasualty.items[i].value + "") );
 				lopCSC.mobjData.marrItems[i].mdblDeductible = ( subCasualty.items[i].deductible == null ? null :
 						new BigDecimal(subCasualty.items[i].deductible + "") );
+				lopCSC.mobjData.marrItems[i].mstrNotes = subCasualty.items[i].notes;
 
 				lopCSC.mobjData.marrItems[i].mbNew = !subCasualty.items[i].deleted;
 				lopCSC.mobjData.marrItems[i].mbDeleted = subCasualty.items[i].deleted;

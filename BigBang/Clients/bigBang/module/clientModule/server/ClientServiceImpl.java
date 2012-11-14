@@ -1,5 +1,6 @@
 package bigBang.module.clientModule.server;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.UUID;
@@ -457,6 +458,7 @@ public class ClientServiceImpl
 		lopCC.mobjData.mdtCasualtyDate = Timestamp.valueOf(casualty.casualtyDate + " 00:00:00.0");
 		lopCC.mobjData.mstrDescription = casualty.description;
 		lopCC.mobjData.mstrNotes = casualty.internalNotes;
+		lopCC.mobjData.mdblPercentFault = new BigDecimal(casualty.percentFault + "");
 		lopCC.mobjData.mbCaseStudy = casualty.caseStudy;
 		lopCC.mobjData.midManager = (casualty.managerId == null ? null : UUID.fromString(casualty.managerId));
 		lopCC.mobjData.mobjPrevValues = null;

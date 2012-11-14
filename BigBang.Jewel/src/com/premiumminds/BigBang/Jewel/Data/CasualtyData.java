@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Data;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ public class CasualtyData
 	public String mstrNotes;
 	public Boolean mbCaseStudy;
 	public UUID midClient;
+	public BigDecimal mdblPercentFault;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -31,13 +33,14 @@ public class CasualtyData
 	{
 		mid = pobjSource.getKey();
 
-		mstrNumber =      (String)   pobjSource.getAt(Casualty.I.NUMBER);
-		midProcess =      (UUID)     pobjSource.getAt(Casualty.I.PROCESS);
-		mdtCasualtyDate = (Timestamp)pobjSource.getAt(Casualty.I.DATE);
-		mstrDescription = (String)   pobjSource.getAt(Casualty.I.DESCRIPTION);
-		mstrNotes =       (String)   pobjSource.getAt(Casualty.I.NOTES);
-		mbCaseStudy =     (Boolean)  pobjSource.getAt(Casualty.I.CASESTUDY);
-		midClient =       (UUID)     pobjSource.getAt(Casualty.I.CLIENT);
+		mstrNumber =       (String)     pobjSource.getAt(Casualty.I.NUMBER);
+		midProcess =       (UUID)       pobjSource.getAt(Casualty.I.PROCESS);
+		mdtCasualtyDate =  (Timestamp)  pobjSource.getAt(Casualty.I.DATE);
+		mstrDescription =  (String)     pobjSource.getAt(Casualty.I.DESCRIPTION);
+		mstrNotes =        (String)     pobjSource.getAt(Casualty.I.NOTES);
+		mbCaseStudy =      (Boolean)    pobjSource.getAt(Casualty.I.CASESTUDY);
+		midClient =        (UUID)       pobjSource.getAt(Casualty.I.CLIENT);
+		mdblPercentFault = (BigDecimal) pobjSource.getAt(Casualty.I.PERCENTFAULT);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -45,13 +48,14 @@ public class CasualtyData
 	{
 		try
 		{
-			pobjDest.setAt(Casualty.I.NUMBER,      mstrNumber);
-			pobjDest.setAt(Casualty.I.PROCESS,     midProcess);
-			pobjDest.setAt(Casualty.I.DATE,        mdtCasualtyDate);
-			pobjDest.setAt(Casualty.I.DESCRIPTION, mstrDescription);
-			pobjDest.setAt(Casualty.I.NOTES,       mstrNotes);
-			pobjDest.setAt(Casualty.I.CASESTUDY,   mbCaseStudy);
-			pobjDest.setAt(Casualty.I.CLIENT,      midClient);
+			pobjDest.setAt(Casualty.I.NUMBER,       mstrNumber);
+			pobjDest.setAt(Casualty.I.PROCESS,      midProcess);
+			pobjDest.setAt(Casualty.I.DATE,         mdtCasualtyDate);
+			pobjDest.setAt(Casualty.I.DESCRIPTION,  mstrDescription);
+			pobjDest.setAt(Casualty.I.NOTES,        mstrNotes);
+			pobjDest.setAt(Casualty.I.CASESTUDY,    mbCaseStudy);
+			pobjDest.setAt(Casualty.I.CLIENT,       midClient);
+			pobjDest.setAt(Casualty.I.PERCENTFAULT, mdblPercentFault);
 		}
 		catch (Throwable e)
 		{
@@ -72,6 +76,14 @@ public class CasualtyData
 		if ( mstrDescription != null )
 			pstrBuilder.append(mstrDescription);
 		pstrBuilder.append(pstrLineBreak);
+
+		if ( mdblPercentFault != null )
+		{
+			pstrBuilder.append("Responsabilidade: ");
+			pstrBuilder.append(mdblPercentFault);
+			pstrBuilder.append("%");
+			pstrBuilder.append(pstrLineBreak);
+		}
 
 		pstrBuilder.append("Notas Internas: ");
 		if ( mstrNotes != null )

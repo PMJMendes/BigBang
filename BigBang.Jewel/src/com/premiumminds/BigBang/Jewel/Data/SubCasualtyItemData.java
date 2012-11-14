@@ -28,6 +28,7 @@ public class SubCasualtyItemData
 	public boolean mbIsManual;
 	public BigDecimal mdblCapital;
 	public BigDecimal mdblDeductible;
+	public String mstrNotes;
 
 	public boolean mbNew;
 	public boolean mbDeleted;
@@ -47,6 +48,7 @@ public class SubCasualtyItemData
 		mbIsManual           =    (Boolean)pobjSource.getAt(SubCasualtyItem.I.MANUAL);
 		mdblCapital          = (BigDecimal)pobjSource.getAt(SubCasualtyItem.I.CAPITAL);
 		mdblDeductible       = (BigDecimal)pobjSource.getAt(SubCasualtyItem.I.DEDUCTIBLE);
+		mstrNotes            =     (String)pobjSource.getAt(SubCasualtyItem.I.NOTES);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -63,6 +65,7 @@ public class SubCasualtyItemData
 			pobjDest.setAt(SubCasualtyItem.I.MANUAL,             mbIsManual);
 			pobjDest.setAt(SubCasualtyItem.I.CAPITAL,            mdblCapital);
 			pobjDest.setAt(SubCasualtyItem.I.DEDUCTIBLE,         mdblDeductible);
+			pobjDest.setAt(SubCasualtyItem.I.NOTES,              mstrNotes);
 		}
 		catch (Throwable e)
 		{
@@ -154,5 +157,13 @@ public class SubCasualtyItemData
 		else
 			pstrBuilder.append("Não indicado.");
 		pstrBuilder.append(pstrLineBreak);
+
+		if ( mstrNotes != null )
+		{
+			pstrBuilder.append("Notas: ");
+			pstrBuilder.append(pstrLineBreak);
+			pstrBuilder.append(mstrNotes);
+			pstrBuilder.append(pstrLineBreak);
+		}
 	}
 }

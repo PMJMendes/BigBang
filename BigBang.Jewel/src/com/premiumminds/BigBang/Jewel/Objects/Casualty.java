@@ -19,13 +19,14 @@ public class Casualty
 {
 	public static class I
 	{
-		public static int NUMBER      = 0;
-		public static int PROCESS     = 1;
-		public static int DATE        = 2;
-		public static int DESCRIPTION = 3;
-		public static int NOTES       = 4;
-		public static int CASESTUDY   = 5;
-		public static int CLIENT      = 6;
+		public static int NUMBER       = 0;
+		public static int PROCESS      = 1;
+		public static int DATE         = 2;
+		public static int DESCRIPTION  = 3;
+		public static int NOTES        = 4;
+		public static int CASESTUDY    = 5;
+		public static int CLIENT       = 6;
+		public static int PERCENTFAULT = 7;
 	}
 
     public static Casualty GetInstance(UUID pidNameSpace, UUID pidKey)
