@@ -169,7 +169,7 @@ public class MailOrganizerForm extends FormView<Document>{
 
 		name = new TextBoxFormField("Nome");
 		docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo");
-		docType.setEditable(false);
+		docType.allowEdition(false);
 		name.setWidth("390px");
 		name.setFieldWidth("390px");
 		
