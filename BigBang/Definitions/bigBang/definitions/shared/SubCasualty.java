@@ -20,6 +20,7 @@ public class SubCasualty
 		public Double deductible; //Unidades desconhecidas
 		public Double value; //Em €
 		public boolean isManual;
+		public String notes;
 
 		public boolean deleted;
 

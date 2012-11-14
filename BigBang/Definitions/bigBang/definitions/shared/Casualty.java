@@ -8,4 +8,5 @@ public class Casualty
 	public String description;
 	public String internalNotes;
 	public String managerId;
+	public Double percentFault;
 }
