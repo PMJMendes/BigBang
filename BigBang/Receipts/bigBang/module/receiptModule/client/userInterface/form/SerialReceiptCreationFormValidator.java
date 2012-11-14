@@ -90,8 +90,7 @@ public class SerialReceiptCreationFormValidator extends FormValidator<SerialRece
 			Date recDate = form.coverageStart.getValue();
 
 			if (polDate.before(recDate)) {
-				form.coverageStart.setInvalid(true);
-				return false;
+				form.coverageStart.setWarning(true);
 			}
 		}
 
