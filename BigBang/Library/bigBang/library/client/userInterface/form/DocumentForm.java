@@ -189,7 +189,7 @@ public abstract class DocumentForm extends FormView<Document>{
 		name.setMandatory(true);
 		docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo");
 		docType.setMandatory(true);
-		docType.setEditable(false);
+		docType.allowEdition(false);
 		name.setWidth("390px");
 		name.setFieldWidth("390px");
 		addFormField(name);
