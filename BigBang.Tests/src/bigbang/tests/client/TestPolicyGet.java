@@ -50,10 +50,11 @@ public class TestPolicyGet
 		};
 
 		parameter = new InsurancePolicySearchParameter();
-		parameter.freeText = "ct23228731";
+		parameter.ownerId = "CAABA817-DA4D-418B-AECE-A0FE00E1B27C";
+		parameter.allowedStates = InsurancePolicySearchParameter.AllowedStates.NONLIVE;
 		sorts = new InsurancePolicySortParameter();
-		sorts.field = InsurancePolicySortParameter.SortableField.RELEVANCE;
-		sorts.order = SortOrder.DESC;
+		sorts.field = InsurancePolicySortParameter.SortableField.CATEGORY_LINE_SUBLINE;
+		sorts.order = SortOrder.ASC;
 
 		Services.insurancePolicyService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 50, callback);
 	}
