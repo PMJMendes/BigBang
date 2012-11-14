@@ -232,7 +232,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				parameter
 		};
 
-		ReceiptSortParameter sort = new ReceiptSortParameter(SortableField.NUMBER, SortOrder.ASC);
+		ReceiptSortParameter sort = new ReceiptSortParameter(SortableField.MATURITY_DATE, SortOrder.DESC);
 		ReceiptSortParameter[] sorts = new ReceiptSortParameter[]{
 				sort
 		};

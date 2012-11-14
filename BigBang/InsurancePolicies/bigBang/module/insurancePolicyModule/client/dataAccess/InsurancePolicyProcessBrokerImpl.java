@@ -382,7 +382,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				parameter
 		};
 
-		SortParameter sort = new InsurancePolicySortParameter(InsurancePolicySortParameter.SortableField.NUMBER, SortOrder.DESC);		
+		SortParameter sort = new InsurancePolicySortParameter(InsurancePolicySortParameter.SortableField.CATEGORY_LINE_SUBLINE, SortOrder.ASC);		
 		SortParameter[] sorts = new SortParameter[]{
 				sort
 		};
