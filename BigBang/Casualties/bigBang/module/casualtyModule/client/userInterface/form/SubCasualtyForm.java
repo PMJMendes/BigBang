@@ -56,7 +56,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected NavigationFormField casualty;
 	protected ExpandableListBoxFormField insuredObject;
 	protected RadioButtonFormField belongsToPolicy;
-	protected TextBoxFormField insuredObjectName; 
+	protected TextBoxFormField insuredObjectName;
 	protected Image statusIcon;
 
 	protected FormViewSection notesSection, internalNotesSection;

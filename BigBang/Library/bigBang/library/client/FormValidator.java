@@ -96,23 +96,23 @@ public abstract class FormValidator<T extends FormView<?>> {
 	public boolean validateNumber(FormField<Double> field, Double minValue, Double maxValue, boolean allowsNull){
 		field.setMandatory(!allowsNull);
 
+		boolean result = true;
+		
 		Double value = field.getValue();
 		if(value == null) {
-			boolean result = allowsNull;
+			result &= allowsNull;
 			field.setInvalid(!result);
 			return result;
 		}else{
 			if(minValue != null) {
-				boolean result = minValue <= value;
+				result &= minValue <= value;
 				field.setInvalid(!result);
-				return result;
 			}
 			if(maxValue != null) {
-				boolean result = maxValue >= value;
+				result &= maxValue >= value;
 				field.setInvalid(!result);
-				return result;
 			}
-			return true;
+			return result;
 		}
 	}
 

@@ -17,8 +17,13 @@ public class CasualtyFormValidator extends FormValidator<CasualtyForm> {
 		valid &= validateDescription();
 		valid &= validateNotes();
 		valid &= validCaseStudy();
+		valid &= validatePercResponsability();
 
 		return new Result(valid, this.validationMessages);
+	}
+
+	private boolean validatePercResponsability() {
+		return validateNumber(form.percResponsability, 0.0, 100.0, true);
 	}
 
 	private boolean validateNumber() {

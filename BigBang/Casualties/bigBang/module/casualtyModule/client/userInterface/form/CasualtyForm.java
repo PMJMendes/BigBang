@@ -10,6 +10,7 @@ import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NavigationFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
@@ -25,6 +26,7 @@ public class CasualtyForm extends FormView<Casualty> {
 	protected TextBoxFormField status;
 	protected CheckBoxFormField caseStudy;
 	protected TextAreaFormField notes;
+	protected NumericTextBoxFormField percResponsability;
 	protected Image statusIcon;
 
 	public CasualtyForm(){
@@ -49,6 +51,9 @@ public class CasualtyForm extends FormView<Casualty> {
 		status.setFieldWidth("100%");
 		statusIcon = new Image();
 		status.add(statusIcon);
+		
+		percResponsability = new NumericTextBoxFormField("Responsabilidade", false);
+		percResponsability.setUnitsLabel("%");
 
 		addSection("Informação Geral");
 		addFormField(client);
@@ -56,7 +61,9 @@ public class CasualtyForm extends FormView<Casualty> {
 		addFormField(status, true);
 		addFormField(manager, true);
 		addFormField(date, true);
-		addFormField(caseStudy);
+		addLineBreak();
+		addFormField(caseStudy,true);
+		addFormField(percResponsability, true);
 
 		addSection("Descrição");
 		addFormField(description);
@@ -90,6 +97,7 @@ public class CasualtyForm extends FormView<Casualty> {
 			result.description = description.getValue();
 			result.internalNotes = notes.getValue();
 			result.managerId = manager.getValue();
+			result.percentFault = percResponsability.getValue();
 		}
 
 		return result;
@@ -123,6 +131,8 @@ public class CasualtyForm extends FormView<Casualty> {
 				status.setValue(null);
 				statusIcon.setVisible(false);
 			}
+			
+			percResponsability.setValue(info.percentFault);
 		}
 	}
 

@@ -20,6 +20,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
+import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
 import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
@@ -34,6 +35,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 	protected NumericTextBoxFormField settlement;
 	protected NumericTextBoxFormField itemValue;
 	protected NumericTextBoxFormField deductible;
+	protected TextAreaFormField notes;
 	
 	protected Button removeButton;
 
@@ -46,30 +48,30 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		damages = new NumericTextBoxFormField("Valor dos Danos", true);
 		damages.setUnitsLabel("€");
 		damages.setFieldWidth("175px");
-		settlement = new NumericTextBoxFormField("Valor Acordado", true);
+		settlement = new NumericTextBoxFormField("Valor da Indemnização", true);
 		settlement.setFieldWidth("175px");
 		settlement.setUnitsLabel("€");
 		itemValue = new NumericTextBoxFormField("Capital Segurado", true);
 		itemValue.setUnitsLabel("€");
-		deductible = new NumericTextBoxFormField("Franquia Esperada", true);
-
+		deductible = new NumericTextBoxFormField("Franquia", true);
+		notes = new TextAreaFormField("Notas do Detalhe");
+		
 		addFormFieldGroup(new FormField<?>[]{
 				coverage,
-				damageType
+				itemValue,
+				deductible
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
-				itemValue,
-				deductible,
-		}, true);
-		
-		
-		addFormFieldGroup(new FormField<?>[]{
+				damageType,
 				damages,
 				settlement
-		}, false);
+		}, true);
 		
-
+		addFormFieldGroup(new FormField<?>[]{
+				notes
+		}, true);
+				
 		SimplePanel buttonWrapper = new SimplePanel();
 		buttonWrapper.add(removeButton);
 		buttonWrapper.setWidth("100%");
@@ -109,6 +111,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 			settlement.setValue(item.settlement);
 			deductible.setValue(item.deductible);
 			itemValue.setValue(item.value);
+			notes.setValue(item.notes);
 		}
 	}
 
@@ -231,6 +234,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 			result.settlement = settlement.getValue();
 			result.deductible = deductible.getValue();
 			result.value = itemValue.getValue();
+			result.notes = notes.getValue();
 		}
 
 		return result;
