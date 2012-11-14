@@ -447,9 +447,31 @@ public class Receipt
     public boolean canAutoValidate()
     	throws BigBangJewelException
     {
+    	Policy lobjPolicy;
+    	SubPolicy lobjSubPolicy;
     	UUID lidProfile;
     	IProcess lobjProcess;
     	Client lobjClient;
+
+    	if ( getAt(9) != null )
+    	{
+	    	lobjPolicy = getDirectPolicy();
+	    	if ( lobjPolicy == null )
+	    	{
+	    		lobjSubPolicy = getSubPolicy();
+	    		if ( lobjSubPolicy == null )
+	    			return false;
+	    		if ( (lobjSubPolicy.getAt(4) != null) &&
+	    				(((Timestamp)lobjSubPolicy.getAt(4)).before((Timestamp)getAt(9))) )
+	    			return false;
+	    	}
+	    	else
+	    	{
+	    		if ( (lobjPolicy.getAt(9) != null) &&
+	    				(((Timestamp)lobjPolicy.getAt(9)).before((Timestamp)getAt(9))) )
+	    			return false;
+	    	}
+    	}
 
     	lidProfile = getAbsolutePolicy().getProfile();
 
