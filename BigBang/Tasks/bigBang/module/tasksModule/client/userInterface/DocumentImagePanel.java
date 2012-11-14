@@ -42,6 +42,7 @@ public class DocumentImagePanel extends View{
 	protected FileServiceAsync fileService;
 	protected SelectionChangedEventHandler selectionHandler;
 	private boolean showSubFolders;
+	private String currentDirDesc;
 
 	public DocumentImagePanel(){
 		this(true);
@@ -50,7 +51,7 @@ public class DocumentImagePanel extends View{
 
 
 	public DocumentImagePanel(boolean showSubFolders) {
-		
+
 		this.showSubFolders = showSubFolders;
 		this.service = DocuShareService.Util.getInstance();
 		this.fileService = FileService.Util.getInstance();
@@ -176,9 +177,19 @@ public class DocumentImagePanel extends View{
 	}
 
 	protected void fetchListContent(final DocumentNavigationList list, final String dirDesc, final boolean showSubFolders){
+		boolean changeContainer;
+
+		if(currentDirDesc != null){
+			changeContainer = !currentDirDesc.equalsIgnoreCase(dirDesc);
+		}else{
+			changeContainer = dirDesc != null;
+		}
+		
+		currentDirDesc = dirDesc;
+		
 		if(dirDesc == null){
 			navigationPanel.setHomeWidget(list);
-		}else{
+		}else if(changeContainer){
 			navigationPanel.navigateTo(list);
 		}
 		list.clear();
@@ -226,7 +237,7 @@ public class DocumentImagePanel extends View{
 				break;
 			}
 		}
-		
+
 		navigationPanel.navigateToSlideRight(list);
 	}
 

@@ -37,6 +37,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	private String ownerTypeId;
 	private DocumentNavigationList list;
 	private String fileHandle;
+	private String currentDirDesc;
 
 	public DocuShareNavigationPanel(){
 		this.service = DocuShareService.Util.getInstance();
@@ -114,6 +115,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 
 			@Override
 			public void onClick(ClickEvent event) {
+				list.clear();
 				fetchListContent(list, dirDesc, showSubFolders);
 			}
 		});
@@ -138,10 +140,20 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	}
 
 	protected void fetchListContent(final DocumentNavigationList list, final String dirDesc, final boolean showSubFolders){
+		boolean changeContainer;
+		
+		if(currentDirDesc != null){
+			changeContainer = !currentDirDesc.equalsIgnoreCase(dirDesc);
+		}else{
+			changeContainer = dirDesc != null;
+		}
+
+		currentDirDesc = dirDesc;
+
 		if(dirDesc == null) {
 			navigationPanel.setHomeWidget(list);
 		}
-		
+
 		if(dirDesc == null && ownerId != null && ownerTypeId != null){
 			list.showLoading(true);
 			service.getContext(ownerId, ownerTypeId, new BigBangAsyncCallback<DocuShareItem[]>() {
@@ -164,7 +176,6 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 
 
 			});
-			navigationPanel.navigateTo(list);
 		}else{
 			list.showLoading(true);
 			service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<DocuShareItem[]>() {
@@ -184,6 +195,9 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 					list.showLoading(false);
 				}
 			});
+		}
+
+		if(changeContainer){
 			navigationPanel.navigateTo(list);
 		}
 	}
@@ -203,10 +217,10 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	}
 
 	public DocuShareHandle getDocuShareHandle() {
-			DocuShareHandle handle = new DocuShareHandle();
-			handle.locationHandle = getList().getLocation();
-			handle.handle = getHandle();
-			return handle;
+		DocuShareHandle handle = new DocuShareHandle();
+		handle.locationHandle = getList().getLocation();
+		handle.handle = getHandle();
+		return handle;
 	}
 
 	private String getHandle() {
@@ -221,7 +235,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	@Override
 	public void setValue(DocuShareItem value) {
 		return;
-		
+
 	}
 
 	@Override
