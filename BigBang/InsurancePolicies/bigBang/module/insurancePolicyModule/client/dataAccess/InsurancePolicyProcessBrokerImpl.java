@@ -377,7 +377,40 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			final ResponseHandler<Collection<InsurancePolicyStub>> policies) {
 		InsurancePolicySearchParameter parameter = new InsurancePolicySearchParameter();
 		parameter.ownerId = clientid;
+		parameter.allowedStates = InsurancePolicySearchParameter.AllowedStates.LIVE;
 
+		SearchParameter[] parameters = new SearchParameter[]{
+				parameter
+		};
+
+		SortParameter sort = new InsurancePolicySortParameter(InsurancePolicySortParameter.SortableField.CATEGORY_LINE_SUBLINE, SortOrder.ASC);		
+		SortParameter[] sorts = new SortParameter[]{
+				sort
+		};
+
+		this.searchBroker.search(parameters, sorts, -1, new ResponseHandler<Search<InsurancePolicyStub>>() {
+
+			@Override
+			public void onResponse(Search<InsurancePolicyStub> response) {
+				policies.onResponse(response.getResults());
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				policies.onError(new String[]{
+						new String("Could not get the client policies")	
+				});
+			}
+		}, true);
+	}
+	
+	@Override
+	public void getDeadClientPolicies(String clientid,
+			final ResponseHandler<Collection<InsurancePolicyStub>> policies) {
+		InsurancePolicySearchParameter parameter = new InsurancePolicySearchParameter();
+		parameter.ownerId = clientid;
+		parameter.allowedStates = InsurancePolicySearchParameter.AllowedStates.NONLIVE;
+		
 		SearchParameter[] parameters = new SearchParameter[]{
 				parameter
 		};
@@ -692,7 +725,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST, result.id));
+				//TODO REQUESTS
+				//EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST, result.id));
 
 				responseHandler.onResponse(result);
 			}
@@ -714,7 +748,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST, result.id));
+				//TODO REQUESTS
+				//EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST, result.id));
 
 				responseHandler.onResponse(result);
 			}
