@@ -166,6 +166,16 @@ public class FiltersPanel extends View {
 		filters.put(id, field);
 		filtersWrapper.add(field);
 	}
+	
+	public void addRadioButtonField(Enum<?> id, String[] names, String description){
+		RadioButtonFormField radio = new RadioButtonFormField(description);
+		for(int i = 0; i<names.length; i++){
+			radio.addOption(names[i], names[i]);
+		}
+		radio.setValue(names[0]);
+		filters.put(id, radio);
+		filtersWrapper.add(radio);
+	}
 
 	public Object getFilterValue(Enum<?> id){
 		Object value = this.filters.get(id).getValue();
