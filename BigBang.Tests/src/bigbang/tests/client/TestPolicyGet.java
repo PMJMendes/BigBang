@@ -50,11 +50,12 @@ public class TestPolicyGet
 		};
 
 		parameter = new InsurancePolicySearchParameter();
-		parameter.ownerId = "CAABA817-DA4D-418B-AECE-A0FE00E1B27C";
-		parameter.allowedStates = InsurancePolicySearchParameter.AllowedStates.NONLIVE;
+		parameter.freeText = "o";
+//		parameter.ownerId = "CAABA817-DA4D-418B-AECE-A0FE00E1B27C";
+//		parameter.allowedStates = InsurancePolicySearchParameter.AllowedStates.NONLIVE;
 		sorts = new InsurancePolicySortParameter();
-		sorts.field = InsurancePolicySortParameter.SortableField.CATEGORY_LINE_SUBLINE;
-		sorts.order = SortOrder.ASC;
+		sorts.field = InsurancePolicySortParameter.SortableField.RELEVANCE;
+		sorts.order = SortOrder.DESC;
 
 		Services.insurancePolicyService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 50, callback);
 	}
