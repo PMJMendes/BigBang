@@ -102,9 +102,9 @@ public class ExtraFieldsSection extends FormViewSection implements HasValue<Fiel
 				break; 
 			}
 
+			formFields[i].setUnitsLabel(value[i].unitsLabel);
 			formFields[i].setValue(value[i].value);
 			formFields[i].setLabel(value[i].fieldName);
-			formFields[i].setUnitsLabel(value[i].unitsLabel);
 			formFields[i].setEditable(!value[i].readOnly);
 			formFields[i].setReadOnly(this.readOnly);
 			addFormField(formFields[i], true);
