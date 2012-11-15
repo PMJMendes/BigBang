@@ -97,4 +97,7 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	public void createClientInfoRequest(InfoOrDocumentRequest request,
 			ResponseHandler<InfoOrDocumentRequest> responseHandler);
 
+	void getDeadClientPolicies(String clientid,
+			ResponseHandler<Collection<InsurancePolicyStub>> policies);
+
 }
