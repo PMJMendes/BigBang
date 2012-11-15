@@ -138,7 +138,8 @@ public class CasualtyServiceImpl
 		lopMD.mobjData.mdtCasualtyDate = Timestamp.valueOf(casualty.casualtyDate + " 00:00:00.0");
 		lopMD.mobjData.mstrDescription = casualty.description;
 		lopMD.mobjData.mstrNotes = casualty.internalNotes;
-		lopMD.mobjData.mdblPercentFault = new BigDecimal(casualty.percentFault + "");
+		lopMD.mobjData.mdblPercentFault = (casualty.percentFault == null ? null :
+				new BigDecimal(casualty.percentFault + ""));
 		lopMD.mobjData.mbCaseStudy = casualty.caseStudy;
 		lopMD.mobjData.midProcess = lobjCasualty.GetProcessID();
 		lopMD.mobjData.midManager = null;
