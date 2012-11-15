@@ -176,7 +176,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 		wrapper.add(contentWrapper);
 		form.lock(true);
-		
+
 		searchPanel.doSearch(true);
 	}
 
@@ -184,7 +184,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	protected void initializeView() {
 		return;
 	}
-	
+
 	public HasSelectables<?> getClientSearchList() {
 		return this.searchPanel;
 	}
@@ -204,7 +204,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public HasValueSelectables<ClientStub> getList() {
 		return this.searchPanel;
 	}
-	
+
 	@Override
 	public void removeFromList(ValueSelectable<ClientStub> selectable) {
 		this.searchPanel.remove(selectable);
@@ -244,16 +244,16 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public void scrollFormToTop() {
 		this.form.scrollToTop();
 	}
-	
+
 	@Override
 	public ValueSelectable<ClientStub> addClientListEntry(ClientStub client) {
 		ClientSearchPanelListEntry entry = new ClientSearchPanelListEntry(client);
 		this.searchPanel.add(0, entry);
 		return entry;
 	}
-	
+
 	/*## PERMISSIONS START ##*/
-	
+
 	@Override
 	public void setSaveModeEnabled(boolean enabled) {
 		this.operationsToolbar.setSaveModeEnabled(enabled);
@@ -264,12 +264,12 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		this.form.setReadOnly(true);
 		this.operationsToolbar.lockAll();
 	}
-	
+
 	@Override
 	public void allowCreate(boolean allow) {
 		this.newButton.setEnabled(allow);
 	}
-	
+
 	@Override
 	public void allowEdit(boolean allow) {
 		this.operationsToolbar.setEditionAvailable(allow);
@@ -314,9 +314,9 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public void allowcreateCasualty(boolean allow) {
 		this.operationsToolbar.allowCreateCasualty(allow);
 	}
-	
+
 	/*## PERMISSIONS END ##*/
-	
+
 	/*## CHILDREN LISTS START ##*/
 
 	@Override
@@ -328,12 +328,12 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public HasValueSelectables<InsurancePolicyStub> getPolicyList() {
 		return this.childrenPanel.insurancePoliciesList;
 	}
-	
+
 	@Override
 	public HasValueSelectables<Contact> getContactsList() {
 		return this.childrenPanel.contactsList;
 	}
-	
+
 	@Override
 	public HasValueSelectables<Document> getDocumentsList() {
 		return this.childrenPanel.documentsList;
@@ -343,7 +343,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
 		return this.childrenPanel.subProcessesList;
 	}
-	
+
 	@Override
 	public HasValueSelectables<QuoteRequestStub> getQuoteRequestList() {
 		return this.childrenPanel.quoteRequestsList;
@@ -363,6 +363,10 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		}
 	}
 
+	@Override
+	public HasValueSelectables<InsurancePolicyStub> getDeadPoliciesList() {
+		return this.childrenPanel.deadInsurancePoliciesList;	}
+
 	/*## CHILDREN LISTS END ##*/
-	
+
 }

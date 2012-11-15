@@ -93,6 +93,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<InsurancePolicyStub> getPolicyList();
 		HasValueSelectables<QuoteRequestStub> getQuoteRequestList();
 		HasValueSelectables<CasualtyStub> getCasualtyList();
+		HasValueSelectables<InsurancePolicyStub> getDeadPoliciesList();
 
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
@@ -368,6 +369,27 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				if(!itemId.isEmpty()){
 					goToCasualty(itemId);
+				}
+			}
+		});
+		
+		view.getDeadPoliciesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
+				InsurancePolicyStub item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("section", "insurancepolicy");
+					navItem.setStackParameter("display");
+					navItem.pushIntoStackParameter("display", "search");
+					navItem.setParameter("policyid", itemId);
+					NavigationHistoryManager.getInstance().go(navItem);
 				}
 			}
 		});
