@@ -194,7 +194,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 			}
 		}
 		else{
-			nf = NumberFormat.getDecimalFormat();
+			nf = NumberFormat.getFormat("#,##0.########");
 		}
 	}
 
