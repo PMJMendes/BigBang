@@ -29,6 +29,7 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.module.insurancePolicyModule.client.resources.Resources;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
+import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter.AllowedStates;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter.SortableField;
 
@@ -38,7 +39,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	 * An entry in the search panel
 	 */
 	public static class Entry extends ListEntry<InsurancePolicyStub>{
-		
+
 		protected Label numberLabel;
 		protected Label clientLabel;
 		protected Label lineLabel;
@@ -90,7 +91,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 				lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 
 				insuredObjectLabel.setText(value.insuredObject);
-				
+
 				Resources resources = GWT.create(Resources.class);
 				if(value.statusIcon == null) {
 					statusIcon.setResource(resources.provisionalPolicyIcon());
@@ -111,14 +112,14 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 						return;
 					}
 				}
-				
+
 				setMetaData(new String[]{
-					value.number,
-					value.categoryName,
-					value.lineName,
-					value.subLineName,
-					value.clientNumber,
-					value.clientName
+						value.number,
+						value.categoryName,
+						value.lineName,
+						value.subLineName,
+						value.clientNumber,
+						value.clientName
 				});
 
 				return;
@@ -148,7 +149,9 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		MEDIATOR,
 		MANAGER,
 		INSURED_OBJECT,
-		CASE_STUDY, CLIENT_POLICIES
+		CASE_STUDY, 
+		CLIENT_POLICIES,
+		STATUS
 	}
 	protected FiltersPanel filtersPanel;
 
@@ -160,11 +163,11 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 
 	public InsurancePolicySearchPanel() {
 		super(((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY)).getSearchBroker());
-		
-		
+
+
 		policiesToUpdate = new HashMap<String, InsurancePolicyStub>();
 		policiesToRemove = new HashMap<String, Void>();
-				
+
 		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
 		sortOptions.put(InsurancePolicySortParameter.SortableField.RELEVANCE, "Relevância");
 		sortOptions.put(InsurancePolicySortParameter.SortableField.NUMBER, "Número");
@@ -183,10 +186,10 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		filtersPanel.addTypifiedListField(Filters.SUBLINE, BigBangConstants.EntityIds.SUB_LINE, "Modalidade", Filters.LINE);
 		filtersPanel.addTextField(Filters.INSURED_OBJECT, "Unidade de Risco");
 		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
-
+		filtersPanel.addRadioButtonField(Filters.STATUS, new String[]{"Todas", "Vivas", "Mortas"}, "Estados");
 		InsurancePolicyBroker broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		broker.registerClient(this);
-		
+
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 
 			@Override
@@ -220,13 +223,14 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		parameter.insuredObject = (String) filtersPanel.getFilterValue(Filters.INSURED_OBJECT);
 		boolean caseStudy = (Boolean) filtersPanel.getFilterValue(Filters.CASE_STUDY);
 		parameter.caseStudy = caseStudy ? true : null;
+		parameter.allowedStates = getAllowedState();
 		if((Boolean)filtersPanel.getFilterValue(Filters.CLIENT_POLICIES) == false || !filtersPanel.isFilterVisible(Filters.CLIENT_POLICIES)){
 			parameter.ownerId = null;
 		}else{
 			parameter.ownerId = ownerId;
 		}
 
-		
+
 		SearchParameter[] parameters = new SearchParameter[]{
 				parameter
 		};
@@ -238,6 +242,18 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		};
 
 		doSearch(parameters, sorts, keepState);
+	}
+
+	private AllowedStates getAllowedState() {
+		String state = (String) filtersPanel.getFilterValue(Filters.STATUS);
+
+		if(state.equalsIgnoreCase("Todas")){
+			return AllowedStates.ALL;
+		}else if(state.equalsIgnoreCase("Vivas")){
+			return AllowedStates.LIVE;
+		}else
+			return AllowedStates.NONLIVE;
+
 	}
 
 	@Override
@@ -267,7 +283,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 			this.insurancePolicyDataVersion = number;
 		}
 	}
-	
+
 	public ValueSelectable<InsurancePolicyStub> addEntry(InsurancePolicyStub policy) {
 		Entry entry = new Entry(policy);
 		add(0, entry);
@@ -315,28 +331,28 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	public void remapItemId(String oldId, String newId) {
 		return;
 	}
-	
+
 	@Override
 	protected void onAttach() {
 		super.onAttach();
-//		doSearch(); TODO
+		//		doSearch(); TODO
 	}
 
 	public void setOwner(String ownerId) {
-		
+
 		if(ownerId != null){
 			this.ownerId = ownerId;
 		}
-		
+
 		InsurancePolicySearchParameter parameter = new InsurancePolicySearchParameter();
 		parameter.ownerId = ownerId;
 		filtersPanel.setFilterVisible(Filters.CLIENT_POLICIES, true);
 		filtersPanel.setFilterValue(Filters.CLIENT_POLICIES, ownerId != null);
-		
+
 		SearchParameter[] parameters = new SearchParameter[]{parameter};
-		
+
 		doSearch(parameters, null);
-		
+
 	}
 
 }
