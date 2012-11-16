@@ -50,6 +50,7 @@ import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateCasualty;
@@ -76,6 +77,7 @@ public class ClientServiceImpl
 		ObjectBase lobjZipCode;
 		ClientGroup lobjGroup;
 		Client lobjResult;
+		Mediator lobjMed;
 		IProcess lobjProc;
 
 		if ( Engine.getCurrentUser() == null )
@@ -98,6 +100,7 @@ public class ClientServiceImpl
 			else
 				lobjGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(10));
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjClient.GetProcessID());
+			lobjMed = Mediator.GetInstance(lobjClient.getNameSpace(), (UUID)lobjClient.getAt(8));
 		}
 		catch (Throwable e)
 		{
@@ -129,7 +132,8 @@ public class ClientServiceImpl
 		lobjResult.NIB = (String)lobjClient.getAt(11);
 		lobjResult.typeId = lobjClient.getAt(6).toString();
 		lobjResult.subtypeId = (lobjClient.getAt(7) == null ? null : lobjClient.getAt(7).toString());
-		lobjResult.mediatorId = lobjClient.getAt(8).toString();
+		lobjResult.mediatorId = lobjMed.getKey().toString();
+		lobjResult.mediatorName = lobjMed.getLabel();
 		lobjResult.operationalProfileId = lobjClient.getAt(9).toString();
 		lobjResult.caeId = (lobjClient.getAt(16) == null ? null : lobjClient.getAt(16).toString());
 		lobjResult.activityNotes = (String)lobjClient.getAt(17);

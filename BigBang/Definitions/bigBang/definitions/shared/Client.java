@@ -11,6 +11,7 @@ public class Client
 	public String typeId;
 	public String subtypeId;
 	public String mediatorId;
+	public String mediatorName;
 	public String managerId;
 	public String operationalProfileId;
 	public String caeId;
