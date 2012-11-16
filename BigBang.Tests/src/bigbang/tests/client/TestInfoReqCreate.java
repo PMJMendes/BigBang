@@ -29,15 +29,16 @@ public class TestInfoReqCreate
 		};
 
 		request = new InfoOrDocumentRequest();
-		request.parentDataObjectId = "CA38CF67-FB1C-4213-9ABE-A03C011459A1";
-		request.requestTypeId = "05D3096C-FC09-47F4-B6FD-9FE801358AD2";
+		request.parentDataObjectId = "145F0BA8-0893-40B5-A71F-A0FE00E1B27C";
+		request.requestTypeId = "03E56D41-5924-44F5-A8DE-A10B01044482";
 		request.replylimit = 15;
-		request.message.toContactInfoId = "C6764677-0885-4BF3-8EB8-9FDD00D78FB5";
-		request.message.forwardUserFullNames = new String[] {"Administrator"};
-		request.message.externalCCs = "joao.mendes@archon-se.com";
+		request.message.toContactInfoId = "6AEFC7DC-FF60-417D-BEE4-A10B01028128";
+//		request.message.forwardUserFullNames = new String[] {"Administrator"};
+		request.message.externalCCs = "joao.mendes@marar.eu";
 		request.message.subject = "Pedido de Carta de Condução";
 		request.message.text = "Por favor, envie-nos uma cópia digital da sua carta de condução.";
+		request.message.attachmentIds = new String[] {"A6B657B0-9513-403B-859C-A10B0102B580", "ECB3070B-0494-4A50-BA70-A10B010C8963"};
 
-		Services.casualtyService.createInfoOrDocumentRequest(request, callback);
+		Services.clientService.createInfoOrDocumentRequest(request, callback);
 	}
 }
