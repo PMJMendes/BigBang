@@ -279,7 +279,10 @@ public class MailConnector
 			lmsg.setSubject(pstrSubject);
 
 			if ( (parrAttachments == null) || (parrAttachments.length == 0) )
+			{
 				lmsg.setText(pstrBody, "UTF-8");
+				lmsg.addHeader("Content-Type", "text/html");
+			}
 			else
 			{
 				lmpMessage = new MimeMultipart();
@@ -293,6 +296,7 @@ public class MailConnector
 					if ( parrAttachments[i] == null )
 						continue;
 
+					lbp = new MimeBodyPart();
 					lbp.setDataHandler(new DataHandler(new ByteArrayDataSource(parrAttachments[i].getData(),
 							parrAttachments[i].getContentType())));
 					lbp.setFileName(parrAttachments[i].getFileName());
@@ -300,9 +304,9 @@ public class MailConnector
 				}
 
 				lmsg.setContent(lmpMessage);
+				lmsg.addHeader("Content-Type", lmpMessage.getContentType());
 			}
 
-			lmsg.addHeader("Content-Type", "text/html");
 			lmsg.addHeader("MIME-Version", "1.0");
 			lmsg.saveChanges();
 			lxport.sendMessage(lmsg, lmsg.getAllRecipients());
