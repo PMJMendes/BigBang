@@ -231,6 +231,7 @@ public class InsurerAccountingMap
 		BigDecimal ldblTotalPremiums, ldblDirectPremiums, ldblPayablePremiums;
 		BigDecimal ldblTotalComms, ldblLifeComms, ldblTaxableComms;
 		BigDecimal ldblPreTax, ldblTax, ldblTotal;
+		BigDecimal ldblAux;
 		boolean lbSubtract;
 		int i;
 
@@ -270,8 +271,13 @@ public class InsurerAccountingMap
 		{
 			ldblTotalPremiums = ldblTotalPremiums.add(((InsurerAccountingDetail)marrDetails[i]).getPremium());
 			ldblDirectPremiums = ldblDirectPremiums.add(((InsurerAccountingDetail)marrDetails[i]).getDirectPremium());
-			ldblTotalComms = ldblTotalComms.add(((InsurerAccountingDetail)marrDetails[i]).getCommissions());
-			ldblLifeComms = ldblLifeComms.add(((InsurerAccountingDetail)marrDetails[i]).getLifeComms());
+
+			ldblAux = ((InsurerAccountingDetail)marrDetails[i]).getCommissions();
+			if ( ldblAux != null )
+				ldblTotalComms = ldblTotalComms.add(ldblAux);
+			ldblAux = ((InsurerAccountingDetail)marrDetails[i]).getLifeComms();
+			if ( ldblAux != null )
+				ldblLifeComms = ldblLifeComms.add(ldblAux);
 		}
 
 		ldblPayablePremiums = ldblTotalPremiums.subtract(ldblDirectPremiums);
