@@ -133,6 +133,15 @@ public class MessageBridge
 		lobjResult.mstrSubject = pobjMessage.subject;
 		lobjResult.mstrBody = pobjMessage.text;
 
+		if ( pobjMessage.attachmentIds == null )
+			lobjResult.marrAttachments = null;
+		else
+		{
+			lobjResult.marrAttachments = new UUID[pobjMessage.attachmentIds.length];
+			for ( i = 0; i < lobjResult.marrAttachments.length; i++ )
+				lobjResult.marrAttachments[i] = UUID.fromString(pobjMessage.attachmentIds[i]);
+		}
+
 		return lobjResult;
 	}
 

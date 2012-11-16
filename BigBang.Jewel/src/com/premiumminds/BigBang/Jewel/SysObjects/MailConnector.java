@@ -1,14 +1,19 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.ByteArrayInputStream;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import javax.activation.DataHandler;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 
 import microsoft.exchange.webservices.data.Attachment;
 import microsoft.exchange.webservices.data.BasePropertySet;
@@ -22,9 +27,17 @@ import microsoft.exchange.webservices.data.ItemView;
 import microsoft.exchange.webservices.data.PropertySet;
 import microsoft.exchange.webservices.data.WellKnownFolderName;
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
+import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
+import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
 public class MailConnector
 {
@@ -166,14 +179,78 @@ public class MailConnector
 		return lobjFolder;
 	}
 
+	public static void DoSendMail(OutgoingMessageData pobjMessage, SQLServer pdb)
+		throws BigBangJewelException
+	{
+		String[] larrTos;
+        ResultSet lrs;
+		IEntity lrefDecos;
+		String[] larrReplyTos;
+		FileXfer[] larrFiles;
+		Document lobjDoc;
+		int i;
+
+		if ( pobjMessage.marrContactInfos == null )
+			larrTos = null;
+		else
+		{
+			larrTos = new String[pobjMessage.marrContactInfos.length];
+			for ( i = 0; i < pobjMessage.marrContactInfos.length; i++ )
+			{
+				larrTos[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
+						pobjMessage.marrContactInfos[i]).getAt(2);
+			}
+		}
+
+		if ( larrTos != null )
+		{
+	        lrs = null;
+			try
+			{
+				lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
+				larrReplyTos = new String[pobjMessage.marrUsers.length];
+				for ( i = 0; i < pobjMessage.marrUsers.length; i++ )
+				{
+					lrs = lrefDecos.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {pobjMessage.marrUsers[i]}, new int[0]);
+				    if (lrs.next())
+				    	larrReplyTos[i] = (String)UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrs).getAt(1);
+				    else
+				    	larrReplyTos[i] = null;
+				    lrs.close();
+				}
+			}
+			catch (Throwable e)
+			{
+				if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			if ( pobjMessage.marrAttachments == null )
+				larrFiles = null;
+			else
+			{
+				larrFiles = new FileXfer[pobjMessage.marrAttachments.length];
+				for ( i = 0; i < larrFiles.length; i++ )
+				{
+					lobjDoc = Document.GetInstance(Engine.getCurrentNameSpace(), pobjMessage.marrAttachments[i]);
+					larrFiles[i] = lobjDoc.getFile();
+				}
+			}
+			DoSendMail(larrReplyTos, larrTos, pobjMessage.marrCCs, pobjMessage.marrBCCs,
+					pobjMessage.mstrSubject, pobjMessage.mstrBody, larrFiles);
+		}
+	}
+
 	public static void DoSendMail(String[] parrReplyTo, String[] parrTo, String[] parrCC, String[] parrBCC,
-			String pstrSubject, String pstrBody)
+			String pstrSubject, String pstrBody, FileXfer[] parrAttachments)
 		throws BigBangJewelException
 	{
 		Session lsession;
 		Transport lxport;
 		MimeMessage lmsg;
 		Address[] larrAddr;
+		MimeMultipart lmpMessage;
+		MimeBodyPart lbp;
 		int i;
 
 		lsession = GetMailSession();
@@ -200,7 +277,31 @@ public class MailConnector
 				for ( i = 0; i < parrBCC.length; i++ )
 					lmsg.addRecipient(Message.RecipientType.BCC, new InternetAddress(parrBCC[i]));
 			lmsg.setSubject(pstrSubject);
-			lmsg.setText(pstrBody, "UTF-8");
+
+			if ( (parrAttachments == null) || (parrAttachments.length == 0) )
+				lmsg.setText(pstrBody, "UTF-8");
+			else
+			{
+				lmpMessage = new MimeMultipart();
+
+				lbp = new MimeBodyPart();
+				lbp.setText(pstrBody, "UTF-8");
+				lmpMessage.addBodyPart(lbp);
+
+				for ( i = 0; i < parrAttachments.length; i++ )
+				{
+					if ( parrAttachments[i] == null )
+						continue;
+
+					lbp.setDataHandler(new DataHandler(new ByteArrayDataSource(parrAttachments[i].getData(),
+							parrAttachments[i].getContentType())));
+					lbp.setFileName(parrAttachments[i].getFileName());
+					lmpMessage.addBodyPart(lbp);
+				}
+
+				lmsg.setContent(lmpMessage);
+			}
+
 			lmsg.addHeader("Content-Type", "text/html");
 			lmsg.addHeader("MIME-Version", "1.0");
 			lmsg.saveChanges();

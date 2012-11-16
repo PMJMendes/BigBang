@@ -173,7 +173,8 @@ public class RepeatRequest
 		{
 			MailConnector.DoSendMail(larrReplyTos.toArray(new String[larrReplyTos.size()]),
 					larrTos.toArray(new String[larrTos.size()]), larrCCs.toArray(new String[larrCCs.size()]),
-					larrBCCs.toArray(new String[larrBCCs.size()]), mstrSubject, mstrRequestBody);
+					larrBCCs.toArray(new String[larrBCCs.size()]), mstrSubject, mstrRequestBody, null);
+			//TODO: Contemplar os attachments aqui!
 		}
 		catch (Throwable e)
 		{

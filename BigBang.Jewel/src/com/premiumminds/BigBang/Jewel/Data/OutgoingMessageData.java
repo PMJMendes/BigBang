@@ -15,4 +15,6 @@ public class OutgoingMessageData
 
 	public String mstrSubject;
 	public String mstrBody;
+
+	public UUID[] marrAttachments;
 }

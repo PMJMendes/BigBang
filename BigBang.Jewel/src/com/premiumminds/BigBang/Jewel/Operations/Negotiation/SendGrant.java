@@ -15,13 +15,10 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
-import com.premiumminds.BigBang.Jewel.Objects.Negotiation;
-import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class SendGrant
@@ -140,12 +137,7 @@ public class SendGrant
 		Timestamp ldtAux;
 		Calendar ldtAux2;
 		Timestamp ldtLimit;
-		Negotiation lobjNegotiation;
 		AgendaItem lobjNewAgendaItem;
-		IEntity lrefDecos;
-		String[] larrReplyTos;
-		String[] larrTos;
-		int i;
 
 		larrItems = new Hashtable<UUID, AgendaItem>();
 		lrs = null;
@@ -180,8 +172,6 @@ public class SendGrant
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		lobjNegotiation = (Negotiation)GetProcess().GetData();
-
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 		{
 			lopTDP = new TriggerDisallowPolicy(GetProcess().getKey());
@@ -214,63 +204,13 @@ public class SendGrant
 			}
 		}
 
-		if ( mobjMessage.marrContactInfos == null )
+		try
 		{
-			if ( lobjNegotiation.getAt(4) == null )
-				larrTos = null;
-			else
-				larrTos = new String[] {(String)lobjNegotiation.getAt(4)};
+			MailConnector.DoSendMail(mobjMessage, pdb);
 		}
-		else
+		catch (Throwable e)
 		{
-			larrTos = new String[mobjMessage.marrContactInfos.length];
-			for ( i = 0; i < mobjMessage.marrContactInfos.length; i++ )
-			{
-				try
-				{
-					larrTos[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
-							mobjMessage.marrContactInfos[i]).getAt(2);
-				}
-				catch (BigBangJewelException e)
-				{
-					throw new JewelPetriException(e.getMessage(), e);
-				} 
-			}
-		}
-
-		if ( larrTos != null )
-		{
-	        lrs = null;
-			try
-			{
-				lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
-				larrReplyTos = new String[mobjMessage.marrUsers.length];
-				for ( i = 0; i < mobjMessage.marrUsers.length; i++ )
-				{
-					lrs = lrefDecos.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {mobjMessage.marrUsers[i]}, new int[0]);
-				    if (lrs.next())
-				    	larrReplyTos[i] = (String)UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrs).getAt(1);
-				    else
-				    	larrReplyTos[i] = null;
-				    lrs.close();
-				}
-	
-			}
-			catch (Throwable e)
-			{
-				if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
-				throw new JewelPetriException(e.getMessage(), e);
-			}
-
-			try
-			{
-				MailConnector.DoSendMail(larrReplyTos, larrTos, mobjMessage.marrCCs, mobjMessage.marrBCCs,
-						mobjMessage.mstrSubject, mobjMessage.mstrBody);
-			}
-			catch (Throwable e)
-			{
-				throw new JewelPetriException(e.getMessage(), e);
-			}
+			throw new JewelPetriException(e.getMessage(), e);
 		}
 	}
 }

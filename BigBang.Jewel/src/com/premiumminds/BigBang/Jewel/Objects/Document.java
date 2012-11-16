@@ -11,12 +11,24 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 public class Document
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int NAME      = 0;
+		public static int OWNERTYPE = 1;
+		public static int OWNER     = 2;
+		public static int TYPE      = 3;
+		public static int TEXT      = 4;
+		public static int FILE      = 5;
+		public static int DATE      = 6;
+	}
+
     public static Document GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -76,6 +88,17 @@ public class Document
 		}
 
 		return mrefOwner;
+	}
+
+	public FileXfer getFile()
+	{
+		if ( getAt(I.FILE) == null )
+			return null;
+
+		if ( getAt(I.FILE) instanceof FileXfer )
+			return (FileXfer)getAt(I.FILE);
+
+		return new FileXfer((byte[])getAt(I.FILE));
 	}
 
 	public DocInfo[] getCurrentInfo()

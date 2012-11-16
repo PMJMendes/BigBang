@@ -5,14 +5,6 @@ import java.sql.Timestamp;
 import java.util.Hashtable;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
-import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
-import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
-import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
-import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
@@ -21,6 +13,12 @@ import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
+
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
+import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class CancelNegotiation
 	extends UndoableOperation
@@ -138,9 +136,6 @@ public class CancelNegotiation
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
-		IEntity lrefDecos;
-		String[] larrTos;
-		String[] larrReplyTos;
 		int i;
 
 		larrItems = new Hashtable<UUID, AgendaItem>();
@@ -193,52 +188,13 @@ public class CancelNegotiation
 
 		if ( mbSendNotification )
 		{
-			if ( mobjMessage.marrContactInfos == null )
-				larrTos = null;
-			else
+			try
 			{
-				larrTos = new String[mobjMessage.marrContactInfos.length];
-				for ( i = 0; i < mobjMessage.marrContactInfos.length; i++ )
-				{
-					try
-					{
-						larrTos[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
-								mobjMessage.marrContactInfos[i]).getAt(2);
-					}
-					catch (BigBangJewelException e)
-					{
-						throw new JewelPetriException(e.getMessage(), e);
-					} 
-				}
+				MailConnector.DoSendMail(mobjMessage, pdb);
 			}
-
-			if ( larrTos != null )
+			catch (Throwable e)
 			{
-				larrReplyTos = new String[mobjMessage.marrUsers.length];
-				lrs = null;
-				try
-				{
-					lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
-					for ( i = 0; i < mobjMessage.marrUsers.length; i++ )
-					{
-						lrs = lrefDecos.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {mobjMessage.marrUsers[i]},
-								new int[0]);
-					    if (lrs.next())
-					    	larrReplyTos[i] = (String)UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrs).getAt(1);
-					    else
-					    	larrReplyTos[i] = null;
-					    lrs.close();
-					}
-					lrs = null;
-
-					MailConnector.DoSendMail(larrReplyTos, larrTos, mobjMessage.marrCCs, mobjMessage.marrBCCs,
-							mobjMessage.mstrSubject, mobjMessage.mstrBody);
-				}
-				catch (Throwable e)
-				{
-					if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
-					throw new JewelPetriException(e.getMessage(), e);
-				}
+				throw new JewelPetriException(e.getMessage(), e);
 			}
 		}
 
