@@ -14,4 +14,6 @@ public class OutgoingMessage
 
 	public String subject;
 	public String text;
+
+	public String[] attachmentIds;
 }
