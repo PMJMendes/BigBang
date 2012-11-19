@@ -13,6 +13,8 @@ public class TestReceiptInsurerAccounting
 
 	private static void DoStep1()
 	{
+		InsurerAccountingExtra extra;
+
 		AsyncCallback<Void> callback = new AsyncCallback<Void>()
 		{
 			public void onFailure(Throwable caught)
@@ -26,6 +28,13 @@ public class TestReceiptInsurerAccounting
 			}
 		};
 
-		Services.receiptService.massInsurerAccounting(new String[] {"E62C9524-408F-4A78-916F-A0E90057A04D"}, new InsurerAccountingExtra[0], callback);
+		extra = new InsurerAccountingExtra();
+		extra.insurerId = "B1965886-2947-4C0D-8C8A-A0FE00E1AEAD";
+		extra.text = "Comissões adicionais";
+		extra.value = 20000.0;
+		extra.isCommissions = true;
+		extra.hasTax = true;
+
+		Services.receiptService.massInsurerAccounting(new String[0], new InsurerAccountingExtra[] {extra}, callback);
 	}
 }
