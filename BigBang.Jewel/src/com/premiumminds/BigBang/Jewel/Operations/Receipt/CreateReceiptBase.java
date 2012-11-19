@@ -74,7 +74,6 @@ public abstract class CreateReceiptBase
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Timestamp ldtCheck;
 		IProcess lobjMe;
 		Receipt lobjAux;
 		IScript lobjScript;
@@ -85,10 +84,6 @@ public abstract class CreateReceiptBase
 
 		try
 		{
-			ldtCheck = DateCheck();
-			if ( (ldtCheck != null) && (mobjData.mdtMaturity != null) && (ldtCheck.compareTo(mobjData.mdtMaturity) < 0) )
-				throw new BigBangJewelException("Erro: Não pode criar recibos com data de vencimento superior à data de fim da apólice.");
-
 			lobjMe = GetProcess();
 
 			if ( mobjData.midManager == null )
