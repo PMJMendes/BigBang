@@ -405,6 +405,7 @@ public class Constants
 	public static final UUID OPID_Receipt_ExternBlockEndProcessSend      = UUID.fromString("11397F84-2A3B-4365-9F1D-A0BD01205EE0");
 	public static final UUID OPID_Receipt_CancelPaymentNotice            = UUID.fromString("0A5C1C90-E45B-4C6C-9A8E-A0E700C982EA");
 	public static final UUID OPID_Receipt_CancelSignatureRequest         = UUID.fromString("1710F073-1A8E-430E-8D75-A0E700CB2C23");
+	public static final UUID OPID_Receipt_AutoBlockPayment               = UUID.fromString("B803BA88-6295-4014-ABAC-A10E00CE3A6A");
 
 	//Casualty Operations
 	public static final UUID OPID_Casualty_AutoProcessVents              = UUID.fromString("4DB7EF2A-DB71-4BF4-810B-A02E00FA9F94");
