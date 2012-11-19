@@ -7,19 +7,12 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
-import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
-import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateReceiptBase;
 
 public class CreateReceipt
 	extends CreateReceiptBase
 {
 	private static final long serialVersionUID = 1L;
-
-	public ReceiptData mobjData;
-	public ContactOps mobjContactOps;
-	public DocOps mobjDocOps;
 
 	public CreateReceipt(UUID pidProcess)
 	{

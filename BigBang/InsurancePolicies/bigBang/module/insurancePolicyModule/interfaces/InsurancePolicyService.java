@@ -2,6 +2,7 @@ package bigBang.module.insurancePolicyModule.interfaces;
 
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.DebitNoteBatch;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
@@ -65,6 +66,8 @@ public interface InsurancePolicyService
 	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
 	public Expense createExpense(Expense expense) throws SessionExpiredException, BigBangException;
 	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
+
+	public void createSubPolicyReceipts(DebitNoteBatch batch) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy voidPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
 

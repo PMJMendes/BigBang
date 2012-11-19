@@ -2,6 +2,7 @@ package com.premiumminds.BigBang.Jewel.Objects;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -821,6 +822,84 @@ public class Policy
 		}
 
 		return larrAux.toArray(new PolicyValue[larrAux.size()]);
+    }
+
+    public SubPolicy[] GetCurrentSubPoliciesForDebit(Timestamp pdtFrom)
+    	throws BigBangJewelException
+    {
+		ArrayList<SubPolicy> larrAux;
+		IEntity lrefContactInfo;
+        MasterDB ldb;
+        ResultSet lrsInfo;
+        SubPolicy lobjAux;
+
+		larrAux = new ArrayList<SubPolicy>();
+
+		try
+		{
+			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Jewel.Petri.Constants.ObjID_PNProcess)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsInfo = lrefContactInfo.SelectByMembers(ldb, new int[] {Jewel.Petri.Constants.FKScript_In_Process,
+					Jewel.Petri.Constants.FKParent_In_Process}, new java.lang.Object[] {Constants.ProcID_SubPolicy,
+					GetProcessID()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsInfo.next() )
+			{
+				lobjAux = SubPolicy.GetInstance(getNameSpace(), lrsInfo);
+				if ( (lobjAux.getAt(4) == null) || ((Timestamp)lobjAux.getAt(4)).after(pdtFrom) )
+					larrAux.add(lobjAux);
+			}
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsInfo.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new SubPolicy[larrAux.size()]);
     }
 
     public SubLine GetSubLine()

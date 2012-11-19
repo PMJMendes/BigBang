@@ -29,17 +29,16 @@ public abstract class CreateReceiptBase
 	public transient DSBridgeData mobjImage;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
+	public boolean mbForceDebitNote;
 
 	public abstract Timestamp DateCheck() throws BigBangJewelException;
 
 	public abstract UUID GetMediatorID() throws BigBangJewelException;
-//	{
-//		return (UUID)lobjPolicy.getAt(11);
-//	}
 
 	public CreateReceiptBase(UUID pidProcess)
 	{
 		super(pidProcess);
+		mbForceDebitNote = false;
 	}
 
 	public String ShortDesc()
@@ -132,28 +131,35 @@ public abstract class CreateReceiptBase
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mobjImage != null )
+		if ( mbForceDebitNote )
 		{
-			lopTIOC = new TriggerImageOnCreate(lobjProc.getKey());
-			lopTIOC.mobjImage = mobjImage;
-			TriggerOp(lopTIOC, pdb);
+			TriggerOp(new ExternForceInternalDebitNote(lobjProc.getKey()), pdb);
 		}
-
-		if ( Constants.ProfID_Simple.equals(lidProfile) )
+		else
 		{
-			TriggerOp(new ExternForceShortCircuit(lobjProc.getKey()), pdb);
-		}
+			if ( mobjImage != null )
+			{
+				lopTIOC = new TriggerImageOnCreate(lobjProc.getKey());
+				lopTIOC.mobjImage = mobjImage;
+				TriggerOp(lopTIOC, pdb);
+			}
 
-		if ( Constants.ProfID_External.equals(lidProfile) )
-		{
-			TriggerOp(new ExternForceShortCircuit(lobjProc.getKey()), pdb);
-			TriggerOp(new ExternBlockEndProcessSend(lobjProc.getKey()), pdb);
-		}
+			if ( Constants.ProfID_Simple.equals(lidProfile) )
+			{
+				TriggerOp(new ExternForceShortCircuit(lobjProc.getKey()), pdb);
+			}
 
-		if ( lobjAux.isReverseCircuit() )
-		{
-			TriggerOp(new ExternForceReverse(lobjProc.getKey()), pdb);
-			TriggerOp(new ExternBlockEndProcessSend(lobjProc.getKey()), pdb);
+			if ( Constants.ProfID_External.equals(lidProfile) )
+			{
+				TriggerOp(new ExternForceShortCircuit(lobjProc.getKey()), pdb);
+				TriggerOp(new ExternBlockEndProcessSend(lobjProc.getKey()), pdb);
+			}
+
+			if ( lobjAux.isReverseCircuit() )
+			{
+				TriggerOp(new ExternForceReverse(lobjProc.getKey()), pdb);
+				TriggerOp(new ExternBlockEndProcessSend(lobjProc.getKey()), pdb);
+			}
 		}
 	}
 }

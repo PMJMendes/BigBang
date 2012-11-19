@@ -16,6 +16,7 @@ import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.DebitNoteBatch;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
@@ -710,6 +711,108 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return NegotiationServiceImpl.sGetNegotiation(lopCN.mobjData.mid);
+	}
+
+	public void createSubPolicyReceipts(DebitNoteBatch batch)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		Timestamp ldtFrom;
+		Timestamp ldtTo;
+		Timestamp ldtLimit;
+		com.premiumminds.BigBang.Jewel.Objects.SubPolicy[] larrSubs;
+		MasterDB ldb;
+		com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateReceipt lopCR;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		ldtFrom = Timestamp.valueOf(batch.maturityDate + " 00:00:00.0");
+		ldtTo = Timestamp.valueOf(batch.endDate + " 00:00:00.0");
+		ldtLimit = Timestamp.valueOf(batch.limitDate + " 00:00:00.0");
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(batch.policyId));
+			larrSubs = lobjPolicy.GetCurrentSubPoliciesForDebit(ldtFrom);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.BeginTrans();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			for ( i = 0; i < larrSubs.length; i++ )
+			{
+				lopCR = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateReceipt(larrSubs[i].GetProcessID());
+				lopCR.mbForceDebitNote = true;
+				lopCR.mobjData = new ReceiptData();
+//				lopCR.mobjData.mstrNumber;
+//				lopCR.mobjData.midType;
+//				lopCR.mobjData.mdblTotal;
+//				lopCR.mobjData.mdblCommercial;
+//				lopCR.mobjData.mdblCommissions;
+//				lopCR.mobjData.mdblRetrocessions;
+//				lopCR.mobjData.mdblFAT;
+//				lopCR.mobjData.mdblBonusMalus;
+//				lopCR.mobjData.mbIsMalus;
+//				lopCR.mobjData.mdtIssue;
+				lopCR.mobjData.mdtMaturity = ldtFrom;
+				lopCR.mobjData.mdtEnd = ldtTo;
+				lopCR.mobjData.mdtDue = ldtLimit;
+//				lopCR.mobjData.midMediator;
+//				lopCR.mobjData.mstrNotes;
+//				lopCR.mobjData.mstrDescription;
+
+				lopCR.Execute(ldb);
+			}
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Rollback(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Commit();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	public InsurancePolicy voidPolicy(PolicyVoiding voiding)
