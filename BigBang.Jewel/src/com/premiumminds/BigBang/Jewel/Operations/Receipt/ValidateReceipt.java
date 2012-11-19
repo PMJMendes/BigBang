@@ -2,6 +2,7 @@ package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -189,6 +190,7 @@ public class ValidateReceipt
 		IProcess lobjProc;
 		AgendaItem lobjItem;
 		Timestamp ldtNow;
+		Calendar ldtAux2;
 
 		if ( mobjData != null )
 		{
@@ -210,6 +212,14 @@ public class ValidateReceipt
 		lobjProc = GetProcess();
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
+
+		if ( mdtPrevLimit == null )
+		{
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtNow.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
+	    	mdtPrevLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
 
     	try
     	{
