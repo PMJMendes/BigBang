@@ -36,7 +36,7 @@ public abstract class TransactionMapBase
 	public abstract UUID getSubObjectType();
 	public abstract DocOps generateDocOp(SQLServer pdb) throws BigBangJewelException;
 
-	protected  TransactionDetailBase[] marrDetails;
+	protected TransactionDetailBase[] marrDetails;
 	protected TransactionSetBase mrefSet;
 
 	public void Initialize()

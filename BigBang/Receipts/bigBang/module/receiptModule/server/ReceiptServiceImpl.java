@@ -55,6 +55,8 @@ import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
+import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingMap;
+import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingSet;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
@@ -1676,6 +1678,9 @@ public class ReceiptServiceImpl
 		Boolean lbIsCommissions;
 		Boolean lbHasTax;
 		InsurerAccounting lopIA;
+		InsurerAccountingSet lobjSet;
+		InsurerAccountingMap lobjMap;
+		MasterDB ldb;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
@@ -1707,9 +1712,24 @@ public class ReceiptServiceImpl
 			larrByInsurer.add(lobjReceipt.getKey());
 		}
 
+		if ( extraInfo != null )
+		{
+			for ( i = 0; i < extraInfo.length; i++ )
+			{
+				lidInsurer = UUID.fromString(extraInfo[i].insurerId);
+				if ( larrReceipts.get(lidInsurer) == null )
+					larrReceipts.put(lidInsurer, new ArrayList<UUID>());
+			}
+		}
+
 		lidSet = null;
 		for(UUID lidI : larrReceipts.keySet())
 		{
+			larrByInsurer = larrReceipts.get(lidI);
+			larrFinal = larrByInsurer.toArray(new UUID[larrByInsurer.size()]);
+			if ( larrFinal.length == 0 )
+				continue;
+
 			lstrExtraText = null;
 			ldblExtraValue = null;
 			lbIsCommissions = null;
@@ -1728,9 +1748,8 @@ public class ReceiptServiceImpl
 					}
 				}
 			}
+
 			lidMap = null;
-			larrByInsurer = larrReceipts.get(lidI);
-			larrFinal = larrByInsurer.toArray(new UUID[larrByInsurer.size()]);
 			for ( i = 0; i < larrFinal.length; i++ )
 			{
 				try
@@ -1754,6 +1773,107 @@ public class ReceiptServiceImpl
 				{
 					throw new BigBangException(e.getMessage(), e);
 				}
+			}
+		}
+
+		ldb = null;
+		for(UUID lidI : larrReceipts.keySet())
+		{
+			larrByInsurer = larrReceipts.get(lidI);
+			larrFinal = larrByInsurer.toArray(new UUID[larrByInsurer.size()]);
+			if ( larrFinal.length != 0 )
+				continue;
+
+			lstrExtraText = null;
+			ldblExtraValue = null;
+			lbIsCommissions = null;
+			lbHasTax = null;
+			if ( extraInfo != null )
+			{
+				for ( i = 0; i < extraInfo.length; i++ )
+				{
+					if ( lidI.equals(UUID.fromString(extraInfo[i].insurerId)) )
+					{
+						lstrExtraText = extraInfo[i].text;
+						ldblExtraValue = ( extraInfo[i].value == null ? null : new BigDecimal(extraInfo[i].value + "") );
+						lbIsCommissions = extraInfo[i].isCommissions;
+						lbHasTax = extraInfo[i].hasTax;
+						break;
+					}
+				}
+			}
+			if ( ldblExtraValue == null )
+				continue;
+
+			if ( ldb == null )
+			{
+				try
+				{
+					ldb = new MasterDB();
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+
+			try
+			{
+				ldb.BeginTrans();
+			}
+			catch (Throwable e)
+			{
+				try {ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			try
+			{
+				if ( lidSet == null )
+				{
+					lobjSet = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), null);
+					lobjSet.setAt(0, new Timestamp(new java.util.Date().getTime()));
+					lobjSet.setAt(1, Engine.getCurrentUser());
+					lobjSet.SaveToDb(ldb);
+					lidSet = lobjSet.getKey();
+				}
+
+				lobjMap = InsurerAccountingMap.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjMap.setAt(InsurerAccountingMap.I.SET, lidSet);
+				lobjMap.setAt(InsurerAccountingMap.I.OWNER, lidI);
+				lobjMap.setAt(InsurerAccountingMap.I.SETTLEDON, (Timestamp)null);
+				lobjMap.setAt(InsurerAccountingMap.I.EXTRATEXT, lstrExtraText);
+				lobjMap.setAt(InsurerAccountingMap.I.EXTRAVALUE, ldblExtraValue);
+				lobjMap.setAt(InsurerAccountingMap.I.ISCOMMISSION, lbIsCommissions);
+				lobjMap.setAt(InsurerAccountingMap.I.HASTAX, lbHasTax);
+				lobjMap.SaveToDb(ldb);
+			}
+			catch (Throwable e)
+			{
+				try {ldb.Rollback(); } catch (Throwable e1) {}
+				try {ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			try
+			{
+				ldb.Commit();
+			}
+			catch (Throwable e)
+			{
+				try {ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+		}
+		if ( ldb != null )
+		{
+			try
+			{
+				ldb.Disconnect();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
 			}
 		}
 	}
