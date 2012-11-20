@@ -17,6 +17,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.DebitNoteBatch;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
@@ -725,8 +726,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				//TODO REQUESTS
-				//EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST, result.id));
 
 				responseHandler.onResponse(result);
 			}
@@ -748,8 +748,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				//TODO REQUESTS
-				//EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST, result.id));
 
 				responseHandler.onResponse(result);
 			}
@@ -764,4 +763,22 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		});
 	}
 
+	@Override
+	public void createSubPolicyReceipts(DebitNoteBatch debitNote, final ResponseHandler<Void> responseHandler){
+		service.createSubPolicyReceipts(debitNote, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				responseHandler.onResponse(result);
+			}		
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{"Error creating debitnotebatch"});
+				super.onResponseFailure(caught);
+			}
+		
+		});
+	}
+	
 }
