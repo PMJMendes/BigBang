@@ -53,7 +53,7 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 		void removeReceiptFromAccountingList(String id);
 		HasCheckables getCheckableSelectedList();
 		HasEditableValue<Receipt> getReceiptForm();
-		HasEditableValue<InsurerAccountingExtra> getInsurerAccountingExtraForm();
+		HasEditableValue<InsurerAccountingExtra[]> getInsurerAccountingExtraForm();
 
 		HasValueSelectables<ReceiptStub> getMainList();
 		HasValueSelectables<ReceiptStub> getSelectedList();
@@ -104,9 +104,7 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 					view.removeAllReceiptsFromAccountingList();
 					break;
 				case SEND_INSURER_ACCOUNTING:
-					if(validate()){
-						sendInsurerAccounting(view.getSelectedList().getAll());
-					}
+					sendInsurerAccounting(view.getSelectedList().getAll());
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();
@@ -257,37 +255,14 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 	public void sendInsurerAccounting(Collection<ValueSelectable<ReceiptStub>> collection){
 		String[] receiptIds = new String[collection.size()];
 
-		if(receiptIds.length == 0){
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhum recibo seleccionado"), TYPE.ALERT_NOTIFICATION));				
-			return;
-		}
-
-		String insurerId = new String();
 		int i = 0;
 		for(ValueSelectable<ReceiptStub> r : collection){
 			ReceiptStub receipt = r.getValue();
 			receiptIds[i] = receipt.id;
-
-			if(insurerId != null){
-				if(insurerId.isEmpty()){
-					insurerId = receipt.insurerId;
-				}else if(!insurerId.equalsIgnoreCase(receipt.insurerId)){
-					insurerId = null;
-				}
-			}
-
 			i++;
 		}
 
-		InsurerAccountingExtra[] extras = null;
-
-		if(insurerId != null) {
-			InsurerAccountingExtra extra = view.getInsurerAccountingExtraForm().getInfo();
-			extra.insurerId = insurerId;
-			extras = new InsurerAccountingExtra[]{
-					extra
-			};
-		}
+		InsurerAccountingExtra[] extras = view.getInsurerAccountingExtraForm().getInfo();
 
 		broker.insurerAccounting(receiptIds, extras, new ResponseHandler<Void>() {
 
@@ -303,29 +278,6 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 		});
 	}
 
-	protected boolean validate(){
-		Collection<ValueSelectable<ReceiptStub>> selected = view.getSelectedList().getAll();
-
-		InsurerAccountingExtra extra = view.getInsurerAccountingExtraForm().getInfo();
-
-		if(extra != null && (extra.value != null || extra.text != null)) {
-			String insurerId = null;
-
-			for(ValueSelectable<ReceiptStub> entry : selected) {
-				if(insurerId == null) {
-					insurerId = entry.getValue().insurerId;
-				}
-
-				if(!insurerId.equalsIgnoreCase(entry.getValue().insurerId)) {
-					showValidationError("Não pode preencher dados extra para recibos de várias seguradoras.");
-					return false;
-				}
-			}
-
-		}
-
-		return true;
-	}
 
 	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
 		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.RECEIPT, BigBangConstants.OperationIds.ReceiptProcess.INSURER_ACCOUNTING, new ResponseHandler<Boolean>() {
