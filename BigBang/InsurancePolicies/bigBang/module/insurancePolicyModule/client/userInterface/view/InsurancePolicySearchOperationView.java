@@ -220,6 +220,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			public void onCancelRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CANCEL_EDIT));
 			}
+			
+			@Override
+			public void onCreateSubPolicyReceipt() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_SUB_POLICY_RECEIPT));
+			}
 
 		};
 
@@ -678,5 +683,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void showExerciseForm(boolean b) {
 		this.exerciseChooser.getNonScrollableContent().setVisible(b);
+	}
+
+	@Override
+	public void allowCreateSubPolicyReceipt(boolean allow) {
+		this.toolbar.allowCreateSubPolicyReceipt(allow);
 	}
 }
