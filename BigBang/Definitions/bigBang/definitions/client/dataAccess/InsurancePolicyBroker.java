@@ -5,6 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.DebitNoteBatch;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
@@ -99,5 +100,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	void getDeadClientPolicies(String clientid,
 			ResponseHandler<Collection<InsurancePolicyStub>> policies);
+
+	void createSubPolicyReceipts(DebitNoteBatch debitNote,
+			ResponseHandler<Void> responseHandler);
 
 }
