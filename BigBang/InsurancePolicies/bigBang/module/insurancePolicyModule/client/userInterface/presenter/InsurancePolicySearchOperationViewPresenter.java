@@ -91,7 +91,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		CREATE_EXPENSE,
 		CREATE_RISK_ANALISYS, 
 		TRANSFER_TO_CLIENT, 
-		ON_NEW_RESULTS
+		ON_NEW_RESULTS, CREATE_SUB_POLICY_RECEIPT
 	}
 	public interface Display {
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -205,6 +205,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void setInvalidPolicySelector(boolean b);
 
 		void showExerciseForm(boolean b);
+
+		void allowCreateSubPolicyReceipt(boolean allow);
 	}
 
 	private InsurancePolicyBroker broker;
@@ -363,6 +365,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				case ON_NEW_RESULTS:
 					onNewResults();
 					break;
+				case CREATE_SUB_POLICY_RECEIPT:
+					onCreateSubPolicyReceipt();
+					break;
 				}
 
 			}
@@ -489,6 +494,13 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		this.bound = true;
 	}
 
+
+
+	protected void onCreateSubPolicyReceipt() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "createsubpolicyreceipt");
+		NavigationHistoryManager.getInstance().go(item);
+	}
 
 
 	protected void onNewResults() {
@@ -1135,6 +1147,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.allowCreateNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_NEGOTIATION));
 		view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
 		view.allowTransferToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT));
+		view.allowCreateSubPolicyReceipt(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT));
 
 	}
 
