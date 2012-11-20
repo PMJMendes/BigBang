@@ -20,6 +20,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	protected MenuItem detailedCalculations;
 	protected MenuItem validate;
 	protected MenuItem clientTransfer;
+	protected MenuItem createSubPolicyReceipt;
 
 	//DATA
 	protected MenuItem managerTransfer;
@@ -115,7 +116,16 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, validate);
+		
+		createSubPolicyReceipt = new MenuItem("Criar Nota de Débito", new Command(){
 
+			@Override
+			public void execute() {
+				onCreateSubPolicyReceipt();
+			}
+			
+		});
+		addItem(SUB_MENU.EXECUTE, createSubPolicyReceipt);
 		//DATA
 		managerTransfer = new MenuItem("Criar Transferência de Gestor", new Command() {
 
@@ -285,6 +295,9 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public void allowEdit(boolean allow) {
 		this.editCancelMenuItem.setEnabled(allow);
 	}
+	public void allowCreateSubPolicyReceipt(boolean allow){
+		this.createSubPolicyReceipt.setEnabled(allow);
+	}
 	
 
 	public abstract void onVoidPolicy();
@@ -324,4 +337,6 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public abstract void onCreateReceipt();
 	
 	public abstract void onTransferToClient();
+	
+	public abstract void onCreateSubPolicyReceipt();
 }
