@@ -127,7 +127,8 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 					value.referenceNumber,
 					value.coverageName,
 					value.clientNumber,
-					value.clientName
+					value.clientName,
+					value.insuredObjectName
 				});
 
 		}
