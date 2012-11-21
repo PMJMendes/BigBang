@@ -57,6 +57,7 @@ public class TransferToClient
 		try
 		{
 			GetProcess().GetData().setAt(17, midNewClient);
+			GetProcess().GetData().SaveToDb(pdb);
 
 			lobjNew = Client.GetInstance(Engine.getCurrentNameSpace(), midNewClient);
 		}
