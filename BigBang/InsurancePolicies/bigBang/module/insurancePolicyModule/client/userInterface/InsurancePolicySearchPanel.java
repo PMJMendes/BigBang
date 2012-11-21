@@ -200,6 +200,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 
 		filtersContainer.clear();
 		filtersContainer.add(filtersPanel);
+		filtersPanel.setFilterValue(Filters.STATUS, "Todas");
 
 	}
 
@@ -247,14 +248,17 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	private AllowedStates getAllowedState() {
 		String state = (String) filtersPanel.getFilterValue(Filters.STATUS);
 
-		if(state.equalsIgnoreCase("Todas")){
+		if("Todas".equalsIgnoreCase(state)){
 			return AllowedStates.ALL;
-		}else if(state.equalsIgnoreCase("Vivas")){
+		}else if("Vivas".equalsIgnoreCase(state)){
 			return AllowedStates.LIVE;
-		}else
+		}else if("Mortas".equalsIgnoreCase(state)){
 			return AllowedStates.NONLIVE;
-
+		}else {
+			return null;
+		}
 	}
+
 
 	@Override
 	public void onResults(Collection<InsurancePolicyStub> results) {
