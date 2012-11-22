@@ -12,6 +12,7 @@ public class ReceiptReturnForm extends FormView<ReturnMessage>{
 	public ReceiptReturnForm(){
 		
 		motive = new ExpandableListBoxFormField(ModuleConstants.ListIDs.RECEIPT_RETURN_MOTIVES, "Motivo");
+		motive.allowEdition(false);
 		addSection("Motivo");
 		addFormField(motive);
 		
