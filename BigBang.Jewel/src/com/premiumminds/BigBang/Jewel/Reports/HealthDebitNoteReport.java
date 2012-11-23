@@ -15,6 +15,8 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicyObject;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBase;
 
 public class HealthDebitNoteReport
@@ -33,16 +35,22 @@ public class HealthDebitNoteReport
 		throws BigBangJewelException
 	{
 		Receipt lobjReceipt;
+		SubPolicy lobjSubPolicy;
+		SubPolicyObject[] larrObjects;
 		Policy lobjPolicy;
 		Client lobjClient;
 		ObjectBase lobjZipCode;
 		Timestamp ldtAux;
+		StringBuilder lstrDesc;
+		int i;
 		HashMap<String, String> larrParams;
 		String[][] larrTables;
 
 		lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
+		lobjSubPolicy = lobjReceipt.getSubPolicy();
 		lobjPolicy = lobjReceipt.getAbsolutePolicy();
 		lobjClient = lobjPolicy.GetClient();
+		larrObjects = lobjSubPolicy.GetCurrentObjects();
 		if ( lobjClient.getAt(4) == null )
 			lobjZipCode = null;
 		else
@@ -59,6 +67,13 @@ public class HealthDebitNoteReport
 		}
 		ldtAux = new Timestamp(new java.util.Date().getTime());
 
+		lstrDesc = new StringBuilder((String)lobjReceipt.getAt(Receipt.I.NOTES));
+		if ( larrObjects != null )
+		{
+			for ( i = 0; i < larrObjects.length; i++ )
+				lstrDesc.append("\r").append(larrObjects[i].getLabel());
+		}
+
 		mstrNumber = lobjReceipt.getLabel();
 		mstrValue = String.format("%,.2f", (BigDecimal)lobjReceipt.getAt(Receipt.I.TOTALPREMIUM));
 
@@ -70,13 +85,13 @@ public class HealthDebitNoteReport
 		larrParams.put("ClientZipLocal", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(1)));
 		larrParams.put("Date", ldtAux.toString().substring(0, 10));
 		larrParams.put("RecNumber", mstrNumber);
-		larrParams.put("RecText", "");
+		larrParams.put("RecText", lstrDesc.toString());
 		larrParams.put("RecValue", mstrValue);
 
 		larrTables = new String[1][];
 		larrTables[0] = new String[6];
-		larrTables[0][0] = mstrNumber;
-		larrTables[0][1] = lobjReceipt.getLabel();
+		larrTables[0][0] = lobjPolicy.getLabel();
+		larrTables[0][1] = mstrNumber;
 		larrTables[0][2] = (lobjReceipt.getAt(9) == null ? "" : ((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
 		larrTables[0][3] = (lobjReceipt.getAt(10) == null ? "" : ((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
 		larrTables[0][4] = mstrValue;

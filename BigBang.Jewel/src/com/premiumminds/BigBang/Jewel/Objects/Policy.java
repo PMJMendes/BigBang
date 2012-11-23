@@ -862,16 +862,10 @@ public class Policy
 		{
 			while ( lrsInfo.next() )
 			{
-				lobjAux = SubPolicy.GetInstance(getNameSpace(), lrsInfo);
+				lobjAux = (SubPolicy)PNProcess.GetInstance(getNameSpace(), lrsInfo).GetData();
 				if ( (lobjAux.getAt(4) == null) || ((Timestamp)lobjAux.getAt(4)).after(pdtFrom) )
 					larrAux.add(lobjAux);
 			}
-		}
-		catch (BigBangJewelException e)
-		{
-			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw e;
 		}
 		catch (Throwable e)
 		{

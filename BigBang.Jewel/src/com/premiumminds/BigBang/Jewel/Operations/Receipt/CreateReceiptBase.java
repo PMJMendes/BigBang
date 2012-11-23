@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
@@ -98,7 +97,7 @@ public abstract class CreateReceiptBase
 				mobjData.midMediator = GetMediatorID();
 
 			if ( mbForceDebitNote && (mobjData.mstrNumber==null) )
-				mobjData.mstrNumber = GetDebitNoteNumber();
+				mobjData.mstrNumber = GetDebitNoteNumber(pdb);
 
 			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
@@ -186,12 +185,11 @@ public abstract class CreateReceiptBase
 		}
 	}
 
-	private String GetDebitNoteNumber()
+	private String GetDebitNoteNumber(SQLServer pdb)
 		throws BigBangJewelException
 	{
 		String lstrFilter;
 		IEntity lrefReceipts;
-        MasterDB ldb;
         ResultSet lrsReceipts;
         int llngResult;
         String lstrAux;
@@ -201,21 +199,11 @@ public abstract class CreateReceiptBase
 		{
 	        lstrFilter = GetProcess().GetData().getLabel() + ".%";
 			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt)); 
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsReceipts = lrefReceipts.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {lstrFilter},
+			lrsReceipts = lrefReceipts.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {lstrFilter},
 					new int[] {Integer.MIN_VALUE});
 		}
 		catch (Throwable e)
 		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -233,23 +221,12 @@ public abstract class CreateReceiptBase
 		catch (Throwable e)
 		{
 			try { lrsReceipts.close(); } catch (SQLException e1) {}
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
 			lrsReceipts.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{
