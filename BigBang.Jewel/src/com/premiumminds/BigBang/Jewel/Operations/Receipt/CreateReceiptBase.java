@@ -1,11 +1,16 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNScript;
@@ -90,6 +95,9 @@ public abstract class CreateReceiptBase
 			if ( mobjData.midMediator == null )
 				mobjData.midMediator = GetMediatorID();
 
+			if ( mbForceDebitNote && (mobjData.mstrNumber==null) )
+				mobjData.mstrNumber = GetDebitNoteNumber();
+
 			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
 			if ( lobjAux.isForCasualties() )
@@ -161,5 +169,78 @@ public abstract class CreateReceiptBase
 				TriggerOp(new ExternBlockEndProcessSend(lobjProc.getKey()), pdb);
 			}
 		}
+	}
+
+	private String GetDebitNoteNumber()
+		throws BigBangJewelException
+	{
+		String lstrFilter;
+		IEntity lrefReceipts;
+        MasterDB ldb;
+        ResultSet lrsReceipts;
+        int llngResult;
+        String lstrAux;
+        int llngAux;
+
+		try
+		{
+	        lstrFilter = GetProcess().GetData().getLabel() + ".%";
+			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsReceipts = lrefReceipts.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {lstrFilter},
+					new int[] {Integer.MIN_VALUE});
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		llngResult = 1;
+		try
+		{
+			while ( lrsReceipts.next() )
+			{
+				lstrAux = lrsReceipts.getString(2).substring(lstrFilter.length() - 1);
+				llngAux = Integer.parseInt(lstrAux);
+				if ( llngAux >= llngResult )
+					llngResult = llngAux + 1;
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsReceipts.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsReceipts.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lstrFilter.substring(0, lstrFilter.length() - 1) + llngResult;
 	}
 }

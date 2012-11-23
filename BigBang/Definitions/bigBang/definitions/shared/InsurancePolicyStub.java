@@ -27,6 +27,9 @@ public class InsurancePolicyStub
 	public String statusId;
 	public String statusText;
 	public PolicyStatus statusIcon;
+	public String insuranceAgencyId;
+	public String insuranceAgencyName;
+	public String insuranceAgencyShort;
 	
 	public InsurancePolicyStub()
 	{
@@ -55,5 +58,8 @@ public class InsurancePolicyStub
 		this.statusId = orig.statusId;
 		this.statusText = orig.statusText;
 		this.statusIcon = orig.statusIcon;
+		this.insuranceAgencyId = orig.insuranceAgencyId;
+		this.insuranceAgencyName = orig.insuranceAgencyName;
+		this.insuranceAgencyShort = orig.insuranceAgencyShort;
 	}
 }

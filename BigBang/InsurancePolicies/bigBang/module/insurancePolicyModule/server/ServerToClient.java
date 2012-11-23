@@ -81,6 +81,7 @@ public class ServerToClient
 		Category lobjCategory;
 		String lstrObject;
 		ObjectBase lobjStatus;
+		Company lobjComp;
 
 		try
 		{
@@ -93,6 +94,7 @@ public class ServerToClient
 			lstrObject = pobjSource.GetObjectFootprint();
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
 					(UUID)pobjSource.getAt(13));
+			lobjComp = pobjSource.GetCompany();
 		}
 		catch (Throwable e)
 		{
@@ -119,6 +121,9 @@ public class ServerToClient
 		mobjDest.caseStudy = (Boolean)pobjSource.getAt(12);
 		mobjDest.statusId = lobjStatus.getKey().toString();
 		mobjDest.statusText = lobjStatus.getLabel();
+		mobjDest.insuranceAgencyId = lobjComp.getKey().toString();
+		mobjDest.insuranceAgencyName = lobjComp.getLabel();
+		mobjDest.insuranceAgencyShort = (String)lobjComp.getAt(1);
 		switch ( (Integer)lobjStatus.getAt(1) )
 		{
 		case 0:
@@ -1478,7 +1483,6 @@ public class ServerToClient
 			buildPolicyStub(mobjOutPolicy, mobjPolicy);
 
 			mobjOutPolicy.managerId = lobjProc.GetManagerID().toString();
-			mobjOutPolicy.insuranceAgencyId = ((UUID)mobjPolicy.getAt(2)).toString();
 			mobjOutPolicy.startDate = (mobjPolicy.getAt(4) == null ? null :
 					((Timestamp)mobjPolicy.getAt(4)).toString().substring(0, 10));
 			mobjOutPolicy.durationId = ((UUID)mobjPolicy.getAt(5)).toString();

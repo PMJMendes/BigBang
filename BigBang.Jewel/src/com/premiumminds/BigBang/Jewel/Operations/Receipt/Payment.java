@@ -100,10 +100,6 @@ public class Payment
 		lbDirect = false;
 		for ( i = 0; i < marrData.length; i++ )
 		{
-			marrData[i].mdblValue = marrData[i].mdblValue.abs();
-			if ( lobjReceipt.isReverseCircuit() )
-				marrData[i].mdblValue = marrData[i].mdblValue.negate();
-
 			ldblTotal = ldblTotal.add(marrData[i].mdblValue);
 			if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter && midReceipt.equals(marrData[i].midReceipt) )
 					throw new JewelPetriException("Erro: Não pode compensar um recibo consigo próprio.");
@@ -113,7 +109,16 @@ public class Payment
 		}
 
 		if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
-			throw new JewelPetriException("Erro: Valor total dos pagamentos não está correcto.");
+		{
+			ldblTotal = BigDecimal.ZERO;
+			for ( i = 0; i < marrData.length; i++ )
+			{
+				marrData[i].mdblValue = marrData[i].mdblValue.negate();
+				ldblTotal = ldblTotal.add(marrData[i].mdblValue);
+			}
+			if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
+				throw new JewelPetriException("Erro: Valor total dos pagamentos não está correcto.");
+		}
 
 		for ( i = 0; i < marrData.length; i++ )
 		{

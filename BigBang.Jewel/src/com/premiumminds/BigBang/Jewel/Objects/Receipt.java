@@ -656,10 +656,10 @@ public class Receipt
 
     	try
     	{
-        	if ( isReverseCircuit() )
-        		mrefPayment = getProcess().GetLiveLog(Constants.OPID_Receipt_SendPayment);
-        	
-        	if ( mrefPayment == null )
+//        	if ( isReverseCircuit() )
+//        		mrefPayment = getProcess().GetLiveLog(Constants.OPID_Receipt_SendPayment);
+//        	
+//        	if ( mrefPayment == null )
         		mrefPayment = getProcess().GetLiveLog(Constants.OPID_Receipt_Payment);
 		}
     	catch (BigBangJewelException e)

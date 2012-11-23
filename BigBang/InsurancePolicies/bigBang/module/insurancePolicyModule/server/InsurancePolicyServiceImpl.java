@@ -768,20 +768,20 @@ public class InsurancePolicyServiceImpl
 				lopCR = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateReceipt(larrSubs[i].GetProcessID());
 				lopCR.mbForceDebitNote = true;
 				lopCR.mobjData = new ReceiptData();
-//				lopCR.mobjData.mstrNumber;
-//				lopCR.mobjData.midType;
+				lopCR.mobjData.mstrNumber = null;
+				lopCR.mobjData.midType = Constants.RecType_Continuing;
 //				lopCR.mobjData.mdblTotal;
 //				lopCR.mobjData.mdblCommercial;
 //				lopCR.mobjData.mdblCommissions;
-//				lopCR.mobjData.mdblRetrocessions;
-//				lopCR.mobjData.mdblFAT;
-//				lopCR.mobjData.mdblBonusMalus;
-//				lopCR.mobjData.mbIsMalus;
+				lopCR.mobjData.mdblRetrocessions = BigDecimal.ZERO;
+				lopCR.mobjData.mdblFAT = BigDecimal.ZERO;
+				lopCR.mobjData.mdblBonusMalus = null;
+				lopCR.mobjData.mbIsMalus = null;
 //				lopCR.mobjData.mdtIssue;
 				lopCR.mobjData.mdtMaturity = ldtFrom;
 				lopCR.mobjData.mdtEnd = ldtTo;
 				lopCR.mobjData.mdtDue = ldtLimit;
-//				lopCR.mobjData.midMediator;
+				lopCR.mobjData.midMediator = larrSubs[i].GetOwner().getMediator().getKey();
 //				lopCR.mobjData.mstrNotes;
 //				lopCR.mobjData.mstrDescription;
 
@@ -896,7 +896,8 @@ public class InsurancePolicyServiceImpl
 	{
 		return new String[] {"[:Number]", "[:Process]", "[:SubLine:Line:Category]", "[:SubLine:Line:Category:Name]",
 				"[:SubLine:Line]", "[:SubLine:Line:Name]", "[:SubLine]", "[:SubLine:Name]", "[:Case Study]", "[:Status]",
-				"[:Status:Status]", "[:Status:Level], [:Client], [:Client:Number], [:Client:Name]"};
+				"[:Status:Status]", "[:Status:Level]", "[:Client]", "[:Client:Number]", "[:Client:Name]", "[:Company]",
+				"[:Company:Name]", "[:Company:Acronym]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -904,7 +905,6 @@ public class InsurancePolicyServiceImpl
 	{
 		InsurancePolicySearchParameter lParam;
 		String lstrAux;
-//		IEntity lrefClients;
 		IEntity lrefObjects;
 
 		if ( !(pParam instanceof InsurancePolicySearchParameter) )
@@ -1095,16 +1095,19 @@ public class InsurancePolicyServiceImpl
 		lobjResult.clientId = ((UUID)parrValues[12]).toString();
 		lobjResult.clientNumber = ((Integer)parrValues[13]).toString();
 		lobjResult.clientName = (String)parrValues[14];
-		lobjResult.categoryId = parrValues[2].toString();
+		lobjResult.categoryId = ((UUID)parrValues[2]).toString();
 		lobjResult.categoryName = (String)parrValues[3];
-		lobjResult.lineId = parrValues[4].toString();
+		lobjResult.lineId = ((UUID)parrValues[4]).toString();
 		lobjResult.lineName = (String)parrValues[5];
-		lobjResult.subLineId = parrValues[6].toString();
+		lobjResult.subLineId = ((UUID)parrValues[6]).toString();
 		lobjResult.subLineName = (String)parrValues[7];
 		lobjResult.insuredObject = lstrObject;
 		lobjResult.caseStudy = (Boolean)parrValues[8];
 		lobjResult.statusId = ((UUID)parrValues[9]).toString();
 		lobjResult.statusText = (String)parrValues[10];
+		lobjResult.insuranceAgencyId = ((UUID)parrValues[15]).toString();
+		lobjResult.insuranceAgencyName = (String)parrValues[16];
+		lobjResult.insuranceAgencyShort = (String)parrValues[17];
 		switch ( (Integer)parrValues[11] )
 		{
 		case 0:

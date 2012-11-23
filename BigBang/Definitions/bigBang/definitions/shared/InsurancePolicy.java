@@ -27,7 +27,6 @@ public class InsurancePolicy
 	}
 
 	public String managerId;
-	public String insuranceAgencyId;
 	public String startDate;
 	public String durationId;
 	public String fractioningId;
@@ -67,7 +66,6 @@ public class InsurancePolicy
 		int i;
 
 		this.managerId = orig.managerId;
-		this.insuranceAgencyId = orig.insuranceAgencyId;
 		this.startDate = orig.startDate;
 		this.durationId = orig.durationId;
 		this.fractioningId = orig.fractioningId;
