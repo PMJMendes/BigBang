@@ -9,7 +9,7 @@ public class CreateSubPolicyReceiptForm extends FormView<DebitNoteBatch>{
 	protected DatePickerFormField from, to, limitDate;
 
 	public CreateSubPolicyReceiptForm() {
-		addSection("Criar Nota de Débito");
+		addSection("Criar Notas de Débito (Saúde)");
 
 		from = new DatePickerFormField("De");	
 		to = new DatePickerFormField("Até");	

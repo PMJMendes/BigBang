@@ -94,7 +94,7 @@ public class InsurancePolicyCreateSubPolicyReceiptViewPresenter implements ViewP
 			
 			@Override
 			public void onResponse(Void response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nota de débito criada com sucesso"), TYPE.TRAY_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Notas de débito criada com sucesso"), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				item.removeParameter("show");
 				NavigationHistoryManager.getInstance().go(item);
@@ -102,7 +102,7 @@ public class InsurancePolicyCreateSubPolicyReceiptViewPresenter implements ViewP
 			
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível criar a nota de débito"), TYPE.ALERT_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível criar as notas de débito"), TYPE.ALERT_NOTIFICATION));
 			}
 		});
 	}
