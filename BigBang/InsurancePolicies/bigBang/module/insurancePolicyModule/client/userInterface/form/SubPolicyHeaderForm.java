@@ -128,6 +128,7 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 		this.client.setValue(info.clientId);
 		this.fractioning.setValue(info.fractioningId);
 		this.policyStatus.setValue(info.statusText);
+		this.premium.setValue(info.premium);
 		Resources resources = GWT.create(Resources.class);
 		if(value.statusIcon == null) {
 			statusIcon.setResource(resources.provisionalPolicyIcon());
