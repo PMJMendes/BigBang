@@ -117,7 +117,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.EXECUTE, validate);
 		
-		createSubPolicyReceipt = new MenuItem("Criar Nota de Débito", new Command(){
+		createSubPolicyReceipt = new MenuItem("Criar Notas de Débito (Saúde)", new Command(){
 
 			@Override
 			public void execute() {
