@@ -147,6 +147,7 @@ public class BigBang_Tests
 //		TestPolicyChangeClient.DoTest();
 //		TestPolicyVoid.DoTest();
 //		TestPolicyDoubleInit.DoTest();
+//		TestPolicyCreateSubDebitNotes.DoTest();
 //
 //		TestObjectGet.DoTest();
 //		TestObjectCreate.DoTest();

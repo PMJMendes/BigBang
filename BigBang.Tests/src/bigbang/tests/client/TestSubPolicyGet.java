@@ -26,6 +26,6 @@ public class TestSubPolicyGet
 			}
 		};
 
-		Services.subPolicyService.getSubPolicy("F01F675F-CB85-46E2-90E1-9FFA010FB114", callback);
+		Services.subPolicyService.getSubPolicy("dd9d5ed0-0b8e-40b8-b3e5-a0fe00e41644", callback);
 	}
 }
