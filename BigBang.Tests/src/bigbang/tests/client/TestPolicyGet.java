@@ -50,7 +50,7 @@ public class TestPolicyGet
 		};
 
 		parameter = new InsurancePolicySearchParameter();
-		parameter.freeText = "o";
+//		parameter.freeText = "o";
 //		parameter.ownerId = "CAABA817-DA4D-418B-AECE-A0FE00E1B27C";
 //		parameter.allowedStates = InsurancePolicySearchParameter.AllowedStates.NONLIVE;
 		sorts = new InsurancePolicySortParameter();
