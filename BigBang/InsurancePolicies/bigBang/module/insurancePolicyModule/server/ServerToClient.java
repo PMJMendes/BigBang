@@ -1606,6 +1606,7 @@ public class ServerToClient
 			IProcess lobjProc;
 			User lobjManager;
 			Mediator lobjMed;
+			Client lobjClient;
 
 			try
 			{
@@ -1613,6 +1614,7 @@ public class ServerToClient
 				lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjSubPolicy.GetProcessID());
 				lobjManager = User.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetManagerID());
 				lobjMed = mobjParent.getMediator();
+				lobjClient = mobjParent.GetClient();
 			}
 			catch (Throwable e)
 			{
@@ -1634,6 +1636,9 @@ public class ServerToClient
 			mobjOutPolicy.premium = (mobjSubPolicy.getAt(8) == null ? null : ((BigDecimal)mobjSubPolicy.getAt(8)).doubleValue());
 			mobjOutPolicy.docushare = (String)mobjSubPolicy.getAt(9);
 			mobjOutPolicy.inheritSubLineId = mobjSubLine.getKey().toString();
+			mobjOutPolicy.inheritClientId = (lobjClient == null ? null : lobjClient.getKey().toString());
+			mobjOutPolicy.inheritClientNumber = (lobjClient == null ? null : ((Integer)lobjClient.getAt(1)).toString());
+			mobjOutPolicy.inheritClientName = (lobjClient == null ? null : lobjClient.getLabel());
 		}
 	}
 

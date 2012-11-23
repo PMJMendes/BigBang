@@ -1,6 +1,7 @@
 package bigBang.module.insurancePolicyModule.server;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -722,6 +723,10 @@ public class InsurancePolicyServiceImpl
 		Timestamp ldtLimit;
 		com.premiumminds.BigBang.Jewel.Objects.SubPolicy[] larrSubs;
 		MasterDB ldb;
+		UUID lidSet;
+		BigDecimal ldblPremium;
+		UUID lidFrac;
+		String lstrDesc;
 		com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateReceipt lopCR;
 		int i;
 
@@ -761,31 +766,57 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		lidSet = null;
 		try
 		{
 			for ( i = 0; i < larrSubs.length; i++ )
 			{
+				ldblPremium = (BigDecimal)larrSubs[i].getAt(8);
+				if ( ldblPremium == null )
+					ldblPremium = BigDecimal.ZERO;
+				else
+				{
+					lidFrac = (UUID)larrSubs[i].getAt(5);
+					if ( Constants.FracID_Semester.equals(lidFrac) )
+						ldblPremium = ldblPremium.divide(new BigDecimal(2)).setScale(2, RoundingMode.HALF_UP);
+					else if ( Constants.FracID_Quarter.equals(lidFrac) )
+						ldblPremium = ldblPremium.divide(new BigDecimal(4)).setScale(2, RoundingMode.HALF_UP);
+					else if ( Constants.FracID_Month.equals(lidFrac) )
+						ldblPremium = ldblPremium.divide(new BigDecimal(12)).setScale(2, RoundingMode.HALF_UP);
+				}
+
+				lstrDesc = "Custo de adesão, no período de " + ldtFrom.toString().subSequence(0, 10) + " a " +
+						ldtTo.toString().substring(0, 10) + ", do Seguro de Saúde Grupo, apólice nr. " +
+						lobjPolicy.getLabel() + ", para o agregado familiar de " +
+						larrSubs[i].GetClient().getLabel() + ".";
+				if ( lstrDesc.length() > 250 )
+					lstrDesc = lstrDesc.substring(0, 250);
+
 				lopCR = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateReceipt(larrSubs[i].GetProcessID());
 				lopCR.mbForceDebitNote = true;
+				lopCR.midDebitNoteSet = lidSet;
+
 				lopCR.mobjData = new ReceiptData();
 				lopCR.mobjData.mstrNumber = null;
 				lopCR.mobjData.midType = Constants.RecType_Continuing;
-//				lopCR.mobjData.mdblTotal;
-//				lopCR.mobjData.mdblCommercial;
-//				lopCR.mobjData.mdblCommissions;
+				lopCR.mobjData.mdblTotal = ldblPremium;
+				lopCR.mobjData.mdblCommercial = null;
+				lopCR.mobjData.mdblCommissions = BigDecimal.ZERO;
 				lopCR.mobjData.mdblRetrocessions = BigDecimal.ZERO;
-				lopCR.mobjData.mdblFAT = BigDecimal.ZERO;
+				lopCR.mobjData.mdblFAT = null;
 				lopCR.mobjData.mdblBonusMalus = null;
 				lopCR.mobjData.mbIsMalus = null;
-//				lopCR.mobjData.mdtIssue;
+				lopCR.mobjData.mdtIssue = new Timestamp(new java.util.Date().getTime());
 				lopCR.mobjData.mdtMaturity = ldtFrom;
 				lopCR.mobjData.mdtEnd = ldtTo;
 				lopCR.mobjData.mdtDue = ldtLimit;
 				lopCR.mobjData.midMediator = larrSubs[i].GetOwner().getMediator().getKey();
-//				lopCR.mobjData.mstrNotes;
-//				lopCR.mobjData.mstrDescription;
+				lopCR.mobjData.mstrNotes = lstrDesc;
+				lopCR.mobjData.mstrDescription = null;
 
 				lopCR.Execute(ldb);
+
+				lidSet = lopCR.midDebitNoteSet;
 			}
 		}
 		catch (Throwable e)

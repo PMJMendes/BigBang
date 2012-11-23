@@ -35,6 +35,7 @@ public abstract class CreateReceiptBase
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 	public boolean mbForceDebitNote;
+	public transient UUID midDebitNoteSet;
 
 	public abstract Timestamp DateCheck() throws BigBangJewelException;
 
@@ -81,7 +82,8 @@ public abstract class CreateReceiptBase
 		IProcess lobjMe;
 		Receipt lobjAux;
 		IScript lobjScript;
-		IProcess lobjProc; 
+		IProcess lobjProc;
+		ExternForceInternalDebitNote lopEFIDN;
 		TriggerImageOnCreate lopTIOC;
 		UUID lidProfile;
 		int i;
@@ -141,7 +143,20 @@ public abstract class CreateReceiptBase
 
 		if ( mbForceDebitNote )
 		{
-			TriggerOp(new ExternForceInternalDebitNote(lobjProc.getKey()), pdb);
+			lopEFIDN = new ExternForceInternalDebitNote(lobjProc.getKey());
+			if ( midDebitNoteSet == null )
+			{
+				try
+				{
+					midDebitNoteSet = lopEFIDN.generatePrintSet(pdb);
+				}
+				catch (Throwable e)
+				{
+					throw new JewelPetriException(e.getMessage(), e);
+				}
+			}
+			lopEFIDN.midPrintSet = midDebitNoteSet;
+			TriggerOp(lopEFIDN, pdb);
 		}
 		else
 		{

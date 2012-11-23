@@ -16,7 +16,10 @@ public class SubPolicy
 	public Double premium; // Numérico com duas casas decimais: prémio comercial.
 	public String docushare;
 	public String inheritSubLineId;
-	
+	public String inheritClientId;
+	public String inheritClientNumber;
+	public String inheritClientName;
+
 	public Contact[] contacts;
 	public Document[] documents;
 
@@ -50,6 +53,9 @@ public class SubPolicy
 		this.premium = orig.premium;
 		this.docushare = orig.docushare;
 		this.inheritSubLineId = orig.inheritSubLineId;
+		this.inheritClientId = orig.inheritClientId;
+		this.inheritClientNumber = orig.inheritClientNumber;
+		this.inheritClientName = orig.inheritClientName;
 
 		if ( orig.contacts == null )
 			this.contacts = null;

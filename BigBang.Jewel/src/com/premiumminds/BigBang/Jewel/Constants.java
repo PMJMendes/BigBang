@@ -564,6 +564,14 @@ public class Constants
 	public static final UUID ObjTypeID_Site      = UUID.fromString("CD709854-DB59-424B-904A-9F9501403847");
 	public static final UUID ObjTypeID_Animal    = UUID.fromString("7A9A0E31-668A-4113-A03E-9F9501403E6E");
 
+	// Fractioning Types
+	public static final UUID FracID_Year     = UUID.fromString("B8234D73-4432-45A0-B670-9F8101580CB5");
+	public static final UUID FracID_Semester = UUID.fromString("9EDAE32A-29DF-46F1-B37B-9F8101581416");
+	public static final UUID FracID_Quarter  = UUID.fromString("6165B7A7-1768-4A3E-A482-9F81015819BA");
+	public static final UUID FracID_Month    = UUID.fromString("4D5AAE28-4CC6-4B50-A478-9F8101582002");
+	public static final UUID FracID_Single   = UUID.fromString("EA520D66-D63F-4D3F-B3FC-9F8101582637");
+	public static final UUID FracID_Variable = UUID.fromString("87CAC8D6-C5CE-4B9B-B707-A04E00F284DC");
+
 	// ExercisePeriods
 	public static final UUID ExID_None     = UUID.fromString("0E99E224-9778-408B-829C-9F9601245A83");
 	public static final UUID ExID_Year     = UUID.fromString("8A81B8E7-B267-4674-ABCA-9F960124622B");
@@ -630,6 +638,7 @@ public class Constants
 	public static final UUID TID_Stamp               = UUID.fromString("BE3106A1-9C31-40D3-ACC2-A0B300D3E585");
 	public static final UUID TID_DASForm             = UUID.fromString("4C6C0B65-1FBA-417B-A2F5-A0E500E572B7");
 	public static final UUID TID_Logo                = UUID.fromString("73297AD9-2741-4EFC-87D7-A0FA011A93F5");
+	public static final UUID TID_HealthDebitNote     = UUID.fromString("C4E53620-782C-4F34-B038-A11200E6F58A");
 
 	// Contact Types
 	public static final UUID CtTypeID_General       = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");
