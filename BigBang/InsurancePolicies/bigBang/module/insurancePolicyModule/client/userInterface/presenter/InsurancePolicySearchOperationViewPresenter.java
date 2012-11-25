@@ -498,7 +498,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 	protected void onCreateSubPolicyReceipt() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("show", "createsubpolicyreceipt");
+		item.setParameter("show", "createsubpolicyreceipts");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

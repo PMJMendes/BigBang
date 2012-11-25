@@ -198,9 +198,12 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 				}else if(show.equalsIgnoreCase("replyinforequest")){
 					present("INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("createsubpolicyreceipts")){
+					present("INSURANCE_POLICY_CREATE_SUB_POLICY_RECEIPT", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
-			
+
 			@Override
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
 				return;
