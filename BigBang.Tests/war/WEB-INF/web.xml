@@ -62,11 +62,11 @@
 	</servlet-mapping>
 
 	<!-- SPNEGO Integrated Login -->
-	<!-- -->
+	<!--
 	<filter>
 		<filter-name>JewelWebFilter</filter-name>
 		<filter-class>net.sourceforge.spnego.SpnegoHttpFilter</filter-class>
-		<!-- <filter-class>Jewel.Web.Filter.JewelWebHttpFilter</filter-class> -->
+		--><!-- <filter-class>Jewel.Web.Filter.JewelWebHttpFilter</filter-class> --><!--
 		<init-param>
 			<param-name>spnego.allow.basic</param-name>
 			<param-value>false</param-value> 
@@ -120,6 +120,6 @@
 		<filter-name>JewelWebFilter</filter-name> 
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
-	<!-- -->
+	-->
 
 </web-app>

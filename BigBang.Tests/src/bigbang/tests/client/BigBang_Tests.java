@@ -23,8 +23,8 @@ public class BigBang_Tests
 			}
 		};
 
-		Services.authenticationService.login("CrediteEGS", callback);
-//		Services.authenticationService.login("root", "Premium.", "CrediteEGS", callback);
+//		Services.authenticationService.login("CrediteEGS", callback);
+		Services.authenticationService.login("root", "Premium.", "CrediteEGS", callback);
 	}
 
 	private void DoTests()
