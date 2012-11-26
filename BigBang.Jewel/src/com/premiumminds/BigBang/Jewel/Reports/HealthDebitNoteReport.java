@@ -87,6 +87,7 @@ public class HealthDebitNoteReport
 		larrParams.put("RecNumber", mstrNumber);
 		larrParams.put("RecText", lstrDesc.toString());
 		larrParams.put("RecValue", mstrValue);
+		larrParams.put("LimitDate", lobjReceipt.getExternalDueDate().toString().substring(0, 10));
 
 		larrTables = new String[1][];
 		larrTables[0] = new String[6];
