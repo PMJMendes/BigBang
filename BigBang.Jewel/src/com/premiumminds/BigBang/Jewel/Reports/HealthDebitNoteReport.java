@@ -49,7 +49,7 @@ public class HealthDebitNoteReport
 		lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
 		lobjSubPolicy = lobjReceipt.getSubPolicy();
 		lobjPolicy = lobjReceipt.getAbsolutePolicy();
-		lobjClient = lobjPolicy.GetClient();
+		lobjClient = lobjSubPolicy.GetClient();
 		larrObjects = lobjSubPolicy.GetCurrentObjects();
 		if ( lobjClient.getAt(4) == null )
 			lobjZipCode = null;
