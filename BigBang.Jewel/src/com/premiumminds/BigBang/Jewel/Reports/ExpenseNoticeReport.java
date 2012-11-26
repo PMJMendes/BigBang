@@ -113,7 +113,7 @@ public class ExpenseNoticeReport
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
-			larrTables[i] = new String[6];
+			larrTables[i] = new String[7];
 			larrTables[i][0] = lobjCompany.getLabel();
 			larrTables[i][1] = lobjPolicy.getLabel();
 			larrTables[i][2] = ( lstrObject == null ? "" : lstrObject );
