@@ -95,7 +95,7 @@ public class InsurancePolicyCreateSubPolicyReceiptViewPresenter implements ViewP
 
 				@Override
 				public void onResponse(Void response) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Notas de débito criada com sucesso"), TYPE.TRAY_NOTIFICATION));
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Notas de débito criadas com sucesso"), TYPE.TRAY_NOTIFICATION));
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 					item.removeParameter("show");
 					NavigationHistoryManager.getInstance().go(item);
