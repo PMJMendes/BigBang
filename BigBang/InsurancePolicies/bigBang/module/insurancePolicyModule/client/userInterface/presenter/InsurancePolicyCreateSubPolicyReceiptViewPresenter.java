@@ -90,21 +90,30 @@ public class InsurancePolicyCreateSubPolicyReceiptViewPresenter implements ViewP
 	}
 
 	protected void onConfirm() {
-		broker.createSubPolicyReceipts(view.getForm().getInfo(), new ResponseHandler<Void>() {
-			
-			@Override
-			public void onResponse(Void response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Notas de débito criada com sucesso"), TYPE.TRAY_NOTIFICATION));
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("show");
-				NavigationHistoryManager.getInstance().go(item);
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível criar as notas de débito"), TYPE.ALERT_NOTIFICATION));
-			}
-		});
+		if(view.getForm().validate()){
+			broker.createSubPolicyReceipts(view.getForm().getInfo(), new ResponseHandler<Void>() {
+
+				@Override
+				public void onResponse(Void response) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Notas de débito criada com sucesso"), TYPE.TRAY_NOTIFICATION));
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(item);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível criar as notas de débito"), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
+		else{
+			onValidationFailed();
+		}
+	}
+
+	private void onValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));		
 	}
 
 	protected void onCancel() {
