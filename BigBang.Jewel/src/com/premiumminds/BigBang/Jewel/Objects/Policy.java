@@ -824,7 +824,7 @@ public class Policy
 		return larrAux.toArray(new PolicyValue[larrAux.size()]);
     }
 
-    public SubPolicy[] GetCurrentSubPoliciesForDebit(Timestamp pdtFrom)
+    public SubPolicy[] GetCurrentSubPoliciesForDebit(UUID pidFrac, Timestamp pdtFrom)
     	throws BigBangJewelException
     {
 		ArrayList<SubPolicy> larrAux;
@@ -863,7 +863,8 @@ public class Policy
 			while ( lrsInfo.next() )
 			{
 				lobjAux = (SubPolicy)PNProcess.GetInstance(getNameSpace(), lrsInfo).GetData();
-				if ( (lobjAux.getAt(4) == null) || ((Timestamp)lobjAux.getAt(4)).after(pdtFrom) )
+				if ( ((pidFrac == null) || (pidFrac.equals(lobjAux.getAt(5)))) &&
+						((lobjAux.getAt(4) == null) || ((Timestamp)lobjAux.getAt(4)).after(pdtFrom)) )
 					larrAux.add(lobjAux);
 			}
 		}

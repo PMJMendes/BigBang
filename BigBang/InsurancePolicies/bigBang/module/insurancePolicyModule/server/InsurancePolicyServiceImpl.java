@@ -718,6 +718,7 @@ public class InsurancePolicyServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		Policy lobjPolicy;
+		UUID lidFrac;
 		Timestamp ldtFrom;
 		Timestamp ldtTo;
 		Timestamp ldtLimit;
@@ -725,7 +726,6 @@ public class InsurancePolicyServiceImpl
 		MasterDB ldb;
 		UUID lidSet;
 		BigDecimal ldblPremium;
-		UUID lidFrac;
 		String lstrDesc;
 		com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateReceipt lopCR;
 		int i;
@@ -733,6 +733,7 @@ public class InsurancePolicyServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		lidFrac = (batch.fractioningId == null ? null : UUID.fromString(batch.fractioningId));
 		ldtFrom = Timestamp.valueOf(batch.maturityDate + " 00:00:00.0");
 		ldtTo = Timestamp.valueOf(batch.endDate + " 00:00:00.0");
 		ldtLimit = Timestamp.valueOf(batch.limitDate + " 00:00:00.0");
@@ -740,7 +741,7 @@ public class InsurancePolicyServiceImpl
 		try
 		{
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(batch.policyId));
-			larrSubs = lobjPolicy.GetCurrentSubPoliciesForDebit(ldtFrom);
+			larrSubs = lobjPolicy.GetCurrentSubPoliciesForDebit(lidFrac, ldtFrom);
 		}
 		catch (Throwable e)
 		{

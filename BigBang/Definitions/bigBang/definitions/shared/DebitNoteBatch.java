@@ -8,6 +8,8 @@ public class DebitNoteBatch
 	private static final long serialVersionUID = 1L;
 
 	public String policyId;
+
+	public String fractioningId;
 	public String maturityDate;
 	public String endDate;
 	public String limitDate;
