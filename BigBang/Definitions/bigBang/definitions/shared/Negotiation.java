@@ -81,6 +81,13 @@ public class Negotiation
 
 	public String managerId;
 
+	public String ownerLabel;
+
+	public String inheritClientId;
+	public String inheritClientName;
+	public String inheritMediatorId;
+	public String inheritMediatorName;
+
 	public String notes;
 	public Contact[] contacts;
 	public Document[] documents;

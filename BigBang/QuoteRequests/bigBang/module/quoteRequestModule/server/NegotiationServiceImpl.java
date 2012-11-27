@@ -35,6 +35,9 @@ import bigBang.module.quoteRequestModule.shared.NegotiationSortParameter;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.QuoteRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CancelNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateExternRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateInfoRequest;
@@ -56,12 +59,17 @@ public class NegotiationServiceImpl
 		IProcess lobjProc;
 		Company lobjComp;
 		Negotiation lobjResult;
+		Mediator lobjMed;
 
 		try
 		{
 			lobjNeg = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(), pidNegotiation);
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjNeg.GetProcessID());
 			lobjComp = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjNeg.getAt(0));
+			if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScript().GetDataType()) )
+				lobjMed = ((Policy)lobjProc.GetParent().GetData()).getMediator();
+			else
+				lobjMed = ((QuoteRequest)lobjProc.GetParent().GetData()).GetClient().getMediator();
 
 			lobjResult = new Negotiation();
 			lobjResult.id = lobjNeg.getKey().toString();
@@ -69,6 +77,11 @@ public class NegotiationServiceImpl
 			lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 			lobjResult.ownerId = lobjProc.GetParent().GetDataKey().toString();
 			lobjResult.ownerTypeId = lobjProc.GetParent().GetScript().GetDataType().toString();
+			lobjResult.ownerLabel = lobjProc.GetParent().GetData().getLabel();
+			lobjResult.inheritClientId = lobjProc.GetParent().GetParent().GetDataKey().toString();
+			lobjResult.inheritClientName = lobjProc.GetParent().GetParent().GetData().getLabel();
+			lobjResult.inheritMediatorId = lobjMed.getKey().toString();
+			lobjResult.inheritMediatorName = lobjMed.getLabel();
 			lobjResult.companyId = lobjComp.getKey().toString();
 			lobjResult.companyName = lobjComp.getLabel();
 			lobjResult.limitDate = (lobjNeg.getAt(2) == null ? null : ((Timestamp)lobjNeg.getAt(2)).toString().substring(0, 10));
