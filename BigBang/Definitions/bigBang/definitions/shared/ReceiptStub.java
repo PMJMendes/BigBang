@@ -20,6 +20,7 @@ public class ReceiptStub
 	public String insurerId;
 	public String insurerName;
 	public String policyId;
+	public String ownerTypeId;
 	public String policyNumber;
 	public String categoryId;
 	public String categoryName;

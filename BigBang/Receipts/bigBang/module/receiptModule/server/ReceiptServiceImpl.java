@@ -159,6 +159,7 @@ public class ReceiptServiceImpl
 		lobjResult.insurerId = lobjCompany.getKey().toString();
 		lobjResult.insurerName = (String)lobjCompany.getAt(1);
 		lobjResult.policyId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
+		lobjResult.ownerTypeId = (lobjSubPolicy == null ? Constants.ObjID_Policy : Constants.ObjID_SubPolicy).toString();
 		lobjResult.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
 		lobjResult.categoryId = lobjCategory.getKey().toString();
 		lobjResult.categoryName = lobjCategory.getLabel();
@@ -321,6 +322,7 @@ public class ReceiptServiceImpl
             	lobjStub.insurerId = lobjCompany.getKey().toString();
             	lobjStub.insurerName = (String)lobjCompany.getAt(1);
             	lobjStub.policyId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
+        		lobjStub.ownerTypeId = (lobjSubPolicy == null ? Constants.ObjID_Policy : Constants.ObjID_SubPolicy).toString();
             	lobjStub.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
             	lobjStub.categoryId = lobjCategory.getKey().toString();
             	lobjStub.categoryName = lobjCategory.getLabel();
@@ -2581,6 +2583,8 @@ public class ReceiptServiceImpl
 		lobjResult.insurerName = (lobjCompany == null ? "(Erro)" : (String)lobjCompany.getAt(1));
 		lobjResult.policyId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : lobjPolicy.getKey().toString()) :
 				lobjSubPolicy.getKey().toString());
+		lobjResult.ownerTypeId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : Constants.ObjID_Policy.toString()) :
+				Constants.ObjID_SubPolicy.toString());
 		lobjResult.policyNumber = (lobjSubPolicy == null ? (lobjPolicy == null ? "(Erro)" : lobjPolicy.getLabel()) :
 				lobjSubPolicy.getLabel());
 		lobjResult.categoryId = (lobjCategory == null ? null : lobjCategory.getKey().toString());
