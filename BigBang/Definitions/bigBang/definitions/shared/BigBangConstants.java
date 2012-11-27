@@ -87,6 +87,10 @@ public class BigBangConstants {
 			public static final String PERCENTAGE = "CECC8014-200C-4C4F-9F47-9EFC01368139";
 			public static final String NEGOTIATED = "C7236BA7-73AD-40ED-B6DC-9EFC013691C8";
 		}
+
+		public static class MEDIATOR_IDS {
+			public static final String DIRECT = "C270BF38-771F-4B14-8677-A0FE00E1AEDB";
+		}
 	}
 
 	public static class OperationIds {
