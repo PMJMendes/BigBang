@@ -37,6 +37,7 @@ import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateSubCasualty;
@@ -58,6 +59,7 @@ public class CasualtyServiceImpl
 		Client lobjClient;
 		Casualty lobjResult;
 		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSub;
+		Mediator lobjMed;
 		String lstrCat;
 		String lstrObj;
 
@@ -69,6 +71,7 @@ public class CasualtyServiceImpl
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjCasualty.GetProcessID());
 			lobjClient = lobjCasualty.GetClient();
 			lobjSub = lobjCasualty.GetFirstSubCasualty();
+			lobjMed = lobjClient.getMediator();
 			if ( lobjSub != null )
 			{
 				lstrCat = lobjSub.GetSubLine().getDescription();
@@ -98,6 +101,8 @@ public class CasualtyServiceImpl
 				== null ? null : ((BigDecimal)lobjCasualty.getAt(
 				com.premiumminds.BigBang.Jewel.Objects.Casualty.I.PERCENTFAULT)).doubleValue());
 		lobjResult.managerId = lobjProcess.GetManagerID().toString();
+		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
+		lobjResult.inheritMediatorName = lobjMed.getLabel();
 
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
 

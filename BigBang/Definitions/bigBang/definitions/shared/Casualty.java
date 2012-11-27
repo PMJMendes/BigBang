@@ -9,4 +9,7 @@ public class Casualty
 	public String internalNotes;
 	public String managerId;
 	public Double percentFault;
+
+	public String inheritMediatorId;
+	public String inheritMediatorName;
 }
