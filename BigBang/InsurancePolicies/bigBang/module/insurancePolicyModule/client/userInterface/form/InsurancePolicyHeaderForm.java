@@ -74,7 +74,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		maturityDate = new DayMonthDatePickerFormField("Dia / Mês de Vencimento");
 		duration = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.DURATION, "Duração");
 		duration.setMandatory(true);
-		duration.setEditable(false);
+		duration.allowEdition(false);
 		startDate = new DatePickerFormField("Data de Início");
 		startDate.setMandatory(true);
 		endDate = new DatePickerFormField("Data de Fim");
