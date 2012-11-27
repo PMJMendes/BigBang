@@ -33,4 +33,13 @@ public class Expense
 	public boolean isManual;
 	public String notes;
 	public String referenceSubLineId; //TODO usar para obter a lista de coberturas
+
+	public String inheritInsurerId;
+	public String inheritInsurerName;
+	public String inheritMediatorId;
+	public String inheritMediatorName;
+	public String inheritMasterClientId;
+	public String inheritMasterClientName;
+	public String inheritMasterMediatorId;
+	public String inheritMasterMediatorName;
 }

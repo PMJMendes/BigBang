@@ -42,7 +42,9 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Coverage;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
@@ -75,6 +77,11 @@ public class ExpenseServiceImpl
 		IProcess lobjProcess;
 		ObjectBase lobjParent;
 		Client lobjClient;
+		Policy lobjPolicy;
+		Mediator lobjMed;
+		Company lobjComp;
+		Client lobjMasterClient;
+		Mediator lobjMasterMed;
 		ObjectBase lobjInsured;
 		ObjectBase lobjPolCov;
 		Coverage lobjCoverage;
@@ -91,7 +98,8 @@ public class ExpenseServiceImpl
 			lobjParent = lobjProcess.GetParent().GetData();
 			if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
 			{
-				lobjClient = (Client)lobjProcess.GetParent().GetParent().GetData();
+				lobjPolicy = (Policy)lobjProcess.GetParent().GetData();
+				lobjClient = lobjPolicy.GetClient();
 				if ( lobjExpense.getAt(3) != null )
 					lobjInsured = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(3));
 				if ( lobjExpense.getAt(5) != null )
@@ -100,9 +108,12 @@ public class ExpenseServiceImpl
 					lobjCoverage = ((PolicyCoverage)lobjPolCov).GetCoverage();
 				}
 				lobjSubLine = ((Policy)lobjProcess.GetParent().GetData()).GetSubLine();
+				lobjMasterClient = null;
+				lobjMasterMed = null;
 			}
 			else
 			{
+				lobjPolicy = (Policy)lobjProcess.GetParent().GetParent().GetData();
 				lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjParent.getAt(2));
 				if ( lobjExpense.getAt(4) != null )
 					lobjInsured = SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(4));
@@ -112,7 +123,11 @@ public class ExpenseServiceImpl
 					lobjCoverage = ((SubPolicyCoverage)lobjPolCov).GetCoverage();
 				}
 				lobjSubLine = ((Policy)lobjProcess.GetParent().GetParent().GetData()).GetSubLine();
+				lobjMasterClient = lobjPolicy.GetClient();
+				lobjMasterMed = lobjMasterClient.getMediator();
 			}
+			lobjMed = lobjPolicy.getMediator();
+			lobjComp = lobjPolicy.GetCompany();
 		}
 		catch (Throwable e)
 		{
@@ -144,6 +159,15 @@ public class ExpenseServiceImpl
 		lobjResult.isManual = (Boolean)lobjExpense.getAt(9);
 		lobjResult.notes = (String)lobjExpense.getAt(10);
 		lobjResult.referenceSubLineId = (lobjSubLine == null ? null : lobjSubLine.getKey().toString());
+
+		lobjResult.inheritInsurerId = lobjComp.getKey().toString();
+		lobjResult.inheritInsurerName = lobjComp.getLabel();
+		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
+		lobjResult.inheritMediatorName = lobjMed.getLabel();
+		lobjResult.inheritMasterClientId = (lobjMasterClient == null ? null : lobjMasterClient.getKey().toString());
+		lobjResult.inheritMasterClientName = (lobjMasterClient == null ? null : lobjMasterClient.getLabel());
+		lobjResult.inheritMasterMediatorId = (lobjMasterMed == null ? null : lobjMasterMed.getKey().toString());
+		lobjResult.inheritMasterMediatorName = (lobjMasterMed == null ? null : lobjMasterMed.getLabel());
 
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
 
