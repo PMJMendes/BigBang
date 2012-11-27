@@ -175,6 +175,7 @@ CasualtyDataBroker {
 			final ResponseHandler<Collection<CasualtyStub>> responseHandler) {
 		CasualtySearchParameter parameter = new CasualtySearchParameter();
 		parameter.ownerId = ownerId;
+		parameter.includeClosed = true;
 		
 		CasualtySortParameter sort = new CasualtySortParameter(SortableField.DATE, SortOrder.DESC);
 		
@@ -297,7 +298,7 @@ CasualtyDataBroker {
 			
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST, result.id));
+				//TODO REQUESTS 		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST, result.id));
 				responseHandler.onResponse(null);
 			}
 			
