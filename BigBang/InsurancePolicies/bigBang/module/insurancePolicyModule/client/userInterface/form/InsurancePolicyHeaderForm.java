@@ -74,16 +74,18 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		maturityDate = new DayMonthDatePickerFormField("Dia / Mês de Vencimento");
 		duration = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.DURATION, "Duração");
 		duration.setMandatory(true);
+		duration.setEditable(false);
 		startDate = new DatePickerFormField("Data de Início");
 		startDate.setMandatory(true);
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
-		fractioning.setMandatory(true);
+		fractioning.allowEdition(false);
 		premium = new NumericTextBoxFormField("Prémio Comercial Anual", true);
 		premium.setFieldWidth("175px");
 		premium.setUnitsLabel("€");
 		operationalProfile = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OPERATIONAL_PROFILES, "Perfil Operational");
 		operationalProfile.setEmptyValueString("O mesmo do Cliente");
+		operationalProfile.allowEdition(false);
 		caseStudy = new CheckBoxFormField("Case Study");
 
 		//CO-INSURANCE
