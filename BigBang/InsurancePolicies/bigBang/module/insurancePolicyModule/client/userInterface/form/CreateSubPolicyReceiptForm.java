@@ -3,19 +3,19 @@ package bigBang.module.insurancePolicyModule.client.userInterface.form;
 import bigBang.definitions.shared.DebitNoteBatch;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
 public class CreateSubPolicyReceiptForm extends FormView<DebitNoteBatch>{
 
-	protected ListBoxFormField fractioning;
+	protected ExpandableListBoxFormField fractioning;
 	protected DatePickerFormField from, to, limitDate;
 
 	public CreateSubPolicyReceiptForm() {
 		addSection("Criar Notas de Débito (Saúde)");
 
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
+		fractioning.allowEdition(false);
 		from = new DatePickerFormField("De");	
 		to = new DatePickerFormField("Até");	
 		limitDate = new DatePickerFormField("Data Limite");	
