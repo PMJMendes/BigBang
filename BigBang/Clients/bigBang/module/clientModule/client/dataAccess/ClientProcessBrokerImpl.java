@@ -277,7 +277,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST, result.id));
+				//TODO REQUESTS EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST, result.id));
 
 				handler.onResponse(result);
 			}
