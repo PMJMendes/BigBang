@@ -12,12 +12,17 @@ FormValidator<CreateSubPolicyReceiptForm> {
 	@Override
 	protected bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
+		valid &= validateFractioning();
 		valid &= validateMaturityDate();
 		valid &= validateEndDate();
 		valid &= validateDates();
 		valid &= validateLimitDate();
 
 		return new Result(valid, this.validationMessages);
+	}
+
+	private boolean validateFractioning() {
+		return validateGuid(form.fractioning, false);
 	}
 
 	private boolean validateDates() {
