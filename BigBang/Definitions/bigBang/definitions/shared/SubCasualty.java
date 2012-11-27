@@ -26,6 +26,13 @@ public class SubCasualty
 
 	}
 
+	public String inheritInsurerId;
+	public String inheritInsurerName;
+	public String inheritMasterClientId;
+	public String inheritMasterClientName;
+	public String inheritMasterMediatorId;
+	public String inheritMasterMediatorName;
+
 	public String insuredObjectId; //Lista tipificada dos objectos de apólice *ou* de sub-apólice, filtrada pelo ID da respectiva
 	public String insuredObjectName;
 	public SubCasualtyItem[] items; //Zero ou mais items

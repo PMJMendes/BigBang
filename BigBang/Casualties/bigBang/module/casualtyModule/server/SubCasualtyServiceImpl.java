@@ -32,6 +32,9 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
@@ -58,6 +61,9 @@ public class SubCasualtyServiceImpl
 		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
 		ObjectBase lobjOwner;
 		Policy lobjPolicy;
+		Client lobjClient;
+		Mediator lobjMed;
+		Company lobjComp;
 		SubCasualtyItem[] larrItems;
 		SubCasualty lobjResult;
 		BigDecimal ldblTotal;
@@ -76,6 +82,9 @@ public class SubCasualtyServiceImpl
 							(UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICY)) );
 			lobjPolicy = (Policy)( Constants.ObjID_Policy.equals(lobjOwner.getDefinition().getDefObject().getKey()) ? lobjOwner :
 					PNProcess.GetInstance(Engine.getCurrentNameSpace(), ((SubPolicy)lobjOwner).GetProcessID()).GetParent().GetData() );
+			lobjComp = lobjPolicy.GetCompany();
+			lobjClient = lobjPolicy.GetClient();
+			lobjMed = lobjClient.getMediator();
 			larrItems = lobjSubCasualty.GetCurrentItems();
 		}
 		catch (Throwable e)
@@ -99,6 +108,12 @@ public class SubCasualtyServiceImpl
 		lobjResult.hasJudicial = (Boolean)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.HASJUDICIAL);
 		lobjResult.text = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.DESCRIPTION);
 		lobjResult.internalNotes = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.NOTES);
+		lobjResult.inheritInsurerId = lobjComp.getKey().toString();
+		lobjResult.inheritInsurerName = lobjComp.getLabel();
+		lobjResult.inheritMasterClientId = lobjClient.getKey().toString();
+		lobjResult.inheritMasterClientName = lobjClient.getLabel();
+		lobjResult.inheritMasterMediatorId = lobjMed.getKey().toString();
+		lobjResult.inheritMasterMediatorName = lobjMed.getLabel();
 		if ( Constants.ObjID_Policy.equals(lobjOwner.getDefinition().getDefObject().getKey()) )
 			lobjResult.insuredObjectId = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICYOBJECT) == null ?
 					null : ((UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICYOBJECT)).toString() );
