@@ -2,7 +2,7 @@ package com.premiumminds.BigBang.Jewel.Operations.InfoRequest;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -54,7 +54,7 @@ public class CancelRequest
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
@@ -69,7 +69,7 @@ public class CancelRequest
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{

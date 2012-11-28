@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -616,7 +616,7 @@ public class ExpenseServiceImpl
 	public void massSendNotification(String[] expenseIds)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrExpenses;
+		HashMap<UUID, ArrayList<UUID>> larrExpenses;
 		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
 		UUID lidPolicy;
 		ArrayList<UUID> larrByPolicy;
@@ -630,7 +630,7 @@ public class ExpenseServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrExpenses = new Hashtable<UUID, ArrayList<UUID>>();
+		larrExpenses = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < expenseIds.length; i++ )
 		{
 			try
@@ -777,7 +777,7 @@ public class ExpenseServiceImpl
 	public void massNotifyClient(String[] expenseIds)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrExpenses;
+		HashMap<UUID, ArrayList<UUID>> larrExpenses;
 		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
 		IProcess lobjProcess;
 		UUID lidClient;
@@ -792,7 +792,7 @@ public class ExpenseServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrExpenses = new Hashtable<UUID, ArrayList<UUID>>();
+		larrExpenses = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < expenseIds.length; i++ )
 		{
 			try
@@ -855,7 +855,7 @@ public class ExpenseServiceImpl
 	public void massReturnToClient(String[] expenseIds)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrExpenses;
+		HashMap<UUID, ArrayList<UUID>> larrExpenses;
 		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
 		IProcess lobjProcess;
 		UUID lidClient;
@@ -870,7 +870,7 @@ public class ExpenseServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrExpenses = new Hashtable<UUID, ArrayList<UUID>>();
+		larrExpenses = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < expenseIds.length; i++ )
 		{
 			try

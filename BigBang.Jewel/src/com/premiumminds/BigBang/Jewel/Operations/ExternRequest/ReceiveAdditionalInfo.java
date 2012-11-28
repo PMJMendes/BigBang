@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import microsoft.exchange.webservices.data.Item;
@@ -77,7 +77,7 @@ public class ReceiveAdditionalInfo
 		Timestamp ldtNow;
 		Calendar ldtAux;
 		Timestamp ldtLimit;
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
@@ -91,7 +91,7 @@ public class ReceiveAdditionalInfo
     	ldtAux.add(Calendar.DAY_OF_MONTH, mlngDays);
     	ldtLimit = new Timestamp(ldtAux.getTimeInMillis());
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{
@@ -200,7 +200,7 @@ public class ReceiveAdditionalInfo
 		throws JewelPetriException
 	{
 		Timestamp ldtNow;
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
@@ -212,7 +212,7 @@ public class ReceiveAdditionalInfo
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{

@@ -2,7 +2,7 @@ package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.net.URI;
 import java.sql.ResultSet;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -11,7 +11,6 @@ import javax.mail.Session;
 import microsoft.exchange.webservices.data.ExchangeService;
 import microsoft.exchange.webservices.data.ExchangeVersion;
 import microsoft.exchange.webservices.data.WebCredentials;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -36,7 +35,7 @@ public class StaticFunctions
 		String lstrEmail;
 		String lstrPrinter;
 		UserDecoration lobjDeco;
-		Hashtable<String, String> larrParams;
+		HashMap<String, String> larrParams;
 		UUID lidParams;
         MasterDB ldb;
         ResultSet lrs;
@@ -49,7 +48,7 @@ public class StaticFunctions
 		if ( pbNested )
 			return;
 
-    	larrParams = new Hashtable<String, String>();
+    	larrParams = new HashMap<String, String>();
     	lobjDeco = null;
 
     	ldb = null;

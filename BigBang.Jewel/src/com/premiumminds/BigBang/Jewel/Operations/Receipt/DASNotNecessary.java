@@ -3,7 +3,7 @@ package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -52,7 +52,7 @@ public class DASNotNecessary
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
@@ -65,7 +65,7 @@ public class DASNotNecessary
     	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
     	mdtLimit = new Timestamp(ldtAux2.getTimeInMillis());
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{

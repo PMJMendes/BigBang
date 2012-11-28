@@ -1,7 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Operations.SignatureRequest;
 
 import java.sql.ResultSet;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -70,14 +70,14 @@ public class ReceiveReply
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
 //		Item lobjItem;
 		ExternAllowSendPayment lopEASP;
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{

@@ -3,6 +3,7 @@ package bigBang.module.quoteRequestModule.server;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -206,14 +207,14 @@ public class QuoteRequestServiceImpl
 			PadSubLine lobjSubLine;
 			QuoteRequestCoverage[] larrLocalCoverages;
 			com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrAuxCoverages;
-			Hashtable<UUID, PadCoverage> lmapCoverages;
+			HashMap<UUID, PadCoverage> lmapCoverages;
 			PadCoverage lobjCoverage;
 			Tax[] larrTaxes;
 			ArrayList<PadField> larrFields;
-			Hashtable<UUID, PadField> lmapFields;
+			HashMap<UUID, PadField> lmapFields;
 			PadField lobjField;
 			com.premiumminds.BigBang.Jewel.Objects.QuoteRequestObject[] larrAuxObjects;
-			Hashtable<UUID, Integer> lmapObjects;
+			HashMap<UUID, Integer> lmapObjects;
 			PadObject lobjObject;
 			QuoteRequestValue[] larrAuxValues;
 			PadValue lobjValue;
@@ -238,7 +239,7 @@ public class QuoteRequestServiceImpl
 				mobjQuoteRequest.mbModified = false;
 
 				larrAuxObjects = lobjAuxRequest.GetCurrentObjects();
-				lmapObjects = new Hashtable<UUID, Integer>();
+				lmapObjects = new HashMap<UUID, Integer>();
 				for ( i = 0 ; i < larrAuxObjects.length; i++ )
 				{
 					lobjObject = new PadObject();
@@ -248,8 +249,8 @@ public class QuoteRequestServiceImpl
 					lmapObjects.put(lobjObject.mid, i);
 				}
 
-				lmapCoverages = new Hashtable<UUID, PadCoverage>();
-				lmapFields = new Hashtable<UUID, PadField>();
+				lmapCoverages = new HashMap<UUID, PadCoverage>();
+				lmapFields = new HashMap<UUID, PadField>();
 				larrLocalSubLines = lobjAuxRequest.GetCurrentSubLines();
 				for ( i = 0; i < larrLocalSubLines.length; i++ )
 				{
@@ -544,7 +545,7 @@ public class QuoteRequestServiceImpl
 			ArrayList<QuoteRequest.HeaderField> larrHeaders;
 			ArrayList<QuoteRequest.Coverage> larrAuxCoverages;
 			ArrayList<QuoteRequest.Coverage.Variability> larrVariability;
-			Hashtable<Integer, QuoteRequest.ColumnHeader> larrColumns;
+			HashMap<Integer, QuoteRequest.ColumnHeader> larrColumns;
 			ArrayList<QuoteRequest.TableSection.TableField> larrTableFields;
 			ArrayList<QuoteRequest.ExtraField> larrExtraFields;
 			QuoteRequest.RequestSubLine lobjSubLine;
@@ -624,7 +625,7 @@ public class QuoteRequestServiceImpl
 				}
 				lobjSubLine.coverages = larrAuxCoverages.toArray(new QuoteRequest.Coverage[larrAuxCoverages.size()]);
 
-				larrColumns = new Hashtable<Integer, QuoteRequest.ColumnHeader>();
+				larrColumns = new HashMap<Integer, QuoteRequest.ColumnHeader>();
 				for ( j = 0; j < marrSubLines.get(i).marrCoverages.size(); j++ )
 				{
 					if ( marrSubLines.get(i).marrCoverages.get(j).mbIsHeader )
@@ -872,7 +873,7 @@ public class QuoteRequestServiceImpl
 			ArrayList<QuoteRequest.HeaderField> larrHeaders;
 			ArrayList<QuoteRequest.Coverage> larrAuxCoverages;
 			ArrayList<QuoteRequest.Coverage.Variability> larrVariability;
-			Hashtable<Integer, QuoteRequest.ColumnHeader> larrColumns;
+			HashMap<Integer, QuoteRequest.ColumnHeader> larrColumns;
 			ArrayList<QuoteRequest.TableSection.TableField> larrTableFields;
 			ArrayList<QuoteRequest.ExtraField> larrExtraFields;
 			QuoteRequest.HeaderField lobjHeader;
@@ -939,7 +940,7 @@ public class QuoteRequestServiceImpl
 			}
 			pobjResult.coverages = larrAuxCoverages.toArray(new QuoteRequest.Coverage[larrAuxCoverages.size()]);
 
-			larrColumns = new Hashtable<Integer, QuoteRequest.ColumnHeader>();
+			larrColumns = new HashMap<Integer, QuoteRequest.ColumnHeader>();
 			for ( i = 0; i < marrSubLines.get(plngSubLine).marrCoverages.size(); i++ )
 			{
 				if ( marrSubLines.get(plngSubLine).marrCoverages.get(i).mbIsHeader )
@@ -949,7 +950,7 @@ public class QuoteRequestServiceImpl
 				{
 					if ( marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mlngColIndex < 0 )
 						continue;
-					if ( larrColumns.contains(marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mlngColIndex) )
+					if ( larrColumns.get(marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mlngColIndex) != null )
 						continue;
 
 					lobjColumn = new QuoteRequest.ColumnHeader();
@@ -1095,7 +1096,7 @@ public class QuoteRequestServiceImpl
 			ArrayList<PadCoverage> larrCoverages;
 			PadCoverage[] larrSortedCoverages;
 			PadCoverage lobjHeaderCoverage;
-			Hashtable<UUID, ArrayList<QuoteRequestObject.CoverageData.FixedField>> larrFixed;
+			HashMap<UUID, ArrayList<QuoteRequestObject.CoverageData.FixedField>> larrFixed;
 			QuoteRequestObject.CoverageData.FixedField lobjFixed;
 			PadValue lobjValue;
 			ArrayList<QuoteRequestObject.CoverageData.FixedField> larrAuxFixed;
@@ -1220,7 +1221,7 @@ public class QuoteRequestServiceImpl
 					}
 				});
 				lobjSubLine.coverageData = new QuoteRequestObject.CoverageData[larrSortedCoverages.length];
-				larrFixed = new Hashtable<UUID, ArrayList<QuoteRequestObject.CoverageData.FixedField>>();
+				larrFixed = new HashMap<UUID, ArrayList<QuoteRequestObject.CoverageData.FixedField>>();
 				larrOutColumns = new ArrayList<QuoteRequestObject.ColumnHeader>();
 				for ( j = 0; j < larrSortedCoverages.length; j++ )
 				{
@@ -2009,7 +2010,7 @@ public class QuoteRequestServiceImpl
 		QuoteRequestValue[] larrLocalValues;
 		QuoteRequestCoverage[] larrLocalCoverages;
 		Coverage[] larrCoverages;
-		Hashtable<UUID, Tax> larrAuxFields;
+		HashMap<UUID, Tax> larrAuxFields;
 		ArrayList<QuoteRequest.HeaderField> larrOutHeaders;
 		ArrayList<QuoteRequest.TableSection.TableField> larrOutFields;
 		ArrayList<QuoteRequest.ExtraField> larrOutExtras;
@@ -2017,9 +2018,9 @@ public class QuoteRequestServiceImpl
 		QuoteRequest.TableSection.TableField lobjField;
 		QuoteRequest.HeaderField lobjHeader;
 		QuoteRequest.ExtraField lobjExtra;
-		Hashtable<UUID, Coverage> larrAuxCoverages;
+		HashMap<UUID, Coverage> larrAuxCoverages;
 		ArrayList<QuoteRequest.Coverage> larrOutCoverages;
-		Hashtable<Integer, QuoteRequest.ColumnHeader> larrOutColumns;
+		HashMap<Integer, QuoteRequest.ColumnHeader> larrOutColumns;
 		Coverage lobjCoverage;
 		Tax[] larrTaxes;
 		QuoteRequest.Coverage lobjAuxCoverage;
@@ -2080,7 +2081,7 @@ public class QuoteRequestServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			larrAuxFields = new Hashtable<UUID, Tax>();
+			larrAuxFields = new HashMap<UUID, Tax>();
 			larrOutHeaders = new ArrayList<QuoteRequest.HeaderField>();
 			larrOutFields = new ArrayList<QuoteRequest.TableSection.TableField>();
 			larrOutExtras = new ArrayList<QuoteRequest.ExtraField>();
@@ -2132,9 +2133,9 @@ public class QuoteRequestServiceImpl
 				larrAuxFields.put(lobjTax.getKey(), lobjTax);
 			}
 
-			larrAuxCoverages = new Hashtable<UUID, Coverage>();
+			larrAuxCoverages = new HashMap<UUID, Coverage>();
 			larrOutCoverages = new ArrayList<QuoteRequest.Coverage>();
-			larrOutColumns = new Hashtable<Integer, QuoteRequest.ColumnHeader>();
+			larrOutColumns = new HashMap<Integer, QuoteRequest.ColumnHeader>();
 			for ( j = 0; j < larrLocalCoverages.length; j++ )
 			{
 				lobjCoverage = larrLocalCoverages[j].GetCoverage();
@@ -2162,7 +2163,7 @@ public class QuoteRequestServiceImpl
 					if ( larrTaxes[k].GetColumnOrder() < 0 )
 						continue;
 
-					if ( !larrOutColumns.contains(larrTaxes[k].GetColumnOrder()) )
+					if ( larrOutColumns.get(larrTaxes[k].GetColumnOrder()) == null )
 					{
 						lobjColumnHeader = new QuoteRequest.ColumnHeader();
 						lobjColumnHeader.label = larrTaxes[k].getLabel();
@@ -2198,7 +2199,7 @@ public class QuoteRequestServiceImpl
 				for ( k = 0; k < larrTaxes.length; k++ )
 				{
 					if ( !larrCoverages[j].IsHeader() && larrTaxes[k].GetColumnOrder() >= 0 &&
-							!larrOutColumns.contains(larrTaxes[k].GetColumnOrder()) )
+							(larrOutColumns.get(larrTaxes[k].GetColumnOrder()) != null) )
 					{
 						lobjColumnHeader = new QuoteRequest.ColumnHeader();
 						lobjColumnHeader.label = larrTaxes[k].getLabel();
@@ -2397,7 +2398,7 @@ public class QuoteRequestServiceImpl
 		Coverage[] larrCoverages;
 		QuoteRequestValue[] larrValues;
 		QuoteRequest.TableSection lobjResult;
-		Hashtable<UUID, Tax> larrAuxFields;
+		HashMap<UUID, Tax> larrAuxFields;
 		ArrayList<QuoteRequest.TableSection.TableField> larrFields;
 		Tax lobjTax;
 		QuoteRequest.TableSection.TableField lobjField;
@@ -2417,7 +2418,7 @@ public class QuoteRequestServiceImpl
 			larrCoverages = lobjSubLine.GetSubLine().GetCurrentCoverages();
 
 			larrValues = lobjSubLine.GetCurrentKeyedValues(lidObject);
-			larrAuxFields = new Hashtable<UUID, Tax>();
+			larrAuxFields = new HashMap<UUID, Tax>();
 			larrFields = new ArrayList<QuoteRequest.TableSection.TableField>();
 			for ( i = 0; i < larrValues.length; i++ )
 			{

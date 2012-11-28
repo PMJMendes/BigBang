@@ -2,7 +2,7 @@ package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -60,7 +60,7 @@ public class SetReturnToInsurer
 		IProcess lobjProc;
 		ObjectBase lobjMotive;
 		Receipt lobjReceipt;
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
@@ -84,7 +84,7 @@ public class SetReturnToInsurer
 
 		mdtPrevLimit = null;
 		mbWithAgenda = false;
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{

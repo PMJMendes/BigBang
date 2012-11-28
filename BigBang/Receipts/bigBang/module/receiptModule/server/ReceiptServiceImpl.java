@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -1354,7 +1354,7 @@ public class ReceiptServiceImpl
 	public void massCreatePaymentNotice(String[] receiptIds)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		IProcess lobjProcess;
 		UUID lidClient;
@@ -1369,7 +1369,7 @@ public class ReceiptServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		larrReceipts = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
 			try
@@ -1432,7 +1432,7 @@ public class ReceiptServiceImpl
 	public void massCreateSignatureRequest(String[] receiptIds, int replylimit)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		IProcess lobjProcess;
 		UUID lidClient;
@@ -1447,7 +1447,7 @@ public class ReceiptServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		larrReceipts = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
 			try
@@ -1511,7 +1511,7 @@ public class ReceiptServiceImpl
 	public void massSendReceipt(String[] receiptIds)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		IProcess lobjProcess;
 		UUID lidClient;
@@ -1526,7 +1526,7 @@ public class ReceiptServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		larrReceipts = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
 			try
@@ -1589,7 +1589,7 @@ public class ReceiptServiceImpl
 	public void massSendPayment(String[] receiptIds)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		IProcess lobjProcess;
 		UUID lidClient;
@@ -1604,7 +1604,7 @@ public class ReceiptServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		larrReceipts = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
 			try
@@ -1667,7 +1667,7 @@ public class ReceiptServiceImpl
 	public void massInsurerAccounting(String[] receiptIds, InsurerAccountingExtra[] extraInfo)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		IProcess lobjProcess;
 		UUID lidInsurer;
@@ -1688,7 +1688,7 @@ public class ReceiptServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		larrReceipts = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
 			try
@@ -1883,7 +1883,7 @@ public class ReceiptServiceImpl
 	public void massMediatorAccounting(String[] receiptIds)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		IProcess lobjProcess;
 		UUID lidMediator;
@@ -1897,7 +1897,7 @@ public class ReceiptServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		larrReceipts = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
 			try
@@ -1968,7 +1968,7 @@ public class ReceiptServiceImpl
 	public void massReturnToInsurer(String[] receiptIds)
 		throws SessionExpiredException, BigBangException
 	{
-		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		IProcess lobjProcess;
 		UUID lidInsurer;
@@ -1983,7 +1983,7 @@ public class ReceiptServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		larrReceipts = new HashMap<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
 			try

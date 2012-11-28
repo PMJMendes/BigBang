@@ -1,7 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Operations.ExternRequest;
 
 import java.sql.ResultSet;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -39,12 +39,12 @@ public class ExternAbortProcess
 	{
 		IProcess lobjProcess;
 		ObjectBase lobjRequest;
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{

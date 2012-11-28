@@ -3,7 +3,7 @@ package com.premiumminds.BigBang.Jewel.Operations.SubCasualty;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -56,7 +56,7 @@ public class CloseProcess
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
@@ -65,7 +65,7 @@ public class CloseProcess
 		Calendar ldtAux2;
 		SubCasualty lobjSubCasualty;
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{
@@ -146,14 +146,14 @@ public class CloseProcess
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
 		AgendaItem lobjItem;
 		SubCasualty lobjSubCasualty;
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{

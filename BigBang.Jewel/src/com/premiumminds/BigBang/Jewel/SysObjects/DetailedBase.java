@@ -2,7 +2,7 @@ package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -172,7 +172,7 @@ public abstract class DetailedBase
 	{
 		int i;
 		PolicyCoverage[] larrCoverages;
-		Hashtable<UUID, UUID> larrTrueCoverages;
+		HashMap<UUID, UUID> larrTrueCoverages;
 		PolicyValue[] larrValues;
 
 		try
@@ -188,7 +188,7 @@ public abstract class DetailedBase
 		if ( pobjPolicy.getLabel().charAt(0) == '-' )
 			pstrBuilder.append("O número de apólice é provisório.\n");
 
-		larrTrueCoverages = new Hashtable<UUID, UUID>();
+		larrTrueCoverages = new HashMap<UUID, UUID>();
 		for ( i = 0; i < larrCoverages.length; i++ )
 		{
 			if ( larrCoverages[i].GetCoverage().IsHeader() ||
@@ -403,7 +403,7 @@ public abstract class DetailedBase
 	{
 		int i;
 		SubPolicyCoverage[] larrCoverages;
-		Hashtable<UUID, UUID> larrTrueCoverages;
+		HashMap<UUID, UUID> larrTrueCoverages;
 		SubPolicyValue[] larrValues;
 
 		try
@@ -416,7 +416,7 @@ public abstract class DetailedBase
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		larrTrueCoverages = new Hashtable<UUID, UUID>();
+		larrTrueCoverages = new HashMap<UUID, UUID>();
 		for ( i = 0; i < larrCoverages.length; i++ )
 		{
 			if ( larrCoverages[i].GetCoverage().IsHeader() ||

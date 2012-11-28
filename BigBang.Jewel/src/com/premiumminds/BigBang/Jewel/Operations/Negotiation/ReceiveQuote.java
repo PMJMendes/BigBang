@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import microsoft.exchange.webservices.data.Item;
@@ -75,14 +75,14 @@ public class ReceiveQuote
 		Timestamp ldtNow;
 		Calendar ldtAux;
 		Timestamp ldtLimit;
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
 		AgendaItem lobjNewAgendaItem;
 		Item lobjItem;
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{
@@ -196,7 +196,7 @@ public class ReceiveQuote
 		throws JewelPetriException
 	{
 		Timestamp ldtNow;
-		Hashtable<UUID, AgendaItem> larrItems;
+		HashMap<UUID, AgendaItem> larrItems;
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
@@ -207,7 +207,7 @@ public class ReceiveQuote
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 
-		larrItems = new Hashtable<UUID, AgendaItem>();
+		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{

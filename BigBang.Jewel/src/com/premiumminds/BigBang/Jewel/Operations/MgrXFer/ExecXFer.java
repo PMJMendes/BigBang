@@ -3,7 +3,7 @@ package com.premiumminds.BigBang.Jewel.Operations.MgrXFer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -82,7 +82,7 @@ public class ExecXFer
 		ObjectBase lobjData;
 		MgrXFer lobjXFer;
 		UUID[] larrProcs;
-		Hashtable<UUID, ArrayList<String>> larrNotifies;
+		HashMap<UUID, ArrayList<String>> larrNotifies;
 		int i;
 		IProcess lobjProc;
 		String lstrUser;
@@ -111,7 +111,7 @@ public class ExecXFer
 		mlngCount = larrProcs.length;
 
 		marrOldManagers = new UUID[mlngCount];
-		larrNotifies = new Hashtable<UUID, ArrayList<String>>();
+		larrNotifies = new HashMap<UUID, ArrayList<String>>();
 		for ( i = 0; i < mlngCount; i++ )
 		{
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
