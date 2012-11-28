@@ -2,10 +2,14 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -19,9 +23,11 @@ import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.module.insurancePolicyModule.client.resources.Resources;
+import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 import bigBang.module.insurancePolicyModule.shared.SubPolicySearchParameter;
 
 public class SubPolicySearchPanel extends SearchPanel<SubPolicyStub> implements InsuranceSubPolicyDataBrokerClient{
@@ -91,16 +97,46 @@ public class SubPolicySearchPanel extends SearchPanel<SubPolicyStub> implements 
 	private HashMap<String, SubPolicyStub> subPoliciesToUpdate;
 	private HashMap<String, Void> subPoliciesToRemove;
 	private int subPolicyDataVersion;
-	
+	private FiltersPanel filtersPanel;
+	private String clientId;
+	private String ownerId;
+
+	public static enum Filters {
+		CLIENT_SUB_POLICIES, INSURANCE_POLICY
+
+	}
+
 	public SubPolicySearchPanel() {
 		super(((InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)).getSearchBroker());
 		subPoliciesToUpdate = new HashMap<String, SubPolicyStub>();
 		subPoliciesToRemove = new HashMap<String, Void>();
-		
-		showFilterField(false);
+
+		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
+		sortOptions.put(InsurancePolicySortParameter.SortableField.RELEVANCE, "Relevância");
+		sortOptions.put(InsurancePolicySortParameter.SortableField.NUMBER, "Número");
+		sortOptions.put(InsurancePolicySortParameter.SortableField.CLIENT_NUMBER, "Número de Cliente");
+		sortOptions.put(InsurancePolicySortParameter.SortableField.CLIENT_NAME, "Nome de Cliente");
+
+		filtersPanel = new FiltersPanel(sortOptions);
+
+		filtersPanel.addCheckBoxField(Filters.INSURANCE_POLICY, "Apenas as apólices adesão da apólice mãe");
+		filtersPanel.setFilterVisible(Filters.INSURANCE_POLICY, false);
+		filtersPanel.addCheckBoxField(Filters.CLIENT_SUB_POLICIES, "Apenas as apólices adesão do cliente subscritor");
+		filtersPanel.setFilterVisible(Filters.CLIENT_SUB_POLICIES, false);
 		
 		InsuranceSubPolicyBroker broker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 		broker.registerClient(this);
+
+		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				doSearch(false);
+			}
+		});
+
+		filtersContainer.clear();
+		filtersContainer.add(filtersPanel);
 	}
 
 	@Override
@@ -109,17 +145,24 @@ public class SubPolicySearchPanel extends SearchPanel<SubPolicyStub> implements 
 			this.broker.disposeSearch(this.workspaceId);
 			this.workspaceId = null;
 		}
-		
+
 		subPoliciesToRemove.clear();
 		subPoliciesToUpdate.clear();
-		
+
 		SubPolicySearchParameter parameter = new SubPolicySearchParameter();
 		parameter.freeText = this.textBoxFilter.getValue();
-		
+		if((Boolean)filtersPanel.getFilterValue(Filters.CLIENT_SUB_POLICIES)){
+			parameter.clientId = clientId;
+		}
+
+		if((Boolean)filtersPanel.getFilterValue(Filters.INSURANCE_POLICY)){
+			parameter.ownerId = ownerId;
+		}
+
 		SearchParameter[] parameters = new SearchParameter[]{
 				parameter
 		};
-		
+
 		doSearch(parameters, null, keepState);
 	}
 
@@ -134,7 +177,7 @@ public class SubPolicySearchPanel extends SearchPanel<SubPolicyStub> implements 
 			}
 		}
 	}
-	
+
 	protected Entry addSearchResult(SearchResult r){
 		Entry entry = null;
 		if(r instanceof SubPolicyStub){
@@ -194,14 +237,41 @@ public class SubPolicySearchPanel extends SearchPanel<SubPolicyStub> implements 
 	}
 
 	public void setOwner(String ownerId) {
+
+		if(ownerId != null){
+			this.ownerId = ownerId;
+		}
+
 		SubPolicySearchParameter parameter = new SubPolicySearchParameter();
 		parameter.ownerId = ownerId;
+
+		filtersPanel.setFilterValue(Filters.INSURANCE_POLICY, ownerId != null);
+		filtersPanel.setFilterVisible(Filters.INSURANCE_POLICY, true);
 		
 		SearchParameter[] parameters = new SearchParameter[]{
 				parameter
 		};
-		
+
 		doSearch(parameters, null, false);
 	}
-	
+
+	public void setClient(String clientId){
+
+		if(clientId != null){
+			this.clientId = clientId;
+		}
+
+		SubPolicySearchParameter parameter = new SubPolicySearchParameter();
+		parameter.clientId = clientId;
+		
+		filtersPanel.setFilterValue(Filters.CLIENT_SUB_POLICIES, clientId != null);
+		filtersPanel.setFilterVisible(Filters.CLIENT_SUB_POLICIES, true);
+		
+		SearchParameter[] parameters = new SearchParameter[]{
+				parameter
+		};
+
+		doSearch(parameters, null, false);
+	}
+
 }
