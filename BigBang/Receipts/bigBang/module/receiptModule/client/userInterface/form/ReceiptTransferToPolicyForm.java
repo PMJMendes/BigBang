@@ -12,7 +12,7 @@ public class ReceiptTransferToPolicyForm extends FormView<String> {
 	
 	public ReceiptTransferToPolicyForm(){
 		InsurancePolicySelectionViewPresenter selectionPanel = (InsurancePolicySelectionViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("RECEIPT_POLICY_SELECTION");
-		selectionPanel.setOperationId(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY);
+		selectionPanel.setOperationId(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT);
 		selectionPanel.go();
 		policy = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_POLICY, "Transferir para a Apólice", selectionPanel);
 		
