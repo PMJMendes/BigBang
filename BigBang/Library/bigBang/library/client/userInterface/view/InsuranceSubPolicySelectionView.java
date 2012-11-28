@@ -112,5 +112,10 @@ public class InsuranceSubPolicySelectionView extends View implements InsuranceSu
 	public void setOwnerId(String ownerId) {
 		list.setOwner(ownerId);
 	}
+	
+	@Override
+	public void setClientId(String clientId) {
+		list.setClient(clientId);
+	}
 
 }
