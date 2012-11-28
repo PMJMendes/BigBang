@@ -43,6 +43,7 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 		Widget asWidget();
 		void setOperationId(String operationId);
 		void setOwnerId(String ownerId);
+		void setClientId(String clientId);
 	}
 
 	private Display view;
@@ -75,8 +76,13 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		String ownerId = parameterHolder.getParameter("ownerid");
+		String clientId = parameterHolder.getParameter("clientid");
 		if(ownerId != null && !ownerId.isEmpty()){
 			view.setOwnerId(ownerId);
+		}
+		
+		if(clientId != null && !clientId.isEmpty()){
+			view.setClientId(clientId);
 		}
 		clearView();
 	}
