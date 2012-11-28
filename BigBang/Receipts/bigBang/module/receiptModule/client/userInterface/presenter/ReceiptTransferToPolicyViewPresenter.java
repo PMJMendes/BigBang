@@ -125,7 +125,6 @@ public class ReceiptTransferToPolicyViewPresenter implements ViewPresenter{
 			onTransferToPolicyFailed();
 			onCancelTransfer();
 		}
-
 	}
 
 	protected void onTransferToPolicyFailed() {
