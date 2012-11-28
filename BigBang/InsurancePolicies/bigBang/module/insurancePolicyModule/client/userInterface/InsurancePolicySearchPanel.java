@@ -339,7 +339,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	@Override
 	protected void onAttach() {
 		super.onAttach();
-		//		doSearch(); TODO
+		//doSearch();
 	}
 
 	public void setOwner(String ownerId) {
