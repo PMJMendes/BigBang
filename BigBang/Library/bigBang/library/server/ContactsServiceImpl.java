@@ -111,12 +111,25 @@ public class ContactsServiceImpl
 	}
 
 	public static void WalkContactTree(ContactData[] parrResults, Contact[] parrContacts)
+		throws BigBangException
 	{
+		ObjectBase lobjType;
 		int i;
-		
+
 		for ( i = 0; i < parrResults.length; i++ )
 		{
+			try
+			{
+				lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ContactType),
+						parrResults[i].midContactType);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
 			parrContacts[i].id = parrResults[i].mid.toString();
+			parrContacts[i].typeLabel = lobjType.getLabel();
 			if ( (parrContacts[i].subContacts != null) && (parrResults[i].marrSubContacts != null) )
 				WalkContactTree(parrResults[i].marrSubContacts, parrContacts[i].subContacts);
 		}
@@ -429,8 +442,6 @@ public class ContactsServiceImpl
 		{
 			try
 			{
-				lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ContactType),
-						(UUID)pobjContact.getAt(6));
 				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
 						(UUID)pobjContact.getAt(5));
 			}
