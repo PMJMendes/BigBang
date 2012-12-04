@@ -1,11 +1,11 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
 import bigBang.definitions.shared.BigBangPolicyValidationException;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DebitNoteBatch;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
@@ -59,8 +59,10 @@ public interface InsurancePolicyService
 
 	public void createDebitNote(String policyId, DebitNote note) throws SessionExpiredException, BigBangException;
 
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
+
+	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
+	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 
 	public SubPolicy createSubPolicy(SubPolicy subPolicy) throws SessionExpiredException, BigBangException;
 	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;

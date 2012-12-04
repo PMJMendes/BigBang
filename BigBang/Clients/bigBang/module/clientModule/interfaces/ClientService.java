@@ -2,7 +2,7 @@ package bigBang.module.clientModule.interfaces;
 
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.RiskAnalysis;
@@ -37,8 +37,10 @@ public interface ClientService
 
 	public Client mergeWithClient(String clientId, String receptorId) throws SessionExpiredException, BigBangException; //Returns the altered receptor client
 
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
+
+	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
+	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy createPolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 	public RiskAnalysis createRiskAnalisys(RiskAnalysis riskAnalisys) throws SessionExpiredException, BigBangException;

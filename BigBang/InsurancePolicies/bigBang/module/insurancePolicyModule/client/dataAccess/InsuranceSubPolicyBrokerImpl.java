@@ -539,23 +539,23 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 	@Override
 	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
 			final ResponseHandler<InfoOrDocumentRequest> handler) {
-		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-
-			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_INFO_OR_DOCUMENT_REQUEST, result.id));
-				handler.onResponse(result);
-
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not create info or document request")
-				});
-				super.onResponseFailure(caught);
-			}
-		});
+//		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+//
+//			@Override
+//			public void onResponseSuccess(InfoOrDocumentRequest result) {
+//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_INFO_OR_DOCUMENT_REQUEST, result.id));
+//				handler.onResponse(result);
+//
+//			}
+//			
+//			@Override
+//			public void onResponseFailure(Throwable caught) {
+//				handler.onError(new String[]{
+//						new String("Could not create info or document request")
+//				});
+//				super.onResponseFailure(caught);
+//			}
+//		});
 	}
 
 	@Override

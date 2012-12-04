@@ -1,7 +1,6 @@
 package bigBang.module.quoteRequestModule.interfaces;
 
-import bigBang.definitions.shared.ExternalInfoRequest;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.library.interfaces.SearchService;
@@ -45,8 +44,8 @@ public interface NegotiationService
 
 	public InsurancePolicy createPolicy(Negotiation negotiation) throws SessionExpiredException, BigBangException;
 
-	public InfoOrDocumentRequest createInfoRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
-	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request) throws SessionExpiredException, BigBangException;
+	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
+	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 
 	public Negotiation closeNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
 

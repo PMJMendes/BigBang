@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -16,11 +17,11 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DebitNoteBatch;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
@@ -35,8 +36,8 @@ import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.server.ContactsServiceImpl;
+import bigBang.library.server.ConversationServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
-import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
 import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
@@ -53,8 +54,10 @@ import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
+import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.DebitNoteData;
 import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
@@ -63,9 +66,9 @@ import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateExpense;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateSubPolicy;
@@ -446,34 +449,6 @@ public class InsurancePolicyServiceImpl
 		}
 	}
 
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
-		throws SessionExpiredException, BigBangException
-	{
-		Policy lobjPolicy;
-		CreateInfoRequest lopCIR;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(request.parentDataObjectId));
-
-			lopCIR = new CreateInfoRequest(lobjPolicy.GetProcessID());
-			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
-			lopCIR.mobjMessage = MessageBridge.outgoingToServer(request.message);
-			lopCIR.mlngDays = request.replylimit;
-
-			lopCIR.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
-	}
-
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
 		throws SessionExpiredException, BigBangException
 	{
@@ -499,6 +474,118 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return transfer;
+	}
+
+	public Conversation sendMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjPolicy.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Outgoing;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Incoming );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
+	}
+
+	public Conversation receiveMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjPolicy.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
 	}
 
 	public SubPolicy createSubPolicy(SubPolicy subPolicy)

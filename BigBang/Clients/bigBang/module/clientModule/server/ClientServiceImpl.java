@@ -17,7 +17,7 @@ import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
@@ -29,8 +29,8 @@ import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
+import bigBang.library.server.ConversationServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
-import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
 import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
@@ -47,6 +47,8 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.ClientData;
+import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
@@ -54,7 +56,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateCasualty;
-import com.premiumminds.BigBang.Jewel.Operations.Client.CreateInfoRequest;
+import com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ExecMgrXFer;
@@ -330,33 +332,118 @@ public class ClientServiceImpl
 		return transfer;
 	}
 
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
+	public Conversation sendMessage(Conversation conversation)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
-		CreateInfoRequest lopCIR;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
 		try
 		{
 			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(request.parentDataObjectId));
-
-			lopCIR = new CreateInfoRequest(lobjClient.GetProcessID());
-			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
-			lopCIR.mobjMessage = MessageBridge.outgoingToServer(request.message);
-			lopCIR.mlngDays = request.replylimit;
-
-			lopCIR.Execute();
+					UUID.fromString(conversation.parentDataObjectId));
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
+		lopCC = new CreateConversation(lobjClient.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Outgoing;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Incoming );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
+	}
+
+	public Conversation receiveMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjClient.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
 	}
 
 	public Client mergeWithClient(String originalId, String receptorId)

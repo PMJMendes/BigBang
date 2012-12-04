@@ -13,7 +13,7 @@ import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
@@ -21,7 +21,7 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.server.BigBangPermissionServiceImpl;
-import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
+import bigBang.library.server.ConversationServiceImpl;
 import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
@@ -34,12 +34,14 @@ import bigBang.module.casualtyModule.shared.CasualtySortParameter;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CloseProcess;
-import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateInfoRequest;
+import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.DeleteCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ExecMgrXFer;
@@ -164,35 +166,6 @@ public class CasualtyServiceImpl
 		return sGetCasualty(lopMD.mobjData.mid);
 	}
 
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
-		throws SessionExpiredException, BigBangException
-	{
-		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjRequest;
-		CreateInfoRequest lopCIR;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(request.parentDataObjectId));
-
-			lopCIR = new CreateInfoRequest(lobjRequest.GetProcessID());
-			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
-			lopCIR.mobjMessage = MessageBridge.outgoingToServer(request.message);
-			lopCIR.mlngDays = request.replylimit;
-
-			lopCIR.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
-	}
-
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
 		throws SessionExpiredException, BigBangException
 	{
@@ -219,6 +192,120 @@ public class CasualtyServiceImpl
 		}
 
 		return transfer;
+	}
+
+	public Conversation sendMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjCasualty.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Outgoing;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Incoming );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
+	}
+
+	public Conversation receiveMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjCasualty.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
 	}
 
 	public SubCasualty createSubCasualty(SubCasualty subCasualty)

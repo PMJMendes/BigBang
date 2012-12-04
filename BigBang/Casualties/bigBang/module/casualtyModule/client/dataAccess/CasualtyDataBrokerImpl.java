@@ -293,26 +293,26 @@ CasualtyDataBroker {
 	@Override
 	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
 			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
-	
-		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-			
-			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				//TODO REQUESTS 		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST, result.id));
-				responseHandler.onResponse(null);
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				responseHandler.onError(new String[]{
-						new String("Could not transfer the process")
-				});
-				super.onResponseFailure(caught);
-			}
-
-		});
-		
-		
+//	
+//		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+//			
+//			@Override
+//			public void onResponseSuccess(InfoOrDocumentRequest result) {
+//				//TODO REQUESTS 		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST, result.id));
+//				responseHandler.onResponse(null);
+//			}
+//			
+//			@Override
+//			public void onResponseFailure(Throwable caught) {
+//				responseHandler.onError(new String[]{
+//						new String("Could not transfer the process")
+//				});
+//				super.onResponseFailure(caught);
+//			}
+//
+//		});
+//		
+//		
 	}
 
 }

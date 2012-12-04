@@ -273,23 +273,23 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	public void createInfoOrDocumentRequest(
 			InfoOrDocumentRequest request,
 			final ResponseHandler<InfoOrDocumentRequest> handler) {
-		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-
-			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				//TODO REQUESTS EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST, result.id));
-
-				handler.onResponse(result);
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not create new Info or Document Request")	
-				});
-				super.onResponseFailure(caught);
-			}
-		});
+//		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+//
+//			@Override
+//			public void onResponseSuccess(InfoOrDocumentRequest result) {
+//				//TODO REQUESTS EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST, result.id));
+//
+//				handler.onResponse(result);
+//			}
+//
+//			@Override
+//			public void onResponseFailure(Throwable caught) {
+//				handler.onError(new String[]{
+//						new String("Could not create new Info or Document Request")	
+//				});
+//				super.onResponseFailure(caught);
+//			}
+//		});
 	}
 
 	@Override

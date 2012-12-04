@@ -36,23 +36,23 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 
 	@Override
 	public void createExternalInfoRequest(final ExternalInfoRequest request, final ResponseHandler<ExternalInfoRequest> handler){
-		service.createExternalRequest(request, new BigBangAsyncCallback<ExternalInfoRequest>() {
-			
-			@Override
-			public void onResponseSuccess(ExternalInfoRequest result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST, result.id));
-				handler.onResponse(result);
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError((new String[]{
-							new String("Could create the external request")
-					}));
-				super.onResponseFailure(caught);
-			}
-			
-		});
+//		service.createExternalRequest(request, new BigBangAsyncCallback<ExternalInfoRequest>() {
+//			
+//			@Override
+//			public void onResponseSuccess(ExternalInfoRequest result) {
+//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST, result.id));
+//				handler.onResponse(result);
+//			}
+//			
+//			@Override
+//			public void onResponseFailure(Throwable caught) {
+//				handler.onError((new String[]{
+//							new String("Could create the external request")
+//					}));
+//				super.onResponseFailure(caught);
+//			}
+//			
+//		});
 	}
 
 	@Override

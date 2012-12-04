@@ -225,7 +225,7 @@ public class CancelNegotiation
     	{
 			lobjNewAgendaItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjNewAgendaItem.setAt(1, Engine.getCurrentUser().toString());
-			lobjNewAgendaItem.setAt(2, Constants.ProcID_ExternRequest);
+			lobjNewAgendaItem.setAt(2, Constants.ProcID_Negotiation);
 			lobjNewAgendaItem.setAt(3, ldtNow);
 			lobjNewAgendaItem.setAt(4, mdtPrevLimit);
 			lobjNewAgendaItem.setAt(5, Constants.UrgID_Pending);

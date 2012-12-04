@@ -1,7 +1,6 @@
 package bigBang.module.casualtyModule.interfaces;
 
-import bigBang.definitions.shared.ExternalInfoRequest;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
@@ -31,8 +30,8 @@ public interface SubCasualtyService extends SearchService {
 
 	public SubCasualty sendNotification(String subCasualtyId) throws SessionExpiredException, BigBangException;
 
-	public InfoOrDocumentRequest createInfoRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
-	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request) throws SessionExpiredException, BigBangException;
+	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
+	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 
 	public SubCasualty markForClosing(String subCasualtyId, String revisorId) throws SessionExpiredException, BigBangException;
 	public SubCasualty closeProcess(String subCasualtyId) throws SessionExpiredException, BigBangException;

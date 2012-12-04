@@ -2,6 +2,7 @@ package bigBang.module.quoteRequestModule.server;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -15,7 +16,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.Address;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
@@ -28,7 +29,7 @@ import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.BigBangPermissionServiceImpl;
-import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
+import bigBang.library.server.ConversationServiceImpl;
 import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
@@ -41,6 +42,8 @@ import bigBang.module.quoteRequestModule.shared.QuoteRequestSearchParameter;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.QuoteRequestCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.QuoteRequestData;
 import com.premiumminds.BigBang.Jewel.Data.QuoteRequestObjectData;
@@ -56,7 +59,7 @@ import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateQuoteRequest;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CloseProcess;
-import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CreateInfoRequest;
+import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.DeleteQuoteRequest;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData;
@@ -2805,35 +2808,6 @@ public class QuoteRequestServiceImpl
 		return lrefPad.GetRemapFromPad(false);
 	}
 
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
-		throws SessionExpiredException, BigBangException
-	{
-		com.premiumminds.BigBang.Jewel.Objects.QuoteRequest lobjRequest;
-		CreateInfoRequest lopCIR;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.QuoteRequest.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(request.parentDataObjectId));
-
-			lopCIR = new CreateInfoRequest(lobjRequest.GetProcessID());
-			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
-			lopCIR.mobjMessage = MessageBridge.outgoingToServer(request.message);
-			lopCIR.mlngDays = request.replylimit;
-
-			lopCIR.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
-	}
-
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
 		throws SessionExpiredException, BigBangException
 	{
@@ -2860,6 +2834,120 @@ public class QuoteRequestServiceImpl
 		}
 
 		return transfer;
+	}
+
+	public Conversation sendMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.QuoteRequest lobjQReq;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjQReq = com.premiumminds.BigBang.Jewel.Objects.QuoteRequest.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjQReq.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Outgoing;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Incoming );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
+	}
+
+	public Conversation receiveMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.QuoteRequest lobjQReq;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjQReq = com.premiumminds.BigBang.Jewel.Objects.QuoteRequest.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjQReq.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
 	}
 
 	public QuoteRequest closeProcess(String requestId, String notes)

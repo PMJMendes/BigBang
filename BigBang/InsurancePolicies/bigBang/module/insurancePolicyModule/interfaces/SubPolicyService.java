@@ -1,8 +1,8 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
 import bigBang.definitions.shared.BigBangPolicyValidationException;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Expense;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
@@ -51,7 +51,8 @@ public interface SubPolicyService
 
 	public SubPolicy transferToPolicy(String subPolicyId, String newPolicyId) throws SessionExpiredException, BigBangException;
 
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
+	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
+	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 
 	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
 	public Expense createExpense(Expense expense) throws SessionExpiredException, BigBangException;

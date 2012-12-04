@@ -1,6 +1,6 @@
 package bigBang.module.quoteRequestModule.interfaces;
 
-import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
@@ -60,8 +60,10 @@ public interface QuoteRequestService
 	public Remap[] commitPad(String requestId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 	public Remap[] discardPad(String requestId) throws SessionExpiredException, BigBangException;
 
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
+
+	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
+	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 
 	public QuoteRequest closeProcess(String requestId, String notes) throws SessionExpiredException, BigBangException;
 
