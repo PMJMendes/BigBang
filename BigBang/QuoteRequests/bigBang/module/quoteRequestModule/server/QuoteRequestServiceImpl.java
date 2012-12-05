@@ -2880,7 +2880,7 @@ public class QuoteRequestServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_QuoteRequest,
-				lobjQReq.getKey());
+				lobjQReq.getKey(), Constants.MsgDir_Outgoing);
 
 		try
 		{
@@ -2938,7 +2938,7 @@ public class QuoteRequestServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_QuoteRequest,
-				lobjQReq.getKey());
+				lobjQReq.getKey(), Constants.MsgDir_Incoming);
 
 		try
 		{

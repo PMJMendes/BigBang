@@ -274,7 +274,8 @@ public class ConversationServiceImpl
 
 		try
 		{
-			lopSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentType(), lobjConv.getParentID());
+			lopSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentType(), lobjConv.getParentID(),
+					Constants.MsgDir_Outgoing);
 
 			lopSM.Execute();
 		}
@@ -323,7 +324,8 @@ public class ConversationServiceImpl
 
 		try
 		{
-			lopRSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentType(), lobjConv.getParentID());
+			lopRSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentType(), lobjConv.getParentID(),
+					Constants.MsgDir_Outgoing);
 
 			lopRSM.Execute();
 		}
@@ -372,7 +374,8 @@ public class ConversationServiceImpl
 
 		try
 		{
-			lopRM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentType(), lobjConv.getParentID());
+			lopRM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentType(), lobjConv.getParentID(),
+					Constants.MsgDir_Incoming);
 
 			lopRM.Execute();
 		}

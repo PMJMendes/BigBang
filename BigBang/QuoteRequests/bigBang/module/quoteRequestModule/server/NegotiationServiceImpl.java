@@ -326,7 +326,7 @@ public class NegotiationServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Negotiation,
-				lobjNeg.getKey());
+				lobjNeg.getKey(), Constants.MsgDir_Outgoing);
 
 		try
 		{
@@ -384,7 +384,7 @@ public class NegotiationServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Negotiation,
-				lobjNeg.getKey());
+				lobjNeg.getKey(), Constants.MsgDir_Incoming);
 
 		try
 		{

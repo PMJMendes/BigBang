@@ -229,7 +229,7 @@ public class MessageBridge
 		return lobjResult;
 	}
 
-	public static MessageData clientToServer(Message pobjMessage, UUID pidParentType, UUID pidParentID)
+	public static MessageData clientToServer(Message pobjMessage, UUID pidParentType, UUID pidParentID, UUID pidDefaultDir)
 		throws BigBangException
 	{
 		MessageData lobjResult;
@@ -248,8 +248,8 @@ public class MessageBridge
 				Timestamp.valueOf(pobjMessage.date + " 00:00:00.0") );
 
 		lobjResult.mbIsEmail = Message.Kind.EMAIL.equals(pobjMessage.kind);
-		lobjResult.midDirection = ( Conversation.Direction.OUTGOING.equals(pobjMessage.direction) ?
-				Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming );
+		lobjResult.midDirection = ( pobjMessage.direction == null ? pidDefaultDir :
+				(Conversation.Direction.OUTGOING.equals(pobjMessage.direction) ? Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming) );
 		if ( lobjResult.mbIsEmail && Constants.MsgDir_Incoming.equals(lobjResult.midDirection) )
 		{
 			lobjResult.mstrEmailID = pobjMessage.emailId;
