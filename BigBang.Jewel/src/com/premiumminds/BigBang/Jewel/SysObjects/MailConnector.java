@@ -482,17 +482,17 @@ public class MailConnector
 			}
 			else if ( Constants.UsageID_CC.equals(pobjMessage.marrAddresses[i].midUsage) )
 			{
-				larrTos[llngTo] = BuildAddress(pobjMessage.marrAddresses[i]);
+				larrCCs[llngCC] = BuildAddress(pobjMessage.marrAddresses[i]);
 				llngCC++;
 			}
 			else if ( Constants.UsageID_BCC.equals(pobjMessage.marrAddresses[i].midUsage) )
 			{
-				larrTos[llngTo] = BuildAddress(pobjMessage.marrAddresses[i]);
+				larrBCCs[llngBCC] = BuildAddress(pobjMessage.marrAddresses[i]);
 				llngBCC++;
 			}
 			else if ( Constants.UsageID_ReplyTo.equals(pobjMessage.marrAddresses[i].midUsage) )
 			{
-				larrTos[llngTo] = BuildAddress(pobjMessage.marrAddresses[i]);
+				larrReplyTos[llngReplyTo] = BuildAddress(pobjMessage.marrAddresses[i]);
 				llngReplyTo++;
 			}
 		}

@@ -80,8 +80,10 @@ public class ConversationServiceImpl
 
 		lobjResult.address = (String)lobjAddr.getAt(MessageAddress.I.ADDRESS);
 		lobjResult.usage = sGetUsage((UUID)lobjAddr.getAt(MessageAddress.I.USAGE));
-		lobjResult.userId = ((UUID)lobjAddr.getAt(MessageAddress.I.USER)).toString();
-		lobjResult.contactInfoId = ((UUID)lobjAddr.getAt(MessageAddress.I.CONTACTINFO)).toString();
+		lobjResult.userId = ( lobjAddr.getAt(MessageAddress.I.USER) == null ? null :
+				((UUID)lobjAddr.getAt(MessageAddress.I.USER)).toString() );
+		lobjResult.contactInfoId = (lobjAddr.getAt(MessageAddress.I.CONTACTINFO) == null ? null:
+				((UUID)lobjAddr.getAt(MessageAddress.I.CONTACTINFO)).toString() );
 		lobjResult.display = (String)lobjAddr.getAt(MessageAddress.I.DISPLAYNAME);
 
 		return lobjResult;
