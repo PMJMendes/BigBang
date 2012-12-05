@@ -120,6 +120,7 @@ public abstract class CreateConversationBase
 		try
 		{
 			mobjData.marrMessages[0].midOwner = lobjConv.getKey();
+			mobjData.marrMessages[0].mlngNumber = 0;
 			lobjMessage = Message.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.marrMessages[0].ToObject(lobjMessage);
 			lobjMessage.SaveToDb(pdb);
