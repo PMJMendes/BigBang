@@ -39,7 +39,6 @@ public class StaticFunctions
 		UUID lidParams;
         MasterDB ldb;
         ResultSet lrs;
-        ResultSet lrsParams;
 		ObjectBase lobjParam;
 		JewelAuthenticator lauth;
 		Properties lprops;
@@ -58,24 +57,16 @@ public class StaticFunctions
 			ldb = new MasterDB();
 
 			lidParams = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AppParams);
-			lrsParams = Entity.GetInstance(lidParams).SelectAll(ldb);
-			while (lrsParams.next())
+			lrs = Entity.GetInstance(lidParams).SelectAll(ldb);
+			while (lrs.next())
 			{
-				lobjParam = Engine.GetWorkInstance(lidParams, lrsParams);
+				lobjParam = Engine.GetWorkInstance(lidParams, lrs);
 				larrParams.put((String)lobjParam.getAt(2), (String)lobjParam.getAt(1));
 			}
-			lrsParams.close();
-
-			Engine.getUserData().put("Printer", larrParams.get("PRINTER"));
-
-			lrs = Entity.GetInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Decorations))
-					.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {pidUser}, null);
-		    if (lrs.next())
-		    	lobjDeco = UserDecoration.GetInstance(pidNameSpace, lrs);
-		    lrs.close();
+			lrs.close();
+	    	lrs = null;
 
 	        ldb.Disconnect();
-
 		}
 		catch (Throwable e)
 		{
@@ -84,16 +75,19 @@ public class StaticFunctions
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		Engine.getUserData().put("Printer", larrParams.get("PRINTER"));
+
+    	lobjDeco = UserDecoration.GetByUserID(pidNameSpace, pidUser);
 		if ( lobjDeco == null )
 			return;
 		
-		lstrPrinter = (String)lobjDeco.getAt(4);
+		lstrPrinter = (String)lobjDeco.getAt(UserDecoration.I.PRINTERNAME);
 		if(lstrPrinter != null)
 		{
 			Engine.getUserData().put("Printer", lstrPrinter);
 		}
 		
-		lstrEmail = (String)lobjDeco.getAt(1);
+		lstrEmail = (String)lobjDeco.getAt(UserDecoration.I.EMAIL);
 
 		try
 		{

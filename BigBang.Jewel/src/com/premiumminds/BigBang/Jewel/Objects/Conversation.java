@@ -11,6 +11,8 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -55,6 +57,32 @@ public class Conversation
 	public void SetProcessID(UUID pidProcess)
 	{
 		internalSetAt(I.PROCESS, pidProcess);
+	}
+
+	public UUID getParentType()
+		throws BigBangJewelException
+	{
+		try
+		{
+			return PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent().GetScript().GetDataType();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	public UUID getParentID()
+		throws BigBangJewelException
+	{
+		try
+		{
+			return PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent().GetDataKey();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	public Message[] GetCurrentMessages()

@@ -2879,7 +2879,8 @@ public class QuoteRequestServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
-		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_QuoteRequest,
+				lobjQReq.getKey());
 
 		try
 		{
@@ -2936,7 +2937,8 @@ public class QuoteRequestServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
-		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_QuoteRequest,
+				lobjQReq.getKey());
 
 		try
 		{

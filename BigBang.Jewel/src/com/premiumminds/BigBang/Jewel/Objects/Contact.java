@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
@@ -88,6 +89,90 @@ public class Contact
     	}
 
     	return mrefOwner;
+    }
+
+    public ContactInfo[] getCurrentInfo()
+    	throws BigBangJewelException
+    {
+    	MasterDB ldb;
+    	ContactInfo[] larrResult;
+
+    	try
+    	{
+			ldb = new MasterDB();
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	try
+    	{
+    		larrResult = getCurrentInfo(ldb);
+    	}
+    	catch (BigBangJewelException e)
+    	{
+    		try {ldb.Disconnect();} catch (Throwable e1) {}
+    		throw e;
+		}
+    	catch (Throwable e)
+    	{
+    		try {ldb.Disconnect();} catch (Throwable e1) {}
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	try
+    	{
+			ldb.Disconnect();
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	return larrResult;
+    }
+
+    public Contact[] getCurrentSubContacts()
+    	throws BigBangJewelException
+    {
+    	MasterDB ldb;
+    	Contact[] larrResult;
+
+    	try
+    	{
+			ldb = new MasterDB();
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	try
+    	{
+    		larrResult = getCurrentSubContacts(ldb);
+    	}
+    	catch (BigBangJewelException e)
+    	{
+    		try {ldb.Disconnect();} catch (Throwable e1) {}
+    		throw e;
+		}
+    	catch (Throwable e)
+    	{
+    		try {ldb.Disconnect();} catch (Throwable e1) {}
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	try
+    	{
+			ldb.Disconnect();
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	return larrResult;
     }
 
 	public ContactInfo[] getCurrentInfo(SQLServer pdb)
@@ -198,5 +283,70 @@ public class Contact
 		}
 
 		return larrAux.toArray(new Contact[larrAux.size()]);
+	}
+
+	public ContactInfo findAddress(String pstrAddress)
+		throws BigBangJewelException
+	{
+		ContactInfo[] larrInfo;
+		Contact[] larrSubs;
+		ContactInfo lobjAux;
+		int i;
+
+		if ( pstrAddress == null )
+			return null;
+		pstrAddress = pstrAddress.trim();
+
+		larrInfo = getCurrentInfo();
+		if ( larrInfo != null )
+		{
+			for ( i = 0; i < larrInfo.length; i++ )
+			{
+				if ( Constants.CInfoID_Email.equals(larrInfo[i].getAt(ContactInfo.I.TYPE)) &&
+						(pstrAddress.equalsIgnoreCase((String)larrInfo[i].getAt(ContactInfo.I.VALUE))) )
+					return larrInfo[i];
+			}
+		}
+
+		larrSubs = getCurrentSubContacts();
+		if ( larrSubs != null )
+		{
+			for ( i = 0; i < larrSubs.length; i++ )
+			{
+				lobjAux = larrSubs[i].findAddress(pstrAddress);
+				if ( lobjAux != null )
+					return lobjAux;
+			}
+		}
+
+		return null;
+	}
+
+	public Contact findName(String pstrName)
+		throws BigBangJewelException
+	{
+		Contact[] larrSubs;
+		Contact lobjAux;
+		int i;
+
+		if ( pstrName == null )
+			return null;
+		pstrName = pstrName.trim();
+
+		if ( pstrName.equalsIgnoreCase(getLabel()) )
+			return this;
+
+		larrSubs = getCurrentSubContacts();
+		if ( larrSubs != null )
+		{
+			for ( i = 0; i < larrSubs.length; i++ )
+			{
+				lobjAux = larrSubs[i].findName(pstrName);
+				if ( lobjAux != null )
+					return lobjAux;
+			}
+		}
+
+		return null;
 	}
 }

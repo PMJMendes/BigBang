@@ -2,6 +2,7 @@ package bigBang.library.server;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
@@ -13,18 +14,35 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.IncomingMessage;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.OutgoingMessage;
 import bigBang.library.shared.BigBangException;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ContactData;
+import com.premiumminds.BigBang.Jewel.Data.ContactInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.IncomingMessageData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
+import com.premiumminds.BigBang.Jewel.Objects.Casualty;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Contact;
+import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
+import com.premiumminds.BigBang.Jewel.Objects.Expense;
+import com.premiumminds.BigBang.Jewel.Objects.Negotiation;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.QuoteRequest;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
+import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
@@ -211,7 +229,7 @@ public class MessageBridge
 		return lobjResult;
 	}
 
-	public static MessageData clientToServer(Message pobjMessage)
+	public static MessageData clientToServer(Message pobjMessage, UUID pidParentType, UUID pidParentID)
 		throws BigBangException
 	{
 		MessageData lobjResult;
@@ -224,7 +242,7 @@ public class MessageBridge
 
 		lobjResult.mid = ( pobjMessage.id == null ? null : UUID.fromString(pobjMessage.id) );
 
-		lobjResult.midOwner = UUID.fromString(pobjMessage.conversationId);
+		lobjResult.midOwner = ( pobjMessage.conversationId == null ? null : UUID.fromString(pobjMessage.conversationId) );
 		lobjResult.mlngNumber = ( pobjMessage.order == null ? -1 : pobjMessage.order );
 		lobjResult.mdtDate = ( pobjMessage.date == null ? new Timestamp(new java.util.Date().getTime()) :
 				Timestamp.valueOf(pobjMessage.date + " 00:00:00.0") );
@@ -298,6 +316,8 @@ public class MessageBridge
 			}
 		}
 
+		lobjResult.mobjContactOps = handleAddresses(lobjResult.marrAddresses, pidParentType, pidParentID);
+
 		if ( Constants.MsgDir_Incoming.equals(lobjResult.midDirection) )
 		{
 			lobjResult.marrAttachments = null;
@@ -314,7 +334,7 @@ public class MessageBridge
 				{
 					lobjResult.mobjDocOps.marrCreate[i] = new DocumentData();
 					lobjResult.mobjDocOps.marrCreate[i].mstrName = pobjMessage.incomingAttachments[i].name;
-					lobjResult.mobjDocOps.marrCreate[i].midOwnerType = null;
+					lobjResult.mobjDocOps.marrCreate[i].midOwnerType = pidParentType;
 					lobjResult.mobjDocOps.marrCreate[i].midOwnerId = null;
 					lobjResult.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(pobjMessage.incomingAttachments[i].docTypeId);
 					lobjResult.mobjDocOps.marrCreate[i].mstrText = null;
@@ -361,6 +381,188 @@ public class MessageBridge
 		lobjResult.mobjContactOps = null;
 
 		return lobjResult;
+	}
+
+	private static ContactOps handleAddresses(MessageAddressData[] parrAddresses, UUID pidParentType, UUID pidParentID)
+		throws BigBangException
+	{
+		Contact[] larrContacts;
+		ArrayList<ContactData> larrCreates;
+		ArrayList<ContactData> larrModifies;
+		int i, j, k;
+		boolean b;
+		UserDecoration lobjDeco;
+		ContactInfo lobjInfo;
+		String lstrAddress;
+		String lstrName;
+		ContactData lobjAux;
+		Contact lobjContact;
+		ContactInfo[] larrInfo;
+		ContactOps lopResult;
+
+		if ( parrAddresses == null )
+			return null;
+
+		try
+		{
+			larrContacts = getParentContacts(pidParentType, pidParentID);
+			if ( larrContacts == null )
+				return null;
+
+			larrCreates = new ArrayList<ContactData>();
+			larrModifies = new ArrayList<ContactData>();
+
+			for ( i = 0; i < parrAddresses.length; i++ )
+			{
+				if ( parrAddresses[i].midUser != null )
+				{
+					lobjDeco = UserDecoration.GetByUserID(Engine.getCurrentNameSpace(), parrAddresses[i].midUser);
+					if ( (parrAddresses[i].mstrAddress == null) || "".equals(parrAddresses[i].mstrAddress) )
+						parrAddresses[i].mstrAddress = ( lobjDeco == null ? null : (String)lobjDeco.getAt(UserDecoration.I.EMAIL) );
+					if ( parrAddresses[i].mstrAddress == null )
+						throw new BigBangException("Erro: O utilizador indicado não tem email definido.");
+					if ( (parrAddresses[i].mstrDisplay == null) || "".equals(parrAddresses[i].mstrDisplay) )
+						parrAddresses[i].mstrDisplay = lobjDeco.getBaseUser().getDisplayName();
+					continue;
+				}
+
+				if ( parrAddresses[i].midInfo != null )
+				{
+					lobjInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(), parrAddresses[i].midInfo);
+					if ( !Constants.CInfoID_Email.equals(lobjInfo.getAt(ContactInfo.I.TYPE)) )
+						throw new BigBangException("Inesperado: Tipo de informação não é endereço de email.");
+					if ( (parrAddresses[i].mstrAddress == null) || "".equals(parrAddresses[i].mstrAddress) )
+						parrAddresses[i].mstrAddress = (String)lobjInfo.getAt(ContactInfo.I.VALUE);
+					if ( (parrAddresses[i].mstrDisplay == null) || "".equals(parrAddresses[i].mstrDisplay) )
+						parrAddresses[i].mstrDisplay = lobjInfo.getOwner().getLabel();
+					continue;
+				}
+
+				if ( (parrAddresses[i].mstrAddress == null) || "".equals(parrAddresses[i].mstrAddress) )
+					throw new BigBangException("Inesperado: Endereço de email vazio.");
+				lstrAddress = parrAddresses[i].mstrAddress.trim();
+
+				b = false;
+				for ( j = 0; !b && j < larrContacts.length; j++ )
+				{
+					lobjInfo = larrContacts[j].findAddress(lstrAddress);
+					if ( lobjInfo == null )
+						continue;
+
+					parrAddresses[i].midInfo = lobjInfo.getKey();
+					if ( (parrAddresses[i].mstrDisplay == null) || "".equals(parrAddresses[i].mstrDisplay) )
+						parrAddresses[i].mstrDisplay = lobjInfo.getOwner().getLabel();
+					b = true;
+				}
+				if ( b )
+					continue;
+
+				if ( !Constants.UsageID_From.equals(parrAddresses[i].midUsage) )
+					continue;
+
+				if ( (parrAddresses[i].mstrDisplay == null) || ("".equals(parrAddresses[i].mstrDisplay.trim())) )
+					continue;
+				lstrName = parrAddresses[i].mstrDisplay.trim();
+
+				lobjAux = new ContactData();
+
+				for ( j = 0; !b && j < larrContacts.length; j++ )
+				{
+					lobjContact = larrContacts[j].findName(lstrName);
+					if ( lobjContact == null )
+						continue;
+
+					lobjAux.FromObject(lobjContact);
+					larrInfo = larrContacts[j].getCurrentInfo();
+					lobjAux.marrInfo = new ContactInfoData[larrInfo.length + 1];
+					for ( k = 0; k < larrInfo.length; k++ )
+					{
+						lobjAux.marrInfo[k] = new ContactInfoData();
+						lobjAux.marrInfo[k].FromObject(larrInfo[k]);
+					}
+					lobjAux.marrInfo[k] = new ContactInfoData();
+					lobjAux.marrInfo[k].midOwner = lobjAux.mid;
+					lobjAux.marrInfo[k].midType = Constants.CInfoID_Email;
+					lobjAux.marrInfo[k].mstrValue = lstrAddress;
+					larrModifies.add(lobjAux);
+					b = true;
+				}
+				if ( b )
+					continue;
+
+				lobjAux.mstrName = lstrName;
+				lobjAux.midOwnerType = pidParentType;
+				lobjAux.midOwnerId = pidParentID;
+				lobjAux.mstrAddress1 = null;
+				lobjAux.mstrAddress2 = null;
+				lobjAux.midZipCode = null;
+				lobjAux.midContactType = Constants.CtTypeID_General;
+				lobjAux.marrSubContacts = null;
+				lobjAux.marrInfo = new ContactInfoData[] { new ContactInfoData() };
+				lobjAux.marrInfo[0].midOwner = null;
+				lobjAux.marrInfo[0].midType = Constants.CInfoID_Email;
+				lobjAux.marrInfo[0].mstrValue = lstrAddress;
+				larrCreates.add(lobjAux);
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( (larrModifies.size() == 0) && (larrCreates.size() == 0) )
+			return null;
+
+		lopResult = new ContactOps();
+		lopResult.marrCreate = ( larrCreates.size() == 0 ? null : larrCreates.toArray(new ContactData[larrCreates.size()]) );
+		lopResult.marrModify = ( larrModifies.size() == 0 ? null : larrModifies.toArray(new ContactData[larrModifies.size()]) );
+		lopResult.marrDelete = null;
+
+		return lopResult;
+	}
+
+	private static Contact[] getParentContacts(UUID pidParentType, UUID pidParentID)
+		throws BigBangJewelException
+	{
+		ObjectBase lobjAux;
+
+		try
+		{
+			lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pidParentType), pidParentID);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( lobjAux instanceof Client )
+			return ((Client)lobjAux).GetCurrentContacts();
+
+		if ( lobjAux instanceof QuoteRequest )
+			return ((QuoteRequest)lobjAux).GetCurrentContacts();
+
+		if ( lobjAux instanceof Negotiation )
+			return ((Negotiation)lobjAux).GetCurrentContacts();
+
+		if ( lobjAux instanceof Policy )
+			return ((Policy)lobjAux).GetCurrentContacts();
+
+		if ( lobjAux instanceof SubPolicy )
+			return ((SubPolicy)lobjAux).GetCurrentContacts();
+
+		if ( lobjAux instanceof Receipt )
+			return ((Receipt)lobjAux).GetCurrentContacts();
+
+		if ( lobjAux instanceof Casualty )
+			return ((Casualty)lobjAux).GetCurrentContacts();
+
+		if ( lobjAux instanceof SubCasualty )
+			return ((SubCasualty)lobjAux).GetCurrentContacts();
+
+		if ( lobjAux instanceof Expense )
+			return ((Expense)lobjAux).GetCurrentContacts();
+
+		return null;
 	}
 
 	private static UUID sGetUsage(Message.MsgAddress.Usage pobjUsage)

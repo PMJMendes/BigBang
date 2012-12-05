@@ -59,7 +59,6 @@ public abstract class CreateConversationBase
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Timestamp ldtNow;
 		UUID lidUrgency;
 		int i;
 		Conversation lobjConv;
@@ -76,17 +75,13 @@ public abstract class CreateConversationBase
 		mobjData.mstrSubject = mobjData.marrMessages[0].mstrSubject;
 		mobjData.midStartDir = mobjData.marrMessages[0].midDirection;
 
-		if ( mobjData.marrMessages[0].mobjDocOps != null )
-			mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
-		if ( mobjData.marrMessages[0].mobjContactOps != null )
-			mobjData.marrMessages[0].mobjContactOps.RunSubOp(pdb, GetProcess().GetDataKey());
-
 		if ( mobjData.mdtDueDate == null )
+		{
 			mobjData.midPendingDir = null;
+			lidUrgency = null;
+		}
 		else
 		{
-			ldtNow = new Timestamp(new java.util.Date().getTime());
-
     		if ( Constants.MsgDir_Outgoing.equals(mobjData.midStartDir) )
     		{
     			mobjData.midPendingDir = Constants.MsgDir_Incoming;
@@ -97,36 +92,6 @@ public abstract class CreateConversationBase
     			mobjData.midPendingDir = Constants.MsgDir_Outgoing;
     			lidUrgency = Constants.UrgID_Pending;
     		}
-
-			larrUsers = new HashSet<UUID>();
-			larrUsers.add(Engine.getCurrentUser());
-			for ( i = 0; i < mobjData.marrMessages[0].marrAddresses.length; i++ )
-			{
-				if ( mobjData.marrMessages[0].marrAddresses[i].midUser != null )
-					larrUsers.add(mobjData.marrMessages[0].marrAddresses[i].midUser);
-			}
-
-	    	for ( UUID lidUser : larrUsers )
-	    	{
-				try
-				{
-					lobjAgendaItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					lobjAgendaItem.setAt(0, "Troca de Mensagens");
-					lobjAgendaItem.setAt(1, lidUser);
-					lobjAgendaItem.setAt(2, Constants.ProcID_Conversation);
-					lobjAgendaItem.setAt(3, ldtNow);
-					lobjAgendaItem.setAt(4, mobjData.mdtDueDate);
-					lobjAgendaItem.setAt(5, lidUrgency);
-					lobjAgendaItem.SaveToDb(pdb);
-					lobjAgendaItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_Conversation_SendMessage,
-							Constants.OPID_Conversation_ReSendMessage, Constants.OPID_Conversation_ReceiveMessage,
-							Constants.OPID_Conversation_CloseProcess}, pdb);
-				}
-				catch (Throwable e)
-				{
-					throw new JewelPetriException(e.getMessage(), e);
-				}
-	    	}
 		}
 
 		try
@@ -135,28 +100,6 @@ public abstract class CreateConversationBase
 			mobjData.ToObject(lobjConv);
 			lobjConv.SaveToDb(pdb);
 			mobjData.mid = lobjConv.getKey();
-
-			if ( (mobjData.marrMessages != null) && (mobjData.marrMessages.length > 0) )
-			{
-
-				mobjData.marrMessages[0].midOwner = lobjConv.getKey();
-				lobjMessage = Message.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-				mobjData.marrMessages[0].ToObject(lobjMessage);
-				lobjMessage.SaveToDb(pdb);
-				mobjData.marrMessages[0].mid = lobjMessage.getKey();
-
-				if ( mobjData.marrMessages[0].marrAddresses != null )
-				{
-					for ( i = 0; i < mobjData.marrMessages[0].marrAddresses.length; i++ )
-					{
-						mobjData.marrMessages[0].marrAddresses[i].midOwner = lobjMessage.getKey();
-						lobjAddr = MessageAddress.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-						mobjData.marrMessages[0].marrAddresses[i].ToObject(lobjAddr);
-						lobjAddr.SaveToDb(pdb);
-						mobjData.marrMessages[0].marrAddresses[i].mid = lobjAddr.getKey();
-					}
-				}
-			}
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Conversation);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjConv.getKey(), GetProcess().getKey(),
@@ -169,13 +112,73 @@ public abstract class CreateConversationBase
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
+		if ( mobjData.marrMessages[0].mobjDocOps != null )
+			mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+		if ( mobjData.marrMessages[0].mobjContactOps != null )
+			mobjData.marrMessages[0].mobjContactOps.RunSubOp(pdb, GetProcess().GetDataKey());
+
+		try
+		{
+			mobjData.marrMessages[0].midOwner = lobjConv.getKey();
+			lobjMessage = Message.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			mobjData.marrMessages[0].ToObject(lobjMessage);
+			lobjMessage.SaveToDb(pdb);
+			mobjData.marrMessages[0].mid = lobjMessage.getKey();
+
+			if ( mobjData.marrMessages[0].marrAddresses != null )
+			{
+				for ( i = 0; i < mobjData.marrMessages[0].marrAddresses.length; i++ )
+				{
+					mobjData.marrMessages[0].marrAddresses[i].midOwner = lobjMessage.getKey();
+					lobjAddr = MessageAddress.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrMessages[0].marrAddresses[i].ToObject(lobjAddr);
+					lobjAddr.SaveToDb(pdb);
+					mobjData.marrMessages[0].marrAddresses[i].mid = lobjAddr.getKey();
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		larrUsers = new HashSet<UUID>();
+		larrUsers.add(Engine.getCurrentUser());
+		for ( i = 0; i < mobjData.marrMessages[0].marrAddresses.length; i++ )
+		{
+			if ( mobjData.marrMessages[0].marrAddresses[i].midUser != null )
+				larrUsers.add(mobjData.marrMessages[0].marrAddresses[i].midUser);
+		}
+
+		if ( mobjData.mdtDueDate != null )
+		{
+	    	for ( UUID lidUser : larrUsers )
+	    	{
+				try
+				{
+					lobjAgendaItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					lobjAgendaItem.setAt(0, "Troca de Mensagens");
+					lobjAgendaItem.setAt(1, lidUser);
+					lobjAgendaItem.setAt(2, Constants.ProcID_Conversation);
+					lobjAgendaItem.setAt(3, new Timestamp(new java.util.Date().getTime()));
+					lobjAgendaItem.setAt(4, mobjData.mdtDueDate);
+					lobjAgendaItem.setAt(5, lidUrgency);
+					lobjAgendaItem.SaveToDb(pdb);
+					lobjAgendaItem.InitNew(new UUID[] {mobjData.midProcess}, new UUID[] {Constants.OPID_Conversation_SendMessage,
+							Constants.OPID_Conversation_ReSendMessage, Constants.OPID_Conversation_ReceiveMessage,
+							Constants.OPID_Conversation_CloseProcess}, pdb);
+				}
+				catch (Throwable e)
+				{
+					throw new JewelPetriException(e.getMessage(), e);
+				}
+	    	}
+		}
+
 		if ( mobjData.mdtDueDate == null )
 			TriggerOp(new TriggerAutoCloseProcess(mobjData.midProcess), pdb);
-		else
-		{
-			if ( Constants.MsgDir_Outgoing.equals(mobjData.midStartDir) )
-				TriggerOp(new ExternInitialSend(mobjData.midProcess), pdb);
-		}
+		else if ( Constants.MsgDir_Outgoing.equals(mobjData.midStartDir) )
+			TriggerOp(new ExternInitialSend(mobjData.midProcess), pdb);
 
 		if ( mobjData.marrMessages[0].mbIsEmail )
 		{
@@ -414,133 +417,4 @@ public abstract class CreateConversationBase
 
 		return lobjResult;
 	}
-
-//	private UUID getInfoFromEmail(EmailAddress pobjAddress, SQLServer pdb)
-//		throws BigBangJewelException, JewelPetriException
-//	{
-//		String lstrAddress;
-//		String lstrName;
-//		Contact[] larrContacts;
-//		ContactInfo[] larrInfo;
-//		int i, j;
-//
-//		if ( pobjAddress == null )
-//			return null;
-//
-//		lstrAddress = pobjAddress.getAddress();
-//		if ( (lstrAddress == null) || ("".equals(lstrAddress.trim())) )
-//			return null;
-//		lstrAddress = lstrAddress.trim();
-//
-//		lstrName = pobjAddress.getName();
-//		if ( (lstrName == null) || ("".equals(lstrName.trim())) )
-//			return null;
-//		lstrName = lstrName.trim();
-//
-//		larrContacts = getParentContacts();
-//		if ( larrContacts == null )
-//			return null;
-//
-//		for ( i = 0; i < larrContacts.length; i++ )
-//		{
-//			larrInfo = larrContacts[i].getCurrentInfo(pdb);
-//			for ( j = 0; j < larrInfo.length; j++ )
-//			{
-//				if ( Constants.CInfoID_Email.equals(larrInfo[j].getAt(ContactInfo.I.TYPE)) &&
-//						(lstrAddress.equals(larrInfo[j].getAt(ContactInfo.I.VALUE))) )
-//					return larrInfo[j].getKey();
-//			}
-//		}
-//
-//		mobjContactOps = new ContactOps();
-//		mobjContactOps.marrDelete = null;
-//
-//		for ( i = 0; i < larrContacts.length; i++ )
-//		{
-//			if ( lstrName.equals(larrContacts[i].getLabel()) )
-//			{
-//				mobjContactOps.marrCreate = null;
-//				mobjContactOps.marrModify = new ContactData[] {new ContactData()};
-//				mobjContactOps.marrModify[0].FromObject(larrContacts[i]);
-//				larrInfo = larrContacts[i].getCurrentInfo(pdb);
-//				mobjContactOps.marrModify[0].marrInfo = new ContactInfoData[larrInfo.length + 1];
-//				for ( j = 0; j < larrInfo.length; j++ )
-//				{
-//					mobjContactOps.marrModify[0].marrInfo[j] = new ContactInfoData();
-//					mobjContactOps.marrModify[0].marrInfo[j].FromObject(larrInfo[j]);
-//				}
-//				mobjContactOps.marrModify[0].marrInfo[j] = new ContactInfoData();
-//				mobjContactOps.marrModify[0].marrInfo[j].midOwner = mobjContactOps.marrModify[0].mid;
-//				mobjContactOps.marrModify[0].marrInfo[j].midType = Constants.CInfoID_Email;
-//				mobjContactOps.marrModify[0].marrInfo[j].mstrValue = lstrAddress;
-//
-//				mobjContactOps.RunSubOp(pdb, GetProcess().GetDataKey());
-//
-//				return mobjContactOps.marrModify[0].marrInfo[j].mid;
-//			}
-//		}
-//
-//		mobjContactOps.marrModify = null;
-//		mobjContactOps.marrCreate = new ContactData[] {new ContactData()};
-//		mobjContactOps.marrCreate[0].mstrName = lstrName;
-//		mobjContactOps.marrCreate[0].midOwnerType = GetProcess().GetScript().GetDataType();
-//		mobjContactOps.marrCreate[0].midOwnerId = GetProcess().GetDataKey();
-//		mobjContactOps.marrCreate[0].mstrAddress1 = null;
-//		mobjContactOps.marrCreate[0].mstrAddress2 = null;
-//		mobjContactOps.marrCreate[0].midZipCode = null;
-//		mobjContactOps.marrCreate[0].midContactType = Constants.CtTypeID_General;
-//		mobjContactOps.marrCreate[0].marrSubContacts = null;
-//		mobjContactOps.marrCreate[0].marrInfo = new ContactInfoData[] { new ContactInfoData() };
-//		mobjContactOps.marrCreate[0].marrInfo[0].midOwner = null;
-//		mobjContactOps.marrCreate[0].marrInfo[0].midType = Constants.CInfoID_Email;
-//		mobjContactOps.marrCreate[0].marrInfo[0].mstrValue = lstrAddress;
-//
-//		mobjContactOps.RunSubOp(pdb, GetProcess().GetDataKey());
-//
-//		return mobjContactOps.marrCreate[0].marrInfo[0].mid;
-//	}
-//
-//	private Contact[] getParentContacts()
-//		throws BigBangJewelException
-//	{
-//		ObjectBase lobjAux;
-//
-//		try
-//		{
-//			lobjAux = GetProcess().GetData();
-//		}
-//		catch (Throwable e)
-//		{
-//			throw new BigBangJewelException(e.getMessage(), e);
-//		}
-//
-//		if ( lobjAux instanceof Client )
-//			return ((Client)lobjAux).GetCurrentContacts();
-//
-//		if ( lobjAux instanceof QuoteRequest )
-//			return ((QuoteRequest)lobjAux).GetCurrentContacts();
-//
-//		if ( lobjAux instanceof Negotiation )
-//			return ((Negotiation)lobjAux).GetCurrentContacts();
-//
-//		if ( lobjAux instanceof Policy )
-//			return ((Policy)lobjAux).GetCurrentContacts();
-//
-//		if ( lobjAux instanceof SubPolicy )
-//			return ((SubPolicy)lobjAux).GetCurrentContacts();
-//
-//		if ( lobjAux instanceof Receipt )
-//			return ((Receipt)lobjAux).GetCurrentContacts();
-//
-//		if ( lobjAux instanceof Casualty )
-//			return ((Casualty)lobjAux).GetCurrentContacts();
-//
-//		if ( lobjAux instanceof SubCasualty )
-//			return ((SubCasualty)lobjAux).GetCurrentContacts();
-//
-//		if ( lobjAux instanceof Expense )
-//			return ((Expense)lobjAux).GetCurrentContacts();
-//
-//		return null;
-//	}
 }

@@ -518,7 +518,8 @@ public class InsurancePolicyServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
-		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Policy,
+				lobjPolicy.getKey());
 
 		try
 		{
@@ -574,7 +575,8 @@ public class InsurancePolicyServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
-		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0]);
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Policy,
+				lobjPolicy.getKey());
 
 		try
 		{

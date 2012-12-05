@@ -8,7 +8,6 @@ import Jewel.Engine.Engine;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
-import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Message;
 import bigBang.library.interfaces.ConversationService;
@@ -271,14 +270,15 @@ public class ConversationServiceImpl
 		}
 
 		lopSM = new SendMessage(lobjConv.GetProcessID());
-		lopSM.mobjData = MessageBridge.clientToServer(message);
 		lopSM.mdtDueDate = ldtLimit;
 
 		try
 		{
+			lopSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentType(), lobjConv.getParentID());
+
 			lopSM.Execute();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
@@ -319,14 +319,15 @@ public class ConversationServiceImpl
 		}
 
 		lopRSM = new ReSendMessage(lobjConv.GetProcessID());
-		lopRSM.mobjData = MessageBridge.clientToServer(message);
 		lopRSM.mdtDueDate = ldtLimit;
 
 		try
 		{
+			lopRSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentType(), lobjConv.getParentID());
+
 			lopRSM.Execute();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
@@ -367,14 +368,15 @@ public class ConversationServiceImpl
 		}
 
 		lopRM = new ReceiveMessage(lobjConv.GetProcessID());
-		lopRM.mobjData = MessageBridge.clientToServer(message);
 		lopRM.mdtDueDate = ldtLimit;
 
 		try
 		{
+			lopRM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentType(), lobjConv.getParentID());
+
 			lopRM.Execute();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
@@ -408,7 +410,7 @@ public class ConversationServiceImpl
 		{
 			lopCP.Execute();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
