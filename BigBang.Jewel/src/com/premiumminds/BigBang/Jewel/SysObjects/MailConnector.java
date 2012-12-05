@@ -102,8 +102,8 @@ public class MailConnector
 		throws BigBangJewelException
 	{
 		Folder lobjFolder;
-		ArrayList<Folder> larrFolders;
-		int i;
+//		ArrayList<Folder> larrFolders;
+//		int i;
 
 		lobjFolder = (Folder)Engine.getUserData().get("ExchangeFolder");
 
@@ -111,26 +111,29 @@ public class MailConnector
 		{
 			try
 			{
-				larrFolders = GetService().findFolders(WellKnownFolderName.MsgFolderRoot,
-						new FolderView(Integer.MAX_VALUE)).getFolders();
-	
-				for ( i = 0; i < larrFolders.size(); i++ )
-				{
-					if ( "bigbang".equals(larrFolders.get(i).getDisplayName()) )
-					{
-						lobjFolder = larrFolders.get(i);
-						Engine.getUserData().put("ExchangeFolder", lobjFolder);
-						break;
-					}
-				}
+				lobjFolder = Folder.bind(GetService(), WellKnownFolderName.Inbox);
+				Engine.getUserData().put("ExchangeFolder", lobjFolder);
 
-				if ( lobjFolder == null )
-				{
-					lobjFolder = new Folder(GetService());
-					lobjFolder.setDisplayName("bigbang");
-					lobjFolder.save(WellKnownFolderName.MsgFolderRoot);
-					Engine.getUserData().put("ExchangeFolder", lobjFolder);
-				}
+//				larrFolders = GetService().findFolders(WellKnownFolderName.MsgFolderRoot,
+//						new FolderView(Integer.MAX_VALUE)).getFolders();
+//	
+//				for ( i = 0; i < larrFolders.size(); i++ )
+//				{
+//					if ( "bigbang".equals(larrFolders.get(i).getDisplayName()) )
+//					{
+//						lobjFolder = larrFolders.get(i);
+//						Engine.getUserData().put("ExchangeFolder", lobjFolder);
+//						break;
+//					}
+//				}
+//
+//				if ( lobjFolder == null )
+//				{
+//					lobjFolder = new Folder(GetService());
+//					lobjFolder.setDisplayName("bigbang");
+//					lobjFolder.save(WellKnownFolderName.MsgFolderRoot);
+//					Engine.getUserData().put("ExchangeFolder", lobjFolder);
+//				}
 			}
 			catch (Throwable e)
 			{
