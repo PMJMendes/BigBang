@@ -24,7 +24,7 @@ public class BigBang_Tests
 		};
 
 //		Services.authenticationService.login("CrediteEGS", callback);
-		Services.authenticationService.login("root", "Premium.", "CrediteEGS", callback);
+		Services.authenticationService.login("jmendes", "maxhed.0", "CrediteEGS", callback);
 	}
 
 	private void DoTests()
@@ -57,17 +57,13 @@ public class BigBang_Tests
 //		TestMgrXferCancel.DoTest();
 //		TestMgrXferMassCreate.DoTest();
 //
-//		TestInfoReqGet.DoTest();
-//		TestInfoReqCreate.DoTest();
-//		TestInfoReqRepeat.DoTest();
-//		TestInfoReqReply.DoTest();
-//		TestInfoReqCancel.DoTest();
-//
-//		TestExternRequestGet.DoTest();
-//		TestExternRequestCreate.DoTest();
-//		TestExternRequestSend.DoTest();
-//		TestExternRequestReceive.DoTest();
-//		TestExternRequestClose.DoTest();
+//		TestConversationGet.DoTest();
+//		TestConversationSendNew.DoTest();
+//		TestConversationReceiveNew.DoTest();
+//		TestConversationSend.DoTest();
+//		TestConversationRepeat.DoTest();
+//		TestConversationReceive.DoTest();
+//		TestConversationClose.DoTest();
 //
 //		TestContactGet.DoTest();
 //		TestContactCreate.DoTest();
