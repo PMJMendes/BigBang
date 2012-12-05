@@ -160,7 +160,7 @@ public class Constants
 	public static final UUID ProcID_SubCasualty      = UUID.fromString("80B7A9BC-8710-4063-A99E-A02E01220F4E");
 	public static final UUID ProcID_Expense          = UUID.fromString("A4EFBA8F-D669-4066-A31F-A03800BFB924");
 	public static final UUID ProcID_MgrXFer          = UUID.fromString("BBF5FFD1-4249-48AE-BB2D-9F6501420E7B");
-	public static final UUID ProcID_Conversation     = UUID.fromString("5DBEF1CD-DEB8-4731-8C6F-9FE500F50BB9");
+	public static final UUID ProcID_Conversation     = UUID.fromString("4B1272F3-28B6-4DEA-AD8F-A11801168139");
 	public static final UUID ProcID_SignatureRequest = UUID.fromString("D705396D-10CE-42E5-BB24-A02A00FF6115");
 	public static final UUID ProcID_DASRequest       = UUID.fromString("41F2CCA4-5114-4A1F-8E97-A03000F1F404");
 

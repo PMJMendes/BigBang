@@ -144,10 +144,13 @@ public abstract class CreateConversationBase
 
 		larrUsers = new HashSet<UUID>();
 		larrUsers.add(Engine.getCurrentUser());
-		for ( i = 0; i < mobjData.marrMessages[0].marrAddresses.length; i++ )
+		if ( mobjData.marrMessages[0].marrAddresses != null )
 		{
-			if ( mobjData.marrMessages[0].marrAddresses[i].midUser != null )
-				larrUsers.add(mobjData.marrMessages[0].marrAddresses[i].midUser);
+			for ( i = 0; i < mobjData.marrMessages[0].marrAddresses.length; i++ )
+			{
+				if ( mobjData.marrMessages[0].marrAddresses[i].midUser != null )
+					larrUsers.add(mobjData.marrMessages[0].marrAddresses[i].midUser);
+			}
 		}
 
 		if ( mobjData.mdtDueDate != null )

@@ -378,8 +378,6 @@ public class MessageBridge
 			}
 		}
 
-		lobjResult.mobjContactOps = null;
-
 		return lobjResult;
 	}
 
