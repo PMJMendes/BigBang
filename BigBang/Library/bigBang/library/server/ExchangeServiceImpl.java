@@ -97,6 +97,78 @@ public class ExchangeServiceImpl
 		return larrResults;
 	}
 
+	public ExchangeItemStub[] getItemsPaged(int page)
+		throws SessionExpiredException, BigBangException
+	{
+		Item[] larrItems;
+		ExchangeItemStub[] larrResults;
+		int i;
+		EmailAddress lobjFrom;
+		MessageBody lobjBody;
+		String lstrBody;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			larrItems = MailConnector.DoGetMail(page);
+
+			if ( larrItems == null )
+				return null;
+
+			larrResults = new ExchangeItemStub[larrItems.length];
+			for ( i = 0; i < larrResults.length; i++ )
+			{
+				try
+				{
+					larrItems[i].load();
+				}
+				catch (Throwable e)
+				{
+					larrResults[i] = new ExchangeItemStub();
+				}
+				larrResults[i] = new ExchangeItemStub();
+				larrResults[i].id = larrItems[i].getId().getUniqueId();
+				larrResults[i].subject = larrItems[i].getSubject();
+				if ( larrItems[i] instanceof EmailMessage )
+				{
+					lobjFrom = ((EmailMessage)larrItems[i]).getFrom();
+					larrResults[i].from = ( lobjFrom == null ? null :
+							(lobjFrom.getName() == null ? lobjFrom.getAddress() : lobjFrom.getName()) );
+				}
+				else
+					larrResults[i].from = null;
+				try
+				{
+					larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(larrItems[i].getDateTimeSent());
+				}
+				catch (Throwable e)
+				{
+					larrResults[i].timestamp = null;
+				}
+				larrResults[i].attachmentCount = larrItems[i].getAttachments().getCount();
+				lobjBody = larrItems[i].getBody();
+				if ( lobjBody == null )
+					larrResults[i].bodyPreview = "";
+				else
+				{
+					lstrBody = lobjBody.toString();
+					if ( lstrBody.length() > 200 )
+						larrResults[i].bodyPreview = lstrBody.substring(0, 200);
+					else
+						larrResults[i].bodyPreview = lstrBody;
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrResults;
+	}
+
 	public ExchangeItem getItem(String id)
 		throws SessionExpiredException, BigBangException
 	{

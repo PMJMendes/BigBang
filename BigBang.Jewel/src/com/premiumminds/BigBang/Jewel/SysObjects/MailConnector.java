@@ -357,6 +357,34 @@ public class MailConnector
 		return larrTmp.toArray(new Item[larrTmp.size()]);
 	}
 
+	public static Item[] DoGetMail(int plngPage)
+		throws BigBangJewelException
+	{
+		Folder lobjFolder;
+		ItemView lobjView;
+		ArrayList<Item> larrTmp;
+
+		lobjFolder = GetFolder();
+
+		if ( lobjFolder == null )
+			return null;
+
+		lobjView = new ItemView(30);
+		lobjView.setOffset(30 * plngPage);
+
+		try
+		{
+			lobjView.getOrderBy().add(ItemSchema.DateTimeReceived, SortDirection.Descending);
+			larrTmp = GetService().findItems(lobjFolder.getId(), lobjView).getItems();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrTmp.toArray(new Item[larrTmp.size()]);
+	}
+
 	public static Item DoGetItem(String pstrUniqueID)
 		throws BigBangJewelException
 	{

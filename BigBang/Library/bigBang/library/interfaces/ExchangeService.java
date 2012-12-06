@@ -27,6 +27,7 @@ public interface ExchangeService
 	}
 
 	ExchangeItemStub[] getItems() throws SessionExpiredException, BigBangException;
+	ExchangeItemStub[] getItemsPaged(int page) throws SessionExpiredException, BigBangException;
 	ExchangeItem getItem(String id) throws SessionExpiredException, BigBangException;
 //	Attachment getAttachment(String emailId, String attachmentId) throws SessionExpiredException, BigBangException;
 }
