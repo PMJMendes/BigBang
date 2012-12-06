@@ -357,7 +357,7 @@ public class MailConnector
 		return larrTmp.toArray(new Item[larrTmp.size()]);
 	}
 
-	public static Item[] DoGetMail(int plngPage)
+	public static Item[] DoGetMailAll()
 		throws BigBangJewelException
 	{
 		Folder lobjFolder;
@@ -369,8 +369,7 @@ public class MailConnector
 		if ( lobjFolder == null )
 			return null;
 
-		lobjView = new ItemView(30);
-		lobjView.setOffset(30 * plngPage);
+		lobjView = new ItemView(Integer.MAX_VALUE);
 
 		try
 		{

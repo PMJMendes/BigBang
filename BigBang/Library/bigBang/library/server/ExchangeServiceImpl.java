@@ -97,7 +97,7 @@ public class ExchangeServiceImpl
 		return larrResults;
 	}
 
-	public ExchangeItemStub[] getItemsPaged(int page)
+	public ExchangeItemStub[] getItemsAll()
 		throws SessionExpiredException, BigBangException
 	{
 		Item[] larrItems;
@@ -112,7 +112,7 @@ public class ExchangeServiceImpl
 
 		try
 		{
-			larrItems = MailConnector.DoGetMail(page);
+			larrItems = MailConnector.DoGetMailAll();
 
 			if ( larrItems == null )
 				return null;

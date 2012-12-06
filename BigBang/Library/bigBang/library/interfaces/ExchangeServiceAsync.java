@@ -9,7 +9,7 @@ public interface ExchangeServiceAsync
 	extends Service
 {
 	void getItems(AsyncCallback<ExchangeItemStub[]> callback);
-	void getItemsPaged(int page, AsyncCallback<ExchangeItemStub[]> callback);
+	void getItemsAll(AsyncCallback<ExchangeItemStub[]> callback);
 	void getItem(String id, AsyncCallback<ExchangeItem> callback);
 //	void getAttachment(String emailId, String attachmentId, AsyncCallback<Attachment> callback);
 }
