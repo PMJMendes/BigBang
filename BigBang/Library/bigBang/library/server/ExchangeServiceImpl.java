@@ -8,6 +8,7 @@ import microsoft.exchange.webservices.data.EmailAddress;
 import microsoft.exchange.webservices.data.EmailMessage;
 import microsoft.exchange.webservices.data.FileAttachment;
 import microsoft.exchange.webservices.data.Item;
+import microsoft.exchange.webservices.data.MessageBody;
 import Jewel.Engine.Engine;
 import bigBang.library.interfaces.ExchangeService;
 import bigBang.library.shared.AttachmentStub;
@@ -31,6 +32,7 @@ public class ExchangeServiceImpl
 		ExchangeItemStub[] larrResults;
 		int i;
 		EmailAddress lobjFrom;
+		MessageBody lobjBody;
 		String lstrBody;
 
 		if ( Engine.getCurrentUser() == null )
@@ -46,24 +48,45 @@ public class ExchangeServiceImpl
 			larrResults = new ExchangeItemStub[larrItems.length];
 			for ( i = 0; i < larrResults.length; i++ )
 			{
-				larrItems[i].load();
+				try
+				{
+					larrItems[i].load();
+				}
+				catch (Throwable e)
+				{
+					larrResults[i] = new ExchangeItemStub();
+				}
 				larrResults[i] = new ExchangeItemStub();
 				larrResults[i].id = larrItems[i].getId().getUniqueId();
 				larrResults[i].subject = larrItems[i].getSubject();
 				if ( larrItems[i] instanceof EmailMessage )
 				{
-					lobjFrom = ((EmailMessage)larrItems[i]).getFrom(); 
-					larrResults[i].from = ( lobjFrom.getName() == null ? lobjFrom.getAddress() : lobjFrom.getName() );
+					lobjFrom = ((EmailMessage)larrItems[i]).getFrom();
+					larrResults[i].from = ( lobjFrom == null ? null :
+							(lobjFrom.getName() == null ? lobjFrom.getAddress() : lobjFrom.getName()) );
 				}
 				else
 					larrResults[i].from = null;
-				larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(larrItems[i].getDateTimeSent());
+				try
+				{
+					larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(larrItems[i].getDateTimeSent());
+				}
+				catch (Throwable e)
+				{
+					larrResults[i].timestamp = null;
+				}
 				larrResults[i].attachmentCount = larrItems[i].getAttachments().getCount();
-				lstrBody = larrItems[i].getBody().toString();
-				if ( lstrBody.length() > 200 )
-					larrResults[i].bodyPreview = lstrBody.substring(0, 200);
+				lobjBody = larrItems[i].getBody();
+				if ( lobjBody == null )
+					larrResults[i].bodyPreview = "";
 				else
-					larrResults[i].bodyPreview = lstrBody;
+				{
+					lstrBody = lobjBody.toString();
+					if ( lstrBody.length() > 200 )
+						larrResults[i].bodyPreview = lstrBody.substring(0, 200);
+					else
+						larrResults[i].bodyPreview = lstrBody;
+				}
 			}
 		}
 		catch (Throwable e)
