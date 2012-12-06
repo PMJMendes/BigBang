@@ -28,8 +28,10 @@ import microsoft.exchange.webservices.data.Folder;
 import microsoft.exchange.webservices.data.FolderView;
 import microsoft.exchange.webservices.data.Item;
 import microsoft.exchange.webservices.data.ItemId;
+import microsoft.exchange.webservices.data.ItemSchema;
 import microsoft.exchange.webservices.data.ItemView;
 import microsoft.exchange.webservices.data.PropertySet;
+import microsoft.exchange.webservices.data.SortDirection;
 import microsoft.exchange.webservices.data.WellKnownFolderName;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
@@ -332,6 +334,7 @@ public class MailConnector
 		throws BigBangJewelException
 	{
 		Folder lobjFolder;
+		ItemView lobjView;
 		ArrayList<Item> larrTmp;
 
 		lobjFolder = GetFolder();
@@ -339,9 +342,12 @@ public class MailConnector
 		if ( lobjFolder == null )
 			return null;
 
+		lobjView = new ItemView(30);
+
 		try
 		{
-			larrTmp = GetService().findItems(lobjFolder.getId(), new ItemView(Integer.MAX_VALUE)).getItems();
+			lobjView.getOrderBy().add(ItemSchema.DateTimeReceived, SortDirection.Descending);
+			larrTmp = GetService().findItems(lobjFolder.getId(), lobjView).getItems();
 		}
 		catch (Throwable e)
 		{
