@@ -291,7 +291,8 @@ public class MessageBridge
 		else
 		{
 			lobjResult.mstrEmailID = null;
-			lobjResult.mstrSubject = pobjMessage.subject;
+			lobjResult.mstrSubject = ( pobjMessage.subject == null ?
+					(pobjMessage.text.length() > 100 ? pobjMessage.text.substring(0, 100) : pobjMessage.text) : pobjMessage.subject );
 			lobjResult.mstrBody = pobjMessage.text;
 
 			if ( !lobjResult.mbIsEmail || (pobjMessage.addresses == null) )
