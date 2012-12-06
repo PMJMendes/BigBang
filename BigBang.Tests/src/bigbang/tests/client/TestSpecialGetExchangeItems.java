@@ -44,6 +44,6 @@ public class TestSpecialGetExchangeItems
 			}
 		};
 
-		Services.exchangeService.getItemsPaged(1, callback);
+		Services.exchangeService.getItemsAll(callback);
 	}
 }
