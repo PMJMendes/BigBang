@@ -617,6 +617,8 @@ public class Constants
 	public static final UUID PayID_BankTransfer    = UUID.fromString("5E1BEB0E-FABC-44F4-97BB-A02200EB78A5");
 	public static final UUID PayID_Compensation    = UUID.fromString("AF1779DA-BB19-4BBD-B1FA-A02200EB84B6");
 	public static final UUID PayID_FromTheInsurer  = UUID.fromString("9FD1C899-B395-4744-974B-A02200EB9014");
+	public static final UUID PayID_ByTheBroker     = UUID.fromString("1959F84F-D627-4FC7-BC30-A12001189C8E");
+	public static final UUID PayID_DirectCheque    = UUID.fromString("D18A38F0-8A4B-4507-99FB-A1200118AA74");
 
 	// Template IDs
 	public static final UUID TID_DebitNote           = UUID.fromString("BD024115-3572-41D4-B60C-9FF100F7E0C4");

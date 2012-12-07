@@ -97,15 +97,15 @@ public class Payment
 		}
 
 		ldblTotal = BigDecimal.ZERO;
-		lbDirect = false;
+		lbDirect = true;
 		for ( i = 0; i < marrData.length; i++ )
 		{
 			ldblTotal = ldblTotal.add(marrData[i].mdblValue);
 			if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter && midReceipt.equals(marrData[i].midReceipt) )
 					throw new JewelPetriException("Erro: Não pode compensar um recibo consigo próprio.");
 
-			if ( Constants.PayID_DirectToInsurer.equals(marrData[i].midPaymentType) )
-				lbDirect = true;
+			if ( !Constants.PayID_DirectToInsurer.equals(marrData[i].midPaymentType) )
+				lbDirect = false;
 		}
 
 		if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )

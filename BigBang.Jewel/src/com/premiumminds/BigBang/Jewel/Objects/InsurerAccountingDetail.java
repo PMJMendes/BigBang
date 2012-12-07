@@ -97,7 +97,8 @@ public class InsurerAccountingDetail
 		{
 			for ( i = 0; i < lobjPayment.marrData.length; i++ )
 				if ( Constants.PayID_DirectToInsurer.equals(lobjPayment.marrData[i].midPaymentType) ||
-						Constants.PayID_FromTheInsurer.equals(lobjPayment.marrData[i].midPaymentType) )
+						Constants.PayID_FromTheInsurer.equals(lobjPayment.marrData[i].midPaymentType) ||
+						Constants.PayID_DirectCheque.equals(lobjPayment.marrData[i].midPaymentType) )
 					ldblResult = ldblResult.add(lobjPayment.marrData[i].mdblValue);
 		}
 
