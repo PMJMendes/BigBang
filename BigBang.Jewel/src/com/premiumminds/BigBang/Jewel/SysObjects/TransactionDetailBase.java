@@ -111,11 +111,22 @@ public abstract class TransactionDetailBase
 		larrCells[7] = ReportBuilder.buildCell(lobjReceipt.getAt(Receipt.I.DUEDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[7], true, true);
 
-		larrCells[8] = ReportBuilder.buildCell(lobjLog.GetTimestamp(), TypeDefGUIDs.T_Date);
-		ReportBuilder.styleCell(larrCells[8], true, true);
+		if ( lobjLog == null )
+		{
+			larrCells[8] = ReportBuilder.buildCell(null, TypeDefGUIDs.T_Date);
+			ReportBuilder.styleCell(larrCells[8], true, true);
 
-		larrCells[9] = ReportBuilder.buildCell(getMeans(lobjLog), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[9], true, true);
+			larrCells[9] = ReportBuilder.buildCell(null, TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[9], true, true);
+		}
+		else
+		{
+			larrCells[8] = ReportBuilder.buildCell(lobjLog.GetTimestamp(), TypeDefGUIDs.T_Date);
+			ReportBuilder.styleCell(larrCells[8], true, true);
+
+			larrCells[9] = ReportBuilder.buildCell(getMeans(lobjLog), TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[9], true, true);
+		}
 
 		return larrCells;
 	}
