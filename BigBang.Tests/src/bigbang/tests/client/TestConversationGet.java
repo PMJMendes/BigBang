@@ -26,6 +26,6 @@ public class TestConversationGet
 			}
 		};
 
-		Services.conversationService.getConversation("AD5EEEE7-E646-4F9D-9E41-9FE80137FC19", callback);
+		Services.conversationService.getConversation("35D525C7-4518-42D4-A5B0-A11E01258DBB", callback);
 	}
 }

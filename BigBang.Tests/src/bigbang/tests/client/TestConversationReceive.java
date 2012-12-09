@@ -30,11 +30,9 @@ public class TestConversationReceive
 		};
 
 		message = new Message();
-//		response = new ExternalInfoRequest.Incoming();
-//		response.requestId = "0D867A6D-ADAE-41F8-8826-A00001005C32";
-//		response.message.notes = null;
-//		response.message.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAACtSKTbKCtrR6MYTzZmb/1MAAADRWwBAAA=";
-//		response.replylimit = 14;
+		message.conversationId = "EC20D291-71B2-4B9D-B24B-A11E01274A39";
+		message.kind = Message.Kind.EMAIL;
+		message.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwAfB8bLbZT3Q6D4HtPpCBWKAAAAAKnCAACtSKTbKCtrR6MYTzZmb/1MAAADRX77AAA=";
 
 		Services.conversationService.receiveMessage(message, null, callback);
 	}
