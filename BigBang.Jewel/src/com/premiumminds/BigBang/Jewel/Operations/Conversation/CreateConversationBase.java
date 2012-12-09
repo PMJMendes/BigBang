@@ -60,13 +60,14 @@ public abstract class CreateConversationBase
 		throws JewelPetriException
 	{
 		UUID lidUrgency;
-		int i;
+		int i, j, k;
 		Conversation lobjConv;
 		Message lobjMessage;
 		MessageAddress lobjAddr;
 		HashSet<UUID> larrUsers;
 		IScript lobjScript;
 		IProcess lobjProc;
+		boolean b;
 		AgendaItem lobjAgendaItem;
 
 		if ( (mobjData.marrMessages == null) || (mobjData.marrMessages.length != 1) )
@@ -130,6 +131,56 @@ public abstract class CreateConversationBase
 			{
 				for ( i = 0; i < mobjData.marrMessages[0].marrAddresses.length; i++ )
 				{
+					if ( Constants.MsgDir_Incoming.equals(mobjData.midStartDir) &&
+							(mobjData.marrMessages[0].marrAddresses[i].midInfo == null) &&
+							Constants.UsageID_From.equals(mobjData.marrMessages[0].marrAddresses[i].midUsage) &&
+							(mobjData.marrMessages[0].mobjContactOps != null) )
+					{
+						b = false;
+						if ( mobjData.marrMessages[0].mobjContactOps.marrModify != null )
+						{
+							for ( j = 0; !b && j < mobjData.marrMessages[0].mobjContactOps.marrModify.length; j++ )
+							{
+								if ( mobjData.marrMessages[0].mobjContactOps.marrModify[j].marrInfo != null )
+								{
+									for ( k = 0; !b && k < mobjData.marrMessages[0].mobjContactOps.marrModify[j].marrInfo.length; k++ )
+									{
+										if ( Constants.CInfoID_Email.equals(
+												mobjData.marrMessages[0].mobjContactOps.marrModify[j].marrInfo[k].midType) &&
+												mobjData.marrMessages[0].marrAddresses[i].mstrAddress.equals(
+												mobjData.marrMessages[0].mobjContactOps.marrModify[j].marrInfo[k].mstrValue) )
+										{
+											mobjData.marrMessages[0].marrAddresses[i].midInfo =
+													mobjData.marrMessages[0].mobjContactOps.marrModify[j].marrInfo[k].mid;
+											b = true;
+										}
+									}
+								}
+							}
+						}
+						if ( mobjData.marrMessages[0].mobjContactOps.marrCreate != null )
+						{
+							for ( j = 0; !b && j < mobjData.marrMessages[0].mobjContactOps.marrCreate.length; j++ )
+							{
+								if ( mobjData.marrMessages[0].mobjContactOps.marrCreate[j].marrInfo != null )
+								{
+									for ( k = 0; !b && k < mobjData.marrMessages[0].mobjContactOps.marrCreate[j].marrInfo.length; k++ )
+									{
+										if ( Constants.CInfoID_Email.equals(
+												mobjData.marrMessages[0].mobjContactOps.marrCreate[j].marrInfo[k].midType) &&
+												mobjData.marrMessages[0].marrAddresses[i].mstrAddress.equals(
+												mobjData.marrMessages[0].mobjContactOps.marrCreate[j].marrInfo[k].mstrValue) )
+										{
+											mobjData.marrMessages[0].marrAddresses[i].midInfo =
+													mobjData.marrMessages[0].mobjContactOps.marrCreate[j].marrInfo[k].mid;
+											b = true;
+										}
+									}
+								}
+							}
+						}
+					}
+
 					mobjData.marrMessages[0].marrAddresses[i].midOwner = lobjMessage.getKey();
 					lobjAddr = MessageAddress.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrMessages[0].marrAddresses[i].ToObject(lobjAddr);

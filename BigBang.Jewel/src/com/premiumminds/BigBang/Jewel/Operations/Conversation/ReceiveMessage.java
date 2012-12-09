@@ -80,7 +80,8 @@ public class ReceiveMessage
 		AgendaItem lobjNewAgendaItem;
 		Message lobjMessage;
 		MessageAddress lobjAddr;
-		int i;
+		int i, j, k;
+		boolean b;
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 
@@ -168,6 +169,55 @@ public class ReceiveMessage
 			{
 				for ( i = 0; i < mobjData.marrAddresses.length; i++ )
 				{
+					if ( (mobjData.marrAddresses[i].midInfo == null) &&
+							Constants.UsageID_From.equals(mobjData.marrAddresses[i].midUsage) &&
+							(mobjData.mobjContactOps != null) )
+					{
+						b = false;
+						if ( mobjData.mobjContactOps.marrModify != null )
+						{
+							for ( j = 0; !b && j < mobjData.mobjContactOps.marrModify.length; j++ )
+							{
+								if ( mobjData.mobjContactOps.marrModify[j].marrInfo != null )
+								{
+									for ( k = 0; !b && k < mobjData.mobjContactOps.marrModify[j].marrInfo.length; k++ )
+									{
+										if ( Constants.CInfoID_Email.equals(
+												mobjData.mobjContactOps.marrModify[j].marrInfo[k].midType) &&
+												mobjData.marrAddresses[i].mstrAddress.equals(
+												mobjData.mobjContactOps.marrModify[j].marrInfo[k].mstrValue) )
+										{
+											mobjData.marrAddresses[i].midInfo =
+													mobjData.mobjContactOps.marrModify[j].marrInfo[k].mid;
+											b = true;
+										}
+									}
+								}
+							}
+						}
+						if ( mobjData.mobjContactOps.marrCreate != null )
+						{
+							for ( j = 0; !b && j < mobjData.mobjContactOps.marrCreate.length; j++ )
+							{
+								if ( mobjData.mobjContactOps.marrCreate[j].marrInfo != null )
+								{
+									for ( k = 0; !b && k < mobjData.mobjContactOps.marrCreate[j].marrInfo.length; k++ )
+									{
+										if ( Constants.CInfoID_Email.equals(
+												mobjData.mobjContactOps.marrCreate[j].marrInfo[k].midType) &&
+												mobjData.marrAddresses[i].mstrAddress.equals(
+												mobjData.mobjContactOps.marrCreate[j].marrInfo[k].mstrValue) )
+										{
+											mobjData.marrAddresses[i].midInfo =
+													mobjData.mobjContactOps.marrCreate[j].marrInfo[k].mid;
+											b = true;
+										}
+									}
+								}
+							}
+						}
+					}
+
 					mobjData.marrAddresses[i].midOwner = lobjMessage.getKey();
 					lobjAddr = MessageAddress.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrAddresses[i].ToObject(lobjAddr);
@@ -246,6 +296,9 @@ public class ReceiveMessage
 
 		try
 		{
+			lobjConv = (Conversation)GetProcess().GetData();
+    		larrUsers = lobjConv.GetUsers(pdb);
+
 			if ( mobjData.marrAddresses != null )
 			{
 				for ( i = 0; i < mobjData.marrAddresses.length; i++ )
@@ -305,7 +358,6 @@ public class ReceiveMessage
 
 		try
 		{
-			lobjConv = (Conversation)GetProcess().GetData();
 			lobjConv.setAt(Conversation.I.DUEDATE, mdtPrevLimit);
 			lobjConv.setAt(Conversation.I.PENDINGDIRECTION, midPrevDir);
 			lobjConv.SaveToDb(pdb);
@@ -315,7 +367,6 @@ public class ReceiveMessage
     		else
     			lidUrgency = Constants.UrgID_Pending;
 
-    		larrUsers = lobjConv.GetUsers(pdb);
 			for ( i = 0; i < larrUsers.length; i++ )
 			{
 				lobjNewAgendaItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
