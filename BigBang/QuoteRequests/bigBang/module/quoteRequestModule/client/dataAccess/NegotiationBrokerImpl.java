@@ -9,7 +9,7 @@ import bigBang.definitions.client.dataAccess.NegotiationBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Negotiation.Cancellation;
 import bigBang.definitions.shared.Negotiation.Deletion;
@@ -34,26 +34,6 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 		this.service = service;
 	}
 
-	@Override
-	public void createExternalInfoRequest(final ExternalInfoRequest request, final ResponseHandler<ExternalInfoRequest> handler){
-//		service.createExternalRequest(request, new BigBangAsyncCallback<ExternalInfoRequest>() {
-//			
-//			@Override
-//			public void onResponseSuccess(ExternalInfoRequest result) {
-//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST, result.id));
-//				handler.onResponse(result);
-//			}
-//			
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				handler.onError((new String[]{
-//							new String("Could create the external request")
-//					}));
-//				super.onResponseFailure(caught);
-//			}
-//			
-//		});
-	}
 
 	@Override
 	public void getNegotiation(final String negotiationId, final ResponseHandler<Negotiation> handler){
@@ -292,6 +272,50 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 			}
 
 		});
+	}
+	@Override
+	public void sendMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.sendMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override 
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});		
+	}
+	@Override
+	public void receiveMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.receiveMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override 
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not receive the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});				
 	}
 
 

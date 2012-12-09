@@ -24,9 +24,9 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 	//other
 	//REQUESTS
 	//client
-	protected MenuItem infoOrDocumentRequest;
+	protected MenuItem sendMessage;
 	//agency
-	protected MenuItem infoFromInsurer;
+	protected MenuItem receiveMessage;
 
 	public ExpenseProcessToolBar() {
 
@@ -102,24 +102,24 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 		//REQUESTS
 		//client
 
-		infoOrDocumentRequest = new MenuItem("Criar Pedido de Informação ao Cliente", new Command() {
+		sendMessage = new MenuItem("Enviar Mensagem", new Command() {
 
 			@Override
 			public void execute() {
-				onInfoOrDocumentRequest();
+				sendMessage();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, infoOrDocumentRequest);
+		addItem(SUB_MENU.REQUESTS, sendMessage);
 
 		//agency
-		infoFromInsurer = new MenuItem("Criar Pedido de Informação Externo da Seguradora", new Command() {
+		receiveMessage = new MenuItem("Receber Mensagem", new Command() {
 
 			@Override
 			public void execute() {
-				onInfoFromInsurer();
+				receiveMessage();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, infoFromInsurer);
+		addItem(SUB_MENU.REQUESTS, receiveMessage);
 
 
 		createMenuItem.setVisible(false);
@@ -130,9 +130,9 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 
 	protected abstract void onReceiveRejection();
 
-	protected abstract void onInfoFromInsurer();
+	protected abstract void receiveMessage();
 
-	protected abstract void onInfoOrDocumentRequest();
+	protected abstract void sendMessage();
 
 	protected abstract void onNotifyClient();
 
@@ -178,12 +178,12 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 		participateToInsurer.setEnabled(allow);
 	}
 
-	public void allowInfoOrDocumentRequest(boolean allow){
-		infoOrDocumentRequest.setEnabled(allow);
+	public void allowSendMessage(boolean allow){
+		sendMessage.setEnabled(allow);
 	}
 
-	public void allowInfoFromInsurer(boolean allow){
-		infoFromInsurer.setEnabled(allow);
+	public void allowReceiveMessage(boolean allow){
+		receiveMessage.setEnabled(allow);
 	}
 
 	public void allowReceiveAcceptance(boolean allow) {

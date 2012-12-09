@@ -73,7 +73,6 @@ public class MailOrganizerView extends View implements MailOrganizerViewPresente
 		right.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		right.setCellHeight(form, "100%");
 		toolbar.setEnabled(false);
-		documentPanel.navigateToDirectoryList(null);
 		wrapper.add(right);	
 		//form.setReadOnly(true);
 		toolbar.setEnabled(true);
@@ -133,5 +132,10 @@ public class MailOrganizerView extends View implements MailOrganizerViewPresente
 	public void setReadOnly(boolean b) {
 		form.setReadOnly(b);
 		toolbar.setEnabled(!b);
+	}
+
+	@Override
+	public void clearNavigationPanel() {
+		documentPanel.navigateToDirectoryList(null);
 	}
 }

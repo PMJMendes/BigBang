@@ -1,17 +1,17 @@
 package bigBang.library.client.userInterface.form;
 
 import bigBang.definitions.shared.InfoOrDocumentRequest.Response;
-import bigBang.library.client.userInterface.IncomingMessageFormField;
+import bigBang.library.client.userInterface.ReceiveMessageFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
 public class InfoOrDocumentRequestReplyForm extends FormView<Response> {
 
-	protected IncomingMessageFormField incomingMessage;
+	protected ReceiveMessageFormField incomingMessage;
 	
 	public InfoOrDocumentRequestReplyForm(){
-		incomingMessage = new IncomingMessageFormField();
+		incomingMessage = new ReceiveMessageFormField();
 		
-		addSection("Resposta a Pedido de Informação");
+		addSection("Resposta a mensagem");
 		addFormField(incomingMessage);
 		
 		setValidator(new InfoOrDocumentRequestReplyFormValidator(this));
@@ -21,7 +21,7 @@ public class InfoOrDocumentRequestReplyForm extends FormView<Response> {
 	public Response getInfo() {
 		Response result = getValue();
 		if(result != null) {
-			result.message = incomingMessage.getValue();
+//			result.message = incomingMessage.getValue();
 		}
 		return result;
 	}
@@ -31,7 +31,7 @@ public class InfoOrDocumentRequestReplyForm extends FormView<Response> {
 		if(info == null) {
 			clearInfo();
 		}else{
-			incomingMessage.setValue(info.message);
+//			incomingMessage.setValue(info.message);
 		}
 	}
 

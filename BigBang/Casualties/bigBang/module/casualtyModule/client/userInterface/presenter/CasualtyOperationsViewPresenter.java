@@ -59,20 +59,24 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 					present("SUB_CASUALTY_VIEW", parameters);
 				}else if(display.equalsIgnoreCase("history")){
 					present("HISTORY", parameters, true);
-				}else if(display.equalsIgnoreCase("inforequest")){
-					present("CASUALTY_CLIENT_INFO_OR_DOCUMENT_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("inforequestsubcasualty")){
-					present("SUB_CASUALTY_INFO_OR_DOCUMENT_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("insurerinfosubcasualty")){
-					present("SUB_CASUALTY_EXTERNAL_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("viewinforequest")){
+				}else if(display.equalsIgnoreCase("sendmessage")){
+					present("CASUALTY_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("receivemessage")){
+					present("CASUALTY_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("subcasualtysendmessage")){
+					present("SUB_CASUALTY_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("subcasualtyreceivemessage")){
+					present("SUB_CASUALTY_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("viewinforequest")){ //TODO REQUESTS CLEAN THIS
 					present("VIEW_CASUALTY_INFO_OR_DOCUMENT_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("viewsubcasualtyinforequest")){
 					present("VIEW_SUB_CASUALTY_INFO_OR_DOCUMENT_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("viewmanagertransfer")){
 					present("MANAGER_TRANSFER", parameters);
-				}else if(display.equalsIgnoreCase("viewsubcasualtyexternalrequest")){
-					present("VIEW_SUB_CASUALTY_EXTERNAL_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("conversation")){
+					present("CASUALTY_CONVERSATION", parameters);
+				}else if(display.equalsIgnoreCase("subcasualtyconversation")){
+					present("SUB_CASUALTY_CONVERSATION", parameters);
 				}else{
 					goToDefault();
 				}

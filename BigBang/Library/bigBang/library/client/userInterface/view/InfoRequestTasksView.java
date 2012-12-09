@@ -11,24 +11,24 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.InfoRequestTasksOperationsToolbar;
-import bigBang.library.client.userInterface.form.InfoOrDocumentRequestForm;
+import bigBang.library.client.userInterface.form.SendMessageForm;
 import bigBang.library.client.userInterface.presenter.InfoRequestTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoRequestTasksViewPresenter.Action;
 
 public class InfoRequestTasksView extends View implements InfoRequestTasksViewPresenter.Display{
 
-	protected InfoOrDocumentRequestForm form;
+	protected SendMessageForm form;
 	protected InfoRequestTasksOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> handler;
-	
+
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
-	
+
 	public InfoRequestTasksView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
-		
+
 		toolbar = new InfoRequestTasksOperationsToolbar() {
 
 			@Override
@@ -50,19 +50,22 @@ public class InfoRequestTasksView extends View implements InfoRequestTasksViewPr
 			protected void onGoToProcess() {
 				handler.onActionInvoked(new ActionInvokedEvent<InfoRequestTasksViewPresenter.Action>(Action.GO_TO_PROCESS));
 			}
-			
+
 		};
 		wrapper.add(toolbar);
-		
-		form = new InfoOrDocumentRequestForm();
+
+		form = new SendMessageForm();
 		form.setReadOnly(true);
 		form.setSize("100%", "100%");
+
+		form.getContactType();
+
 		wrapper.add(form);
 		wrapper.setCellHeight(form, "100%");
-		
+
 		this.overlayContainer = new SimplePanel();
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
@@ -70,7 +73,8 @@ public class InfoRequestTasksView extends View implements InfoRequestTasksViewPr
 
 	@Override
 	public HasValue<InfoOrDocumentRequest> getForm() {
-		return form;
+//		return form;
+		return null;
 	}
 
 	@Override
@@ -88,12 +92,12 @@ public class InfoRequestTasksView extends View implements InfoRequestTasksViewPr
 	public void allowReceiveResponse(boolean allow) {
 		toolbar.allowReceiveResponse(allow);
 	}
-	
+
 	@Override
 	public void allowRepeat(boolean allow) {
 		toolbar.allowRepeat(allow);
 	}
-	
+
 	@Override
 	public void allowCancel(boolean allow) {
 		toolbar.allowCancel(allow);

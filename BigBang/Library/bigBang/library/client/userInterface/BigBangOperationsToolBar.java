@@ -58,7 +58,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		createMenuItem = new BigBangMenuItem("Criar", this.createSubMenu);
 		executeMenuItem = new BigBangMenuItem("Executar", this.executeSubMenu);
 		dataMenuItem = new BigBangMenuItem("Dados", this.dataSubMenu);
-		requestMenuItem = new BigBangMenuItem("Pedidos", this.requestsSubMenu);
+		requestMenuItem = new BigBangMenuItem("Mensagens", this.requestsSubMenu);
 		adminMenuItem = new BigBangMenuItem("Admin", this.adminSubMenu);
 
 		editCancelMenuItem = new BigBangMenuItem("", new Command() {

@@ -22,7 +22,7 @@ public class ViewInfoOrDocumentRequestForm extends
 	public ViewInfoOrDocumentRequestForm(){
 		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)", false);
 		replyLimit.setFieldWidth("72px");
-		type = new ExpandableSelectionFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Pedido");
+		type = new ExpandableSelectionFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
 		subject = new TextBoxFormField("Assunto");
 		subject.setFieldWidth("100%");
 		text = new RichTextAreaFormField();
@@ -31,7 +31,7 @@ public class ViewInfoOrDocumentRequestForm extends
 		internalBCCs = new TextBoxFormField("BCC");
 		externalCCs = new TextBoxFormField("CC");
 				
-		addSection("Detalhes do Pedido");
+		addSection("Detalhes da Mensagem");
 		addFormField(type, true);
 		addFormField(replyLimit, true);
 		addFormField(toUserNames);

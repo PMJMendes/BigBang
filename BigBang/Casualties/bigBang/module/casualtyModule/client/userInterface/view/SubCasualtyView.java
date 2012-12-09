@@ -112,20 +112,20 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 			public void onMarkForClosing() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.MARK_FOR_CLOSING));
 			}
-
+			
 			@Override
-			protected void onExternalInfoRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.EXTERNAL_REQUEST));
-			}
-
-			@Override
-			protected void onInsurerInfoRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.INFO_OR_DOCUMENT_REQUEST));
+			protected void onSendMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.SEND_MESSAGE));
 			}
 
 			@Override
 			protected void onMarkNotificationSent() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.MARK_NOTIFICATION_SENT));
+			}
+
+			@Override
+			protected void onReceiveMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.RECEIVE_MESSAGE));
 			}
 		};
 		formWrapper.add(this.toolbar);
@@ -215,14 +215,14 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	}
 
 	@Override
-	public void allowInfoOrDocumentRequest(boolean hasPermission) {
-		toolbar.allowInfoOrDocumentRequest(hasPermission);
+	public void allowSendMessage(boolean hasPermission) {
+		toolbar.allowSendMessage(hasPermission);
 
 	}
 
 	@Override
-	public void allowInsurerInfoRequest(boolean hasPermission) {
-		toolbar.allowInsurerInfoRequest(hasPermission);
+	public void allowReceiveMessage(boolean hasPermission) {
+		toolbar.allowReceiveMessage(hasPermission);
 	}
 
 	@Override

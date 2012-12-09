@@ -78,8 +78,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		VOID_POLICY,
 		TRANSFER_BROKERAGE,
 		CREATE_SUBSTITUTE_POLICY,
-		REQUEST_CLIENT_INFO,
-		REQUEST_AGENCY_INFO,
 		CREATE_INSURED_OBJECT_FROM_CLIENT,
 		TRANSFER_MANAGER,
 		VALIDATE,
@@ -91,7 +89,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		CREATE_EXPENSE,
 		CREATE_RISK_ANALISYS, 
 		TRANSFER_TO_CLIENT, 
-		ON_NEW_RESULTS, CREATE_SUB_POLICY_RECEIPT
+		ON_NEW_RESULTS, CREATE_SUB_POLICY_RECEIPT, RECEIVE_MESSAGE, SEND_MESSAGE
 	}
 	public interface Display {
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -121,8 +119,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void allowVoidPolicy(boolean allow);
 		void allowTransferBrokerage(boolean allow);
 		void allowCreateSubstitutePolicy(boolean allow);
-		void allowRequestClientInfo(boolean allow);
-		void allowRequestAgencyInfo(boolean allow);
 		void allowCreateInsuredObjectFromClient(boolean allow);
 		void allowTransferManager(boolean allow);
 		void allowExecuteDetailedCalculations(boolean allow);
@@ -133,6 +129,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void allowCreateHealthExpense(boolean allow);
 		void allowCreateRiskAnalisys(boolean allow);
 		void allowTransferToClient(boolean allow);
+		void allowSendMessage(boolean allow);
+		void allowReceiveMessage(boolean allow);
 
 		//children lists
 		HasValueSelectables<Contact> getContactsList();
@@ -330,11 +328,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					item.setParameter("show", "issuecreditnote");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
-				case REQUEST_AGENCY_INFO:
-					onRequestCompanyInfo();
+				case RECEIVE_MESSAGE:
+					onReceiveMessage();
 					break;
-				case REQUEST_CLIENT_INFO:
-					onRequestClientInfo();
+				case SEND_MESSAGE:
+					onSendMessage();
 					break;
 				case TRANSFER_BROKERAGE:
 					item.pushIntoStackParameter("display", "brokeragetransfer");
@@ -669,11 +667,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 			item.pushIntoStackParameter("display", "viewmanagertransfer");
 			item.setParameter("transferid", selectedValue.dataId);
 			NavigationHistoryManager.getInstance().go(item);
-		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewinforequest");
-			item.setParameter("requestid", selectedValue.dataId);
-			NavigationHistoryManager.getInstance().go(item);
+			item.pushIntoStackParameter("display", "conversation");
+			item.setParameter("conversationid", selectedValue.dataId);
+			NavigationHistoryManager.getInstance().go(item);	
 		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 			item.pushIntoStackParameter("display", "negotiation");
@@ -1111,16 +1109,16 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice falhou a validação :<br><br>" + message), TYPE.ALERT_NOTIFICATION));
 	}
 
-	private void onRequestCompanyInfo(){
+	private void onReceiveMessage(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "companyinforequest");
+		item.pushIntoStackParameter("display", "receivemessage");
 		item.setParameter("ownerid", policyId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	private void onRequestClientInfo(){
+	private void onSendMessage(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "clientinforequest");
+		item.pushIntoStackParameter("display", "sendmessage");
 		item.setParameter("ownerid", policyId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -1138,8 +1136,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.allowVoidPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY));
 		view.allowTransferBrokerage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_BROKERAGE));
 		view.allowCreateSubstitutePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUBSTITUTE_POLICY));
-		view.allowRequestClientInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST));
-		view.allowRequestAgencyInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST));
+		//TODO REQUESTS
+		view.allowSendMessage(true);
+		view.allowReceiveMessage(true);
 		view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER));
 		view.allowExecuteDetailedCalculations(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS));
 		view.allowCreateSubPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY));

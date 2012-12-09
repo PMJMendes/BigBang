@@ -20,7 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ContactNavigationViewPresenter implements ViewPresenter{
 
 	private Display view;
-	private boolean hasPermissions = false;
+	private boolean isManagementPanel;
 
 	public ContactNavigationViewPresenter(Display view){
 
@@ -58,12 +58,10 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(final HasParameters parameterHolder) {
 
-		if(parameterHolder.getParameter("editpermission") != null){
-			hasPermissions = true;
-		}
 		final ContactViewPresenter presenter = (ContactViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("SINGLE_CONTACT");
 		HasWidgets container = view.getNextContainer();
 		presenter.go(container);
+		isManagementPanel = parameterHolder.getParameter("managementpanel") != null;
 		view.setHomeWidget((UIObject) container);
 		presenter.setParameters(parameterHolder);
 		presenter.registerActionHandler(new ActionInvokedEventHandler<ContactViewPresenter.Action>() {
@@ -73,13 +71,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 
 				switch (action.getAction()){
 				case CLOSE_POPUP:{
-					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-					navig.removeParameter("show");
-					navig.removeParameter("contactid");
-					navig.removeParameter("ownerid");
-					navig.removeParameter("ownertypeid");
-					NavigationHistoryManager.getInstance().go(navig);
-
+					onClosePopup();
 					break;
 				}
 
@@ -88,7 +80,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					break;
 				}
 				case CANCEL:{
-					presenter.setParameters(parameterHolder);	
+					onCancel(presenter, parameterHolder);
 					break;
 				}
 
@@ -100,12 +92,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 				}
 
 				case ERROR_SHOWING_CONTACT:{
-					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-					navig.removeParameter("show");
-					navig.removeParameter("contactid");
-					navig.removeParameter("ownerid");
-					navig.removeParameter("ownertypeid");
-					NavigationHistoryManager.getInstance().go(navig);
+					onErrorShowingContact();
 					break;
 				}
 
@@ -115,15 +102,40 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 		});
 	}
 
+	protected void onCancel(ContactViewPresenter presenter,
+			HasParameters parameterHolder) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	protected void onErrorShowingContact() {
+		NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+		navig.removeParameter("show");
+		navig.removeParameter("contactid");
+		navig.removeParameter("ownerid");
+		navig.removeParameter("ownertypeid");
+		NavigationHistoryManager.getInstance().go(navig);		
+	}
+
+	protected void onClosePopup() {
+		if(!isManagementPanel){
+			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+			navig.removeParameter("show");
+			navig.removeParameter("contactid");
+			navig.removeParameter("ownerid");
+			navig.removeParameter("ownertypeid");
+			NavigationHistoryManager.getInstance().go(navig);		
+		}
+		
+	}
+
 	protected void createShowChildContact(String id, String ownerId) {
 
 		HasParameters showChildContact = new HasParameters();
 		showChildContact.setParameter("contactid", id);
 		showChildContact.setParameter("ownerid", ownerId);
 		showChildContact.setParameter("ownertypeid", BigBangConstants.EntityIds.CONTACT);
-		if(hasPermissions ){
-			showChildContact.setParameter("editpermission", "1");
-		}
 		ContactViewPresenter newChildPresenter = (ContactViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("SINGLE_CONTACT");
 		HasWidgets newChildContainer = view.getNextContainer();
 		newChildPresenter.go(newChildContainer);
@@ -166,11 +178,25 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					((NavigationPanel)view).navigateBack();
 					break;
 				}
+				case PARENT_CONTACT_CREATED:{
+					if(!isManagementPanel){
+						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+						navig.removeParameter("show");
+						navig.removeParameter("contactid");
+						navig.removeParameter("ownerid");
+						navig.removeParameter("ownertypeid");
+						NavigationHistoryManager.getInstance().go(navig);
+					}
+					
 				}
+				break;
 
+				}
 			}
+
 		});
 	}
+
 
 
 }

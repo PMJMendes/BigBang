@@ -1,7 +1,8 @@
 package bigBang.library.client.userInterface.view;
 
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.IncomingMessage.AttachmentUpgrade;
+import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.Message.AttachmentUpgrade;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -365,18 +366,18 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 
 
 	@Override
-	public AttachmentUpgrade[] getChecked() {
+	public Message.AttachmentUpgrade[] getChecked() {
 
 
 		int ammount = attachments.getChecked().size();
-		AttachmentUpgrade[] attachs = new AttachmentUpgrade[ammount];
+		bigBang.definitions.shared.Message.AttachmentUpgrade[] attachs = new Message.AttachmentUpgrade[ammount];
 		int counter = 0;
 
 		AttachmentUpgrade temp;
 
 		for(int i = 0; i<attachments.size(); i++){
 			if(attachments.get(i).isChecked()){
-				temp = new AttachmentUpgrade();
+				temp = new Message.AttachmentUpgrade();
 				temp.docTypeId = ((AttachmentEntry)attachments.get(i)).getDocType().getValue();
 				temp.name =((AttachmentEntry)attachments.get(i)).getDocName().getValue();
 				temp.attachmentId = ((AttachmentEntry)attachments.get(i)).getValue().id;

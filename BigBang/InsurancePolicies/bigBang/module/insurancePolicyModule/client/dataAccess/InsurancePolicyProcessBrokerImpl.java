@@ -16,11 +16,11 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DebitNoteBatch;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
@@ -444,7 +444,6 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(SubPolicy result) {
-				//TODO
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY, result.mainPolicyId));
 
 				handler.onResponse(result);
@@ -719,49 +718,6 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		});
 	}
 
-	@Override
-	public void createCompanyInfoRequest(InfoOrDocumentRequest request,
-			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
-//		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-//
-//			@Override
-//			public void onResponseSuccess(InfoOrDocumentRequest result) {
-//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST, result.id));
-//
-//				responseHandler.onResponse(result);
-//			}
-//
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				responseHandler.onError(new String[]{
-//						new String("Could not create de info request")	
-//				});
-//				super.onResponseFailure(caught);
-//			}
-//		});
-	}
-
-	@Override
-	public void createClientInfoRequest(InfoOrDocumentRequest request,
-			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
-//		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-//
-//			@Override
-//			public void onResponseSuccess(InfoOrDocumentRequest result) {
-//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST, result.id));
-//
-//				responseHandler.onResponse(result);
-//			}
-//
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				responseHandler.onError(new String[]{
-//						new String("Could not create de info request")	
-//				});
-//				super.onResponseFailure(caught);
-//			}
-//		});
-	}
 
 	@Override
 	public void createSubPolicyReceipts(DebitNoteBatch debitNote, final ResponseHandler<Void> responseHandler){
@@ -779,6 +735,52 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			}
 		
 		});
+	}
+
+	@Override
+	public void sendMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.sendMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});		
+	}
+
+	@Override
+	public void receiveMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.receiveMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not receive the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});				
 	}
 	
 }

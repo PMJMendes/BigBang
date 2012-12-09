@@ -11,14 +11,14 @@ public class Conversation
 		OUTGOING
 	}
 
-	public String parentDataObjectId;
-	public String parentDataTypeId;
+	public String parentDataObjectId; //*
+	public String parentDataTypeId; //*
 	public String managerId;
-	public String requestTypeId;
+	public String requestTypeId; //*
 	public String subject;
 	public Direction startDir;
 	public Direction pendingDir;
-	public Integer replylimit;
+	public Integer replylimit; //*
 
 	public Message[] messages;
 }

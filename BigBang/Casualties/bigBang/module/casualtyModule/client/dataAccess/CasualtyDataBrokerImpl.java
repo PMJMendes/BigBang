@@ -14,7 +14,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
@@ -102,7 +102,7 @@ CasualtyDataBroker {
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.UPDATE_CASUALTY, result.id));
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -126,7 +126,7 @@ CasualtyDataBroker {
 					((CasualtyDataBrokerClient) client).removeCasualty(casualtyId);
 				}
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -149,7 +149,7 @@ CasualtyDataBroker {
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -176,9 +176,9 @@ CasualtyDataBroker {
 		CasualtySearchParameter parameter = new CasualtySearchParameter();
 		parameter.ownerId = ownerId;
 		parameter.includeClosed = true;
-		
+
 		CasualtySortParameter sort = new CasualtySortParameter(SortableField.DATE, SortOrder.DESC);
-		
+
 		getSearchBroker().search(new SearchParameter[]{parameter}, new SortParameter[]{sort}, -1, new ResponseHandler<Search<CasualtyStub>>() {
 
 			@Override
@@ -208,11 +208,11 @@ CasualtyDataBroker {
 					((CasualtyDataBrokerClient) client).updateCasualty(result);
 				}
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-					new String("Could not close the process")	
+						new String("Could not close the process")	
 				});
 				super.onResponseFailure(caught);
 			}
@@ -231,7 +231,7 @@ CasualtyDataBroker {
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_SUB_CASUALTY, result.id));
 				responseHandler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
@@ -257,7 +257,7 @@ CasualtyDataBroker {
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER, result.id));
 					handler.onResponse(null);
 				}
-				
+
 				@Override
 				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
@@ -274,7 +274,7 @@ CasualtyDataBroker {
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER, result.id));
 					handler.onResponse(null);
 				}
-				
+
 				@Override
 				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
@@ -285,34 +285,58 @@ CasualtyDataBroker {
 			});
 		}else{
 			handler.onError(new String[]{
-				new String("Cannot transfer 0 processes")	
+					new String("Cannot transfer 0 processes")	
 			});
 		}
 	}
 
+
+
 	@Override
-	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
-			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
-//	
-//		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-//			
-//			@Override
-//			public void onResponseSuccess(InfoOrDocumentRequest result) {
-//				//TODO REQUESTS 		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST, result.id));
-//				responseHandler.onResponse(null);
-//			}
-//			
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				responseHandler.onError(new String[]{
-//						new String("Could not transfer the process")
-//				});
-//				super.onResponseFailure(caught);
-//			}
-//
-//		});
-//		
-//		
+	public void sendMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.sendMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});
+	}
+
+	@Override
+	public void receiveMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.receiveMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not receive the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});
+
 	}
 
 }

@@ -20,8 +20,8 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 	protected MenuItem createInsuredObject;
 
 	//REQUESTS
-	protected MenuItem infoOrDocumentRequest;
-
+	protected MenuItem sendMessage;
+	private MenuItem receiveMessage;
 	//CREATE
 	protected MenuItem createReceipt;
 	protected MenuItem healthExpense;
@@ -64,14 +64,23 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 		addItem(SUB_MENU.EXECUTE, validate);
 
 		//REQUESTS
-		infoOrDocumentRequest = new MenuItem("Pedido de Informação ou Documento", new Command() {
+		sendMessage = new MenuItem("Enviar Mensagem", new Command() {
 			
 			@Override
 			public void execute() {
-				onCreateInfoOrDocumentRequest();
+				onSendMessage();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, infoOrDocumentRequest);
+		addItem(SUB_MENU.REQUESTS, sendMessage);
+		
+		receiveMessage = new MenuItem("Receber Mensagem", new Command() {
+			
+			@Override
+			public void execute() {
+				onReceiveMessage();
+			}
+		});
+		addItem(SUB_MENU.REQUESTS, receiveMessage);
 
 		//ADMIN
 		voidItem = new MenuItem("Anular", new Command() {
@@ -102,6 +111,8 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 		addItem(SUB_MENU.DATA, transferToPolicy);
 	}
 
+	protected abstract void onReceiveMessage();
+
 	protected abstract void onCreateHealthExpense();
 
 	public void allowDelete(boolean allow){
@@ -121,7 +132,7 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 	}
 
 	public void allowCreateInfoOrDocumentRequest(boolean allow) {
-		this.infoOrDocumentRequest.setEnabled(allow);
+		this.sendMessage.setEnabled(allow);
 	}
 	
 	public void allowCreateReceipt(boolean allow) {
@@ -152,7 +163,7 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 
 	public abstract void onTransferToPolicy();
 
-	public abstract void onCreateInfoOrDocumentRequest();
+	public abstract void onSendMessage();
 
 	public abstract void onCreateReceipt();
 
@@ -179,6 +190,14 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 	public void allowIncludeInsuredObjectFromClient(boolean allow) {
 		//TODO
 		}
+
+	public void allowSendMessage(boolean b) {
+		sendMessage.setEnabled(b);
+	}
+	
+	public void allowReceiveMessage(boolean b){
+		receiveMessage.setEnabled(b);
+	}
 
 
 

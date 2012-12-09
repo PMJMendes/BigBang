@@ -9,8 +9,8 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsToolBar {
 
 	protected MenuItem delete, markForClosing, close, rejectClose;
-	protected MenuItem internalInfoRequest;
-	protected MenuItem externalInfoRequesT;
+	protected MenuItem sendMessage;
+	protected MenuItem receiveMessage;
 	protected MenuItem markNotificationSent;
 
 	public SubCasualtyOperationsToolbar(){
@@ -58,23 +58,23 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		});
 		addItem(SUB_MENU.ADMIN, delete);
 		
-		internalInfoRequest = new MenuItem("Criação de Pedido de Informação", new Command() {
+		sendMessage = new MenuItem("Enviar Mensagem", new Command() {
 			
 			@Override
 			public void execute() {
-				onInsurerInfoRequest();
+				onSendMessage();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, internalInfoRequest);
+		addItem(SUB_MENU.REQUESTS, sendMessage);
 		
-		externalInfoRequesT = new MenuItem("Criação de Pedido de Informação Externo", new Command() {
+		receiveMessage = new MenuItem("Receber Mensagem", new Command() {
 			
 			@Override
 			public void execute() {
-				onExternalInfoRequest();
+				onReceiveMessage();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, externalInfoRequesT);
+		addItem(SUB_MENU.REQUESTS, receiveMessage);
 		
 		markNotificationSent = new MenuItem("Marcar Participação Enviada", new Command() {
 			
@@ -89,9 +89,9 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 
 	protected abstract void onMarkNotificationSent();
 
-	protected abstract void onInsurerInfoRequest();
+	protected abstract void onSendMessage();
 	
-	protected abstract void onExternalInfoRequest();
+	protected abstract void onReceiveMessage();
 
 	public abstract void onDelete();
 	
@@ -121,12 +121,12 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		this.rejectClose.setEnabled(allow);
 	}
 
-	public void allowInfoOrDocumentRequest(boolean hasPermission) {
-		internalInfoRequest.setEnabled(hasPermission);
+	public void allowSendMessage(boolean hasPermission) {
+		sendMessage.setEnabled(hasPermission);
 	}
 
-	public void allowInsurerInfoRequest(boolean hasPermission) {
-		externalInfoRequesT.setEnabled(hasPermission);
+	public void allowReceiveMessage(boolean hasPermission) {
+		receiveMessage.setEnabled(hasPermission);
 	}
 	
 	public void allowMarkNotificationSent(boolean hasPermission){

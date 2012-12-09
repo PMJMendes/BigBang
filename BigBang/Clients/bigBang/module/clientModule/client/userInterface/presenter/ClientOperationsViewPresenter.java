@@ -61,15 +61,17 @@ public class ClientOperationsViewPresenter implements ViewPresenter {
 					present("SINGLE_MANAGER_TRANSFER", parameters);
 				}else if(display.equalsIgnoreCase("viewmanagertransfer")){
 					present("MANAGER_TRANSFER", parameters);
-				}else if(display.equalsIgnoreCase("inforequest")){
-					present("CLIENT_INFO_OR_DOCUMENT_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("viewinforequest")){
-					present("VIEW_CLIENT_INFO_OR_DOCUMENT_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("sendmessage")){
+					present("CLIENT_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("receivemessage")){
+					present("CLIENT_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("conversation")){
+					present("CLIENT_CONVERSATION", parameters);
 				}else if(display.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
 				}else if(display.equalsIgnoreCase("contactmanagement")){
 					present("CONTACT", parameters);
-				}else if(display.equalsIgnoreCase("clienthistory")){
+				}else if(display.equalsIgnoreCase("history")){
 					present("HISTORY", parameters, true);
 				}else if(display.equalsIgnoreCase("createquoterequest")){
 					present("CLIENT_CREATE_QUOTE_REQUEST", parameters);

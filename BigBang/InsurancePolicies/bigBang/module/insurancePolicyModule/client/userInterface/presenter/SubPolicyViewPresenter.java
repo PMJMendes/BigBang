@@ -65,14 +65,14 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		PERFORM_CALCULATIONS, 
 		VALIDATE, 
 		TRANSFER_TO_POLICY, 
-		CREATE_INFO_OR_DOCUMENT_REQUEST, 
+		SEND_MESSAGE, 
 		CREATE_RECEIPT, 
 		VOID, 
 		DELETE, 
 		CREATE_EXPENSE,
 		BACK, 
 		SUB_POLICY_SELECTED, 
-		NEW_INSURED_OBJECT
+		NEW_INSURED_OBJECT, RECEIVE_MESSAGE
 	}
 
 	public static interface Display {
@@ -182,6 +182,10 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		void setOwner(SubPolicy subPol);
 
 		void setObjectListOwner(String subPolicyId);
+
+		void allowSendMessage(boolean b);
+
+		void allowReceiveMessage(boolean b);
 
 	}
 
@@ -324,7 +328,6 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 	protected void setPermissions(SubPolicy response) {
 
-		view.allowCreateInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_INFO_OR_DOCUMENT_REQUEST));
 		view.allowCreateInsuredObjectFromClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.INCLUDE_OBJECT_FROM_CLIENT));
 		view.allowCreateInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY));
 		view.allowCreateReceipt(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT));
@@ -332,6 +335,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		view.allowExcludeInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EXCLUDE_OBJECT));
 		//view.allowIncludeInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.INCLUDE_OBJECT_FROM_CLIENT));
 		//		view.allowIncludeInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.INCLUDE_OBJECT_FROM_CLIENT));
+		view.allowSendMessage(true); //TODO REQUESTS
+		view.allowReceiveMessage(true);
 		view.allowPerformCalculations(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.PERFORM_CALCULATIONS));
 		view.allowTransferToPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.TRANSFER_TO_POLICY));
 		view.allowValidate(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VALIDATE));
@@ -395,8 +400,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 				case CREATE_EXPENSE:
 					onCreateExpense();
 					break;
-				case CREATE_INFO_OR_DOCUMENT_REQUEST:
-					onCreateInfoOrDocumentRequest();
+				case SEND_MESSAGE:
+					onSendMessage();
 					break;
 				case CREATE_INSURED_OBJECT_FROM_CLIENT:
 					//TODO
@@ -441,7 +446,9 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 				case VOID:
 					onVoid();
 					break;
-
+				case RECEIVE_MESSAGE:
+					onReceiveMessage();
+					break;
 				}
 			}
 		});
@@ -554,6 +561,15 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 	}
 
+	protected void onReceiveMessage() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
+		item.pushIntoStackParameter("display", "subpolicyreceivemessage");
+		item.setParameter("ownerid", view.getSubPolicyForm().getValue().id);
+		item.setParameter("ownertypeid",
+				BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		NavigationHistoryManager.getInstance().go(item);	}
+
 	protected void onDeleteInsuredObject() {
 		view.dealWithObject(subPolicyBroker.removeInsuredObject(subPolicyId, view.getInsuredObjectHeaderForm().getValue().id));
 		onSubPolicySelected();		
@@ -576,12 +592,12 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 			item.pushIntoStackParameter("display", "viewmanagertransfer");
 			item.setParameter("transferid", selectedValue.dataId);
 			NavigationHistoryManager.getInstance().go(item);
-		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewinforequest");
-			item.setParameter("requestid", selectedValue.dataId);
+			item.pushIntoStackParameter("display", "subpolicyconversation");
+			item.setParameter("conversationid", selectedValue.dataId);
 			NavigationHistoryManager.getInstance().go(item);
-		}		
+		}	
 	}
 
 	protected void showExpense(ExpenseStub selectedValue) {
@@ -860,10 +876,10 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	protected void onCreateInfoOrDocumentRequest() {
+	protected void onSendMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
 				.getCurrentState();
-		item.pushIntoStackParameter("display", "subpolicyinforequest");
+		item.pushIntoStackParameter("display", "subpolicysendmessage");
 		item.setParameter("ownerid", view.getSubPolicyForm().getValue().id);
 		item.setParameter("ownertypeid",
 				BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);

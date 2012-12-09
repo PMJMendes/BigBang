@@ -3,13 +3,12 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.definitions.shared.ExpenseStub;
-import bigBang.definitions.shared.ExternalInfoRequest;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 
 
 public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
@@ -30,12 +29,6 @@ public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
 	
 	void massSendNotification(String[] expenseIds, ResponseHandler<Void> handler);
 
-	void createExternalInfoRequest(ExternalInfoRequest toSend,
-			ResponseHandler<ExternalInfoRequest> responseHandler);
-
-	void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
-			ResponseHandler<InfoOrDocumentRequest> responseHandler);
-
 	void notifyClient(String expenseId, ResponseHandler<Expense> responseHandler);
 
 	void returnToClient(String expenseId,
@@ -53,5 +46,11 @@ public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
 
 	void massReceiveProof(String[] toReceive,
 			DocuShareHandle handle, ResponseHandler<Void> responseHandler);
+
+	void sendMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
+
+	void receiveMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
 	
 }

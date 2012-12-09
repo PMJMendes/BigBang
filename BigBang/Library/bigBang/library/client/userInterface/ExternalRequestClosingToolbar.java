@@ -10,7 +10,7 @@ public abstract class ExternalRequestClosingToolbar extends BigBangOperationsToo
 	public ExternalRequestClosingToolbar(){
 		hideAll();
 		
-		close = new MenuItem("Encerrar Pedido", new Command() {
+		close = new MenuItem("Encerrar Processo", new Command() {
 			
 			@Override
 			public void execute() {

@@ -44,7 +44,7 @@ public class ViewClientInfoRequestViewPresenter extends ViewInfoOrDocumentReques
 	@Override
 	protected void showHistory(String processId, String historyItemId) {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "clienthistory");
+		item.pushIntoStackParameter("display", "history");
 		item.setParameter("historyownerid", processId);
 		item.setParameter("historyitemid", historyItemId);
 		NavigationHistoryManager.getInstance().go(item);
@@ -52,7 +52,7 @@ public class ViewClientInfoRequestViewPresenter extends ViewInfoOrDocumentReques
 
 	@Override
 	protected void onFailure() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresenter o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar a mensagem"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
@@ -60,13 +60,13 @@ public class ViewClientInfoRequestViewPresenter extends ViewInfoOrDocumentReques
 	
 	@Override
 	protected void onRepeatSuccess() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Pedido de Informação foi Repetido com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A mensagem foi reenviada com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
 	
 	@Override
 	protected void onRepeatFailed() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Repetir o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível reenviar a mensagem"), TYPE.ALERT_NOTIFICATION));
 	}
 	
 }

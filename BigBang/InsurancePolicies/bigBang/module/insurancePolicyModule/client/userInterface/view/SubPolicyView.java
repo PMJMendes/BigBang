@@ -156,8 +156,8 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 			}
 
 			@Override
-			public void onCreateInfoOrDocumentRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.CREATE_INFO_OR_DOCUMENT_REQUEST));
+			public void onSendMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.SEND_MESSAGE));
 			}
 
 			@Override
@@ -173,6 +173,11 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 			@Override
 			protected void onCreateHealthExpense() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.CREATE_EXPENSE));
+			}
+
+			@Override
+			protected void onReceiveMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.RECEIVE_MESSAGE));
 			}
 
 		};
@@ -552,5 +557,15 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	@Override
 	public void setObjectListOwner(String subPolicyId) {
 		objectsList.setOwner(subPolicyId);
+	}
+
+	@Override
+	public void allowSendMessage(boolean b) {
+		toolbar.allowSendMessage(b);
+	}
+
+	@Override
+	public void allowReceiveMessage(boolean b) {
+		toolbar.allowReceiveMessage(b);
 	}
 }

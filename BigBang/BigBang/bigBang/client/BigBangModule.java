@@ -1,7 +1,5 @@
 package bigBang.client;
 
-import com.google.gwt.core.client.GWT;
-
 import bigBang.client.tests.TestsView;
 import bigBang.client.tests.TestsViewPresenter;
 import bigBang.definitions.client.dataAccess.DataBroker;
@@ -10,6 +8,7 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.dataAccess.BigBangContactsListBroker;
 import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
+import bigBang.library.client.dataAccess.ConversationBrokerImpl;
 import bigBang.library.client.dataAccess.HistoryBrokerImpl;
 import bigBang.library.client.dataAccess.SubProcessesBrokerImpl;
 import bigBang.library.client.dataAccess.TypifiedTextBrokerImpl;
@@ -17,34 +16,33 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.CancelInfoOrDocumentRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactNavigationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
+import bigBang.library.client.userInterface.presenter.ConversationTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalInfoRequestTasksViewPresenter;
-import bigBang.library.client.userInterface.presenter.ExternalRequestClosingViewPresenter;
+import bigBang.library.client.userInterface.presenter.ConversationClosingViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestContinuationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestReplyViewPresenter;
-import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestRepeatViewPresenter;
-import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter;
-import bigBang.library.client.userInterface.presenter.InfoRequestTasksViewPresenter;
-import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
+import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter;
+import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.ReportTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.ReportViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.CancelInfoOrDocumentRequestView;
 import bigBang.library.client.userInterface.view.ContactNavigationView;
 import bigBang.library.client.userInterface.view.ContactView;
+import bigBang.library.client.userInterface.view.ConversationTasksView;
 import bigBang.library.client.userInterface.view.DocumentView;
 import bigBang.library.client.userInterface.view.ExternalInfoRequestTasksView;
-import bigBang.library.client.userInterface.view.ExternalRequestClosingView;
+import bigBang.library.client.userInterface.view.ConversationClosingView;
 import bigBang.library.client.userInterface.view.ExternalRequestContinuationView;
 import bigBang.library.client.userInterface.view.ExternalRequestReplyView;
-import bigBang.library.client.userInterface.view.InfoOrDocumentRequestRepeatView;
-import bigBang.library.client.userInterface.view.InfoOrDocumentRequestReplyView;
-import bigBang.library.client.userInterface.view.InfoRequestTasksView;
-import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
 import bigBang.library.client.userInterface.view.HistoryView;
+import bigBang.library.client.userInterface.view.InfoOrDocumentRequestReplyView;
+import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
 import bigBang.library.client.userInterface.view.ReportTasksView;
 import bigBang.library.client.userInterface.view.ReportView;
+import com.google.gwt.core.client.GWT;
 
 public class BigBangModule implements Module {
 
@@ -135,15 +133,6 @@ public class BigBangModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INFO_OR_DOCUMENT_REQUEST_REPEAT", new ViewPresenterInstantiator() {
-
-			@Override
-			public ViewPresenter getInstance() {
-				InfoOrDocumentRequestRepeatView view = (InfoOrDocumentRequestRepeatView) GWT.create(InfoOrDocumentRequestRepeatView.class);
-				ViewPresenter presenter = new InfoOrDocumentRequestRepeatViewPresenter(view);
-				return presenter;
-			}
-		});
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_REPLY", new ViewPresenterInstantiator() {
 
 			@Override
@@ -162,12 +151,12 @@ public class BigBangModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CLOSING", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CONVERSATION_CLOSE", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ExternalRequestClosingView view = (ExternalRequestClosingView) GWT.create(ExternalRequestClosingView.class);
-				ViewPresenter presenter = new ExternalRequestClosingViewPresenter(view);
+				ConversationClosingView view = (ConversationClosingView) GWT.create(ConversationClosingView.class);
+				ViewPresenter presenter = new ConversationClosingViewPresenter(view);
 				return presenter;
 			}
 		});
@@ -177,15 +166,6 @@ public class BigBangModule implements Module {
 			public ViewPresenter getInstance() {
 				ReportView view = (ReportView) GWT.create(ReportView.class);
 				ReportViewPresenter presenter = new ReportViewPresenter(view);
-				return presenter;
-			}
-		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INFO_REQUEST_TASKS", new ViewPresenterInstantiator() {
-
-			@Override
-			public ViewPresenter getInstance() {
-				InfoRequestTasksView view = (InfoRequestTasksView) GWT.create(InfoRequestTasksView.class);
-				ViewPresenter presenter = new InfoRequestTasksViewPresenter(view);
 				return presenter;
 			}
 		});
@@ -207,6 +187,15 @@ public class BigBangModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TASKS_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ConversationTasksView view = (ConversationTasksView) GWT.create(ConversationTasksView.class);
+				ConversationTasksViewPresenter presenter = new ConversationTasksViewPresenter(view);
+				return presenter;
+			}
+		});
 	}
 
 	@Override
@@ -216,7 +205,8 @@ public class BigBangModule implements Module {
 				(DataBroker<?>) BigBangContactsListBroker.Util.getInstance(),
 				(DataBroker<?>) BigBangDocumentsBroker.Util.getInstance(),
 				new SubProcessesBrokerImpl(),
-				new TypifiedTextBrokerImpl()
+				new TypifiedTextBrokerImpl(),
+				new ConversationBrokerImpl()
 		};
 	}
 

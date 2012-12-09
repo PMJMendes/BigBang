@@ -73,10 +73,14 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 					present("INSURANCE_POLICY_SUB_POLICY_EXERCISE", parameters);
 				}else if(display.equalsIgnoreCase("viewsubpolicyobject")){
 					present("INSURANCE_POLICY_SUB_POLICY_INSURED_OBJECT", parameters);
-				}else if(display.equalsIgnoreCase("externalrequest")){
-					present("INSURANCE_POLICY_NEGOTIATION_EXTERNAL_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("subpolicyinforequest")){
-					present("INSURANCE_POLICY_SUB_POLICY_INFO_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("negotiationreceivemessage")){
+					present("INSURANCE_POLICY_NEGOTIATION_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("negotiationsendmessage")){
+					present("INSURANCE_POLICY_NEGOTIATION_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("subpolicysendmessage")){
+					present("INSURANCE_POLICY_SUB_POLICY_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("subpolicyreceivemessage")){
+					present("INSURANCE_POLICY_SUB_POLICY_RECEIVE_MESSAGE", parameters);
 				}else if(display.equalsIgnoreCase("subpolicytransfertopolicy")){
 					present("INSURANCE_POLICY_SUB_POLICY_TRANSFER_TO_POLICY", parameters);
 				}else if(display.equalsIgnoreCase("subpolicycreatereceipt")){
@@ -87,14 +91,20 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 					present("INSURANCE_POLICY_CREATE_EXPENSE", parameters);
 				}else if(display.equalsIgnoreCase("createexpensesubpolicy")){
 					present("INSURANCE_POLICY_CREATE_EXPENSE_SUB_POLICY", parameters);
-				}else if(display.equalsIgnoreCase("companyinforequest")){
-					present("INSURANCE_POLICY_CREATE_COMPANY_INFO_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("clientinforequest")){
-					present("INSURANCE_POLICY_CREATE_CLIENT_INFO_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("receivemessage")){
+					present("INSURANCE_POLICY_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("sendmessage")){
+					present("INSURANCE_POLICY_SEND_MESSAGE", parameters);
 				}else if(display.equalsIgnoreCase("viewinforequest")){
 					present("VIEW_INSURANCE_POLICY_INFO_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("viewsubpolicyinforequest")){
 					present("VIEW_SUB_POLICY_INFO_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("conversation")){
+					present("INSURANCE_POLICY_CONVERSATION", parameters);
+				}else if(display.equalsIgnoreCase("subpolicyconversation")){
+					present("INSURANCE_SUB_POLICY_CONVERSATION", parameters);
+				}else if(display.equalsIgnoreCase("negotiationconversation")){
+					present("INSURANCE_POLICY_NEGOTIATION_CONVERSATION", parameters);
 				}else{
 					goToDefault();
 				}

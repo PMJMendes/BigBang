@@ -45,7 +45,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		MARK_FOR_CLOSING,
 		CLOSE,
 		REJECT_CLOSE,
-		DELETE, INFO_OR_DOCUMENT_REQUEST, EXTERNAL_REQUEST, MARK_NOTIFICATION_SENT, BACK
+		DELETE, SEND_MESSAGE, RECEIVE_MESSAGE, MARK_NOTIFICATION_SENT, BACK
 	}
 
 	public static interface Display {
@@ -67,8 +67,8 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		void allowMarkNotificationSent(boolean allow);
 
 		Widget asWidget();
-		void allowInfoOrDocumentRequest(boolean hasPermission);
-		void allowInsurerInfoRequest(boolean hasPermission);
+		void allowSendMessage(boolean hasPermission);
+		void allowReceiveMessage(boolean hasPermission);
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
 		void setReferenceParameters(HasParameters parameterHolder);
@@ -150,11 +150,11 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 				case REJECT_CLOSE:
 					onRejectClosing();
 					break;
-				case EXTERNAL_REQUEST:
-					onInsurerInfoRequest();
+				case RECEIVE_MESSAGE:
+					onReceiveMessage();
 					break;
-				case INFO_OR_DOCUMENT_REQUEST:
-					onInfoOrDocumentRequest();
+				case SEND_MESSAGE:
+					onSendMessage();
 					break;
 				case MARK_NOTIFICATION_SENT:
 					markNotificationSent(view.getForm().getInfo().id);
@@ -247,18 +247,17 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
-	protected void onInfoOrDocumentRequest() {
+	protected void onSendMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "inforequestsubcasualty");
+		item.pushIntoStackParameter("display", "subcasualtysendmessage");
 		item.setParameter("ownerid", view.getForm().getValue().id);
 		NavigationHistoryManager.getInstance().go(item);		
 	}
 
-	protected void onInsurerInfoRequest() {
+	protected void onReceiveMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "insurerinfosubcasualty");
+		item.pushIntoStackParameter("display", "subcasualtyreceivemessage");
 		item.setParameter("ownerid", view.getForm().getValue().id);
-		item.setParameter("externalrequestid", "new");
 		NavigationHistoryManager.getInstance().go(item);			
 	}
 
@@ -274,10 +273,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 					public void onResponse(Casualty casualty) {
 						view.getParentForm().setValue(casualty);
 						view.getForm().setValue(subCasualty);
-
-						//TODO PERMISSIONS
-						view.allowInfoOrDocumentRequest(PermissionChecker.hasPermission(subCasualty,BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_EXTERNAL_INFO_REQUEST));
-						view.allowInsurerInfoRequest(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_INSURER_INFO_REQUEST));
+						//TODO REQUESTS 
+						view.allowSendMessage(true);
+						view.allowReceiveMessage(true);
 						view.allowEdit(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY));
 						view.allowDelete(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY));
 						view.allowMarkForClosing(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.MARK_CLOSE_SUB_CASUALTY));
@@ -432,16 +430,10 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 	protected void showSubProcess(BigBangProcess process){
 		String type = process.dataTypeId;
 
-		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewsubcasualtyinforequest");
-			item.setParameter("requestid", process.dataId);
-			NavigationHistoryManager.getInstance().go(item);
-		}
-		else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST)){
-			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewsubcasualtyexternalrequest");
-			item.setParameter("externalrequestid", process.dataId);
+			item.pushIntoStackParameter("display", "subcasualtyconversation");
+			item.setParameter("conversationid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 	}

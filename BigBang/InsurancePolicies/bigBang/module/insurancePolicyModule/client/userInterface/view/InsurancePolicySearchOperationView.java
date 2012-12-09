@@ -40,7 +40,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.form.InsuredObj
 import bigBang.module.insurancePolicyModule.client.userInterface.form.PolicyCrossFormValidator;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
-
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -82,7 +81,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		policyForm = new InsurancePolicyHeaderForm();
 		objectForm = new InsuredObjectForm();
-		
+
 		searchPanel = new InsurancePolicySearchPanel(){ 
 			@Override
 			public void onResults(Collection<InsurancePolicyStub> results) {
@@ -92,7 +91,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		};
 
 		doSearch(true);
-		
+
 		searchPanelWrapper.add(searchPanel);
 		searchPanelWrapper.setCellHeight(searchPanel, "100%");
 
@@ -135,18 +134,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			public void onCreateSubstitutePolicy() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_SUBSTITUTE_POLICY));
 			}
-
-			@Override
-			public void onRequestInfoFromClient() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.REQUEST_CLIENT_INFO));
-			}
-
-			@Override
-			public void onRequestInfoFromAgency() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.REQUEST_AGENCY_INFO));
-			}
-
-			@Override
 			public void onIncludeInsuredObject() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.INCLUDE_INSURED_OBJECT));
 			}
@@ -220,7 +207,17 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			public void onCancelRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CANCEL_EDIT));
 			}
-			
+
+			@Override
+			public void onReceiveMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.RECEIVE_MESSAGE));
+			}
+
+			@Override
+			public void onSendMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.SEND_MESSAGE));				
+			}
+
 			@Override
 			public void onCreateSubPolicyReceipt() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_SUB_POLICY_RECEIPT));
@@ -321,7 +318,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
 		contentWrapper.add(toolbarAndCenterWrapper);
 		mainWrapper.add(contentWrapper);
-		
+
 		new PolicyCrossFormValidator(policyForm, objectForm, exerciseChooser);
 	}
 
@@ -426,16 +423,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void allowCreateSubstitutePolicy(boolean allow) {
 		toolbar.allowCreateSubstitutepolicy(allow);
-	}
-
-	@Override
-	public void allowRequestClientInfo(boolean allow) {
-		toolbar.allowRequestClientInfo(allow);
-	}
-
-	@Override
-	public void allowRequestAgencyInfo(boolean allow) {
-		toolbar.allowRequestAgencyInfo(allow);
 	}
 
 	@Override
@@ -651,7 +638,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	public void allowManagerChange(boolean b) {
 		policyForm.allowManagerChange(b);
 	}
-	
+
 	@Override
 	public void setObjectListOwner(String policyId){
 		objectsList.setOwner(policyId);
@@ -688,5 +675,15 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void allowCreateSubPolicyReceipt(boolean allow) {
 		this.toolbar.allowCreateSubPolicyReceipt(allow);
+	}
+
+	@Override
+	public void allowSendMessage(boolean allow) {
+		toolbar.allowSendMessage(allow);
+	}
+
+	@Override
+	public void allowReceiveMessage(boolean allow) {
+		toolbar.allowReceiveMessage(allow);
 	}
 }

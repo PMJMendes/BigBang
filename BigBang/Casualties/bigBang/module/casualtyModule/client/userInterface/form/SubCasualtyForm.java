@@ -436,7 +436,13 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 	public void setPanelParameters(HasParameters parameters){
 		policyReference.setParameters(parameters);
-		//subPolicyReference.setParameters(parameters);
+		String ownerId = parameters.getParameter("ownerid");
+		
+		if(ownerId != null){
+			HasParameters newParameters = new HasParameters();
+			newParameters.setParameter("clientid", ownerId);
+			subPolicyReference.setParameters(newParameters);
+		}
 	}
 
 	public void setReference(String referenceTypeId, String referenceId){

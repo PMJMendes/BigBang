@@ -146,13 +146,18 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			}
 
 			@Override
-			public void onRequestInfoOrDocument() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.REQUIRE_INFO_DOCUMENT));
+			public void onSendMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.SEND_MESSAGE));
 			}
 
 			@Override
 			public void onDelete() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.DELETE));
+			}
+
+			@Override
+			public void onReceiveMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.RECEIVE_MESSAGE));
 			}
 		};
 
@@ -281,8 +286,8 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	}
 
 	@Override
-	public void allowRequestInfoOrDocument(boolean allow) {
-		this.operationsToolbar.allowInfoOrDocumentRequest(allow);
+	public void allowSendMessage(boolean allow) {
+		this.operationsToolbar.allowSendMessage(allow);
 	}
 
 	@Override
@@ -313,6 +318,12 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void allowcreateCasualty(boolean allow) {
 		this.operationsToolbar.allowCreateCasualty(allow);
+	}
+	
+
+	@Override
+	public void allowReceiveMessage(boolean b) {
+		this.operationsToolbar.allowReceiveMessage(b);
 	}
 
 	/*## PERMISSIONS END ##*/
@@ -354,6 +365,12 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		return this.childrenPanel.casualtiesList;
 	}
 
+
+	@Override
+	public HasValueSelectables<InsurancePolicyStub> getDeadPoliciesList() {
+		return this.childrenPanel.deadInsurancePoliciesList;
+	}
+
 	@Override
 	public void setForCreation(boolean forCreation) {
 		if(forCreation) {
@@ -363,9 +380,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		}
 	}
 
-	@Override
-	public HasValueSelectables<InsurancePolicyStub> getDeadPoliciesList() {
-		return this.childrenPanel.deadInsurancePoliciesList;	}
+
 
 	/*## CHILDREN LISTS END ##*/
 

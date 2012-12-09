@@ -1,8 +1,7 @@
 package bigBang.library.client.userInterface.presenter;
 
-import bigBang.definitions.shared.IncomingMessage;
-import bigBang.definitions.shared.IncomingMessage.AttachmentUpgrade;
-import bigBang.definitions.shared.IncomingMessage.Kind;
+import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.Message.AttachmentUpgrade;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
@@ -32,7 +31,7 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
-		HasValue<IncomingMessage> {
+		HasValue<Message> {
 	
 	public enum Action{
 		CANCEL,
@@ -59,7 +58,7 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 
-		AttachmentUpgrade[] getChecked();
+		bigBang.definitions.shared.Message.AttachmentUpgrade[] getChecked();
 
 		
 	}
@@ -167,7 +166,7 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<IncomingMessage> handler) {
+			ValueChangeHandler<Message> handler) {
 		return manager.addHandler(ValueChangeEvent.getType(), handler);
 	}
 
@@ -177,25 +176,25 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 	}
 
 	@Override
-	public IncomingMessage getValue() {
-		IncomingMessage newMessage = new IncomingMessage();
+	public Message getValue() {
+		Message newMessage = new Message();
 		
 		newMessage.emailId = view.getForm().getValue().id;
-		newMessage.kind = Kind.EMAIL;
-		newMessage.notes = null;
-		newMessage.upgrades = view.getChecked();
+		newMessage.kind = Message.Kind.EMAIL;
+		newMessage.text = null;
+		newMessage.incomingAttachments = view.getChecked();
 		
 		return newMessage;
 	}
 	
 
 	@Override
-	public void setValue(IncomingMessage value) {
+	public void setValue(Message value) {
 		return;
 	}
 
 	@Override
-	public void setValue(IncomingMessage value, boolean fireEvents) {
+	public void setValue(Message value, boolean fireEvents) {
 		return;
 	}
 

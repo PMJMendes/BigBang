@@ -40,8 +40,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 	public enum Action{
-		EDIT, SAVE, CANCEL, DELETE, INFO_FROM_INSURER,
-		INFO_OR_DOCUMENT_REQUEST,
+		EDIT, SAVE, CANCEL, DELETE, RECEIVE_MESSAGE,
+		SEND_MESSAGE,
 		PARTICIPATE_TO_INSURER, NOTIFY_CLIENT, RETURN_TO_CLIENT, CLOSE_PROCESS, RECEIVE_ACCEPTANCE, RECEIVE_REJECTION
 	}
 
@@ -62,8 +62,8 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 		void clear();
 		void lockOptions();
 		void allowReceiveAcceptance(boolean allow);
-		void allowInfoFromInsurer(boolean allow);
-		void allowInfoOrDocumentRequest(boolean allow);
+		void allowReceiveMessage(boolean allow);
+		void allowSendMessage(boolean allow);
 		void allowNotifyClient(boolean allow);
 		void allowParticipateToInsurer(boolean allow);
 		void allowReturnToClient(boolean allow);
@@ -141,13 +141,15 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 				view.clearAllowedPermissions();
 				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.DELETE_EXPENSE));
 				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.UPDATE_EXPENSE));
-				view.allowInfoFromInsurer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.CREATE_EXTERNAL_REQUEST));
+				//TODO REQUESTS 
+				view.allowReceiveMessage(true);
 				view.allowNotifyClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT));
 				view.allowParticipateToInsurer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.SEND_NOTIFICATION));
 				view.allowReceiveAcceptance(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.RECEIVE_ACCEPTANCE));
 				view.allowReceiveRejection(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.RECEIVE_RETURN));
 				view.allowReturnToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.RETURN_TO_CLIENT));
-				view.allowInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.CREATE_INFO_REQUEST));
+				//TODO REQUESTS 
+				view.allowSendMessage(true);
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(response);
@@ -177,7 +179,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 				stub.setSelected(false, false);
 			}
 		}
-		
+
 		if(!found){
 			ExpenseSearchPanel.Entry entry = new ExpenseSearchPanel.Entry(response);
 			view.addEntryToList(entry);
@@ -225,11 +227,11 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 				case EDIT:
 					onEdit();
 					break;
-				case INFO_FROM_INSURER:
-					onInfoFromInsurer();
+				case RECEIVE_MESSAGE:
+					onReceiveMessage();
 					break;
-				case INFO_OR_DOCUMENT_REQUEST:
-					onInfoOrDocumentRequest();
+				case SEND_MESSAGE:
+					onSendMessage();
 					break;
 				case NOTIFY_CLIENT:
 					onNotifyClient();
@@ -394,17 +396,17 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 	}
 
-	protected void onInfoOrDocumentRequest() {
+	protected void onSendMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "inforequest");
+		item.pushIntoStackParameter("display", "sendmessage");
 		item.setParameter("ownerid", view.getForm().getValue().id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	protected void onInfoFromInsurer() {
+	protected void onReceiveMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "externalrequest");
-		item.setParameter("externalrequestid", "new");
+		item.pushIntoStackParameter("display", "receivemessage");
+		item.setParameter("ownerid", view.getForm().getValue().id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -447,19 +449,13 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 	private void showSubProcess(final BigBangProcess process){
 		String type = process.dataTypeId;
+		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "conversation");
+			item.setParameter("conversationid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}
 
-		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
-			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewinforequest");
-			item.setParameter("requestid", process.dataId);
-			NavigationHistoryManager.getInstance().go(item);
-		}
-		else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST)){
-			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewexternalrequest");
-			item.setParameter("externalrequestid", process.dataId);
-			NavigationHistoryManager.getInstance().go(item);
-		}
 	}
 
 	private void showHistory(final HistoryItemStub historyItem) {

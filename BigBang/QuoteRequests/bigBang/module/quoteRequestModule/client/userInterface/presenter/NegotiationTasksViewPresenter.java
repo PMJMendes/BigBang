@@ -236,15 +236,15 @@ public class NegotiationTasksViewPresenter implements ViewPresenter,
 	}
 	
 	protected void onReceiveResponseFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao Receber a Resposta"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao receber a resposta"), TYPE.ALERT_NOTIFICATION));
 	}
 	
 	protected void onRepeatSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido Repetido com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem reenviada com sucesso"), TYPE.TRAY_NOTIFICATION));
 	}
 	
 	protected void onRepeatFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o envio"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

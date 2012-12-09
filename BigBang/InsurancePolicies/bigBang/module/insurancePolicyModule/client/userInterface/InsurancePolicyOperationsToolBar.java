@@ -28,8 +28,8 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	protected MenuItem includeInsuredObject;
 	
 	//REQUESTS
-	protected MenuItem agencyInfoRequestItem;
-	protected MenuItem clientInfoRequestItem;
+	protected MenuItem sendMessage;
+	protected MenuItem receiveMessage;
 
 	//ADMIN
 	protected MenuItem substitutePolicy;
@@ -116,7 +116,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, validate);
-		
+
 		createSubPolicyReceipt = new MenuItem("Criar Notas de Débito (Saúde)", new Command(){
 
 			@Override
@@ -153,22 +153,22 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		addItem(SUB_MENU.DATA, clientAsInsuredObject);
 
 		//REQUESTS
-		agencyInfoRequestItem = new MenuItem("Pedido de Informação à Seguradora", new Command() {
+		sendMessage = new MenuItem("Enviar Mensagem", new Command() {
 
 			@Override
 			public void execute() {
-				onRequestInfoFromAgency();
+				onSendMessage();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, agencyInfoRequestItem);
-		clientInfoRequestItem = new MenuItem("Pedido de Informação ao Cliente", new Command() {
+		addItem(SUB_MENU.REQUESTS, sendMessage);
+		receiveMessage = new MenuItem("Receber Mensagem", new Command() {
 
 			@Override
 			public void execute() {
-				onRequestInfoFromClient();
+				onReceiveMessage();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, clientInfoRequestItem);
+		addItem(SUB_MENU.REQUESTS, receiveMessage);
 
 		//ADMIN
 		substitutePolicy = new MenuItem("Criar Apólice de Substituição", new Command() {
@@ -249,12 +249,12 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		this.substitutePolicy.setEnabled(allow);
 	}
 
-	public void allowRequestClientInfo(boolean allow) {
-		this.clientInfoRequestItem.setEnabled(allow);
+	public void allowReceiveMessage(boolean allow) {
+		this.receiveMessage.setEnabled(allow);
 	}
 
-	public void allowRequestAgencyInfo(boolean allow) {
-		this.agencyInfoRequestItem.setEnabled(allow);
+	public void allowSendMessage(boolean allow) {
+		this.sendMessage.setEnabled(allow);
 	}
 
 	public void allowCreateInsuredObjectFromClient(boolean allow) {
@@ -298,7 +298,6 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public void allowCreateSubPolicyReceipt(boolean allow){
 		this.createSubPolicyReceipt.setEnabled(allow);
 	}
-	
 
 	public abstract void onVoidPolicy();
 
@@ -310,9 +309,9 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	
 	public abstract void onCreateSubstitutePolicy();
 
-	public abstract void onRequestInfoFromClient();
+	public abstract void onReceiveMessage();
 
-	public abstract void onRequestInfoFromAgency();
+	public abstract void onSendMessage();
 	
 	public abstract void onIncludeInsuredObject();
 

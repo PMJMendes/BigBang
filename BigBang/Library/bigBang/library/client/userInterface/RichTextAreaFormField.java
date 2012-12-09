@@ -3,6 +3,8 @@ package bigBang.library.client.userInterface;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,6 +21,8 @@ public class RichTextAreaFormField extends FormField<String> {
 	protected HorizontalPanel textAndMandatory;
 	protected RichTextArea field;
 	private RichTextToolbar toolbar;
+	private boolean firstTime = true;
+	VerticalPanel fieldWrapper;
 	
 	
 	public RichTextAreaFormField(String label,FieldValidator<String> validator){
@@ -57,14 +61,27 @@ public class RichTextAreaFormField extends FormField<String> {
 		
 		toolbar = new RichTextToolbar(this.field);
 		
-		VerticalPanel fieldWrapper = new VerticalPanel();
+		fieldWrapper = new VerticalPanel();
 		fieldWrapper.setSize("100%", "100%");
 		fieldWrapper.add(toolbar);
-		fieldWrapper.add(this.field);
-		fieldWrapper.setSize("100%", "100%");
-		fieldWrapper.setCellHeight(this.field, "100%");
-		fieldWrapper.setSize("100%", "100%");
-		fieldWrapper.setCellWidth(field, "100%");
+		
+		addAttachHandler(new Handler() {
+			
+
+			@Override
+			public void onAttachOrDetach(AttachEvent event) {
+				if(firstTime && event.isAttached()){
+					fieldWrapper.add(field);
+					fieldWrapper.setSize("100%", "100%");
+					fieldWrapper.setCellHeight(field, "100%");
+					fieldWrapper.setSize("100%", "100%");
+					fieldWrapper.setCellWidth(field, "100%");
+				}
+				firstTime = false;
+			}
+		});
+		
+		
 		textAndMandatory = new HorizontalPanel();
 		textAndMandatory.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		textAndMandatory.add(fieldWrapper);

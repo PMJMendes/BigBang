@@ -78,9 +78,8 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 			}
 
 			@Override
-			public void onExternalRequest() {
-				fireAction(Action.EXTERNAL_REQUEST);
-
+			public void onReceiveMessage() {
+				fireAction(Action.RECEIVE_MESSAGE);
 			}
 
 			@Override
@@ -91,6 +90,11 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 			@Override
 			public void onResponse() {
 				fireAction(Action.RESPONSE);				
+			}
+
+			@Override
+			protected void onSendMessage() {
+				fireAction(Action.SEND_MESSAGE);
 			}
 		};
 
@@ -231,8 +235,8 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	}
 
 	@Override
-	public void allowExternalRequest(boolean hasPermission) {
-		toolbar.allowExternalRequest(hasPermission);
+	public void allowReceiveMessage(boolean hasPermission) {
+		toolbar.allowReceiveMessage(hasPermission);
 	}
 
 	public abstract void setParentHeaderTitle(String title);
@@ -302,5 +306,10 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		documents.allowCreation(hasPermission);
 		
 	};
+	
+	@Override
+	public void allowSendMessage(boolean b) {
+		toolbar.allowSendMessage(b);
+	}
 
 }

@@ -318,7 +318,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST));
 					view.allowCreateInsuredObject(false);
 					view.allowCreateManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER));
-					view.allowCreateInfoorDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_INFO_OR_DOCUMENT_REQUEST));
+					//TODO REQUESTS view.allowCreateInfoorDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_INFO_OR_DOCUMENT_REQUEST));
 
 					view.getForm().setValue(response);
 					
@@ -450,7 +450,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	
 	protected void onCreateInfoOrDocumentRequest(){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.pushIntoStackParameter("display", "inforequest");
+		navItem.pushIntoStackParameter("display", "sendmessage");
 		navItem.setParameter("ownerid", view.getForm().getValue().id);
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
@@ -469,9 +469,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
 			showNegotiation(process.dataId);
-		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)) {
-			showInfoRequest(process.dataId);
-		}
+		}		//TODO REQUESTS else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)) {
+		//TODO REQUESTS 	showInfoRequest(process.dataId);
+		//TODO REQUESTS }
 	}
 
 	protected void showNegotiation(String negotiationId) {

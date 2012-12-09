@@ -14,9 +14,9 @@ public class ExternalRequestReplyForm extends FormView<Outgoing> {
 	protected OutgoingMessageFormField message;
 
 	public ExternalRequestReplyForm(){
-		addSection("Detalhes do Pedido");
+		addSection("Detalhes do processo de mensagem");
 		
-		isFinal = new CheckBoxFormField("Finalizar Pedido");
+		isFinal = new CheckBoxFormField("Finalizar processo");
 		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)", false);
 		replyLimit.setFieldWidth("72px");
 		message = new OutgoingMessageFormField();

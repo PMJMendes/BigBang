@@ -62,6 +62,8 @@ public class MailOrganizerViewPresenter implements ViewPresenter{
 
 		HasNavigationStateChangedHandlers getNavigationPanel();
 
+		void clearNavigationPanel();
+
 	}
 
 	private Display view;
@@ -162,6 +164,7 @@ public class MailOrganizerViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		view.clear();
+		view.clearNavigationPanel();
 		view.setReadOnly(true);
 	}
 

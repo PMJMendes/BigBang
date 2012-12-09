@@ -80,14 +80,14 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 			}
 
 			@Override
-			protected void onInfoFromInsurer() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.INFO_FROM_INSURER));
+			protected void receiveMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.RECEIVE_MESSAGE));
 
 			}
 
 			@Override
-			protected void onInfoOrDocumentRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.INFO_OR_DOCUMENT_REQUEST));
+			protected void sendMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.SEND_MESSAGE));
 
 			}
 
@@ -235,14 +235,14 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	}
 
 	@Override
-	public void allowInfoFromInsurer(boolean allow) {
-		this.operationsToolbar.allowInfoFromInsurer(allow);
+	public void allowReceiveMessage(boolean allow) {
+		this.operationsToolbar.allowReceiveMessage(allow);
 
 	}
 
 	@Override
-	public void allowInfoOrDocumentRequest(boolean allow) {
-		this.operationsToolbar.allowInfoOrDocumentRequest(allow);
+	public void allowSendMessage(boolean allow) {
+		this.operationsToolbar.allowSendMessage(allow);
 
 	}
 

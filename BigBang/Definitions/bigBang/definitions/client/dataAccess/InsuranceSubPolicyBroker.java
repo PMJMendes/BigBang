@@ -3,9 +3,9 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -74,11 +74,15 @@ public interface InsuranceSubPolicyBroker extends
 	
 	void transferToInsurancePolicy(String subPolicyId, String newPolicyId, ResponseHandler<SubPolicy> handler);
 	
-	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, ResponseHandler<InfoOrDocumentRequest> handler);
-
 	void executeDetailedCalculations(String subPolicyId, ResponseHandler<SubPolicy> handler);
 	
 	void voidSubPolicy(PolicyVoiding voiding, ResponseHandler<SubPolicy> responseHandler);
 
 	void createExpense(Expense expense, ResponseHandler<Expense> handler);
+
+	public void sendMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
+
+	public void receiveMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
 }

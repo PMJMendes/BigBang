@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class InsurancePolicySectionViewPresenter implements ViewPresenter{
-	
+
 	public static enum Action {
 		ON_OVERLAY_CLOSED,
 	}
@@ -75,7 +75,7 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 				}
 			}
 		});
-		
+
 		this.view.registerOperationSelectionHandler(new ActionInvokedEventHandler<InsurancePolicySectionViewPresenter.SectionOperation>() {
 
 			@Override
@@ -137,7 +137,7 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 			}
 		};
 		this.overlayController = new ViewPresenterController(view.getOverlayViewContainer()) {
-			
+
 			@Override
 			public void onParameters(HasParameters parameters) {
 				String show = parameters.getParameter("show");
@@ -145,8 +145,8 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 
 				if(show.isEmpty()){
 					view.showOverlayViewContainer(false);
-					
-				//OVERLAY VIEWS
+
+					//OVERLAY VIEWS
 				}else if(show.equalsIgnoreCase("voidpolicy")){
 					present("INSURANCE_POLICY_VOID", parameters);
 					view.showOverlayViewContainer(true);
@@ -200,6 +200,9 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("createsubpolicyreceipts")){
 					present("INSURANCE_POLICY_CREATE_SUB_POLICY_RECEIPT", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("conversationclose")){
+					present("CONVERSATION_CLOSE", parameters);
 					view.showOverlayViewContainer(true);
 				}
 			}

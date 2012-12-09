@@ -1,10 +1,10 @@
 package bigBang.library.client.userInterface.view;
 
-import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.Message;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ExternalInfoRequestTasksOperationsToolbar;
-import bigBang.library.client.userInterface.form.ExternalInfoRequestForm;
+import bigBang.library.client.userInterface.form.ReceiveMessageForm;
 import bigBang.library.client.userInterface.presenter.ExternalInfoRequestTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalInfoRequestTasksViewPresenter.Action;
 
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ExternalInfoRequestTasksView extends View implements ExternalInfoRequestTasksViewPresenter.Display {
 
-	protected ExternalInfoRequestForm form;
+	protected ReceiveMessageForm form;
 	protected ExternalInfoRequestTasksOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> handler;
 	
@@ -54,7 +54,7 @@ public class ExternalInfoRequestTasksView extends View implements ExternalInfoRe
 		};
 		wrapper.add(toolbar);
 		
-		form = new ExternalInfoRequestForm();
+		form = new ReceiveMessageForm();
 		form.setReadOnly(true);
 		form.setSize("100%", "100%");
 		wrapper.add(form);
@@ -69,8 +69,8 @@ public class ExternalInfoRequestTasksView extends View implements ExternalInfoRe
 	}
 
 	@Override
-	public HasValue<ExternalInfoRequest> getForm() {
-		return form;
+	public HasValue<Message> getForm() {
+		return null;
 	}
 
 	@Override

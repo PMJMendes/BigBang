@@ -14,9 +14,9 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -536,27 +536,6 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 		});
 	}
 
-	@Override
-	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
-			final ResponseHandler<InfoOrDocumentRequest> handler) {
-//		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-//
-//			@Override
-//			public void onResponseSuccess(InfoOrDocumentRequest result) {
-//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_INFO_OR_DOCUMENT_REQUEST, result.id));
-//				handler.onResponse(result);
-//
-//			}
-//			
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				handler.onError(new String[]{
-//						new String("Could not create info or document request")
-//				});
-//				super.onResponseFailure(caught);
-//			}
-//		});
-	}
 
 	@Override
 	public void createReceipt(Receipt receipt, final ResponseHandler<Receipt> handler) {
@@ -629,6 +608,50 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 				super.onResponseFailure(caught);
 			}
 		});
+	}
+
+	@Override
+	public void sendMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.sendMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});		
+	}
+
+	@Override
+	public void receiveMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.sendMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not receive the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		});				
 	}
 
 }

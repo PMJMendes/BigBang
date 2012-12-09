@@ -7,30 +7,32 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.clientModule.client.dataAccess.ClientProcessBrokerImpl;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientInfoOrDocumentRequestViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientConversationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientMassManagerTransferViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientOperationsViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientReceiveMessageViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientSendMessageViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateCasualtyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateQuoteRequestViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.DeleteClientViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.SingleClientManagerTransferViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.ViewClientInfoRequestViewPresenter;
-import bigBang.module.clientModule.client.userInterface.view.ClientInfoOrDocumentRequestView;
+import bigBang.module.clientModule.client.userInterface.view.ClientConversationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientMassManagerTransferView;
 import bigBang.module.clientModule.client.userInterface.view.ClientMergeView;
 import bigBang.module.clientModule.client.userInterface.view.ClientOperationsView;
+import bigBang.module.clientModule.client.userInterface.view.ClientReceiveMessageView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
+import bigBang.module.clientModule.client.userInterface.view.ClientSendMessageView;
 import bigBang.module.clientModule.client.userInterface.view.CreateCasualtyView;
 import bigBang.module.clientModule.client.userInterface.view.CreateInsurancePolicyView;
 import bigBang.module.clientModule.client.userInterface.view.CreateQuoteRequestView;
 import bigBang.module.clientModule.client.userInterface.view.DeleteClientView;
 import bigBang.module.clientModule.client.userInterface.view.SingleClientManagerTransferView;
-import bigBang.module.clientModule.client.userInterface.view.ViewClientInfoRequestView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -114,21 +116,30 @@ public class ClientModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_SEND_MESSAGE", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ClientInfoOrDocumentRequestView view = (ClientInfoOrDocumentRequestView) GWT.create(ClientInfoOrDocumentRequestView.class);
-				ViewPresenter presenter = new ClientInfoOrDocumentRequestViewPresenter(view);
+				ClientSendMessageView view = (ClientSendMessageView) GWT.create(ClientSendMessageView.class);
+				ViewPresenter presenter = new ClientSendMessageViewPresenter(view);
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VIEW_CLIENT_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ViewClientInfoRequestView view = (ViewClientInfoRequestView) GWT.create(ViewClientInfoRequestView.class);
-				ViewPresenter presenter = new ViewClientInfoRequestViewPresenter(view);
+				ClientReceiveMessageView view = (ClientReceiveMessageView) GWT.create(ClientReceiveMessageView.class);
+				ViewPresenter presenter = new ClientReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ClientConversationView view = (ClientConversationView) GWT.create(ClientConversationView.class);
+				ViewPresenter presenter = new ClientConversationViewPresenter(view);
 				return presenter;
 			}
 		});

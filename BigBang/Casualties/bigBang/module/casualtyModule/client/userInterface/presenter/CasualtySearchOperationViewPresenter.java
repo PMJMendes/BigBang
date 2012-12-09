@@ -46,7 +46,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		DELETE,
 		CLOSE,
 		CREATE_SUB_CASUALTY,
-		TRANSFER_MANAGER, INFO_DOCUMENT_REQUEST
+		TRANSFER_MANAGER, SEND_MESSAGE, RECEIVE_MESSAGE
 	}
 
 	public interface Display {
@@ -71,8 +71,9 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		void setSaveModeEnabled(boolean enabled);
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
-		void allowInfoOrDocumentRequest(boolean hasPermission);
 		void addEntryToList(CasualtySearchPanelListEntry entry);
+		void allowSendMessage(boolean b);
+		void allowReceiveMessage(boolean b);
 	}
 
 	protected CasualtyDataBroker broker;
@@ -98,12 +99,12 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String quoteRequestId = parameterHolder.getParameter("casualtyid");
+		String casualtyId = parameterHolder.getParameter("casualtyid");
 
-		if(quoteRequestId == null || quoteRequestId.isEmpty()) {
+		if(casualtyId == null || casualtyId.isEmpty()) {
 			clearView();
 		}else{
-			showCasualty(quoteRequestId);
+			showCasualty(casualtyId);
 		}
 	}
 
@@ -154,8 +155,11 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 				case TRANSFER_MANAGER:
 					onTransferManager();
 					break;
-				case INFO_DOCUMENT_REQUEST:
-					onInfoOrDocumentRequest();
+				case SEND_MESSAGE:
+					onSendMessage();
+					break;
+				case RECEIVE_MESSAGE:
+					onReceiveMessage();
 					break;
 				}
 			}
@@ -195,6 +199,13 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		bound = true;
 	}
 
+	protected void onReceiveMessage() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "receivemessage");
+		item.setParameter("ownerid", view.getForm().getValue().id);
+		NavigationHistoryManager.getInstance().go(item);		
+	}
+
 	protected void showDocument(String id) {
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.setParameter("show", "documentmanagement");
@@ -214,9 +225,9 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 
 	}
 
-	protected void onInfoOrDocumentRequest() {
+	protected void onSendMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "inforequest");
+		item.pushIntoStackParameter("display", "sendmessage");
 		item.setParameter("ownerid", view.getForm().getValue().id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -252,7 +263,10 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 				view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY));
 				view.allowCreateSubCasualty(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_SUB_CASUALTY));
 				view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER));
-				view.allowInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST));
+				//TODO REQUESTS 
+				view.allowSendMessage(true);
+				view.allowReceiveMessage(true);
+				//TODO REQUESTS 
 				view.getForm().setValue(response);
 				ensureListedAndSelected(response);
 			}
@@ -346,16 +360,11 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 
 	protected void showSubProcess(BigBangProcess process){
 		String type = process.dataTypeId;
-
-		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.MANAGER_TRANSFER)){
+		
+		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewmanagertransfer");
-			item.setParameter("transferid", process.dataId);
-			NavigationHistoryManager.getInstance().go(item);
-		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
-			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewinforequest");
-			item.setParameter("requestid", process.dataId);
+			item.pushIntoStackParameter("display", "conversation");
+			item.setParameter("conversationid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 	}

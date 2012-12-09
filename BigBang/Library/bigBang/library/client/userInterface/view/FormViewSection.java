@@ -6,7 +6,6 @@ import java.util.Iterator;
 import bigBang.library.client.FormField;
 
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;

@@ -103,7 +103,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		ownerId = parameterHolder.getParameter("ownerid");
 		documentId = parameterHolder.getParameter("documentid");
 		ownerTypeId = parameterHolder.getParameter("ownertypeid");
-		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
+		boolean hasPermissions = true; //TODO PERMISSIONS
 
 		if(ownerId == null){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um documento sem cliente associado."), TYPE.ALERT_NOTIFICATION));
@@ -270,13 +270,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 				@Override
 				public void onResponse(Document response) {
-
-					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-					navig.removeParameter("documentid");
-					navig.removeParameter("ownertypeid");
-					navig.removeParameter("show");
-					NavigationHistoryManager.getInstance().go(navig);
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+					onCreateDocument();
 				}
 
 				@Override
@@ -309,6 +303,15 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			});
 		}
 
+	}
+
+	protected void onCreateDocument() {
+		NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+		navig.removeParameter("documentid");
+		navig.removeParameter("ownertypeid");
+		navig.removeParameter("show");
+		NavigationHistoryManager.getInstance().go(navig);
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento criado com sucesso."), TYPE.TRAY_NOTIFICATION));		
 	}
 
 	private void cancelChanges(){

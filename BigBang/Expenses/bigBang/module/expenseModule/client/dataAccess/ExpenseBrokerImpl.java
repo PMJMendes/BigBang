@@ -11,13 +11,12 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.definitions.shared.ExpenseStub;
-import bigBang.definitions.shared.ExternalInfoRequest;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
@@ -322,58 +321,6 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 		});
 	}
 
-
-	@Override
-	public void createExternalInfoRequest(ExternalInfoRequest toSend,
-			final ResponseHandler<ExternalInfoRequest> responseHandler) {
-//		service.createExternalRequest(toSend, new BigBangAsyncCallback<ExternalInfoRequest>() {
-//
-//			@Override
-//			public void onResponseSuccess(ExternalInfoRequest result) {
-//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.CREATE_EXTERNAL_REQUEST, result.id));
-//
-//				responseHandler.onResponse(result);
-//
-//			}
-//
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				responseHandler.onError(new String[]{
-//						new String("Could not receive the info or document request response")	
-//				});
-//				super.onResponseFailure(caught);	
-//			}
-//
-//		});
-//
-	}
-
-
-	@Override
-	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
-			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
-//		service.createInfoRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-//			@Override
-//			public void onResponseSuccess(InfoOrDocumentRequest result) {
-//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.CREATE_INFO_REQUEST, result.id));
-//
-//				responseHandler.onResponse(result);
-//
-//			}
-//
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				responseHandler.onError(new String[]{
-//						new String("Could not receive the info or document request response")	
-//				});
-//				super.onResponseFailure(caught);	
-//			}
-//
-//		});
-//
-	}
-
-
 	@Override
 	public void notifyClient(String expenseId,
 			final ResponseHandler<Expense> responseHandler) {
@@ -557,6 +504,53 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 				super.onResponseFailure(caught);
 			}
 		});
+	}
+
+
+	@Override
+	public void sendMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.sendMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+		});
+		
+	}
+
+
+	@Override
+	public void receiveMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.receiveMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not receive the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+		});		
 	}
 
 }

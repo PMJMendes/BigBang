@@ -20,7 +20,8 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 	private MenuItem managerTransferItem;
 	
 	//REQUESTS
-	private MenuItem infoRequestItem;
+	private MenuItem sendMessage;
+	private MenuItem receiveMessage;
 	
 	//ADMIN
 	protected MenuItem deleteItem;
@@ -88,14 +89,23 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.DATA, managerTransferItem);
 		
 		//REQUESTS
-		infoRequestItem = new MenuItem("Pedir Informação ou Documento", new Command() {
+		sendMessage = new MenuItem("Enviar Mensagem", new Command() {
 
 			@Override
 			public void execute() {
-				onRequestInfoOrDocument();
+				onSendMessage();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, infoRequestItem);
+		addItem(SUB_MENU.REQUESTS, sendMessage);
+		
+		receiveMessage = new MenuItem("Receber Mensagem", new Command() {
+
+			@Override
+			public void execute() {
+				onReceiveMessage();
+			}
+		});
+		addItem(SUB_MENU.REQUESTS, receiveMessage);
 		
 		//ADMIN
 		this.deleteItem = new MenuItem("Eliminar", new Command() {
@@ -119,7 +129,8 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 	public abstract void onMergeWithClient();
 	
 	//DATA
-	public abstract void onRequestInfoOrDocument();
+	public abstract void onSendMessage();
+	public abstract void onReceiveMessage();
 	public abstract void onTransferToManager();
 	
 	//ADMIN
@@ -129,8 +140,8 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 		this.deleteItem.setEnabled(allow);
 	}
 	
-	public void allowInfoOrDocumentRequest(boolean allow) {
-		this.infoRequestItem.setEnabled(allow);
+	public void allowSendMessage(boolean allow) {
+		this.sendMessage.setEnabled(allow);
 	}
 
 	public void allowManagerTransfer(boolean allow) {
@@ -155,5 +166,9 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 
 	public void allowCreateCasualty(boolean allow) {
 		this.casualtyItem.setEnabled(allow);
+	}
+	
+	public void allowReceiveMessage(boolean allow){
+		this.receiveMessage.setEnabled(allow);
 	}
 }

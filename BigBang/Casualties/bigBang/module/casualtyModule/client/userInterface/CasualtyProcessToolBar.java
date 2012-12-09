@@ -14,10 +14,12 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 	protected MenuItem transferManager;
 	
 	//REQUESTS
-	protected MenuItem infoOrDocumentRequest;
+	protected MenuItem sendMessage;
 	
 	//ADMIN
 	protected MenuItem delete, close;
+
+	private MenuItem receiveMessage;
 
 
 	public CasualtyProcessToolBar(){
@@ -43,14 +45,23 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.DATA, transferManager);
 
 		//REQUESTS
-		infoOrDocumentRequest = new MenuItem("Pedido de Informação ao Cliente", new Command() {
+		sendMessage = new MenuItem("Enviar Mensagem", new Command() {
 			
 			@Override
 			public void execute() {
-				onInfoOrDocumentRequest();
+				onSendMessage();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, infoOrDocumentRequest);
+		addItem(SUB_MENU.REQUESTS, sendMessage);
+		
+		receiveMessage = new MenuItem("Receber Mensagem", new Command() {
+			
+			@Override
+			public void execute() {
+				onReceiveMessage();
+			}
+		});
+		addItem(SUB_MENU.REQUESTS, receiveMessage);
 		//ADMIN
 		close = new MenuItem("Encerrar", new Command() {
 
@@ -113,7 +124,9 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 		//		addItem(policyMenuItem);
 	}
 
-	public abstract void onInfoOrDocumentRequest();
+	public abstract void onReceiveMessage();
+
+	public abstract void onSendMessage();
 
 	public abstract void onCreateSubCasualty();
 
@@ -140,8 +153,12 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 		this.transferManager.setEnabled(allow);
 	}
 
-	public void allowInfoOrDocumentRequest(boolean hasPermission) {
-		infoOrDocumentRequest.setEnabled(hasPermission);
+	public void allowSendMessage(boolean hasPermission) {
+		sendMessage.setEnabled(hasPermission);
+	}
+
+	public void allowReceiveMessage(boolean b) {
+		receiveMessage.setEnabled(b);
 	}
 
 }

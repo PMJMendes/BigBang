@@ -45,7 +45,7 @@ protected NegotiationBroker negotiationBroker;
 
 	@Override
 	protected void onFailure() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar a mensagem"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);

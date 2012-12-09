@@ -20,7 +20,7 @@ public abstract class ViewExternalInfoRequestOperationsToolbar extends
 		});
 		addItem(replyRequest);
 		
-		continueRequest = new MenuItem("Continuar Pedido", new Command() {
+		continueRequest = new MenuItem("Continuar Processo", new Command() {
 			
 			@Override
 			public void execute() {
@@ -31,7 +31,7 @@ public abstract class ViewExternalInfoRequestOperationsToolbar extends
 		
 		addSeparator();
 		
-		closeRequest = new MenuItem("Encerrar Pedido", new Command() {
+		closeRequest = new MenuItem("Encerrar Processo", new Command() {
 			
 			@Override
 			public void execute() {

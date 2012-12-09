@@ -61,7 +61,7 @@ public abstract class ViewInfoOrDocumentRequestView<T extends ProcessBase> exten
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
 		
-		ListHeader formHeader = new ListHeader("Pedido de Informação ou Documento");
+		ListHeader formHeader = new ListHeader("Mensagem");
 		formHeader.setHeight("30px");
 		formWrapper.add(formHeader);
 

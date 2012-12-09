@@ -30,8 +30,7 @@ public class TasksViewPresenterMapper {
 		map(BigBangConstants.EntityIds.INSURANCE_POLICY, "INSURANCE_POLICY_TASKS");
 		map(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, "INSURANCE_SUB_POLICY_TASKS");
 		map(BigBangConstants.EntityIds.DAS_REQUEST, "DAS_REQUEST_TASKS");
-		map(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST, "EXTERNAL_INFO_REQUEST_TASKS");
-		map(BigBangConstants.EntityIds.INFO_REQUEST, "INFO_REQUEST_TASKS");
+		map(BigBangConstants.EntityIds.CONVERSATION, "TASKS_CONVERSATION");
 		map(BigBangConstants.EntityIds.NEGOTIATION, "NEGOTIATION_TASKS");
 		map(BigBangConstants.EntityIds.RECEIPT, "RECEIPT_TASKS");
 		map(BigBangConstants.EntityIds.SIGNATURE_REQUEST, "SIGNATURE_REQUEST_TASKS");

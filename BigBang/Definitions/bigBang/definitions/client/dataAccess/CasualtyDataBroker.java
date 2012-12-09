@@ -5,7 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SubCasualty;
 
@@ -28,8 +28,8 @@ public interface CasualtyDataBroker extends DataBrokerInterface<Casualty> {
 			ResponseHandler<SubCasualty> responseHandler);
 	
 	public void createManagerTransfer(String[] dataObjectIds, String newManagerId, ResponseHandler<ManagerTransfer> handler);
-
-	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
-			ResponseHandler<InfoOrDocumentRequest> responseHandler);
 	
+	void sendMessage(Conversation conversation, ResponseHandler<Conversation> handler);
+	
+	void receiveMessage(Conversation conversation, ResponseHandler<Conversation> handler);
 }

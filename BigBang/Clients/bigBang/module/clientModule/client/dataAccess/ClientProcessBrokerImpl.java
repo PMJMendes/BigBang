@@ -15,8 +15,8 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.RiskAnalysis;
@@ -204,7 +204,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_POLICY, result.clientId));
 
 				handler.onResponse(result);
-				
+
 			}
 
 			@Override
@@ -267,29 +267,6 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				super.onResponseFailure(caught);
 			}
 		});
-	}
-
-	@Override
-	public void createInfoOrDocumentRequest(
-			InfoOrDocumentRequest request,
-			final ResponseHandler<InfoOrDocumentRequest> handler) {
-//		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-//
-//			@Override
-//			public void onResponseSuccess(InfoOrDocumentRequest result) {
-//				//TODO REQUESTS EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST, result.id));
-//
-//				handler.onResponse(result);
-//			}
-//
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				handler.onError(new String[]{
-//						new String("Could not create new Info or Document Request")	
-//				});
-//				super.onResponseFailure(caught);
-//			}
-//		});
 	}
 
 	@Override
@@ -467,6 +444,53 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				return;
 			}
 		});
+	}
+
+	@Override
+	public void sendMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.sendMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});
+
+	}
+
+	@Override
+	public void receiveMessage(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.receiveMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CONVERSATION, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});		
 	}
 
 }

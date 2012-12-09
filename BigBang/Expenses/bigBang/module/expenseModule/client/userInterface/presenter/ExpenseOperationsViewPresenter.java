@@ -52,14 +52,14 @@ public class ExpenseOperationsViewPresenter implements ViewPresenter {
 					present("EXPENSE_SEARCH", parameters, true);
 				}else if(display.equalsIgnoreCase("history")){
 					present("HISTORY", parameters, true);
-				}else if(display.equalsIgnoreCase("inforequest")){
-					present("EXPENSE_INFO_OR_DOCUMENT_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("externalrequest")){
-					present("EXPENSE_EXTERNAL_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("sendmessage")){
+					present("EXPENSE_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("receivemessage")){
+					present("EXPENSE_RECEIVE_MESSAGE", parameters); //TODO REQUESTS CLEAN
 				}else if(display.equalsIgnoreCase("viewinforequest")){
 					present("VIEW_EXPENSE_INFO_OR_DOCUMENT_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("viewexternalrequest")){
-					present("VIEW_EXPENSE_EXTERNAL_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("conversation")){
+					present("EXPENSE_CONVERSATION", parameters);
 				}else{
 					goToDefault();
 				}

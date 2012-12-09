@@ -27,7 +27,7 @@ public class ViewExternalInfoRequestForm extends FormView<ExternalInfoRequest> {
 		from.setEditable(false);
 		replyLimit.setEditable(false);
 		
-		addSection("Informação do Pedido Externo");
+		addSection("Informação d");
 		addFormField(from, true);
 		addFormField(replyLimit, false);
 		addFormField(subject);

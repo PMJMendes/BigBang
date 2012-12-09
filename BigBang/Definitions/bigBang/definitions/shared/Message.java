@@ -40,11 +40,11 @@ public class Message
 
 		public String id;
 
-		public String address;
-		public Usage usage;
-		public String userId; //Só para REPLYTO
-		public String contactInfoId; //Só para FROM e TO
-		public String display;
+		public String address; //*
+		public Usage usage; //*
+		public String userId; //Só para REPLYTO //*
+		public String contactInfoId; //Só para FROM e TO //*
+		public String display; //*
 	}
 
 	public String id;
@@ -52,14 +52,14 @@ public class Message
 	public String conversationId;
 	public Integer order;
 	public Conversation.Direction direction;
-	public Kind kind;
-	public String date;
-	public String subject; //Só pode vir a null se tiver emailId.
-	public String text; //Só pode vir a null se tiver emailId.
-	public String emailId; //Se fôr incoming e kind=EMAIL, obrigatório. Se não, tem que vir a null.
+	public Kind kind; //*
+	public String date; 
+	public String subject; //Só pode vir a null se tiver emailId. //*
+	public String text; //Só pode vir a null se tiver emailId. //*
+	public String emailId; //Se fôr incoming e kind=EMAIL, obrigatório. Se não, tem que vir a null. //*
 
-	public AttachmentUpgrade[] incomingAttachments;
-	public String[] outgoingAttachmentIds;
+	public AttachmentUpgrade[] incomingAttachments; //*
+	public String[] outgoingAttachmentIds; //*
 
-	public MsgAddress[] addresses;
+	public MsgAddress[] addresses;  //*
 }

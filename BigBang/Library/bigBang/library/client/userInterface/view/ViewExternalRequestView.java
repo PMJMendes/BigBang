@@ -15,7 +15,7 @@ import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ExternalInfoRequestChildrenPanel;
+import bigBang.library.client.userInterface.ConversationChildrenPanel;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.ViewExternalInfoRequestOperationsToolbar;
 import bigBang.library.client.userInterface.form.ViewExternalInfoRequestForm;
@@ -28,7 +28,7 @@ public abstract class ViewExternalRequestView<T extends ProcessBase> extends Vie
 	protected ViewExternalInfoRequestForm form;
 	protected ActionInvokedEventHandler<Action> handler;
 	protected ViewExternalInfoRequestOperationsToolbar toolbar;
-	protected ExternalInfoRequestChildrenPanel childrenPanel;
+	protected ConversationChildrenPanel childrenPanel;
 
 	public ViewExternalRequestView(FormView<T> ownerForm){
 		this.ownerForm = ownerForm;
@@ -63,7 +63,7 @@ public abstract class ViewExternalRequestView<T extends ProcessBase> extends Vie
 		VerticalPanel requestWrapper = new VerticalPanel();
 		requestWrapper.setSize("100%", "100%");
 		
-		ListHeader requestHeader = new ListHeader("Pedido Externo de Informação");
+		ListHeader requestHeader = new ListHeader("Mensagem");
 		requestHeader.setHeight("30px");
 		
 		SplitLayoutPanel requestDataWrapper = new SplitLayoutPanel();
@@ -71,7 +71,7 @@ public abstract class ViewExternalRequestView<T extends ProcessBase> extends Vie
 		requestWrapper.add(requestDataWrapper);
 		requestWrapper.setCellHeight(requestDataWrapper, "100%");
 		
-		childrenPanel = new ExternalInfoRequestChildrenPanel();
+		childrenPanel = new ConversationChildrenPanel();
 		childrenPanel.setSize("100%", "100%");
 		requestDataWrapper.addEast(childrenPanel, 250);
 		
@@ -114,7 +114,7 @@ public abstract class ViewExternalRequestView<T extends ProcessBase> extends Vie
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<ExternalInfoRequest> event) {
-				childrenPanel.setOwner(event.getValue());
+			//	childrenPanel.setOwner(event.getValue());
 			}
 		});
 	}

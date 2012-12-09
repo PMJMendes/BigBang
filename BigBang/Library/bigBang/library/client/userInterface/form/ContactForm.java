@@ -26,6 +26,7 @@ public class ContactForm extends FormView<Contact> {
 		protected ExpandableListBoxFormField type;
 		protected TextBoxFormField infoValue;
 		private Button remove;
+		private boolean initialized;
 		public ContactEntry(ContactInfo contactinfo) {
 			super(contactinfo);
 		}
@@ -43,42 +44,51 @@ public class ContactForm extends FormView<Contact> {
 
 					}
 				});
+
 				add.setWidth("180px");
 				this.setLeftWidget(add);
-				super.setValue(contactinfo);
-				return;	
-
 			}
 
-			type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_DETAILS_TYPE, "");
-			type.setFieldWidth("100px");
-			infoValue = new TextBoxFormField();
-			infoValue.setFieldWidth("205px");
-			infoValue.setWidth("205px");
+			else if(!initialized){
+
+				type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_DETAILS_TYPE, "");
+				type.setFieldWidth("100px");
+				infoValue = new TextBoxFormField();
+				infoValue.setFieldWidth("205px");
+				infoValue.setWidth("205px");
+
+				ContactForm.this.registerFormField(type);
+				ContactForm.this.registerFormField(infoValue);
+
+				infoValue.getNativeField().addKeyDownHandler(new KeyDownHandler() {
+
+					@Override
+					public void onKeyDown(KeyDownEvent event) {
+						event.stopPropagation();
+					}
+				});
+
+
+				remove = new Button("X");
+				remove.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						onDeleteRequest(ContactEntry.this);
+					}
+				});
+				this.setLeftWidget(type);
+				this.setWidget(infoValue);
+				this.setRightWidget(remove);
+
+				initialized = true;
+			}
+
+			if(contactinfo != null){
+				type.setValue(contactinfo.typeId);
+				infoValue.setValue(contactinfo.value);
+			}
 			
-			infoValue.getNativeField().addKeyDownHandler(new KeyDownHandler() {
-
-				@Override
-				public void onKeyDown(KeyDownEvent event) {
-					event.stopPropagation();
-				}
-			});
-
-
-			type.setValue(contactinfo.typeId);
-			infoValue.setValue(contactinfo.value);
-
-			remove = new Button("X");
-			remove.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					onDeleteRequest(event.getSource());
-				}
-			});
-			this.setLeftWidget(type);
-			this.setWidget(infoValue);
-			this.setRightWidget(remove);
 			super.setValue(contactinfo);
 		}
 
@@ -130,7 +140,7 @@ public class ContactForm extends FormView<Contact> {
 		contactIL.setSelectableEntries(false);
 		contactIL.setSize("407px", "218px");
 		currentSection.setContent(contactIL);
-		
+
 		setValidator(new ContactFormValidator(this));
 	}
 
@@ -161,7 +171,7 @@ public class ContactForm extends FormView<Contact> {
 		return newContact;
 
 	}
-	
+
 	@Override
 	public void setValue(Contact value) {
 		if(value == null){
@@ -204,7 +214,7 @@ public class ContactForm extends FormView<Contact> {
 		}
 		temp.setHeight("40px");
 		contactIL.add(temp);
-//		contactIL.getScrollable().scrollToBottom();
+		//		contactIL.getScrollable().scrollToBottom();
 
 	}
 
@@ -214,14 +224,11 @@ public class ContactForm extends FormView<Contact> {
 		this.type.setReadOnly(!editable);
 		this.type.setReadOnly(!editable);
 		this.address.setReadOnly(!editable);
-		int i;
-		ContactEntry temp;
-		for(i=0; i<contactIL.size(); i++){
 
-			temp = (ContactEntry) contactIL.get(i);
-			temp.setEditable(editable);
+		for(ListEntry<ContactInfo> cont : contactIL){
+			((ContactEntry) cont).setEditable(editable);
+		}
 
-		}		
 	}
 
 	public List<ContactInfo> getContactInfoList() {
@@ -244,16 +251,17 @@ public class ContactForm extends FormView<Contact> {
 
 	}
 
-	public void onDeleteRequest(Object object) {
+	public void onDeleteRequest(ContactEntry object) {
 
 		List<ContactInfo> list = getContactInfoList();
 
 		for(ValueSelectable<ContactInfo> cont: list){
 
-			if(cont.getValue() == object) {
+			if(((ContactEntry)cont).equals(object)){
 				list.remove(cont);
 				break;
 			}
 		}
 	}
+
 }

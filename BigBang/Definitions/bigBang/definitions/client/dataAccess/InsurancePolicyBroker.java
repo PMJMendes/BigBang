@@ -4,11 +4,11 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.ComplexFieldContainer;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DebitNoteBatch;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.FieldContainer;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
@@ -92,16 +92,16 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	void createExpense(Expense expense, ResponseHandler<Expense> handler);
 
-	public void createCompanyInfoRequest(InfoOrDocumentRequest request,
-			ResponseHandler<InfoOrDocumentRequest> responseHandler);
-	
-	public void createClientInfoRequest(InfoOrDocumentRequest request,
-			ResponseHandler<InfoOrDocumentRequest> responseHandler);
-
 	void getDeadClientPolicies(String clientid,
 			ResponseHandler<Collection<InsurancePolicyStub>> policies);
 
 	void createSubPolicyReceipts(DebitNoteBatch debitNote,
 			ResponseHandler<Void> responseHandler);
+
+	public void sendMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
+
+	public void receiveMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
 
 }

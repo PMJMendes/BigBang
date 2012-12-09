@@ -7,9 +7,10 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.expenseModule.client.dataAccess.ExpenseBrokerImpl;
+import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseConversationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseDeleteViewPresenter;
-import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseExternalRequestViewPresenter;
-import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseInfoOrDocumentRequestViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseReceiveMessageViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSendMessageViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseOperationsViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectionViewPresenter;
@@ -22,9 +23,10 @@ import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturn
 import bigBang.module.expenseModule.client.userInterface.presenter.SerialExpenseCreationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ViewExpenseInfoRequestViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ViewExternalInfoRequestViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.view.ExpenseConversationView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseDeleteView;
-import bigBang.module.expenseModule.client.userInterface.view.ExpenseExternalRequestView;
-import bigBang.module.expenseModule.client.userInterface.view.ExpenseInfoOrDocumentRequestView;
+import bigBang.module.expenseModule.client.userInterface.view.ExpenseReceiveMessageView;
+import bigBang.module.expenseModule.client.userInterface.view.ExpenseSendMessageView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseOperationsView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSearchOperationView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSectionView;
@@ -134,21 +136,21 @@ public class ExpenseModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_SEND_MESSAGE", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ExpenseInfoOrDocumentRequestView view = (ExpenseInfoOrDocumentRequestView) GWT.create(ExpenseInfoOrDocumentRequestView.class);
-				ExpenseInfoOrDocumentRequestViewPresenter presenter = new ExpenseInfoOrDocumentRequestViewPresenter(view);
+				ExpenseSendMessageView view = (ExpenseSendMessageView) GWT.create(ExpenseSendMessageView.class);
+				ExpenseSendMessageViewPresenter presenter = new ExpenseSendMessageViewPresenter(view);
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_EXTERNAL_REQUEST", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ExpenseExternalRequestView view = (ExpenseExternalRequestView) GWT.create(ExpenseExternalRequestView.class);
-				ExpenseExternalRequestViewPresenter presenter = new ExpenseExternalRequestViewPresenter(view);
+				ExpenseReceiveMessageView view = (ExpenseReceiveMessageView) GWT.create(ExpenseReceiveMessageView.class);
+				ExpenseReceiveMessageViewPresenter presenter = new ExpenseReceiveMessageViewPresenter(view);
 				return presenter;
 			}
 		});
@@ -185,6 +187,15 @@ public class ExpenseModule implements Module {
 			public ViewPresenter getInstance() {
 				ProofReceptionView view = (ProofReceptionView) GWT.create(ProofReceptionView.class);
 				ViewPresenter presenter = new ProofReceptionViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExpenseConversationView view = (ExpenseConversationView) GWT.create(ExpenseConversationView.class);
+				ExpenseConversationViewPresenter presenter = new ExpenseConversationViewPresenter(view);
 				return presenter;
 			}
 		});

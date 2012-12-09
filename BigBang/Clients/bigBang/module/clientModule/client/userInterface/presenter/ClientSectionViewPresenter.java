@@ -175,6 +175,9 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("delete")){
 					present("CLIENT_DELETE", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("conversationclose")){
+					present("CONVERSATION_CLOSE", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 

@@ -2,6 +2,7 @@ package bigBang.library.client.userInterface.view;
 
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
+import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
@@ -31,7 +32,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
-		wrapper.setSize("100%", "100%");
+		wrapper.setSize("680px", "645px");
 		form = new ContactForm();
 
 		//TOOLBAR
@@ -197,5 +198,10 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			System.out.println(subContacts.get(i).getValue().name);
 		}
 
+	}
+
+	@Override
+	public HasEditableValue<Contact> getForm() {
+		return form;
 	}
 }

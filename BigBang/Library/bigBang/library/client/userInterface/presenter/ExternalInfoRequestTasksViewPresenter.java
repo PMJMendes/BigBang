@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.Message;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.HasOperationPermissions;
 import bigBang.library.client.HasParameters;
@@ -14,7 +15,6 @@ import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
-import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.ExternRequestService;
 import bigBang.library.interfaces.ExternRequestServiceAsync;
 
@@ -23,13 +23,13 @@ public class ExternalInfoRequestTasksViewPresenter implements ViewPresenter,
 	
 	public static enum Action {
 		SEND_RESPONSE,
-		CONTINUE,
+		CONTINUE, 
 		CLOSE, 
 		GO_TO_PROCESS
 	}
 	
 	public static interface Display {
-		HasValue<ExternalInfoRequest> getForm();
+		HasValue<Message> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		
 		HasWidgets getOverlayViewContainer();
@@ -93,7 +93,7 @@ public class ExternalInfoRequestTasksViewPresenter implements ViewPresenter,
 					onClose();
 					break;
 				case GO_TO_PROCESS:
-					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST, view.getForm().getValue().id);
+					//TODO REQUESTS 		NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST, view.getForm().getValue().id);
 					break;
 				default:
 					break;
@@ -129,7 +129,7 @@ public class ExternalInfoRequestTasksViewPresenter implements ViewPresenter,
 
 			@Override
 			public void onResponseSuccess(ExternalInfoRequest result) {
-				view.getForm().setValue(result);
+			//	view.getForm().setValue(result);
 			}
 			
 			@Override

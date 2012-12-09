@@ -41,7 +41,7 @@ public class InsurancePolicyManagerTransferView extends View implements Insuranc
 		wrapper.setCellHeight(toolbar, "21px");
 
 		wrapper.add(form.getNonScrollableContent());
-		wrapper.setCellHeight(form, "100%");
+		wrapper.setCellHeight(form.getNonScrollableContent(), "100%");
 	}
 	
 	@Override

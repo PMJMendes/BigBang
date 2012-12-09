@@ -7,39 +7,39 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.InfoOrDocumentRequestOperationsToolbar;
-import bigBang.library.client.userInterface.form.InfoOrDocumentRequestForm;
+import bigBang.library.client.userInterface.SendMessageToolbar;
+import bigBang.library.client.userInterface.form.SendMessageForm;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestRepeatViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestRepeatViewPresenter.Action;
 
 public class InfoOrDocumentRequestRepeatView extends View implements InfoOrDocumentRequestRepeatViewPresenter.Display {
 
-	private InfoOrDocumentRequestOperationsToolbar toolbar;
-	private InfoOrDocumentRequestForm form;
+	private SendMessageToolbar toolbar;
+	private SendMessageForm form;
 	private ActionInvokedEventHandler<Action> handler;
-	
+
 	public InfoOrDocumentRequestRepeatView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
-		
-		toolbar = new InfoOrDocumentRequestOperationsToolbar() {
-			
+
+		toolbar = new SendMessageToolbar() {
+
 			@Override
 			public void onSendRequest() {
 				handler.onActionInvoked(new ActionInvokedEvent<InfoOrDocumentRequestRepeatViewPresenter.Action>(Action.SEND));
 			}
-			
+
 			@Override
 			public void onCancelRequest() {
 				handler.onActionInvoked(new ActionInvokedEvent<InfoOrDocumentRequestRepeatViewPresenter.Action>(Action.CANCEL));
 			}
 		};
 		wrapper.add(toolbar);
-		
-		form = new InfoOrDocumentRequestForm();
+
+		form = new SendMessageForm();
 		wrapper.add(form.getNonScrollableContent());
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
@@ -47,7 +47,8 @@ public class InfoOrDocumentRequestRepeatView extends View implements InfoOrDocum
 
 	@Override
 	public HasEditableValue<InfoOrDocumentRequest> getForm() {
-		return this.form;
+//		return this.form;
+		return null;
 	}
 
 	@Override

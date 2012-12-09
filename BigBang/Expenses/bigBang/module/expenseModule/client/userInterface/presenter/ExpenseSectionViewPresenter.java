@@ -209,6 +209,9 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("continueexternalrequest")){
 					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CONTINUATION", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("conversationclose")){
+					present("CONVERSATION_CLOSE", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 

@@ -41,7 +41,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 	public static enum Action{
-		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT, CANCEL_NEGOTIATION, EXTERNAL_REQUEST, GRANT, RESPONSE, BACK
+		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT, CANCEL_NEGOTIATION, RECEIVE_MESSAGE, GRANT, RESPONSE, BACK, SEND_MESSAGE
 
 	}
 
@@ -78,7 +78,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 		void applyOwnerToList(String negotiationId);
 
-		void allowExternalRequest(boolean hasPermission);
+		void allowReceiveMessage(boolean hasPermission);
 
 		void allowGrant(boolean hasPermission);
 
@@ -95,6 +95,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void setOwnerTypeId(String negotiation);
 
 		void allowContactDocumentEdit(boolean hasPermission);
+
+		void allowSendMessage(boolean b);
 
 	}
 
@@ -195,8 +197,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					cancelNegotiation();
 					break;
 				}
-				case EXTERNAL_REQUEST:
-					receiveExternalRequest();
+				case RECEIVE_MESSAGE:
+					onReceiveMessage();
 					break;
 
 				case GRANT:{
@@ -212,6 +214,9 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					onBack();
 					break;
 				}
+				case SEND_MESSAGE:
+					onSendMessage();
+					break;
 				}
 
 			}
@@ -280,6 +285,12 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		bound = true;
 	}
 
+	protected void onSendMessage() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "negotiationsendmessage");
+		NavigationHistoryManager.getInstance().go(item);		
+	}
+
 	protected void onBack() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.popFromStackParameter("display");
@@ -299,10 +310,9 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	protected void receiveExternalRequest() {
+	protected void onReceiveMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "externalrequest");
-		item.setParameter("externalrequestid", "new");
+		item.pushIntoStackParameter("display", "negotiationreceivemessage");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -327,7 +337,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			view.setToolbarSaveMode(true);
 			view.allowEdit(true);
 			view.allowCancelNegotiation(false);
-			view.allowExternalRequest(false);
+			view.allowReceiveMessage(false);
 			view.allowGrant(false);
 			view.allowResponse(false);
 			view.allowResponse(false);
@@ -346,7 +356,9 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
 					view.allowContactDocumentEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
 					view.allowCancelNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.CANCEL_NEGOTIATION));
-					view.allowExternalRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST));
+					//TODO REQUESTS 
+					view.allowSendMessage(true);
+					view.allowReceiveMessage(true);
 					view.allowGrant(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.GRANT_NEGOTIATION));
 					view.allowResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.RECEIVE_QUOTE));
 					view.enableDocumentCreation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
@@ -423,8 +435,11 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			@Override
 			public void onResponse(BigBangProcess response) {
 				String type = response.dataTypeId;
-				if(type.equalsIgnoreCase(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST)) {
-					showExternalRequest(response.dataId);
+				if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.pushIntoStackParameter("display", "negotiationconversation");
+					item.setParameter("conversationid", response.dataId);
+					NavigationHistoryManager.getInstance().go(item);
 				}
 			}
 
@@ -433,13 +448,6 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 				view.getSubProcessList().clearSelection();
 			}
 		});
-	}
-
-	private void showExternalRequest(String requestId){
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "viewnegotiationexternalrequest");
-		item.setParameter("externalrequestid", requestId);
-		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void showHistory(String ownerId, String itemId){

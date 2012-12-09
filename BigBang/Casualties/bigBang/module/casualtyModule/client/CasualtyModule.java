@@ -8,39 +8,45 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.casualtyModule.client.dataAccess.CasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.dataAccess.SubCasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyCloseViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyConversationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyDeleteViewPresenter;
-import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyInfoOrDocumentRequestViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyReceiveMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySendMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyManagerTransferViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyMassManagerTransferViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyTasksViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyConversationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyDeleteViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyMarkForClosingViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyRejectCloseViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyTasksViewPresenter;
-import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyExternalRequestViewPresenter;
-import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyInfoOrDocumentRequestViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyReceiveMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtySendMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.ViewCasualtyInfoRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.ViewSubCasualtyExternalInfoRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.ViewSubCasualtyInfoRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyConversationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
-import bigBang.module.casualtyModule.client.userInterface.view.CasualtyInfoOrDocumentRequestView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyReceiveMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtySendMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyManagerTransferView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyMassManagerTransferView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyTasksView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyConversationView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyDeleteView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyMarkForClosingView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyRejectCloseView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyTasksView;
-import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyExternalRequestView;
-import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyInfoOrDocumentRequestView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReceiveMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtySendMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyView;
 import bigBang.module.casualtyModule.client.userInterface.view.ViewCasualtyInfoRequestView;
 import bigBang.module.casualtyModule.client.userInterface.view.ViewSubCasualtyExternalInfoRequestView;
@@ -143,12 +149,21 @@ public class CasualtyModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_CLIENT_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_SEND_MESSAGE", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				CasualtyInfoOrDocumentRequestView view = (CasualtyInfoOrDocumentRequestView) GWT.create(CasualtyInfoOrDocumentRequestView.class);
-				ViewPresenter presenter = new CasualtyInfoOrDocumentRequestViewPresenter(view);
+				CasualtySendMessageView view = (CasualtySendMessageView) GWT.create(CasualtySendMessageView.class);
+				ViewPresenter presenter = new CasualtySendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyReceiveMessageView view = (CasualtyReceiveMessageView) GWT.create(CasualtyReceiveMessageView.class);
+				ViewPresenter presenter = new CasualtyReceiveMessageViewPresenter(view);
 				return presenter;
 			}
 		});
@@ -188,21 +203,21 @@ public class CasualtyModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_SEND_MESSAGE", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				SubCasualtyInfoOrDocumentRequestView view = (SubCasualtyInfoOrDocumentRequestView) GWT.create(SubCasualtyInfoOrDocumentRequestView.class);
-				ViewPresenter presenter = new SubCasualtyInfoOrDocumentRequestViewPresenter(view);
+				SubCasualtySendMessageView view = (SubCasualtySendMessageView) GWT.create(SubCasualtySendMessageView.class);
+				ViewPresenter presenter = new SubCasualtySendMessageViewPresenter(view);
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_EXTERNAL_REQUEST", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				SubCasualtyExternalRequestView view = (SubCasualtyExternalRequestView) GWT.create(SubCasualtyExternalRequestView.class);
-				ViewPresenter presenter = new SubCasualtyExternalRequestViewPresenter(view);
+				SubCasualtyReceiveMessageView view = (SubCasualtyReceiveMessageView) GWT.create(SubCasualtyReceiveMessageView.class);
+				ViewPresenter presenter = new SubCasualtyReceiveMessageViewPresenter(view);
 				return presenter;
 			}
 		});
@@ -230,6 +245,24 @@ public class CasualtyModule implements Module {
 			public ViewPresenter getInstance() {
 				ViewSubCasualtyExternalInfoRequestView view = (ViewSubCasualtyExternalInfoRequestView) GWT.create(ViewSubCasualtyExternalInfoRequestView.class);
 				ViewPresenter presenter = new ViewSubCasualtyExternalInfoRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyConversationView view = (CasualtyConversationView) GWT.create(CasualtyConversationView.class);
+				CasualtyConversationViewPresenter presenter = new CasualtyConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyConversationView view = (SubCasualtyConversationView) GWT.create(SubCasualtyConversationView.class);
+				SubCasualtyConversationViewPresenter presenter = new SubCasualtyConversationViewPresenter(view);
 				return presenter;
 			}
 		});

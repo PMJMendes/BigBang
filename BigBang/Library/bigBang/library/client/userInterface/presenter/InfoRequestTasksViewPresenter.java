@@ -10,7 +10,6 @@ import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
-import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.ContactsService;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
 import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
@@ -96,7 +95,7 @@ public class InfoRequestTasksViewPresenter implements ViewPresenter, HasOperatio
 					onCancel();
 					break;
 				case GO_TO_PROCESS:
-					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.INFO_REQUEST, view.getForm().getValue().id);
+					//TODO REQUESTS 		NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.INFO_REQUEST, view.getForm().getValue().id);
 					break;
 				default:
 					break;

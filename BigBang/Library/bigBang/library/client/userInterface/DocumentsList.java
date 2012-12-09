@@ -45,7 +45,7 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 			Document c = (Document) info;
 			this.setTitle(c.name);
 			this.setText(c.docTypeLabel + " (" + c.creationDate + ")");
-		};
+		}
 	}
 
 	protected int documentsDataVersion;
@@ -147,6 +147,7 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 			for(ValueSelectable<Document> s : this) {
 				if(s.getValue().id.equalsIgnoreCase(document.id)){
 					remove(s);
+					break;
 				}
 			}
 		}

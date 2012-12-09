@@ -20,10 +20,10 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -55,8 +55,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		CREATE_CASUALTY,
 		MERGE_WITH_CLIENT,
 		TRANSFER_MANAGER,
-		REQUIRE_INFO_DOCUMENT,
-		ON_NEW_RESULTS
+		SEND_MESSAGE,
+		ON_NEW_RESULTS, RECEIVE_MESSAGE
 	}
 
 	public interface Display {
@@ -76,7 +76,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		void allowCreate(boolean allow);
 		void allowEdit(boolean allow);
 		void allowDelete(boolean allow);
-		void allowRequestInfoOrDocument(boolean allow);
+		void allowSendMessage(boolean allow);
 		void allowManagerTransfer(boolean allow);
 		void allowClientMerge(boolean allow);
 		void allowCreatePolicy(boolean allow);
@@ -101,6 +101,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		void setForCreation(boolean forCreation);
 
 		Widget asWidget();
+		void allowReceiveMessage(boolean b);
 	}
 
 	private Display view;
@@ -231,8 +232,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					item.pushIntoStackParameter("display", "merge");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
-				case REQUIRE_INFO_DOCUMENT:
-					item.pushIntoStackParameter("display", "inforequest");
+				case SEND_MESSAGE:
+					item.pushIntoStackParameter("display", "sendmessage");
 					item.setParameter("ownerid", view.getForm().getValue().id);
 					NavigationHistoryManager.getInstance().go(item);
 					break;
@@ -242,6 +243,11 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case ON_NEW_RESULTS:
 					onNewResults();
+					break;
+				case RECEIVE_MESSAGE:
+					item.pushIntoStackParameter("display", "receivemessage");
+					item.setParameter("ownerid", view.getForm().getValue().id);
+					NavigationHistoryManager.getInstance().go(item);
 					break;
 				}
 			}
@@ -259,7 +265,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-					navItem.pushIntoStackParameter("display", "clienthistory");
+					navItem.pushIntoStackParameter("display", "history");
 					navItem.setParameter("historyownerid", view.getForm().getValue().id);
 					navItem.setParameter("historyItemId", itemId);
 					NavigationHistoryManager.getInstance().go(navItem);
@@ -372,7 +378,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		view.getDeadPoliciesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -480,7 +486,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.UPDATE_CLIENT));
 				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.DELETE_CLIENT));
-				view.allowRequestInfoOrDocument(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST));
+				view.allowSendMessage(true);//TODO REQUESTS 
+				view.allowReceiveMessage(true); //TODO REQUESTS
 				view.allowManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER));
 				view.allowClientMerge(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.MERGE_CLIENT));
 				view.allowCreatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_POLICY));
@@ -579,7 +586,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível guardar as alterações ao Cliente"), TYPE.ALERT_NOTIFICATION));
 		view.getForm().setReadOnly(false);
 	}
-	
+
 	private void onFormValidationFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}
@@ -592,10 +599,11 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			item.pushIntoStackParameter("display", "viewmanagertransfer");
 			item.setParameter("transferid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
-		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+		}
+		else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewinforequest");
-			item.setParameter("requestid", process.dataId);
+			item.pushIntoStackParameter("display", "conversation");
+			item.setParameter("conversationid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 	}

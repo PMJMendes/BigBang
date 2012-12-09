@@ -12,7 +12,7 @@ public class CancelInfoOrDocumentRequestForm extends FormView<Cancellation> {
 	public CancelInfoOrDocumentRequestForm(){
 		motive = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INFO_REQUEST_CANCEL_MOTIVES, "Motivo");
 
-		addSection("Cancelamento de Pedido de Informação");
+		addSection("Cancelamento de pedido de resposta a mensagem");
 		addFormField(motive);
 		
 		setValidator(new CancelInfoOrDocumentRequestFormValidator(this));

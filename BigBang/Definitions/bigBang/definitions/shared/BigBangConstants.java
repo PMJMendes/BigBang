@@ -40,17 +40,16 @@ public class BigBangConstants {
 		public static final String SUB_CASUALTY = "D5FD2D1B-59FB-4171-961A-A02E0121C81B";
 		public static final String COMPLAINT = "TODO";
 		public static final String EXPENSE = "09963260-CDB1-4207-B856-A03800B8AFC8";
-		public static final String INFO_REQUEST = "1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4";
 		public static final String INSURANCE_POLICY_EXERCISES = "DEE32F69-B33D-4427-AD5B-9F9C001607F2";
 		public static final String INSURANCE_POLICY_INSURED_OBJECT = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
 		public static final String INSURANCE_SUB_POLICY = "C7BC8D2F-BD61-43D5-9347-9FF300EE9986";
 		public static final String NEGOTIATION = "0D50EB51-725D-4741-8618-9FFD00E918D3";
 		public static final String INSURANCE_SUB_POLICY_INSURED_OBJECTS = "C3480E17-821B-4DCB-BF42-9FF800D1C470";
-		public static final String EXTERNAL_INFO_REQUEST = "BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD";
 		public static final String QUOTE_REQUEST_INSURED_OBJECT = "B594AB7F-573F-4401-A369-A00500F9D2D8";
 		public static final String SIGNATURE_REQUEST = "A864FABC-8DCE-4D97-9A50-A02A00F7CBB5";
 		public static final String DAS_REQUEST = "F7137CCF-744D-4BD8-918A-A03000F0F182";
 		public static final String GENERAL_SYSTEM = "628F5DA6-434F-46A8-9C88-9EB1008A689A";
+		public static final String CONVERSATION = "1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4";
 
 	}
 
@@ -67,8 +66,6 @@ public class BigBangConstants {
 		public static final String TYPIFIED_TEXT = "0F218912-1626-4A2C-BF68-9FE100F72735";
 		public static final String REQUEST_TYPE = "B437ECD7-11D2-4C55-B6DD-9FE80101ECC8";
 		public static final String INSURANCE_POLICY_VOID_MOTIVES = "B36C9AB7-0052-4C2E-B392-9FF200CF6022";
-		public static final String INFO_REQUEST_CANCEL_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
-		public static final String EXTERNAL_INFO_REQUEST_CLOSING_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 		public static final String RECEIPT_PAYMENT_TYPES = "C480B530-C6E2-49A0-BE15-A02200E88280";
 		public static final String BANK = "9954EADC-D7BE-4858-B1DE-A02200F45247";
 		public static final String DAMAGE_TYPE = "6D2B02AF-A092-475F-85C7-A035012321FE";
@@ -76,6 +73,8 @@ public class BigBangConstants {
 		public static final String SUB_POLICY_COVERAGE = "53EF35E5-AACD-4916-A212-9FF800CEAA89";
 		public static final String OPERATIONAL_PROFILES = "11921769-CDF3-447A-8E6B-9ECA01761BAA";
 		public static final String FILE_SPECIFICATIONS = "5514358C-2FCF-4769-981F-3C11BB25BA76";
+		public static final String INFO_REQUEST_CANCEL_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
+		public static final String CONVERSATION_CLOSING_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 	}
 	
 	public static class TypifiedListValues {
@@ -123,11 +122,11 @@ public class BigBangConstants {
 			public static final String DELETE_CLIENT = "2227C32A-0AF5-4ECC-B807-9F090143401F";
 			public static final String CREATE_CASUALTY = "6CCF24EB-AF80-4B63-A50A-9F8B012E01BB";
 			public static final String MERGE_CLIENT = "895BB8D7-1263-4230-B1C4-9F8801189ADF";
-			public static final String CREATE_INFO_REQUEST = "26185760-A862-4CE4-9620-9F090142B18A";
 			public static final String CREATE_MANAGER_TRANSFER = "C75EEC27-780C-4C0C-9FD7-9F090142CB10";
 			public static final String CREATE_QUOTE_REQUEST = "F9BF0190-20E3-45F8-9EBE-9F090142E605";
 			public static final String CREATE_POLICY = "5903FA18-8F4D-4DD3-B4AE-9F090143186E";
 			public static final String CREATE_RISK_ANALISYS = "";
+			public static final String CONVERSATION = "26185760-A862-4CE4-9620-9F090142B18A";
 			
 		}
 		
@@ -146,8 +145,6 @@ public class BigBangConstants {
 			public static final String VOID_POLICY = "DF2C50EF-5E4A-475A-AB1E-9FD401143D8A";
 			public static final String TRANSFER_BROKERAGE = "9568FAA4-ADBF-41AE-8FB9-9FD401140765";
 			public static final String CREATE_SUBSTITUTE_POLICY = "66504952-BCFD-4B6A-B8F0-9FD401138D07";
-			public static final String CREATE_CLIENT_INFO_REQUEST = "DF06C139-4D61-44D1-81EE-9FD30118E9D3";
-			public static final String CREATE_COMPANY_INFO_REQUEST = "3F0120C1-F64E-4806-8AB2-9FD40110D264";
 			public static final String CREATE_INSURED_OBJECT_FROM_CLIENT = "783EFBDB-44DB-4CAA-BF88-9FD4010FDB91";
 			public static final String TRANSFER_MANAGER = "EF9C257E-323C-4BA0-A158-9F9000D8A755";
 			public static final String EXECUTE_DETAILED_CALCULATIONS = "7DC1A798-31AA-49A1-B2DC-9FD4010F7593";
@@ -158,6 +155,7 @@ public class BigBangConstants {
 			public static final String CREATE_HEALTH_EXPENSE = "A7A22C6D-ED66-444D-9E5E-9FD40112D52C";
 			public static final String CREATE_RISK_ANALISYS = null;
 			public static final String TRANSFER_TO_CLIENT = "E8DBFC9B-C24F-4F62-BE4E-9FF200B406C8";
+			public static final String CONVERSATION = "DF06C139-4D61-44D1-81EE-9FD30118E9D3";
 		}
 		
 		public static class InsuranceSubPolicyProcess {
@@ -168,11 +166,11 @@ public class BigBangConstants {
 			public static final String PERFORM_CALCULATIONS = "85224AA5-3C12-470F-9539-9FF30101B35E";
 			public static final String VOID = "FA8BF9F2-FEB2-49C7-A408-9FF300F34C38";
 			public static final String TRANSFER_TO_POLICY = "E89D08A1-7BE7-4F2B-9E06-9FF3010A6138";
-			public static final String CREATE_INFO_OR_DOCUMENT_REQUEST = "E9507402-B03D-4544-B770-9FF300F64319";
 			public static final String CREATE_EXPENSE = "BDAD68E7-7BA6-43AD-B10A-9FF300F5EE50";
 			public static final String CLOSE = null;
 			public static final String INCLUDE_OBJECT_FROM_CLIENT = null;
 			public static final String EXCLUDE_OBJECT = null;
+			public static final String CONVERSATION = "E9507402-B03D-4544-B770-9FF300F64319";
 		}
 
 		
@@ -181,10 +179,10 @@ public class BigBangConstants {
 			public static final String DELETE_NEGOTIATION = "796C9A67-2B7E-40D0-974A-9FFD0105890E";
 			public static final String UPDATE_NEGOTIATION = "FA636D7A-FEF3-4F87-9D1A-9FFD010242ED";
 			public static final String CANCEL_NEGOTIATION = "500AAB3B-9035-4F4F-B12E-9FFD0102F303";
-			public static final String EXTERNAL_REQUEST = "16FCE46C-EFE4-497A-BFB8-9FFD01048B6C";
 			public static final String GRANT_NEGOTIATION = "65EB3752-A87B-4658-9FF1-9FFD0104EA07";
 			public static final String RECEIVE_QUOTE = "E43282B7-FBE2-49FB-B227-9FFD01035C99";
 			public static final String REPEAT_QUOTE_REQUEST = "7F12F9E3-9F5D-4365-9F30-9FFD0102D342";
+			public static final String CONVERSATION = "16FCE46C-EFE4-497A-BFB8-9FFD01048B6C";
 		}
 		
 		public static class ReceiptProcess {
@@ -235,7 +233,6 @@ public class BigBangConstants {
 			public static final String DELETE_QUOTE_REQUEST = "57172AC9-8CDF-4C34-825F-A00C01294D35";
 			public static final String CLOSE_QUOTE_REQUEST = "2E49B889-594C-49A6-B25D-A00C012876B8";
 			public static final String CREATE_MANAGER_TRANSFER = "D47D25C0-E8AE-4AC7-AB76-A00C01252C9F";
-			public static final String CREATE_INFO_OR_DOCUMENT_REQUEST = "113799FC-D92B-42DB-A472-A00C0124AB91";
 		}
 
 		public static class SignatureRequestProcess {
@@ -250,8 +247,8 @@ public class BigBangConstants {
 			public static final String CLOSE_CASUALTY = "4FC7D258-3CBB-4174-AD53-A02E01094F3D";
 			public static final String CREATE_SUB_CASUALTY = "5E84E2C5-5461-4D0D-9B77-A02E0107D0EA";
 			public static final String CREATE_MANAGER_TRANSFER = "C6E44C82-211F-494B-BC2A-A02E0104E0FB";
-			public static final String CREATE_INFO_REQUEST = "59FB24D3-979B-4C2E-A69E-A02E0104A04D";
-		}
+			public static final String CONVERSATION = "59FB24D3-979B-4C2E-A69E-A02E0104A04D";
+			}
 		
 		public static class SubCasualtyProcess {
 			public static final String UPDATE_SUB_CASUALTY = "A1DE87C0-1878-4533-A82D-A03600FA6B23";
@@ -259,9 +256,8 @@ public class BigBangConstants {
 			public static final String CLOSE_SUB_CASUALTY = "207F3FEC-0CB2-47D4-868A-A03600FEE4FB";
 			public static final String REJECT_CLOSE_SUB_CASUALTY = "B7D949CE-7E2A-418B-AC4F-A03600FE57C9";
 			public static final String MARK_CLOSE_SUB_CASUALTY = "CDDBD0AC-B19E-4576-890B-A03600FE0E49";
-			public static final String CREATE_EXTERNAL_INFO_REQUEST = "7859A887-03B0-423A-B104-A03600FC360D";
-			public static final String CREATE_INSURER_INFO_REQUEST = "94DEF8C7-6740-4C66-85A3-A03600FC056A";
 			public static final String MARK_NOTIFICATION_SENT = "2A0EF8C0-ECFA-4622-9C72-A03600FACBCB";
+			public static final String CONVERSATION = "94DEF8C7-6740-4C66-85A3-A03600FC056A";
 		}
 
 		public static class DASRequestProcess{
@@ -280,11 +276,20 @@ public class BigBangConstants {
 			public static final String NOTIFY_CLIENT = "64F5A5D2-8A9D-48B4-9A8D-A03800C2CFFC";
 			public static final String RECEIVE_RETURN = "14EAD818-E313-4F80-B781-A03800C324EA";
 			public static final String RETURN_TO_CLIENT = "C675919E-A13D-459F-9E1F-A03800C3F021";
-			public static final String CREATE_INFO_REQUEST = "B2370F23-09C7-4B3B-BAA1-A03800C43B95";
-			public static final String CREATE_EXTERNAL_REQUEST = "9D618AB8-53F5-4D5C-8CB7-A03800C56E4F";
 			public static final String PAYMENT_VALIDATION = "8D11C94A-E3B7-45C9-AB9A-A03800C5AB4B";
 			public static final String CLOSE_PROCESS = "0EEB387C-661F-4FB0-8675-A03800C5DE73";
 			public static final String RECEIVE_PROOF = "DDEB0BD3-10F8-4EB7-87C9-A0BC01249AC9";
+			public static final String CONVERSATION = "B2370F23-09C7-4B3B-BAA1-A03800C43B95";
+		}
+
+		public static class ConversationProcess{
+
+			public static final String EDIT = "450638E3-C230-458D-A307-A118011A4423";
+			public static final String SEND = "77A3770A-FAA4-481F-986D-A118011AC58C";
+			public static final String REPEAT = "62217CB6-5B54-4E43-870C-A118011AECE2";
+			public static final String RECEIVE = "5928AB00-2DED-45A6-B66E-A118011B1BC5";
+			public static final String CLOSE = "0712A1EB-867F-409D-AC1B-A118011B6FD8";
+			
 		}
 		
 	}

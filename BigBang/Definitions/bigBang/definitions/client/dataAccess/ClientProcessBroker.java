@@ -6,8 +6,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.RiskAnalysis;
@@ -65,14 +65,17 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	public void createCasualty(Casualty casualty, ResponseHandler<Casualty> handler);
 	
 	public void mergeWithClient(String originalId, String receptorId, ResponseHandler<Client> handler);
-	
-	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request, ResponseHandler<InfoOrDocumentRequest> handler);
-	
+		
 	public void createManagerTransfer(String[] dataObjectIds, String managerId, ResponseHandler<ManagerTransfer> handler);
 
 	void getClientSubProcesses(String clientId,
 			ResponseHandler<Collection<BigBangProcess>> handler);
 	
 	void getClientSubProcess(String clientId, String subProcessId, ResponseHandler<BigBangProcess> handler);
+	
+	void sendMessage(Conversation conversation, ResponseHandler<Conversation> handler);
+	
+	void receiveMessage(Conversation conversation, ResponseHandler<Conversation> handler);
+
 
 }

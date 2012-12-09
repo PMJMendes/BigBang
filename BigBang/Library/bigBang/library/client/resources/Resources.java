@@ -124,5 +124,13 @@ public interface Resources extends ClientBundle {
 
 	@Source("images/invalidEntry.png")
 	ImageResource invalidEntry();
+	
+	//ARROWS
+	@Source("images/arrow_left.png")
+	ImageResource arrowLeftIcon();
+	
+	@Source("images/arrow_right.png")
+	ImageResource arrowRightIcon();
+	
 
 }

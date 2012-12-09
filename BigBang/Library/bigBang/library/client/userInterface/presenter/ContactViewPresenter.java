@@ -10,6 +10,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
@@ -21,8 +22,6 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.history.NavigationHistoryItem;
-import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.form.ContactForm.ContactEntry;
@@ -50,7 +49,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		EDIT,
 		CANCEL, 
 		CREATE_CHILD_CONTACT,
-		DELETE, CLOSE_POPUP, CHILD_SELECTED, ERROR_SHOWING_CONTACT, ATTACHED, CONTACT_CREATED, DETTACHED
+		DELETE, CLOSE_POPUP, CHILD_SELECTED, ERROR_SHOWING_CONTACT, ATTACHED, CONTACT_CREATED, DETTACHED, PARENT_CONTACT_CREATED
 	}
 
 	public ContactViewPresenter(Display view){
@@ -74,13 +73,13 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		public void setSaveMode(boolean b);
 		ContactOperationsToolBar getToolbar();
 		List<Contact> getSubContactList();
+		HasEditableValue<Contact> getForm();
 	}
 
 	public void setContact(Contact contact){
 
 		if(contact == null){
 			view.setSaveMode(true);
-			view.setEditable(true);
 			view.setContact(null);
 			this.contact = null;
 			return;
@@ -118,16 +117,18 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		//	boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
 
 		if(ownerId == null){
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um contacto sem cliente associado."), TYPE.ALERT_NOTIFICATION));
-			view.getToolbar().lockAll();
-			setContact(null);
-			view.setEditable(false);
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um contacto sem processo associado."), TYPE.ALERT_NOTIFICATION));
+			lockAll();
 			return;
 		}
 		else{
 			broker.registerClient(this, ownerId);
 
-			if(contactId.equalsIgnoreCase("new")){
+			if(contactId == null){
+				lockAll();
+			}
+
+			else if(contactId.equalsIgnoreCase("new")){
 
 				setContact(null);
 				view.getToolbar().allowEdit(true);
@@ -168,6 +169,12 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		}
 	}
 
+	private void lockAll() {
+		setContact(null);
+		view.setEditable(false);
+		view.getToolbar().lockAll();
+	}
+
 	public void bind() {
 		if(bound){
 			return;
@@ -192,17 +199,24 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					break;
 
 				case CREATE_CHILD_CONTACT: 
-					Contact temp2 = view.getContact();
-					createChildContact(temp2);
+					if(view.getForm().validate()){
+						Contact temp2 = view.getContact();
+						createChildContact(temp2);
+					}else{
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
+					}
 					break;
 
 				case CANCEL:
+					view.setEditable(false);
+					view.setSaveMode(false);
+					
 					if(contactId.equalsIgnoreCase("new") && !ownerTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CONTACT)){
 						detach();
 					}
-					else{
-						fireAction(Action.CANCEL);
-					}
+					
+					fireAction(Action.CANCEL);
+
 					break;
 
 				case EDIT: 
@@ -211,8 +225,13 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					break;
 
 				case SAVE:
-					Contact temp = view.getContact();
-					createUpdateContact(temp);
+					if(view.getForm().validate()){
+
+						Contact temp = view.getContact();
+						createUpdateContact(temp);
+					}else{
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
+					}
 					break;
 
 				case DELETE:{
@@ -241,6 +260,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 						@Override
 						public void onResponse(Void response) {
 							fireAction(Action.CLOSE_POPUP);
+							lockAll();
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
 						}
 
@@ -269,10 +289,13 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 						@Override
 						public void onResponse(Contact response) {
+							contactId = response.id;
+							view.setEditable(false);
+							view.setSaveMode(false);
+							view.getForm().setValue(response);
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 							if(ownerTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CONTACT)){
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 								ContactViewPresenter.this.setContact(response);
-								contactId = response.id;
 								view.setSaveMode(false);
 								view.setEditable(false);
 								fireAction(Action.CONTACT_CREATED);
@@ -296,12 +319,13 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 						@Override
 						public void onResponse(Contact response) {
+							contactId = response.id;
+							view.getForm().setValue(response);
+							view.setEditable(false);
+							view.setSaveMode(false);
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
 							if(ownerTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CONTACT)){
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
 								ContactViewPresenter.this.setContact(response);
-								contactId = response.id;
-								view.setSaveMode(false);
-								view.setEditable(false);
 								fireAction(Action.CONTACT_CREATED);
 							}
 							else{
@@ -338,12 +362,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 	protected void detach() {
 
-		NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-		navig.removeParameter("show");
-		navig.removeParameter("contactid");
-		navig.removeParameter("ownerid");
-		navig.removeParameter("ownertypeid");
-		NavigationHistoryManager.getInstance().go(navig);
+		fireAction(Action.PARENT_CONTACT_CREATED);
 
 	}
 
@@ -353,6 +372,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			temp.ownerId = ownerId;
 			temp.ownerTypeId = ownerTypeId;
 
+			
 			broker.addContact(temp, new ResponseHandler<Contact>() {
 
 				@Override
@@ -370,6 +390,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		}else{
 			fireAction(Action.CREATE_CHILD_CONTACT);
 		}
+		
 
 	}
 
@@ -438,6 +459,10 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 	public HasParameters getParameters() {
 		return this.parameterHolder;
+	}
+
+	public String getContactId(){
+		return contactId;
 	}
 
 }

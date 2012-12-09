@@ -19,7 +19,7 @@ public abstract class InfoRequestTasksOperationsToolbar extends BigBangOperation
 		});
 		addItem(receiveResponse);
 		
-		repeat = new MenuItem("Repetir Pedido", new Command() {
+		repeat = new MenuItem("Reenviar Mensagem", new Command() {
 			
 			@Override
 			public void execute() {
@@ -28,7 +28,7 @@ public abstract class InfoRequestTasksOperationsToolbar extends BigBangOperation
 		});
 		addItem(repeat);
 		
-		cancel = new MenuItem("Cancelar Pedido", new Command() {
+		cancel = new MenuItem("Cancelar Processo", new Command() {
 			
 			@Override
 			public void execute() {

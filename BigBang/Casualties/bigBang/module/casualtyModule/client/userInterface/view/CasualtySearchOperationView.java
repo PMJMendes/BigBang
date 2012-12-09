@@ -101,9 +101,14 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 			}
 
 			@Override
-			public void onInfoOrDocumentRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.INFO_DOCUMENT_REQUEST));
+			public void onSendMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.SEND_MESSAGE));
 				
+			}
+
+			@Override
+			public void onReceiveMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.RECEIVE_MESSAGE));
 			}
 			
 		};
@@ -210,14 +215,19 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	}
 
 	@Override
-	public void allowInfoOrDocumentRequest(boolean hasPermission) {
-		operationsToolbar.allowInfoOrDocumentRequest(hasPermission);
+	public void allowSendMessage(boolean hasPermission) {
+		operationsToolbar.allowSendMessage(hasPermission);
 	}
 
 	@Override
 	public void addEntryToList(CasualtySearchPanelListEntry entry) {
 		searchPanel.add(0, entry);
 		entry.setSelected(true, false);
+	}
+
+	@Override
+	public void allowReceiveMessage(boolean b) {
+		operationsToolbar.allowReceiveMessage(b);
 	}
 
 }

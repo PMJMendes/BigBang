@@ -20,7 +20,7 @@ public abstract class ExternalInfoRequestTasksOperationsToolbar extends
 		});
 		addItem(sendResponse);
 		
-		continueRequest = new MenuItem("Continuar Pedido", new Command() {
+		continueRequest = new MenuItem("Continuar Processo", new Command() {
 			
 			@Override
 			public void execute() {
@@ -29,7 +29,7 @@ public abstract class ExternalInfoRequestTasksOperationsToolbar extends
 		});
 		addItem(continueRequest);
 		
-		close = new MenuItem("Encerrar Pedido", new Command() {
+		close = new MenuItem("Encerrar Processo", new Command() {
 			
 			@Override
 			public void execute() {
@@ -38,7 +38,7 @@ public abstract class ExternalInfoRequestTasksOperationsToolbar extends
 		});
 		addItem(close);
 		
-		goToExternalInfo = new MenuItem("Navegar para Pedido Externo", new Command() {
+		goToExternalInfo = new MenuItem("Navegar para Processo", new Command() {
 			
 			@Override
 			public void execute() {

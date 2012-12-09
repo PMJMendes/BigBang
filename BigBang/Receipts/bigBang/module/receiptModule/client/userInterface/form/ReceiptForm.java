@@ -75,13 +75,13 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		fat.setFieldWidth("100px");
 		fat.setUnitsLabel("€");
 		fat.setTextAligment(TextAlignment.RIGHT);
-		
+
 		bonusMalusOption = new ListBoxFormField("Bonus/Malus");
 		bonusMalusOption.setFieldWidth("100%");
 		bonusMalusOption.setEmptyValueString("Nenhum");
 		bonusMalusOption.addItem("Bonus", "Bonus");
 		bonusMalusOption.addItem("Malus", "Malus");
-		
+
 		bonusMalusValue = new NumericTextBoxFormField("Valor", true);
 		bonusMalusValue.setFieldWidth("100px");
 		bonusMalusValue.setUnitsLabel("€");
@@ -137,7 +137,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		addFormField(notes);
 
 		bonusMalusOption.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				bonusMalusValue.setEditable(event.getValue() != null && !event.getValue().isEmpty());
@@ -145,12 +145,12 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 				bonusMalusValue.setValue(null);
 			}
 		});
-		
+
 		setValue(new Receipt());
 
 		ReceiptDataBroker broker = ((ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT));
 		broker.registerClient(this);
-		
+
 		setValidator(new ReceiptFormValidator(this));
 	}
 
@@ -214,10 +214,19 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		}
 		if(info.policyId != null) {
 			NavigationHistoryItem item = new NavigationHistoryItem();
-			item.setParameter("section", "insurancepolicy");
-			item.setStackParameter("display");
-			item.pushIntoStackParameter("display", "search");
-			item.setParameter("policyid", info.policyId);
+			if(BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(info.ownerTypeId)){
+				item.setParameter("section", "insurancepolicy");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
+				item.setParameter("policyid", info.policyId);
+			}
+			else{
+				item.setParameter("section", "insurancepolicy");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
+				item.pushIntoStackParameter("display", "subpolicy");
+				item.setParameter("subpolicyid", info.policyId);
+			}
 			policy.setValue(item);
 
 			policy.setValueName("#" + info.policyNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
