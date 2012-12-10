@@ -10,7 +10,7 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.ReceiptImageHandlerPanel;
 import bigBang.module.receiptModule.client.userInterface.ReceiptTasksOperationsToolbar;
-import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptTasksForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter.Action;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.Display {
 
-	protected ReceiptForm form;
+	protected ReceiptTasksForm form;
 	protected ReceiptTasksOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> handler;
 	protected ReceiptImageHandlerPanel imagePanel;
@@ -65,7 +65,7 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 		};
 		wrapper.add(toolbar);
 
-		form = new ReceiptForm();
+		form = new ReceiptTasksForm();
 		form.setReadOnly(true);
 		form.setSize("100%", "100%");
 

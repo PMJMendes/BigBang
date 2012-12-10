@@ -128,7 +128,7 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.ADJUSTMENT.equalsIgnoreCase(form.type.getValue()))) );
 	}
 
-	private boolean validateDescription() {
+	public boolean validateDescription() {
 		return validateString(form.description, 0, 250, true);
 	}
 
