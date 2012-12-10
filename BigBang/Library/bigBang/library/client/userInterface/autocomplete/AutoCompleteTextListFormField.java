@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.library.client.FormField;
 
@@ -83,7 +84,7 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 			}
 		});
 
-		
+
 		panel.add(list);
 
 		panel.addDomHandler(new ClickHandler() {
@@ -146,13 +147,27 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 			this.box.setValue("");
 			this.itemBox.setValue("");
 			this.itemsSelected.clear();
+			removeItemsFromList();
+			
 		}else{
 			for(String s : value){
 				this.itemBox.setValue(this.itemBox.getValue() + " " + s);
 			}
+			this.itemBox.setValue(this.itemBox.getValue().trim());
 		}
 		if(fireEvents)
 			ValueChangeEvent.fire(this, value);	}
+
+	private void removeItemsFromList() {
+		while(list.getWidgetCount()>1){
+			for(Widget w : list){
+				if (w instanceof ListItem){
+					list.remove(w);
+					break;
+				}
+			}
+		}
+	}
 
 	@Override
 	public Collection<String> getValue() {
@@ -172,6 +187,7 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 	@Override
 	public void clear() {
 		this.box.setValue(null);
+		setValue(null);
 	}
 
 	@Override
