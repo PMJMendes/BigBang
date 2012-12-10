@@ -126,51 +126,43 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 	}
 
 	protected void repeatReceiveRequest() {
-		if(view.getForm().validate()) {
-			signatureBroker.repeatRequest(view.getForm().getInfo(), new ResponseHandler<SignatureRequest>() {
 
-				@Override
-				public void onResponse(SignatureRequest response) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de assinatura reenviado."), TYPE.TRAY_NOTIFICATION));
-					NavigationHistoryManager.getInstance().reload();
-				}
+		signatureBroker.repeatRequest(view.getForm().getInfo(), new ResponseHandler<SignatureRequest>() {
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
-				}
-			});
-		}else{
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
-		}
+			@Override
+			public void onResponse(SignatureRequest response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de assinatura reenviado."), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
+			}
+		});
 	}
 
 	protected void receiveReply() {
 
-		if(view.getForm().validate()){
-			SignatureRequest.Response response = new SignatureRequest.Response();
-			response.requestId = view.getForm().getInfo().id;
+		SignatureRequest.Response response = new SignatureRequest.Response();
+		response.requestId = view.getForm().getInfo().id;
 
-			signatureBroker.receiveResponse(response, new ResponseHandler<SignatureRequest>() {
+		signatureBroker.receiveResponse(response, new ResponseHandler<SignatureRequest>() {
 
-				@Override
-				public void onResponse(SignatureRequest response) {
-					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.popFromStackParameter("display");
-					item.removeParameter("signaturerequestid");
-					NavigationHistoryManager.getInstance().go(item);
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
-				}
+			@Override
+			public void onResponse(SignatureRequest response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.popFromStackParameter("display");
+				item.removeParameter("signaturerequestid");
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
+			}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao receber a resposta ao pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
-				}
-			});
-		}else{
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preenchimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
-		}
-
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao receber a resposta ao pedido de assinatura."), TYPE.ALERT_NOTIFICATION));
+			}
+		});
 	}
 
 	protected void cancelSignatureRequest() {
