@@ -145,7 +145,9 @@ public class ReceiveMessage
 						Constants.OPID_Conversation_ReSendMessage, Constants.OPID_Conversation_ReceiveMessage,
 						Constants.OPID_Conversation_CloseProcess}, pdb);
 			}
+
 			lobjConv.SaveToDb(pdb);
+			mobjData.mlngNumber = lobjConv.GetCurrentMessages(pdb).length;
 		}
 		catch (Throwable e)
 		{
