@@ -174,7 +174,10 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 						m = ((MessagesList.Entry)sel).getValue();
 					}
 					currentMessage = m;
-					view.setMessage(m);	
+					view.setMessage(m);
+					if(m.direction.equals(Conversation.Direction.INCOMING)){
+						view.allowRepeatMessage(false);
+					}
 				}
 			}
 		});

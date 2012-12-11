@@ -103,7 +103,7 @@ public class CasualtyTasksViewPresenter implements ViewPresenter, HasOperationPe
 	public void setPermittedOperations(String[] operationIds) {
 		view.clearAllowedPermissions();
 		for(String opid : operationIds) {
-			if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.InsurancePolicyProcess.VALIDATE_POLICY)) {
+			if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY)) {
 				view.allowClose(true);
 			}
 		}

@@ -25,9 +25,12 @@ import bigBang.library.shared.ExchangeItemStub;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -246,6 +249,15 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		VerticalPanel leftWrapper = new VerticalPanel();
 		leftWrapper.setSize("100%", "100%");
 		ListHeader header = new ListHeader("Lista de E-mails");
+		Button getAllEmails = new Button("Obter todos (lento)");
+		getAllEmails.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExchangeItemSelectionViewPresenter.Action>(ExchangeItemSelectionViewPresenter.Action.GET_ALL_EMAILS));
+			}
+		});
+		header.setLeftWidget(getAllEmails);
 		emails = new FilterableList<ExchangeItemStub>();
 		emails.setHeaderWidget(header);
 		emails.showFilterField(false);

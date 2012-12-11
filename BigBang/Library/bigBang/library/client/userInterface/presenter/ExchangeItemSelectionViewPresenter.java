@@ -31,18 +31,18 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
-		HasValue<Message> {
-	
+HasValue<Message> {
+
 	public enum Action{
 		CANCEL,
-		CONFIRM
+		CONFIRM, GET_ALL_EMAILS
 	}
-	
+
 	HandlerManager manager;
 	protected Display view;
 	private boolean bound = false;
 	ExchangeServiceAsync service;
-	
+
 	public static interface Display{
 
 		Widget asWidget();
@@ -60,9 +60,9 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 
 		bigBang.definitions.shared.Message.AttachmentUpgrade[] getChecked();
 
-		
+
 	}
-	
+
 	public ExchangeItemSelectionViewPresenter(Display view){
 		setView((UIObject)view);
 		manager = new HandlerManager(this);
@@ -70,45 +70,45 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 	}
 	@Override
 	public void setView(UIObject view) {
-		
+
 		this.view = (Display)view;
 	}
-	
+
 	public void bind(){
 		if(bound ){
 			return;
 		}
-		
+
 		view.getEmailList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				
+
 				if(view.getEmailList().getSelected().size() > 0){
 					service.getItem(((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue().id, new BigBangAsyncCallback<ExchangeItem>() {
-	
-					
+
+
 
 						@Override
 						public void onResponseSuccess(ExchangeItem result) {
 							view.getForm().setValue(result);
 							view.setAttachments(result.attachments);
 						}
-						
+
 						@Override
 						public void onResponseFailure(Throwable caught) {
 							super.onResponseFailure(caught);
 						};
 					});
-					
+
 				}
 
 			}
 		});
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<ExchangeItemSelectionViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -118,23 +118,43 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 				}
 				case CONFIRM:{
 					AttachmentUpgrade[] checked = view.getChecked();
-					
+
 					for(int i = 0; i<checked.length; i++){
 						if(checked[i].docTypeId == null || checked[i].name == null){
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Todos os anexos a promover para documento devem ter nome e tipo."), TYPE.ALERT_NOTIFICATION));
 							return;
 						}
 					}
-					
+
 					ValueChangeEvent.fire(ExchangeItemSelectionViewPresenter.this, getValue());
 					break;
 				}
+				case GET_ALL_EMAILS:
+					getAllEmails();
 				}
 			}
 		});
 		bound = true;
 	}
 
+	protected void getAllEmails() {
+		view.clear();
+
+		service.getItemsAll(new BigBangAsyncCallback<ExchangeItemStub[]>() {
+
+			@Override
+			public void onResponseSuccess(ExchangeItemStub[] result) {
+
+				for(int i=0; i<result.length; i++){
+					view.addEmailEntry(result[i]);
+				}
+			}
+
+			public void onResponseFailure(Throwable caught) {
+				super.onResponseFailure(caught);
+			};
+		});
+	}
 	@Override
 	public void go(HasWidgets container) {
 		bind();
@@ -144,24 +164,24 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-	
+
 		view.clear();
-		
+
 		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
 			public void onResponseSuccess(ExchangeItemStub[] result) {
-				
+
 				for(int i=0; i<result.length; i++){
 					view.addEmailEntry(result[i]);
 				}
 			}
-			
+
 			public void onResponseFailure(Throwable caught) {
 				super.onResponseFailure(caught);
 			};
 		});
-		
+
 	}
 
 	@Override
@@ -178,15 +198,15 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 	@Override
 	public Message getValue() {
 		Message newMessage = new Message();
-		
+
 		newMessage.emailId = view.getForm().getValue().id;
 		newMessage.kind = Message.Kind.EMAIL;
 		newMessage.text = null;
 		newMessage.incomingAttachments = view.getChecked();
-		
+
 		return newMessage;
 	}
-	
+
 
 	@Override
 	public void setValue(Message value) {
