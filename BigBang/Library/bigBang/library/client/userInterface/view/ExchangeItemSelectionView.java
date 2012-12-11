@@ -249,15 +249,15 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		VerticalPanel leftWrapper = new VerticalPanel();
 		leftWrapper.setSize("100%", "100%");
 		ListHeader header = new ListHeader("Lista de E-mails");
-		Button getAllEmails = new Button("Obter todos (lento)");
-		getAllEmails.addClickHandler(new ClickHandler() {
+		header.showNewButton("Obter todos (lento)");
+		header.getNewButton().setVisible(true);		
+		header.getNewButton().addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ExchangeItemSelectionViewPresenter.Action>(ExchangeItemSelectionViewPresenter.Action.GET_ALL_EMAILS));
 			}
 		});
-		header.setLeftWidget(getAllEmails);
 		emails = new FilterableList<ExchangeItemStub>();
 		emails.setHeaderWidget(header);
 		emails.showFilterField(false);
