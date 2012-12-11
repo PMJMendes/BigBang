@@ -138,12 +138,14 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 		listConversWrapper.setSize("100%", "100%");
 
 		listConversWrapper.add(messageList);
-		rightWrapper.add(toolbar);
+		
 		rightWrapper.setCellHeight(toolbar, "21px");
 		conversationForm.getNonScrollableContent().setSize("100%","100%");
 		listConversWrapper.add(conversationForm.getNonScrollableContent());
 		listConversWrapper.setCellWidth(conversationForm.getNonScrollableContent(), "100%");
 
+		conversationWrapper.add(toolbar);
+		conversationWrapper.setCellHeight(toolbar, "21px");
 		conversationWrapper.add(listConversWrapper);
 
 		sendMessageToolbar = new SendMessageToolbar() {
