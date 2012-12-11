@@ -2,7 +2,6 @@ package bigBang.client.tests;
 
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.userInterface.form.SerialExpenseCreationForm;
-import bigBang.module.receiptModule.client.userInterface.form.SerialReceiptCreationForm;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
