@@ -60,6 +60,7 @@ public class BigBang_Tests
 //		TestConversationGet.DoTest();
 //		TestConversationSendNew.DoTest();
 //		TestConversationReceiveNew.DoTest();
+//		TestConversationEdit.DoTest();
 //		TestConversationSend.DoTest();
 //		TestConversationRepeat.DoTest();
 //		TestConversationReceive.DoTest();
