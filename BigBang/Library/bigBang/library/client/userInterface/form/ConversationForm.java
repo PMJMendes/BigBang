@@ -56,7 +56,7 @@ public class ConversationForm extends FormView<Conversation>{
 
 	@Override
 	public Conversation getInfo() {
-		Conversation conv = new Conversation();
+		Conversation conv = value;
 
 		conv.subject = subject.getValue();
 		conv.requestTypeId = requestType.getValue();
