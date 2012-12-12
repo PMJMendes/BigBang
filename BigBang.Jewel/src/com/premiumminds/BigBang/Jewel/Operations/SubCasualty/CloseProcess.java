@@ -119,7 +119,7 @@ public class CloseProcess
 			lobjItem.setAt(3, ldtAux);
 			lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 			lobjItem.setAt(5, Constants.UrgID_Completed);
-			lobjItem.setAt(6, "O processo foi fechado após revisão.");
+			lobjItem.setAt(6, "O processo n. " + lobjSubCasualty.getLabel() + " foi fechado após revisão.");
 			lobjItem.SaveToDb(pdb);
 			lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {}, pdb);
 		}

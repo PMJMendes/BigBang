@@ -121,7 +121,9 @@ public class RejectClosing
 			lobjItem.setAt(3, ldtAux);
 			lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 			lobjItem.setAt(5, Constants.UrgID_Completed);
-			lobjItem.setAt(6, "O processo foi rejeitado pelo seguinte motivo: " + mstrReason + ".");
+			lobjItem.setAt(6, "O fecho do processo n. " + lobjSubCasualty.getLabel() +
+					" foi rejeitado pelo seguinte motivo: " +
+					( mstrReason.length() > 180 ? mstrReason.substring(0, 180) : mstrReason ) + ".");
 			lobjItem.SaveToDb(pdb);
 			lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {}, pdb);
 
