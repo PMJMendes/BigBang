@@ -16,6 +16,7 @@ public class TaskStub
 	private static final long serialVersionUID = 1L;
 
 	public String description;
+	public String reference;
 	public String timeStamp;
 	public String dueDate;
 	public Status status;

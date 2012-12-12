@@ -47,6 +47,7 @@ public class TasksServiceImpl
 		UUID[] larrOps;
 		UUID lidAgendaProcs;
 		UUID lidAgendaOps;
+		String lstrLabel;
 		ObjectBase lobjAux;
 		int i;
 
@@ -62,16 +63,38 @@ public class TasksServiceImpl
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgenda.getAt(2));
 			lidAgendaProcs = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess);
 			lidAgendaOps = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaOp);
+
+			switch ( larrProcs.length )
+			{
+			case 0:
+				lstrLabel = null;
+				break;
+			case 1:
+				lstrLabel = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[0]).GetData().getLabel();
+				break;
+			default:
+				lstrLabel = "<vários>";
+				break;
+			}
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		try
+		{
+		}
+		catch (Throwable e)
+		{
+			lstrLabel = "(Erro a obter a referência.)";
+		}
+
 		lobjResult = new Task();
 
 		lobjResult.id = lid.toString();
 		lobjResult.description = (String)lobjAgenda.getAt(0);
+		lobjResult.reference = lstrLabel;
 		lobjResult.timeStamp = ((Timestamp)lobjAgenda.getAt(3)).toString();
 		lobjResult.dueDate = ((Timestamp)lobjAgenda.getAt(4)).toString();
 		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Invalid) == 0)
@@ -413,10 +436,36 @@ public class TasksServiceImpl
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
 		TaskStub lobjResult;
+		AgendaItem lobjItem;
+		UUID[] larrProcIDs;
+		String lstrLabel;
+
+		try
+		{
+			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), pid);
+			larrProcIDs = lobjItem.GetAgendaProcIDs();
+			switch ( larrProcIDs.length )
+			{
+			case 0:
+				lstrLabel = null;
+				break;
+			case 1:
+				lstrLabel = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcIDs[0]).GetData().getLabel();
+				break;
+			default:
+				lstrLabel = "<vários>";
+				break;
+			}
+		}
+		catch (Throwable e)
+		{
+			lstrLabel = "(Erro a obter a referência.)";
+		}
 
 		lobjResult = new TaskStub();
 		lobjResult.id = pid.toString();
 		lobjResult.description = (String)parrValues[0];
+		lobjResult.reference = lstrLabel;
 		lobjResult.timeStamp = ((Timestamp)parrValues[1]).toString();
 		lobjResult.dueDate = ((Timestamp)parrValues[2]).toString();
 		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Invalid) == 0)
