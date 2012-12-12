@@ -68,7 +68,6 @@ public class MessagesList extends FilterableList<Message> implements Conversatio
 	}
 
 	public void setOwner(final String ownerId){
-		discardOwner();
 		if(ownerId != null && !ownerId.isEmpty()){
 			this.broker.getConversation(ownerId, new ResponseHandler<Conversation>() {
 

@@ -42,7 +42,6 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		SAVE,
 		SEND_MESSAGE,
 		RECEIVE_MESSAGE,
-		REPEAT_MESSAGE,
 		TOOLBAR_CANCEL,
 		TOOLBAR_SEND,
 		CLICK_BACK, TOOLBAR_EDIT,
@@ -80,7 +79,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	public ConversationViewPresenter(Display<T> view){
 		setView((UIObject)view);
 		broker = (ConversationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CONVERSATION);
-		
+
 	}
 
 	protected Display<T> view;
@@ -92,6 +91,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	private boolean isSendMessage;
 	protected Message currentMessage;
 	protected Conversation conversation;
+	private boolean toSend;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -110,7 +110,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		if(bound){return;}
 
 		view.registerActionHandler(new ActionInvokedEventHandler<ConversationViewPresenter.Action>() {
-
+			
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -132,14 +132,16 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 				case RECEIVE_MESSAGE:
 					onReceiveMessage();
 					break;
-				case REPEAT_MESSAGE:
-					onRepeatMessage();
-					break;
 				case SAVE:
 					onSave();
 					break;
 				case SEND_MESSAGE:
-					onSendMessage();
+					if(toSend){
+						onSendMessage();
+					}
+					else{
+						onRepeatMessage();
+					}
 					break;
 				case CLICK_BACK:
 					navigateBack();
@@ -181,7 +183,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 				}
 			}
 		});
-		
+
 		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -312,6 +314,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	}
 	protected void onClickSend() {
 		isSendMessage = true;
+		toSend = true;
 		Conversation conv = view.getForm().getValue();
 		conv.messages = new Message[1];
 		view.getSendMessageForm().setValue(conv);
@@ -323,6 +326,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	}
 
 	protected void onClickRepeat() {
+		toSend = false;
 		isSendMessage = true;
 		view.setFormVisible(isSendMessage);
 		Conversation conv = view.getForm().getValue();

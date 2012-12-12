@@ -135,7 +135,7 @@ public class ConversationClosingViewPresenter implements ViewPresenter {
 	}
 
 	protected void onFailure(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível Encerrar o Pedido"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível Encerrar o Pedido"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);

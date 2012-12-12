@@ -10,6 +10,8 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Message;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.interfaces.ConversationService;
 import bigBang.library.interfaces.ConversationServiceAsync;
 
@@ -93,6 +95,7 @@ service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>(
 
 	@Override
 	public void onResponseSuccess(Conversation result) {
+		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.SEND, result.id));
 		incrementDataVersion();
 		notifyItemUpdate(result.id);
 		handler.onResponse(result);				
@@ -117,6 +120,7 @@ service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>(
 
 			@Override
 			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.REPEAT, result.id));
 				incrementDataVersion();
 				notifyItemUpdate(result.id);
 				handler.onResponse(result);						
@@ -138,6 +142,7 @@ service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>(
 
 			@Override
 			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.RECEIVE, result.id));
 				incrementDataVersion();
 				notifyItemUpdate(result.id);
 				handler.onResponse(result);							
@@ -161,6 +166,7 @@ service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>(
 
 			@Override
 			public void onResponseSuccess(Void result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.CLOSE, conversationId));
 				incrementDataVersion();
 				notifyItemUpdate(conversationId);
 				handler.onResponse(result);			

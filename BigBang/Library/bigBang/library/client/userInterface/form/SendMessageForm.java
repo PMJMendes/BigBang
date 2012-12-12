@@ -412,7 +412,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 		for(String userId : forwardReply.getValue()){
 			MsgAddress newAddress = new MsgAddress();
-			newAddress.userId = userId;
+			newAddress.display = userId;
 			newAddress.usage = MsgAddress.Usage.REPLYTO;
 			addresses.add(newAddress);
 		}
@@ -423,7 +423,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			for(int i = 0; i<ccs.length; i++){
 				MsgAddress newAddress = new MsgAddress();
 				newAddress.usage =  MsgAddress.Usage.CC;
-				newAddress.address = ccs[i];
+				newAddress.address = ccs[i].trim();
 				addresses.add(newAddress);
 			}
 		}
@@ -433,7 +433,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			for(int i = 0; i<bccs.length; i++){
 				MsgAddress newAddress = new MsgAddress();
 				newAddress.usage =  MsgAddress.Usage.BCC;
-				newAddress.address = bccs[i];
+				newAddress.address = bccs[i].trim();
 				addresses.add(newAddress);
 			}
 		}
@@ -466,10 +466,11 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			for(int i = 0; i<msg.addresses.length ; i++){
 				switch(msg.addresses[i].usage){
 				case BCC:
-					externalCCAddresses.setValue(externalCCAddresses.getValue()+", " + msg.addresses[i].address);
+					externalCCAddresses.setValue(( externalCCAddresses.getValue() == null ?
+							"" : externalCCAddresses.getValue() +", " ) + msg.addresses[i].address);
 					break;
 				case CC:
-					internalCCAddresses.setValue(internalCCAddresses.getValue() + ", " + msg.addresses[i].address);
+					internalCCAddresses.setValue(( internalCCAddresses.getValue() == null ? "" : internalCCAddresses.getValue() + ", ") + msg.addresses[i].address);
 					break;
 				case REPLYTO:
 					forwardReplies.add(msg.addresses[i].display);
@@ -480,15 +481,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				}
 			}
 
-
-
 			forwardReply.setValue(forwardReplies);
-			if(externalCCAddresses.getValue() != null){
-				externalCCAddresses.setValue(externalCCAddresses.getValue().substring(2));
-			}
-			if(internalCCAddresses.getValue() != null){
-				internalCCAddresses.setValue(internalCCAddresses.getValue().substring(2));
-			}
 		}
 		else{
 			emailOrNote.setValue(Kind.EMAIL.toString());

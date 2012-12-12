@@ -34,7 +34,7 @@ public class DismissTaskForm extends FormView<Task> {
 	@Override
 	public void setInfo(Task info) {
 		dateField.setValue(info.timeStamp);
-		descriptionField.setValue(info.description);
+		descriptionField.setValue(info.longDesc);
 	}
 
 }
