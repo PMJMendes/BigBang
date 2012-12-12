@@ -70,7 +70,9 @@ public class TasksServiceImpl
 				lstrLabel = null;
 				break;
 			case 1:
-				lstrLabel = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[0]).GetData().getLabel();
+				lstrLabel = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+						(UUID)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_AgendaProcess), larrProcs[0]).getAt(1)).GetData().getLabel();
 				break;
 			default:
 				lstrLabel = "<vários>";
@@ -450,7 +452,9 @@ public class TasksServiceImpl
 				lstrLabel = null;
 				break;
 			case 1:
-				lstrLabel = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcIDs[0]).GetData().getLabel();
+				lstrLabel = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+						(UUID)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_AgendaProcess), larrProcIDs[0]).getAt(1)).GetData().getLabel();
 				break;
 			default:
 				lstrLabel = "<vários>";
