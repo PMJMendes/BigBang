@@ -413,6 +413,16 @@ public class MessageBridge
 
 			for ( i = 0; i < parrAddresses.length; i++ )
 			{
+				if ( (parrAddresses[i].mstrAddress == null) && (parrAddresses[i].mstrDisplay != null))
+				{
+					lobjDeco = UserDecoration.GetByFullName(Engine.getCurrentNameSpace(), parrAddresses[i].mstrDisplay);
+					parrAddresses[i].mstrAddress = ( lobjDeco == null ? null : (String)lobjDeco.getAt(UserDecoration.I.EMAIL) );
+					if ( parrAddresses[i].mstrAddress == null )
+						throw new BigBangException("Erro: O utilizador indicado não tem email definido.");
+					parrAddresses[i].midUser = ( lobjDeco == null ? null : lobjDeco.getBaseUser().getKey() );
+					continue;
+				}
+
 				if ( parrAddresses[i].midUser != null )
 				{
 					lobjDeco = UserDecoration.GetByUserID(Engine.getCurrentNameSpace(), parrAddresses[i].midUser);

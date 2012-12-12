@@ -86,6 +86,43 @@ public class UserDecoration
 		return lobjDeco;
     }
 
+    public static UserDecoration GetByFullName(UUID pidNameSpace, String pstrName)
+    	throws BigBangJewelException
+    {
+        MasterDB ldb;
+        ResultSet lrs;
+        User lobjUser;
+
+    	ldb = null;
+    	lrs = null;
+    	lobjUser = null;
+		try
+		{
+			ldb = new MasterDB();
+
+			lrs = Entity.GetInstance(Engine.FindEntity(pidNameSpace, Jewel.Engine.Constants.ObjectGUIDs.O_User))
+					.SelectByMembers(ldb, new int[] {Jewel.Engine.Constants.Miscellaneous.FullName_In_User},
+							new java.lang.Object[] {pstrName}, null);
+		    if (lrs.next())
+		    	lobjUser = User.GetInstance(pidNameSpace, lrs);
+		    lrs.close();
+	    	lrs = null;
+
+	        ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+			if ( ldb != null ) try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( lobjUser == null )
+			return null;
+
+		return GetByUserID(pidNameSpace, lobjUser.getKey());
+    }
+
 	private IUser mrefUser;
 
 	public void Initialize()
