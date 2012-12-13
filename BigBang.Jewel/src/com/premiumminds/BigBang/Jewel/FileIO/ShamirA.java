@@ -37,19 +37,22 @@ public class ShamirA
 
 	public static class Fields
 	{
-	    public static final int LENSID         =  0;
-	    public static final int ACTIVATIONDATE =  1;
+	    public static final int LENSID         = 0;
+	    public static final int ACTIVATIONDATE = 1;
 	}
 
 	public static class StatusCodes
 	{
-	    public static final UUID Code_0_Ok              = UUID.fromString("042D26D4-F0DF-43EC-B76D-A12600E14EB2");
-	    public static final UUID Code_1_InternalError   = UUID.fromString("082DB047-ED33-4B8B-9A75-A12600E19096");
-	    public static final UUID Code_2_RepeatedLens    = UUID.fromString("C3978EBF-F45F-464F-8E5A-A12600E199AD");
-	    public static final UUID Code_3_ExistingLens    = UUID.fromString("A0C2E7FE-3388-4314-B396-A12600E1A5AE");
-	    public static final UUID Code_4_LineFormatError = UUID.fromString("1295A7DF-A2A3-4CFA-A369-A12600E1AF86");
-	    public static final UUID Code_5_LensNotFound    = UUID.fromString("3069A1D0-B16F-4241-BB19-A126010E8CC9");
-	    public static final UUID Code_6_LensIsActivated = UUID.fromString("C4540139-BE2F-41B5-8E88-A12601119C90");
+	    public static final UUID Code_0_Ok               = UUID.fromString("042D26D4-F0DF-43EC-B76D-A12600E14EB2");
+	    public static final UUID Code_1_InternalError    = UUID.fromString("082DB047-ED33-4B8B-9A75-A12600E19096");
+	    public static final UUID Code_2_RepeatedLens     = UUID.fromString("C3978EBF-F45F-464F-8E5A-A12600E199AD");
+	    public static final UUID Code_3_ExistingLens     = UUID.fromString("A0C2E7FE-3388-4314-B396-A12600E1A5AE");
+	    public static final UUID Code_4_LineFormatError  = UUID.fromString("1295A7DF-A2A3-4CFA-A369-A12600E1AF86");
+	    public static final UUID Code_5_LensNotFound     = UUID.fromString("3069A1D0-B16F-4241-BB19-A126010E8CC9");
+	    public static final UUID Code_6_LensIsActivated  = UUID.fromString("C4540139-BE2F-41B5-8E88-A12601119C90");
+	    public static final UUID Code_7_LensNotActivated = UUID.fromString("92463F7C-FA66-488E-97B3-A126012030B8");
+	    public static final UUID Code_8_LensNotCovered   = UUID.fromString("72F2A848-8E4C-457C-8535-A126012040AA");
+	    public static final UUID Code_9_ExistingCasualty = UUID.fromString("DEBC5F99-E3E3-4EAC-810C-A126012210FB");
 	}
 
 	public UUID GetStatusTable()
@@ -64,7 +67,7 @@ public class ShamirA
 		MasterDB ldb;
 		HashSet<String> larrSet;
 		ArrayList<PolicyObjectData> larrObjects;
-		FileSectionData[] larrSales;
+		FileSectionData[] larrActivations;
 		FileFieldData[] larrData;
 		int i;
 		Policy lobjPolicy;
@@ -92,18 +95,18 @@ public class ShamirA
 		larrSet = new HashSet<String>();
 		larrObjects = new ArrayList<PolicyObjectData>();
 
-		larrSales = mobjData.getData()[0];
+		larrActivations = mobjData.getData()[0];
 
 		try
 		{
 			createSession(ldb);
 
-			for ( i = 0; i < larrSales.length; i++ )
+			for ( i = 0; i < larrActivations.length; i++ )
 			{
-				larrData = larrSales[i].getData();
+				larrData = larrActivations[i].getData();
 				try
 				{
-					ParseSale(i, larrData, larrSet, larrObjects, ldb);
+					ParseActivation(i, larrData, larrSet, larrObjects, ldb);
 				}
 				catch (Throwable e)
 				{
@@ -154,7 +157,7 @@ public class ShamirA
 		}
 	}
 
-	private void ParseSale(int plngLine, FileFieldData[] parrData, HashSet<String> parrSet,
+	private void ParseActivation(int plngLine, FileFieldData[] parrData, HashSet<String> parrSet,
 			ArrayList<PolicyObjectData> parrObjects, SQLServer pdb)
 		throws BigBangJewelException
 	{
