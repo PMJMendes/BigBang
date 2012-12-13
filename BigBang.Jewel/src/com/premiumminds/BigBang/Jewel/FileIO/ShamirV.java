@@ -244,7 +244,7 @@ public class ShamirV
 
 		for ( i = 0; i < parrObjects.length; i++ )
 		{
-			if ( lstrLineText.equals(parrObjects[i]) )
+			if ( lstrLineText.equals(parrObjects[i].mstrName) )
 			{
 				createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_0_Ok, parrObjects[i].mid);
 				return;

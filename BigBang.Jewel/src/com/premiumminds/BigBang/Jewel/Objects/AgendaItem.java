@@ -239,8 +239,9 @@ public class AgendaItem
 			throw new BigBangJewelException("Erro: Não pode redefinir os processos de items de agenda pré-existentes.");
 		if ( getKey() == null )
 			throw new BigBangJewelException("Erro: Não pode definir o conjunto de processos para um item de agenda antes de gravar.");
-		if ( parrProcIDs.length == 0 )
-			throw new BigBangJewelException("Erro: Não pode definir um conjunto vazio de processos para um novo item de agenda.");
+		if ( (parrProcIDs.length == 0) && !(Constants.UrgID_Completed.equals(getAt(5))) )
+			throw new BigBangJewelException("Erro: Não pode definir um conjunto vazio de processos para um novo item de agenda, " +
+					"se este não fôr uma notificação.");
 		if ( (parrOpIDs.length == 0) && !(Constants.UrgID_Completed.equals(getAt(5))) )
 			throw new BigBangJewelException("Erro: Não pode definir um conjunto vazio de operações para um novo item de agenda, " +
 					"se este não fôr uma notificação.");
