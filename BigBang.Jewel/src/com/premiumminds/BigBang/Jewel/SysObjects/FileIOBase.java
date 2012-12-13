@@ -24,9 +24,8 @@ public abstract class FileIOBase
 	public FileData mobjData;
 	public UUID midSession;
 
-	public static final UUID ObjID_ImportStatus   = UUID.fromString("EE1BF5D6-4116-410F-9A9B-A0A700F4F569");
-
 	public abstract void Parse() throws BigBangJewelException;
+	public abstract UUID GetStatusTable() throws BigBangJewelException;
 
 	public void run()
 	{

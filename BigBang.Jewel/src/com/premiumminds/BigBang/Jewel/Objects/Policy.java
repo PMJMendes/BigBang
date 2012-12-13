@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.ecs.GenericElement;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
@@ -23,6 +25,29 @@ import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 public class Policy
 	extends ProcessData
 {
+	public static class I
+	{
+		public static int NUMBER        =  0;
+		public static int PROCESS       =  1;
+		public static int COMPANY       =  2;
+		public static int SUBLINE       =  3;
+		public static int BEGINDATE     =  4;
+		public static int DURATION      =  5;
+		public static int FRACTIONING   =  6;
+		public static int MATURITYDAY   =  7;
+		public static int MATURITYMONTH =  8;
+		public static int ENDDATE       =  9;
+		public static int NOTES         = 10;
+		public static int MEDIATOR      = 11;
+		public static int CASESTUDY     = 12;
+		public static int STATUS        = 13;
+		public static int PREMIUM       = 14;
+		public static int DOCUSHARE     = 15;
+		public static int MIGRATIONID   = 16;
+		public static int CLIENT        = 17;
+		public static int PROFILE       = 18;
+	}
+
     public static Policy GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -47,6 +72,18 @@ public class Policy
 	    {
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public static GenericElement[] printImportReport(String[] parrParams)
+		throws BigBangJewelException
+	{
+		FileImportSession lobjSession;
+
+		if ( (parrParams == null) || (parrParams.length < 2) )
+			throw new BigBangJewelException("Erro: Número de parâmetros inválido.");
+
+		lobjSession = FileImportSession.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(parrParams[1]));
+		return lobjSession.printReport(parrParams);
 	}
 
     private SubLine mrefSubLine;

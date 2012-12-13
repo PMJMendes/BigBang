@@ -128,6 +128,22 @@ public class FileProcesser
 		}
 	}
 
+	public UUID GetStatusTable()
+		throws BigBangJewelException
+	{
+		if ( mrefConst == null )
+			throw new BigBangJewelException("Erro inesperado a inicializar o processador de ficheiros.");
+
+		try
+		{
+			return ((FileIOBase)mrefConst.newInstance()).GetStatusTable();
+		} 
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
 	public void Process(FileXfer pobjFile, UUID pidFormat)
 		throws BigBangJewelException
 	{

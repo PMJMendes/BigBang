@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("ConversationService")
 public interface ConversationService
-	extends RemoteService
+	extends RemoteService, DependentItemSubService
 {
 	public static class Util
 	{
@@ -27,6 +27,8 @@ public interface ConversationService
 	}
 
 	public Conversation getConversation(String id) throws SessionExpiredException, BigBangException;
+
+	public Conversation createFromEmail(Conversation conversation) throws SessionExpiredException, BigBangException;
 
 	public Conversation saveConversation(Conversation conversation) throws SessionExpiredException, BigBangException;
 

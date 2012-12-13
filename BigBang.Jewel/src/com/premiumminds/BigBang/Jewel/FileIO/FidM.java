@@ -30,6 +30,7 @@ public class FidM
 	public static final UUID ObjID_TypeTranslator = UUID.fromString("71A31B02-2FB6-465B-B33E-A0A700F04940");
 	public static final UUID RDef_Imports = UUID.fromString("8D11763D-4B0B-44EF-8779-A0A701270881");
 	public static final UUID FormatID_FidM = UUID.fromString("29631C89-6783-4EBA-A214-A0A600B8AFFA");
+	public static final UUID ObjID_ImportStatus   = UUID.fromString("EE1BF5D6-4116-410F-9A9B-A0A700F4F569");
 
 	public static class Fields
 	{
@@ -59,6 +60,12 @@ public class FidM
 	    public static final UUID Code_5_UnknownType     = UUID.fromString("FD82165C-492B-460A-8CE0-A0A700F5FC10");
 	    public static final UUID Code_6_BadFileLine     = UUID.fromString("AD012EF2-DAC6-4F80-A74A-A0A700F5FC10");
 	    public static final UUID Code_7_InternalError   = UUID.fromString("C8E3D6D7-D3DE-45A7-AB40-A0A700F9FADE");
+	}
+
+	public UUID GetStatusTable()
+		throws BigBangJewelException
+	{
+		return ObjID_ImportStatus;
 	}
 
 	public void Parse()

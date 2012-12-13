@@ -22,7 +22,6 @@ import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.SysObjects.FileIOBase;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
 public class FileImportSession
@@ -81,21 +80,17 @@ public class FileImportSession
 		}
 	}
 
-	public String getFormat()
+	public ObjectBase getFormat()
 		throws BigBangJewelException
 	{
-		ObjectBase lobjAux;
-
 		try
 		{
-			lobjAux = Engine.GetWorkInstance(Engine.FindEntity(getNameSpace(), ObjectGUIDs.O_FileSpec), (UUID)getAt(I.FORMAT));
+			return Engine.GetWorkInstance(Engine.FindEntity(getNameSpace(), ObjectGUIDs.O_FileSpec), (UUID)getAt(I.FORMAT));
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-
-		return lobjAux.getLabel();
 	}
 
 	public FileImportDetail[] getDetails()
@@ -215,9 +210,9 @@ public class FileImportSession
 
 		larrRows[3] = ReportBuilder.constructDualRow("Importado em", getAt(I.TIMESTAMP), TypeDefGUIDs.T_Date, false);
 
-		larrRows[4] = ReportBuilder.constructDualRow("Formato", getFormat(), TypeDefGUIDs.T_String, false);
+		larrRows[4] = ReportBuilder.constructDualRow("Formato", getFormat().getLabel(), TypeDefGUIDs.T_String, false);
 
-		larrRows[4] = ReportBuilder.constructDualRow("Total de Linhas", plngCount, TypeDefGUIDs.T_Integer, false);
+		larrRows[5] = ReportBuilder.constructDualRow("Total de Linhas", plngCount, TypeDefGUIDs.T_Integer, false);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);
@@ -235,7 +230,8 @@ public class FileImportSession
 
 		try
 		{
-			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(getNameSpace(), FileIOBase.ObjID_ImportStatus), pidStatus);
+			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(getNameSpace(),
+					FileProcesser.GetProcesserForFormat(getFormat().getKey()).GetStatusTable()), pidStatus);
 		}
 		catch (Throwable e)
 		{
