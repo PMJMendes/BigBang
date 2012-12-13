@@ -238,7 +238,7 @@ public class ShamirP
 			lstrDesc = "Desconhecido - ";
 			break;
 		}
-		switch ( parrData[Fields.EVENTINDICATOR].getData().charAt(0) )
+		switch ( parrData[Fields.LENSINDICATOR].getData().charAt(0) )
 		{
 		case 'R':
 			lstrDesc += "Lente Direita";
@@ -263,6 +263,7 @@ public class ShamirP
 			lopCC.mobjData.mstrDescription = lstrName;
 			lopCC.mobjData.mstrNotes = lstrDesc;
 			lopCC.mobjData.midClient = FKClient;
+			lopCC.mobjData.mbCaseStudy = false;
 			lopCC.mobjData.midManager = FKManager;
 			lopCC.Execute(pdb);
 
