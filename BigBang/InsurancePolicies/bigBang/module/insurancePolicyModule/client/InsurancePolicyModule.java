@@ -424,7 +424,7 @@ public class InsurancePolicyModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_TASKS", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_GENERAL_TASKS", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {

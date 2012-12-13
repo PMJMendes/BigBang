@@ -268,7 +268,7 @@ public class CasualtyModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_TASKS", new ViewPresenterInstantiator(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_GENERAL_TASKS", new ViewPresenterInstantiator(){
 			@Override
 			public ViewPresenter getInstance() {
 				GeneralTasksView view = new GeneralTasksView() {

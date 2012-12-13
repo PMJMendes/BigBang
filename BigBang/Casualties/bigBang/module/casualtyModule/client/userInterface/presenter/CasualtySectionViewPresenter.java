@@ -137,7 +137,7 @@ private void initializeController(){
 					present("REPORTS", parameters);
 				}else if(display.equalsIgnoreCase("generaltasks")){
 					view.selectOperation(SectionOperation.REPORT);
-					present("GENERAL_TASKS", parameters);
+					present("CASUALTY_GENERAL_TASKS", parameters);
 				}else{
 					view.selectOperation(SectionOperation.OPERATIONS);
 					present("CASUALTY_OPERATIONS", parameters, true);

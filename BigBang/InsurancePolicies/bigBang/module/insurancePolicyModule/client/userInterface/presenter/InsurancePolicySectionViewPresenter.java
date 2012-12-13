@@ -133,7 +133,7 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 						present("REPORTS", parameters);
 					}else if(display.equalsIgnoreCase("generaltasks")){
 						view.selectOperation(SectionOperation.GENERAL_TASKS);
-						present("GENERAL_TASKS", parameters);
+						present("INSURANCE_POLICY_GENERAL_TASKS", parameters);
 					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("INSURANCE_POLICY_OPERATIONS", parameters, true);
