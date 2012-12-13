@@ -45,7 +45,7 @@ public class TestSpecialFileProcessing
 			}
 		};
 
-		Services.fileService.getListItemsFilter("5514358C-2FCF-4769-981F-3C11BB25BA76", "recibo", callback);
+		Services.fileService.getListItemsFilter("5514358C-2FCF-4769-981F-3C11BB25BA76", "apolice", callback);
 	}
 
 	private static void DoStep2()
