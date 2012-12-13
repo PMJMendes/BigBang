@@ -23,7 +23,7 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 	public static enum SectionOperation {
 		OPERATIONS,
 		MASS_MANAGER_TRANSFER,
-		REPORT
+		REPORT, GENERAL_TASKS
 	}
 
 	public static interface Display {
@@ -98,6 +98,9 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					case REPORT:
 						item.pushIntoStackParameter("display", "report");
 						break;
+					case GENERAL_TASKS:
+						item.pushIntoStackParameter("display", "generaltasks");
+						break;
 					}
 				}
 
@@ -128,6 +131,9 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 						view.selectOperation(SectionOperation.REPORT);
 						parameters.setParameter("processtypeid", BigBangConstants.EntityIds.INSURANCE_POLICY);
 						present("REPORTS", parameters);
+					}else if(display.equalsIgnoreCase("generaltasks")){
+						view.selectOperation(SectionOperation.GENERAL_TASKS);
+						present("GENERAL_TASKS", parameters);
 					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("INSURANCE_POLICY_OPERATIONS", parameters, true);

@@ -23,7 +23,7 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 	public static enum SectionOperation {
 		OPERATIONS,
 		MASS_MANAGER_TRANSFER,
-		REPORT
+		REPORT, GENERAL_TASKS
 	}
 
 	public static interface Display {
@@ -35,15 +35,15 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 		void registerOperationSelectionHandler(ActionInvokedEventHandler<SectionOperation> handler);
 		Widget asWidget();
 	}
-	
+
 	private Display view;
 	private ViewPresenterController controller;
 	private ViewPresenterController overlayController;
-	
+
 	public CasualtySectionViewPresenter(View view) {
 		this.setView(view);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -56,7 +56,7 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 		container.add(this.view.asWidget());
 		initializeController();
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		this.controller.onParameters(parameterHolder);
@@ -99,109 +99,117 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 					case REPORT:
 						item.pushIntoStackParameter("display", "report");
 						break;
+					case GENERAL_TASKS:
+						item.pushIntoStackParameter("display", "generaltasks");
+						break;
+					
 					}
-				}
 
-				NavigationHistoryManager.getInstance().go(item);
 			}
-		});
-	}
-	
-	private void initializeController(){
-		this.controller = new ViewPresenterController(this.view.getOperationViewContainer()) {
 
-			@Override
-			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
-				return;
-			}
-			
-			@Override
-			public void onParameters(HasParameters parameters) {
-				String section = parameters.getParameter("section");
-				if(section != null && section.equalsIgnoreCase("casualty")){
-					String display = parameters.peekInStackParameter("display");
-					display = display == null ? "" : display;
+			NavigationHistoryManager.getInstance().go(item);
+		}
+	});
+}
 
-					//MASS OPERATIONS
-					if(display.equalsIgnoreCase("massmanagertransfer")){
-						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
-						present("CASUALTY_MASS_MANAGER_TRANSFER", parameters);
-					}else if(display.equalsIgnoreCase("report")){
-						view.selectOperation(SectionOperation.REPORT);
-						parameters.setParameter("processtypeid", BigBangConstants.EntityIds.CASUALTY);
-						present("REPORTS", parameters);
-					}else{
-						view.selectOperation(SectionOperation.OPERATIONS);
-						present("CASUALTY_OPERATIONS", parameters, true);
-					}
-				}
-				CasualtySectionViewPresenter.this.overlayController.onParameters(parameters);
-			}
-		};
-		this.overlayController = new ViewPresenterController(view.getOverlayViewContainer()) {
+private void initializeController(){
+	this.controller = new ViewPresenterController(this.view.getOperationViewContainer()) {
 
-			@Override
-			public void onParameters(HasParameters parameters) {
-				String show = parameters.getParameter("show");
-				show = show == null ? new String() : show;
+		@Override
+		protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
+			return;
+		}
 
-				if(show.isEmpty()){
-					view.showOverlayViewContainer(false);
+		@Override
+		public void onParameters(HasParameters parameters) {
+			String section = parameters.getParameter("section");
+			if(section != null && section.equalsIgnoreCase("casualty")){
+				String display = parameters.peekInStackParameter("display");
+				display = display == null ? "" : display;
 
-					//OVERLAY VIEWS
-				}else if(show.equalsIgnoreCase("contactmanagement")){
-					present("CONTACT", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("documentmanagement")){
-					present("DOCUMENT", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("delete")){
-					present("CASUALTY_DELETE", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("close")){
-					present("CASUALTY_CLOSE", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("deletesubcasualty")){
-					present("SUB_CASUALTY_DELETE", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("managertransfer")){
-					present("CASUALTY_MANAGER_TRANSFER", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("subcasualtymarkforclosing")){
-					present("SUB_CASUALTY_MARK_FOR_CLOSING", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("subcasualtyrejectclose")){
-					present("SUB_CASUALTY_REJECT_CLOSING", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("cancelinforequest")){
-					present("INFO_OR_DOCUMENT_REQUEST_CANCELLATION", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("replyinforequest")){
-					present("INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("repeatinforequest")){
-					present("INFO_OR_DOCUMENT_REQUEST_REPEAT", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("replyexternalrequest")){
-					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("closeexternalrequest")){
-					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CLOSING", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("continueexternalrequest")){
-					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CONTINUATION", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("conversationclose")){
-					present("CONVERSATION_CLOSE", parameters);
-					view.showOverlayViewContainer(true);
+				//MASS OPERATIONS
+				if(display.equalsIgnoreCase("massmanagertransfer")){
+					view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
+					present("CASUALTY_MASS_MANAGER_TRANSFER", parameters);
+				}else if(display.equalsIgnoreCase("report")){
+					view.selectOperation(SectionOperation.REPORT);
+					parameters.setParameter("processtypeid", BigBangConstants.EntityIds.CASUALTY);
+					present("REPORTS", parameters);
+				}else if(display.equalsIgnoreCase("generaltasks")){
+					view.selectOperation(SectionOperation.REPORT);
+					present("GENERAL_TASKS", parameters);
+				}else{
+					view.selectOperation(SectionOperation.OPERATIONS);
+					present("CASUALTY_OPERATIONS", parameters, true);
 				}
 			}
+			CasualtySectionViewPresenter.this.overlayController.onParameters(parameters);
+		}
+	};
+	this.overlayController = new ViewPresenterController(view.getOverlayViewContainer()) {
 
-			@Override
-			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
-				return;
+		@Override
+		public void onParameters(HasParameters parameters) {
+			String show = parameters.getParameter("show");
+			show = show == null ? new String() : show;
+
+			if(show.isEmpty()){
+				view.showOverlayViewContainer(false);
+
+				//OVERLAY VIEWS
+			}else if(show.equalsIgnoreCase("contactmanagement")){
+				present("CONTACT", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("documentmanagement")){
+				present("DOCUMENT", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("delete")){
+				present("CASUALTY_DELETE", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("close")){
+				present("CASUALTY_CLOSE", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("deletesubcasualty")){
+				present("SUB_CASUALTY_DELETE", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("managertransfer")){
+				present("CASUALTY_MANAGER_TRANSFER", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("subcasualtymarkforclosing")){
+				present("SUB_CASUALTY_MARK_FOR_CLOSING", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("subcasualtyrejectclose")){
+				present("SUB_CASUALTY_REJECT_CLOSING", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("cancelinforequest")){
+				present("INFO_OR_DOCUMENT_REQUEST_CANCELLATION", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("replyinforequest")){
+				present("INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("repeatinforequest")){
+				present("INFO_OR_DOCUMENT_REQUEST_REPEAT", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("replyexternalrequest")){
+				present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("closeexternalrequest")){
+				present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CLOSING", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("continueexternalrequest")){
+				present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CONTINUATION", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("conversationclose")){
+				present("CONVERSATION_CLOSE", parameters);
+				view.showOverlayViewContainer(true);
 			}
-		};
-	}
+		}
+
+		@Override
+		protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
+			return;
+		}
+	};
+}
 
 }

@@ -1,10 +1,8 @@
-package bigBang.module.receiptModule.client.userInterface.view;
+package bigBang.library.client.userInterface.view;
 
 import bigBang.library.client.userInterface.FileImportFormViewSection;
-import bigBang.library.client.userInterface.view.FormView;
-import bigBang.library.client.userInterface.view.View;
 
-public class GeneralTasksView extends View {
+public abstract class GeneralTasksView extends View {
 
 	public GeneralTasksView(){
 		FormView<Void> form = new FormView<Void>() {
@@ -22,12 +20,14 @@ public class GeneralTasksView extends View {
 		initWidget(form);
 		form.setSize("100%", "100%");
 		
-		FileImportFormViewSection section = new FileImportFormViewSection("recibo");
+		FileImportFormViewSection section = new FileImportFormViewSection(getItemType());
 		form.addSection(section);
 		
 		form.setReadOnly(false);
 	}
 	
+	public abstract String getItemType();
+
 	@Override
 	protected void initializeView() {
 		return;

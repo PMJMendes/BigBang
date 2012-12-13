@@ -4,7 +4,9 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.GeneralTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.GeneralTasksView;
 import bigBang.module.casualtyModule.client.dataAccess.CasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.dataAccess.SubCasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyCloseViewPresenter;
@@ -263,6 +265,21 @@ public class CasualtyModule implements Module {
 			public ViewPresenter getInstance() {
 				SubCasualtyConversationView view = (SubCasualtyConversationView) GWT.create(SubCasualtyConversationView.class);
 				SubCasualtyConversationViewPresenter presenter = new SubCasualtyConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_TASKS", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				GeneralTasksView view = new GeneralTasksView() {
+					
+					@Override
+					public String getItemType() {
+						return "sinistro";
+					}
+				};
+				GeneralTasksViewPresenter presenter = new GeneralTasksViewPresenter();
+				presenter.setView(view);
 				return presenter;
 			}
 		});

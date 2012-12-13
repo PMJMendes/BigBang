@@ -8,8 +8,10 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
+import bigBang.library.client.userInterface.presenter.GeneralTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.GeneralTasksView;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientSelectionView;
@@ -422,10 +424,27 @@ public class InsurancePolicyModule implements Module {
 				return presenter;
 			}
 		});
-		
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_TASKS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				GeneralTasksView view = new GeneralTasksView() {
+
+					@Override
+					public String getItemType() {
+						return "apolice";
+					}
+				};
+
+				GeneralTasksViewPresenter presenter = new GeneralTasksViewPresenter();
+				presenter.setView(view);
+				return presenter;
+			}
+		});
+
 		//EXPANDABLE PANELS
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.INSURANCE_POLICY, new ExpandableSelectionManagementPanelInstantiator() {
-			
+
 			@Override
 			public ExpandableSelectionFormFieldPanel getInstance() {
 				InsurancePolicySelectionView view = (InsurancePolicySelectionView) GWT.create(InsurancePolicySelectionView.class);
@@ -434,9 +453,9 @@ public class InsurancePolicyModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 	} 
-	
+
 	public boolean isInitialized() {
 		return initialized;
 	}

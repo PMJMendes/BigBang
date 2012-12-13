@@ -20,4 +20,7 @@ public interface Resources extends ClientBundle {
 	@Source("images/reportIcon.png")
 	ImageResource reportIcon();
 	
+	@Source("images/generalTasks.png")
+	ImageResource generalTasks();
+	
 }

@@ -1,11 +1,10 @@
-package bigBang.module.receiptModule.client.userInterface.presenter;
+package bigBang.library.client.userInterface.presenter;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.library.client.HasParameters;
-import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class GeneralTasksViewPresenter implements ViewPresenter {
 
