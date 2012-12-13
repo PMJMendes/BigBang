@@ -2,7 +2,9 @@ package com.premiumminds.BigBang.Jewel.FileIO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -18,28 +20,25 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyObjectData;
-import com.premiumminds.BigBang.Jewel.Data.PolicyValueData;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData;
 import com.premiumminds.BigBang.Jewel.SysObjects.FileIOBase;
 
-public class ShamirV
+public class ShamirA
 	extends FileIOBase
 {
 	public static final UUID FKPolicy = UUID.fromString("04460908-B283-4AC1-A8C5-A0FE012D2C5E");
 	public static final UUID ValueID_SalesDate = UUID.fromString("64883643-ED00-498E-82D4-9F960156930B");
 	public static final UUID ValueID_Cost = UUID.fromString("BF80A9FC-AD3F-4630-8DD3-9F9601565146");
 	public static final UUID RDef_Imports = UUID.fromString("5D287368-3C08-40BE-B850-A125012D3E12");
-	public static final UUID FormatID_ShamirV = UUID.fromString("599F921A-BEEF-426B-A5DD-A12501011A9B");
+	public static final UUID FormatID_ShamirA = UUID.fromString("6B92C238-68CB-455C-A185-A126010E1D2D");
 	public static final UUID ObjID_ImportStatus = UUID.fromString("86F90B2E-9AB4-456D-879B-A12600D2B843");
 
 	public static class Fields
 	{
-	    public static final int LENSID    =  0;
-	    public static final int SALESDATE =  1;
-	    public static final int PRODUCT   =  2;
-	    public static final int COST      =  3;
+	    public static final int LENSID         =  0;
+	    public static final int ACTIVATIONDATE =  1;
 	}
 
 	public static class StatusCodes
@@ -65,7 +64,6 @@ public class ShamirV
 		MasterDB ldb;
 		HashSet<String> larrSet;
 		ArrayList<PolicyObjectData> larrObjects;
-		ArrayList<PolicyValueData> larrValues;
 		FileSectionData[] larrSales;
 		FileFieldData[] larrData;
 		int i;
@@ -93,7 +91,6 @@ public class ShamirV
 
 		larrSet = new HashSet<String>();
 		larrObjects = new ArrayList<PolicyObjectData>();
-		larrValues = new ArrayList<PolicyValueData>();
 
 		larrSales = mobjData.getData()[0];
 
@@ -106,7 +103,7 @@ public class ShamirV
 				larrData = larrSales[i].getData();
 				try
 				{
-					ParseSale(i, larrData, larrSet, larrObjects, larrValues, ldb);
+					ParseSale(i, larrData, larrSet, larrObjects, ldb);
 				}
 				catch (Throwable e)
 				{
@@ -118,23 +115,10 @@ public class ShamirV
 			lopMD.mobjData = new PolicyData();
 			lopMD.mobjData.FromObject(lobjPolicy);
 			lopMD.mobjData.marrObjects = larrObjects.toArray(new PolicyObjectData[larrObjects.size()]);
-			lopMD.mobjData.marrValues = larrValues.toArray(new PolicyValueData[larrValues.size()]);
 
 			lopMD.Execute(ldb);
 
-			for ( i = 0; i < larrSales.length; i++ )
-			{
-				larrData = larrSales[i].getData();
-				try
-				{
-					PostParse(i, larrData, lopMD.mobjData.marrObjects, ldb);
-				}
-				catch (Throwable e)
-				{
-				}
-			}
-
-			createReport(ldb, "Importação Shamir Vendas", RDef_Imports, FormatID_ShamirV.toString() + "|" + midSession.toString());
+			createReport(ldb, "Importação Shamir Vendas", RDef_Imports, FormatID_ShamirA.toString() + "|" + midSession.toString());
 		}
 		catch (BigBangJewelException e)
 		{
@@ -171,15 +155,16 @@ public class ShamirV
 	}
 
 	private void ParseSale(int plngLine, FileFieldData[] parrData, HashSet<String> parrSet,
-			ArrayList<PolicyObjectData> parrObjects, ArrayList<PolicyValueData> parrValues, SQLServer pdb)
+			ArrayList<PolicyObjectData> parrObjects, SQLServer pdb)
 		throws BigBangJewelException
 	{
 		String lstrLineText;
+		PolicyObject lobjObject;
+		PolicyObjectData lobjData;
 		String lstrDate;
-		String lstrValue;
-		PolicyObjectData lobjObject;
-		PolicyValueData lobjValue;
-		int i;
+		Timestamp ldtStart;
+		Calendar ldtAux2;
+		Timestamp ldtEnd;
 
 		lstrLineText = parrData[Fields.LENSID].getData();
 
@@ -189,16 +174,26 @@ public class ShamirV
 			return;
 		}
 
-		if ( FindLens(lstrLineText, pdb) )
+		lobjObject = FindLens(lstrLineText, pdb);
+
+		if ( lobjObject == null )
 		{
-			createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_3_ExistingLens, null);
+			createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_5_LensNotFound, null);
+			return;
+		}
+
+		lobjData = new PolicyObjectData();
+		lobjData.FromObject(lobjObject);
+
+		if ( lobjData.mdtInclusion != null )
+		{
+			createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_6_LensIsActivated, null);
 			return;
 		}
 
 		try
 		{
-			lstrDate = ProcessDate(parrData[Fields.SALESDATE].getData());
-			lstrValue = ProcessCost(parrData[Fields.COST].getData());
+			lstrDate = ProcessDate(parrData[Fields.ACTIVATIONDATE].getData());
 		}
 		catch ( BigBangJewelException e )
 		{
@@ -206,62 +201,37 @@ public class ShamirV
 			return;
 		}
 
-		i = parrObjects.size();
-
-		lobjObject = new PolicyObjectData();
-		lobjObject.mstrName = lstrLineText;
-		lobjObject.midType = Constants.ObjTypeID_Equipment;
-		lobjObject.mstrMakeAndModel = parrData[Fields.PRODUCT].getData();
-		lobjObject.mstrClientIDE = lstrLineText;
-		lobjObject.mbNew = true;
-		lobjObject.mbDeleted = false;
-		parrObjects.add(lobjObject);
-
-		lobjValue = new PolicyValueData();
-		lobjValue.mstrValue = lstrDate;
-		lobjValue.midField = ValueID_SalesDate;
-		lobjValue.mlngObject = i;
-		lobjValue.mlngExercise = -1;
-		lobjValue.mbNew = true;
-		lobjValue.mbDeleted = false;
-		parrValues.add(lobjValue);
-
-		lobjValue = new PolicyValueData();
-		lobjValue.mstrValue = lstrValue;
-		lobjValue.midField = ValueID_Cost;
-		lobjValue.mlngObject = i;
-		lobjValue.mlngExercise = -1;
-		lobjValue.mbNew = true;
-		lobjValue.mbDeleted = false;
-		parrValues.add(lobjValue);
-	}
-
-	private void PostParse(int plngLine, FileFieldData[] parrData, PolicyObjectData[] parrObjects, SQLServer pdb)
-		throws BigBangJewelException
-	{
-		String lstrLineText;
-		int i;
-
-		lstrLineText = parrData[Fields.LENSID].getData();
-
-		for ( i = 0; i < parrObjects.length; i++ )
+		try
 		{
-			if ( lstrLineText.equals(parrObjects[i].mstrName) )
-			{
-				createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_0_Ok, parrObjects[i].mid);
-				return;
-			}
+			ldtStart = Timestamp.valueOf(lstrDate + " 00:00:00.0");
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtStart.getTime());
+	    	ldtAux2.add(Calendar.YEAR, 1);
+	    	ldtEnd = new Timestamp(ldtAux2.getTimeInMillis());
 		}
+		catch ( Throwable e )
+		{
+			createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_1_InternalError, null);
+			return;
+		}
+
+		lobjData.mdtInclusion = ldtStart;
+		lobjData.mdtExclusion = ldtEnd;
+		lobjData.mbNew = false;
+		lobjData.mbDeleted = false;
+		parrObjects.add(lobjData);
+
+		createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_0_Ok, lobjData.mid);
 	}
 
-	private boolean FindLens(String pstrNumber, SQLServer pdb)
+	private PolicyObject FindLens(String pstrNumber, SQLServer pdb)
 		throws BigBangJewelException
 	{
 		IEntity lrefObjects;
         ResultSet lrsObjects;
-		boolean lbFound;
+        PolicyObject lobjResult;
 
-		lbFound = false;
+		lobjResult = null;
 
 		try
 		{
@@ -277,7 +247,7 @@ public class ShamirV
 		try
 		{
 	        if (lrsObjects.next())
-	        	lbFound = true;
+	        	lobjResult = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), lrsObjects);
         }
         catch (Throwable e)
         {
@@ -294,24 +264,15 @@ public class ShamirV
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return lbFound;
+		return lobjResult;
 	}
 
 	private String ProcessDate(String pstrDate)
 		throws BigBangJewelException
 	{
 		if ( (pstrDate == null) || (pstrDate.length() != 8) )
-			throw new BigBangJewelException("Erro: Formato inválido na data de venda.");
+			throw new BigBangJewelException("Erro: Formato inválido na data de activação.");
 
 		return pstrDate.substring(0, 4) + "-" + pstrDate.substring(4, 6) + "-" + pstrDate.substring(6, 8);
-	}
-
-	private String ProcessCost(String pstrCost)
-		throws BigBangJewelException
-	{
-		if ( pstrCost == null )
-			throw new BigBangJewelException("Erro: Formato inválido no custo unitário.");
-
-		return pstrCost.replaceAll(",", "").replaceAll("\\.", ",");
 	}
 }
