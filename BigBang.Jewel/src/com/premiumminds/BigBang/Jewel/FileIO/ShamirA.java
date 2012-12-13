@@ -118,7 +118,7 @@ public class ShamirA
 
 			lopMD.Execute(ldb);
 
-			createReport(ldb, "Importação Shamir Vendas", RDef_Imports, FormatID_ShamirA.toString() + "|" + midSession.toString());
+			createReport(ldb, "Importação Shamir Activações", RDef_Imports, FormatID_ShamirA.toString() + "|" + midSession.toString());
 		}
 		catch (BigBangJewelException e)
 		{
