@@ -37,7 +37,7 @@ public class TestSpecialFileProcessing
 
 			public void onSuccess(TipifiedListItem[] result)
 			{
-				gstrFormatID = "6B92C238-68CB-455C-A185-A126010E1D2D";
+				gstrFormatID = "9689FDF3-E88E-43FC-80F8-A126011E4265";
 				DoStep2();
 			}
 		};
