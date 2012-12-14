@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -26,6 +27,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
+import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.CreateConversationBase;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.ManageData;
@@ -197,7 +199,7 @@ public class ConversationServiceImpl
 	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
 		throws SessionExpiredException, BigBangException
 	{
-		IProcess lobjParent;
+		HashSet<UUID> lsetUsers;
 		IEntity lrefProcess;
         MasterDB ldb;
         ResultSet lrsProcesses;
@@ -211,12 +213,12 @@ public class ConversationServiceImpl
 		if ( !Constants.ObjID_Conversation.equals(UUID.fromString(listId)) )
 			throw new BigBangException("Erro: Lista inválida para o espaço de trabalho.");
 
-		lobjParent = BigBangProcessServiceImpl.sGetProcessFromDataObject(UUID.fromString(filterId));
+		lsetUsers = getDelegates();
 
 		try
 		{
 			lrefProcess = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNProcess)); 
+					Jewel.Petri.Constants.ObjID_PNProcess));
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -227,8 +229,8 @@ public class ConversationServiceImpl
 		try
 		{
 			lrsProcesses = lrefProcess.SelectByMembers(ldb,
-					new int[] {Jewel.Petri.Constants.FKScript_In_Process, Jewel.Petri.Constants.FKParent_In_Process},
-					new java.lang.Object[] {Constants.ProcID_Conversation, lobjParent.getKey()},
+					new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+					new java.lang.Object[] {Constants.ProcID_Conversation},
 					new int[] {com.premiumminds.BigBang.Jewel.Objects.Conversation.I.SUBJECT});
 		}
 		catch (Throwable e)
@@ -245,6 +247,8 @@ public class ConversationServiceImpl
 			{
 				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lrsProcesses);
 				if ( !lobjProcess.IsRunning() )
+					continue;
+				if ( !lsetUsers.contains(lobjProcess.GetManagerID()) )
 					continue;
 
 				lobjResult = new TipifiedListItem();
@@ -612,5 +616,75 @@ public class ConversationServiceImpl
 			return new com.premiumminds.BigBang.Jewel.Operations.Expense.CreateConversation(lobjData.GetProcessID());
 
 		return null;
+	}
+
+	private HashSet<UUID> getDelegates()
+		throws BigBangException
+	{
+		HashSet<UUID> lsetResult;
+		IEntity lrefDecoration;
+		MasterDB ldb;
+        ResultSet lrsDecos;
+        UserDecoration lobjDeco;
+
+		lsetResult = new HashSet<UUID>();
+		lsetResult.add(Engine.getCurrentUser());
+
+		try
+		{
+			lrefDecoration = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDecos = lrefDecoration.SelectByMembers(ldb, new int[] {UserDecoration.I.SURROGATE},
+					new java.lang.Object[] {Engine.getCurrentUser()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsDecos.next() )
+			{
+				lobjDeco = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrsDecos);
+				lsetResult.add(lobjDeco.getBaseUser().getKey());
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsDecos.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDecos.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return lsetResult;
 	}
 }
