@@ -132,7 +132,7 @@ public class ShamirP
 
 		try
 		{
-			createReport(ldb, "Importação Shamir Activações", RDef_Imports, FormatID_ShamirP.toString() + "|" + midSession.toString());
+			createReport(ldb, "Importação Shamir Participações", RDef_Imports, FormatID_ShamirP.toString() + "|" + midSession.toString());
 		}
 		catch (BigBangJewelException e)
 		{
