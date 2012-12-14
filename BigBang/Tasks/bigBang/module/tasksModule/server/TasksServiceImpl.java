@@ -470,8 +470,8 @@ public class TasksServiceImpl
 		lobjResult.id = pid.toString();
 		lobjResult.description = (String)parrValues[0];
 		lobjResult.reference = lstrLabel;
-		lobjResult.timeStamp = ((Timestamp)parrValues[1]).toString();
-		lobjResult.dueDate = ((Timestamp)parrValues[2]).toString();
+		lobjResult.timeStamp = ((Timestamp)parrValues[1]).toString().substring(0, 10);
+		lobjResult.dueDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Invalid) == 0)
 			lobjResult.status = TaskStub.Status.INVALID;
 		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Valid) == 0)
