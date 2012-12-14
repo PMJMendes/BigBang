@@ -591,28 +591,28 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		if ( Constants.ProcID_Client.equals(pidParentType) )
+		if ( Constants.ObjID_Client.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation(lobjData.GetProcessID());
 
-		if ( Constants.ProcID_QuoteRequest.equals(pidParentType) )
+		if ( Constants.ObjID_QuoteRequest.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CreateConversation(lobjData.GetProcessID());
 
-		if ( Constants.ProcID_Negotiation.equals(pidParentType) )
+		if ( Constants.ObjID_Negotiation.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateConversation(lobjData.GetProcessID());
 
-		if ( Constants.ProcID_Policy.equals(pidParentType) )
+		if ( Constants.ObjID_Policy.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.Policy.CreateConversation(lobjData.GetProcessID());
 
-		if ( Constants.ProcID_SubPolicy.equals(pidParentType) )
+		if ( Constants.ObjID_SubPolicy.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateConversation(lobjData.GetProcessID());
 
-		if ( Constants.ProcID_Casualty.equals(pidParentType) )
+		if ( Constants.ObjID_Casualty.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateConversation(lobjData.GetProcessID());
 
-		if ( Constants.ProcID_SubCasualty.equals(pidParentType) )
+		if ( Constants.ObjID_SubCasualty.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateConversation(lobjData.GetProcessID());
 
-		if ( Constants.ProcID_Expense.equals(pidParentType) )
+		if ( Constants.ObjID_Expense.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.Expense.CreateConversation(lobjData.GetProcessID());
 
 		return null;
