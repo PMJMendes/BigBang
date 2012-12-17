@@ -4,6 +4,8 @@ import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.event.ContentChangedEvent;
 
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -68,6 +70,8 @@ public class TextAreaFormField extends FormField<String> {
 		textAndMandatory = new HorizontalPanel();
 		this.label = new Label();
 		wrapper.add(this.label);
+		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		label.getElement().getStyle().setFontSize(11, Unit.PX);
 		this.field = new TextArea();
 		textAndMandatory.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		textAndMandatory.add((Widget) this.field);
