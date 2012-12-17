@@ -27,5 +27,8 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/todo.png")
 	ImageResource agendaIcon();
+	
+	@Source("images/ampersand.png")
+	ImageResource emailIcon();
 
 }

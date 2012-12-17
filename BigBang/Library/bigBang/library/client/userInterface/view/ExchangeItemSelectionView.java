@@ -30,7 +30,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -47,6 +46,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 	private ActionInvokedEventHandler<Action> actionHandler;
 
 	private ExchangeItemSelectionToolbar toolbar;
+	private ListHeader header;
 
 	public static class AttachmentEntry extends ListEntry<AttachmentStub>{
 
@@ -248,8 +248,9 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		//LEFT
 		VerticalPanel leftWrapper = new VerticalPanel();
 		leftWrapper.setSize("100%", "100%");
-		ListHeader header = new ListHeader("Lista de E-mails");
+		header = new ListHeader("Lista de E-mails");
 		header.showNewButton("Obter todos (lento)");
+		header.getNewButton().setEnabled(false);
 		header.getNewButton().setVisible(true);		
 		header.getNewButton().addClickHandler(new ClickHandler() {
 			
@@ -278,7 +279,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		attachments.setSelectableEntries(false);
 		rightWrapper.add(attachments);
 		rightWrapper.setCellHeight(attachments, "100%");
-		insideWrapper.addEast(rightWrapper, 250);
+		insideWrapper.addEast(rightWrapper, 600);
 
 		//CENTER
 		VerticalPanel centerWrapper = new VerticalPanel();
@@ -348,6 +349,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 	public void clear() {
 
 		emails.clear();
+		enableGetAll(false);
 		attachments.clear();
 		centerForm.clearInfo();
 
@@ -399,6 +401,12 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		}
 
 		return attachs;
+	}
+
+
+	@Override
+	public void enableGetAll(boolean b) {
+		header.getNewButton().setEnabled(b);
 	}
 
 

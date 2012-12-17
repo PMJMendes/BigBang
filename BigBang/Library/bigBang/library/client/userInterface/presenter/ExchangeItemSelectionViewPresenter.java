@@ -60,6 +60,8 @@ HasValue<Message> {
 
 		bigBang.definitions.shared.Message.AttachmentUpgrade[] getChecked();
 
+		void enableGetAll(boolean b);
+
 
 	}
 
@@ -175,6 +177,7 @@ HasValue<Message> {
 				for(int i=0; i<result.length; i++){
 					view.addEmailEntry(result[i]);
 				}
+				view.enableGetAll(true);
 			}
 
 			public void onResponseFailure(Throwable caught) {

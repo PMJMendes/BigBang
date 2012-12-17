@@ -1,6 +1,8 @@
 package bigBang.library.client.dataAccess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
@@ -9,6 +11,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.OperationWasExecutedEvent;
@@ -91,26 +94,26 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 	@Override
 	public void sendMessage(Message message, Integer replyLimit,
 			final ResponseHandler<Conversation> handler) {
-service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>() {
+		service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>() {
 
-	@Override
-	public void onResponseSuccess(Conversation result) {
-		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.SEND, result.id));
-		incrementDataVersion();
-		notifyItemUpdate(result.id);
-		handler.onResponse(result);				
-	}
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.SEND, result.id));
+				incrementDataVersion();
+				notifyItemUpdate(result.id);
+				handler.onResponse(result);				
+			}
 
 
-	@Override
-	public void onResponseFailure(Throwable caught) {
-		handler.onError(new String[]{
-				new String("Could not send the message")
-		});			
-		super.onResponseFailure(caught);
-	}
-	
-});
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the message")
+				});			
+				super.onResponseFailure(caught);
+			}
+
+		});
 	}
 
 	@Override
@@ -147,7 +150,7 @@ service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>(
 				notifyItemUpdate(result.id);
 				handler.onResponse(result);							
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -155,7 +158,7 @@ service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>(
 				});			
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
 	}
 
@@ -173,7 +176,7 @@ service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>(
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not close the conversation")
 				});
@@ -189,14 +192,14 @@ service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>(
 		service.saveConversation(conversation, new BigBangAsyncCallback<Conversation>() {
 
 
-
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not save the conversation")
 				});
 				super.onResponseFailure(caught);
 			}
+
 
 			@Override
 			public void onResponseSuccess(Conversation result) {
@@ -207,4 +210,51 @@ service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>(
 			}
 		});
 	}
+
+	@Override
+	public void getConversations(String listId,String filterId, final ResponseHandler<List<TipifiedListItem>> handler){
+		service.getListItemsFilter(listId, filterId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+
+			@Override
+			public void onResponseSuccess(TipifiedListItem[] result) {
+				List<TipifiedListItem> toReturn = new ArrayList<TipifiedListItem>();
+				for(TipifiedListItem item : result){
+					toReturn.add(0, item);
+				}
+				handler.onResponse(toReturn);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the conversations")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
+	@Override
+	public void createConversationFromEmail(Conversation conv, final ResponseHandler<Conversation> handler){
+		service.createFromEmail(conv, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				incrementDataVersion();
+				notifyItemUpdate(result.id);
+				handler.onResponse(result);
+				
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create the conversation")
+				});
+				super.onResponseFailure(caught);
+			}
+		
+		});
+	}
 }
+

@@ -1,9 +1,12 @@
 package bigBang.library.client.dataAccess;
 
+import java.util.List;
+
 import bigBang.definitions.client.dataAccess.DataBrokerInterface;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.TipifiedListItem;
 
 public interface ConversationBroker extends DataBrokerInterface<Conversation>{
 
@@ -24,4 +27,10 @@ public interface ConversationBroker extends DataBrokerInterface<Conversation>{
 	
 	void closeConversation(String conversationId, String motiveId,
 			ResponseHandler<Void> handler);
+
+	void getConversations(String listId, String filterId,
+			ResponseHandler<List<TipifiedListItem>> handler);
+
+	void createConversationFromEmail(Conversation conv,
+			ResponseHandler<Conversation> handler);
 }

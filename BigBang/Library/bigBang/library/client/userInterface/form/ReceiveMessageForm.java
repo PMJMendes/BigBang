@@ -32,7 +32,6 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 		replyLimit = new NumericTextBoxFormField("Prazo de Resposta", false);
 		replyLimit.setUnitsLabel("dias");
 		replyLimit.setFieldWidth("70px");
-		replyLimit.setMandatory(true);
 		
 		expectsResponse.addValueChangeHandler(new ValueChangeHandler<String>() {
 

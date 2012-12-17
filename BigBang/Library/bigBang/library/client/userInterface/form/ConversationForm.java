@@ -46,7 +46,7 @@ public class ConversationForm extends FormView<Conversation>{
 		messageSubject.setEditable(false);
 		text = new RichTextAreaFormField();
 		text.setEditable(false);
-		
+		text.getNativeField().setSize("98%", "600px");
 		messageSection.addFormField(messageSubject);
 		messageSection.addFormField(text);
 				

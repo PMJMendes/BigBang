@@ -24,32 +24,56 @@ import bigBang.module.tasksModule.shared.TaskSortParameter;
 import bigBang.module.tasksModule.shared.TaskSortParameter.SortableField;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataBrokerClient {
 
 	public static class Entry extends ListEntry<TaskStub> {
 
 		protected Image statusIndicator;
+		protected Label title;
+		protected Label reference;
+		protected Label dueDate;
 		protected String defaultBGColor;
 
 		public Entry(TaskStub value) {
 			super(value);
 			setRightWidget(statusIndicator);
 			defaultBGColor = this.getElement().getStyle().getBackgroundColor();
-			setHeight("40px");
+			setHeight("50px");
 		}
 
 		public <I extends Object> void setInfo(I info) {
+			VerticalPanel wrapper; 
 			if(statusIndicator == null){
 				statusIndicator = new Image();
+				wrapper = new VerticalPanel();
+				title = getFormatedLabel();
+				title.getElement().getStyle().setFontSize(14, Unit.PX);
+				reference = getFormatedLabel();
+				reference.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
+				dueDate = getFormatedLabel();
+				dueDate.getElement().getStyle().setFontSize(12, Unit.PX);
+				
+				wrapper.add(title);
+				wrapper.add(reference);
+				wrapper.add(dueDate);
+				
+				setWidget(wrapper);
 			}
 			Resources r = GWT.create(Resources.class);
 			TaskStub t = (TaskStub) info;
-			setTitle(t.description);
-			setText("Data limite : " + t.dueDate.substring(0, 10));
+		
+			title.setText(t.description);
+			reference.setText("Ref: " + t.reference);
+			dueDate.setText("Data Limite: " + t.dueDate);
+			
 			statusIndicator.setVisible(true);
 			this.getElement().getStyle().setBackgroundColor(this.defaultBGColor);
 			switch(t.status){

@@ -21,7 +21,8 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 
 	public static enum SectionOperation{
 		AGENDA,
-		MAIL_ORGANIZER
+		MAIL_ORGANIZER,
+		EMAIL
 	}
 
 	public interface Display {
@@ -74,6 +75,9 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 					}else if(display.equalsIgnoreCase("mailorganizer")){
 						view.selectOperation(SectionOperation.MAIL_ORGANIZER);
 						present("MAIL_ORGANIZER", parameters, true);
+					}else if(display.equalsIgnoreCase("email")){
+						view.selectOperation(SectionOperation.EMAIL);
+						present("EMAIL", parameters, true);
 					}else{
 						goToDefault();
 					}
@@ -96,16 +100,16 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 			@Override
 			public void onParameters(HasParameters parameters) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			protected void onNavigationHistoryEvent(
 					NavigationHistoryItem historyItem) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 		};
 
 	}
@@ -162,8 +166,12 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 					case MAIL_ORGANIZER:
 						item.pushIntoStackParameter("display", "mailorganizer");
 						break;
+					case EMAIL:
+						item.pushIntoStackParameter("display", "email");
+						break;
 					}
 					
+
 					NavigationHistoryManager.getInstance().go(item);
 				}
 			}

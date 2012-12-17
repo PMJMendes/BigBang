@@ -16,10 +16,12 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.tasksModule.client.dataAccess.TasksBrokerImpl;
 import bigBang.module.tasksModule.client.userInterface.presenter.AgendaViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.presenter.DismissTaskViewPresenter;
+import bigBang.module.tasksModule.client.userInterface.presenter.EmailViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.presenter.MailOrganizerViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.view.AgendaView;
 import bigBang.module.tasksModule.client.userInterface.view.DismissTaskView;
+import bigBang.module.tasksModule.client.userInterface.view.EmailView;
 import bigBang.module.tasksModule.client.userInterface.view.MailOrganizerView;
 import bigBang.module.tasksModule.client.userInterface.view.TasksSectionView;
 
@@ -41,9 +43,9 @@ public class TasksModule implements Module {
 
 			@Override
 			public void onLoginSuccess(LoginSuccessEvent event) {
-//				if(!notificationsManager.isRunning()){
-//					notificationsManager.run();
-//				}
+				//				if(!notificationsManager.isRunning()){
+				//					notificationsManager.run();
+				//				}
 			}
 		});
 		EventBus.getInstance().addHandler(LogoutEvent.TYPE, new LogoutEventHandler(){
@@ -71,7 +73,7 @@ public class TasksModule implements Module {
 		ViewPresenterFactory factory = ViewPresenterFactory.getInstance();
 
 		factory.registerViewPresenterInstantiator("AGENDA", new ViewPresenterInstantiator() {
-			
+
 			@Override
 			public ViewPresenter getInstance() {
 				AgendaView view = new AgendaView();
@@ -79,9 +81,9 @@ public class TasksModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		factory.registerViewPresenterInstantiator("MAIL_ORGANIZER", new ViewPresenterInstantiator() {
-			
+
 			@Override
 			public ViewPresenter getInstance() {
 				MailOrganizerView view = new MailOrganizerView();
@@ -89,7 +91,17 @@ public class TasksModule implements Module {
 				return presenter;
 			}
 		});
-		
+
+		factory.registerViewPresenterInstantiator("EMAIL", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				EmailView view = new EmailView();
+				EmailViewPresenter presenter = new EmailViewPresenter(view);
+				return presenter;
+			}
+		});
+
 		factory.registerViewPresenterInstantiator("TASKS_SECTION", new ViewPresenterInstantiator() {
 
 			@Override

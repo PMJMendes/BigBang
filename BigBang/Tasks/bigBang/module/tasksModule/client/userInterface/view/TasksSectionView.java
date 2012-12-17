@@ -61,6 +61,7 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 
 		addDockItem("Agenda", r.agendaIcon(), SectionOperation.AGENDA, "100px");
 		addDockItem("Organizar Correio", r.mailIcon(), SectionOperation.MAIL_ORGANIZER);
+		addDockItem("Receber E-Mail", r.emailIcon(), SectionOperation.EMAIL);
 
 	}
 

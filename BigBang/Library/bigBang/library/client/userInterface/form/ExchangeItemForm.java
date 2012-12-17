@@ -51,5 +51,9 @@ public class ExchangeItemForm extends FormView<ExchangeItem>{
 		body.setValue(info.body);
 	}
 
+	public void setTextBoxSize(String string, String string2) {
+		body.getNativeField().setSize(string, string2);
+	}
+
 
 }

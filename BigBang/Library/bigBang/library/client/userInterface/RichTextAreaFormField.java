@@ -3,6 +3,7 @@ package bigBang.library.client.userInterface;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -56,6 +57,7 @@ public class RichTextAreaFormField extends FormField<String> {
 		wrapper.setSize("100%", "100%");
 		this.label = new Label();
 		wrapper.add(this.label);
+		label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		this.field = new RichTextArea();
 		this.field.setSize("400px", "300px");
 		
