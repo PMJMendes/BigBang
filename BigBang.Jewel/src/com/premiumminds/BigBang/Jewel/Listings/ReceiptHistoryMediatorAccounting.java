@@ -103,16 +103,22 @@ public class ReceiptHistoryMediatorAccounting
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		if ( parrParams[1] != null )
-			lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[1]).append("'");
+		if ( parrParams[3] != null )
+			lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[3]).append("'");
 
-		if ( parrParams[2] != null )
-			lstrSQL.append(" AND [Timestamp] <= '").append(parrParams[2]).append("'");
+		if ( parrParams[4] != null )
+			lstrSQL.append(" AND [Timestamp] <= '").append(parrParams[4]).append("'");
 
 		lstrSQL.append(")");
 
 		if ( parrParams[0] != null )
 			filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
+
+		if ( parrParams[1] != null )
+			filterByClientGroup(lstrSQL, UUID.fromString(parrParams[1]));
+
+		if ( parrParams[2] != null )
+			filterByAgent(lstrSQL, UUID.fromString(parrParams[2]));
 
 		larrAux = new ArrayList<Receipt>();
 

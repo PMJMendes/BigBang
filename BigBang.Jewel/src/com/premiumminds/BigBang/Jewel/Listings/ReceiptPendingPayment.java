@@ -122,16 +122,22 @@ public class ReceiptPendingPayment
 			filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
 
 		if ( parrParams[1] != null )
-			lstrSQL.append(" AND [Maturity Date] >= '").append(parrParams[1]).append("'");
+			filterByClientGroup(lstrSQL, UUID.fromString(parrParams[1]));
 
 		if ( parrParams[2] != null )
-			lstrSQL.append(" AND [Maturity Date] <= '").append(parrParams[2]).append("'");
+			filterByAgent(lstrSQL, UUID.fromString(parrParams[2]));
 
 		if ( parrParams[3] != null )
-			lstrSQL.append(" AND [Due Date] >= '").append(parrParams[3]).append("'");
+			lstrSQL.append(" AND [Maturity Date] >= '").append(parrParams[3]).append("'");
 
 		if ( parrParams[4] != null )
-			lstrSQL.append(" AND [Due Date] <= '").append(parrParams[4]).append("'");
+			lstrSQL.append(" AND [Maturity Date] <= '").append(parrParams[4]).append("'");
+
+		if ( parrParams[5] != null )
+			lstrSQL.append(" AND [Due Date] >= '").append(parrParams[5]).append("'");
+
+		if ( parrParams[6] != null )
+			lstrSQL.append(" AND [Due Date] <= '").append(parrParams[6]).append("'");
 
 		larrAux = new ArrayList<Receipt>();
 
