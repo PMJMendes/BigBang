@@ -67,6 +67,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateDASRequest;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateInternalReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateSignatureRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DASNotNecessary;
@@ -1077,6 +1078,32 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 
+	public Receipt createInternalReceipt(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		CreateInternalReceipt lopCIR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+
+			lopCIR = new CreateInternalReceipt(lobjReceipt.GetProcessID());
+
+			lopCIR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
 	public Receipt sendReceipt(String receiptId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -1582,6 +1609,34 @@ public class ReceiptServiceImpl
 				{
 					throw new BigBangException(e.getMessage(), e);
 				}
+			}
+		}
+	}
+
+	public void massCreateInternalReceipt(String[] receiptIds)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		CreateInternalReceipt lopCIR;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		for ( i = 0; i < receiptIds.length; i++ )
+		{
+			try
+			{
+				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(receiptIds[i]));
+
+				lopCIR = new CreateInternalReceipt(lobjReceipt.GetProcessID());
+
+				lopCIR.Execute();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
 			}
 		}
 	}

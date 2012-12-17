@@ -32,6 +32,7 @@ public interface ReceiptServiceAsync
 	void createDASRequest(DASRequest request, AsyncCallback<Receipt> callback);
 	void createSignatureRequest(SignatureRequest request, AsyncCallback<Receipt> callback);
 	void sendPayment(String receiptId, AsyncCallback<Receipt> callback);
+	void createInternalReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void sendReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void returnPayment(String receiptId, AsyncCallback<Receipt> callback);
 	void insurerAccouting(String receiptId, AsyncCallback<Receipt> callback);
@@ -41,8 +42,9 @@ public interface ReceiptServiceAsync
 	void serialCreateReceipt(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
 	void massCreatePaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);
 	void massCreateSignatureRequest(String[] receiptIds, int replylimit, AsyncCallback<Void> callback);
-	void massSendReceipt(String[] receiptIds, AsyncCallback<Void> callback);
 	void massSendPayment(String[] receiptIds, AsyncCallback<Void> callback);
+	void massCreateInternalReceipt(String[] receiptIds, AsyncCallback<Void> callback);
+	void massSendReceipt(String[] receiptIds, AsyncCallback<Void> callback);
 	void massInsurerAccounting(String[] receiptIds, InsurerAccountingExtra[] extraInfo, AsyncCallback<Void> callback);
 	void massMediatorAccounting(String[] receiptIds, AsyncCallback<Void> callback);
 	void massReturnToInsurer(String[] receiptIds, AsyncCallback<Void> callback);

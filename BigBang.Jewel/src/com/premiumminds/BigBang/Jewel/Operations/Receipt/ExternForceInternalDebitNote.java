@@ -91,6 +91,8 @@ public class ExternForceInternalDebitNote
 		}
 
 		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+
+		TriggerOp(new ExternForceShortCircuit(GetProcess().getKey()), pdb);
 	}
 
 	public UUID generatePrintSet(SQLServer pdb)

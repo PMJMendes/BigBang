@@ -405,6 +405,7 @@ public class Constants
 	public static final UUID OPID_Receipt_CancelSignatureRequest         = UUID.fromString("1710F073-1A8E-430E-8D75-A0E700CB2C23");
 	public static final UUID OPID_Receipt_AutoBlockPayment               = UUID.fromString("B803BA88-6295-4014-ABAC-A10E00CE3A6A");
 	public static final UUID OPID_Receipt_ExternForceInternalDebitNote   = UUID.fromString("B0D0475F-9628-46A7-9C41-A10E01300E46");
+	public static final UUID OPID_Receipt_CreateInternalReceipt          = UUID.fromString("E870B538-B7AE-4B33-B13E-A12A011BD386");
 
 	//Casualty Operations
 	public static final UUID OPID_Casualty_AutoProcessVents              = UUID.fromString("4DB7EF2A-DB71-4BF4-810B-A02E00FA9F94");
@@ -638,6 +639,7 @@ public class Constants
 	public static final UUID TID_DASForm             = UUID.fromString("4C6C0B65-1FBA-417B-A2F5-A0E500E572B7");
 	public static final UUID TID_Logo                = UUID.fromString("73297AD9-2741-4EFC-87D7-A0FA011A93F5");
 	public static final UUID TID_HealthDebitNote     = UUID.fromString("C4E53620-782C-4F34-B038-A11200E6F58A");
+	public static final UUID TID_HealthReceipt       = UUID.fromString("06801686-C77A-4B90-A74A-A12A0120FE95");
 
 	// Contact Types
 	public static final UUID CtTypeID_General       = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");
