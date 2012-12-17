@@ -91,7 +91,7 @@ public class CreateInternalReceipt
 		lobjDoc.mstrName = "Recibo de Saúde";
 		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 		lobjDoc.midOwnerId = null;
-		lobjDoc.midDocType = Constants.DocID_ReceiptScan;
+		lobjDoc.midDocType = Constants.DocID_DebitNoteReceipt;
 		lobjDoc.mstrText = null;
 		lobjDoc.mobjFile = lobjFile.GetVarData();
 		lobjDoc.marrInfo = new DocInfoData[2];
