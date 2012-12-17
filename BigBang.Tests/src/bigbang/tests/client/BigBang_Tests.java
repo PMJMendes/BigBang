@@ -186,6 +186,7 @@ public class BigBang_Tests
 //		TestReceiptNoDAS.DoTest();
 //		TestReceiptCreateDASRequest.DoTest();
 //		TestReceiptNotPayed.DoTest();
+//		TestReceiptCreateInternal.DoTest();
 //
 //		TestSigReqGet.DoTest();
 //		TestSigReqRepeat.DoTest();
