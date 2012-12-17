@@ -94,4 +94,7 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 	
 	public void returnPayment(String receiptIdm, ResponseHandler<Receipt> handler);
 
+	public void massSendPayment(String[] array,
+			ResponseHandler<Void> responseHandler);
+
 }

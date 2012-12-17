@@ -23,6 +23,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatu
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassInsurerAccountingViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassSendPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSignatureRequestViewPresenter;
@@ -48,6 +49,7 @@ import bigBang.module.receiptModule.client.userInterface.view.DASRequestTasksVie
 import bigBang.module.receiptModule.client.userInterface.view.DASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentNoticeView;
 import bigBang.module.receiptModule.client.userInterface.view.MassInsurerAccountingView;
+import bigBang.module.receiptModule.client.userInterface.view.MassSendPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.MassSendReceiptView;
 import bigBang.module.receiptModule.client.userInterface.view.MassReturnToInsurerView;
 import bigBang.module.receiptModule.client.userInterface.view.MassSignatureRequestView;
@@ -311,6 +313,14 @@ public class ReceiptModule implements Module {
 				};
 				GeneralTasksViewPresenter presenter = new GeneralTasksViewPresenter();
 				presenter.setView(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_SEND_PAYMENT", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MassSendPaymentView view = (MassSendPaymentView) GWT.create(MassSendPaymentView.class);
+				ViewPresenter presenter = new MassSendPaymentViewPresenter(view);
 				return presenter;
 			}
 		});

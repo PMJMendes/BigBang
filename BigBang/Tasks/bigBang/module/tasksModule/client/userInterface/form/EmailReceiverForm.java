@@ -52,6 +52,7 @@ public class EmailReceiverForm extends FormView<Message>{
 				}else{
 					referenceWrapper.setVisible(!event.getValue().equalsIgnoreCase("OLD"));
 					conversationList.setVisible(event.getValue().equalsIgnoreCase("OLD"));
+					requestType.setVisible(!event.getValue().equalsIgnoreCase("OLD"));
 					validate();
 				}
 			}

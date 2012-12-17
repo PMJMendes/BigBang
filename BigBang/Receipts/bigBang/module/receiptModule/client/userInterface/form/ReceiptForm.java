@@ -198,7 +198,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 	}
 
 	@Override
-	public void setInfo(final Receipt info) {
+	public void setInfo(Receipt info) {
 		if(info == null) {
 			clearInfo();
 			return;

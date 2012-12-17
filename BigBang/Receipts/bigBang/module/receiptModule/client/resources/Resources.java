@@ -34,5 +34,9 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/generalTasks.png")
 	ImageResource generalTasksIcon();
+	
+	@Source("images/sendpayment.png")
+	ImageResource sendPaymentIcon();
+
 
 }

@@ -22,7 +22,7 @@ FormValidator<EmailReceiverForm> {
 	}
 
 	private boolean validateType() {
-		return validateGuid(form.requestType, false);
+		return validateGuid(form.requestType, !form.requestType.isVisible());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -33,7 +33,7 @@ FormValidator<EmailReceiverForm> {
 			valid &= validateGuid(form.conversationList, !form.conversationList.isVisible());
 		}else{
 			valid &= validateGuid(form.referenceType, !form.referenceType.isVisible());
-
+			valid &= validateType();
 		}
 		
 		for(int i = 0; i<form.references.length; i++){

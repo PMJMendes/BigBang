@@ -876,7 +876,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		});
 
 	}
-	
+
 	@Override
 	public void massCreateSignatureRequest(String[] receiptIds, int replyLimit,
 			final ResponseHandler<Void> handler) {
@@ -936,6 +936,29 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				super.onResponseFailure(caught);
 			}
 		});
+	}
+
+	@Override
+	public void massSendPayment(String[] array,
+			final ResponseHandler<Void> responseHandler) {
+
+		service.massSendPayment(array, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CREATE_SIGNATURE_REQUEST, null));
+				responseHandler.onResponse(null);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						"Cannot create Signature requests"
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+
 	}
 
 }

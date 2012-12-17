@@ -1,21 +1,10 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
-import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
-import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter.Action;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
@@ -42,12 +31,24 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptSearchDataBroker;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassSendPaymentViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassSendPaymentViewPresenter.Action;
 import bigBang.module.receiptModule.shared.ModuleConstants;
 import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
 
-public class MassSendReceiptView extends View implements MassSendReceiptViewPresenter.Display{
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+public class MassSendPaymentView extends View implements MassSendPaymentViewPresenter.Display{
 
 	protected static enum Filters {
 		TYPES,
@@ -116,7 +117,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.SEND_RECEIPT);
+			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.SEND_PAYMENT_TO_CLIENT);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 			doSearch(false);
@@ -176,11 +177,6 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 
 	}
 
-	@Override
-	protected void initializeView() {
-		return;
-	}
-
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected CheckableReceiptsSearchPanel searchPanel;
 	protected SelectedReceiptsList selectedReceipts;
@@ -188,8 +184,12 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 	protected BigBangOperationsToolBar toolbar;
 	protected Button createPNotice, clearButton;
 
-	public MassSendReceiptView(){
+	@Override
+	protected void initializeView() {
+		return;
+	}
 
+	public MassSendPaymentView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
@@ -223,7 +223,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.SEND_RECEIPTS));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.SEND_PAYMENTS));
 			}
 		});
 
@@ -241,10 +241,10 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 				return null;
 			}
 		};
-		
-		applyPaymentNoticeCreationForm.addSection("Recibos a Enviar");
-		
-		
+
+		applyPaymentNoticeCreationForm.addSection("Pagamentos a Enviar");
+
+
 		VerticalPanel selectedListWrapper = new VerticalPanel();
 		selectedListWrapper.add(new ListHeader("Marcação para Envio"));
 		selectedListWrapper.setSize("100%", "100%");
@@ -263,7 +263,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 			}
 		});
 		selectedReceipts = new SelectedReceiptsList();
-		
+
 		selectedListWrapper.add(selectedReceipts);
 		selectedListWrapper.setCellHeight(selectedReceipts, "100%");
 		wrapper.addEast(selectedListWrapper, 400);
@@ -277,7 +277,6 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 		wrapper.add(receiptWrapper);
 
 	}
-
 	@Override 
 	public void addReceiptToSendList(ReceiptStub value) {
 		this.selectedReceipts.addEntry(value);
@@ -332,7 +331,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 		if(searchPanel.getWorkspaceId() != null){
 			SearchDataBroker<ReceiptStub> broker = this.searchPanel.getSearchBroker();
 			broker.getResults(searchPanel.getWorkspaceId(), 0, -1, new ResponseHandler<Search<ReceiptStub>>() {
-				
+
 				@Override
 				public void onResponse(Search<ReceiptStub> response) {
 					Collection <ReceiptStub> results = response.getResults();
@@ -343,7 +342,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 						}
 					}
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					return;
@@ -381,5 +380,6 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 		clearButton.setEnabled(b);
 		searchPanel.setCheckable(b);
 	}
+
 
 }
