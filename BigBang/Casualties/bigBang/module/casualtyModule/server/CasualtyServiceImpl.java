@@ -47,6 +47,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Casualty.DeleteCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ReopenProcess;
+import com.premiumminds.BigBang.Jewel.Operations.Casualty.ReopenSubCasualty;
 
 public class CasualtyServiceImpl
 	extends SearchServiceBase
@@ -393,6 +394,41 @@ public class CasualtyServiceImpl
 		}
 
 		return SubCasualtyServiceImpl.sGetSubCasualty(lopCSC.mobjData.mid);
+	}
+
+	public SubCasualty reopenSubCasualty(String casualtyId, String subCasualtyId, String motiveId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		ReopenSubCasualty lopRSC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(casualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRSC = new ReopenSubCasualty(lobjCasualty.GetProcessID());
+		lopRSC.midSubCasualty = UUID.fromString(subCasualtyId);
+		lopRSC.midMotive = UUID.fromString(motiveId);
+
+		try
+		{
+			lopRSC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return SubCasualtyServiceImpl.sGetSubCasualty(lopRSC.midSubCasualty);
 	}
 
 	public Casualty closeProcess(String casualtyId)

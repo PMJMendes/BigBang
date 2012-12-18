@@ -17,6 +17,7 @@ public interface CasualtyServiceAsync
 	void sendMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void receiveMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void createSubCasualty(SubCasualty subCasualty, AsyncCallback<SubCasualty> callback);
+	void reopenSubCasualty(String casualtyId, String subCasualtyId, String motiveId, AsyncCallback<SubCasualty> callback);
 	void closeProcess(String casualtyId, AsyncCallback<Casualty> callback);
 	void reopenProcess(String casualtyId, String motiveId, AsyncCallback<Casualty> callback);
 	void deleteCasualty(String casualtyId, String reason, AsyncCallback<Void> callback);
