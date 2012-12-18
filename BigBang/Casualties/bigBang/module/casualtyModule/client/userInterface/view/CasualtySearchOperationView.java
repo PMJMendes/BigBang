@@ -90,7 +90,7 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 
 			@Override
 			public void onCancelRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.SAVE));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.CANCEL));
 
 			}
 			
