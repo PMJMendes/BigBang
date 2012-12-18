@@ -61,3 +61,50 @@ p.PK FKProcess, o.PK FKOperation, '6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5' FKLevel
 from bigbang.tblPNOperations o
 inner join amartins.tblPNProcesses p on p.FKScript=o.FKScript
 where o.PK in ('BF8E24E8-BCD2-4670-BEF2-A12B00EADACF');
+
+update n set NodeCount=1
+from credite_egs.tblPNProcesses p
+inner join credite_egs.tblPNNodes n on n.FKProcess=p.FKParent
+where p.FKScript='80B7A9BC-8710-4063-A99E-A02E01220F4E'
+and p.FKData is not null and p.IsRunning=0
+and n.FKController='92B645E1-519C-42C9-A653-A02E010DA61A' and n.NodeCount=0
+
+update n set NodeCount=1
+from amartins.tblPNProcesses p
+inner join amartins.tblPNNodes n on n.FKProcess=p.FKParent
+where p.FKScript='80B7A9BC-8710-4063-A99E-A02E01220F4E'
+and p.FKData is not null and p.IsRunning=0
+and n.FKController='92B645E1-519C-42C9-A653-A02E010DA61A' and n.NodeCount=0
+
+update n set NodeCount=1
+from credite_egs.tblPNProcesses p
+inner join credite_egs.tblPNNodes n on n.FKProcess=p.PK
+where p.FKScript='80B7A9BC-8710-4063-A99E-A02E01220F4E'
+and p.FKData is not null and p.IsRunning=0
+and n.FKController='2C3830AC-29B3-4CE7-9345-A036010CBBF9' and n.NodeCount=0
+
+update n set NodeCount=1
+from amartins.tblPNProcesses p
+inner join amartins.tblPNNodes n on n.FKProcess=p.PK
+where p.FKScript='80B7A9BC-8710-4063-A99E-A02E01220F4E'
+and p.FKData is not null and p.IsRunning=0
+and n.FKController='2C3830AC-29B3-4CE7-9345-A036010CBBF9' and n.NodeCount=0
+
+update s set FKLevel='7925EF60-80FC-4EA2-96A0-9EB1007EA1FF'
+from credite_egs.tblPNSteps s
+inner join credite_egs.tblPNProcesses p on p.PK=s.FKProcess
+inner join credite_egs.tblPNNodes n on n.FKProcess=p.PK
+where s.FKOperation='BB2E2468-98F0-4B16-B8DA-A02E01085B01'
+and n.FKController='92B645E1-519C-42C9-A653-A02E010DA61A'
+and s.FKLevel='6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5'
+and n.NodeCount>0
+
+update s set FKLevel='7925EF60-80FC-4EA2-96A0-9EB1007EA1FF'
+from amartins.tblPNSteps s
+inner join amartins.tblPNProcesses p on p.PK=s.FKProcess
+inner join amartins.tblPNNodes n on n.FKProcess=p.PK
+where s.FKOperation='BB2E2468-98F0-4B16-B8DA-A02E01085B01'
+and n.FKController='92B645E1-519C-42C9-A653-A02E010DA61A'
+and s.FKLevel='6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5'
+and n.NodeCount>0
+
