@@ -20,10 +20,12 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOper
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyTasksViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.ReopenCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyConversationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyDeleteViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyMarkForClosingViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyRejectCloseViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyReopenViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyTasksViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyReceiveMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtySendMessageViewPresenter;
@@ -42,10 +44,12 @@ import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperation
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyTasksView;
+import bigBang.module.casualtyModule.client.userInterface.view.ReopenCasualtyView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyConversationView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyDeleteView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyMarkForClosingView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyRejectCloseView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReopenView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyTasksView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReceiveMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtySendMessageView;
@@ -280,6 +284,24 @@ public class CasualtyModule implements Module {
 				};
 				GeneralTasksViewPresenter presenter = new GeneralTasksViewPresenter();
 				presenter.setView(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("REOPEN", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ReopenCasualtyView view = (ReopenCasualtyView) GWT.create(ReopenCasualtyView.class);
+				ReopenCasualtyViewPresenter presenter = new ReopenCasualtyViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_REOPEN", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyReopenView view = (SubCasualtyReopenView) GWT.create(SubCasualtyReopenView.class);
+				SubCasualtyReopenViewPresenter presenter = new SubCasualtyReopenViewPresenter(view);
 				return presenter;
 			}
 		});
