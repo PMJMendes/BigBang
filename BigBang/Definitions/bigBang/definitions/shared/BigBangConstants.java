@@ -75,6 +75,7 @@ public class BigBangConstants {
 		public static final String FILE_SPECIFICATIONS = "5514358C-2FCF-4769-981F-3C11BB25BA76";
 		public static final String INFO_REQUEST_CANCEL_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 		public static final String CONVERSATION_CLOSING_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
+		public static final String CASUALTY_SUB_CASUALTY_REOPEN = "F4E500C7-5EFE-4A8B-AD8A-A12B00E0CDC1";
 	}
 	
 	public static class TypifiedListValues {
@@ -205,6 +206,7 @@ public class BigBangConstants {
 			public static final String NOT_PAID_INDICATION = "3323CA57-827F-4EE5-94B7-A01300CDD793";
 			public static final String RETURN_PAYMENT = "C0451D21-BE44-47D7-9745-A0B000FB7C49";
 			public static final String SET_ORIGINAL_IMAGE = "E99A9029-BBF0-4E76-AC49-A01300C4FB8C";
+			public static final String RECEIPT_GENERATION = "E870B538-B7AE-4B33-B13E-A12A011BD386";
 
 			public static class ReceiptType {
 				public static final String CONTINUING = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";
@@ -248,6 +250,8 @@ public class BigBangConstants {
 			public static final String CREATE_SUB_CASUALTY = "5E84E2C5-5461-4D0D-9B77-A02E0107D0EA";
 			public static final String CREATE_MANAGER_TRANSFER = "C6E44C82-211F-494B-BC2A-A02E0104E0FB";
 			public static final String CONVERSATION = "59FB24D3-979B-4C2E-A69E-A02E0104A04D";
+			public static final String REOPEN = "1AEB3940-56CC-41D4-BC29-A12B00DE69D5";
+			public static final String REOPEN_SUB_CASUALTY = "BB2E2468-98F0-4B16-B8DA-A02E01085B01";
 			}
 		
 		public static class SubCasualtyProcess {

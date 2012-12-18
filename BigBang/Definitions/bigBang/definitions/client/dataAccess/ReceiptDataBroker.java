@@ -97,4 +97,10 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 	public void massSendPayment(String[] array,
 			ResponseHandler<Void> responseHandler);
 
+	void massGenerateReceipt(String[] array,
+			ResponseHandler<Void> responseHandler);
+
+	void generateReceipt(String receiptId,
+			ResponseHandler<Receipt> responseHandler);
+
 }

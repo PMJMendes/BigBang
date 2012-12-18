@@ -110,6 +110,16 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 			public void onReceiveMessage() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.RECEIVE_MESSAGE));
 			}
+
+			@Override
+			public void onSubCasualtyReopen() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.SUB_CASUALTY_REOPEN));
+			}
+
+			@Override
+			public void onReopen() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.REOPEN));			
+			}
 			
 		};
 		this.form = new CasualtyForm();
@@ -228,6 +238,16 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	@Override
 	public void allowReceiveMessage(boolean b) {
 		operationsToolbar.allowReceiveMessage(b);
+	}
+
+	@Override
+	public void allowReopen(boolean b) {
+		operationsToolbar.allowReopen(b);
+	}
+
+	@Override
+	public void allowReopenSubCasualty(boolean hasPermission) {
+		operationsToolbar.allowReopenSubCasualty(hasPermission);
 	}
 
 }

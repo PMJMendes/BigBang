@@ -32,4 +32,9 @@ public interface CasualtyDataBroker extends DataBrokerInterface<Casualty> {
 	void sendMessage(Conversation conversation, ResponseHandler<Conversation> handler);
 	
 	void receiveMessage(Conversation conversation, ResponseHandler<Conversation> handler);
+
+	public void reOpen(String casualtyId, String motive, ResponseHandler<Casualty> responseHandler);
+
+	void subCasualtyReopen(String casualtyId, String subCasualtyId,
+			String motive, ResponseHandler<SubCasualty> responseHandler);
 }

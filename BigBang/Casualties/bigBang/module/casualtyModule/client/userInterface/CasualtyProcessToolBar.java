@@ -16,8 +16,11 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 	//REQUESTS
 	protected MenuItem sendMessage;
 	
+	//EXECUTE
+	protected MenuItem reopenSubCasualty;
+	
 	//ADMIN
-	protected MenuItem delete, close;
+	protected MenuItem delete, close, reopen;
 
 	private MenuItem receiveMessage;
 
@@ -80,49 +83,35 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.ADMIN, delete);
+		
+		adminSubMenu.addSeparator();
+		
+		reopen = new MenuItem("Reabrir", new Command(){
 
-		//		MenuBar executeSubMenu = new MenuBar(true);
-		//		MenuItem executeMenuItem = new MenuItem("Sinistro", executeSubMenu);
-		//		executeSubMenu.addItem("Pedir Informação ou Documento ao Cliente", new Command() {
-		//
-		//			@Override
-		//			public void execute() {
-		//				// TODO Auto-generated method stub
-		//
-		//			}
-		//		});
-		//		
-		//		addItem(executeMenuItem);
-		//		
-		//		MenuBar casualtySubMenu = new MenuBar(true);
-		//		MenuItem policyMenuItem = new MenuItem("Outras", casualtySubMenu);
-		//		casualtySubMenu.addItem("Encerrar", new Command() {
-		//
-		//			@Override
-		//			public void execute() {
-		//				// TODO Auto-generated method stub
-		//
-		//			}
-		//		});
-		//		casualtySubMenu.addItem("Reabrir", new Command() {
-		//
-		//			@Override
-		//			public void execute() {
-		//				// TODO Auto-generated method stub
-		//
-		//			}
-		//		});
-		//		casualtySubMenu.addItem("Eliminar", new Command() {
-		//
-		//			@Override
-		//			public void execute() {
-		//				// TODO Auto-generated method stub
-		//
-		//			}
-		//		});
-		//		
-		//		addItem(policyMenuItem);
+			@Override
+			public void execute() {
+				onReopen();
+			}
+			
+		});
+		addItem(SUB_MENU.ADMIN, reopen);
+		
+		reopenSubCasualty = new MenuItem("Reabrir Sub-Sinistro", new Command(){
+
+			@Override
+			public void execute() {
+				onSubCasualtyReopen();
+			}
+			
+		});
+		addItem(SUB_MENU.EXECUTE, reopenSubCasualty);
+
+		
 	}
+
+	public abstract void onSubCasualtyReopen();
+
+	public abstract void onReopen();
 
 	public abstract void onReceiveMessage();
 
@@ -159,6 +148,17 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 
 	public void allowReceiveMessage(boolean b) {
 		receiveMessage.setEnabled(b);
+	}
+
+	public void allowReopen(boolean b) {
+		reopen.setEnabled(b);
+		if(b){
+			adminMenuItem.setEnabled(true);
+		}
+	}
+
+	public void allowReopenSubCasualty(boolean hasPermission) {
+		reopenSubCasualty.setEnabled(hasPermission);
 	}
 
 }

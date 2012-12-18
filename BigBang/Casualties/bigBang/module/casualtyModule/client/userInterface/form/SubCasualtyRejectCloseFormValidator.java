@@ -21,7 +21,7 @@ public class SubCasualtyRejectCloseFormValidator extends
 
 
 	private boolean validateReason() {
-		return validateGuid(form.reason, false); 
+		return validateString(form.reason, 1, 250, false); 
 	}
 	
 }

@@ -339,4 +339,50 @@ CasualtyDataBroker {
 
 	}
 
+	@Override
+	public void reOpen(String casualtyId, String motive,
+			final ResponseHandler<Casualty> responseHandler) {
+		service.reopenProcess(casualtyId, motive, new BigBangAsyncCallback<Casualty>() {
+
+			@Override
+			public void onResponseSuccess(Casualty result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.REOPEN, result.id));
+				responseHandler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not reopen casualty")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		});
+
+	}
+
+	@Override
+	public void subCasualtyReopen(String casualtyId, String subCasualtyId,
+			String motive, final ResponseHandler<SubCasualty> responseHandler) {
+
+		service.reopenSubCasualty(casualtyId, subCasualtyId, motive, new BigBangAsyncCallback<SubCasualty>() {
+
+			@Override
+			public void onResponseSuccess(SubCasualty result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.REOPEN_SUB_CASUALTY, result.id));
+				responseHandler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not reopen casualty")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		});
+
+	}
+
+
 }

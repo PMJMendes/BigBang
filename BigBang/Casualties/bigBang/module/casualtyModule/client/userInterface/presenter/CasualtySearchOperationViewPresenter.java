@@ -46,7 +46,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		DELETE,
 		CLOSE,
 		CREATE_SUB_CASUALTY,
-		TRANSFER_MANAGER, SEND_MESSAGE, RECEIVE_MESSAGE
+		TRANSFER_MANAGER, SEND_MESSAGE, RECEIVE_MESSAGE, SUB_CASUALTY_REOPEN, REOPEN
 	}
 
 	public interface Display {
@@ -74,6 +74,8 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		void addEntryToList(CasualtySearchPanelListEntry entry);
 		void allowSendMessage(boolean b);
 		void allowReceiveMessage(boolean b);
+		void allowReopen(boolean b);
+		void allowReopenSubCasualty(boolean hasPermission);
 	}
 
 	protected CasualtyDataBroker broker;
@@ -161,6 +163,11 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 				case RECEIVE_MESSAGE:
 					onReceiveMessage();
 					break;
+				case REOPEN:
+					onReopen();
+					break;
+				case SUB_CASUALTY_REOPEN:
+					onSubCasualtyReopen();
 				}
 			}
 		});
@@ -197,6 +204,18 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 
 		bound = true;
+	}
+
+	protected void onSubCasualtyReopen() {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "subcasualtyreopen");
+		NavigationHistoryManager.getInstance().go(navItem);				
+	}
+
+	protected void onReopen() {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "reopen");
+		NavigationHistoryManager.getInstance().go(navItem);		
 	}
 
 	protected void onReceiveMessage() {
@@ -257,16 +276,15 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 				view.getForm().setReadOnly(true);
 				view.setSaveModeEnabled(false);
 
-				//TODO PERMISSIONS
 				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.UPDATE_CASUALTY));
 				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.DELETE_CASUALTY));
 				view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY));
 				view.allowCreateSubCasualty(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_SUB_CASUALTY));
 				view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER));
-				//TODO REQUESTS 
-				view.allowSendMessage(true);
-				view.allowReceiveMessage(true);
-				//TODO REQUESTS 
+				view.allowSendMessage(PermissionChecker.hasPermission(response,BigBangConstants.OperationIds.CasualtyProcess.CONVERSATION));
+				view.allowReceiveMessage(PermissionChecker.hasPermission(response,BigBangConstants.OperationIds.CasualtyProcess.CONVERSATION));
+				view.allowReopen(PermissionChecker.hasPermission(response,BigBangConstants.OperationIds.CasualtyProcess.REOPEN));
+				view.allowReopenSubCasualty(PermissionChecker.hasPermission(response,BigBangConstants.OperationIds.CasualtyProcess.REOPEN_SUB_CASUALTY));
 				view.getForm().setValue(response);
 				ensureListedAndSelected(response);
 			}

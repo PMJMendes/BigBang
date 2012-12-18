@@ -202,6 +202,12 @@ private void initializeController(){
 			}else if(show.equalsIgnoreCase("conversationclose")){
 				present("CONVERSATION_CLOSE", parameters);
 				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("reopen")){
+				present("REOPEN", parameters);
+				view.showOverlayViewContainer(true);
+			}else if(show.equalsIgnoreCase("subcasualtyreopen")){
+				present("SUB_CASUALTY_REOPEN", parameters);
+				view.showOverlayViewContainer(true);
 			}
 		}
 
