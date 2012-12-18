@@ -51,8 +51,8 @@ public class BigBangPermissionServiceImpl
 				lobjAux = new Permission();
 				lobjAux.id = larrOps[i].getKey().toString();
 				lobjStep = lobjProcess.GetOperation(larrOps[i].getKey(), ldb);
-				if ( (!lobjProcess.IsRunning()) || (lobjStep == null) ||
-						(Jewel.Petri.Constants.LevelID_Invalid.equals(lobjStep.GetLevel())) )
+				if ( (!lobjProcess.IsRunning() && !Jewel.Petri.Constants.LevelID_Override.equals(lobjStep.GetLevel())) ||
+						(lobjStep == null) || (Jewel.Petri.Constants.LevelID_Invalid.equals(lobjStep.GetLevel())) )
 					lobjAux.instanceId = null;
 				else
 					lobjAux.instanceId = lobjStep.getKey().toString();

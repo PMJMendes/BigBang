@@ -46,6 +46,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.DeleteCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Casualty.ReopenProcess;
 
 public class CasualtyServiceImpl
 	extends SearchServiceBase
@@ -418,6 +419,40 @@ public class CasualtyServiceImpl
 		try
 		{
 			lobjDC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetCasualty(lobjCasualty.getKey());
+	}
+
+	public Casualty reopenProcess(String casualtyId, String motiveId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		ReopenProcess lobjRP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(casualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjRP = new ReopenProcess(lobjCasualty.GetProcessID());
+		lobjRP.midMotive = UUID.fromString(motiveId);
+
+		try
+		{
+			lobjRP.Execute();
 		}
 		catch (Throwable e)
 		{

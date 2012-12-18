@@ -38,6 +38,7 @@ public interface CasualtyService extends SearchService {
 	public SubCasualty createSubCasualty(SubCasualty subCasualty) throws SessionExpiredException, BigBangException;
 
 	public Casualty closeProcess(String casualtyId) throws SessionExpiredException, BigBangException;
+	public Casualty reopenProcess(String casualtyId, String motiveId) throws SessionExpiredException, BigBangException;
 
 	public void deleteCasualty(String casualtyId, String reason) throws SessionExpiredException, BigBangException;
 

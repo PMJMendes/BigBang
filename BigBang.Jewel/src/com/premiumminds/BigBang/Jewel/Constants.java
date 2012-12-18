@@ -141,6 +141,7 @@ public class Constants
 	public static final UUID ObjID_PaymentType              = UUID.fromString("C480B530-C6E2-49A0-BE15-A02200E88280");
 	public static final UUID ObjID_Bank                     = UUID.fromString("9954EADC-D7BE-4858-B1DE-A02200F45247");
 	public static final UUID ObjID_DamageType               = UUID.fromString("6D2B02AF-A092-475F-85C7-A035012321FE");
+	public static final UUID ObjID_CasualtyReopenMotives    = UUID.fromString("F4E500C7-5EFE-4A8B-AD8A-A12B00E0CDC1");
 
 	public static final UUID ObjID_FieldType                = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues              = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
@@ -432,6 +433,8 @@ public class Constants
 	public static final UUID OPID_Casualty_UndoCloseProcess              = UUID.fromString("CAF2B2EF-7E3C-4C94-8DC1-A02E010983D6");
 	public static final UUID OPID_Casualty_DeleteCasualty                = UUID.fromString("21AEC620-C547-404A-8956-A02E0109A821");
 	public static final UUID OPID_Casualty_ExternResumeCasualty          = UUID.fromString("FD65F22E-C32E-43F0-BCAA-A02E0109D010");
+	public static final UUID OPID_Casualty_ReopenProcess                 = UUID.fromString("1AEB3940-56CC-41D4-BC29-A12B00DE69D5");
+	public static final UUID OPID_Casualty_UndoReopenProcess             = UUID.fromString("0285FC21-45F1-4EFF-BAEF-A12B00DF7CCA");
 
 	//SubCasualty Operations
 	public static final UUID OPID_SubCasualty_AutoProcessSubs            = UUID.fromString("B7E57ED8-3FC1-45D8-9068-A03600FA2A46");

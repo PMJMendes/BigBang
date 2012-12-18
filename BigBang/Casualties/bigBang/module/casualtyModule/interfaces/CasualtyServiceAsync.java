@@ -18,6 +18,7 @@ public interface CasualtyServiceAsync
 	void receiveMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void createSubCasualty(SubCasualty subCasualty, AsyncCallback<SubCasualty> callback);
 	void closeProcess(String casualtyId, AsyncCallback<Casualty> callback);
+	void reopenProcess(String casualtyId, String motiveId, AsyncCallback<Casualty> callback);
 	void deleteCasualty(String casualtyId, String reason, AsyncCallback<Void> callback);
 	void massCreateManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 }
