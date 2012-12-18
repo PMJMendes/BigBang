@@ -31,7 +31,7 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 		REPORT,
 		MASS_RETURN_TO_INSURER,
 		MASS_CREATE_PAYMENT_NOTICE,
-		GENERAL_TASKS, MASS_SEND_PAYMENT
+		GENERAL_TASKS, MASS_SEND_PAYMENT, MASS_RECEIPT_GENERATION
 	}
 
 	public static interface Display {
@@ -133,7 +133,12 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 						break;
 					case MASS_SEND_PAYMENT:
 						item.pushIntoStackParameter("display", "masssendpayment");
+						break;
+					case MASS_RECEIPT_GENERATION:
+						item.pushIntoStackParameter("display", "massreceiptgeneration");
+						break;
 					}
+					
 				}
 
 				NavigationHistoryManager.getInstance().go(item);
@@ -193,6 +198,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 					}else if(display.equalsIgnoreCase("masssendpayment")){
 						view.selectOperation(SectionOperation.MASS_SEND_PAYMENT);
 						present("MASS_SEND_PAYMENT", parameters);
+					}else if(display.equalsIgnoreCase("massreceiptgeneration")){
+						view.selectOperation(SectionOperation.MASS_RECEIPT_GENERATION);
+						present("MASS_RECEIPT_GENERATION", parameters);
 					}
 					else{
 						present("RECEIPT_OPERATIONS", parameters, true);

@@ -3,11 +3,10 @@ package bigBang.module.receiptModule.client.dataAccess;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
-import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -946,7 +945,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CREATE_SIGNATURE_REQUEST, null));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.SEND_PAYMENT_TO_CLIENT, null));
 				responseHandler.onResponse(null);
 			}
 
@@ -957,6 +956,55 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});
 				super.onResponseFailure(caught);
 			}
+		});
+
+	}
+	
+	@Override
+	public void massGenerateReceipt(String[] array,
+			final ResponseHandler<Void> responseHandler) {
+		
+		service.massCreateInternalReceipt(array, new BigBangAsyncCallback<Void>() {
+			
+			@Override
+			public void onResponseSuccess(Void result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.RECEIPT_GENERATION, null));
+				responseHandler.onResponse(null);
+				
+			}
+		
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						"Cannot generate receipts"
+				});
+				super.onResponseFailure(caught);
+			}
+		
+		});
+		
+	}
+	
+	@Override
+	public void generateReceipt(final String receiptId,
+			final ResponseHandler<Receipt> responseHandler) {
+		service.createInternalReceipt(receiptId, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.RECEIPT_GENERATION, receiptId));
+				responseHandler.onResponse(null);
+				
+			}
+		
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						"Cannot generate receipts"
+				});
+				super.onResponseFailure(caught);
+			}
+			
 		});
 
 	}

@@ -49,7 +49,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SEND_RECEIPT,
 		INSURER_ACCOUNTING, AGENT_ACCOUNTING,
 		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY, REQUEST_DAS, NOT_PAYED_INDICATION,
-		RETURN_PAYMENT
+		RETURN_PAYMENT, GENERATE_RECEIPT
 	}
 
 	public interface Display {
@@ -80,6 +80,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowSetDASDesnecessary(boolean hasPermission);
 		void allowSetNotPaid(boolean hasPermission);
 		void allowReturnPayment(boolean hasPermission);
+		void allowGenerateReceipt(boolean hasPermission);
 		//Children Lists
 		//TODO
 
@@ -225,6 +226,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case RETURN_PAYMENT:
 					returnPayment();
 					break;
+				case GENERATE_RECEIPT:
+					generateReceipt();
+					break;
 				}
 
 			}
@@ -277,6 +281,24 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void generateReceipt() {
+		receiptBroker.generateReceipt(receiptId, new ResponseHandler<Receipt>() {
+
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo emitido com sucesso."), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível emitir o recibo."), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();								
+			}
+		});
+		
 	}
 
 	protected void notPayedIndication() {
@@ -476,6 +498,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowRequestDAS(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_DAS_REQUEST));
 				view.allowSetNotPaid(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.NOT_PAID_INDICATION));
 				view.allowReturnPayment(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RETURN_PAYMENT));
+				view.allowGenerateReceipt(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RECEIPT_GENERATION));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

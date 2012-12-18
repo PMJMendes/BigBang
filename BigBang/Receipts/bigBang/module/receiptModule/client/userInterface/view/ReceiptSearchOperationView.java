@@ -206,6 +206,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 			public void onReturnPayment() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.RETURN_PAYMENT));
 			}
+
+			@Override
+			public void onGenerateReceipt() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.GENERATE_RECEIPT));
+			}
 			
 		};
 		formWrapper.add(operationsToolbar);
@@ -402,6 +407,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	public void addEntryToList(Entry entry) {
 		searchPanel.add(0, entry);
 		entry.setSelected(true, false);
+	}
+
+	@Override
+	public void allowGenerateReceipt(boolean hasPermission) {
+		operationsToolbar.allowGenerateReceipt(hasPermission);
 	}
 
 }

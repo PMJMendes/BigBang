@@ -30,7 +30,8 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	protected MenuItem sendPaymentToAgency;
 	//mediator
 	protected MenuItem sendPaymentToMediator;
-
+	//other
+	protected MenuItem generateReceipt;
 	//DATA
 	protected MenuItem receivePhysicalReceipt;
 	protected MenuItem associateWithDebitNote;
@@ -179,7 +180,19 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, sendPaymentToMediator);
+		
+		this.executeSubMenu.addSeparator();
+		
+		generateReceipt = new MenuItem("Emissão de Recibo", new Command(){
+			
+			@Override
+			public void execute() {
+				onGenerateReceipt();
+			}
+			
+		});
 
+		addItem(SUB_MENU.EXECUTE, generateReceipt);
 		//DATA
 		receivePhysicalReceipt = new MenuItem("Associar Imagem", new Command() { //TODO remove or add
 
@@ -260,6 +273,8 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.ADMIN, deleteReceipt);
 
 	}
+
+	public abstract void onGenerateReceipt();
 
 	public abstract void onDelete();
 
@@ -377,6 +392,10 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	
 	public void allowReturnPayment(boolean hasPermission) {
 		this.returnPayment.setEnabled(hasPermission);
+	}
+
+	public void allowGenerateReceipt(boolean hasPermission) {
+		this.generateReceipt.setEnabled(hasPermission);
 	}
 
 }

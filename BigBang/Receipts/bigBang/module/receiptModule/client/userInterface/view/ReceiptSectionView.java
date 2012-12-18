@@ -68,6 +68,7 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 		addDockItem("Avisos de Cobrança", r.sendReceiptIcon(), SectionOperation.MASS_CREATE_PAYMENT_NOTICE);
 		addDockItem("Pedidos de Assinatura", r.signatureRequestIcon(), SectionOperation.MASS_SIGNATURE_REQUEST);
 		addDockItem("Cobranças", r.paymentIcon(), SectionOperation.SERIAL_RECEIPT_MARK_FOR_PAYMENT);
+		addDockItem("Emissão de Recibos", r.receiptGenerationIcon(), SectionOperation.MASS_RECEIPT_GENERATION);
 		addDockItem("Prestações de Contas", r.accountabilityIcon(), SectionOperation.MASS_INSURER_ACCOUNTING);
 		addDockItem("Retrocessões", r.accountabilityIcon(), SectionOperation.MASS_AGENT_ACCOUNTING);
 		addDockItem("Envio dos Recibos", r.sendReceiptIcon(), SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT);
