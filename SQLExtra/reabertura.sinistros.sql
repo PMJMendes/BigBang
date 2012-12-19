@@ -108,3 +108,14 @@ and n.FKController='92B645E1-519C-42C9-A653-A02E010DA61A'
 and s.FKLevel='6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5'
 and n.NodeCount>0
 
+update n set NodeCount=0
+from credite_egs.tblPNProcesses p
+inner join credite_egs.tblPNNodes n on n.FKProcess=p.PK
+where n.FKController='EC6BA1E1-9831-4B9E-9807-A036010C956F' and n.NodeCount>0
+and p.IsRunning=0
+
+update n set NodeCount=0
+from amartins.tblPNProcesses p
+inner join amartins.tblPNNodes n on n.FKProcess=p.PK
+where n.FKController='EC6BA1E1-9831-4B9E-9807-A036010C956F' and n.NodeCount>0
+and p.IsRunning=0
