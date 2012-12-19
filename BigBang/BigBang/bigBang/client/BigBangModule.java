@@ -191,7 +191,7 @@ public class BigBangModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ConversationTasksView view = (ConversationTasksView) GWT.create(ConversationTasksView.class);
+				ConversationTasksView<?> view = (ConversationTasksView<?>) GWT.create(ConversationTasksView.class);
 				ConversationTasksViewPresenter presenter = new ConversationTasksViewPresenter(view);
 				return presenter;
 			}

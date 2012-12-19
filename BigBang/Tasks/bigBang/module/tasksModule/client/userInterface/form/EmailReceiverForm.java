@@ -47,6 +47,8 @@ public class EmailReceiverForm extends FormView<Message>{
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
+				conversationList.clear();
+				
 				if(event.getValue() == null){
 					newOrOldSubject.setValue("OLD");
 				}else{
@@ -92,7 +94,7 @@ public class EmailReceiverForm extends FormView<Message>{
 
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
 		addFormField(requestType);
-		
+
 		expectsResponse = new RadioButtonFormField("Espera resposta");
 		expectsResponse.addOption("YES", "Sim");
 		expectsResponse.addOption("NO", "Não");
@@ -105,12 +107,12 @@ public class EmailReceiverForm extends FormView<Message>{
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
+				replyLimit.clear();
+
 				if(event.getValue().equals("YES")){
-					replyLimit.clear();
 					replyLimit.setEditable(true);
 					replyLimit.setReadOnly(false);
 				}else{
-					replyLimit.clear();
 					replyLimit.setEditable(false);
 					replyLimit.setReadOnly(true);
 				}
@@ -189,7 +191,7 @@ public class EmailReceiverForm extends FormView<Message>{
 		Message message = new Message();
 		message.conversationId = conversationList.getValue();
 		message.kind = Kind.EMAIL;
-		
+
 		return message;
 
 	}
@@ -231,10 +233,10 @@ public class EmailReceiverForm extends FormView<Message>{
 		expectsResponse.setValue("YES");
 		newOrOldSubject.setValue("OLD");
 	}
-	
+
 	public String getRequestType(){
 		return requestType.getValue();
 	}
 
-	
+
 }

@@ -77,10 +77,14 @@ public class EmailViewPresenter implements ViewPresenter{
 
 		String getRequestType();
 
+		void enableRefresh(boolean b);
+
+		void removeSelected();
+
 	}
 
 	public enum Action{
-		GET_ALL_EMAILS, CANCEL, CONFIRM
+		GET_ALL_EMAILS, CANCEL, CONFIRM, REFRESH
 
 	}
 
@@ -156,6 +160,10 @@ public class EmailViewPresenter implements ViewPresenter{
 					break;
 				case GET_ALL_EMAILS:
 					getAllEmails();
+					break;
+				case REFRESH:
+					getEmails();
+					break;
 				}
 			}
 		});
@@ -164,6 +172,9 @@ public class EmailViewPresenter implements ViewPresenter{
 
 	protected void getAllEmails() {
 		view.clearList();
+		view.clear();
+		view.enableGetAll(false);
+		view.enableRefresh(false);
 		service.getItemsAll(new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
@@ -172,7 +183,8 @@ public class EmailViewPresenter implements ViewPresenter{
 				for(int i=0; i<result.length; i++){
 					view.addEmailEntry(result[i]);
 				}
-				view.enableGetAll(true);				
+				view.enableGetAll(true);		
+				view.enableRefresh(true);
 			}
 
 			@Override
@@ -214,8 +226,7 @@ public class EmailViewPresenter implements ViewPresenter{
 					public void onResponse(Conversation response) {
 						view.clear();
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem recebida com sucesso"), TYPE.TRAY_NOTIFICATION));
-						view.clearList();
-						getEmails();
+						removeSelectedItem();
 					}
 
 					@Override
@@ -231,8 +242,7 @@ public class EmailViewPresenter implements ViewPresenter{
 					public void onResponse(Conversation response) {
 						view.clear();
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem recebida com sucesso"), TYPE.TRAY_NOTIFICATION));
-						view.clearList();
-						getEmails();
+						removeSelectedItem();
 					}
 
 					@Override
@@ -249,6 +259,10 @@ public class EmailViewPresenter implements ViewPresenter{
 		}
 	}
 
+	protected void removeSelectedItem() {
+		view.removeSelected();
+	}
+
 	protected void onCancel() {
 		view.clear();
 	}
@@ -259,13 +273,18 @@ public class EmailViewPresenter implements ViewPresenter{
 		view.clear();
 		view.getMessageForm().setReadOnly(true);
 		view.enableGetAll(false);
+		view.enableRefresh(false);
 		getConversations();
 		getEmails();
 
 	}
 
 	private void getEmails() {
+		view.clear();
 		view.clearList();
+		view.enableGetAll(false);
+		view.enableRefresh(false);
+		
 		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
@@ -274,7 +293,8 @@ public class EmailViewPresenter implements ViewPresenter{
 				for(int i=0; i<result.length; i++){
 					view.addEmailEntry(result[i]);
 				}
-				view.enableGetAll(true);				
+				view.enableGetAll(true);		
+				view.enableRefresh(true);
 			}
 
 			@Override

@@ -4,10 +4,12 @@ import org.gwt.mosaic.ui.client.ToolButton;
 import org.gwt.mosaic.ui.client.util.ButtonHelper;
 import org.gwt.mosaic.ui.client.util.ButtonHelper.ButtonLabelType;
 
+import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.view.View;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -18,9 +20,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.view.View;
 
 public class ListHeader extends View {
 
@@ -99,7 +98,7 @@ public class ListHeader extends View {
 		setLeftWidget(refreshButton);
 	}
 
-	public HasClickHandlers getRefreshButton() {
+	public PushButton getRefreshButton() {
 		return refreshButton;
 	}
 

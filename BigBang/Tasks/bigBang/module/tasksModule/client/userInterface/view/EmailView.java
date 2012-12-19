@@ -51,6 +51,7 @@ public class EmailView extends View implements EmailViewPresenter.Display{
 		leftWrapper.setSize("100%", "100%");
 
 		header = new ListHeader("Lista de E-mails");
+		header.showRefreshButton();
 		header.showNewButton("Obter todos (lento)");
 		header.getNewButton().setVisible(true);
 		header.getNewButton().setEnabled(false);
@@ -59,6 +60,14 @@ public class EmailView extends View implements EmailViewPresenter.Display{
 			@Override
 			public void onClick(ClickEvent event) {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<EmailViewPresenter.Action>(EmailViewPresenter.Action.GET_ALL_EMAILS));
+			}
+		});
+		
+		header.getRefreshButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<EmailViewPresenter.Action>(EmailViewPresenter.Action.REFRESH));
 			}
 		});
 		emails = new FilterableList<ExchangeItemStub>();
@@ -173,11 +182,13 @@ public class EmailView extends View implements EmailViewPresenter.Display{
 	
 	@Override
 	public void clear(){
-		toolbar.lockAll();
+		toolbar.allowCancel(false);
+		toolbar.allowReceive(false);
 		centerForm.clearInfo();
 		form.clearInfo();
 		attachments.clear();
-	}
+		form.setReadOnly(true);
+	}	
 	
 	@Override
 	public Message.AttachmentUpgrade[] getChecked() {
@@ -243,5 +254,20 @@ public class EmailView extends View implements EmailViewPresenter.Display{
 	@Override
 	public String getRequestType() {
 		return form.getRequestType();
+	}
+
+
+	@Override
+	public void enableRefresh(boolean b) {
+		header.getRefreshButton().setEnabled(b);
+	}
+
+
+	@Override
+	public void removeSelected() {
+		for(ValueSelectable<ExchangeItemStub>  email: emails.getSelected()){
+			emails.remove(email);
+			break;
+		}
 	}
 }
