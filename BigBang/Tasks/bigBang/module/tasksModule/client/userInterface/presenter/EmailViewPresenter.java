@@ -201,6 +201,7 @@ public class EmailViewPresenter implements ViewPresenter{
 			conversation.id = conversation.messages[0].conversationId;
 
 			conversation.messages[0].emailId = item.id;
+			conversation.messages[0].incomingAttachments = view.getChecked();
 			conversation.parentDataObjectId = view.getParentId();
 			conversation.parentDataTypeId =  view.getParentType();
 			conversation.requestTypeId = view.getRequestType();
