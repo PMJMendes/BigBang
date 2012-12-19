@@ -112,7 +112,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		showAll();
 		this.setSaveModeEnabled(false);
 	}
-
+	
 	/**
 	 * Adds a menu item to a submenu identified in the argument
 	 * @param submenu The submenu identification
@@ -155,16 +155,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	 * @param available If true, the edit mode will be available, otherwise it won't.
 	 */
 	public void setEditionAvailable(boolean available){
-		if(!available)
-			setSaveModeEnabled(false);
-		for(MenuItem i : getItems()){
-			if(i == this.saveMenuItem){
-				if(!available)
-					this.saveMenuItem.setEnabled(false);
-			}else{
-				i.setEnabled(available);
-			}
-		}
+		editCancelMenuItem.setEnabled(available);
 	}
 
 	/**
@@ -239,6 +230,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	
 	public void lockAll(){
 		lockMenuBarItems(this, true);
+		lockNonSaveOptions(false);
 	}
 	
 	protected void lockMenuBarItems(OperationsToolBar bar, boolean lock){
@@ -258,11 +250,11 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	}
 	
 	public void lockNonSaveOptions(boolean b) {
-		adminMenuItem.setEnabled(!b);
-		createMenuItem.setEnabled(!b);
-		dataMenuItem.setEnabled(!b);
-		executeMenuItem.setEnabled(!b);
-		requestMenuItem.setEnabled(!b);
+		for(MenuItem item : this.getMenuItems()) {
+			if (!item.equals(editCancelMenuItem) && !item.equals(saveMenuItem)){
+				item.setEnabled(!b);
+			}
+		}
 	}
 
 	/**

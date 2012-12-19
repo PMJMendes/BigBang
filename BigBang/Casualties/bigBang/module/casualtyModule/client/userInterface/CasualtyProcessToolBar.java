@@ -152,9 +152,6 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 
 	public void allowReopen(boolean b) {
 		reopen.setEnabled(b);
-		if(b){
-			adminMenuItem.setEnabled(true);
-		}
 	}
 
 	public void allowReopenSubCasualty(boolean hasPermission) {
