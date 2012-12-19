@@ -44,7 +44,6 @@ public class ExternReopenProcess
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		GetProcess().Restart(pdb);
 	}
 
 	public String UndoDesc(String pstrLineBreak)

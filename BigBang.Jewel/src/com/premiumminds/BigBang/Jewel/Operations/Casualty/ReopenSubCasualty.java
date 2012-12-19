@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
@@ -63,6 +64,8 @@ public class ReopenSubCasualty
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjSubCasualty.GetProcessID()).Restart(pdb);
 
 		lopERP = new ExternReopenProcess(lobjSubCasualty.GetProcessID());
 		lopERP.mstrMotive = mstrMotive;
