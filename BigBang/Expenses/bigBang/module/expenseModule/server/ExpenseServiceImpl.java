@@ -827,14 +827,16 @@ public class ExpenseServiceImpl
 	public void massNotifyClient(String[] expenseIds)
 		throws SessionExpiredException, BigBangException
 	{
-		HashMap<UUID, ArrayList<UUID>> larrExpenses;
+		HashMap<String, ArrayList<UUID>> larrExpenses;
 		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		UUID lidKey;
+		String lstrKey;
 		IProcess lobjProcess;
 		UUID lidClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
 		UUID lidSet;
-		UUID lidSetClient;
+		UUID lidSetObject;
 		DocOps lobjDocOps;
 		NotifyClient lopNC;
 		int i;
@@ -842,38 +844,47 @@ public class ExpenseServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrExpenses = new HashMap<UUID, ArrayList<UUID>>();
+		larrExpenses = new HashMap<String, ArrayList<UUID>>();
 		for ( i = 0; i < expenseIds.length; i++ )
 		{
 			try
 			{
 				lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(expenseIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjExpense.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
-				else
-					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+				lidKey = (UUID)lobjExpense.getAt(com.premiumminds.BigBang.Jewel.Objects.Expense.I.POLICYOBJECT);
+				if ( lidKey == null )
+					lidKey = (UUID)lobjExpense.getAt(com.premiumminds.BigBang.Jewel.Objects.Expense.I.SUBPOLICYOBJECT);
+				lstrKey = ( lidKey == null ? (String)lobjExpense.getAt(com.premiumminds.BigBang.Jewel.Objects.Expense.I.GENERICOBJECT) :
+						lidKey.toString() );
+				if ( lstrKey == null )
+				{
+					lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjExpense.GetProcessID());
+					if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+						lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
+					else
+						lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+					lstrKey = lidClient.toString();
+				}
 			}
 			catch (Throwable e)
 			{
 				throw new BigBangException(e.getMessage(), e);
 			}
-			larrByClient = larrExpenses.get(lidClient);
+			larrByClient = larrExpenses.get(lstrKey);
 			if ( larrByClient == null )
 			{
 				larrByClient = new ArrayList<UUID>();
-				larrExpenses.put(lidClient, larrByClient);
+				larrExpenses.put(lstrKey, larrByClient);
 			}
 			larrByClient.add(lobjExpense.getKey());
 		}
 
 		lidSet = null;
-		for(UUID lidC : larrExpenses.keySet())
+		for(String lstr : larrExpenses.keySet())
 		{
-			lidSetClient = null;
+			lidSetObject = null;
 			lobjDocOps = null;
-			larrByClient = larrExpenses.get(lidC);
+			larrByClient = larrExpenses.get(lstr);
 			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
 			for ( i = 0; i < larrFinal.length; i++ )
 			{
@@ -885,13 +896,13 @@ public class ExpenseServiceImpl
 					lopNC.marrExpenseIDs = larrFinal;
 					lopNC.mbUseSets = true;
 					lopNC.midSet = lidSet;
-					lopNC.midSetDocument = lidSetClient;
+					lopNC.midSetDocument = lidSetObject;
 					lopNC.mobjDocOps = lobjDocOps;
 
 					lopNC.Execute();
 
 					lobjDocOps = lopNC.mobjDocOps;
-					lidSetClient = lopNC.midSetDocument;
+					lidSetObject = lopNC.midSetDocument;
 					lidSet = lopNC.midSet;
 				}
 				catch (Throwable e)

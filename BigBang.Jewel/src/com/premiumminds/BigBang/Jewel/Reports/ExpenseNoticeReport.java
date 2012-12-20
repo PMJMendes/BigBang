@@ -42,11 +42,17 @@ public class ExpenseNoticeReport
 		throws BigBangJewelException
 	{
 		Client lobjClient;
+		String lstrName;
+		String lstrAddr1;
+		String lstrAddr2;
 		ObjectBase lobjZipCode;
+		Expense lobjExpense;
+		UUID lidKey;
+		PolicyObject lobjObject;
+		SubPolicyObject lobjSObject;
 		Timestamp ldtAux;
 		HashMap<String, String> larrParams;
 		String[][] larrTables;
-		Expense lobjExpense;
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		Company lobjCompany;
@@ -54,27 +60,83 @@ public class ExpenseNoticeReport
 		String lstrObject;
 		int i;
 
+		lstrName = null;
+		lstrAddr1 = null;
+		lstrAddr2 = null;
+		lobjZipCode = null;
+
 		lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
-		if ( lobjClient.getAt(4) == null )
-			lobjZipCode = null;
-		else
+		lobjExpense = Expense.GetInstance(Engine.getCurrentNameSpace(), marrExpenseIDs[0]);
+		lidKey = (UUID)lobjExpense.getAt(Expense.I.POLICYOBJECT);
+		if ( lidKey != null )
 		{
-			try
+			lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), lidKey);
+			lstrName = lobjObject.getLabel();
+			lstrAddr1 = (String)lobjObject.getAt(PolicyObject.I.ADDRESS1);
+			lstrAddr2 = (String)lobjObject.getAt(PolicyObject.I.ADDRESS2);
+			if ( lobjObject.getAt(PolicyObject.I.ZIPCODE) != null )
 			{
-				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
-						(UUID)lobjClient.getAt(4));
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
+				try
+				{
+					lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
+							(UUID)lobjObject.getAt(PolicyObject.I.ZIPCODE));
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
 			}
 		}
+		else
+		{
+			lidKey = (UUID)lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT);
+			if ( lidKey != null )
+			{
+				lobjSObject = SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), lidKey);
+				lstrName = lobjSObject.getLabel();
+				lstrAddr1 = (String)lobjSObject.getAt(SubPolicyObject.I.ADDRESS1);
+				lstrAddr2 = (String)lobjSObject.getAt(SubPolicyObject.I.ADDRESS2);
+				if ( lobjSObject.getAt(SubPolicyObject.I.ZIPCODE) != null )
+				{
+					try
+					{
+						lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
+								(UUID)lobjSObject.getAt(SubPolicyObject.I.ZIPCODE));
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangJewelException(e.getMessage(), e);
+					}
+				}
+			}
+			else
+				lstrName = lobjClient.getLabel();
+		}
+
+		if ( (lstrAddr1 == null) && (lstrAddr2 == null) && (lobjZipCode == null) )
+		{
+			lstrAddr1 = (String)lobjClient.getAt(2);
+			lstrAddr2 = (String)lobjClient.getAt(3);
+			if ( lobjClient.getAt(4) != null )
+			{
+				try
+				{
+					lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
+							(UUID)lobjClient.getAt(4));
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
+		}
+
 		ldtAux = new Timestamp(new java.util.Date().getTime());
 
 		larrParams = new HashMap<String, String>();
-		larrParams.put("ClientName", (String)lobjClient.getAt(0));
-		larrParams.put("ClientAddress1", (lobjClient.getAt(2) == null ? "" : (String)lobjClient.getAt(2)));
-		larrParams.put("ClientAddress2", (lobjClient.getAt(3) == null ? "" : (String)lobjClient.getAt(3)));
+		larrParams.put("ClientName", lstrName);
+		larrParams.put("ClientAddress1", (lstrAddr1 == null ? "" : lstrAddr1));
+		larrParams.put("ClientAddress2", (lstrAddr2 == null ? "" : lstrAddr2));
 		larrParams.put("ClientZipCode", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(0)));
 		larrParams.put("ClientZipLocal", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(1)));
 		larrParams.put("Date", ldtAux.toString().substring(0, 10));

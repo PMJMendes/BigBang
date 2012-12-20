@@ -18,7 +18,7 @@ public class PolicyObject
 		public static int NAME             =  0;
 		public static int POLICY           =  1;
 		public static int TYPE             =  2;
-		public static int ADDESS1          =  3;
+		public static int ADDRESS1         =  3;
 		public static int ADDRESS2         =  4;
 		public static int ZIPCODE          =  5;
 		public static int INCLUSIONDATE    =  6;
