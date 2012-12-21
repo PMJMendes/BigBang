@@ -65,7 +65,6 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		void setMessage(Message source);
 		void setFormVisible(boolean isSendMessage);
 		void addContact(String string, String mediatorId, String mediator);
-		void lockAllMainToolbar();
 		void allowEdit(boolean hasPermission);
 		void allowSendMessage(boolean hasPermission);
 		void allowRepeatMessage(boolean hasPermission);
@@ -74,6 +73,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		void setOwner(Conversation convers);
 		void setHistoryOwner(Conversation conversation);
 		List<HistoryItemStub> getHistoryList();
+		void setMainFormVisible(boolean b);
 	}
 
 	public ConversationViewPresenter(Display<T> view){
@@ -177,9 +177,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 					}
 					currentMessage = m;
 					view.setMessage(m);
-					if(m.direction.equals(Conversation.Direction.INCOMING)){
-						view.allowRepeatMessage(false);
-					}
+					setPermissions();
 				}
 			}
 		});
@@ -209,6 +207,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 
 	protected void resetView(){
 		view.closeSubForms();
+		view.setMainFormVisible(true);
 		setPermissions();
 	}
 
@@ -232,6 +231,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 				@Override
 				public void onResponse(Conversation response) {
 					view.setHistoryOwner(conversation);
+					conversation = response;
 					view.getForm().setValue(response);
 					view.getForm().setReadOnly(true);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Alterações gravadas com sucesso"), TYPE.TRAY_NOTIFICATION));
@@ -254,6 +254,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 				@Override
 				public void onResponse(Conversation response) {
 					view.setHistoryOwner(conversation);
+					conversation = response;
 					resetView();
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem enviada com sucesso"), TYPE.TRAY_NOTIFICATION));
 				}
@@ -276,6 +277,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 				@Override
 				public void onResponse(Conversation response) {
 					view.setHistoryOwner(conversation);
+					conversation = response;
 					resetView();
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem enviada com sucesso"), TYPE.TRAY_NOTIFICATION));
 				}
@@ -292,11 +294,13 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	}
 	protected void onReceiveMessage() {
 		if(view.getReceiveMessageForm().validate()){
-			broker.receiveMessage(view.getReceiveMessageForm().getInfo().messages[0], view.getReceiveMessageForm().getInfo().replylimit, new ResponseHandler<Conversation>() {
+			Conversation conv = view.getReceiveMessageForm().getInfo();
+			broker.receiveMessage(conv.messages[0], conv.replylimit, new ResponseHandler<Conversation>() {
 
 				@Override
 				public void onResponse(Conversation response) {
 					view.setHistoryOwner(conversation);
+					conversation = response;
 					resetView();
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem recebida com sucesso"), TYPE.TRAY_NOTIFICATION));					
 				}
@@ -319,7 +323,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		conv.messages = new Message[1];
 		view.getSendMessageForm().setValue(conv);
 		view.setFormVisible(isSendMessage);
-		view.lockAllMainToolbar();
+		view.setMainFormVisible(false);
 	}
 	protected void onSaveFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar as alterações."), TYPE.ALERT_NOTIFICATION));
@@ -332,8 +336,8 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		Conversation conv = view.getForm().getValue();
 		conv.messages = new Message[1];
 		conv.messages[0] = (currentMessage);
+		view.setMainFormVisible(false);
 		view.getSendMessageForm().setValue(conv);
-		view.lockAllMainToolbar();
 	}
 	protected void onClickReceive() {
 		isSendMessage = false;
@@ -341,7 +345,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		conv.messages = new Message[1];
 		view.getReceiveMessageForm().setValue(conv);
 		view.setFormVisible(isSendMessage);
-		view.lockAllMainToolbar();
+		view.setMainFormVisible(false);
 	}
 	protected void onClickClose() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -408,7 +412,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	protected void setPermissions() {
 		view.allowEdit(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.EDIT));
 		view.allowSendMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.SEND));
-		view.allowRepeatMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT));
+		view.allowRepeatMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT) && (currentMessage == null || !Conversation.Direction.INCOMING.equals(currentMessage.direction)));
 		view.allowReceiveMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.RECEIVE));
 		view.allowClose(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.CLOSE));
 	}

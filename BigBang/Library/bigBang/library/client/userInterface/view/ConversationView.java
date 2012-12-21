@@ -42,6 +42,7 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 	protected SendMessageToolbar sendMessageToolbar;
 	protected ReceiveMessageToolbar receiveMessageToolbar;
 	protected ConversationChildrenPanel childrenPanel;
+	private HorizontalPanel listConversWrapper;
 
 	public ConversationView(FormView<T> ownerForm) {
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -133,19 +134,17 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 		scrollPanel.getElement().getStyle().setOverflowX(Overflow.HIDDEN);
 
 		conversationWrapper.setSize("100%", "100%");
-		HorizontalPanel listConversWrapper = new HorizontalPanel();
+		listConversWrapper = new HorizontalPanel();
 		messageList.setSize("200px", "100%");
 		listConversWrapper.setSize("100%", "100%");
 
 		listConversWrapper.add(messageList);
 		
-		rightWrapper.setCellHeight(toolbar, "21px");
 		conversationForm.getNonScrollableContent().setSize("100%","100%");
 		listConversWrapper.add(conversationForm.getNonScrollableContent());
 		listConversWrapper.setCellWidth(conversationForm.getNonScrollableContent(), "100%");
 
 		conversationWrapper.add(toolbar);
-		conversationWrapper.setCellHeight(toolbar, "21px");
 		conversationWrapper.add(listConversWrapper);
 
 		sendMessageToolbar = new SendMessageToolbar() {
@@ -267,11 +266,6 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 		sendMessageForm.addItemContactList(name, nameId, ownerTypeId);
 	}
 
-	@Override
-	public void lockAllMainToolbar(){
-		toolbar.lockAll();
-	}
-
 
 	@Override
 	public void allowEdit(boolean hasPermission) {
@@ -312,5 +306,12 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 	@Override
 	public List<HistoryItemStub> getHistoryList() {
 		return childrenPanel.historyList;
+	}
+
+
+	@Override
+	public void setMainFormVisible(boolean b) {
+		listConversWrapper.setVisible(b);
+		toolbar.setVisible(b);
 	}
 }

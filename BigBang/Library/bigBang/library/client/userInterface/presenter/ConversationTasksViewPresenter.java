@@ -87,6 +87,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 		void addContact(String string, String id, String client);
 		void showOverlayViewContainer(boolean b);
 		HasWidgets getOverlayViewContainer();
+		void setMainFormVisible(boolean b);
 	}
 
 	protected boolean bound = false;
@@ -187,10 +188,8 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 						m = ((MessagesList.Entry)sel).getValue();
 					}
 					currentMessage = m;
+					setPermissions();
 					view.setMessage(m);
-					if(m.direction.equals(Conversation.Direction.INCOMING)){
-						view.allowRepeat(false);
-					}
 				}
 			}
 		});
@@ -203,6 +202,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 
 				@Override
 				public void onResponse(Conversation response) {
+					conversation = response;
 					resetView();
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem enviada com sucesso"), TYPE.TRAY_NOTIFICATION));
 				}
@@ -219,10 +219,13 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 		}	}
 	protected void onReceive() {
 		if(view.getReceiveMessageForm().validate()){
-			broker.receiveMessage(view.getReceiveMessageForm().getInfo().messages[0], view.getSendMessageForm().getInfo().replylimit, new ResponseHandler<Conversation>() {
+			Conversation conv = view.getReceiveMessageForm().getInfo();
+
+			broker.receiveMessage(conv.messages[0], conv.replylimit, new ResponseHandler<Conversation>() {
 
 				@Override
 				public void onResponse(Conversation response) {
+					conversation = response;
 					resetView();
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem enviada com sucesso"), TYPE.TRAY_NOTIFICATION));
 				}
@@ -243,6 +246,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 
 				@Override
 				public void onResponse(Conversation response) {
+					conversation = response;
 					resetView();
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem enviada com sucesso"), TYPE.TRAY_NOTIFICATION));
 				}
@@ -264,7 +268,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 		conv.messages = new Message[1];
 		view.getSendMessageForm().setValue(conv);
 		view.setFormVisible(isSendMessage);
-		view.lockAllMainToolbar();		
+		view.setMainFormVisible(false);
 	}
 	protected void onClickRepeat() {
 		toSend = false;
@@ -274,7 +278,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 		conv.messages = new Message[1];
 		conv.messages[0] = (currentMessage);
 		view.getSendMessageForm().setValue(conv);
-		view.lockAllMainToolbar();
+		view.setMainFormVisible(false);
 
 	}
 	protected void onClickReceive() {
@@ -283,7 +287,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 		conv.messages = new Message[1];
 		view.getReceiveMessageForm().setValue(conv);
 		view.setFormVisible(isSendMessage);
-		view.lockAllMainToolbar();		
+		view.setMainFormVisible(false);
 	}
 	protected void onClickClose() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -297,6 +301,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 	protected void resetView() {
 		view.closeSubForms();
 		setPermissions();
+		view.setMainFormVisible(true);
 	}
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
@@ -493,7 +498,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 
 	protected void setPermissions() {
 		view.allowSend(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.SEND));
-		view.allowRepeat(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT));
+		view.allowRepeat(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT) && (currentMessage == null || !Conversation.Direction.INCOMING.equals(currentMessage.direction)));
 		view.allowReceive(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.RECEIVE));
 		view.allowClose(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.CLOSE));
 	}

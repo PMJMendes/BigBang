@@ -40,6 +40,7 @@ public class ConversationTasksView<T> extends View implements ConversationTasksV
 	private ScrollPanel ownerWrapper;
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
+	private HorizontalPanel listAndConversation;
 
 	public ConversationTasksView() {
 		
@@ -82,7 +83,7 @@ public class ConversationTasksView<T> extends View implements ConversationTasksV
 		
 		VerticalPanel leftWrapper = new VerticalPanel();
 		messageList = new MessagesList();
-		HorizontalPanel listAndConversation = new HorizontalPanel();
+		listAndConversation = new HorizontalPanel();
 		conversationForm = new ConversationForm();
 		conversationForm.setReadOnly(true);
 		leftWrapper.add(toolbar);
@@ -292,6 +293,12 @@ public class ConversationTasksView<T> extends View implements ConversationTasksV
 	@Override
 	public HasWidgets getOverlayViewContainer() {
 		return this.overlayContainer;
+	}
+
+	@Override
+	public void setMainFormVisible(boolean b) {
+		listAndConversation.setVisible(b);
+		toolbar.setVisible(b);
 	}
 
 }

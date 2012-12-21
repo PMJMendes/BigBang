@@ -38,7 +38,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EmailViewPresenter implements ViewPresenter{
+public class EmailReceiverViewPresenter implements ViewPresenter{
 
 	public interface Display{
 
@@ -94,7 +94,7 @@ public class EmailViewPresenter implements ViewPresenter{
 	ExchangeServiceAsync service;
 
 
-	public EmailViewPresenter(Display view) {
+	public EmailReceiverViewPresenter(Display view) {
 		setView((UIObject) view);
 		broker = (ConversationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CONVERSATION);
 		service = ExchangeService.Util.getInstance();
@@ -113,7 +113,7 @@ public class EmailViewPresenter implements ViewPresenter{
 	}
 
 	private void bind() {
-		if(bound ){
+		if(bound){
 			return;
 		}
 
@@ -192,7 +192,8 @@ public class EmailViewPresenter implements ViewPresenter{
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os emails."), TYPE.ALERT_NOTIFICATION));
 				super.onResponseFailure(caught);
 			}
-		});			}
+		});			
+	}
 
 	protected void onConfirm() {
 		AttachmentUpgrade[] checked = view.getChecked();
@@ -284,7 +285,7 @@ public class EmailViewPresenter implements ViewPresenter{
 		view.clearList();
 		view.enableGetAll(false);
 		view.enableRefresh(false);
-		
+
 		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override

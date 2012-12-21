@@ -1,7 +1,5 @@
 package bigBang.library.client.userInterface.presenter;
 
-import java.util.Collection;
-
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -9,22 +7,21 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
+import bigBang.library.client.BigBangAsyncCallback;
+
 
 public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFormFieldPanel implements ViewPresenter {
 
@@ -36,7 +33,7 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 	public static interface Display {
 		HasValueSelectables<InsurancePolicyStub> getList();
 		HasEditableValue<InsurancePolicy> getForm();
-		
+
 		void allowConfirm(boolean allow);
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -47,10 +44,10 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 
 	private Display view;
 	private boolean bound = false;
-	private InsurancePolicyBroker policyBroker;
+	private InsurancePolicyServiceAsync service;
 
 	public InsurancePolicySelectionViewPresenter(Display view){
-		policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		service = InsurancePolicyService.Util.getInstance();
 		setView((UIObject)view);		
 	}
 
@@ -100,18 +97,18 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 				if(policy == null) {
 					view.getForm().setValue(null);
 				}else{
-					policyBroker.getPolicy(policy.id, new ResponseHandler<InsurancePolicy>(){
+					service.getPolicy(policy.id, new BigBangAsyncCallback<InsurancePolicy>(){
 
 						@Override
-						public void onResponse(InsurancePolicy response) {
-							view.getForm().setValue(response);
+						public void onResponseSuccess(InsurancePolicy result) {
+							view.getForm().setValue(result);
+
 						}
 
-						@Override
-						public void onError(Collection<ResponseError> errors) {
+						public void onResponseFailure(Throwable caught) {
 							view.getForm().setValue(null);
 							view.getList().clearSelection();
-						}
+						};
 					});
 				}
 			}
@@ -164,20 +161,22 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 
 	@Override
 	public void setValue(String value, final boolean fireEvents) {
-		this.policyBroker.getPolicy(value, new ResponseHandler<InsurancePolicy>() {
+
+		service.getPolicy(value, new BigBangAsyncCallback<InsurancePolicy>(){
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
-				view.getForm().setValue(response);
+			public void onResponseSuccess(InsurancePolicy result) {
+				view.getForm().setValue(result);
 				if(fireEvents) {
-					ValueChangeEvent.fire(InsurancePolicySelectionViewPresenter.this, response.id);
+					ValueChangeEvent.fire(InsurancePolicySelectionViewPresenter.this, result.id);
 				}
+
 			}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onResponse(null);
-			}
+			public void onResponseFailure(Throwable caught) {
+				view.getForm().setValue(null);
+				view.getList().clearSelection();
+			};
 		});
 	}
 

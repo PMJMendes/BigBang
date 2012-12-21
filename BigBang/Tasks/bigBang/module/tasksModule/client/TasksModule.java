@@ -16,12 +16,12 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.tasksModule.client.dataAccess.TasksBrokerImpl;
 import bigBang.module.tasksModule.client.userInterface.presenter.AgendaViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.presenter.DismissTaskViewPresenter;
-import bigBang.module.tasksModule.client.userInterface.presenter.EmailViewPresenter;
+import bigBang.module.tasksModule.client.userInterface.presenter.EmailReceiverViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.presenter.MailOrganizerViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.view.AgendaView;
 import bigBang.module.tasksModule.client.userInterface.view.DismissTaskView;
-import bigBang.module.tasksModule.client.userInterface.view.EmailView;
+import bigBang.module.tasksModule.client.userInterface.view.EmailReceiverView;
 import bigBang.module.tasksModule.client.userInterface.view.MailOrganizerView;
 import bigBang.module.tasksModule.client.userInterface.view.TasksSectionView;
 
@@ -96,8 +96,8 @@ public class TasksModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				EmailView view = new EmailView();
-				EmailViewPresenter presenter = new EmailViewPresenter(view);
+				EmailReceiverView view = new EmailReceiverView();
+				EmailReceiverViewPresenter presenter = new EmailReceiverViewPresenter(view);
 				return presenter;
 			}
 		});

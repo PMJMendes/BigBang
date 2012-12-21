@@ -1,6 +1,19 @@
 package bigBang.library.client.userInterface.presenter;
 
-import java.util.Collection;
+import bigBang.definitions.shared.SubPolicy;
+import bigBang.definitions.shared.SubPolicyStub;
+import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
+import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyServiceAsync;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -8,23 +21,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
-
-import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.SubPolicy;
-import bigBang.definitions.shared.SubPolicyStub;
-import bigBang.library.client.HasEditableValue;
-import bigBang.library.client.HasParameters;
-import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.library.client.event.ActionInvokedEvent;
-import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.SelectionChangedEvent;
-import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
 
 public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectionFormFieldPanel implements ViewPresenter {
 
@@ -48,10 +44,10 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 
 	private Display view;
 	private boolean bound = false;
-	private InsuranceSubPolicyBroker subPolicyBroker;
+	private SubPolicyServiceAsync service;
 
 	public InsuranceSubPolicySelectionViewPresenter(Display view){
-		subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		service = SubPolicyService.Util.getInstance();
 		setView((UIObject)view);		
 	}
 
@@ -80,7 +76,7 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 		if(ownerId != null && !ownerId.isEmpty()){
 			view.setOwnerId(ownerId);
 		}
-		
+
 		if(clientId != null && !clientId.isEmpty()){
 			view.setClientId(clientId);
 		}
@@ -106,19 +102,23 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 				if(policy == null) {
 					view.getForm().setValue(null);
 				}else{
-					subPolicyBroker.getSubPolicy(policy.id, new ResponseHandler<SubPolicy>(){
+					service.getSubPolicy(policy.id, new BigBangAsyncCallback<SubPolicy>(){
 
 						@Override
-						public void onResponse(SubPolicy response) {
-							view.getForm().setValue(response);
+						public void onResponseSuccess(SubPolicy result) {
+							view.getForm().setValue(result);
+
 						}
 
 						@Override
-						public void onError(Collection<ResponseError> errors) {
+						public void onResponseFailure(Throwable caught) {
 							view.getForm().setValue(null);
 							view.getList().clearSelection();
 						}
+
+
 					});
+
 				}
 			}
 		});
@@ -171,23 +171,22 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 	@Override
 	public void setValue(String value, final boolean fireEvents) {
 		if(value != null){
-			this.subPolicyBroker.getSubPolicy(value, new ResponseHandler<SubPolicy>() {
+			service.getSubPolicy(value, new BigBangAsyncCallback<SubPolicy>(){
 
 				@Override
-				public void onResponse(SubPolicy response) {
-					view.getForm().setValue(response);
-					if(fireEvents) {
-						ValueChangeEvent.fire(InsuranceSubPolicySelectionViewPresenter.this, response.id);
-					}
+				public void onResponseSuccess(SubPolicy result) {
+					view.getForm().setValue(result);
+
 				}
 
 				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onResponse(null);
+				public void onResponseFailure(Throwable caught) {
+					view.getForm().setValue(null);
+					view.getList().clearSelection();
 				}
 			});
 		}
-		
+
 		else{
 			view.getForm().setValue(null);
 			if(fireEvents) {

@@ -22,15 +22,15 @@ import bigBang.library.shared.AttachmentStub;
 import bigBang.library.shared.ExchangeItem;
 import bigBang.library.shared.ExchangeItemStub;
 import bigBang.module.tasksModule.client.userInterface.form.EmailReceiverForm;
-import bigBang.module.tasksModule.client.userInterface.presenter.EmailViewPresenter;
-import bigBang.module.tasksModule.client.userInterface.presenter.EmailViewPresenter.Action;
+import bigBang.module.tasksModule.client.userInterface.presenter.EmailReceiverViewPresenter;
+import bigBang.module.tasksModule.client.userInterface.presenter.EmailReceiverViewPresenter.Action;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class EmailView extends View implements EmailViewPresenter.Display{
+public class EmailReceiverView extends View implements EmailReceiverViewPresenter.Display{
 
 
 	FilterableList<ExchangeItemStub> emails;
@@ -39,10 +39,10 @@ public class EmailView extends View implements EmailViewPresenter.Display{
 	EmailReceiverForm form;
 	ReceiveMessageToolbar toolbar;
 	
-	private ActionInvokedEventHandler<EmailViewPresenter.Action> actionHandler;
+	private ActionInvokedEventHandler<EmailReceiverViewPresenter.Action> actionHandler;
 	private ListHeader header;
 
-	public EmailView() {
+	public EmailReceiverView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 
@@ -59,7 +59,7 @@ public class EmailView extends View implements EmailViewPresenter.Display{
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<EmailViewPresenter.Action>(EmailViewPresenter.Action.GET_ALL_EMAILS));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<EmailReceiverViewPresenter.Action>(EmailReceiverViewPresenter.Action.GET_ALL_EMAILS));
 			}
 		});
 		
@@ -67,7 +67,7 @@ public class EmailView extends View implements EmailViewPresenter.Display{
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<EmailViewPresenter.Action>(EmailViewPresenter.Action.REFRESH));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<EmailReceiverViewPresenter.Action>(EmailReceiverViewPresenter.Action.REFRESH));
 			}
 		});
 		emails = new FilterableList<ExchangeItemStub>();
@@ -93,7 +93,7 @@ public class EmailView extends View implements EmailViewPresenter.Display{
 			
 			@Override
 			public void onReceiveRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<EmailViewPresenter.Action>(Action.CONFIRM));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<EmailReceiverViewPresenter.Action>(Action.CONFIRM));
 			}
 			
 			@Override
