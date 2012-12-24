@@ -17,6 +17,7 @@ public class TaskStub
 
 	public String description;
 	public String reference;
+	public String clientName;
 	public String timeStamp;
 	public String dueDate;
 	public Status status;

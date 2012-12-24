@@ -26,6 +26,8 @@ import bigBang.library.shared.SessionExpiredException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Objects.Contact;
+import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.CloseProcess;
@@ -54,19 +56,19 @@ public class ConversationServiceImpl
 
 	public static Message.MsgAddress.Usage sGetUsage(UUID pid)
 	{
-		if (Constants.UsageID_From.equals(pid) )
+		if ( Constants.UsageID_From.equals(pid) )
 			return Message.MsgAddress.Usage.FROM;
 
-		if (Constants.UsageID_To.equals(pid) )
+		if ( Constants.UsageID_To.equals(pid) )
 			return Message.MsgAddress.Usage.TO;
 
-		if (Constants.UsageID_ReplyTo.equals(pid) )
+		if ( Constants.UsageID_ReplyTo.equals(pid) )
 			return Message.MsgAddress.Usage.REPLYTO;
 
-		if (Constants.UsageID_CC.equals(pid) )
+		if ( Constants.UsageID_CC.equals(pid) )
 			return Message.MsgAddress.Usage.CC;
 
-		if (Constants.UsageID_BCC.equals(pid) )
+		if ( Constants.UsageID_BCC.equals(pid) )
 			return Message.MsgAddress.Usage.BCC;
 
 		return null;
@@ -75,12 +77,23 @@ public class ConversationServiceImpl
 	public static Message.MsgAddress sGetAddress(UUID pid)
 		throws BigBangException
 	{
+		ContactInfo lobjInfo;
+		Contact lobjContact;
 		MessageAddress lobjAddr;
+		UUID lidUsage;
 		Message.MsgAddress lobjResult;
 
+		lobjInfo = null;
+		lobjContact = null;
 		try
 		{
 			lobjAddr = MessageAddress.GetInstance(Engine.getCurrentNameSpace(), pid);
+			lidUsage = (UUID)lobjAddr.getAt(MessageAddress.I.USAGE);
+			if ( lobjAddr.getAt(MessageAddress.I.CONTACTINFO) != null )
+				lobjInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
+						(UUID)lobjAddr.getAt(MessageAddress.I.CONTACTINFO));
+			if ( Constants.UsageID_To.equals(lidUsage) && (lobjInfo != null) )
+				lobjContact = ( lobjInfo == null ? null : lobjInfo.getOwner() );
 		}
 		catch (Throwable e)
 		{
@@ -91,12 +104,16 @@ public class ConversationServiceImpl
 		lobjResult.id = lobjAddr.getKey().toString();
 
 		lobjResult.address = (String)lobjAddr.getAt(MessageAddress.I.ADDRESS);
-		lobjResult.usage = sGetUsage((UUID)lobjAddr.getAt(MessageAddress.I.USAGE));
+		lobjResult.usage = sGetUsage(lidUsage);
 		lobjResult.userId = ( lobjAddr.getAt(MessageAddress.I.USER) == null ? null :
 				((UUID)lobjAddr.getAt(MessageAddress.I.USER)).toString() );
-		lobjResult.contactInfoId = (lobjAddr.getAt(MessageAddress.I.CONTACTINFO) == null ? null:
-				((UUID)lobjAddr.getAt(MessageAddress.I.CONTACTINFO)).toString() );
+		lobjResult.contactInfoId = ( lobjInfo == null ? null : lobjInfo.getKey().toString() );
 		lobjResult.display = (String)lobjAddr.getAt(MessageAddress.I.DISPLAYNAME);
+		if ( lobjContact != null )
+		{
+			lobjResult.ownerTypeId = lobjContact.getOwnerType().toString();
+			lobjResult.ownerId = lobjContact.getOwnerID().toString();
+		}
 
 		return lobjResult;
 	}

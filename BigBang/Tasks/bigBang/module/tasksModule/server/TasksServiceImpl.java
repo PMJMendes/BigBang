@@ -47,7 +47,9 @@ public class TasksServiceImpl
 		UUID[] larrOps;
 		UUID lidAgendaProcs;
 		UUID lidAgendaOps;
+		IProcess lrefProc;
 		String lstrLabel;
+		String lstrClient;
 		ObjectBase lobjAux;
 		int i;
 
@@ -68,14 +70,20 @@ public class TasksServiceImpl
 			{
 			case 0:
 				lstrLabel = null;
+				lstrClient = null;
 				break;
 			case 1:
-				lstrLabel = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+				lrefProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
 						(UUID)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-						Constants.ObjID_AgendaProcess), larrProcs[0]).getAt(1)).GetData().getLabel();
+						Constants.ObjID_AgendaProcess), larrProcs[0]).getAt(1));
+				lstrLabel = lrefProc.GetData().getLabel();
+				while ( (lrefProc != null) && !Constants.ProcID_Client.equals(lrefProc.GetScriptID()) )
+					lrefProc = lrefProc.GetParent();
+				lstrClient = ( lrefProc == null ? null : lrefProc.GetData().getLabel() );
 				break;
 			default:
 				lstrLabel = "<vários>";
+				lstrClient = "<vários clientes>";
 				break;
 			}
 		}
@@ -97,6 +105,7 @@ public class TasksServiceImpl
 		lobjResult.id = lid.toString();
 		lobjResult.description = (String)lobjAgenda.getAt(0);
 		lobjResult.reference = lstrLabel;
+		lobjResult.clientName = lstrClient;
 		lobjResult.timeStamp = ((Timestamp)lobjAgenda.getAt(3)).toString();
 		lobjResult.dueDate = ((Timestamp)lobjAgenda.getAt(4)).toString();
 		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Invalid) == 0)
@@ -440,8 +449,12 @@ public class TasksServiceImpl
 		TaskStub lobjResult;
 		AgendaItem lobjItem;
 		UUID[] larrProcIDs;
+		IProcess lrefProc;
 		String lstrLabel;
+		String lstrClient;
 
+		lstrLabel = null;
+		lstrClient = null;
 		try
 		{
 			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), pid);
@@ -449,27 +462,35 @@ public class TasksServiceImpl
 			switch ( larrProcIDs.length )
 			{
 			case 0:
-				lstrLabel = null;
 				break;
 			case 1:
-				lstrLabel = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+				lrefProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
 						(UUID)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-						Constants.ObjID_AgendaProcess), larrProcIDs[0]).getAt(1)).GetData().getLabel();
+						Constants.ObjID_AgendaProcess), larrProcIDs[0]).getAt(1));
+				lstrLabel = lrefProc.GetData().getLabel();
+				while ( (lrefProc != null) && !Constants.ProcID_Client.equals(lrefProc.GetScriptID()) )
+					lrefProc = lrefProc.GetParent();
+				lstrClient = ( lrefProc == null ? null : lrefProc.GetData().getLabel() );
 				break;
 			default:
 				lstrLabel = "<vários>";
+				lstrClient = "<vários clientes>";
 				break;
 			}
 		}
 		catch (Throwable e)
 		{
-			lstrLabel = "(Erro a obter a referência.)";
+			if ( lstrLabel == null )
+				lstrLabel = "(Erro a obter a referência.)";
+			if ( lstrClient == null )
+				lstrClient = "(Erro a obter o cliente.)";
 		}
 
 		lobjResult = new TaskStub();
 		lobjResult.id = pid.toString();
 		lobjResult.description = (String)parrValues[0];
 		lobjResult.reference = lstrLabel;
+		lobjResult.clientName = lstrClient;
 		lobjResult.timeStamp = ((Timestamp)parrValues[1]).toString().substring(0, 10);
 		lobjResult.dueDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Invalid) == 0)

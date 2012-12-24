@@ -45,6 +45,8 @@ public class Message
 		public String userId; //Só para REPLYTO //*
 		public String contactInfoId; //Só para FROM e TO //*
 		public String display; //*
+		public String ownerTypeId; //Só para TO, para pre-preencher a form
+		public String ownerId; //Só para TO, para pre-preencher a form
 	}
 
 	public String id;
