@@ -225,8 +225,8 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 			String maturityMonth = "";
 			if(maturityDate.getStringValue() != null && !maturityDate.getStringValue().isEmpty()){
 				String[] maturity = maturityDate.getStringValue().split("-");
-				maturityDay = maturity[0];
-				maturityMonth = maturity[1];
+				maturityMonth = maturity[0];
+				maturityDay = maturity[1];
 			}
 			try{
 				result.maturityDay = Integer.parseInt(maturityDay);
@@ -294,7 +294,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 
 		this.mediator.setValue(info.mediatorId);
 		try{
-			this.maturityDate.setValue(DateTimeFormat.getFormat("MM-dd").parse(info.maturityDay + "-" + info.maturityMonth));
+			this.maturityDate.setValue(DateTimeFormat.getFormat("MM-dd").parse(info.maturityMonth + "-" + info.maturityDay));
 
 		}catch (IllegalArgumentException e) {
 			maturityDate.clear();
