@@ -12,6 +12,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
+import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
@@ -41,6 +42,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CloseProcess;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateAssessment;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.DeleteSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData;
@@ -286,6 +288,40 @@ public class SubCasualtyServiceImpl
 		}
 
 		return sGetSubCasualty(lobjSubCasualty.getKey());
+	}
+
+	public Assessment createAssessment(Assessment assessment)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CreateAssessment lopCA;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(assessment.subCasualtyId));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCA = new CreateAssessment(lobjSubCasualty.GetProcessID());
+		lopCA.mobjData = AssessmentServiceImpl.sParseClient(assessment);
+
+		try
+		{
+			lopCA.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return AssessmentServiceImpl.sGetAssessment(lopCA.mobjData.mid);
 	}
 
 	public Conversation sendMessage(Conversation conversation)

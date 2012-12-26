@@ -90,6 +90,7 @@ public class Constants
 	// SubCasualty Objects
 	public static final UUID ObjID_SubCasualty              = UUID.fromString("D5FD2D1B-59FB-4171-961A-A02E0121C81B");
 	public static final UUID ObjID_SubCasualtyItem          = UUID.fromString("A62F4F4F-7F10-4391-ABF4-A035012009A9");
+	public static final UUID ObjID_Assessment               = UUID.fromString("CCCC8540-B2AF-45D6-951C-A1330100BC77");
 
 	// Expense Objects
 	public static final UUID ObjID_Expense                  = UUID.fromString("09963260-CDB1-4207-B856-A03800B8AFC8");
@@ -164,6 +165,7 @@ public class Constants
 	public static final UUID ProcID_Conversation     = UUID.fromString("4B1272F3-28B6-4DEA-AD8F-A11801168139");
 	public static final UUID ProcID_SignatureRequest = UUID.fromString("D705396D-10CE-42E5-BB24-A02A00FF6115");
 	public static final UUID ProcID_DASRequest       = UUID.fromString("41F2CCA4-5114-4A1F-8E97-A03000F1F404");
+	public static final UUID ProcID_Assessment       = UUID.fromString("4FF7BFFD-C0F9-4E45-8E72-A1330105A7C7");
 
 	// Operations
 
@@ -524,6 +526,14 @@ public class Constants
 	public static final UUID OPID_DASRequest_RepeatRequest               = UUID.fromString("D9757AE7-7F2F-4A29-BF7F-A03000F2533D");
 	public static final UUID OPID_DASRequest_CancelRequest               = UUID.fromString("27BE85A3-F216-49F2-A54B-A03000F2A27A");
 	public static final UUID OPID_DASRequest_UndoCancelRequest           = UUID.fromString("435C94A8-F8C8-4FA0-9149-A03000F30495");
+
+	// Assessment Operations
+	public static final UUID OPID_Assessment_ManageData                  = UUID.fromString("500557E4-27AC-4764-95B8-A133011535EE");
+	public static final UUID OPID_Assessment_UndoManageData              = UUID.fromString("D91113DA-25FA-4F21-8936-A1330115835D");
+	public static final UUID OPID_Assessment_CreateConversation          = UUID.fromString("5DAAE24E-6C34-4014-A675-A13301160582");
+	public static final UUID OPID_Assessment_UndoCreateConversation      = UUID.fromString("CE49900D-A110-427F-9639-A13301173499");
+	public static final UUID OPID_Assessment_CloseProcess                = UUID.fromString("FB1EBB7E-CE90-4FBE-ACDC-A13301178A3B");
+	public static final UUID OPID_Assessment_UndoCloseProcess            = UUID.fromString("4D0964C2-7283-40A2-8265-A1330117CC9C");
 
 	// Urgency Levels
 	public static final UUID UrgID_Invalid   = UUID.fromString("6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5");
