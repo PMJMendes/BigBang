@@ -250,13 +250,22 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		leftWrapper.setSize("100%", "100%");
 		header = new ListHeader("Lista de E-mails");
 		header.showNewButton("Obter todos (lento)");
+		header.showRefreshButton();
 		header.getNewButton().setEnabled(false);
 		header.getNewButton().setVisible(true);		
 		header.getNewButton().addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ExchangeItemSelectionViewPresenter.Action>(ExchangeItemSelectionViewPresenter.Action.GET_ALL_EMAILS));
+			}
+		});
+
+		header.getRefreshButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExchangeItemSelectionViewPresenter.Action>(ExchangeItemSelectionViewPresenter.Action.REFRESH));
 			}
 		});
 		emails = new FilterableList<ExchangeItemStub>();
@@ -407,6 +416,19 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 	@Override
 	public void enableGetAll(boolean b) {
 		header.getNewButton().setEnabled(b);
+	}
+
+
+	@Override
+	public void enableRefresh(boolean b) {
+		header.getRefreshButton().setEnabled(b);
+		
+	}
+
+
+	@Override
+	public void clearList() {
+		emails.clear();		
 	}
 
 

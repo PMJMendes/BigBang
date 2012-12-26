@@ -28,11 +28,14 @@ import bigBang.module.receiptModule.client.userInterface.presenter.MassSendPayme
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSignatureRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptConversationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptOperationsViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptAssociateWithDebitNoteViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReceiveMessageViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturnViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSendMessageViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.RepeatDASRequestViewPresenter;
@@ -55,11 +58,14 @@ import bigBang.module.receiptModule.client.userInterface.view.MassSendPaymentVie
 import bigBang.module.receiptModule.client.userInterface.view.MassSendReceiptView;
 import bigBang.module.receiptModule.client.userInterface.view.MassReturnToInsurerView;
 import bigBang.module.receiptModule.client.userInterface.view.MassSignatureRequestView;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptConversationView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptOperationsView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptAssociateWithDebitNoteView;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptReceiveMessageView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptReturnView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOperationView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptSendMessageView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTasksView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
 import bigBang.module.receiptModule.client.userInterface.view.RepeatDASRequestView;
@@ -334,6 +340,31 @@ public class ReceiptModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_SEND_MESSAGE", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				ReceiptSendMessageView view = (ReceiptSendMessageView) GWT.create(ReceiptSendMessageView.class);
+				ViewPresenter presenter = new ReceiptSendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_RECEIVE_MESSAGE", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				ReceiptReceiveMessageView view = (ReceiptReceiveMessageView) GWT.create(ReceiptReceiveMessageView.class);
+				ViewPresenter presenter = new ReceiptReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_CONVERSATION", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				ReceiptConversationView view = (ReceiptConversationView) GWT.create(ReceiptConversationView.class);
+				ViewPresenter presenter = new ReceiptConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		
 	}
 
 	@Override

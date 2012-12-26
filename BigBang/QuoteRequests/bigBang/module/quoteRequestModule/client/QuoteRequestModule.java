@@ -21,7 +21,6 @@ import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteReq
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.SingleQuoteRequestManagerTransferViewPresenter;
-import bigBang.module.quoteRequestModule.client.userInterface.presenter.ViewQuoteRequestInfoOrDocumentRequestViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationCancellationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationGrantView;
@@ -34,7 +33,6 @@ import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestO
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSearchOperationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSectionView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.SingleQuoteRequestManagerTransferView;
-import bigBang.module.quoteRequestModule.client.userInterface.view.ViewQuoteRequestInfoOrDocumentRequestView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -156,15 +154,6 @@ public class QuoteRequestModule implements Module {
 //				return presenter;
 //			}
 //		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_VIEW_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
-
-			@Override
-			public ViewPresenter getInstance() {
-				ViewQuoteRequestInfoOrDocumentRequestView view = (ViewQuoteRequestInfoOrDocumentRequestView) GWT.create(ViewQuoteRequestInfoOrDocumentRequestView.class);
-				ViewQuoteRequestInfoOrDocumentRequestViewPresenter presenter = new ViewQuoteRequestInfoOrDocumentRequestViewPresenter(view);
-				return presenter;
-			}
-		});
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("NEGOTIATION_CANCEL", new ViewPresenterInstantiator() {
 
 			@Override

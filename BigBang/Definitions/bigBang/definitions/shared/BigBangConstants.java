@@ -207,6 +207,7 @@ public class BigBangConstants {
 			public static final String RETURN_PAYMENT = "C0451D21-BE44-47D7-9745-A0B000FB7C49";
 			public static final String SET_ORIGINAL_IMAGE = "E99A9029-BBF0-4E76-AC49-A01300C4FB8C";
 			public static final String RECEIPT_GENERATION = "E870B538-B7AE-4B33-B13E-A12A011BD386";
+			public static final String CONVERSATION = "E7305369-657B-4CC3-B769-A13300EEF0CD";
 
 			public static class ReceiptType {
 				public static final String CONTINUING = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";

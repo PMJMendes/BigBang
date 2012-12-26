@@ -21,8 +21,6 @@ import bigBang.module.expenseModule.client.userInterface.presenter.ProofReceptio
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.SerialExpenseCreationViewPresenter;
-import bigBang.module.expenseModule.client.userInterface.presenter.ViewExpenseInfoRequestViewPresenter;
-import bigBang.module.expenseModule.client.userInterface.presenter.ViewExternalInfoRequestViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseConversationView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseDeleteView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseReceiveMessageView;
@@ -37,9 +35,6 @@ import bigBang.module.expenseModule.client.userInterface.view.ProofReceptionView
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveAcceptanceView;
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveReturnView;
 import bigBang.module.expenseModule.client.userInterface.view.SerialExpenseCreationView;
-import bigBang.module.expenseModule.client.userInterface.view.ViewExpenseInfoRequestView;
-import bigBang.module.expenseModule.client.userInterface.view.ViewExternalInfoRequestView;
-
 import com.google.gwt.core.client.GWT;
 
 public class ExpenseModule implements Module {
@@ -162,26 +157,7 @@ public class ExpenseModule implements Module {
 				MassReturnToClientViewPresenter presenter = new MassReturnToClientViewPresenter(view);
 				return presenter;
 			}
-		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VIEW_EXPENSE_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
-
-			@Override
-			public ViewPresenter getInstance() {
-				ViewExpenseInfoRequestView view = (ViewExpenseInfoRequestView ) GWT.create(ViewExpenseInfoRequestView.class);
-				ViewPresenter presenter = new ViewExpenseInfoRequestViewPresenter(view);
-				return presenter;
-			}
-		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VIEW_EXPENSE_EXTERNAL_REQUEST", new ViewPresenterInstantiator() {
-
-			@Override
-			public ViewPresenter getInstance() {
-				ViewExternalInfoRequestView view = (ViewExternalInfoRequestView) GWT.create(ViewExternalInfoRequestView.class);
-				ViewPresenter presenter = new ViewExternalInfoRequestViewPresenter(view);
-				return presenter;
-			}
-		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("PROOF_RECEPTION", new ViewPresenterInstantiator() {
+		});		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("PROOF_RECEPTION", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {

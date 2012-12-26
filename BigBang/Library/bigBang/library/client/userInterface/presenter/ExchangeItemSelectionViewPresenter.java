@@ -35,7 +35,7 @@ HasValue<Message> {
 
 	public enum Action{
 		CANCEL,
-		CONFIRM, GET_ALL_EMAILS
+		CONFIRM, GET_ALL_EMAILS, REFRESH
 	}
 
 	HandlerManager manager;
@@ -61,6 +61,10 @@ HasValue<Message> {
 		bigBang.definitions.shared.Message.AttachmentUpgrade[] getChecked();
 
 		void enableGetAll(boolean b);
+
+		void enableRefresh(boolean b);
+
+		void clearList();
 
 
 	}
@@ -133,15 +137,48 @@ HasValue<Message> {
 				}
 				case GET_ALL_EMAILS:
 					getAllEmails();
+					break;
+				case REFRESH:
+					getEmails();
+					break;
 				}
 			}
 		});
 		bound = true;
 	}
 
-	protected void getAllEmails() {
+	protected void getEmails() {
 		view.clear();
+		view.clearList();
+		view.enableGetAll(false);
+		view.enableRefresh(false);
+		
+		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
+			@Override
+			public void onResponseSuccess(ExchangeItemStub[] result) {
+
+				for(int i=0; i<result.length; i++){
+					view.addEmailEntry(result[i]);
+				}
+				view.enableGetAll(true);
+				view.enableRefresh(true);
+
+			}
+			
+
+			public void onResponseFailure(Throwable caught) {
+				super.onResponseFailure(caught);
+			};
+		});
+		
+	}
+	protected void getAllEmails() {
+		view.clearList();
+		view.clear();
+		view.enableGetAll(false);
+		view.enableRefresh(false);
+		
 		service.getItemsAll(new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
@@ -168,22 +205,9 @@ HasValue<Message> {
 	public void setParameters(HasParameters parameterHolder) {
 
 		view.clear();
-
-		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
-
-			@Override
-			public void onResponseSuccess(ExchangeItemStub[] result) {
-
-				for(int i=0; i<result.length; i++){
-					view.addEmailEntry(result[i]);
-				}
-				view.enableGetAll(true);
-			}
-
-			public void onResponseFailure(Throwable caught) {
-				super.onResponseFailure(caught);
-			};
-		});
+		view.enableGetAll(false);
+		view.enableRefresh(false);
+		getEmails();
 
 	}
 

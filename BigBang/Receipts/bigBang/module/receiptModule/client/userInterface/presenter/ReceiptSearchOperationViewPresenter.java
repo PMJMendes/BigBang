@@ -49,7 +49,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SEND_RECEIPT,
 		INSURER_ACCOUNTING, AGENT_ACCOUNTING,
 		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY, REQUEST_DAS, NOT_PAYED_INDICATION,
-		RETURN_PAYMENT, GENERATE_RECEIPT
+		RETURN_PAYMENT, GENERATE_RECEIPT, SEND_MESSAGE, RECEIVE_MESSAGE
 	}
 
 	public interface Display {
@@ -101,6 +101,10 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowRequestDAS(boolean hasPermission);
 
 		void addEntryToList(Entry entry);
+
+		void allowSendMessage(boolean hasPermission);
+
+		void allowReceiveMessage(boolean hasPermission);
 
 	}
 
@@ -229,6 +233,12 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case GENERATE_RECEIPT:
 					generateReceipt();
 					break;
+				case RECEIVE_MESSAGE:
+					onReceiveMessage();
+					break;
+				case SEND_MESSAGE:
+					onSendMessage();
+					break;
 				}
 
 			}
@@ -281,6 +291,20 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onReceiveMessage() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "receivemessage");
+		item.setParameter("ownerid", receiptId);
+		NavigationHistoryManager.getInstance().go(item);		
+	}
+
+	protected void onSendMessage() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "sendmessage");
+		item.setParameter("ownerid", receiptId);
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	protected void generateReceipt() {
@@ -499,6 +523,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowSetNotPaid(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.NOT_PAID_INDICATION));
 				view.allowReturnPayment(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RETURN_PAYMENT));
 				view.allowGenerateReceipt(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RECEIPT_GENERATION));
+				view.allowSendMessage(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CONVERSATION));
+				view.allowReceiveMessage(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CONVERSATION));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

@@ -12,6 +12,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
@@ -1008,6 +1009,49 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		});
 
 	}
+
+	@Override
+	public void sendMessage(Conversation info,
+			final ResponseHandler<Conversation> responseHandler) {
+		service.sendMessage(info, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CONVERSATION, result.id));
+				responseHandler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+
+		});				
+	}
+	
+	@Override
+	public void receiveMessage(Conversation info, 
+			final ResponseHandler<Conversation> responseHandler) {
+		service.sendMessage(info, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CONVERSATION, result.id));
+				responseHandler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not receive the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		});					}
 
 }
 

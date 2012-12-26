@@ -50,6 +50,10 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	//ADMIN
 	protected MenuItem deleteReceipt;
 
+	private MenuItem sendMessage;
+
+	private MenuItem receiveMessage;
+
 	//OTHER
 
 	public ReceiptProcessToolBar(){
@@ -180,16 +184,16 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, sendPaymentToMediator);
-		
+
 		this.executeSubMenu.addSeparator();
-		
+
 		generateReceipt = new MenuItem("Emissão de Recibo", new Command(){
-			
+
 			@Override
 			public void execute() {
 				onGenerateReceipt();
 			}
-			
+
 		});
 
 		addItem(SUB_MENU.EXECUTE, generateReceipt);
@@ -201,7 +205,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 				onReceivePhysicalReceipt();
 			}
 		});
-//		addItem(SUB_MENU.DATA, receivePhysicalReceipt);
+		//		addItem(SUB_MENU.DATA, receivePhysicalReceipt);
 		unnecessaryDASFlag = new MenuItem("Indicar DAS Desnecessária", new Command() {
 
 			@Override
@@ -212,6 +216,25 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.DATA, unnecessaryDASFlag);
 
 		//REQUESTS
+		sendMessage = new MenuItem("Enviar Mensagem", new Command(){
+
+			@Override
+			public void execute() {
+				onSendMessage();
+			}
+		});
+		addItem(SUB_MENU.REQUESTS, sendMessage);
+
+		receiveMessage = new MenuItem("Receber Mensagem", new Command(){
+
+			@Override
+			public void execute() {
+				onReceiveMessage();
+			}
+		});
+		addItem(SUB_MENU.REQUESTS, receiveMessage);
+		requestsSubMenu.addSeparator();
+
 		requestPurchaseOrderNumber = new MenuItem("Criar Pedido de Número de Encomenda", new Command() {
 
 			@Override
@@ -276,6 +299,10 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 
 	public abstract void onGenerateReceipt();
 
+	protected abstract void onReceiveMessage();
+
+	protected abstract void onSendMessage();
+
 	public abstract void onDelete();
 
 	public abstract void onRequestAdvanceDebit();
@@ -297,7 +324,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	public abstract void onLackOfPaymentFlag();
 
 	public abstract void onEnterPayment();
-	
+
 	public abstract void onReturnPayment();
 
 	public abstract void onAssociateWithDebitNote();
@@ -367,13 +394,13 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 
 	public void allowPaymentToClient(boolean hasPermission) {
 		this.sendPaymentToClient.setEnabled(hasPermission);
-		
+
 	}
-	
+
 	public void allowReturnToAgency(boolean hasPermission){
 		this.returnToAgency.setEnabled(hasPermission);
 	}
-	
+
 	public void allowCreateSignatureRequest(boolean hasPermission){
 		this.requestSignature.setEnabled(hasPermission);
 	}
@@ -389,13 +416,21 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	public void allowSetNotPaid(boolean hasPermission) {
 		this.lackOfPaymentFlag.setEnabled(hasPermission);
 	}
-	
+
 	public void allowReturnPayment(boolean hasPermission) {
 		this.returnPayment.setEnabled(hasPermission);
 	}
 
 	public void allowGenerateReceipt(boolean hasPermission) {
 		this.generateReceipt.setEnabled(hasPermission);
+	}
+
+	public void allowSendMessage(boolean hasPermission) {
+		this.sendMessage.setEnabled(hasPermission);
+	}
+
+	public void allowReceiveMessage(boolean hasPermission) {
+		this.receiveMessage.setEnabled(hasPermission);
 	}
 
 }

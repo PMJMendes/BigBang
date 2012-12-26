@@ -63,6 +63,10 @@ public class ReceiptOperationsViewPresenter implements ViewPresenter {
 					present("SIGNATURE_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("dasrequest")){
 					present("DAS_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("sendmessage")){
+					present("RECEIPT_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("receivemessage")){
+					present("RECEIPT_RECEIVE_MESSAGE", parameters);
 				}
 				else{
 					goToDefault();

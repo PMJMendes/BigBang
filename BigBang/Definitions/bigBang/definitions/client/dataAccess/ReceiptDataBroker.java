@@ -3,6 +3,7 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
@@ -102,5 +103,11 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 
 	void generateReceipt(String receiptId,
 			ResponseHandler<Receipt> responseHandler);
+
+	public void sendMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
+
+	void receiveMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
 
 }
