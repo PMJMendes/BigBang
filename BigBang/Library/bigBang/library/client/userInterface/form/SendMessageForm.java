@@ -88,6 +88,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	private DocumentViewPresenter documentViewPresenter;
 	private DocumentsBroker documentBroker;
 	protected String ownerTypeId;
+	private String contactChosen;
 
 	public SendMessageForm(){
 
@@ -315,6 +316,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			@Override
 			public void onResponseSuccess(Contact[] result) {
 				setAvailableContacts(result);
+				to.setValue(contactChosen);
+				contactChosen = null;
 				addContactButton.setEnabled(true);
 			}			
 
@@ -476,7 +479,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 					forwardReplies.add(msg.addresses[i].display);
 					break;
 				case TO:
-					to.setValue(msg.addresses[i].contactInfoId);
+					contactsFrom.setValue(msg.addresses[i].ownerId);
+					contactChosen = msg.addresses[i].contactInfoId; 
 					break;
 				}
 			}
@@ -583,7 +587,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		this.ownerTypeId = ownerTypeId2;
 		documentBroker.registerClient(this, ownerId2);
 	}
-	
+
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {
 		return;

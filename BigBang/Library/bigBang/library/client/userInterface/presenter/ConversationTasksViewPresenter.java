@@ -8,6 +8,7 @@ import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -20,6 +21,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.ProcessBase;
+import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.EventBus;
@@ -51,6 +53,7 @@ import bigBang.module.expenseModule.client.userInterface.form.ExpenseForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyHeaderForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyHeaderForm;
 import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationForm;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -482,6 +485,27 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 						view.addContact("Cliente (" + response.clientName + ")", response.clientId, BigBangConstants.EntityIds.CLIENT);
 						view.addContact("Mediador (" + response.inheritMediatorName + ")", response.inheritMediatorId, BigBangConstants.EntityIds.MEDIATOR);
 					}
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetOwnerFailed();
+				}
+			});
+		}else if(BigBangConstants.EntityIds.RECEIPT.equalsIgnoreCase(response.parentDataTypeId)){
+			ReceiptDataBroker broker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
+			broker.getReceipt(response.parentDataObjectId, new ResponseHandler<Receipt>() {
+
+				@Override
+				public void onResponse(Receipt receipt) {
+					view.setOwnerForm(new ReceiptForm());
+					view.setOwnerFormValue(receipt);
+					
+					view.addContact("Recibo (" + receipt.number + ")",receipt.id ,BigBangConstants.EntityIds.RECEIPT);
+					view.addContact("Apólice " + (BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(receipt.ownerTypeId) ? "Adesão " : "") + "(" + receipt.policyNumber + ")", receipt.policyId, receipt.ownerTypeId);
+					view.addContact("Cliente (" + receipt.clientName + ")", receipt.clientId, BigBangConstants.EntityIds.CLIENT);
+					view.addContact("Seguradora (" + receipt.insurerName + ")", receipt.insurerId, BigBangConstants.EntityIds.INSURANCE_AGENCY);
+					view.addContact("Mediador (" + receipt.inheritMediatorName + ")", receipt.inheritMediatorId, BigBangConstants.EntityIds.MEDIATOR);
 				}
 
 				@Override

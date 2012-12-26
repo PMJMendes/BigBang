@@ -41,28 +41,31 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 		protected Label reference;
 		protected Label dueDate;
 		protected String defaultBGColor;
+		private Label client;
 
 		public Entry(TaskStub value) {
 			super(value);
 			setRightWidget(statusIndicator);
 			defaultBGColor = this.getElement().getStyle().getBackgroundColor();
-			setHeight("50px");
+			setHeight("65px");
 		}
 
 		public <I extends Object> void setInfo(I info) {
 			VerticalPanel wrapper; 
-			if(statusIndicator == null){
+			if(title == null){
 				statusIndicator = new Image();
 				wrapper = new VerticalPanel();
 				title = getFormatedLabel();
 				title.getElement().getStyle().setFontSize(14, Unit.PX);
 				reference = getFormatedLabel();
 				reference.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
+				client = getFormatedLabel();
 				dueDate = getFormatedLabel();
 				dueDate.getElement().getStyle().setFontSize(12, Unit.PX);
 				
 				wrapper.add(title);
 				wrapper.add(reference);
+				wrapper.add(client);
 				wrapper.add(dueDate);
 				
 				setWidget(wrapper);
@@ -72,6 +75,7 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 		
 			title.setText(t.description);
 			reference.setText("Ref: " + t.reference);
+			client.setText(t.clientName);
 			dueDate.setText("Data Limite: " + t.dueDate);
 			
 			statusIndicator.setVisible(true);
@@ -99,6 +103,19 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 				break;
 			}
 		};
+		
+		@Override
+		public void setSelected(boolean selected, boolean b) {
+			super.setSelected(selected, b);
+			if(title == null) {
+				return;
+			}
+			if(selected){
+				this.client.getElement().getStyle().setColor("white");
+			}else{
+				this.client.getElement().getStyle().setColor("#0066FF");
+			}
+		}
 	}
 
 	protected static enum Filters {
