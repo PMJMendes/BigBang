@@ -753,6 +753,11 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 			item.pushIntoStackParameter("display", "dasrequest");
 			item.setParameter("dasrequestid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
+			
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
+			item.pushIntoStackParameter("display", "conversation");
+			item.setParameter("conversationid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
 		}
 	}
 

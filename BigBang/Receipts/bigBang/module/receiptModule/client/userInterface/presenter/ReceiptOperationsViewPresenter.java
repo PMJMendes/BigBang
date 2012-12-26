@@ -67,6 +67,8 @@ public class ReceiptOperationsViewPresenter implements ViewPresenter {
 					present("RECEIPT_SEND_MESSAGE", parameters);
 				}else if(display.equalsIgnoreCase("receivemessage")){
 					present("RECEIPT_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("conversation")){
+					present("RECEIPT_CONVERSATION", parameters);
 				}
 				else{
 					goToDefault();

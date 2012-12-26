@@ -174,9 +174,15 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 						}
 					});
 
-				}else {
+				}else if(BigBangConstants.EntityIds.EXPENSE.equalsIgnoreCase(response.parentDataTypeId)){
 					navigationItem.setParameter("section", "expense");
 					navigationItem.setParameter("expenseid", response.parentDataObjectId);
+					navigationItem.pushIntoStackParameter("display","conversation");
+					handler.onResponse(navigationItem);
+				}
+				else{
+					navigationItem.setParameter("section", "receipt");
+					navigationItem.setParameter("receiptid", response.parentDataObjectId);
 					navigationItem.pushIntoStackParameter("display","conversation");
 					handler.onResponse(navigationItem);
 				}
