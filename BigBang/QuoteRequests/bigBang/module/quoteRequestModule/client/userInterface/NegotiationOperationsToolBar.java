@@ -117,7 +117,6 @@ public abstract class NegotiationOperationsToolBar extends BigBangOperationsTool
 
 	}
 
-
 	public void allowSendMessage(boolean b) {
 		sendMessage.setEnabled(b);
 	}

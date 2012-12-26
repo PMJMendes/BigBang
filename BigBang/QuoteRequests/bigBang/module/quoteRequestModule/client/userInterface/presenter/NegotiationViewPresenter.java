@@ -334,14 +334,10 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			newNeg.ownerId = ownerId;
 			view.getForm().setInfo(newNeg);
 			view.getForm().setReadOnly(false);
+			view.disableToolbar();
 			view.setToolbarSaveMode(true);
 			view.allowEdit(true);
-			view.allowCancelNegotiation(false);
-			view.allowReceiveMessage(false);
-			view.allowGrant(false);
-			view.allowResponse(false);
-			view.allowResponse(false);
-
+			
 		}else{
 
 			negotiationBroker.getNegotiation(negotiationId, new ResponseHandler<Negotiation>() {
@@ -356,9 +352,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
 					view.allowContactDocumentEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
 					view.allowCancelNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.CANCEL_NEGOTIATION));
-					//TODO REQUESTS 
-					view.allowSendMessage(true);
-					view.allowReceiveMessage(true);
+					view.allowSendMessage(PermissionChecker.hasPermission(response,BigBangConstants.OperationIds.NegotiationProcess.CONVERSATION));
+					view.allowReceiveMessage(PermissionChecker.hasPermission(response,BigBangConstants.OperationIds.NegotiationProcess.CONVERSATION));
 					view.allowGrant(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.GRANT_NEGOTIATION));
 					view.allowResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.RECEIVE_QUOTE));
 					view.enableDocumentCreation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
