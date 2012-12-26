@@ -24,6 +24,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
@@ -39,8 +40,10 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
+import bigBang.library.server.ConversationServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.FileServiceImpl;
+import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -49,8 +52,10 @@ import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -66,6 +71,7 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateDASRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateInternalReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
@@ -1273,6 +1279,122 @@ public class ReceiptServiceImpl
 		}
 
 		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Conversation sendMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjReceipt.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Outgoing;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Incoming );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Receipt,
+				lobjReceipt.getKey(), Constants.MsgDir_Outgoing);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
+	}
+
+	public Conversation receiveMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjReceipt.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Receipt,
+				lobjReceipt.getKey(), Constants.MsgDir_Incoming);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
 	}
 
 	public void deleteReceipt(String receiptId)

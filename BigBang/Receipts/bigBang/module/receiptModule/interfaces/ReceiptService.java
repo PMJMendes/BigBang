@@ -1,5 +1,6 @@
 package bigBang.module.receiptModule.interfaces;
 
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
@@ -65,6 +66,9 @@ public interface ReceiptService
 	public Receipt mediatorAccounting(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt returnToInsurer(String receiptId) throws SessionExpiredException, BigBangException;
+
+	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
+	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 
 	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 

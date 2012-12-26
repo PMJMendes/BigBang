@@ -1,5 +1,6 @@
 package bigBang.module.receiptModule.interfaces;
 
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
@@ -38,6 +39,8 @@ public interface ReceiptServiceAsync
 	void insurerAccouting(String receiptId, AsyncCallback<Receipt> callback);
 	void mediatorAccounting(String receiptId, AsyncCallback<Receipt> callback);
 	void returnToInsurer(String receiptId, AsyncCallback<Receipt> callback);
+	void sendMessage(Conversation conversation, AsyncCallback<Conversation> callback);
+	void receiveMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void deleteReceipt(String receiptId, AsyncCallback<Void> callback);
 	void serialCreateReceipt(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
 	void massCreatePaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);

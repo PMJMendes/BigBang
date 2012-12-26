@@ -407,6 +407,8 @@ public class Constants
 	public static final UUID OPID_Receipt_AutoBlockPayment               = UUID.fromString("B803BA88-6295-4014-ABAC-A10E00CE3A6A");
 	public static final UUID OPID_Receipt_ExternForceInternalDebitNote   = UUID.fromString("B0D0475F-9628-46A7-9C41-A10E01300E46");
 	public static final UUID OPID_Receipt_CreateInternalReceipt          = UUID.fromString("E870B538-B7AE-4B33-B13E-A12A011BD386");
+	public static final UUID OPID_Receipt_CreateConversation             = UUID.fromString("E7305369-657B-4CC3-B769-A13300EEF0CD");
+	public static final UUID OPID_Receipt_UndoCreateConversation         = UUID.fromString("A58119C9-7B91-4B64-BF1F-A13300EF84B1");
 
 	//Casualty Operations
 	public static final UUID OPID_Casualty_AutoProcessVents              = UUID.fromString("4DB7EF2A-DB71-4BF4-810B-A02E00FA9F94");
