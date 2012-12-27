@@ -99,6 +99,7 @@ public class ReceiptHistoryPaymentAcct
 		IEntity lrefReceipts, lrefLogs;
 		MasterDB ldb;
 		ResultSet lrsReceipts;
+		Receipt lobjAux;
 
 		larrAux = new ArrayList<Receipt>();
 
@@ -144,7 +145,11 @@ public class ReceiptHistoryPaymentAcct
 		try
 		{
 			while ( lrsReceipts.next() )
-				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts));
+			{
+				lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts);
+				if ( !lobjAux.isInternal() )
+					larrAux.add(lobjAux);
+			}
 		}
 		catch (Throwable e)
 		{

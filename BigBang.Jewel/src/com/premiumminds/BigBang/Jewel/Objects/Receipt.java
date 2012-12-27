@@ -71,6 +71,9 @@ public class Receipt
 		public static int DESCRIPTION       = 14;
 		public static int RETURNTEXT        = 15;
 		public static int MIGRATIONID       = 16;
+		public static int BONUSMALUS        = 17;
+		public static int ISMALUS           = 18;
+		public static int ISINTERNAL        = 19;
 	}
 
     public static Receipt GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -523,6 +526,14 @@ public class Receipt
 
     	return false;
     }
+
+	public boolean isInternal()
+	{
+		Boolean b;
+
+		b = (Boolean)getAt(I.ISINTERNAL);
+		return ( (b != null) && b );
+	}
 
     public String getReceiptType()
     	throws BigBangJewelException

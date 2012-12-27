@@ -16,6 +16,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.HealthDebitNoteReport;
 
@@ -63,11 +64,16 @@ public class ExternForceInternalDebitNote
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Receipt lobjReceipt;
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
 
 		try
 		{
+			lobjReceipt = (Receipt)GetProcess().GetData();
+			lobjReceipt.setAt(Receipt.I.ISINTERNAL, true);
+			lobjReceipt.SaveToDb(pdb);
+
 			if ( mobjDocOps == null )
 				generateDocOp();
 

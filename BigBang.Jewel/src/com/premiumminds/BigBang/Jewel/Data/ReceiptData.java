@@ -9,6 +9,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class ReceiptData
 	implements DataBridge
@@ -33,6 +34,7 @@ public class ReceiptData
 	public UUID midMediator;
 	public String mstrNotes;
 	public String mstrDescription;
+	public Boolean mbInternal;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -43,23 +45,24 @@ public class ReceiptData
 	{
 		mid = pobjSource.getKey();
 
-		mstrNumber = (String)pobjSource.getAt(0);
-		midType = (UUID)pobjSource.getAt(1);
-		midProcess = (UUID)pobjSource.getAt(2);
-		mdblTotal = (BigDecimal)pobjSource.getAt(3);
-		mdblCommercial = (BigDecimal)pobjSource.getAt(4);
-		mdblCommissions = (BigDecimal)pobjSource.getAt(5);
-		mdblRetrocessions = (BigDecimal)pobjSource.getAt(6);
-		mdblFAT = (BigDecimal)pobjSource.getAt(7);
-		mdtIssue = (Timestamp)pobjSource.getAt(8);
-		mdtMaturity = (Timestamp)pobjSource.getAt(9);
-		mdtEnd = (Timestamp)pobjSource.getAt(10);
-		mdtDue = (Timestamp)pobjSource.getAt(11);
-		midMediator = (UUID)pobjSource.getAt(12);
-		mstrNotes = (String)pobjSource.getAt(13);
-		mstrDescription = (String)pobjSource.getAt(14);
-		mdblBonusMalus = (BigDecimal)pobjSource.getAt(17);
-		mbIsMalus = (Boolean)pobjSource.getAt(18);
+		mstrNumber =            (String)pobjSource.getAt(Receipt.I.NUMBER);
+		midType =                 (UUID)pobjSource.getAt(Receipt.I.TYPE);
+		midProcess =              (UUID)pobjSource.getAt(Receipt.I.PROCESS);
+		mdblTotal =         (BigDecimal)pobjSource.getAt(Receipt.I.TOTALPREMIUM);
+		mdblCommercial =    (BigDecimal)pobjSource.getAt(Receipt.I.COMMERCIALPREMIUM);
+		mdblCommissions =   (BigDecimal)pobjSource.getAt(Receipt.I.COMMISSIONS);
+		mdblRetrocessions = (BigDecimal)pobjSource.getAt(Receipt.I.RETROCESSIONS);
+		mdblFAT =           (BigDecimal)pobjSource.getAt(Receipt.I.FAT);
+		mdtIssue =           (Timestamp)pobjSource.getAt(Receipt.I.ISSUEDATE);
+		mdtMaturity =        (Timestamp)pobjSource.getAt(Receipt.I.MATURITYDATE);
+		mdtEnd =             (Timestamp)pobjSource.getAt(Receipt.I.ENDDATE);
+		mdtDue =             (Timestamp)pobjSource.getAt(Receipt.I.DUEDATE);
+		midMediator =             (UUID)pobjSource.getAt(Receipt.I.MEDIATOR);
+		mstrNotes =             (String)pobjSource.getAt(Receipt.I.NOTES);
+		mstrDescription =       (String)pobjSource.getAt(Receipt.I.DESCRIPTION);
+		mdblBonusMalus =    (BigDecimal)pobjSource.getAt(Receipt.I.BONUSMALUS);
+		mbIsMalus =            (Boolean)pobjSource.getAt(Receipt.I.ISMALUS);
+		mbInternal =           (Boolean)pobjSource.getAt(Receipt.I.ISINTERNAL);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -67,23 +70,24 @@ public class ReceiptData
 	{
 		try
 		{
-			pobjDest.setAt( 0, mstrNumber);
-			pobjDest.setAt( 1, midType);
-			pobjDest.setAt( 2, midProcess);
-			pobjDest.setAt( 3, mdblTotal);
-			pobjDest.setAt( 4, mdblCommercial);
-			pobjDest.setAt( 5, mdblCommissions);
-			pobjDest.setAt( 6, mdblRetrocessions);
-			pobjDest.setAt( 7, mdblFAT);
-			pobjDest.setAt( 8, mdtIssue);
-			pobjDest.setAt( 9, mdtMaturity);
-			pobjDest.setAt(10, mdtEnd);
-			pobjDest.setAt(11, mdtDue);
-			pobjDest.setAt(12, midMediator);
-			pobjDest.setAt(13, mstrNotes);
-			pobjDest.setAt(14, mstrDescription);
-			pobjDest.setAt(17, mdblBonusMalus);
-			pobjDest.setAt(18, mbIsMalus);
+			pobjDest.setAt(Receipt.I.NUMBER,            mstrNumber);
+			pobjDest.setAt(Receipt.I.TYPE,              midType);
+			pobjDest.setAt(Receipt.I.PROCESS,           midProcess);
+			pobjDest.setAt(Receipt.I.TOTALPREMIUM,      mdblTotal);
+			pobjDest.setAt(Receipt.I.COMMERCIALPREMIUM, mdblCommercial);
+			pobjDest.setAt(Receipt.I.COMMISSIONS,       mdblCommissions);
+			pobjDest.setAt(Receipt.I.RETROCESSIONS,     mdblRetrocessions);
+			pobjDest.setAt(Receipt.I.FAT,               mdblFAT);
+			pobjDest.setAt(Receipt.I.ISSUEDATE,         mdtIssue);
+			pobjDest.setAt(Receipt.I.MATURITYDATE,      mdtMaturity);
+			pobjDest.setAt(Receipt.I.ENDDATE,           mdtEnd);
+			pobjDest.setAt(Receipt.I.DUEDATE,           mdtDue);
+			pobjDest.setAt(Receipt.I.MEDIATOR,          midMediator);
+			pobjDest.setAt(Receipt.I.NOTES,             mstrNotes);
+			pobjDest.setAt(Receipt.I.DESCRIPTION,       mstrDescription);
+			pobjDest.setAt(Receipt.I.BONUSMALUS,        mdblBonusMalus);
+			pobjDest.setAt(Receipt.I.ISMALUS,           mbIsMalus);
+			pobjDest.setAt(Receipt.I.ISINTERNAL,        mbInternal);
 		}
 		catch (Throwable e)
 		{
