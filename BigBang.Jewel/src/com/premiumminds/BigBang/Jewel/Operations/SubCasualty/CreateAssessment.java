@@ -39,7 +39,7 @@ public class CreateAssessment
 
 	public String ShortDesc()
 	{
-		return "Criação de Processo de Peritagem ou Averiguação";
+		return "Criação de Sub-Processo: Peritagem ou Averiguação";
 	}
 
 	public String LongDesc(String pstrLineBreak)

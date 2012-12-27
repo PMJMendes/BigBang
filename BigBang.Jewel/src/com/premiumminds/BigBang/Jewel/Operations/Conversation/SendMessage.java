@@ -74,6 +74,7 @@ public class SendMessage
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
 		Conversation lobjConv;
+		UUID lidContainer;
 		AgendaItem lobjNewAgendaItem;
 		Message lobjMessage;
 		MessageAddress lobjAddr;
@@ -118,6 +119,8 @@ public class SendMessage
 
 		try
 		{
+			lidContainer = lobjConv.getParentContainer();
+
 			if ( mdtDueDate == null )
 			{
 				TriggerOp(new TriggerAutoCloseProcess(GetProcess().getKey()), pdb);
@@ -149,9 +152,9 @@ public class SendMessage
 		}
 
 		if ( mobjData.mobjDocOps != null )
-			mobjData.mobjDocOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
+			mobjData.mobjDocOps.RunSubOp(pdb, lidContainer);
 		if ( mobjData.mobjContactOps != null )
-			mobjData.mobjContactOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
+			mobjData.mobjContactOps.RunSubOp(pdb, lidContainer);
 
 		try
 		{

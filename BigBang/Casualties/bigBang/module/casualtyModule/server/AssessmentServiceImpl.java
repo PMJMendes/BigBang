@@ -134,7 +134,7 @@ public class AssessmentServiceImpl
 	public Conversation sendMessage(Conversation conversation)
 		throws SessionExpiredException, BigBangException
 	{
-		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		com.premiumminds.BigBang.Jewel.Objects.Assessment lobjAssessment;
 		Timestamp ldtAux, ldtLimit;
 		Calendar ldtAux2;
 		CreateConversation lopCC;
@@ -155,7 +155,7 @@ public class AssessmentServiceImpl
 
 		try
 		{
-			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
+			lobjAssessment = com.premiumminds.BigBang.Jewel.Objects.Assessment.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(conversation.parentDataObjectId));
 		}
 		catch (Throwable e)
@@ -163,7 +163,7 @@ public class AssessmentServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lopCC = new CreateConversation(lobjCasualty.GetProcessID());
+		lopCC = new CreateConversation(lobjAssessment.GetProcessID());
 		lopCC.mobjData = new ConversationData();
 		lopCC.mobjData.mid = null;
 		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
@@ -174,8 +174,9 @@ public class AssessmentServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
-		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Casualty,
-				lobjCasualty.getKey(), Constants.MsgDir_Outgoing);
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
+				(UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY),
+				Constants.MsgDir_Outgoing);
 
 		try
 		{
@@ -192,7 +193,7 @@ public class AssessmentServiceImpl
 	public Conversation receiveMessage(Conversation conversation)
 		throws SessionExpiredException, BigBangException
 	{
-		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		com.premiumminds.BigBang.Jewel.Objects.Assessment lobjAssessment;
 		Timestamp ldtAux, ldtLimit;
 		Calendar ldtAux2;
 		CreateConversation lopCC;
@@ -213,7 +214,7 @@ public class AssessmentServiceImpl
 
 		try
 		{
-			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
+			lobjAssessment = com.premiumminds.BigBang.Jewel.Objects.Assessment.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(conversation.parentDataObjectId));
 		}
 		catch (Throwable e)
@@ -221,7 +222,7 @@ public class AssessmentServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lopCC = new CreateConversation(lobjCasualty.GetProcessID());
+		lopCC = new CreateConversation(lobjAssessment.GetProcessID());
 		lopCC.mobjData = new ConversationData();
 		lopCC.mobjData.mid = null;
 		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
@@ -232,8 +233,9 @@ public class AssessmentServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
-		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Casualty,
-				lobjCasualty.getKey(), Constants.MsgDir_Incoming);
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
+				(UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY),
+				Constants.MsgDir_Incoming);
 
 		try
 		{

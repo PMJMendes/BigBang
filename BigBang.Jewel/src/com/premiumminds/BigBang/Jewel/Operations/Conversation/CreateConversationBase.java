@@ -14,6 +14,7 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
@@ -67,6 +68,7 @@ public abstract class CreateConversationBase
 		HashSet<UUID> larrUsers;
 		IScript lobjScript;
 		IProcess lobjProc;
+		UUID lidContainer;
 		boolean b;
 		AgendaItem lobjAgendaItem;
 
@@ -107,6 +109,8 @@ public abstract class CreateConversationBase
 					GetContext(), pdb);
 
 			mobjData.midProcess = lobjProc.getKey();
+
+			lidContainer = lobjConv.getParentContainer();
 		}
 		catch (Throwable e)
 		{
@@ -114,9 +118,9 @@ public abstract class CreateConversationBase
 		}
 
 		if ( mobjData.marrMessages[0].mobjDocOps != null )
-			mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+			mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
 		if ( mobjData.marrMessages[0].mobjContactOps != null )
-			mobjData.marrMessages[0].mobjContactOps.RunSubOp(pdb, GetProcess().GetDataKey());
+			mobjData.marrMessages[0].mobjContactOps.RunSubOp(pdb, lidContainer);
 
 		try
 		{
@@ -299,13 +303,23 @@ public abstract class CreateConversationBase
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		UUID lidContainer;
 		ExternAbortProcess lopEAP;
 
+		try
+		{
+			lidContainer = Conversation.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid).getParentContainer();
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
 		if ( mobjData.marrMessages[0].mobjDocOps != null )
-			mobjData.marrMessages[0].mobjDocOps.UndoSubOp(pdb, GetProcess().GetDataKey());
+			mobjData.marrMessages[0].mobjDocOps.UndoSubOp(pdb, lidContainer);
 
 		if ( mobjData.marrMessages[0].mobjContactOps != null )
-			mobjData.marrMessages[0].mobjContactOps.UndoSubOp(pdb, GetProcess().GetDataKey());
+			mobjData.marrMessages[0].mobjContactOps.UndoSubOp(pdb, lidContainer);
 
 		if (mobjData.mdtDueDate == null )
 			PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess).Restart(pdb);

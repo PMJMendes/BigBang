@@ -77,6 +77,7 @@ public class ReceiveMessage
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
 		Conversation lobjConv;
+		UUID lidContainer;
 		AgendaItem lobjNewAgendaItem;
 		Message lobjMessage;
 		MessageAddress lobjAddr;
@@ -124,6 +125,8 @@ public class ReceiveMessage
 
 		try
 		{
+			lidContainer = lobjConv.getParentContainer();
+
 			if ( mdtDueDate == null )
 			{
 				TriggerOp(new TriggerAutoCloseProcess(GetProcess().getKey()), pdb);
@@ -155,9 +158,9 @@ public class ReceiveMessage
 		}
 
 		if ( mobjData.mobjDocOps != null )
-			mobjData.mobjDocOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
+			mobjData.mobjDocOps.RunSubOp(pdb, lidContainer);
 		if ( mobjData.mobjContactOps != null )
-			mobjData.mobjContactOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
+			mobjData.mobjContactOps.RunSubOp(pdb, lidContainer);
 
 		try
 		{
@@ -291,6 +294,7 @@ public class ReceiveMessage
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
 		Conversation lobjConv;
+		UUID lidContainer;
 		AgendaItem lobjNewAgendaItem;
 		UUID lidUrgency;
 		UUID[] larrUsers;
@@ -299,6 +303,7 @@ public class ReceiveMessage
 		try
 		{
 			lobjConv = (Conversation)GetProcess().GetData();
+			lidContainer = lobjConv.getParentContainer();
     		larrUsers = lobjConv.GetUsers(pdb);
 
 			if ( mobjData.marrAddresses != null )
@@ -319,9 +324,9 @@ public class ReceiveMessage
 		}
 
 		if ( mobjData.mobjDocOps != null )
-			mobjData.mobjDocOps.UndoSubOp(pdb, GetProcess().GetParent().GetDataKey());
+			mobjData.mobjDocOps.UndoSubOp(pdb, lidContainer);
 		if ( mobjData.mobjContactOps != null )
-			mobjData.mobjContactOps.UndoSubOp(pdb, GetProcess().GetParent().GetDataKey());
+			mobjData.mobjContactOps.UndoSubOp(pdb, lidContainer);
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 

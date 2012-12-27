@@ -103,25 +103,14 @@ public class MailConnector
 	private static Folder GetFolder()
 		throws BigBangJewelException
 	{
-		Folder lobjFolder;
-
-		lobjFolder = (Folder)Engine.getUserData().get("ExchangeFolder");
-
-		if ( lobjFolder == null )
+		try
 		{
-			try
-			{
-				lobjFolder = Folder.bind(GetService(), WellKnownFolderName.Inbox);
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-
-			Engine.getUserData().put("ExchangeFolder", lobjFolder);
+			return Folder.bind(GetService(), WellKnownFolderName.Inbox);
 		}
-
-		return lobjFolder;
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	private static Folder GetBigBangFolder()
@@ -165,43 +154,37 @@ public class MailConnector
 	private static Folder GetProcessedFolder()
 		throws BigBangJewelException
 	{
-		Folder lobjParent;
 		Folder lobjFolder;
+		Folder lobjParent;
 		ArrayList<Folder> larrFolders;
 		int i;
 
-		lobjFolder = (Folder)Engine.getUserData().get("ExchangeProcessedFolder");
+		lobjFolder = null;
+		lobjParent = GetBigBangFolder();
 
-		if ( lobjFolder == null )
+		try
 		{
-			lobjParent = GetBigBangFolder();
+			larrFolders = GetService().findFolders(lobjParent.getId(), new FolderView(Integer.MAX_VALUE)).getFolders();
 
-			try
+			for ( i = 0; i < larrFolders.size(); i++ )
 			{
-				larrFolders = GetService().findFolders(lobjParent.getId(), new FolderView(Integer.MAX_VALUE)).getFolders();
-	
-				for ( i = 0; i < larrFolders.size(); i++ )
+				if ( "tratados".equals(larrFolders.get(i).getDisplayName()) )
 				{
-					if ( "tratados".equals(larrFolders.get(i).getDisplayName()) )
-					{
-						lobjFolder = larrFolders.get(i);
-						break;
-					}
-				}
-
-				if ( lobjFolder == null )
-				{
-					lobjFolder = new Folder(GetService());
-					lobjFolder.setDisplayName("tratados");
-					lobjFolder.save(lobjParent.getId());
+					lobjFolder = larrFolders.get(i);
+					break;
 				}
 			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
 
-			Engine.getUserData().put("ExchangeProcessedFolder", lobjFolder);
+			if ( lobjFolder == null )
+			{
+				lobjFolder = new Folder(GetService());
+				lobjFolder.setDisplayName("tratados");
+				lobjFolder.save(lobjParent.getId());
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		return lobjFolder;

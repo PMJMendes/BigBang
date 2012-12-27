@@ -11,6 +11,7 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.ProcessData;
@@ -83,6 +84,25 @@ public class Conversation
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public UUID getParentContainer()
+		throws BigBangJewelException
+	{
+		IProcess lrefProc;
+
+		try
+		{
+			lrefProc = PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent();
+			if ( Constants.ProcID_Assessment.equals(lrefProc.GetScriptID()) )
+				lrefProc = lrefProc.GetParent();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lrefProc.GetDataKey();
 	}
 
 	public Message[] GetCurrentMessages()
