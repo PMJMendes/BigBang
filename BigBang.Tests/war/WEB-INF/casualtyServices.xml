@@ -6,6 +6,10 @@
 	<servlet-name>SubCasualtyService</servlet-name>
 	<servlet-class>bigBang.module.casualtyModule.server.SubCasualtyServiceImpl</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>AssessmentService</servlet-name>
+	<servlet-class>bigBang.module.casualtyModule.server.AssessmentServiceImpl</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>CasualtyService</servlet-name>
@@ -14,4 +18,8 @@
 <servlet-mapping>
 	<servlet-name>SubCasualtyService</servlet-name>
 	<url-pattern>/bigbang_tests/SubCasualtyService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>AssessmentService</servlet-name>
+	<url-pattern>/bigbang_tests/AssessmentService</url-pattern>
 </servlet-mapping>
