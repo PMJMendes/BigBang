@@ -1,4 +1,4 @@
-package bigBang.definitions.shared;
+package bigBang.definitions.client;
 
 /**
  * Class that holds important information which should be shared across modules
@@ -50,6 +50,7 @@ public class BigBangConstants {
 		public static final String DAS_REQUEST = "F7137CCF-744D-4BD8-918A-A03000F0F182";
 		public static final String GENERAL_SYSTEM = "628F5DA6-434F-46A8-9C88-9EB1008A689A";
 		public static final String CONVERSATION = "1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4";
+		public static final String ASSESSMENT = "CCCC8540-B2AF-45D6-951C-A1330100BC77";
 
 	}
 
@@ -94,18 +95,6 @@ public class BigBangConstants {
 	}
 
 	public static class OperationIds {
-
-		public static class InfoOrDocumentRequest {
-			public static final String REPEAT_REQUEST = "342772ED-99A8-4662-9439-9FE500FABF29";
-			public static final String RECEIVE_REPLY = "1497B196-8AE7-4E3F-8962-9FE500FAFEC6";
-			public static final String CANCEL_REQUEST = "E4CAAC1D-C89F-4956-9F0E-9FE500FB443D";
-		}
-		
-		public static class ExternalInfoRequest {
-			public static final String REPLY = "870ADF31-4DA8-41D2-BECD-9FEA00CE0A05";
-			public static final String CONTINUE = "18376BE2-9005-425A-98D0-9FEA00CE7865";
-			public static final String CLOSE = "C8D7C92A-FA92-4A74-8A4F-9FEA00CEF1CB";
-		}
 		
 		public static class GeneralSystemProcess {
 			public static final String MANAGE_COST_CENTERS = "39A4A919-F3D0-4966-8CBB-9EB100A38EE8";
@@ -263,6 +252,7 @@ public class BigBangConstants {
 			public static final String MARK_CLOSE_SUB_CASUALTY = "CDDBD0AC-B19E-4576-890B-A03600FE0E49";
 			public static final String MARK_NOTIFICATION_SENT = "2A0EF8C0-ECFA-4622-9C72-A03600FACBCB";
 			public static final String CONVERSATION = "94DEF8C7-6740-4C66-85A3-A03600FC056A";
+			public static final String CREATE_ASSESSMENT = "634A8C33-50A7-41D6-AF28-A03600FC9F95";
 		}
 
 		public static class DASRequestProcess{
@@ -294,6 +284,14 @@ public class BigBangConstants {
 			public static final String REPEAT = "62217CB6-5B54-4E43-870C-A118011AECE2";
 			public static final String RECEIVE = "5928AB00-2DED-45A6-B66E-A118011B1BC5";
 			public static final String CLOSE = "0712A1EB-867F-409D-AC1B-A118011B6FD8";
+			
+		}
+		
+		public static class AssessmentProcess{
+			
+			public static final String EDIT = "500557E4-27AC-4764-95B8-A133011535EE";
+			public static final String CONVERSATION = "5DAAE24E-6C34-4014-A675-A13301160582";
+			public static final String CLOSE = "FB1EBB7E-CE90-4FBE-ACDC-A13301178A3B";
 			
 		}
 		
