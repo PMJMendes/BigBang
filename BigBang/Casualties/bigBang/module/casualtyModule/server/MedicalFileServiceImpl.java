@@ -104,35 +104,35 @@ public class MedicalFileServiceImpl
 		lobjResult.mdtNextDate = ( pobjSource.nextDate == null ? null : Timestamp.valueOf(pobjSource.nextDate + " 00:00:00.0") );
 
 		if ( pobjSource.details == null )
-			lobjResult.marrItems = null;
+			lobjResult.marrDetails = null;
 		else
 		{
-			lobjResult.marrItems = new MedicalDetailData[pobjSource.details.length];
+			lobjResult.marrDetails = new MedicalDetailData[pobjSource.details.length];
 			for ( i = 0; i < pobjSource.details.length ; i++ )
 			{
 				if ( (pobjSource.details[i].id == null) && pobjSource.details[i].deleted )
-					lobjResult.marrItems[i] = null;
+					lobjResult.marrDetails[i] = null;
 				else
 				{
-					lobjResult.marrItems[i] = new MedicalDetailData();
-					lobjResult.marrItems[i].mid = ( pobjSource.details[i].id == null ? null :
+					lobjResult.marrDetails[i] = new MedicalDetailData();
+					lobjResult.marrDetails[i].mid = ( pobjSource.details[i].id == null ? null :
 							UUID.fromString(pobjSource.details[i].id) );
 					if ( pobjSource.details[i].deleted )
-						lobjResult.marrItems[i].mbDeleted = true;
+						lobjResult.marrDetails[i].mbDeleted = true;
 					else
 					{
-						lobjResult.marrItems[i].mbDeleted = false;
-						lobjResult.marrItems[i].mbNew = (pobjSource.details[i].id == null);
-						lobjResult.marrItems[i].midFile = lobjResult.mid;
-						lobjResult.marrItems[i].midDisabilityType = ( pobjSource.details[i].disabilityTypeId == null ? null :
+						lobjResult.marrDetails[i].mbDeleted = false;
+						lobjResult.marrDetails[i].mbNew = (pobjSource.details[i].id == null);
+						lobjResult.marrDetails[i].midFile = lobjResult.mid;
+						lobjResult.marrDetails[i].midDisabilityType = ( pobjSource.details[i].disabilityTypeId == null ? null :
 								UUID.fromString(pobjSource.details[i].disabilityTypeId) );
-						lobjResult.marrItems[i].mdtStartDate = ( pobjSource.details[i].startDate == null ? null :
+						lobjResult.marrDetails[i].mdtStartDate = ( pobjSource.details[i].startDate == null ? null :
 								Timestamp.valueOf(pobjSource.details[i].startDate + " 00:00:00.0") );
-						lobjResult.marrItems[i].mstrPlace = pobjSource.details[i].place;
-						lobjResult.marrItems[i].mlngPercent = pobjSource.details[i].percentDisability;
-						lobjResult.marrItems[i].mdtEndDate = ( pobjSource.details[i].endDate == null ? null :
+						lobjResult.marrDetails[i].mstrPlace = pobjSource.details[i].place;
+						lobjResult.marrDetails[i].mlngPercent = pobjSource.details[i].percentDisability;
+						lobjResult.marrDetails[i].mdtEndDate = ( pobjSource.details[i].endDate == null ? null :
 								Timestamp.valueOf(pobjSource.details[i].endDate + " 00:00:00.0") );
-						lobjResult.marrItems[i].mdblBenefits = new BigDecimal(pobjSource.details[i].benefits + "");
+						lobjResult.marrDetails[i].mdblBenefits = new BigDecimal(pobjSource.details[i].benefits + "");
 					}
 				}
 			}
