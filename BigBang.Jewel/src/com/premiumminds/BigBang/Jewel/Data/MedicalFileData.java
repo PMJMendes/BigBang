@@ -22,7 +22,7 @@ public class MedicalFileData
 	public UUID midManager;
 	public UUID midProcess;
 
-	public MedicalDetailData[] marrItems;
+	public MedicalDetailData[] marrDetails;
 
 	public MedicalFileData mobjPrevValues;
 
@@ -67,12 +67,12 @@ public class MedicalFileData
 			pstrBuilder.append(pstrLineBreak);
 		}
 
-		if ( (marrItems != null) && (marrItems.length > 0) )
+		if ( (marrDetails != null) && (marrDetails.length > 0) )
 		{
 			pstrBuilder.append(pstrLineBreak).append("Detalhes da Baixa ou Internamento:").append(pstrLineBreak).append(pstrLineBreak);
-			for ( i = 0; i < marrItems.length; i++ )
+			for ( i = 0; i < marrDetails.length; i++ )
 			{
-				marrItems[i].Describe(pstrBuilder, pstrLineBreak);
+				marrDetails[i].Describe(pstrBuilder, pstrLineBreak);
 				pstrBuilder.append(pstrLineBreak);
 			}
 		}

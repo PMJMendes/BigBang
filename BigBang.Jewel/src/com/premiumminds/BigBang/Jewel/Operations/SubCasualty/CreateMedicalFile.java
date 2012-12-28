@@ -20,6 +20,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.MedicalFileData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 
 public class CreateMedicalFile
@@ -66,9 +67,11 @@ public class CreateMedicalFile
 		throws JewelPetriException
 	{
 		MedicalFile lobjAux;
+		MedicalDetail lobjDetail;
 		IScript lobjScript;
 		IProcess lobjProc;
 		AgendaItem lobjItem;
+		int i;
 
 		if ( mobjData.midManager == null )
 			mobjData.midManager = Engine.getCurrentUser();
@@ -81,12 +84,27 @@ public class CreateMedicalFile
 			lobjAux = MedicalFile.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
+			mobjData.mid = lobjAux.getKey();
+
+			if ( mobjData.marrDetails != null )
+			{
+				for ( i = 0; i < mobjData.marrDetails.length; i++ )
+				{
+					if ( mobjData.marrDetails[i] == null )
+						continue;
+
+					mobjData.marrDetails[i].midFile = mobjData.mid;
+
+					lobjDetail = MedicalDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrDetails[i].ToObject(lobjDetail);
+					lobjDetail.SaveToDb(pdb);
+				}
+			}
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MedicalFile);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(), GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
-			mobjData.mid = lobjAux.getKey();
 			mobjData.midProcess = lobjProc.getKey();
 			mobjData.midManager = lobjProc.GetManagerID();
 			mobjData.mobjPrevValues = null;

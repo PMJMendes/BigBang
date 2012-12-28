@@ -14,8 +14,10 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.MedicalDetailData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalFileData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 
 public class ManageData
@@ -65,11 +67,13 @@ public class ManageData
 		throws JewelPetriException
 	{
 		MedicalFile lobjAux;
+		MedicalDetail lobjDetail;
 		HashMap<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
 		AgendaItem lobjItem;
+		int i;
 
 		try
 		{
@@ -83,6 +87,39 @@ public class ManageData
 				mobjData.midManager = GetProcess().GetManagerID();
 				mobjData.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
+
+				if ( mobjData.marrDetails != null )
+				{
+					for ( i = 0; i < mobjData.marrDetails.length; i++ )
+					{
+						if ( mobjData.marrDetails[i] == null )
+							continue;
+
+						if ( mobjData.marrDetails[i].mbDeleted )
+						{
+							lobjDetail = MedicalDetail.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrDetails[i].mid);
+							mobjData.marrDetails[i].FromObject(lobjDetail);
+							lobjDetail.getDefinition().Delete(pdb, lobjDetail.getKey());
+						}
+						else if ( mobjData.marrDetails[i].mbNew )
+						{
+							mobjData.marrDetails[i].midFile = mobjData.mid;
+
+							lobjDetail = MedicalDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrDetails[i].ToObject(lobjDetail);
+							lobjDetail.SaveToDb(pdb);
+							mobjData.marrDetails[i].mid = lobjDetail.getKey();
+						}
+						else
+						{
+							lobjDetail = MedicalDetail.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrDetails[i].mid);
+							mobjData.marrDetails[i].mobjPrevValues = new MedicalDetailData();
+							mobjData.marrDetails[i].mobjPrevValues.FromObject(lobjDetail);
+							mobjData.marrDetails[i].ToObject(lobjDetail);
+							lobjDetail.SaveToDb(pdb);
+						}
+					}
+				}
 			}
 		}
 		catch (Throwable e)
@@ -180,11 +217,13 @@ public class ManageData
 		throws JewelPetriException
 	{
 		MedicalFile lobjAux;
+		MedicalDetail lobjDetail;
 		HashMap<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
 		AgendaItem lobjItem;
+		int i;
 
 		try
 		{
@@ -194,6 +233,33 @@ public class ManageData
 
 				mobjData.mobjPrevValues.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
+
+				if ( mobjData.marrDetails != null )
+				{
+					for ( i = 0; i < mobjData.marrDetails.length; i++ )
+					{
+						if ( mobjData.marrDetails[i] == null )
+							continue;
+
+						if ( mobjData.marrDetails[i].mbDeleted )
+						{
+							lobjDetail = MedicalDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrDetails[i].ToObject(lobjDetail);
+							lobjDetail.SaveToDb(pdb);
+						}
+						else if ( mobjData.marrDetails[i].mbNew )
+						{
+							lobjDetail = MedicalDetail.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrDetails[i].mid);
+							lobjDetail.getDefinition().Delete(pdb, lobjDetail.getKey());
+						}
+						else
+						{
+							lobjDetail = MedicalDetail.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrDetails[i].mid);
+							mobjData.marrDetails[i].mobjPrevValues.ToObject(lobjDetail);
+							lobjDetail.SaveToDb(pdb);
+						}
+					}
+				}
 			}
 		}
 		catch (Throwable e)

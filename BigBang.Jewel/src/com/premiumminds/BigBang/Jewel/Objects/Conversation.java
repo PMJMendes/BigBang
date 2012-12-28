@@ -94,7 +94,8 @@ public class Conversation
 		try
 		{
 			lrefProc = PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent();
-			if ( Constants.ProcID_Assessment.equals(lrefProc.GetScriptID()) )
+			if ( Constants.ProcID_Assessment.equals(lrefProc.GetScriptID()) ||
+					Constants.ProcID_MedicalFile.equals(lrefProc.GetScriptID()) )
 				lrefProc = lrefProc.GetParent();
 		}
 		catch (JewelPetriException e)
