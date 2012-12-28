@@ -1,0 +1,337 @@
+package bigBang.module.casualtyModule.server;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.UUID;
+
+import Jewel.Engine.Engine;
+import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.SysObjects.JewelPetriException;
+import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.MedicalFile;
+import bigBang.library.server.BigBangPermissionServiceImpl;
+import bigBang.library.server.ConversationServiceImpl;
+import bigBang.library.server.EngineImplementor;
+import bigBang.library.server.MessageBridge;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.casualtyModule.interfaces.MedicalFileService;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.MedicalDetailData;
+import com.premiumminds.BigBang.Jewel.Data.MedicalFileData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
+import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CloseProcess;
+import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CreateConversation;
+import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.ManageData;
+
+public class MedicalFileServiceImpl
+	extends EngineImplementor
+	implements MedicalFileService
+{
+	private static final long serialVersionUID = 1L;
+
+	public static MedicalFile sGetMedicalFile(UUID pidFile)
+		throws BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.MedicalFile lobjFile;
+		MedicalDetail[] larrDetails;
+		IProcess lobjProcess;
+		MedicalFile lobjResult;
+		int i;
+
+		try
+		{
+			lobjFile = com.premiumminds.BigBang.Jewel.Objects.MedicalFile.GetInstance(Engine.getCurrentNameSpace(), pidFile);
+			larrDetails = lobjFile.GetCurrentDetails();
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjFile.GetProcessID());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new MedicalFile();
+		lobjResult.id = lobjFile.getKey().toString();
+		lobjResult.processId = lobjProcess.getKey().toString();
+		lobjResult.reference = lobjFile.getLabel();
+		lobjResult.subCasualtyId = ((UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY)).toString();
+		lobjResult.nextDate = (lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.NEXTDATE) == null ? null :
+			((Timestamp)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.NEXTDATE)).toString().substring(0, 10) );
+
+		if ( larrDetails == null )
+			lobjResult.details = null;
+		else
+		{
+			lobjResult.details = new MedicalFile.MedicalDetail[larrDetails.length];
+			for ( i = 0; i < larrDetails.length; i++ )
+			{
+				lobjResult.details[i] = new MedicalFile.MedicalDetail();
+				lobjResult.details[i].id = larrDetails[i].getKey().toString(); //Campo auxiliar para ajudar os serviços, manter inalterado
+				lobjResult.details[i].disabilityTypeId = ((UUID)larrDetails[i].getAt(MedicalDetail.I.DISABILITYTYPE)).toString();
+				lobjResult.details[i].startDate = (larrDetails[i].getAt(MedicalDetail.I.STARTDATE) == null ? null :
+						((Timestamp)larrDetails[i].getAt(MedicalDetail.I.STARTDATE)).toString().substring(0, 10) );
+				lobjResult.details[i].place = (String)larrDetails[i].getAt(MedicalDetail.I.PLACE);
+				lobjResult.details[i].percentDisability = (Integer)larrDetails[i].getAt(MedicalDetail.I.PERCENT);
+				lobjResult.details[i].endDate = (larrDetails[i].getAt(MedicalDetail.I.ENDDATE) == null ? null :
+						((Timestamp)larrDetails[i].getAt(MedicalDetail.I.ENDDATE)).toString().substring(0, 10) );
+				lobjResult.details[i].benefits = (larrDetails[i].getAt(MedicalDetail.I.BENEFITS) == null ? null :
+						((BigDecimal)larrDetails[i].getAt(MedicalDetail.I.BENEFITS)).doubleValue());
+			}
+		}
+
+		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
+
+		return lobjResult;
+	}
+
+	public static MedicalFileData sParseClient(MedicalFile pobjSource)
+	{
+		MedicalFileData lobjResult;
+		int i;
+
+		lobjResult = new MedicalFileData();
+
+		lobjResult.mid = (pobjSource.id == null ? null : UUID.fromString(pobjSource.id));
+		lobjResult.mstrReference = pobjSource.reference;
+		lobjResult.midSubCasualty = UUID.fromString(pobjSource.subCasualtyId);
+		lobjResult.midProcess = ( pobjSource.processId == null ? null : UUID.fromString(pobjSource.processId) );
+		lobjResult.mdtNextDate = ( pobjSource.nextDate == null ? null : Timestamp.valueOf(pobjSource.nextDate + " 00:00:00.0") );
+
+		if ( pobjSource.details == null )
+			lobjResult.marrItems = null;
+		else
+		{
+			lobjResult.marrItems = new MedicalDetailData[pobjSource.details.length];
+			for ( i = 0; i < pobjSource.details.length ; i++ )
+			{
+				if ( (pobjSource.details[i].id == null) && pobjSource.details[i].deleted )
+					lobjResult.marrItems[i] = null;
+				else
+				{
+					lobjResult.marrItems[i] = new MedicalDetailData();
+					lobjResult.marrItems[i].mid = ( pobjSource.details[i].id == null ? null :
+							UUID.fromString(pobjSource.details[i].id) );
+					if ( pobjSource.details[i].deleted )
+						lobjResult.marrItems[i].mbDeleted = true;
+					else
+					{
+						lobjResult.marrItems[i].mbDeleted = false;
+						lobjResult.marrItems[i].mbNew = (pobjSource.details[i].id == null);
+						lobjResult.marrItems[i].midFile = lobjResult.mid;
+						lobjResult.marrItems[i].midDisabilityType = ( pobjSource.details[i].disabilityTypeId == null ? null :
+								UUID.fromString(pobjSource.details[i].disabilityTypeId) );
+						lobjResult.marrItems[i].mdtStartDate = ( pobjSource.details[i].startDate == null ? null :
+								Timestamp.valueOf(pobjSource.details[i].startDate + " 00:00:00.0") );
+						lobjResult.marrItems[i].mstrPlace = pobjSource.details[i].place;
+						lobjResult.marrItems[i].mlngPercent = pobjSource.details[i].percentDisability;
+						lobjResult.marrItems[i].mdtEndDate = ( pobjSource.details[i].endDate == null ? null :
+								Timestamp.valueOf(pobjSource.details[i].endDate + " 00:00:00.0") );
+						lobjResult.marrItems[i].mdblBenefits = new BigDecimal(pobjSource.details[i].benefits + "");
+					}
+				}
+			}
+		}
+
+		return lobjResult;
+	}
+
+	public MedicalFile getMedicalFile(String id)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return sGetMedicalFile(UUID.fromString(id));
+	}
+
+	public MedicalFile editMedicalFile(MedicalFile medicalFile)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.MedicalFile lobjFile;
+		ManageData lopMD;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjFile = com.premiumminds.BigBang.Jewel.Objects.MedicalFile.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(medicalFile.id));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopMD = new ManageData(lobjFile.GetProcessID());
+		lopMD.mobjData = sParseClient(medicalFile);
+
+		try
+		{
+			lopMD.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetMedicalFile(lopMD.mobjData.mid);
+	}
+
+	public Conversation sendMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.MedicalFile lobjFile;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjFile = com.premiumminds.BigBang.Jewel.Objects.MedicalFile.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjFile.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Outgoing;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Incoming );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
+				(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY),
+				Constants.MsgDir_Outgoing);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
+	}
+
+	public Conversation receiveMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.MedicalFile lobjFile;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjFile = com.premiumminds.BigBang.Jewel.Objects.MedicalFile.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjFile.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
+				(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY),
+				Constants.MsgDir_Incoming);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
+	}
+
+	public MedicalFile closeProcess(String id)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.MedicalFile lobjFile;
+		CloseProcess lopCP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjFile = com.premiumminds.BigBang.Jewel.Objects.MedicalFile.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(id));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCP = new CloseProcess(lobjFile.GetProcessID());
+
+		try
+		{
+			lopCP.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetMedicalFile(lobjFile.getKey());
+	}
+}

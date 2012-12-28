@@ -14,6 +14,7 @@ import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
@@ -44,6 +45,7 @@ import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateAssessment;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateConversation;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateMedicalFile;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.DeleteSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.MarkForClosing;
@@ -322,6 +324,40 @@ public class SubCasualtyServiceImpl
 		}
 
 		return AssessmentServiceImpl.sGetAssessment(lopCA.mobjData.mid);
+	}
+
+	public MedicalFile createMedicalFile(MedicalFile file)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CreateMedicalFile lopCMF;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(file.subCasualtyId));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCMF = new CreateMedicalFile(lobjSubCasualty.GetProcessID());
+		lopCMF.mobjData = MedicalFileServiceImpl.sParseClient(file);
+
+		try
+		{
+			lopCMF.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return MedicalFileServiceImpl.sGetMedicalFile(lopCMF.mobjData.mid);
 	}
 
 	public Conversation sendMessage(Conversation conversation)

@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.interfaces;
 
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.interfaces.SearchServiceAsync;
 
@@ -14,6 +15,7 @@ public interface SubCasualtyServiceAsync
 	void editSubCasualty(SubCasualty subCasualty, AsyncCallback<SubCasualty> callback);
 	void sendNotification(String subCasualtyId, AsyncCallback<SubCasualty> callback);
 	void createAssessment(Assessment assessment, AsyncCallback<Assessment> callback);
+	void createMedicalFile(MedicalFile file, AsyncCallback<MedicalFile> callback);
 	void sendMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void receiveMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void markForClosing(String subCasualtyId, String revisorId, AsyncCallback<SubCasualty> callback);
