@@ -10,6 +10,10 @@
 	<servlet-name>AssessmentService</servlet-name>
 	<servlet-class>bigBang.module.casualtyModule.server.AssessmentServiceImpl</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>MedicalFileService</servlet-name>
+	<servlet-class>bigBang.module.casualtyModule.server.MedicalFileServiceImpl</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>CasualtyService</servlet-name>
@@ -22,4 +26,8 @@
 <servlet-mapping>
 	<servlet-name>AssessmentService</servlet-name>
 	<url-pattern>/bigbang/AssessmentService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>MedicalFileService</servlet-name>
+	<url-pattern>/bigbang/MedicalFileService</url-pattern>
 </servlet-mapping>
