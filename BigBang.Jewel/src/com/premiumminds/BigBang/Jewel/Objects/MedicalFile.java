@@ -1,8 +1,13 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Petri.SysObjects.ProcessData;
 
@@ -47,4 +52,75 @@ public class MedicalFile
 	{
 		internalSetAt(I.PROCESS, pidProcess);
 	}
+
+    public MedicalDetail[] GetCurrentDetails()
+    	throws BigBangJewelException
+    {
+		ArrayList<MedicalDetail> larrAux;
+		IEntity lrefDetails;
+        MasterDB ldb;
+        ResultSet lrsDetails;
+
+		larrAux = new ArrayList<MedicalDetail>();
+
+		try
+		{
+			lrefDetails = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MedicalDetail)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDetails = lrefDetails.SelectByMembers(ldb, new int[] {MedicalDetail.I.FILE},
+					new java.lang.Object[] {getKey()}, new int[] {MedicalDetail.I.STARTDATE});
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsDetails.next() )
+				larrAux.add(MedicalDetail.GetInstance(getNameSpace(), lrsDetails));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsDetails.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsDetails.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDetails.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new MedicalDetail[larrAux.size()]);
+    }
 }
