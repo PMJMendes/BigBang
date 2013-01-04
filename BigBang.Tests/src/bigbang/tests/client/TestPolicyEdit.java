@@ -26,7 +26,7 @@ public class TestPolicyEdit
 			}
 		};
 
-		Services.insurancePolicyService.getPolicy("AFCAA2D4-BD48-444A-88F1-A0B8000464DA", callback);
+		Services.insurancePolicyService.getPolicy("BD8D8C7C-EA7C-48CA-B1E4-A13C0111BEDD", callback);
 	}
 
 	private static void DoStep2(InsurancePolicy policy)
@@ -44,10 +44,8 @@ public class TestPolicyEdit
 			}
 		};
 
-		if ( policy.number.startsWith("x") )
-			policy.number = policy.number.substring(1);
-		else
-			policy.number = "x" + policy.number;
+		if ( (policy.exerciseData != null) && (policy.exerciseData.length > 0) )
+			policy.exerciseData[0].isActive = true;
 
 		Services.insurancePolicyService.editPolicy(policy, callback);
 	}
