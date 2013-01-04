@@ -7,6 +7,7 @@ public class Assessment
 
 	public String reference; //Read-only, criado no server
 	public String subCasualtyId;
+	public String subCasualtyNumber;
 	public String scheduledDate;
 	public String effectiveDate;
 	public Boolean isConditional;

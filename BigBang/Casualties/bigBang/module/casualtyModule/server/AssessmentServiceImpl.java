@@ -23,6 +23,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.AssessmentData;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Assessment.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Assessment.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Assessment.ManageData;
@@ -37,12 +38,15 @@ public class AssessmentServiceImpl
 		throws BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Assessment lobjAssessment;
+		SubCasualty lobjSubC;
 		IProcess lobjProcess;
 		Assessment lobjResult;
 
 		try
 		{
 			lobjAssessment = com.premiumminds.BigBang.Jewel.Objects.Assessment.GetInstance(Engine.getCurrentNameSpace(), pidAssessment);
+			lobjSubC = SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					(UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY));
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjAssessment.GetProcessID());
 		}
 		catch (Throwable e)
@@ -54,7 +58,8 @@ public class AssessmentServiceImpl
 		lobjResult.id = lobjAssessment.getKey().toString();
 		lobjResult.processId = lobjProcess.getKey().toString();
 		lobjResult.reference = lobjAssessment.getLabel();
-		lobjResult.subCasualtyId = ((UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY)).toString();
+		lobjResult.subCasualtyId = lobjSubC.getKey().toString();
+		lobjResult.subCasualtyNumber = lobjSubC.getLabel();
 		lobjResult.scheduledDate = (lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SCHEDULEDDATE) == null ? null :
 				((Timestamp)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SCHEDULEDDATE)).toString().substring(0, 10) );
 		lobjResult.effectiveDate = (lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.EFFECTIVEDATE) == null ? null :
