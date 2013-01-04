@@ -185,7 +185,7 @@ public class CreatePolicy
 						    	ldtAux2 = Calendar.getInstance();
 						    	ldtAux2.setTimeInMillis(mobjData.marrExercises[i + 1].mdtStart.getTime());
 								mobjData.marrExercises[i + 1].mdtEnd = Timestamp.valueOf("" + ldtAux2.get(Calendar.YEAR) +
-										"-12-31  00:00:00.0");
+										"-12-31 00:00:00.0");
 								lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrExercises[i + 1].mid);
 								mobjData.marrExercises[i + 1].ToObject(lobjExercise);
 								lobjExercise.SaveToDb(pdb);
@@ -199,7 +199,7 @@ public class CreatePolicy
 					}
 
 					if ( Constants.ExID_Variable.equals(lobjPolicy.GetSubLine().getExerciseType()) )
-						mobjData.marrExercises[i].mstrLabel = "Prorrogação n. " + (i + 1);
+						mobjData.marrExercises[i].mstrLabel = "Prorrogação n. " + (mobjData.marrExercises.length - 1);
 					else
 					{
 				    	ldtAux2 = Calendar.getInstance();
