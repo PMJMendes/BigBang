@@ -29,8 +29,8 @@ public class TestCasualtyCreate
 		};
 
 		casualty = new Casualty();
-		casualty.clientId = "22F5CC61-E9F8-4141-801E-9FB70020135F";
-		casualty.casualtyDate = "2012-04-01";
+		casualty.clientId = "72C55741-E996-477A-89C7-A0FE00E1B24D";
+		casualty.casualtyDate = "2012-12-01";
 		casualty.caseStudy = false;
 		casualty.description = "Escorregou, partiu um pé, salta agora só com um pé.";
 		casualty.internalNotes = "Nhurro...";
