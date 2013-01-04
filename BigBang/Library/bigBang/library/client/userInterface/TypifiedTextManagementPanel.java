@@ -6,9 +6,9 @@ import java.util.List;
 import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.ToolButton;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.TypifiedText;
 import bigBang.library.client.EventBus;

@@ -1,8 +1,8 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.UserBroker;
 import bigBang.definitions.client.dataAccess.UserDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.User;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;

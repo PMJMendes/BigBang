@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.TipifiedListItem;
@@ -71,10 +71,7 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 
 			@Override
 			public void onResponse(Conversation response) {
-				incrementDataVersion();
-				for(DataBrokerClient<Conversation> client : clients){
-					((ConversationBrokerClient) client).updateConversation(response);
-				}
+				return;
 			}
 
 			@Override

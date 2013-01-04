@@ -6,10 +6,10 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.EventBus;

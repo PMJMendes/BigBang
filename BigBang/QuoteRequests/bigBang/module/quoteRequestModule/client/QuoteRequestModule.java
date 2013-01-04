@@ -1,7 +1,7 @@
 package bigBang.module.quoteRequestModule.client;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;

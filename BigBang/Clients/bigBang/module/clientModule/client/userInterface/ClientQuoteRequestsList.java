@@ -4,11 +4,11 @@ import java.util.Collection;
 
 import com.google.gwt.event.logical.shared.AttachEvent;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
 import bigBang.definitions.client.dataAccess.QuoteRequestDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.ValueSelectable;

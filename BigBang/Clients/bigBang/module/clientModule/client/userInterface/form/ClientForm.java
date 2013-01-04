@@ -2,9 +2,9 @@ package bigBang.module.clientModule.client.userInterface.form;
 
 import java.util.List;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.FormField;

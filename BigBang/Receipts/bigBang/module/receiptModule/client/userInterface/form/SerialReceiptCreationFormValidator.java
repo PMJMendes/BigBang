@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.FormValidator;
 
 public class SerialReceiptCreationFormValidator extends FormValidator<SerialReceiptCreationForm> {

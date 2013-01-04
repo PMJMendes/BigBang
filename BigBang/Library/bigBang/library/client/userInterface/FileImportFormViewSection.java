@@ -17,9 +17,9 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;

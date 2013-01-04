@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.UserBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
 import bigBang.definitions.shared.Conversation;
@@ -553,13 +553,15 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 		attachments.clear();
 
-		for(Document doc : documents){
-			DocumentsList.Entry entry = new DocumentsList.Entry(doc);
-			attachments.add(entry);
-			attachments.setCheckable(true);
-			attachments.setSelectableEntries(false);
-			entry.setSelectable(false);
-			entry.setCheckable(true);
+		if(documents != null){
+			for(Document doc : documents){
+				DocumentsList.Entry entry = new DocumentsList.Entry(doc);
+				attachments.add(entry);
+				attachments.setCheckable(true);
+				attachments.setSelectableEntries(false);
+				entry.setSelectable(false);
+				entry.setCheckable(true);
+			}
 		}
 
 	}

@@ -2,9 +2,9 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;

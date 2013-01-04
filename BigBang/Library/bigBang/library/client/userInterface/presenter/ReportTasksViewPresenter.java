@@ -2,9 +2,9 @@ package bigBang.library.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Report;
 import bigBang.definitions.shared.Report.Section;
 import bigBang.definitions.shared.Task;

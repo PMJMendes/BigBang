@@ -9,11 +9,11 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.dataAccess.DataBrokerManager;

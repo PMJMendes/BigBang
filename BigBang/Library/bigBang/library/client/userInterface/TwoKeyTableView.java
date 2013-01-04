@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.TwoKeyTable.Field;
 import bigBang.library.client.userInterface.TwoKeyTable.HeaderCell;

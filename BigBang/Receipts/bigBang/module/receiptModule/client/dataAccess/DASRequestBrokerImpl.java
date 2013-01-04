@@ -1,11 +1,11 @@
 package bigBang.module.receiptModule.client.dataAccess;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DASRequestBroker;
 import bigBang.definitions.client.dataAccess.DASRequestBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DASRequest.Cancellation;
 import bigBang.definitions.shared.DASRequest.Response;

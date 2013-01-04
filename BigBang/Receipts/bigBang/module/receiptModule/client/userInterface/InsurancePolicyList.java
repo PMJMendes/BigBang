@@ -1,7 +1,7 @@
 package bigBang.module.receiptModule.client.userInterface;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;

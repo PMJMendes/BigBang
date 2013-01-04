@@ -2,6 +2,7 @@ package bigBang.module.insurancePolicyModule.client.dataAccess;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
@@ -9,7 +10,6 @@ import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;

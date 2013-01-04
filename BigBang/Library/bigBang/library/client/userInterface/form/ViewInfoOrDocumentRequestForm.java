@@ -1,6 +1,6 @@
 package bigBang.library.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;

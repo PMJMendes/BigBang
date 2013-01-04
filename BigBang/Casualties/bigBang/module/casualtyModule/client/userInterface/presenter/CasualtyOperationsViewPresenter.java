@@ -67,18 +67,25 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 					present("SUB_CASUALTY_SEND_MESSAGE", parameters);
 				}else if(display.equalsIgnoreCase("subcasualtyreceivemessage")){
 					present("SUB_CASUALTY_RECEIVE_MESSAGE", parameters);
-				}else if(display.equalsIgnoreCase("viewinforequest")){ //TODO REQUESTS CLEAN THIS
-					present("VIEW_CASUALTY_INFO_OR_DOCUMENT_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("viewsubcasualtyinforequest")){
-					present("VIEW_SUB_CASUALTY_INFO_OR_DOCUMENT_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("viewmanagertransfer")){
 					present("MANAGER_TRANSFER", parameters);
 				}else if(display.equalsIgnoreCase("conversation")){
 					present("CASUALTY_CONVERSATION", parameters);
 				}else if(display.equalsIgnoreCase("subcasualtyconversation")){
 					present("SUB_CASUALTY_CONVERSATION", parameters);
-				}else{
-					goToDefault();
+				}else if(display.equalsIgnoreCase("assessment")){
+					present("ASSESSMENT", parameters);
+				}else if(display.equalsIgnoreCase("assessmentsendmessage")){
+					present("ASSESSMENT_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("assessmentreceivemessage")){
+					present("ASSESSMENT_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("assessmentconversation")){
+					present("ASSESSMENT_CONVERSATION", parameters);
+				}else if(display.equalsIgnoreCase("medicalfile")){
+					present("MEDICAL_FILE", parameters);
+				}
+				else{
+						goToDefault();
 				}
 			}
 

@@ -1,6 +1,6 @@
 package bigBang.module.clientModule.client.userInterface;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.userInterface.ContactsList;

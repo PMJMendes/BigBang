@@ -1,6 +1,6 @@
 package bigBang.library.client.userInterface.view;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Message.AttachmentUpgrade;
 import bigBang.library.client.HasValueSelectables;

@@ -1,6 +1,6 @@
 package bigBang.library.client.userInterface.presenter;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicyStub;

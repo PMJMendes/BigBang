@@ -2,11 +2,11 @@ package bigBang.module.casualtyModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Contact;
@@ -45,7 +45,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		MARK_FOR_CLOSING,
 		CLOSE,
 		REJECT_CLOSE,
-		DELETE, SEND_MESSAGE, RECEIVE_MESSAGE, MARK_NOTIFICATION_SENT, BACK
+		DELETE, SEND_MESSAGE, RECEIVE_MESSAGE, MARK_NOTIFICATION_SENT, BACK, CREATE_ASSESSMENT, CREATE_MEDICAL_FILE
 	}
 
 	public static interface Display {
@@ -69,10 +69,12 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		Widget asWidget();
 		void allowSendMessage(boolean hasPermission);
 		void allowReceiveMessage(boolean hasPermission);
+		void allowCreateMedicalFile(boolean hasPermission);
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
 		void setReferenceParameters(HasParameters parameterHolder);
 		void openNewDetail();
+		void allowCreateAssessment(boolean allow);
 	}
 
 
@@ -162,6 +164,12 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 				case BACK:
 					onBack(view.getParentForm().getValue().id);
 					break;
+				case CREATE_ASSESSMENT:
+					onCreateAssessment();
+					break;
+				case CREATE_MEDICAL_FILE:
+					onCreateMedicalFile();
+					break;
 				}
 			}
 		});
@@ -193,6 +201,22 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		view.getDocumentsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+	}
+
+	protected void onCreateMedicalFile() {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.pushIntoStackParameter("display", "medicalfile");
+		navItem.setParameter("ownerid", view.getForm().getValue().id);
+		navItem.setParameter("medicalfileid", "new");
+		NavigationHistoryManager.getInstance().go(navItem);
+	}
+
+	protected void onCreateAssessment() {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.pushIntoStackParameter("display", "assessment");
+		navItem.setParameter("ownerid", view.getForm().getValue().id);
+		navItem.setParameter("assessmentid", "new");
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 	protected void onBack(String id) {
@@ -273,15 +297,16 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 					public void onResponse(Casualty casualty) {
 						view.getParentForm().setValue(casualty);
 						view.getForm().setValue(subCasualty);
-						//TODO REQUESTS 
-						view.allowSendMessage(true);
-						view.allowReceiveMessage(true);
+						view.allowSendMessage(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CONVERSATION));
+						view.allowReceiveMessage(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CONVERSATION));
 						view.allowEdit(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY));
 						view.allowDelete(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY));
 						view.allowMarkForClosing(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.MARK_CLOSE_SUB_CASUALTY));
 						view.allowClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CLOSE_SUB_CASUALTY));
 						view.allowRejectClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY));
 						view.allowMarkNotificationSent(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.MARK_NOTIFICATION_SENT));
+						view.allowCreateAssessment(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_ASSESSMENT));
+						view.allowCreateMedicalFile(false); //TODO
 						view.getForm().setReadOnly(true);
 					}
 
@@ -312,10 +337,8 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 
 				view.getForm().setValue(subCasualty);
 				view.openNewDetail();
-				//TODO PERMISSIONS
 				view.allowEdit(true);
 				view.allowDelete(true);
-
 				view.getForm().setReadOnly(false);
 				view.setSaveModeEnabled(true);
 			}
@@ -434,6 +457,11 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 			item.pushIntoStackParameter("display", "subcasualtyconversation");
 			item.setParameter("conversationid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.ASSESSMENT)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "assessment");
+			item.setParameter("assessmentid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 	}

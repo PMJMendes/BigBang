@@ -5,10 +5,10 @@ import java.util.Collection;
 import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.library.client.HasEditableValue;

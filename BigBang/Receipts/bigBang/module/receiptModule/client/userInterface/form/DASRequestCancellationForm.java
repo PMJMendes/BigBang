@@ -1,6 +1,6 @@
 package bigBang.module.receiptModule.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DASRequest.Cancellation;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;

@@ -1,8 +1,8 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsuranceAgencyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceAgencyDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;

@@ -300,5 +300,12 @@ public class ConversationTasksView<T> extends View implements ConversationTasksV
 		listAndConversation.setVisible(b);
 		toolbar.setVisible(b);
 	}
+	
+	@Override
+	public void setTypeAndOwnerId(String ownerTypeId, String ownerId) {
+		sendMessageForm.setTypeAndOwnerId(ownerTypeId, ownerId);
+	}
 
+	
+	
 }

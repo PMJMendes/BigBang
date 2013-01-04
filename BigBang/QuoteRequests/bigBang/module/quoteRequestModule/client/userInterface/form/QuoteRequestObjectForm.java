@@ -3,7 +3,7 @@ package bigBang.module.quoteRequestModule.client.userInterface.form;
 import java.util.HashMap;
 import java.util.Map;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.QuoteRequestObject.SubLineData;
 import bigBang.library.client.FormField;

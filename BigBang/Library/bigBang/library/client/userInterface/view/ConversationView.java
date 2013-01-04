@@ -314,4 +314,16 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 		listConversWrapper.setVisible(b);
 		toolbar.setVisible(b);
 	}
+
+
+	@Override
+	public void setTypeAndOwnerId(String ownerTypeId, String ownerId) {
+		sendMessageForm.setTypeAndOwnerId(ownerTypeId, ownerId);
+	}
+
+
+	@Override
+	public void setSaveMode(boolean b) {
+		toolbar.setSaveModeEnabled(b);
+	}
 }

@@ -1,7 +1,7 @@
 package bigBang.library.client.userInterface;
 
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Message.AttachmentUpgrade;
 import bigBang.definitions.shared.Message.Kind;

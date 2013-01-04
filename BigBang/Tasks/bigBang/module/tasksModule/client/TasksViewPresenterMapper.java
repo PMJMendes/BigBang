@@ -3,7 +3,7 @@ package bigBang.module.tasksModule.client;
 import java.util.HashMap;
 import java.util.Map;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 
 public class TasksViewPresenterMapper {
 

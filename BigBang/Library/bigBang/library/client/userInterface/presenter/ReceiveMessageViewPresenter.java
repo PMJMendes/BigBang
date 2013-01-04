@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class ReceiveMessageViewPresenter<T extends ProcessBase> implements ViewPresenter{
 
 	protected String ownerId;
-	protected String ownerTypeId;
 	//	protected int counter;
 
 	public static enum Action{
@@ -45,7 +44,6 @@ public abstract class ReceiveMessageViewPresenter<T extends ProcessBase> impleme
 	public void setParameters(final HasParameters parameterHolder){
 
 		ownerId = parameterHolder.getParameter("ownerid");
-		ownerTypeId = parameterHolder.getParameter("ownertypeid");
 
 		showOwner(ownerId);
 

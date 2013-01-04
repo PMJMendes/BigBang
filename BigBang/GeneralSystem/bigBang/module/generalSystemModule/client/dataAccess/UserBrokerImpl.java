@@ -4,13 +4,13 @@ import java.util.Collection;
 
 import com.google.gwt.core.client.GWT;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.UserBroker;
 import bigBang.definitions.client.dataAccess.UserDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.User;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;

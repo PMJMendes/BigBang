@@ -6,7 +6,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.ui.Button;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
 import bigBang.library.client.ValueSelectable;

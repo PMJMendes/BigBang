@@ -1,6 +1,6 @@
 package bigBang.module.tasksModule.client.userInterface.view;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.TaskStub;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;

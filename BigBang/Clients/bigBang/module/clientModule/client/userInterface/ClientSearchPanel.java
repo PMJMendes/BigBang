@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.SearchParameter;

@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.dataAccess;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.CasualtyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
@@ -11,7 +12,6 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.Conversation;

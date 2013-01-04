@@ -2,9 +2,9 @@ package bigBang.module.expenseModule.client.userInterface.form;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Expense;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;

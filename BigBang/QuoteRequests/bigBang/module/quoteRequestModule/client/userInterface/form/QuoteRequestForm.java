@@ -7,8 +7,8 @@ import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
 import bigBang.library.client.FormField;

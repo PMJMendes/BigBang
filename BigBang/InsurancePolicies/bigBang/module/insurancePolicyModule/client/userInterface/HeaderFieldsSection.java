@@ -5,7 +5,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.FieldContainer.HeaderField;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;

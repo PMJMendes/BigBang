@@ -9,9 +9,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.HistoryBroker;
 import bigBang.definitions.client.dataAccess.HistoryDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SortParameter;

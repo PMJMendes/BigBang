@@ -2,7 +2,7 @@ package bigBang.module.tasksModule.client.userInterface.form;
 
 import java.util.Iterator;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.FormField;

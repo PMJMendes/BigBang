@@ -2,13 +2,15 @@ package bigBang.client;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.AssessmentBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
 import bigBang.definitions.client.dataAccess.SignatureRequestBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.SignatureRequest;
@@ -31,6 +33,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 	SubCasualtyDataBroker subCasualtyBroker;
 	SignatureRequestBroker signatureBroker;
 	ConversationBroker conversationBroker;
+	private AssessmentBroker assessmentBroker;
 
 	public BigBangProcessNavigationMapper() {
 		subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
@@ -38,6 +41,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 		subCasualtyBroker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
 		signatureBroker = (SignatureRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SIGNATURE_REQUEST);
 		conversationBroker = (ConversationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CONVERSATION);
+		assessmentBroker = (AssessmentBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.ASSESSMENT);
 	}
 
 	@Override
@@ -179,6 +183,27 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 					navigationItem.setParameter("expenseid", response.parentDataObjectId);
 					navigationItem.pushIntoStackParameter("display","conversation");
 					handler.onResponse(navigationItem);
+					
+				}else if(BigBangConstants.EntityIds.ASSESSMENT.equalsIgnoreCase(response.parentDataTypeId)){
+					assessmentBroker.getAssessment(response.parentDataObjectId, new ResponseHandler<Assessment>() {
+						
+						@Override
+						public void onResponse(Assessment response) {
+							navigationItem.setParameter("section", "casualty");
+							navigationItem.pushIntoStackParameter("display", "subcasualty");
+							navigationItem.pushIntoStackParameter("display", "assessment");
+							navigationItem.pushIntoStackParameter("display", "assessmentconversation");
+							navigationItem.setParameter("assessmentid", response.id);
+							navigationItem.setParameter("subcasualtyid", response.subCasualtyId);
+							handler.onResponse(navigationItem);							
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));						
+						}
+					});
+					
 				}
 				else{
 					navigationItem.setParameter("section", "receipt");

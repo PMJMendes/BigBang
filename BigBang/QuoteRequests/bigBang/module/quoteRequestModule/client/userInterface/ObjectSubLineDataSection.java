@@ -10,10 +10,10 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequest.ColumnHeader;
 import bigBang.definitions.shared.QuoteRequest.Coverage;
 import bigBang.definitions.shared.QuoteRequest.ExtraField;

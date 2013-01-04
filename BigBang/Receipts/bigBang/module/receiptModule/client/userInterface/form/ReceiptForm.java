@@ -1,8 +1,8 @@
 package bigBang.module.receiptModule.client.userInterface.form;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;

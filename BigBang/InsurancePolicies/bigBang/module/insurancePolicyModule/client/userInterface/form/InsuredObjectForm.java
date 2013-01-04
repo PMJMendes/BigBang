@@ -1,6 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.AddressFormField;

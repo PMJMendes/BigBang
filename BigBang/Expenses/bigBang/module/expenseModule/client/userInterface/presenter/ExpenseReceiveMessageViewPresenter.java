@@ -2,14 +2,13 @@ package bigBang.module.expenseModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Expense;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -24,13 +23,7 @@ public class ExpenseReceiveMessageViewPresenter extends ReceiveMessageViewPresen
 		super(view);
 		broker = (ExpenseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE);
 	}
-
-	@Override
-	public void setParameters(final HasParameters parameterHolder){
-		parameterHolder.setParameter("ownertypeid", BigBangConstants.EntityIds.EXPENSE);
-		super.setParameters(parameterHolder);
-	}
-
+	
 	@Override
 	protected void showOwner(String ownerId) {
 		broker.getExpense(ownerId, new ResponseHandler<Expense>() {

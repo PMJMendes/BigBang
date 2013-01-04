@@ -1,6 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;

@@ -5,7 +5,7 @@ import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialMarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter.Action;
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.Receipt.PaymentInfo.Payment;

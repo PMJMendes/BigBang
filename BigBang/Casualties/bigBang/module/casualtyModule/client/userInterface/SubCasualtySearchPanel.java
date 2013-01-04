@@ -3,10 +3,10 @@ package bigBang.module.casualtyModule.client.userInterface;
 import java.util.Collection;
 import java.util.HashMap;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SubCasualty;

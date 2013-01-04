@@ -2,9 +2,9 @@ package bigBang.module.casualtyModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.StackPanel;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;

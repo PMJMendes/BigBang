@@ -1,7 +1,7 @@
 package bigBang.module.clientModule.client.userInterface.presenter;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;

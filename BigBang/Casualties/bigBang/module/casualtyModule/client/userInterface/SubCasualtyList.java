@@ -2,11 +2,11 @@ package bigBang.module.casualtyModule.client.userInterface;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualtyStub;
 import bigBang.library.client.ValueSelectable;

@@ -2,10 +2,10 @@ package bigBang.module.quoteRequestModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Negotiation.Response;
 import bigBang.library.client.EventBus;

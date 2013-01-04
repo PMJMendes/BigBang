@@ -1,6 +1,6 @@
 package bigBang.module.receiptModule.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;

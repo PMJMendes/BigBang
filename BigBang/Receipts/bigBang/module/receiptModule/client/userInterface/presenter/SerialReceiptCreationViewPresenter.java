@@ -2,12 +2,12 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsuranceAgencyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.definitions.shared.InsurancePolicy;

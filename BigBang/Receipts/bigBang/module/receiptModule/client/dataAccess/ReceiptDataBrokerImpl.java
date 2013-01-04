@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.client.dataAccess;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
@@ -11,7 +12,6 @@ import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;

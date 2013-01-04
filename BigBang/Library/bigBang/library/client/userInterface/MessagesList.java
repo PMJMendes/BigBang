@@ -7,9 +7,9 @@ import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Image;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Message;
 import bigBang.library.client.dataAccess.ConversationBroker;
@@ -68,6 +68,7 @@ public class MessagesList extends FilterableList<Message> implements Conversatio
 	}
 
 	public void setOwner(final String ownerId){
+		discardOwner();
 		if(ownerId != null && !ownerId.isEmpty()){
 			this.broker.getConversation(ownerId, new ResponseHandler<Conversation>() {
 
@@ -106,7 +107,7 @@ public class MessagesList extends FilterableList<Message> implements Conversatio
 
 	@Override
 	public void updateConversation(Conversation response) {
-		discardOwner();
+		this.clear();
 		addEntrys(response);		
 	}
 

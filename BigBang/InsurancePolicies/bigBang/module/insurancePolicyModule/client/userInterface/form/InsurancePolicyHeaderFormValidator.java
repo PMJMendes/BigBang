@@ -2,7 +2,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface.form;
 
 import java.util.Date;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.CoInsurer;
 import bigBang.definitions.shared.InsurancePolicyStub.PolicyStatus;

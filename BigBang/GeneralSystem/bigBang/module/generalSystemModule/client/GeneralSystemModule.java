@@ -1,7 +1,7 @@
 package bigBang.module.generalSystemModule.client;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.ExpandableSelectionManagementPanelInstantiator;

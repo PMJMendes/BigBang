@@ -3,7 +3,7 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Image;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.CheckBoxFormField;

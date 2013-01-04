@@ -6,7 +6,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.FieldContainer.ExtraField;
 import bigBang.definitions.shared.StructuredFieldContainer;

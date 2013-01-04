@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.InsuredObjectStub.Change;

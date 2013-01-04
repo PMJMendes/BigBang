@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.SearchParameter;

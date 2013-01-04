@@ -8,8 +8,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.SearchParameter;

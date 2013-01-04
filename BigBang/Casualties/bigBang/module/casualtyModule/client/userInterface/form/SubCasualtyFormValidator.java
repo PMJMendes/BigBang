@@ -1,6 +1,6 @@
 package bigBang.module.casualtyModule.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.FormValidator;
 
 public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {

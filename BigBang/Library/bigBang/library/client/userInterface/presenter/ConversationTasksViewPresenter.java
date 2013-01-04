@@ -2,6 +2,8 @@ package bigBang.library.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.AssessmentBroker;
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
@@ -12,7 +14,7 @@ import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.Conversation;
@@ -29,12 +31,11 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasOperationPermissions;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
-import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Selectable;
+import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.dataAccess.ConversationBroker;
-import bigBang.library.client.dataAccess.ConversationBrokerClient;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -46,6 +47,7 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.MessagesList;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.casualtyModule.client.userInterface.form.AssessmentForm;
 import bigBang.module.casualtyModule.client.userInterface.form.CasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyForm;
 import bigBang.module.clientModule.client.userInterface.form.ClientForm;
@@ -59,7 +61,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ConversationTasksViewPresenter implements ViewPresenter, HasOperationPermissions, ConversationBrokerClient{
+public class ConversationTasksViewPresenter implements ViewPresenter, HasOperationPermissions{
 
 	public static enum Action {
 		GO_TO_PROCESS, CLICK_CLOSE, CLICK_SEND, CLICK_RECEIVE, SEND, CANCEL, RECEIVE, CLICK_REPEAT
@@ -91,6 +93,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 		void showOverlayViewContainer(boolean b);
 		HasWidgets getOverlayViewContainer();
 		void setMainFormVisible(boolean b);
+		void setTypeAndOwnerId(String ownerTypeId, String ownerId);
 	}
 
 	protected boolean bound = false;
@@ -174,7 +177,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					onClickRepeat();
 					break;
 				}
-				
+
 			}
 		});
 
@@ -343,6 +346,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(Client response) {
 					view.setOwnerForm(new ClientForm());
 					view.setOwnerFormValue(response);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.CLIENT, response.id);
 					
 					view.addContact("Cliente (" + response.name +")", response.id, BigBangConstants.EntityIds.CLIENT);
 					view.addContact("Mediador (" + response.mediatorName + ")", response.mediatorId, BigBangConstants.EntityIds.MEDIATOR);
@@ -361,6 +365,8 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(InsurancePolicy response) {
 					view.setOwnerForm(new InsurancePolicyHeaderForm());
 					view.setOwnerFormValue(response);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.INSURANCE_POLICY, response.id);
+					
 					
 					view.addContact("Apólice (" + response.number + ")", response.id, BigBangConstants.EntityIds.INSURANCE_POLICY);
 					view.addContact("Seguradora (" + response.insuranceAgencyName + ")", response.insuranceAgencyId, BigBangConstants.EntityIds.INSURANCE_AGENCY);
@@ -381,6 +387,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(SubPolicy response) {
 					view.setOwnerForm(new SubPolicyHeaderForm());
 					view.setOwnerFormValue(response);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, response.id);
 					
 					view.addContact("Apólice Adesão (" + response.number + ")", response.id, BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 					view.addContact("Apólice (" + response.mainPolicyNumber + ")", response.mainPolicyId, BigBangConstants.EntityIds.INSURANCE_POLICY);
@@ -402,6 +409,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(Casualty response) {
 					view.setOwnerForm(new CasualtyForm());
 					view.setOwnerFormValue(response);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.CASUALTY, response.id);
 					
 					view.addContact("Sinistro (" + response.processNumber + ")", response.id, BigBangConstants.EntityIds.CASUALTY);
 					view.addContact("Cliente (" + response.clientName + ")", response.clientId, BigBangConstants.EntityIds.CLIENT);		
@@ -423,7 +431,8 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(SubCasualty response) {
 					view.setOwnerForm(new SubCasualtyForm());
 					view.setOwnerFormValue(response);
-					
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.SUB_CASUALTY, response.id);
+
 					view.addContact("Sub-Sinistro (" + response.number + ")", response.id , BigBangConstants.EntityIds.SUB_CASUALTY);
 					view.addContact("Apólice " + (BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(response.referenceTypeId) ? "Adesão " : "") + "(" + response.referenceNumber + ")", response.referenceId, response.referenceTypeId);
 					view.addContact("Seguradora (" + response.inheritInsurerName + ")", response.inheritInsurerId, BigBangConstants.EntityIds.INSURANCE_AGENCY);
@@ -447,7 +456,8 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(Negotiation response) {
 					view.setOwnerForm(new NegotiationForm());
 					view.setOwnerFormValue(response);
-					
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.NEGOTIATION, response.id);
+
 					view.addContact("Negociação (" + response.companyName + ")",response.id, BigBangConstants.EntityIds.NEGOTIATION);
 					view.addContact((response.ownerTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? "Apólice" : "Consulta de Mercado") + " (" + response.ownerLabel + ")",response.ownerId, response.ownerTypeId);
 					view.addContact("Seguradora (" + response.companyName + ")", response.companyId, BigBangConstants.EntityIds.INSURANCE_AGENCY);
@@ -471,6 +481,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(Expense response) {
 					view.setOwnerForm(new ExpenseForm());
 					view.setOwnerFormValue(response);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.EXPENSE, response.id);
 					
 					view.addContact("Despesa de Saúde (" + response.number + ")", response.id , BigBangConstants.EntityIds.EXPENSE);
 					view.addContact("Apólice " + (BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(response.referenceTypeId) ? "Adesão " : "") + "(" + response.referenceNumber + ")", response.referenceId, response.referenceTypeId);
@@ -500,6 +511,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(Receipt receipt) {
 					view.setOwnerForm(new ReceiptForm());
 					view.setOwnerFormValue(receipt);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.RECEIPT, receipt.id);
 					
 					view.addContact("Recibo (" + receipt.number + ")",receipt.id ,BigBangConstants.EntityIds.RECEIPT);
 					view.addContact("Apólice " + (BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(receipt.ownerTypeId) ? "Adesão " : "") + "(" + receipt.policyNumber + ")", receipt.policyId, receipt.ownerTypeId);
@@ -513,7 +525,26 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					onGetOwnerFailed();
 				}
 			});
+		}else if(BigBangConstants.EntityIds.ASSESSMENT.equalsIgnoreCase(response.parentDataTypeId)){
+			AssessmentBroker broker = (AssessmentBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.ASSESSMENT);
+			broker.getAssessment(response.parentDataObjectId, new ResponseHandler<Assessment>() {
+
+				@Override
+				public void onResponse(Assessment response) {
+					view.setOwnerForm(new AssessmentForm());
+					view.setOwnerFormValue(response);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.SUB_CASUALTY, response.subCasualtyId);
+					
+					view.addContact("Sub-Sinistro (" + response.subCasualtyNumber + ")", response.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);		
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetOwnerFailed();
+				}
+			});
 		}
+
 	}
 
 	public void onGetOwnerFailed() {
@@ -526,25 +557,11 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 		view.allowReceive(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.RECEIVE));
 		view.allowClose(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.CLOSE));
 	}
-	
+
 	protected void onFormValidationFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}
-	@Override
-	public void setDataVersionNumber(String dataElementId, int number) {
-		return;
-		
-	}
-	@Override
-	public int getDataVersion(String dataElementId) {
-		return 0;
-	}
-	@Override
-	public void updateConversation(Conversation response) {
-		return;
-		
-	}
-	
+
 	protected void initController(){
 		this.overlayController = new ViewPresenterController(view.getOverlayViewContainer()) {
 
@@ -556,7 +573,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				if(show.isEmpty()){
 					view.showOverlayViewContainer(false);
 
-				//OVERLAY VIEWS
+					//OVERLAY VIEWS
 				}else if(show.equalsIgnoreCase("conversationclose")){
 					present("CONVERSATION_CLOSE", parameters);
 					view.showOverlayViewContainer(true);

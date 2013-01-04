@@ -3,8 +3,8 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 import java.util.Map;
 import java.util.TreeMap;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.SearchParameter;

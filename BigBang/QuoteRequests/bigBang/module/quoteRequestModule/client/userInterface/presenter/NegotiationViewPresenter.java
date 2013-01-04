@@ -2,10 +2,10 @@ package bigBang.module.quoteRequestModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
@@ -231,7 +231,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 				if(selectable != null) {
 
 					if(event.getSource() == view.getHistoryList()){ //HISTORY
-						showHistory(view.getForm().getValue().id, ((HistoryItemStub) selectable.getValue()).id);
+						showHistory(((HistoryItemStub) selectable.getValue()).id);
 					} else if(event.getSource() == view.getSubProcessList()){ //SUB PROCESSES
 						showSubProcess(((BigBangProcess) selectable.getValue()).dataId);
 					}
@@ -313,6 +313,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 	protected void onReceiveMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "negotiationreceivemessage");
+		item.setParameter("ownerid", view.getForm().getValue().id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -445,7 +446,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		});
 	}
 
-	private void showHistory(String ownerId, String itemId){
+	private void showHistory(String itemId){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "history");
 		item.setParameter("historyownerid", ownerId);

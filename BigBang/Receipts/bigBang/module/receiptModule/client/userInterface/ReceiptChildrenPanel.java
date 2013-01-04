@@ -2,9 +2,9 @@ package bigBang.module.receiptModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.StackPanel;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;

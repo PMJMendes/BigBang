@@ -2,10 +2,10 @@ package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.dataAccess.DataBrokerManager;

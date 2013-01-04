@@ -2,10 +2,10 @@ package bigBang.library.client.userInterface.form;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.UserBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.User;
 import bigBang.library.client.dataAccess.DataBrokerManager;

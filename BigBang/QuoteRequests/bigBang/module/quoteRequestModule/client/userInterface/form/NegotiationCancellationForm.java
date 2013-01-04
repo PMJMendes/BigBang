@@ -3,7 +3,7 @@ package bigBang.module.quoteRequestModule.client.userInterface.form;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Negotiation.Cancellation;
 import bigBang.library.client.userInterface.CheckBoxFormField;

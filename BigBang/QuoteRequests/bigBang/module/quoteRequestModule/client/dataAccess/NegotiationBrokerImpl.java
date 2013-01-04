@@ -2,13 +2,13 @@ package bigBang.module.quoteRequestModule.client.dataAccess;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
 import bigBang.definitions.client.dataAccess.NegotiationBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Negotiation.Cancellation;

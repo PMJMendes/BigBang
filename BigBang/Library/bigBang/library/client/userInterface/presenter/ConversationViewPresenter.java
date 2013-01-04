@@ -2,9 +2,9 @@ package bigBang.library.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Message;
@@ -14,12 +14,11 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
-import bigBang.library.client.PermissionChecker;
-import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Selectable;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.ConversationBroker;
-import bigBang.library.client.dataAccess.ConversationBrokerClient;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -36,7 +35,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ConversationViewPresenter<T extends ProcessBase> implements ViewPresenter, ConversationBrokerClient {
+public abstract class ConversationViewPresenter<T extends ProcessBase> implements ViewPresenter{
 
 	public static enum Action{
 		SAVE,
@@ -74,6 +73,8 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		void setHistoryOwner(Conversation conversation);
 		List<HistoryItemStub> getHistoryList();
 		void setMainFormVisible(boolean b);
+		void setTypeAndOwnerId(String ownerTypeId, String ownerId);
+		void setSaveMode(boolean b);
 	}
 
 	public ConversationViewPresenter(Display<T> view){
@@ -84,9 +85,9 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 
 	protected Display<T> view;
 	protected boolean bound = false;
-	private String ownerId;
-	private String ownerTypeId;
-	private String conversationId;
+	protected String ownerId;
+	protected String ownerTypeId;
+	protected String conversationId;
 	protected ConversationBroker broker;
 	private boolean isSendMessage;
 	protected Message currentMessage;
@@ -234,6 +235,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 					conversation = response;
 					view.getForm().setValue(response);
 					view.getForm().setReadOnly(true);
+					view.setSaveMode(false);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Alterações gravadas com sucesso"), TYPE.TRAY_NOTIFICATION));
 				}
 
@@ -364,6 +366,8 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		ownerTypeId = parameterHolder.getParameter("ownertypeId");
 		conversationId = parameterHolder.getParameter("conversationid");
 
+		view.setTypeAndOwnerId(ownerTypeId, ownerId);
+		
 		if(ownerId == null || ownerTypeId == null){			
 			onGetOwnerFailed();
 		}
@@ -390,7 +394,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		}
 	}
 
-	private void getConversation() {
+	protected void getConversation() {
 		broker.getConversation(conversationId, new ResponseHandler<Conversation>() {
 
 			@Override
@@ -444,16 +448,5 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	}
 
 	protected abstract void fillOwner(String ownerId, ResponseHandler<T> handler);
-
-
-	@Override
-	public void setDataVersionNumber(String dataElementId, int number) {
-		return;
-	}
-
-	@Override
-	public int getDataVersion(String dataElementId) {
-		return 0;
-	}
 
 }

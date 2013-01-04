@@ -4,7 +4,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.library.client.HasEditableValue;

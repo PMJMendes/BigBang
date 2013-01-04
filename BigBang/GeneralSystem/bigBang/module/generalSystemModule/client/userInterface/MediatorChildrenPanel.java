@@ -1,8 +1,8 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.MediatorBroker;
 import bigBang.definitions.client.dataAccess.MediatorDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;

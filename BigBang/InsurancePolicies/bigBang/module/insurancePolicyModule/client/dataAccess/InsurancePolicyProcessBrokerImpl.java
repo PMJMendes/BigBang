@@ -3,6 +3,7 @@ package bigBang.module.insurancePolicyModule.client.dataAccess;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
@@ -13,7 +14,6 @@ import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.definitions.shared.Conversation;

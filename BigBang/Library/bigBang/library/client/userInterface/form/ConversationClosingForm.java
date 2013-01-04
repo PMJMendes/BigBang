@@ -1,6 +1,6 @@
 package bigBang.library.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 

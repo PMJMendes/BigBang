@@ -51,8 +51,8 @@ public abstract class SendMessageViewPresenter<T extends ProcessBase> implements
 
 	protected Display<T> view;
 	protected boolean bound = false;
-	private String ownerId;
-	private String ownerTypeId;
+	protected String ownerId;
+	protected String ownerTypeId;
 
 	public SendMessageViewPresenter(Display<T> view) {
 		setView((UIObject)view);
@@ -86,7 +86,7 @@ public abstract class SendMessageViewPresenter<T extends ProcessBase> implements
 		if(ownerId.isEmpty() || ownerTypeId.isEmpty()){
 			onGetOwnerFailed();
 		}else {
-			showCreateRequest(ownerId, ownerTypeId);
+			showCreateRequest(ownerId);
 		}
 	}
 
@@ -120,13 +120,13 @@ public abstract class SendMessageViewPresenter<T extends ProcessBase> implements
 		view.getForm().setValue(null);
 	}
 
-	protected void showCreateRequest(final String ownerId, final String ownerTypeId){
+	protected void showCreateRequest(final String ownerId){
 		fillOwner(ownerId, new ResponseHandler<T>(){
 
 			@Override
 			public void onResponse(T response) {
 					view.getOwnerForm().setValue(response);
-					Conversation request = getFormattedRequest(ownerId, ownerTypeId);
+					Conversation request = getFormattedRequest(ownerId);
 					view.getForm().setValue(request);
 					view.getForm().setReadOnly(false);
 			}
@@ -138,8 +138,7 @@ public abstract class SendMessageViewPresenter<T extends ProcessBase> implements
 		});
 	}
 
-	protected Conversation getFormattedRequest(String ownerId,
-			String ownerTypeId) {
+	protected Conversation getFormattedRequest(String ownerId) {
 		Conversation request = new Conversation();
 		request.parentDataObjectId = ownerId;
 		return request;

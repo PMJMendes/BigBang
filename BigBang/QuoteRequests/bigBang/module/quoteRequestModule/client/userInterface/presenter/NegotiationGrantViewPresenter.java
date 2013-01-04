@@ -6,11 +6,11 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
 import bigBang.definitions.client.dataAccess.UserBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.User;

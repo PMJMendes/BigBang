@@ -2,12 +2,12 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.library.client.ValueSelectable;

@@ -3,7 +3,7 @@ package bigBang.module.quoteRequestModule.client.userInterface;
 import java.util.HashMap;
 import java.util.Map;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequestObject.ColumnHeader;
 import bigBang.definitions.shared.QuoteRequestObject.CoverageData;
 import bigBang.definitions.shared.QuoteRequestObject.HeaderData;

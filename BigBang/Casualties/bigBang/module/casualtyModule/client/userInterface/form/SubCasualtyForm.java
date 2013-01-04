@@ -12,12 +12,12 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;

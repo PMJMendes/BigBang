@@ -1,6 +1,6 @@
 package bigBang.module.tasksModule.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Message.Kind;

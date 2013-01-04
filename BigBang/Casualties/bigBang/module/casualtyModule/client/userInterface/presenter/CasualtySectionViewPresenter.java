@@ -1,6 +1,6 @@
 package bigBang.module.casualtyModule.client.userInterface.presenter;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;

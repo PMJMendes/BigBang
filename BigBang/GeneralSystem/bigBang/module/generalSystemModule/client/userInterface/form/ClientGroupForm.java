@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.ClientGroup;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.ValueSelectable;

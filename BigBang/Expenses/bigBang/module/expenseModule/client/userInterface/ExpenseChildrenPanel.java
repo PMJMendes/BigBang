@@ -2,9 +2,9 @@ package bigBang.module.expenseModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.StackPanel;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.dataAccess.ExpenseDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Expense;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;

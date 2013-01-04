@@ -34,7 +34,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	protected ReceiptProcessToolBar operationsToolbar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected ReceiptChildrenPanel childrenPanel;
-	
+
 
 	public ReceiptSearchOperationView() {
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -43,14 +43,14 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 		VerticalPanel searchPanelWrapper = new VerticalPanel();
 		searchPanelWrapper.setSize("100%", "100%");
-		
+
 		ListHeader header = new ListHeader("Recibos");
 		searchPanelWrapper.add(header);
-		
+
 		searchPanel = new ReceiptSearchPanel();
 		searchPanelWrapper.add(searchPanel);
 		searchPanelWrapper.setCellHeight(searchPanel, "100%");
-		
+
 		mainWrapper.addWest(searchPanelWrapper, SEARCH_PANEL_WIDTH);
 
 		VerticalPanel formWrapper = new VerticalPanel();
@@ -201,7 +201,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 				// TODO Auto-generated method stub
 
 			}
-			
+
 			@Override
 			public void onReturnPayment() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.RETURN_PAYMENT));
@@ -221,7 +221,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 			protected void onSendMessage() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.SEND_MESSAGE));
 			}
-			
+
 		};
 		formWrapper.add(operationsToolbar);
 		formWrapper.setCellHeight(operationsToolbar, "21px");
@@ -231,7 +231,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");
-		
+
 		childrenPanel = new ReceiptChildrenPanel();
 		childrenPanel.setHeight("100%");
 		contentWrapper.addEast(childrenPanel, 300);
@@ -240,12 +240,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 		mainWrapper.add(contentWrapper);
 
-		if(!bigBang.definitions.client.Constants.DEBUG){
-			searchPanel.doSearch(true);
-		}
-		
+		searchPanel.doSearch(true);
+
+
 		form.addValueChangeHandler(new ValueChangeHandler<Receipt>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<Receipt> event) {
 				Receipt receipt = event.getValue();
@@ -308,38 +307,38 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowTransferToPolicy(boolean allow) {
 		this.operationsToolbar.allowTransfer(allow);
-		
+
 	}
 
 	@Override
 	public void allowAssociateDebitNote(boolean hasPermission) {
 		operationsToolbar.allowAssociateDebitNote(hasPermission);
-		
+
 	}
 
 	@Override
 	public void allowValidate(boolean hasPermission) {
 		operationsToolbar.allowValidate(hasPermission);
-		
+
 	}
 
 	@Override
 	public void allowSetForReturn(boolean hasPermission) {
 		operationsToolbar.allowSetForReturn(hasPermission);
-		
+
 	}
 
 	@Override
 	public void allowSendPaymentNotice(boolean hasPermission) {
 		operationsToolbar.allowCreatePaymentNotice(hasPermission);
-		
+
 	}
-	
+
 	@Override
 	public void allowMarkForPayment(boolean allow) {
 		operationsToolbar.allowMarkForPayment(allow);
 	}
-	
+
 	@Override
 	public void allowSendReceipt(boolean allow) {
 		operationsToolbar.allowSendReceipt(allow);
@@ -349,40 +348,40 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	public void allowInsurerAccounting(boolean allow) {
 		operationsToolbar.allowInsurerAccounting(allow);
 	}
-	
+
 	@Override
 	public void allowAgentAccounting(boolean allow) {
 		this.operationsToolbar.allowAgentAccounting(allow);
 	}
-	
+
 	@Override
 	public void allowPaymentToClient(boolean hasPermission) {
 		operationsToolbar.allowPaymentToClient(hasPermission);
-		
+
 	}
 
 	@Override
 	public void allowReturnToInsurer(boolean hasPermission) {
 		operationsToolbar.allowReturnToAgency(hasPermission);
-		
+
 	}
 
 	@Override
 	public void allowCreateSignatureRequest(boolean hasPermission) {
 		operationsToolbar.allowCreateSignatureRequest(hasPermission);
-		
+
 	}
-	
+
 	@Override
 	public void allowSetDASDesnecessary(boolean hasPermission){
 		operationsToolbar.allowSetDASDesnecessary(hasPermission);
 	}
-	
+
 	@Override
 	public void allowRequestDAS(boolean hasPermission){
 		operationsToolbar.allowRequestDAS(hasPermission);
 	}
-	
+
 	@Override
 	public HasValueSelectables<Contact> getContactsList() {
 		return this.childrenPanel.contactsList;
@@ -392,12 +391,12 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	public HasValueSelectables<Document> getDocumentsList() {
 		return this.childrenPanel.documentsList;
 	}
-	
+
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
 		return this.childrenPanel.subProcessesList;
 	}
-	
+
 	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return this.childrenPanel.historyList;
@@ -407,7 +406,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	public void allowSetNotPaid(boolean hasPermission) {
 		operationsToolbar.allowSetNotPaid(hasPermission);
 	}
-	
+
 	@Override
 	public void allowReturnPayment(boolean hasPermission) {
 		operationsToolbar.allowReturnPayment(hasPermission);

@@ -1,15 +1,17 @@
 package bigBang.module.casualtyModule.client.userInterface;
 
 
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
-
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
 public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsToolBar {
 
 	protected MenuItem delete, markForClosing, close, rejectClose;
 	protected MenuItem sendMessage;
+	protected MenuItem createAssessment;
+	protected MenuItem createMedicalFile;
 	protected MenuItem receiveMessage;
 	protected MenuItem markNotificationSent;
 
@@ -85,7 +87,29 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		});
 		
 		addItem(SUB_MENU.EXECUTE, markNotificationSent);
+		
+		createAssessment = new MenuItem("Criar Peritagem ou Averiguação", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateAssessment();
+			}
+		});
+		
+		addItem(SUB_MENU.EXECUTE, createAssessment);
+		
+		createMedicalFile = new MenuItem("Criar Ficha Clínica", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateMedicalFile();
+			}
+		});
 	}
+
+	protected abstract void onCreateMedicalFile();
+	
+	protected abstract void onCreateAssessment();
 
 	protected abstract void onMarkNotificationSent();
 
@@ -131,6 +155,14 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 	
 	public void allowMarkNotificationSent(boolean hasPermission){
 		markNotificationSent.setEnabled(hasPermission);
+	}
+	
+	public void allowCreateAssessment(boolean hasPermission){
+		createAssessment.setEnabled(hasPermission);
+	}
+
+	public void allowCreateMedicalFile(boolean hasPermission) {
+		createMedicalFile.setEnabled(hasPermission);
 	}
 
 }

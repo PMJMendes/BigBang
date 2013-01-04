@@ -2,11 +2,11 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DASRequestBroker;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Receipt;

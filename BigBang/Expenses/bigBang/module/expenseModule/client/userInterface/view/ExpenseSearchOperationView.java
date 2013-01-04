@@ -42,16 +42,16 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 
 		VerticalPanel searchPanelWrapper = new VerticalPanel();
 		searchPanelWrapper.setSize("100%", "100%");
-		
+
 		ListHeader header = new ListHeader("Despesas de Saude");
 		searchPanelWrapper.add(header);
-		
+
 		searchPanel = new ExpenseSearchPanel();
 		searchPanelWrapper.add(searchPanel);
 		searchPanelWrapper.setCellHeight(searchPanel, "100%");
-		
+
 		mainWrapper.addWest(searchPanelWrapper, SEARCH_PANEL_WIDTH);
-		
+
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
 
@@ -143,9 +143,7 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 		contentWrapper.add(formWrapper);
 		mainWrapper.add(contentWrapper);
 
-		if(!bigBang.definitions.client.Constants.DEBUG){
-			searchPanel.doSearch(true);
-		}
+		searchPanel.doSearch(true);
 
 		form.addValueChangeHandler(new ValueChangeHandler<Expense>() {
 

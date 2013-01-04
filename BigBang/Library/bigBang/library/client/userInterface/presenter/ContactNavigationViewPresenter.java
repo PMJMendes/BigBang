@@ -1,7 +1,7 @@
 package bigBang.library.client.userInterface.presenter;
 
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterFactory;

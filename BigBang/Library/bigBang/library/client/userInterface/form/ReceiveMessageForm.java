@@ -3,7 +3,7 @@ package bigBang.library.client.userInterface.form;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Message;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;

@@ -14,9 +14,9 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.SearchParameter;

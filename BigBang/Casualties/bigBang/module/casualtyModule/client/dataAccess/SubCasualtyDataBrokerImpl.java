@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.dataAccess;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.Search;
@@ -10,7 +11,7 @@ import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
@@ -320,9 +321,44 @@ service.sendNotification(subCasualtyId, new BigBangAsyncCallback<SubCasualty>() 
 
 	@Override
 	public void receiveMessage(Conversation conversation,
-			ResponseHandler<Conversation> handler) {
-		// TODO Auto-generated method stub
+			final ResponseHandler<Conversation> handler) {
+		service.receiveMessage(conversation, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CONVERSATION, result.id));
+				handler.onResponse(result);				
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not receive the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
 		
+		});
+	}
+	
+	@Override
+	public void createAssessment(Assessment assessment, final ResponseHandler<Assessment> handler){
+		service.createAssessment(assessment, new BigBangAsyncCallback<Assessment>() {
+
+			@Override
+			public void onResponseSuccess(Assessment result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_ASSESSMENT, result.id));
+				handler.onResponse(result);								
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create the assessment")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 }

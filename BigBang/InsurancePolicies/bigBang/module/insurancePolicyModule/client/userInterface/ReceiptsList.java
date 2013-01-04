@@ -2,10 +2,10 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;

@@ -1,6 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer.Coverage;

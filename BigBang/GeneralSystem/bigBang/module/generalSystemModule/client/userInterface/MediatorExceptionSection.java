@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Mediator.MediatorException;
 import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;

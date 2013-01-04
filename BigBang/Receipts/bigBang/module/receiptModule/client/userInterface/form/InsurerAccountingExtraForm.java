@@ -3,7 +3,7 @@ package bigBang.module.receiptModule.client.userInterface.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;

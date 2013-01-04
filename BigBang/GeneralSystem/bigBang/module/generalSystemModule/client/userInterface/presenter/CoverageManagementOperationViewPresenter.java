@@ -4,10 +4,10 @@ import java.util.Collection;
 
 import org.gwt.mosaic.ui.client.MessageBox;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;

@@ -4,11 +4,11 @@ import java.util.Collection;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.MediatorBroker;
 import bigBang.definitions.client.dataAccess.MediatorDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;

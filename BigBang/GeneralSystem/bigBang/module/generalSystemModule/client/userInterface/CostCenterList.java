@@ -2,11 +2,11 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.CostCenterBroker;
 import bigBang.definitions.client.dataAccess.CostCenterDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.CostCenter;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;

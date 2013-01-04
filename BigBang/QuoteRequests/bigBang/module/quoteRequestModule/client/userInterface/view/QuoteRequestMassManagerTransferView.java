@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.definitions.shared.SearchParameter;

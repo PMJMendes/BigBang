@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.Task;

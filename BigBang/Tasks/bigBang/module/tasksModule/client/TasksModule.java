@@ -2,8 +2,8 @@ package bigBang.module.tasksModule.client;
 
 import com.google.gwt.core.client.GWT;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;

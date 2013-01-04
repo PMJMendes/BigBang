@@ -1,6 +1,6 @@
 package bigBang.module.quoteRequestModule.client.userInterface.form;
 
-import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;

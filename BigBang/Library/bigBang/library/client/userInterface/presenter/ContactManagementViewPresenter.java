@@ -3,9 +3,9 @@ package bigBang.library.client.userInterface.presenter;
 import java.util.Collection;
 import java.util.List;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;

@@ -51,6 +51,7 @@ public class BigBangConstants {
 		public static final String GENERAL_SYSTEM = "628F5DA6-434F-46A8-9C88-9EB1008A689A";
 		public static final String CONVERSATION = "1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4";
 		public static final String ASSESSMENT = "CCCC8540-B2AF-45D6-951C-A1330100BC77";
+		public static final String MEDICAL_FILE = "835E3722-A13B-451B-AEC8-A13401125446";
 
 	}
 

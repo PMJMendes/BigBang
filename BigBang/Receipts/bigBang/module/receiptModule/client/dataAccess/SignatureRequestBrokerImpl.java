@@ -1,11 +1,11 @@
 package bigBang.module.receiptModule.client.dataAccess;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.SignatureRequestBroker;
 import bigBang.definitions.client.dataAccess.SignatureRequestBrokerClient;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.definitions.shared.SignatureRequest.Cancellation;
 import bigBang.definitions.shared.SignatureRequest.Response;

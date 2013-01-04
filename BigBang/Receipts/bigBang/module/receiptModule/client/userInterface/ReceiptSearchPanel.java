@@ -18,9 +18,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;

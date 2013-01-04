@@ -7,9 +7,9 @@ import org.gwt.mosaic.ui.client.ToolButton;
 import org.gwt.mosaic.ui.client.util.ButtonHelper;
 import org.gwt.mosaic.ui.client.util.ButtonHelper.ButtonLabelType;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.ContactsBroker;

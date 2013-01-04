@@ -7,8 +7,6 @@ import com.google.gwt.user.client.ui.StackPanel;
 
 public class ConversationChildrenPanel extends View {
 
-	protected Conversation conversation;
-
 	public HistoryList historyList;
 
 	public ConversationChildrenPanel(){
@@ -25,7 +23,6 @@ public class ConversationChildrenPanel extends View {
 	protected void initializeView() {}
 
 	public void setOwner(Conversation request){
-		this.conversation = request;
 		String requestId = request == null ? null : request.id;
 		this.historyList.setOwner(requestId);
 	}

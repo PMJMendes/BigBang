@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.interfaces.ContactsService;

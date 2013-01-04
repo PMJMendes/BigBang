@@ -6,11 +6,11 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimplePanel;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
