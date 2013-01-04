@@ -13,7 +13,6 @@ import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
-import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -67,7 +66,7 @@ public class Conversation
 		{
 			return PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent().GetScript().GetDataType();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -80,7 +79,27 @@ public class Conversation
 		{
 			return PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent().GetDataKey();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	public UUID getParentContainerType()
+		throws BigBangJewelException
+	{
+		IProcess lrefProc;
+
+		try
+		{
+			lrefProc = PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent();
+			if ( Constants.ProcID_Assessment.equals(lrefProc.GetScriptID()) ||
+					Constants.ProcID_MedicalFile.equals(lrefProc.GetScriptID()) )
+				lrefProc = lrefProc.GetParent();
+
+			return lrefProc.GetScript().GetDataType();
+		}
+		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -98,7 +117,7 @@ public class Conversation
 					Constants.ProcID_MedicalFile.equals(lrefProc.GetScriptID()) )
 				lrefProc = lrefProc.GetParent();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
