@@ -126,7 +126,7 @@ public class CreateCasualty
 
 		try
 		{
-	        lstrFilter = Integer.toString(mlngYear) + "%";
+	        lstrFilter = "!" + Integer.toString(mlngYear) + "%";
 			lrefCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Casualty)); 
 			ldb = new MasterDB();
 		}
@@ -151,7 +151,7 @@ public class CreateCasualty
 		{
 			while ( lrsCasualties.next() )
 			{
-				lstrAux = lrsCasualties.getString(2).substring(lstrFilter.length() - 1);
+				lstrAux = lrsCasualties.getString(2).substring(lstrFilter.length() - 2);
 				llngAux = Integer.parseInt(lstrAux);
 				if ( llngAux >= llngResult )
 					llngResult = llngAux + 1;
@@ -183,6 +183,6 @@ public class CreateCasualty
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return lstrFilter.substring(0, lstrFilter.length() - 1) + String.format("%04d", llngResult);
+		return lstrFilter.substring(1, lstrFilter.length() - 1) + String.format("%04d", llngResult);
 	}
 }
