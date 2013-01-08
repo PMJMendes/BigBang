@@ -48,6 +48,8 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.interfaces.ContactsService;
 import bigBang.library.interfaces.ContactsServiceAsync;
+import bigBang.library.interfaces.DocumentService;
+import bigBang.library.interfaces.DocumentServiceAsync;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -56,6 +58,7 @@ import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -88,14 +91,22 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	private DocumentViewPresenter documentViewPresenter;
 	private DocumentsBroker documentBroker;
 	protected String ownerTypeId;
+	protected String documentOwnerId, documentOwner;
 	private String contactChosen;
+	private TextBoxFormField subject;
+	private ListBoxFormField documentsFrom;
 
 	public SendMessageForm(){
 
 		addSection("Detalhes do Processo de Mensagem");
+		subject = new TextBoxFormField("Tópico");
 		contactsFrom = new ListBoxFormField("Contactos de:");
 		contactsFrom.setFieldWidth("400px");
 		to = new ListBoxFormField("Para:");
+
+		documentsFrom = new ListBoxFormField("Documentos de:");
+		documentsFrom.setFieldWidth("400px");
+
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
 		text = new TypifiedTextSelector();	
 		to.setFieldWidth("400px");
@@ -130,6 +141,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		addContactButton = new Button("Gerir contactos");
 
 		addFormField(requestType, false);
+		addFormField(subject, false);
 		addFormField(forwardReply, false);
 		addFormField(expectsResponse, true);
 		addFormField(replyLimit, true);
@@ -145,6 +157,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		toAndButtonWrapper.add(addContactButton);
 
 		addWidget(toAndButtonWrapper);
+
+		addFormField(documentsFrom);
 
 		VerticalPanel emailWrapper = new VerticalPanel();
 		noteWrapper = new VerticalPanel();
@@ -282,6 +296,14 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			}
 		});
 
+		documentsFrom.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				documentOwnerChanged(event.getValue());
+			}
+		});
+
 		documentBroker = (DocumentsBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.DOCUMENT);
 
 
@@ -301,6 +323,49 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		});		
 
 		setValidator(new SendMessageFormValidator(this));
+	}
+
+	protected void documentOwnerChanged(String value) {
+		if(value == null || value.isEmpty() || BigBangConstants.TypifiedListValues.MEDIATOR_IDS.DIRECT.equalsIgnoreCase(value)){
+			addDocumentButton.setEnabled(false);
+			clearDocuments();
+			return;
+		}
+		addDocumentButton.setEnabled(true);
+		clearDocuments();
+		DocumentServiceAsync documentsService = DocumentService.Util.getInstance();
+
+		documentsService.getDocuments(value, new AsyncCallback<Document[]>() {
+
+			@Override
+			public void onSuccess(Document[] result) {
+				for(Document doc : result){						
+					addDocument(doc);
+				}
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				return;
+			}
+		});
+	}
+
+	private void clearDocuments() {
+		ArrayList<ListEntry<Document>> checkeds = new ArrayList<ListEntry<Document>>();
+
+		for(ListEntry<Document>  doc: attachments){
+			if(doc.isChecked()){
+				checkeds.add(doc);
+			}
+		}
+		attachments.clear();
+
+		for(ListEntry<Document>  checked: checkeds){
+			attachments.add(checked);
+		}
+
 	}
 
 	private void contactChoiceChanged(String id) {
@@ -341,6 +406,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 		Conversation conversation = value;
 		conversation.requestTypeId = requestType.getValue();
+		conversation.subject = subject.getValue();
 		TypifiedText requestText = text.getValue();
 
 		try{
@@ -449,7 +515,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 		replyLimit.setValue(info.replylimit != null ? info.replylimit.doubleValue() : null);
 		requestType.setValue(info.requestTypeId);
-
+		subject.setValue(info.subject);
 		TypifiedText textValue = new TypifiedText();
 		textValue.subject = info.subject;
 
@@ -491,6 +557,12 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			emailOrNote.setValue(Kind.EMAIL.toString());
 		}
 
+		if(requestType.getValue() != null){
+			requestType.setReadOnly(true);
+		}
+		if(subject.getValue() != null){
+			subject.setReadOnly(true);
+		}
 
 	}
 
@@ -567,6 +639,12 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 
 	public void addDocument(Document doc){
+		for(ListEntry<Document>  document: attachments){
+			if(document.getValue().id.equalsIgnoreCase(doc.id)){
+				return;
+			}
+		}
+		
 		DocumentsList.Entry entry = new DocumentsList.Entry(doc);
 		attachments.add(entry);
 		attachments.setCheckable(true);
@@ -577,6 +655,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 	public void addItemContactList(String name, String id, String ownerType) {
 		contactsFrom.addItem(name, id);
+		documentsFrom.addItem(name, id);
 		ownerTypes.put(id, ownerType);
 	}
 
@@ -587,7 +666,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	public void setTypeAndOwnerId(String ownerTypeId2, String ownerId2) {
 		this.ownerId = ownerId2;
 		this.ownerTypeId = ownerTypeId2;
-		documentBroker.registerClient(this, ownerId2);
+		documentBroker.registerClient(this);
 	}
 
 	@Override
