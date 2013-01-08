@@ -23,7 +23,7 @@ public class CasualtyFormValidator extends FormValidator<CasualtyForm> {
 	}
 
 	private boolean validatePercResponsability() {
-		return validateNumber(form.percResponsability, 0.0, 100.0, true);
+		return validateNumber(form.percResponsability, 0.0, 101.0, true);
 	}
 
 	private boolean validateNumber() {
