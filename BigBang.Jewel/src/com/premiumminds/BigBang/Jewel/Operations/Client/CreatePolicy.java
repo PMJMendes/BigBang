@@ -199,7 +199,7 @@ public class CreatePolicy
 					}
 
 					if ( Constants.ExID_Variable.equals(lobjPolicy.GetSubLine().getExerciseType()) )
-						mobjData.marrExercises[i].mstrLabel = "Prorrogação n. " + (mobjData.marrExercises.length - 1);
+						mobjData.marrExercises[i].mstrLabel = "Período Inicial";
 					else
 					{
 				    	ldtAux2 = Calendar.getInstance();
