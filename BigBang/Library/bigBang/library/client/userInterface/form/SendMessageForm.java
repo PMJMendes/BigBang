@@ -194,9 +194,9 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		VerticalPanel attachmentsWrapper = new VerticalPanel();
 		attachmentsWrapper.add(firstHeader);
 		attachmentsWrapper.add(attachments);
+		attachmentsWrapper.setCellHeight(attachments, "510px");
 		emailAndAttachmentsWrapper.add(emailWrapper);
 		emailAndAttachmentsWrapper.add(attachmentsWrapper);
-		emailAndAttachmentsWrapper.setCellHeight(attachments, "510px");
 
 		noteWrapper.setVisible(false);
 		noteWrapper.add(note);
