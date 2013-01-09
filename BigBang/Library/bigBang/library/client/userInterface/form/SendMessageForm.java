@@ -186,7 +186,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		ListHeader firstHeader = new ListHeader("Anexos");
 		ListHeader header = new ListHeader();
 		addDocumentButton = new Button("Criar Documento");
-		addDocumentButton.getElement().getStyle().setMarginRight(10, Unit.PX);
+		addDocumentButton.getElement().getStyle().setMarginRight(14, Unit.PX);
+		addDocumentButton.setEnabled(false);
 		header.setRightWidget(addDocumentButton);
 		header.setLeftWidget(documentsFrom);
 		attachments.setHeaderWidget(header);
