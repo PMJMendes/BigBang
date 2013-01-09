@@ -6,18 +6,27 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.MedicalFile;
+import bigBang.definitions.shared.MedicalFileStub;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ConversationServiceImpl;
-import bigBang.library.server.EngineImplementor;
 import bigBang.library.server.MessageBridge;
+import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.casualtyModule.interfaces.MedicalFileService;
+import bigBang.module.casualtyModule.shared.MedicalFileSearchParameter;
+import bigBang.module.casualtyModule.shared.MedicalFileSortParameter;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -25,13 +34,15 @@ import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalDetailData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalFileData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.ManageData;
 
 public class MedicalFileServiceImpl
-	extends EngineImplementor
+	extends SearchServiceBase
 	implements MedicalFileService
 {
 	private static final long serialVersionUID = 1L;
@@ -41,6 +52,9 @@ public class MedicalFileServiceImpl
 	{
 		com.premiumminds.BigBang.Jewel.Objects.MedicalFile lobjFile;
 		MedicalDetail[] larrDetails;
+		SubCasualty lobjSubC;
+		Client lobjCli;
+		String lstrObj;
 		IProcess lobjProcess;
 		MedicalFile lobjResult;
 		int i;
@@ -49,6 +63,10 @@ public class MedicalFileServiceImpl
 		{
 			lobjFile = com.premiumminds.BigBang.Jewel.Objects.MedicalFile.GetInstance(Engine.getCurrentNameSpace(), pidFile);
 			larrDetails = lobjFile.GetCurrentDetails();
+			lobjSubC = SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY));
+			lobjCli = lobjSubC.GetCasualty().GetClient();
+			lstrObj = lobjSubC.GetObjectName();
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjFile.GetProcessID());
 		}
 		catch (Throwable e)
@@ -60,9 +78,12 @@ public class MedicalFileServiceImpl
 		lobjResult.id = lobjFile.getKey().toString();
 		lobjResult.processId = lobjProcess.getKey().toString();
 		lobjResult.reference = lobjFile.getLabel();
-		lobjResult.subCasualtyId = ((UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY)).toString();
 		lobjResult.nextDate = (lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.NEXTDATE) == null ? null :
 			((Timestamp)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.NEXTDATE)).toString().substring(0, 10) );
+		lobjResult.inheritClientName = lobjCli.getLabel();
+		lobjResult.inheritObjectName = lstrObj;
+		lobjResult.isRunning = lobjProcess.IsRunning();
+		lobjResult.subCasualtyId = ((UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY)).toString();
 
 		if ( larrDetails == null )
 			lobjResult.details = null;
@@ -333,5 +354,215 @@ public class MedicalFileServiceImpl
 		}
 
 		return sGetMedicalFile(lobjFile.getKey());
+	}
+
+	protected UUID getObjectID()
+	{
+		return Constants.ObjID_MedicalFile;
+	}
+
+	protected String[] getColumns()
+	{
+		return new String[] {"[:Reference]", "[:Process]", "[:Next Date]", "[:Process:Running]"};
+	}
+
+	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
+		throws BigBangException
+	{
+		MedicalFileSearchParameter lParam;
+		String lstrAux;
+		IEntity lrefSubCasualties;
+		IEntity lrefPolObjects;
+		IEntity lrefSubPolObjects;
+
+		if ( !(pParam instanceof MedicalFileSearchParameter) )
+			return false;
+		lParam = (MedicalFileSearchParameter)pParam;
+
+		if ( !lParam.includeClosed )
+		{
+			pstrBuffer.append(" AND [:Process:Running] = 1");
+		}
+
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Reference] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR (LEFT(CONVERT(NVARCHAR, [:Next Date], 120), 10) LIKE N'%").append(lstrAux).append("%')")
+					.append(" OR [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubC] WHERE ([:Casualty:Client:Name] LIKE '%").append(lstrAux).append("%')))");
+		}
+
+		if ( lParam.insuredObject != null )
+		{
+			lstrAux = lParam.insuredObject.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubCasualties] WHERE ([:Generic Object] LIKE '%").append(lstrAux).append("%'")
+					.append(" OR [:Policy Object] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefPolObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyObject));
+				pstrBuffer.append(lrefPolObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPolObjects] WHERE [:Name] LIKE '%").append(lstrAux).append("%')")
+					.append(" OR [:Sub Policy Object] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefSubPolObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject));
+				pstrBuffer.append(lrefSubPolObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubPolObjects] WHERE [:Name] LIKE '%").append(lstrAux).append("%'))))");
+		}
+
+		return true;
+	}
+
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		MedicalFileSortParameter lParam;
+
+		if ( !(pParam instanceof MedicalFileSortParameter) )
+			return false;
+		lParam = (MedicalFileSortParameter)pParam;
+
+		if ( lParam.field == MedicalFileSortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return false;
+		}
+
+		if ( lParam.field == MedicalFileSortParameter.SortableField.REFERENCE )
+			pstrBuffer.append("[:Reference]");
+
+		if ( lParam.field == MedicalFileSortParameter.SortableField.NEXT_DATE )
+			pstrBuffer.append("[:Next Date]");
+
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
+
+		return true;
+	}
+
+	protected SearchResult buildResult(UUID pid, Object[] parrValues)
+	{
+		IProcess lobjProcess;
+		MedicalFileStub lobjResult;
+		SubCasualty lobjSub;
+		Client lobjCli;
+		String lstrObj;
+		
+		lobjProcess = null;
+		lobjCli = null;
+		lstrObj = null;
+		try
+		{
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
+			lobjSub = (SubCasualty)lobjProcess.GetParent().GetData();
+			lobjCli = lobjSub.GetCasualty().GetClient();
+			lstrObj = lobjSub.GetObjectName();
+		}
+		catch (Throwable e)
+		{
+		}
+
+		lobjResult = new MedicalFileStub();
+
+		lobjResult.id = pid.toString();
+		lobjResult.reference = (String)parrValues[0];
+		lobjResult.nextDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
+		lobjResult.inheritClientName = (lobjCli == null ? "(Erro a obter o nome do cliente.)" : lobjCli.getLabel());
+		lobjResult.inheritObjectName = lstrObj;
+		lobjResult.isRunning = ((Boolean)parrValues[3]);
+
+		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		MedicalFileSearchParameter lParam;
+		String lstrAux;
+		IEntity lrefSubCasualties;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof MedicalFileSearchParameter) )
+				continue;
+			lParam = (MedicalFileSearchParameter) parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("CASE WHEN [:Reference] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Reference]) ELSE ")
+					.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubC] WHERE ([:Casualty:Client:Name] LIKE '%").append(lstrAux).append("%')) THEN ")
+					.append("-1000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:Casualty:Client:Name] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubC2] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
+			
+			pstrBuffer.append("CASE WHEN (LEFT(CONVERT(NVARCHAR, [:Next Date], 120), 10) LIKE N'%")
+					.append(lstrAux).append("%') THEN ")
+					.append("-1000000*PATINDEX(N'%").append(lstrAux)
+					.append("%', LEFT(CONVERT(NVARCHAR, [:Next Date], 120), 10)) ELSE ");
+			
+			pstrBuffer.append("0 END END END");
+		}
+
+		return lbFound;
 	}
 }

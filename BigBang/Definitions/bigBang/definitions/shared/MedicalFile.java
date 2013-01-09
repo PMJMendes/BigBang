@@ -3,7 +3,7 @@ package bigBang.definitions.shared;
 import java.io.Serializable;
 
 public class MedicalFile
-	extends ProcessBase
+	extends MedicalFileStub
 {
 	private static final long serialVersionUID = 1L;
 
@@ -23,9 +23,7 @@ public class MedicalFile
 		public boolean deleted;
 	}
 
-	public String reference; //Read-only, criado no server
 	public String subCasualtyId;
-	public String nextDate;
 
 	public MedicalDetail[] details;
 }

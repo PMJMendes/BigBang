@@ -2,12 +2,12 @@ package bigBang.module.casualtyModule.interfaces;
 
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.MedicalFile;
-import bigBang.library.interfaces.Service;
+import bigBang.library.interfaces.SearchServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface MedicalFileServiceAsync
-	extends Service
+	extends SearchServiceAsync
 {
 	void getMedicalFile(String id, AsyncCallback<MedicalFile> callback);
 	void editMedicalFile(MedicalFile medicalFile, AsyncCallback<MedicalFile> callback);
