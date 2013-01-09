@@ -91,7 +91,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	private DocumentViewPresenter documentViewPresenter;
 	private DocumentsBroker documentBroker;
 	protected String ownerTypeId;
-	protected String documentOwnerId, documentOwner;
+	protected String documentOwnerId;
 	private String contactChosen;
 	private TextBoxFormField subject;
 	private ListBoxFormField documentsFrom;
@@ -158,8 +158,6 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 		addWidget(toAndButtonWrapper);
 
-		addFormField(documentsFrom);
-
 		VerticalPanel emailWrapper = new VerticalPanel();
 		noteWrapper = new VerticalPanel();
 
@@ -185,14 +183,18 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		emailWrapper.add(text);
 
 		attachments = new bigBang.library.client.userInterface.List<Document>();
-		ListHeader header = new ListHeader("Anexos");
+		ListHeader firstHeader = new ListHeader("Anexos");
+		ListHeader header = new ListHeader();
 		addDocumentButton = new Button("Criar Documento");
 		addDocumentButton.getElement().getStyle().setMarginRight(10, Unit.PX);
 		header.setRightWidget(addDocumentButton);
-
+		header.setLeftWidget(documentsFrom);
 		attachments.setHeaderWidget(header);
+		VerticalPanel attachmentsWrapper = new VerticalPanel();
+		attachmentsWrapper.add(firstHeader);
+		attachmentsWrapper.add(attachments);
 		emailAndAttachmentsWrapper.add(emailWrapper);
-		emailAndAttachmentsWrapper.add(attachments);
+		emailAndAttachmentsWrapper.add(attachmentsWrapper);
 		emailAndAttachmentsWrapper.setCellHeight(attachments, "510px");
 
 		noteWrapper.setVisible(false);
@@ -269,10 +271,11 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			@Override
 			public void onClick(ClickEvent event) {
 				HasParameters params = new HasParameters();
-				params.setParameter("ownerid", ownerId);
-				params.setParameter("ownertypeid", ownerTypeId);
+				params.setParameter("ownerid", documentOwnerId);
+				params.setParameter("ownertypeid", getOwnerType(documentOwnerId));
 				params.setParameter("documentid", "new");
 				popup = new PopupPanel();
+				
 				documentViewPresenter.setParameters(params);
 				documentViewPresenter.go(popup);
 				popup.center();				
@@ -284,6 +287,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			@Override
 			protected void onCreateDocument() {
 				popup.hidePopup();
+				documentOwnerChanged(documentOwnerId);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 		};
@@ -332,6 +336,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			return;
 		}
 		addDocumentButton.setEnabled(true);
+		documentOwnerId = value;
 		clearDocuments();
 		DocumentServiceAsync documentsService = DocumentService.Util.getInstance();
 
