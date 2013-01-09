@@ -2,16 +2,16 @@ package bigBang.module.casualtyModule.interfaces;
 
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
+import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("AssessmentService")
 public interface AssessmentService
-	extends RemoteService
+	extends SearchService
 {
 	/**
 	 * Utility class for simplifying access to the instance of async service.

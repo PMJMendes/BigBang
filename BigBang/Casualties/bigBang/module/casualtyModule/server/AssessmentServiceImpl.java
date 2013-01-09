@@ -5,31 +5,41 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Assessment;
+import bigBang.definitions.shared.AssessmentStub;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ConversationServiceImpl;
-import bigBang.library.server.EngineImplementor;
 import bigBang.library.server.MessageBridge;
+import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.casualtyModule.interfaces.AssessmentService;
+import bigBang.module.casualtyModule.shared.AssessmentSearchParameter;
+import bigBang.module.casualtyModule.shared.AssessmentSortParameter;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.AssessmentData;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Assessment.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Assessment.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Assessment.ManageData;
 
 public class AssessmentServiceImpl
-	extends EngineImplementor
+	extends SearchServiceBase
 	implements AssessmentService
 {
 	private static final long serialVersionUID = 1L;
@@ -39,6 +49,8 @@ public class AssessmentServiceImpl
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Assessment lobjAssessment;
 		SubCasualty lobjSubC;
+		Client lobjCli;
+		String lstrObj;
 		IProcess lobjProcess;
 		Assessment lobjResult;
 
@@ -47,6 +59,8 @@ public class AssessmentServiceImpl
 			lobjAssessment = com.premiumminds.BigBang.Jewel.Objects.Assessment.GetInstance(Engine.getCurrentNameSpace(), pidAssessment);
 			lobjSubC = SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
 					(UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY));
+			lobjCli = lobjSubC.GetCasualty().GetClient();
+			lstrObj = lobjSubC.GetObjectName();
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjAssessment.GetProcessID());
 		}
 		catch (Throwable e)
@@ -58,12 +72,15 @@ public class AssessmentServiceImpl
 		lobjResult.id = lobjAssessment.getKey().toString();
 		lobjResult.processId = lobjProcess.getKey().toString();
 		lobjResult.reference = lobjAssessment.getLabel();
-		lobjResult.subCasualtyId = lobjSubC.getKey().toString();
-		lobjResult.subCasualtyNumber = lobjSubC.getLabel();
 		lobjResult.scheduledDate = (lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SCHEDULEDDATE) == null ? null :
-				((Timestamp)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SCHEDULEDDATE)).toString().substring(0, 10) );
+			((Timestamp)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SCHEDULEDDATE)).toString().substring(0, 10) );
 		lobjResult.effectiveDate = (lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.EFFECTIVEDATE) == null ? null :
 			((Timestamp)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.EFFECTIVEDATE)).toString().substring(0, 10) );
+		lobjResult.inheritClientName = lobjCli.getLabel();
+		lobjResult.inheritObjectName = lstrObj;
+		lobjResult.isRunning = lobjProcess.IsRunning();
+		lobjResult.subCasualtyId = lobjSubC.getKey().toString();
+		lobjResult.subCasualtyNumber = lobjSubC.getLabel();
 		lobjResult.isConditional = (Boolean)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.ISCONDITIONAL);
 		lobjResult.isTotalLoss = (Boolean)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.ISTOTALLOSS);
 		lobjResult.notes = (String)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.NOTES);
@@ -284,5 +301,235 @@ public class AssessmentServiceImpl
 		}
 
 		return sGetAssessment(lobjAssessment.getKey());
+	}
+
+	protected UUID getObjectID()
+	{
+		return Constants.ObjID_Assessment;
+	}
+
+	protected String[] getColumns()
+	{
+		return new String[] {"[:Reference]", "[:Process]", "[:Scheduled Date]", "[:Effective Date]", "[:Process:Running]"};
+	}
+
+	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
+		throws BigBangException
+	{
+		AssessmentSearchParameter lParam;
+		String lstrAux;
+		IEntity lrefSubCasualties;
+		IEntity lrefPolObjects;
+		IEntity lrefSubPolObjects;
+
+		if ( !(pParam instanceof AssessmentSearchParameter) )
+			return false;
+		lParam = (AssessmentSearchParameter)pParam;
+
+		if ( !lParam.includeClosed )
+		{
+			pstrBuffer.append(" AND [:Process:Running] = 1");
+		}
+
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Reference] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR (LEFT(CONVERT(NVARCHAR, [:Scheduled Date], 120), 10) LIKE N'%").append(lstrAux).append("%')")
+					.append(" OR (LEFT(CONVERT(NVARCHAR, [:Effective Date], 120), 10) LIKE N'%").append(lstrAux).append("%')")
+					.append(" OR [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubC] WHERE ([:Casualty:Client:Name] LIKE '%").append(lstrAux).append("%')))");
+		}
+
+		if ( lParam.insuredObject != null )
+		{
+			lstrAux = lParam.insuredObject.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubCasualties] WHERE ([:Generic Object] LIKE '%").append(lstrAux).append("%'")
+					.append(" OR [:Policy Object] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefPolObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyObject));
+				pstrBuffer.append(lrefPolObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPolObjects] WHERE [:Name] LIKE '%").append(lstrAux).append("%')")
+					.append(" OR [:Sub Policy Object] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefSubPolObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject));
+				pstrBuffer.append(lrefSubPolObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubPolObjects] WHERE [:Name] LIKE '%").append(lstrAux).append("%'))))");
+		}
+
+		return true;
+	}
+
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		AssessmentSortParameter lParam;
+		IEntity lrefSubCasualties;
+
+		if ( !(pParam instanceof AssessmentSortParameter) )
+			return false;
+		lParam = (AssessmentSortParameter)pParam;
+
+		if ( lParam.field == AssessmentSortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return false;
+		}
+
+		if ( lParam.field == AssessmentSortParameter.SortableField.REFERENCE )
+			pstrBuffer.append("[:Reference]");
+
+		if ( lParam.field == AssessmentSortParameter.SortableField.CLIENT_NAME )
+		{
+			pstrBuffer.append("(SELECT [:Casualty:Client:Name] FROM (");
+			try
+			{
+				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubC] WHERE [:Process] = [Aux].[:Process:Parent])");
+		}
+		
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
+
+		return true;
+	}
+
+	protected SearchResult buildResult(UUID pid, Object[] parrValues)
+	{
+		IProcess lobjProcess;
+		AssessmentStub lobjResult;
+		SubCasualty lobjSub;
+		Client lobjCli;
+		String lstrObj;
+		
+		lobjProcess = null;
+		lobjCli = null;
+		lstrObj = null;
+		try
+		{
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
+			lobjSub = (SubCasualty)lobjProcess.GetParent().GetData();
+			lobjCli = lobjSub.GetCasualty().GetClient();
+			lstrObj = lobjSub.GetObjectName();
+		}
+		catch (Throwable e)
+		{
+		}
+
+		lobjResult = new AssessmentStub();
+
+		lobjResult.id = pid.toString();
+		lobjResult.reference = (String)parrValues[0];
+		lobjResult.scheduledDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
+		lobjResult.effectiveDate = ((Timestamp)parrValues[3]).toString().substring(0, 10);
+		lobjResult.inheritClientName = (lobjCli == null ? "(Erro a obter o nome do cliente.)" : lobjCli.getLabel());
+		lobjResult.inheritObjectName = lstrObj;
+		lobjResult.isRunning = ((Boolean)parrValues[4]);
+
+		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		AssessmentSearchParameter lParam;
+		String lstrAux;
+		IEntity lrefSubCasualties;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof AssessmentSearchParameter) )
+				continue;
+			lParam = (AssessmentSearchParameter) parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("CASE WHEN [:Reference] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Reference]) ELSE ")
+					.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubC] WHERE ([:Casualty:Client:Name] LIKE '%").append(lstrAux).append("%')) THEN ")
+					.append("-1000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:Casualty:Client:Name] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubC2] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
+			
+			pstrBuffer.append("CASE WHEN (LEFT(CONVERT(NVARCHAR, [:Scheduled Date], 120), 10) LIKE N'%")
+					.append(lstrAux).append("%') THEN ")
+					.append("-1000000*PATINDEX(N'%").append(lstrAux)
+					.append("%', LEFT(CONVERT(NVARCHAR, [:Scheduled Date], 120), 10)) ELSE ");
+			
+			pstrBuffer.append("CASE WHEN (LEFT(CONVERT(NVARCHAR, [:Effective Date], 120), 10) LIKE N'%")
+					.append(lstrAux).append("%')")
+					.append("-1000000000*PATINDEX(N'%").append(lstrAux)
+					.append("%', LEFT(CONVERT(NVARCHAR, [:Effective Date], 120), 10)) ELSE ");
+			
+			pstrBuffer.append("0 END END END END");
+		}
+
+		return lbFound;
 	}
 }
