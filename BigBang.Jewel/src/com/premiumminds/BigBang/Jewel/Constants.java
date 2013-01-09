@@ -576,6 +576,9 @@ public class Constants
 	public static final UUID TypeID_Company    = UUID.fromString("C5B4F500-BB57-4BFD-8248-9EE600C95ABA");
 	public static final UUID TypeID_Other      = UUID.fromString("4098CF7A-B5EE-4C3F-973F-9EE600C961AA");
 
+	//Client SubTypes
+	public static final UUID SubTypeID_Condo = UUID.fromString("5C7A0424-126B-467B-977A-9EE600CC13A4");
+
 	// Client Profiles
 	public static final UUID ProfID_Normal   = UUID.fromString("9F871430-9BBC-449F-B125-9EE600BE5A9A");
 	public static final UUID ProfID_VIP      = UUID.fromString("63114D11-6087-4EFE-9A7E-9EE600BE52DA");

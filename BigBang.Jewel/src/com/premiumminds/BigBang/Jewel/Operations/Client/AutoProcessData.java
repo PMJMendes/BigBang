@@ -84,7 +84,7 @@ public class AutoProcessData
 		}
 		else
 		{
-			if ( !IsValidNIF((String)lobjClient.getAt(5), (UUID)lobjClient.getAt(6)) )
+			if ( !IsValidNIF((String)lobjClient.getAt(5), (UUID)lobjClient.getAt(6), (UUID)lobjClient.getAt(7)) )
 			{
 				b = false;
 				mstrFiscal = "Inválido";
@@ -99,7 +99,7 @@ public class AutoProcessData
 			TriggerOp(new TriggerDisallowPolicies(this.GetProcess().getKey()), pdb);
 	}
 
-	private static boolean IsValidNIF(String pstrNIF, UUID pidType)
+	private static boolean IsValidNIF(String pstrNIF, UUID pidType, UUID pidSubType)
 	{
 		char c;
 		int checkDigit;
@@ -111,7 +111,8 @@ public class AutoProcessData
 			{
 				c = pstrNIF.charAt(0);
 				if ( ((c == '1' || c == '2') && Constants.TypeID_Individual.equals(pidType)) ||
-						((c == '5' || c == '6') && !Constants.TypeID_Individual.equals(pidType)) ) 
+						((c == '5' || c == '6') && !Constants.TypeID_Individual.equals(pidType)) ||
+						((c == '9') && Constants.TypeID_Other.equals(pidType) && Constants.SubTypeID_Condo.equals(pidSubType)) ) 
 				{
 					checkDigit = Character.getNumericValue(c) * 9;
 					for ( i = 2; i <= 8; i++ )

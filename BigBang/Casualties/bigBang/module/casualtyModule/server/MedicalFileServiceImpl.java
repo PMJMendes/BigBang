@@ -499,7 +499,7 @@ public class MedicalFileServiceImpl
 
 		lobjResult.id = pid.toString();
 		lobjResult.reference = (String)parrValues[0];
-		lobjResult.nextDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
+		lobjResult.nextDate = ( parrValues[2] == null ? null : ((Timestamp)parrValues[2]).toString().substring(0, 10) );
 		lobjResult.inheritClientName = (lobjCli == null ? "(Erro a obter o nome do cliente.)" : lobjCli.getLabel());
 		lobjResult.inheritObjectName = lstrObj;
 		lobjResult.isRunning = ((Boolean)parrValues[3]);

@@ -460,8 +460,8 @@ public class AssessmentServiceImpl
 
 		lobjResult.id = pid.toString();
 		lobjResult.reference = (String)parrValues[0];
-		lobjResult.scheduledDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
-		lobjResult.effectiveDate = ((Timestamp)parrValues[3]).toString().substring(0, 10);
+		lobjResult.scheduledDate = ( parrValues[2] == null ? null : ((Timestamp)parrValues[2]).toString().substring(0, 10) );
+		lobjResult.effectiveDate = ( parrValues[3] == null ? null : ((Timestamp)parrValues[3]).toString().substring(0, 10) );
 		lobjResult.inheritClientName = (lobjCli == null ? "(Erro a obter o nome do cliente.)" : lobjCli.getLabel());
 		lobjResult.inheritObjectName = lstrObj;
 		lobjResult.isRunning = ((Boolean)parrValues[4]);
