@@ -53,7 +53,7 @@ public class Message
 
 	public String conversationId;
 	public Integer order;
-	public Conversation.Direction direction;
+	public ConversationStub.Direction direction;
 	public Kind kind; //*
 	public String date; 
 	public String subject; //Só pode vir a null se tiver emailId. //*

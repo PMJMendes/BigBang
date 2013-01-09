@@ -18,6 +18,7 @@ import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Message;
@@ -553,7 +554,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 
 	protected void setPermissions() {
 		view.allowSend(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.SEND));
-		view.allowRepeat(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT) && (currentMessage == null || !Conversation.Direction.INCOMING.equals(currentMessage.direction)));
+		view.allowRepeat(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT) && (currentMessage == null || !ConversationStub.Direction.INCOMING.equals(currentMessage.direction)));
 		view.allowReceive(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.RECEIVE));
 		view.allowClose(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.CLOSE));
 	}

@@ -6,6 +6,7 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.ProcessBase;
@@ -416,7 +417,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	protected void setPermissions() {
 		view.allowEdit(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.EDIT));
 		view.allowSendMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.SEND));
-		view.allowRepeatMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT) && (currentMessage == null || !Conversation.Direction.INCOMING.equals(currentMessage.direction)));
+		view.allowRepeatMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT) && (currentMessage == null || !ConversationStub.Direction.INCOMING.equals(currentMessage.direction)));
 		view.allowReceiveMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.RECEIVE));
 		view.allowClose(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.CLOSE));
 	}

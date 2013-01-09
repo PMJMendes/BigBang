@@ -15,7 +15,7 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
-import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.IncomingMessage;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.OutgoingMessage;
@@ -249,7 +249,7 @@ public class MessageBridge
 
 		lobjResult.mbIsEmail = Message.Kind.EMAIL.equals(pobjMessage.kind);
 		lobjResult.midDirection = ( pobjMessage.direction == null ? pidDefaultDir :
-				(Conversation.Direction.OUTGOING.equals(pobjMessage.direction) ? Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming) );
+				(ConversationStub.Direction.OUTGOING.equals(pobjMessage.direction) ? Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming) );
 		if ( lobjResult.mbIsEmail && Constants.MsgDir_Incoming.equals(lobjResult.midDirection) )
 		{
 			lobjResult.mstrEmailID = pobjMessage.emailId;

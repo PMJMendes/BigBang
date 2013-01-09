@@ -2,6 +2,7 @@ package bigBang.library.client.userInterface.form;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
@@ -74,13 +75,13 @@ public class ConversationForm extends FormView<Conversation>{
 		subject.setValue(info.subject);
 		requestType.setValue(info.requestTypeId);
 		replyLimit.setValue(info.replylimit != null ? info.replylimit.doubleValue() : null);
-		pendingAction.setValue(Conversation.Direction.INCOMING.equals(info.pendingDir) ? "Receber Mensagem" : "Enviar Mensagem");
+		pendingAction.setValue(ConversationStub.Direction.INCOMING.equals(info.pendingDir) ? "Receber Mensagem" : "Enviar Mensagem");
 		
 		
 	}
 	
 	public void setCurrentMessage(Message info){
-		directionText = Conversation.Direction.INCOMING.equals(info.direction) ? " recebida" : " enviada";
+		directionText = ConversationStub.Direction.INCOMING.equals(info.direction) ? " recebida" : " enviada";
 		messageSection.setHeaderText("Mensagem nº. " + (info.order+1) + directionText + " a: " + info.date);
 		text.setValue(info.text);
 		messageSubject.setValue(info.subject);

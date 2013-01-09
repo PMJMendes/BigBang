@@ -11,6 +11,7 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
 import bigBang.library.client.dataAccess.ConversationBroker;
 import bigBang.library.client.dataAccess.ConversationBrokerClient;
@@ -42,7 +43,7 @@ public class MessagesList extends FilterableList<Message> implements Conversatio
 					setRightWidget(statusIcon);
 				}
 				Resources resources = GWT.create(Resources.class);
-				statusIcon.setResource(Conversation.Direction.OUTGOING.equals(m.direction) ? resources.arrowLeftIcon() : resources.arrowRightIcon());
+				statusIcon.setResource(ConversationStub.Direction.OUTGOING.equals(m.direction) ? resources.arrowLeftIcon() : resources.arrowRightIcon());
 				this.setTitle(m.subject);
 				this.setText(m.date);
 			}

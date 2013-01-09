@@ -17,6 +17,7 @@ import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.interfaces.ConversationService;
@@ -43,13 +44,13 @@ public class ConversationServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public static Conversation.Direction sGetDirection(UUID pid)
+	public static ConversationStub.Direction sGetDirection(UUID pid)
 	{
 		if (Constants.MsgDir_Incoming.equals(pid) )
-			return Conversation.Direction.INCOMING;
+			return ConversationStub.Direction.INCOMING;
 
 		if (Constants.MsgDir_Outgoing.equals(pid) )
-			return Conversation.Direction.OUTGOING;
+			return ConversationStub.Direction.OUTGOING;
 
 		return null;
 	}
@@ -396,7 +397,7 @@ public class ConversationServiceImpl
 			lopMD.mobjData.mstrSubject = conversation.subject;
 			lopMD.mobjData.midType = UUID.fromString(conversation.requestTypeId);
 			lopMD.mobjData.midPendingDir = ( conversation.pendingDir == null ? null :
-					(Conversation.Direction.INCOMING.equals(conversation.pendingDir) ?
+					(ConversationStub.Direction.INCOMING.equals(conversation.pendingDir) ?
 					Constants.MsgDir_Incoming : Constants.MsgDir_Outgoing) );
 			lopMD.mobjData.mdtDueDate = ldtLimit;
 
