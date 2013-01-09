@@ -14,6 +14,7 @@ public class ConversationStub
 	public String parentDataObjectId;
 	public String parentDataTypeId;
 	public String requestTypeId;
+	public String requestTypeLabel;
 	public String subject;
 	public ConversationStub.Direction pendingDir;
 }

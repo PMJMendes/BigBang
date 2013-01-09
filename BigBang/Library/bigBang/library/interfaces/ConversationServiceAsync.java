@@ -6,7 +6,7 @@ import bigBang.definitions.shared.Message;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ConversationServiceAsync
-	extends Service, DependentItemSubServiceAsync
+	extends SearchServiceAsync, DependentItemSubServiceAsync
 {
 	void getConversation(String id, AsyncCallback<Conversation> callback);
 	void createFromEmail(Conversation conversation, AsyncCallback<Conversation> callback);

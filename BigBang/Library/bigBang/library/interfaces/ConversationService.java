@@ -6,12 +6,11 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("ConversationService")
 public interface ConversationService
-	extends RemoteService, DependentItemSubService
+	extends SearchService, DependentItemSubService
 {
 	public static class Util
 	{

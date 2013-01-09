@@ -19,9 +19,15 @@ import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.interfaces.ConversationService;
 import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.ConversationSearchParameter;
+import bigBang.library.shared.ConversationSortParameter;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -39,7 +45,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReceiveMessage;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.SendMessage;
 
 public class ConversationServiceImpl
-	extends EngineImplementor
+	extends SearchServiceBase
 	implements ConversationService
 {
 	private static final long serialVersionUID = 1L;
@@ -592,6 +598,127 @@ public class ConversationServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+	}
+
+	protected UUID getObjectID()
+	{
+		return Constants.ObjID_Conversation;
+	}
+
+	protected String[] getColumns()
+	{
+		return new String[] {"[:Process:Data]", "[:Process:Script:Data Class]", "[:Request Type]", "[:Request Type:Type]",
+				"[:Subject]", "[:Pending Direction]"};
+	}
+
+	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
+		throws BigBangException
+	{
+		ConversationSearchParameter lParam;
+		String lstrAux;
+
+		if ( !(pParam instanceof ConversationSearchParameter) )
+			return false;
+		lParam = (ConversationSearchParameter)pParam;
+
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Subject] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:Request Type:Type] LIKE N'%").append(lstrAux).append("%')");
+		}
+
+		if ( lParam.ownerId != null )
+		{
+			pstrBuffer.append(" AND ([:Process:Parent:Data] = '").append(lParam.ownerId).append("')");
+		}
+
+		return true;
+	}
+
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		ConversationSortParameter lParam;
+
+		if ( !(pParam instanceof ConversationSortParameter) )
+			return false;
+		lParam = (ConversationSortParameter)pParam;
+
+		if ( lParam.field == ConversationSortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return false;
+		}
+
+		if ( lParam.field == ConversationSortParameter.SortableField.SUBJECT )
+			pstrBuffer.append("[:Subject]");
+
+		if ( lParam.field == ConversationSortParameter.SortableField.TYPE )
+			pstrBuffer.append("[:Request Type:Type]");
+
+		if ( lParam.field == ConversationSortParameter.SortableField.PENDINGDATE )
+			pstrBuffer.append("[:Due Date]");
+
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
+
+		return true;
+	}
+
+	protected SearchResult buildResult(UUID pid, Object[] parrValues)
+	{
+		ConversationStub lobjResult;
+
+		lobjResult = new ConversationStub();
+
+		lobjResult.id = pid.toString();
+		lobjResult.parentDataObjectId = ((UUID)parrValues[0]).toString();
+		lobjResult.parentDataTypeId = ((UUID)parrValues[1]).toString();
+		lobjResult.requestTypeId = ((UUID)parrValues[2]).toString();
+		lobjResult.requestTypeLabel = (String)parrValues[3];
+		lobjResult.subject = (String)parrValues[4];
+		lobjResult.pendingDir = sGetDirection((UUID)parrValues[5]);
+
+		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		ConversationSearchParameter lParam;
+		String lstrAux;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof ConversationSearchParameter) )
+				continue;
+			lParam = (ConversationSearchParameter) parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("CASE WHEN [:Subject] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Subject]) ELSE ");
+
+			pstrBuffer.append("CASE WHEN [:Request Type:Type] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000*PATINDEX(N'%").append(lstrAux).append("%', [:Request Type:Type]) ELSE ");
+
+			pstrBuffer.append("0 END END");
+		}
+
+		return lbFound;
 	}
 
 	private CreateConversationBase getOperation(UUID pidParentType, UUID pidParentID)
