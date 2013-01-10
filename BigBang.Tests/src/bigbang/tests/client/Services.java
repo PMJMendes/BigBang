@@ -26,8 +26,12 @@ import bigBang.library.interfaces.TypifiedTextService;
 import bigBang.library.interfaces.TypifiedTextServiceAsync;
 import bigBang.library.interfaces.ZipCodeService;
 import bigBang.library.interfaces.ZipCodeServiceAsync;
+import bigBang.module.casualtyModule.interfaces.AssessmentService;
+import bigBang.module.casualtyModule.interfaces.AssessmentServiceAsync;
 import bigBang.module.casualtyModule.interfaces.CasualtyService;
 import bigBang.module.casualtyModule.interfaces.CasualtyServiceAsync;
+import bigBang.module.casualtyModule.interfaces.MedicalFileService;
+import bigBang.module.casualtyModule.interfaces.MedicalFileServiceAsync;
 import bigBang.module.casualtyModule.interfaces.SubCasualtyService;
 import bigBang.module.casualtyModule.interfaces.SubCasualtyServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
@@ -135,6 +139,10 @@ public class Services
 			GWT.create(CasualtyService.class);
 	public static final SubCasualtyServiceAsync subCasualtyService =
 			GWT.create(SubCasualtyService.class);
+	public static final AssessmentServiceAsync assessmentService =
+			GWT.create(AssessmentService.class);
+	public static final MedicalFileServiceAsync medicalFileService =
+			GWT.create(MedicalFileService.class);
 	public static final ExpenseServiceAsync expenseService =
 			GWT.create(ExpenseService.class);
 }

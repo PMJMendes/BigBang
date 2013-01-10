@@ -212,6 +212,16 @@ public class BigBang_Tests
 //		TestSubCasualtyRejectClosing.DoTest();
 //		TestSubCasualtyCloseProcess.DoTest();
 //
+//		TestAssessmentGet
+//		TestAssessmentCreate
+//		TestAssessmentEdit
+//		TestAssessmentClose
+//
+//		TestMedicalFileGet
+//		TestMedicalFileCreate.DoTest();
+//		TestMedicalFileEdir
+//		TestMedicalFileClose
+//
 //		TestExpenseGet.DoTest();
 //		TestExpenseCreate.DoTest();
 //		TestExpenseEdit.DoTest();
