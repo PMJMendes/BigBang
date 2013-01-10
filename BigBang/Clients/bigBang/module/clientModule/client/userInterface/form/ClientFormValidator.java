@@ -119,12 +119,14 @@ public class ClientFormValidator extends FormValidator<ClientForm> {
 	private boolean specialValidateTaxNumberFormat() {
 		String nif;
 		String type;
+		String subType;
 		char c;
 		int checkDigit;
 		int i;
 
 		nif = form.taxNumber.getValue();
 		type = form.clientType.getValue();
+		subType = form.otherClientType.getValue();
 
 		if (nif != null)
 		{
@@ -132,7 +134,9 @@ public class ClientFormValidator extends FormValidator<ClientForm> {
 			{
 				c = nif.charAt(0);
 				if ( ((c == '1' || c == '2') && ModuleConstants.ClientTypeIDs.Person.equalsIgnoreCase(type)) ||
-						((c == '5' || c == '6') && !ModuleConstants.ClientTypeIDs.Person.equalsIgnoreCase(type)) ) 
+						((c == '5' || c == '6') && !ModuleConstants.ClientTypeIDs.Person.equalsIgnoreCase(type)) ||
+						((c == '9') && ModuleConstants.ClientTypeIDs.Other.equalsIgnoreCase(type) &&
+								ModuleConstants.ClientSubTypeIDs.Condo.equalsIgnoreCase(subType)) ) 
 				{
 					checkDigit = Character.digit(c, 10) * 9;
 					for ( i = 2; i <= 8; i++ )

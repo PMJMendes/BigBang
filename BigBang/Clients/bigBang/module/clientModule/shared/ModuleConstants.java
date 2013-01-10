@@ -20,6 +20,11 @@ public class ModuleConstants
 		public static final String Other   = "4098CF7A-B5EE-4C3F-973F-9EE600C961AA";
 	}
 
+	public class ClientSubTypeIDs
+	{
+		public static final String Condo = "5C7A0424-126B-467B-977A-9EE600CC13A4";
+	}
+
 	public class ProcessTypeIDs
 	{
 		public static final String GENERAL_SYSTEM = "628f5da6-434f-46a8-9c88-9eb1008a689a";
