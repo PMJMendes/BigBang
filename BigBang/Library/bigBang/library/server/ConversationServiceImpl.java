@@ -616,6 +616,7 @@ public class ConversationServiceImpl
 	{
 		ConversationSearchParameter lParam;
 		String lstrAux;
+		IEntity lrefProcesses;
 
 		if ( !(pParam instanceof ConversationSearchParameter) )
 			return false;
@@ -630,7 +631,18 @@ public class ConversationServiceImpl
 
 		if ( lParam.ownerId != null )
 		{
-			pstrBuffer.append(" AND ([:Process:Parent:Data] = '").append(lParam.ownerId).append("')");
+			pstrBuffer.append(" AND ([:Process:Parent] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefProcesses = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Jewel.Petri.Constants.ObjID_PNProcess));
+				pstrBuffer.append(lrefProcesses.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxProcs] WHERE [:Data] = '").append(lParam.ownerId).append("'))");
 		}
 
 		return true;
