@@ -319,8 +319,6 @@ public class Constants
 	public static final UUID OPID_Policy_UndoTransferToClient            = UUID.fromString("7D4D06DC-8652-4E4E-B1F8-9FF200B460A5");
 	public static final UUID OPID_Policy_ExternAutoVoid                  = UUID.fromString("34FB7D31-175E-423A-8FEC-A03100CD86B2");
 	public static final UUID OPID_Policy_ExternUndoAutoVoid              = UUID.fromString("9F4ABCF3-F2FA-4515-A2F9-A03100CDC836");
-	public static final UUID OPID_Policy_AutoBlockOnAutoVoid             = UUID.fromString("C5762CA8-E911-468F-BC4D-A03100CE29AF");
-	public static final UUID OPID_Policy_AutoUnblockOnUndoAutoVoid       = UUID.fromString("9B392086-8DEE-4402-BD5A-A03100CE6B71");
 
 	// Sub Policy Operations
 	public static final UUID OPID_SubPolicy_AutoProcessSubProcs          = UUID.fromString("60E3DCEF-E669-4816-8006-9FF30102C132");
@@ -352,8 +350,6 @@ public class Constants
 	public static final UUID OPID_SubPolicy_UndoTransferToPolicy         = UUID.fromString("063AF772-A40C-4895-9F95-9FF300FEA254");
 	public static final UUID OPID_SubPolicy_ExternAutoVoid               = UUID.fromString("658F89A9-006A-4A19-BEF0-A03101001F8B");
 	public static final UUID OPID_SubPolicy_ExternUndoAutoVoid           = UUID.fromString("0D1980F1-5BE1-4F55-B56D-A031010047E1");
-	public static final UUID OPID_SubPolicy_AutoBlockOnAutoVoid          = UUID.fromString("12CD7FE7-5386-4499-B0A6-A0310100C4F8");
-	public static final UUID OPID_SubPolicy_AutoUnblockOnUndoAutoVoid    = UUID.fromString("12F09413-EBE1-4D65-8B61-A0310100F4CB");
 
 	// Receipt Operations
 	public static final UUID OPID_Receipt_AutoDisallowDelete             = UUID.fromString("C79AE4F9-F00E-40B1-9DF4-A01300C42A2C");
