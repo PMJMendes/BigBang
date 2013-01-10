@@ -349,7 +349,7 @@ public class ConversationServiceImpl
 
 		lopCCB.mobjData = new ConversationData();
 		lopCCB.mobjData.mid = null;
-		lopCCB.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCCB.mobjData.mstrSubject = conversation.subject;
 		lopCCB.mobjData.midType = UUID.fromString(conversation.requestTypeId);
 		lopCCB.mobjData.midProcess = null;
 		lopCCB.mobjData.midStartDir = Constants.MsgDir_Incoming;

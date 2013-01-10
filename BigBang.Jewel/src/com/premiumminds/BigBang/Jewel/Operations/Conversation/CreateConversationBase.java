@@ -75,7 +75,8 @@ public abstract class CreateConversationBase
 		if ( (mobjData.marrMessages == null) || (mobjData.marrMessages.length != 1) )
 			throw new JewelPetriException("Erro: Tem que indicar a mensagem inicial.");
 
-		mobjData.mstrSubject = mobjData.marrMessages[0].mstrSubject;
+		if ( mobjData.mstrSubject == null )
+			mobjData.mstrSubject = mobjData.marrMessages[0].mstrSubject;
 		mobjData.midStartDir = mobjData.marrMessages[0].midDirection;
 
 		if ( mobjData.mdtDueDate == null )

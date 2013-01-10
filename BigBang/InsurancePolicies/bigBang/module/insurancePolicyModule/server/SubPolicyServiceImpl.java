@@ -473,7 +473,7 @@ public class SubPolicyServiceImpl
 		lopCC = new CreateConversation(lobjSubPol.GetProcessID());
 		lopCC.mobjData = new ConversationData();
 		lopCC.mobjData.mid = null;
-		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.mstrSubject = conversation.subject;
 		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
 		lopCC.mobjData.midProcess = null;
 		lopCC.mobjData.midStartDir = Constants.MsgDir_Outgoing;
@@ -531,7 +531,7 @@ public class SubPolicyServiceImpl
 		lopCC = new CreateConversation(lobjSubPol.GetProcessID());
 		lopCC.mobjData = new ConversationData();
 		lopCC.mobjData.mid = null;
-		lopCC.mobjData.mstrSubject = conversation.messages[0].subject;
+		lopCC.mobjData.mstrSubject = conversation.subject;
 		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
 		lopCC.mobjData.midProcess = null;
 		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
