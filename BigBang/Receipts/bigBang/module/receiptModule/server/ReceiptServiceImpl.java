@@ -2514,16 +2514,16 @@ public class ReceiptServiceImpl
 			}
 			pstrBuffer.append(") [AuxPayment] WHERE [:Operation] = '").append(Constants.OPID_Receipt_Payment);
 			if ( lParam.paymentFrom != null )
-				pstrBuffer.append("' AND [:Timestamp] >= '").append(lParam.paymentFrom).append("'");
+				pstrBuffer.append("' AND [:Timestamp] >= '").append(lParam.paymentFrom);
 			if ( lParam.paymentTo != null )
 			{
 	        	ldtAux = Calendar.getInstance();
 	        	ldtAux.setTimeInMillis(Timestamp.valueOf(lParam.paymentTo + " 00:00:00.0").getTime());
 	        	ldtAux.add(Calendar.DAY_OF_MONTH, 1);
 	        	pstrBuffer.append("' AND [:Timestamp] < '");
-	        	pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10)).append("'");
+	        	pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10));
 			}
-			pstrBuffer.append(")");
+			pstrBuffer.append("')");
 		}
 
 		if ( (lParam.subLineId != null) || (lParam.lineId != null) || (lParam.categoryId != null) )
