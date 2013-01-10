@@ -50,6 +50,8 @@ public class TestMedicalFileGet
 		};
 
 		parameter = new MedicalFileSearchParameter();
+		parameter.freeText = "dia";
+		parameter.insuredObject = "fradique";
 		sorts = new MedicalFileSortParameter();
 		sorts.field = MedicalFileSortParameter.SortableField.REFERENCE;
 		sorts.order = SortOrder.ASC;
