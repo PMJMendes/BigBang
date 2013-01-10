@@ -164,7 +164,6 @@ public class CloseProcess
 		AgendaItem lobjItem;
 
 		lobjFile = (MedicalFile)GetProcess().GetData();
-		mdtNextAppt = (Timestamp)lobjFile.getAt(MedicalFile.I.NEXTDATE);
 
 		try
 		{
