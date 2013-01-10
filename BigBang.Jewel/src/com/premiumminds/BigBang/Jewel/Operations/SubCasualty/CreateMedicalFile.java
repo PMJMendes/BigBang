@@ -126,7 +126,7 @@ public class CreateMedicalFile
 				lobjItem.setAt(4, mobjData.mdtNextDate);
 				lobjItem.setAt(5, Constants.UrgID_Pending);
 				lobjItem.SaveToDb(pdb);
-				lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_MedicalFile_ManageData}, pdb);
+				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_MedicalFile_ManageData}, pdb);
 			}
 		}
 		catch (Throwable e)
