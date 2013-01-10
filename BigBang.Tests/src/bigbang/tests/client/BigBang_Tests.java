@@ -217,9 +217,9 @@ public class BigBang_Tests
 //		TestAssessmentEdit
 //		TestAssessmentClose
 //
-//		TestMedicalFileGet
+//		TestMedicalFileGet.DoTest();
 //		TestMedicalFileCreate.DoTest();
-//		TestMedicalFileEdir
+//		TestMedicalFileEdit.DoTest();
 //		TestMedicalFileClose
 //
 //		TestExpenseGet.DoTest();
