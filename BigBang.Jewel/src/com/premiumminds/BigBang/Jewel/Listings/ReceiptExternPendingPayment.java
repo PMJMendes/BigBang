@@ -85,10 +85,17 @@ public class ReceiptExternPendingPayment
 			lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNStep));
 
 			lstrSQL = new StringBuilder();
-			lstrSQL.append("SELECT * FROM (" +
-					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
-					lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
-					new java.lang.Object[] {Constants.OPID_Receipt_Payment, Constants.UrgID_Pending}, null) + ") [AuxSteps])");
+			lstrSQL.append("SELECT * FROM (")
+					.append(lrefReceipts.SQLForSelectAll())
+					.append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM (")
+					.append(lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step,
+							Jewel.Petri.Constants.FKLevel_In_Step}, new java.lang.Object[] {Constants.OPID_Receipt_Payment,
+							Constants.UrgID_Pending}, null))
+					.append(" UNION ")
+					.append(lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step,
+							Jewel.Petri.Constants.FKLevel_In_Step}, new java.lang.Object[] {Constants.OPID_Receipt_ExternAllowSendPayment,
+							Constants.UrgID_Valid}, null))
+					.append(") [AuxSteps])");
 		}
 		catch (Throwable e)
 		{
