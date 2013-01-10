@@ -20,7 +20,7 @@ public class HistoryAndConversationAndSubProcessChildrenPanel extends View{
 
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
-		conversationList = new ConversationList();
+	//	conversationList = new ConversationList();
 		
 		//wrapper.add(conversationList, "Trocas de Mensagens");
 		wrapper.add(subProcessesList, "Sub-Processos");
