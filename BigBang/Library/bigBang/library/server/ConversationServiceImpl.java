@@ -760,6 +760,12 @@ public class ConversationServiceImpl
 		if ( Constants.ObjID_Expense.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.Expense.CreateConversation(lobjData.GetProcessID());
 
+		if ( Constants.ObjID_Assessment.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.Assessment.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_MedicalFile.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CreateConversation(lobjData.GetProcessID());
+
 		return null;
 	}
 
