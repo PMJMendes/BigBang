@@ -50,7 +50,8 @@ public class TestReceiptGet
 		};
 
 		parameter = new ReceiptSearchParameter();
-		parameter.freeText = "erro";
+		parameter.paymentFrom = "2012-12-01";
+		parameter.paymentTo = "2013-01-03";
 		sorts = new ReceiptSortParameter();
 		sorts.field = ReceiptSortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
