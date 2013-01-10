@@ -2,7 +2,7 @@ package bigBang.module.casualtyModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.StackPanel;
 
-import bigBang.library.client.userInterface.ConversationList;
+//import bigBang.library.client.userInterface.ConversationList;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.View;
