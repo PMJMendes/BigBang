@@ -5,6 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualtyStub;
 
@@ -36,4 +37,6 @@ public interface SubCasualtyDataBroker extends DataBrokerInterface<SubCasualty> 
 
 	void createAssessment(Assessment assessment,
 			ResponseHandler<Assessment> handler);
+
+	public void createMedicalFile(MedicalFile info, ResponseHandler<MedicalFile> responseHandler);
 }

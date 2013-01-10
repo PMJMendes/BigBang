@@ -14,23 +14,23 @@ import bigBang.module.receiptModule.client.dataAccess.DASRequestBrokerImpl;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
 import bigBang.module.receiptModule.client.dataAccess.SignatureRequestBrokerImpl;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelDASRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateDASRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.CreateSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassAgentAccountingViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.CreateSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassInsurerAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassReceiptGenerationViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSendPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSignatureRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptAssociateWithDebitNoteViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptConversationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptOperationsViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptAssociateWithDebitNoteViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReceiveMessageViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturnViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
@@ -42,8 +42,6 @@ import bigBang.module.receiptModule.client.userInterface.presenter.RepeatDASRequ
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialMarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestTasksViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.view.MarkForPaymentView;
-import bigBang.module.receiptModule.client.userInterface.view.MassAgentAccountingView;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.CancelDASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.CancelSignatureRequestView;
@@ -51,16 +49,18 @@ import bigBang.module.receiptModule.client.userInterface.view.CreateDASRequestVi
 import bigBang.module.receiptModule.client.userInterface.view.CreateSignatureRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.DASRequestTasksView;
 import bigBang.module.receiptModule.client.userInterface.view.DASRequestView;
+import bigBang.module.receiptModule.client.userInterface.view.MarkForPaymentView;
+import bigBang.module.receiptModule.client.userInterface.view.MassAgentAccountingView;
 import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentNoticeView;
 import bigBang.module.receiptModule.client.userInterface.view.MassInsurerAccountingView;
 import bigBang.module.receiptModule.client.userInterface.view.MassReceiptGenerationView;
+import bigBang.module.receiptModule.client.userInterface.view.MassReturnToInsurerView;
 import bigBang.module.receiptModule.client.userInterface.view.MassSendPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.MassSendReceiptView;
-import bigBang.module.receiptModule.client.userInterface.view.MassReturnToInsurerView;
 import bigBang.module.receiptModule.client.userInterface.view.MassSignatureRequestView;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptAssociateWithDebitNoteView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptConversationView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptOperationsView;
-import bigBang.module.receiptModule.client.userInterface.view.ReceiptAssociateWithDebitNoteView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptReceiveMessageView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptReturnView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOperationView;
@@ -364,7 +364,6 @@ public class ReceiptModule implements Module {
 				return presenter;
 			}
 		});
-		
 	}
 
 	@Override

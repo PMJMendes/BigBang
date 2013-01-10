@@ -13,6 +13,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
@@ -216,7 +217,7 @@ implements SubCasualtyDataBroker{
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.MARK_CLOSE_SUB_CASUALTY, result.id));
 				handler.onResponse(null);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -237,7 +238,7 @@ implements SubCasualtyDataBroker{
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CLOSE_SUB_CASUALTY, result.id));
 				handler.onResponse(null);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -258,7 +259,7 @@ implements SubCasualtyDataBroker{
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY, result.id));
 				handler.onResponse(null);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -273,28 +274,28 @@ implements SubCasualtyDataBroker{
 	@Override
 	public void markNotificationSent(String subCasualtyId,
 			final ResponseHandler<SubCasualty> responseHandler) {
-service.sendNotification(subCasualtyId, new BigBangAsyncCallback<SubCasualty>() {
+		service.sendNotification(subCasualtyId, new BigBangAsyncCallback<SubCasualty>() {
 
-	@Override
-	public void onResponseSuccess(SubCasualty result) {
-		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.MARK_NOTIFICATION_SENT, result.id));
-		responseHandler.onResponse(result);
-		
-	}
-	
-	@Override
-	public void onResponseFailure(Throwable caught) {
-		responseHandler.onError(new String[]{
-				new String("Could not send notification")	
-		});
-		super.onResponseFailure(caught);
-	}
-	
-	
+			@Override
+			public void onResponseSuccess(SubCasualty result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.MARK_NOTIFICATION_SENT, result.id));
+				responseHandler.onResponse(result);
 
-	
-	
-});		
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not send notification")	
+				});
+				super.onResponseFailure(caught);
+			}
+
+
+
+
+
+		});		
 	}
 
 	@Override
@@ -329,7 +330,7 @@ service.sendNotification(subCasualtyId, new BigBangAsyncCallback<SubCasualty>() 
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CONVERSATION, result.id));
 				handler.onResponse(result);				
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -337,10 +338,10 @@ service.sendNotification(subCasualtyId, new BigBangAsyncCallback<SubCasualty>() 
 				});	
 				super.onResponseFailure(caught);
 			}
-		
+
 		});
 	}
-	
+
 	@Override
 	public void createAssessment(Assessment assessment, final ResponseHandler<Assessment> handler){
 		service.createAssessment(assessment, new BigBangAsyncCallback<Assessment>() {
@@ -350,7 +351,7 @@ service.sendNotification(subCasualtyId, new BigBangAsyncCallback<SubCasualty>() 
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_ASSESSMENT, result.id));
 				handler.onResponse(result);								
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -359,6 +360,29 @@ service.sendNotification(subCasualtyId, new BigBangAsyncCallback<SubCasualty>() 
 				super.onResponseFailure(caught);
 			}
 		});
+	}
+
+	@Override
+	public void createMedicalFile(MedicalFile info,
+			final ResponseHandler<MedicalFile> responseHandler) {
+
+		service.createMedicalFile(info, new BigBangAsyncCallback<MedicalFile>() {
+
+			@Override
+			public void onResponseSuccess(MedicalFile result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_MEDICAL_FILE, result.id));
+				responseHandler.onResponse(result);								
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not create the medical file")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		});
+
 	}
 
 }

@@ -9,6 +9,7 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.GeneralTasksView;
 import bigBang.module.casualtyModule.client.dataAccess.AssessmentBrokerImpl;
 import bigBang.module.casualtyModule.client.dataAccess.CasualtyDataBrokerImpl;
+import bigBang.module.casualtyModule.client.dataAccess.MedicalFileBrokerImpl;
 import bigBang.module.casualtyModule.client.dataAccess.SubCasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentConversationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentReceiveMessageViewPresenter;
@@ -17,24 +18,28 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentVi
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyCloseViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyConversationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyDeleteViewPresenter;
-import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyReceiveMessageViewPresenter;
-import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySendMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyManagerTransferViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyMassManagerTransferViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyReceiveMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySendMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyTasksViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileConversationViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileReceiveMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileSendMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileTasksViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.ReopenCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyConversationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyDeleteViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyMarkForClosingViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyReceiveMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyRejectCloseViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyReopenViewPresenter;
-import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyTasksViewPresenter;
-import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyReceiveMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtySendMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyTasksViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.AssessmentConversationView;
 import bigBang.module.casualtyModule.client.userInterface.view.AssessmentReceiveMessageView;
@@ -43,24 +48,28 @@ import bigBang.module.casualtyModule.client.userInterface.view.AssessmentView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyConversationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
-import bigBang.module.casualtyModule.client.userInterface.view.CasualtyReceiveMessageView;
-import bigBang.module.casualtyModule.client.userInterface.view.CasualtySendMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyManagerTransferView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyMassManagerTransferView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyReceiveMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtySendMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyTasksView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileConversationView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileReceiveMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileSendMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileTasksView;
 import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileView;
 import bigBang.module.casualtyModule.client.userInterface.view.ReopenCasualtyView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyConversationView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyDeleteView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyMarkForClosingView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReceiveMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyRejectCloseView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReopenView;
-import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyTasksView;
-import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReceiveMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtySendMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyTasksView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyView;
 
 import com.google.gwt.core.client.GWT;
@@ -328,6 +337,41 @@ public class CasualtyModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MEDICAL_FILE_SEND_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				MedicalFileSendMessageView view = (MedicalFileSendMessageView) GWT.create(MedicalFileSendMessageView.class);
+				ViewPresenter presenter = new MedicalFileSendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MEDICAL_FILE_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				MedicalFileReceiveMessageView view = (MedicalFileReceiveMessageView) GWT.create(MedicalFileReceiveMessageView.class);
+				ViewPresenter presenter = new MedicalFileReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MEDICAL_FILE_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				MedicalFileConversationView view = (MedicalFileConversationView) GWT.create(MedicalFileConversationView.class);
+				ViewPresenter presenter = new MedicalFileConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MEDICAL_FILE_TASKS", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MedicalFileTasksView view = (MedicalFileTasksView) GWT.create(MedicalFileTasksView.class);
+				ViewPresenter presenter = new MedicalFileTasksViewPresenter(view);
+				return presenter;
+			}
+		});
 	}
 
 	@Override
@@ -335,7 +379,8 @@ public class CasualtyModule implements Module {
 		return new DataBroker<?>[]{
 				new CasualtyDataBrokerImpl(),
 				new SubCasualtyDataBrokerImpl(),
-				new AssessmentBrokerImpl()
+				new AssessmentBrokerImpl(),
+				new MedicalFileBrokerImpl()
 		};
 	}
 

@@ -306,7 +306,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 						view.allowRejectClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY));
 						view.allowMarkNotificationSent(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.MARK_NOTIFICATION_SENT));
 						view.allowCreateAssessment(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_ASSESSMENT));
-						view.allowCreateMedicalFile(false); //TODO
+						view.allowCreateMedicalFile(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_MEDICAL_FILE));
 						view.getForm().setReadOnly(true);
 					}
 
@@ -462,6 +462,11 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 			item.pushIntoStackParameter("display", "assessment");
 			item.setParameter("assessmentid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.MEDICAL_FILE)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "medicalfile");
+			item.setParameter("medicalfileid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 	}

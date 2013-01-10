@@ -202,13 +202,11 @@ public class SubCasualtySelectionViewPresenter extends ExpandableSelectionFormFi
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public boolean isReadOnly() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

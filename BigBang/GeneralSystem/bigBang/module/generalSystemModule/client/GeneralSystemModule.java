@@ -24,6 +24,10 @@ import bigBang.library.client.userInterface.view.ExpenseSelectionView;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
 import bigBang.library.client.userInterface.view.SubCasualtySelectionView;
+import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentSelectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileSelectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.view.AssessmentSelectionView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileSelectionView;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientSelectionView;
 import bigBang.module.generalSystemModule.client.dataAccess.ClientGroupBrokerImpl;
@@ -218,6 +222,28 @@ public class GeneralSystemModule implements Module {
 			public ExpandableSelectionFormFieldPanel getInstance() {
 				ExpenseSelectionView view = (ExpenseSelectionView) GWT.create(ExpenseSelectionView.class);
 				ExpenseSelectionViewPresenter presenter = new ExpenseSelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.ASSESSMENT, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				AssessmentSelectionView view = (AssessmentSelectionView) GWT.create(AssessmentSelectionView.class);
+				AssessmentSelectionViewPresenter presenter = new AssessmentSelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.MEDICAL_FILE, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				MedicalFileSelectionView view = (MedicalFileSelectionView) GWT.create(MedicalFileSelectionView.class);
+				MedicalFileSelectionViewPresenter presenter = new MedicalFileSelectionViewPresenter(view);
 				presenter.go();
 				return presenter;
 			}

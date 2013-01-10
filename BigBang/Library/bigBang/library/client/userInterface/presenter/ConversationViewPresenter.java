@@ -324,8 +324,8 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		toSend = true;
 		Conversation conv = view.getForm().getValue();
 		conv.messages = new Message[1];
-		view.getSendMessageForm().setValue(conv);
 		view.setFormVisible(isSendMessage);
+		view.getSendMessageForm().setValue(conv);
 		view.setMainFormVisible(false);
 	}
 	protected void onSaveFailed() {
@@ -346,8 +346,8 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		isSendMessage = false;
 		Conversation conv = view.getForm().getValue();
 		conv.messages = new Message[1];
-		view.getReceiveMessageForm().setValue(conv);
 		view.setFormVisible(isSendMessage);
+		view.getReceiveMessageForm().setValue(conv);
 		view.setMainFormVisible(false);
 	}
 	protected void onClickClose() {

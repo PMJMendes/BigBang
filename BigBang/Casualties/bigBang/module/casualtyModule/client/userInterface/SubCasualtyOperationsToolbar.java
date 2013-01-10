@@ -21,6 +21,7 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		showItem(SUB_MENU.REQUESTS, true);
 		showItem(SUB_MENU.ADMIN, true);
 		showItem(SUB_MENU.EXECUTE, true);
+		showItem(SUB_MENU.CREATE, true);
 
 		markForClosing = new MenuItem("Marcar para Encerramento", new Command() {
 
@@ -96,7 +97,7 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 			}
 		});
 		
-		addItem(SUB_MENU.EXECUTE, createAssessment);
+		addItem(SUB_MENU.CREATE, createAssessment);
 		
 		createMedicalFile = new MenuItem("Criar Ficha Clínica", new Command() {
 			
@@ -105,6 +106,8 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 				onCreateMedicalFile();
 			}
 		});
+		
+		addItem(SUB_MENU.CREATE, createMedicalFile);
 	}
 
 	protected abstract void onCreateMedicalFile();

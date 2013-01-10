@@ -20,11 +20,13 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 	protected RadioButtonFormField expectsResponse;
 	protected NumericTextBoxFormField replyLimit;
 	protected ReceiveMessageFormField messageFormField = new ReceiveMessageFormField();
+	protected TextBoxFormField subject;
 
 
 	public ReceiveMessageForm() {
 
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
+		subject = new TextBoxFormField("Tópico");
 		expectsResponse = new RadioButtonFormField("Espera resposta");
 		expectsResponse.addOption("YES", "Sim");
 		expectsResponse.addOption("NO", "Não");
@@ -51,6 +53,7 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 		
 		addSection("Detalhes do Processo de Mensagem");
 		addFormField(requestType);
+		addFormField(subject, false);
 		addFormField(requestSubject, false);
 		addFormField(expectsResponse, true);
 		addFormField(replyLimit, true);
@@ -72,6 +75,7 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 		Conversation request = (value == null ? new Conversation() : value);
 		
 		request.requestTypeId = requestType.getValue();
+		request.subject = subject.getValue();
 		
 		try{
 			request.replylimit = replyLimit.getValue().intValue();
@@ -90,10 +94,19 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 	@Override
 	public void setInfo(Conversation info) {
 
+		subject.setValue(info.subject);
 		requestType.setValue(info.requestTypeId);
 		requestSubject.setValue(info.subject);
 		messageFormField.setValue(info.messages[0]);
 		replyLimit.setValue(info.replylimit == null ? null : (double)info.replylimit);
+	
+		if(requestType.getValue() != null){
+			requestType.setReadOnly(true);
+		}
+		if(subject.getValue() != null){
+			subject.setReadOnly(true);
+		}
+
 	}
 
 	@Override

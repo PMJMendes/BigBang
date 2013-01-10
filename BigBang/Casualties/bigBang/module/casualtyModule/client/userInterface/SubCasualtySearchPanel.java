@@ -197,7 +197,7 @@ public class SubCasualtySearchPanel extends SearchPanel<SubCasualtyStub> impleme
 
 	@Override
 	public int getDataVersion(String dataElementId) {
-		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
+		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
 			return subCasualtyDataVersion;
 		}
 		return -1;	

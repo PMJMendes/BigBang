@@ -199,7 +199,9 @@ public class AssessmentViewPresenter implements ViewPresenter{
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Peritagem ou Averiguação criada com sucesso."), TYPE.TRAY_NOTIFICATION));
 					assessment = response;
 					assessmentId = response.id;
-					getAssessment();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.setParameter("assessmentid", assessmentId);
+					NavigationHistoryManager.getInstance().go(item);
 				}
 
 				@Override

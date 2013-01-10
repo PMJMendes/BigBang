@@ -11,6 +11,11 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+
 public class ConversationForm extends FormView<Conversation>{
 
 	protected ExpandableListBoxFormField requestType;
@@ -21,21 +26,34 @@ public class ConversationForm extends FormView<Conversation>{
 	private String directionText = "";
 	private TextBoxFormField messageSubject;
 	public FormViewSection messageSection;
+	private Button printButton;
 
 
 	public ConversationForm() {
 		addSection("Troca de Mensagens");
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Pedido");
-		subject = new TextBoxFormField("Assunto");
+		subject = new TextBoxFormField("Tópico");
 		pendingAction = new TextBoxFormField("Acção Pendente");
 		pendingAction.setFieldWidth("150px");
 		pendingAction.setEditable(false);
 		replyLimit = new NumericTextBoxFormField("Prazo", false);
 		replyLimit.setUnitsLabel("dias");
 		replyLimit.setFieldWidth("50px");
+		printButton = new Button("Imprimir Troca de Mensagens");
 		
-		addFormField(subject, true);
-		addFormField(requestType, true);
+		HorizontalPanel panel = new HorizontalPanel();
+		
+		panel.add(subject);
+		panel.add(printButton);
+		
+		panel.setCellWidth(printButton, "100%");
+		printButton.getElement().getStyle().setRight(10, Unit.PX);
+		panel.setCellHorizontalAlignment(printButton, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		registerFormField(subject);
+		
+		addWidget(panel);
+		addFormField(requestType, false);
 		addLineBreak();
 		addFormField(pendingAction, true);
 		addFormField(replyLimit, true);

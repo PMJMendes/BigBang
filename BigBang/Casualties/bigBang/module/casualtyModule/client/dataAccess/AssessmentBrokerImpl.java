@@ -6,9 +6,11 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.AssessmentBroker;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Assessment;
+import bigBang.definitions.shared.AssessmentStub;
 import bigBang.definitions.shared.Conversation;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -20,10 +22,12 @@ import bigBang.module.casualtyModule.interfaces.AssessmentServiceAsync;
 public class AssessmentBrokerImpl extends DataBroker<Assessment> implements AssessmentBroker{
 
 	protected AssessmentServiceAsync service;
+	protected AssessmentSearchBroker searchBroker;
 
 	public AssessmentBrokerImpl() {
 		this.service = AssessmentService.Util.getInstance();
 		this.dataElementId = BigBangConstants.EntityIds.ASSESSMENT;
+		this.searchBroker = new AssessmentSearchBroker();
 	}
 
 	@Override
@@ -172,5 +176,10 @@ public class AssessmentBrokerImpl extends DataBroker<Assessment> implements Asse
 
 	});
 }
+
+	@Override
+	public SearchDataBroker<AssessmentStub> getSearchBroker() {
+		return this.searchBroker;
+	}
 
 }

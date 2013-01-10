@@ -289,7 +289,6 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				subPolicyReference.setValue(null);
 
 				
-				//clear reference details TODO
 				referenceDetails.clear();
 			}else if(info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)) {
 				referenceType.setValue(BigBangConstants.EntityIds.INSURANCE_POLICY, true);

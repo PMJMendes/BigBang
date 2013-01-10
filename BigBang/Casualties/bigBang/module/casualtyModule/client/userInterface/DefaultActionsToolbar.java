@@ -5,13 +5,13 @@ import com.google.gwt.user.client.ui.MenuItem;
 
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
-public abstract class AssessmentOperationsToolbar extends BigBangOperationsToolBar{
+public abstract class DefaultActionsToolbar extends BigBangOperationsToolBar{
 	
 	protected MenuItem sendMessage;
 	protected MenuItem receiveMessage;
 	protected MenuItem close;
 	
-	public AssessmentOperationsToolbar() {
+	public DefaultActionsToolbar() {
 		hideAll();
 		showItem(SUB_MENU.EDIT, true);
 		showItem(SUB_MENU.REQUESTS, true);

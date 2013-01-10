@@ -10,8 +10,8 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.casualtyModule.client.userInterface.AssessmentChildrenPanel;
-import bigBang.module.casualtyModule.client.userInterface.AssessmentOperationsToolbar;
+import bigBang.module.casualtyModule.client.userInterface.HistoryAndConversationAndSubProcessChildrenPanel;
+import bigBang.module.casualtyModule.client.userInterface.DefaultActionsToolbar;
 import bigBang.module.casualtyModule.client.userInterface.form.AssessmentForm;
 import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentViewPresenter;
@@ -27,10 +27,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class AssessmentView extends View implements AssessmentViewPresenter.Display{
 
 	protected AssessmentForm form;
-	private AssessmentOperationsToolbar toolbar;
+	private DefaultActionsToolbar toolbar;
 	private ActionInvokedEventHandler<Action> handler;
 	private SubCasualtyForm ownerForm;
-	private AssessmentChildrenPanel childrenPanel;
+	private HistoryAndConversationAndSubProcessChildrenPanel childrenPanel;
 
 
 	public AssessmentView() {
@@ -38,7 +38,7 @@ public class AssessmentView extends View implements AssessmentViewPresenter.Disp
 		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 
-		toolbar = new AssessmentOperationsToolbar() {
+		toolbar = new DefaultActionsToolbar() {
 
 			@Override
 			protected void onSendMessage() {
@@ -113,7 +113,7 @@ public class AssessmentView extends View implements AssessmentViewPresenter.Disp
 		
 		assessmentInnerWrapper.setCellHeight(form, "100%");
 		
-		childrenPanel = new AssessmentChildrenPanel();
+		childrenPanel = new HistoryAndConversationAndSubProcessChildrenPanel();
 		childWrapper.addEast(childrenPanel, 260);
 		childWrapper.add(assessmentInnerWrapper);
 		

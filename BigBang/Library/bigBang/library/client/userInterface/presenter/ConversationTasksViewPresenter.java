@@ -21,6 +21,7 @@ import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.ProcessBase;
@@ -48,8 +49,10 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.MessagesList;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.casualtyModule.client.dataAccess.MedicalFileBroker;
 import bigBang.module.casualtyModule.client.userInterface.form.AssessmentForm;
 import bigBang.module.casualtyModule.client.userInterface.form.CasualtyForm;
+import bigBang.module.casualtyModule.client.userInterface.form.MedicalFileForm;
 import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyForm;
 import bigBang.module.clientModule.client.userInterface.form.ClientForm;
 import bigBang.module.expenseModule.client.userInterface.form.ExpenseForm;
@@ -273,8 +276,8 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 		toSend = true;
 		Conversation conv = view.getForm().getValue();
 		conv.messages = new Message[1];
-		view.getSendMessageForm().setValue(conv);
 		view.setFormVisible(isSendMessage);
+		view.getSendMessageForm().setValue(conv);
 		view.setMainFormVisible(false);
 	}
 	protected void onClickRepeat() {
@@ -292,9 +295,9 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 		isSendMessage = false;
 		Conversation conv = view.getForm().getValue();
 		conv.messages = new Message[1];
-		view.getReceiveMessageForm().setValue(conv);
 		view.setFormVisible(isSendMessage);
 		view.setMainFormVisible(false);
+		view.getReceiveMessageForm().setValue(conv);
 	}
 	protected void onClickClose() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -537,6 +540,24 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.SUB_CASUALTY, response.subCasualtyId);
 					
 					view.addContact("Sub-Sinistro (" + response.subCasualtyNumber + ")", response.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);		
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetOwnerFailed();
+				}
+			});
+		}else if(BigBangConstants.EntityIds.MEDICAL_FILE.equalsIgnoreCase(response.parentDataTypeId)){
+			MedicalFileBroker broker = (MedicalFileBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.MEDICAL_FILE);
+			broker.getMedicalFile(response.parentDataObjectId, new ResponseHandler<MedicalFile>() {
+
+				@Override
+				public void onResponse(MedicalFile response) {
+					view.setOwnerForm(new MedicalFileForm());
+					view.setOwnerFormValue(response);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.SUB_CASUALTY, response.subCasualtyId);
+					
+					view.addContact("Sub-Sinistro (FALTA SUBCASUALTYNUMBER" + response.subCasualtyId + ")", response.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);		
 				}
 
 				@Override

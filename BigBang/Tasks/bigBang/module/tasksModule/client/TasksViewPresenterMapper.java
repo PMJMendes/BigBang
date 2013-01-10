@@ -36,6 +36,7 @@ public class TasksViewPresenterMapper {
 		map(BigBangConstants.EntityIds.SIGNATURE_REQUEST, "SIGNATURE_REQUEST_TASKS");
 		map(BigBangConstants.EntityIds.CASUALTY, "CASUALTY_TASKS");
 		map(BigBangConstants.EntityIds.SUB_CASUALTY, "SUB_CASUALTY_TASKS");
+		map(BigBangConstants.EntityIds.MEDICAL_FILE, "MEDICAL_FILE_TASKS");
 	}
 	
 	private static void map(String objectTypeId, String presenterId){
