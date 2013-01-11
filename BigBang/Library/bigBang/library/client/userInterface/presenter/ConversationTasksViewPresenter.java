@@ -557,7 +557,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerFormValue(response);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.SUB_CASUALTY, response.subCasualtyId);
 					
-					view.addContact("Sub-Sinistro (FALTA SUBCASUALTYNUMBER" + response.subCasualtyId + ")", response.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);		
+					view.addContact("Sub-Sinistro (" + response.subCasualtyNumber + ")", response.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);		
 				}
 
 				@Override
