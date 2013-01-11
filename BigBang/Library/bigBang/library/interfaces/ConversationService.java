@@ -26,6 +26,7 @@ public interface ConversationService
 	}
 
 	public Conversation getConversation(String id) throws SessionExpiredException, BigBangException;
+	public String getForPrinting(String id) throws SessionExpiredException, BigBangException;
 
 	public Conversation createFromEmail(Conversation conversation) throws SessionExpiredException, BigBangException;
 

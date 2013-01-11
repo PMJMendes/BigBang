@@ -32,6 +32,7 @@ import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
@@ -317,6 +318,52 @@ public class ConversationServiceImpl
 			throw new SessionExpiredException();
 
 		return sGetConversation(UUID.fromString(id));
+	}
+
+	public String getForPrinting(String id)
+		throws SessionExpiredException, BigBangException
+	{
+		ConversationData lobjData;
+		com.premiumminds.BigBang.Jewel.Objects.Conversation lobjConv;
+		com.premiumminds.BigBang.Jewel.Objects.Message[] larrMsgs;
+		MessageAddress[] larrAddrs;
+		StringBuilder lstrBuilder;
+		int i, j;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjConv = com.premiumminds.BigBang.Jewel.Objects.Conversation.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(id));
+			lobjData = new ConversationData();
+			lobjData.FromObject(lobjConv);
+
+			larrMsgs = lobjConv.GetCurrentMessages();
+			lobjData.marrMessages = new MessageData[larrMsgs.length];
+			for ( i = 0; i < larrMsgs.length; i++ )
+			{
+				lobjData.marrMessages[i] = new MessageData();
+				lobjData.marrMessages[i].FromObject(larrMsgs[i]);
+
+				larrAddrs = larrMsgs[i].GetAddresses();
+				lobjData.marrMessages[i].marrAddresses = new MessageAddressData[larrAddrs.length];
+				for ( j = 0; j < larrAddrs.length; j++ )
+				{
+					lobjData.marrMessages[i].marrAddresses[j] = new MessageAddressData();
+					lobjData.marrMessages[i].marrAddresses[j].FromObject(larrAddrs[j]);
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lstrBuilder = new StringBuilder();
+		lobjData.Describe(lstrBuilder, "<br>");
+
+		return lstrBuilder.toString();
 	}
 
 	public Conversation createFromEmail(Conversation conversation)
@@ -762,6 +809,9 @@ public class ConversationServiceImpl
 
 		if ( Constants.ObjID_SubPolicy.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_Receipt.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateConversation(lobjData.GetProcessID());
 
 		if ( Constants.ObjID_Casualty.equals(pidParentType) )
 			return new com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateConversation(lobjData.GetProcessID());

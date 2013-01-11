@@ -9,6 +9,7 @@ public interface ConversationServiceAsync
 	extends SearchServiceAsync, DependentItemSubServiceAsync
 {
 	void getConversation(String id, AsyncCallback<Conversation> callback);
+	void getForPrinting(String id, AsyncCallback<String> callback);
 	void createFromEmail(Conversation conversation, AsyncCallback<Conversation> callback);
 	void saveConversation(Conversation conversation, AsyncCallback<Conversation> callback);
 	void sendMessage(Message message, Integer replylimit, AsyncCallback<Conversation> callback);
