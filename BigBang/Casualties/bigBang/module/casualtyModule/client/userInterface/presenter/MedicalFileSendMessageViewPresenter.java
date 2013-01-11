@@ -44,7 +44,7 @@ public class MedicalFileSendMessageViewPresenter extends SendMessageViewPresente
 	}
 
 	protected void setContacts() {
-		view.addContact("Sub-Sinistro (FALTA NUMERO DO SUB-SINISTRO" +  medicalFile.subCasualtyId + ")", medicalFile.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);
+		view.addContact("Sub-Sinistro (" +  medicalFile.subCasualtyNumber + ")", medicalFile.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);
 	}
 
 	@Override

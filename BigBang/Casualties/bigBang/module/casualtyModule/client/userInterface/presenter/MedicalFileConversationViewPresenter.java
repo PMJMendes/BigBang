@@ -45,7 +45,7 @@ public class MedicalFileConversationViewPresenter extends ConversationViewPresen
 	}
 	
 	protected void setContacts() {
-		view.addContact("Sub-Sinistro (FALTA NUMERO DO SUB-SINISTRO" +  file.subCasualtyId + ")", file.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);
+		view.addContact("Sub-Sinistro (" +  file.subCasualtyNumber + ")", file.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);
 	}
 
 	@Override
