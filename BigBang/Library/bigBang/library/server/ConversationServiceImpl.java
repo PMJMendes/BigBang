@@ -366,7 +366,7 @@ public class ConversationServiceImpl
 		}
 
 		lstrBuilder = new StringBuilder();
-		lobjData.Describe(lstrBuilder, "<br>");
+		lobjData.Describe(lstrBuilder, "<br />");
 
 		larrContent = new String[] {lstrBuilder.toString()};
 

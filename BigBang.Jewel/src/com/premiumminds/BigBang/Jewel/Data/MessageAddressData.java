@@ -68,7 +68,7 @@ public class MessageAddressData
 			pstrBuilder.append(" (outro): ");
 
 		if ( mstrDisplay != null )
-			pstrBuilder.append(mstrDisplay).append(" <").append(mstrAddress).append(">");
+			pstrBuilder.append(mstrDisplay).append(" &lt;").append(mstrAddress).append("&gt;");
 		else
 			pstrBuilder.append(mstrAddress);
 		pstrBuilder.append(pstrLineBreak);
