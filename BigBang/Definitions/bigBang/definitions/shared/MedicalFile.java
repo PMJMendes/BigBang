@@ -24,6 +24,7 @@ public class MedicalFile
 	}
 
 	public String subCasualtyId;
+	public String subCasualtyNumber;
 
 	public MedicalDetail[] details;
 }

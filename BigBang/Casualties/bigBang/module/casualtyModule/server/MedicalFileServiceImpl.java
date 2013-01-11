@@ -83,7 +83,8 @@ public class MedicalFileServiceImpl
 		lobjResult.inheritClientName = lobjCli.getLabel();
 		lobjResult.inheritObjectName = lstrObj;
 		lobjResult.isRunning = lobjProcess.IsRunning();
-		lobjResult.subCasualtyId = ((UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY)).toString();
+		lobjResult.subCasualtyId = lobjSubC.getKey().toString();
+		lobjResult.subCasualtyNumber = lobjSubC.getLabel();
 
 		if ( larrDetails == null )
 			lobjResult.details = null;
