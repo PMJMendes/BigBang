@@ -115,8 +115,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		replyLimit.setFieldWidth("70px");
 
 		forwardReply = new AutoCompleteTextListFormField("Utilizadores a envolver no processo");
-		internalCCAddresses = new TextBoxFormField("BCC Endereços separados por ';'");
-		externalCCAddresses = new TextBoxFormField("CC Endereços separados por ';'");
+		internalCCAddresses = new TextBoxFormField("CC Endereços separados por ','");
+		externalCCAddresses = new TextBoxFormField("BCC Endereços separados por ','");
 
 		expectsResponse = new RadioButtonFormField("Espera resposta");
 		expectsResponse.addOption("YES", "Sim");
