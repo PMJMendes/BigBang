@@ -3,6 +3,7 @@ package bigBang.module.quoteRequestModule.client.userInterface.view;
 
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.ProcessBase;
@@ -14,6 +15,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ContactsList;
+import bigBang.library.client.userInterface.ConversationList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.ListHeader;
@@ -43,6 +45,7 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	protected ContactsList contacts;
 	protected SubProcessesList subProcessesList;
 	protected HistoryList historyList;
+	protected ConversationList conversationList;
 	protected ListHeader ownerHeader;
 
 	public NegotiationView(FormView<T> ownerForm){
@@ -145,10 +148,12 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
+		conversationList = new ConversationList();
 
 		StackPanel stackWrapper = new StackPanel();
 		stackWrapper.add(contacts, "Contactos");
 		stackWrapper.add(documents, "Documentos");
+		stackWrapper.add(conversationList, "Trocas de Mensagens");
 		stackWrapper.add(subProcessesList, "Sub-Processos");
 		stackWrapper.add(historyList, "Histórico");
 
@@ -247,6 +252,7 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		documents.setOwner(negotiationId);
 		subProcessesList.setOwner(negotiationId);
 		historyList.setOwner(negotiationId);
+		conversationList.setOwner(negotiationId);
 	}
 
 	@Override
@@ -312,4 +318,8 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		toolbar.allowSendMessage(b);
 	}
 
+	@Override
+	public HasValueSelectables<ConversationStub> getConversationList() {
+		return conversationList;
+	}
 }

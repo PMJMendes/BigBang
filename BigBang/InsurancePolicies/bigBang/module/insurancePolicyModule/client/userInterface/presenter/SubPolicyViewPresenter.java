@@ -11,6 +11,7 @@ import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.FieldContainer;
@@ -159,6 +160,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 
 		HasValueSelectables<ExpenseStub> getExpensesList();
 
+		HasValueSelectables<ConversationStub> getConversationList();
+		
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 
 		HasValueSelectables<HistoryItemStub> getHistoryList();
@@ -556,9 +559,28 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 			}
 		});
 
+		view.getConversationList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ConversationStub stub = event.getFirstSelected() == null ? null : ((ValueSelectable<ConversationStub>) event.getFirstSelected()).getValue();
+				if(stub != null){
+					showConversation(stub.id);
+				}
+			}
+		});
+		
 		//APPLICATION-WIDE EVENTS
 		this.bound = true;
 
+	}
+
+	protected void showConversation(String id) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "subpolicyconversation");
+		item.setParameter("conversationid", id);
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	protected void onReceiveMessage() {
@@ -593,10 +615,7 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 			item.setParameter("transferid", selectedValue.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
-			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "subpolicyconversation");
-			item.setParameter("conversationid", selectedValue.dataId);
-			NavigationHistoryManager.getInstance().go(item);
+			showConversation(selectedValue.dataId);
 		}	
 	}
 

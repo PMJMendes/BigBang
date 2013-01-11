@@ -11,6 +11,7 @@ import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -94,6 +95,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<QuoteRequestStub> getQuoteRequestList();
 		HasValueSelectables<CasualtyStub> getCasualtyList();
 		HasValueSelectables<InsurancePolicyStub> getDeadPoliciesList();
+		HasValueSelectables<ConversationStub> getConversationList();
 
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
@@ -399,6 +401,18 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
+		
+		view.getConversationList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ConversationStub stub = event.getFirstSelected() == null ? null : ((ValueSelectable<ConversationStub>) event.getFirstSelected()).getValue();
+				if(stub != null){
+					showConversation(stub.id);
+				}
+			}
+		});
 
 		//APPLICATION-WIDE EVENTS
 		this.bound = true;
@@ -486,8 +500,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.UPDATE_CLIENT));
 				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.DELETE_CLIENT));
-				view.allowSendMessage(true);//TODO REQUESTS 
-				view.allowReceiveMessage(true); //TODO REQUESTS
+				view.allowSendMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CONVERSATION)); 
+				view.allowReceiveMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CONVERSATION));
 				view.allowManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER));
 				view.allowClientMerge(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.MERGE_CLIENT));
 				view.allowCreatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_POLICY));
@@ -601,11 +615,15 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			NavigationHistoryManager.getInstance().go(item);
 		}
 		else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
-			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "conversation");
-			item.setParameter("conversationid", process.dataId);
-			NavigationHistoryManager.getInstance().go(item);
+			showConversation(process.dataId);
 		}
+	}
+
+	private void showConversation(String dataId) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "conversation");
+		item.setParameter("conversationid", dataId);
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	private void goToQuoteRequest(String requestId){

@@ -9,6 +9,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Casualty;
@@ -67,6 +68,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<SubCasualtyStub> getSubCasualtyList();
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
+		HasValueSelectables<ConversationStub> getConversationList();
 
 		void setSaveModeEnabled(boolean enabled);
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -181,7 +183,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 					if(event.getSource() == view.getSubCasualtyList()) {
 						SubCasualtyStub process = (SubCasualtyStub) selected.getValue();
 						showSubCasualty(process.id);
-					} else if(event.getSource() == view.getSubProcessesList()) {
+					}else if(event.getSource() == view.getSubProcessesList()) {
 						BigBangProcess process = (BigBangProcess) selected.getValue();
 						showSubProcess(process);
 					}else if(event.getSource() == view.getHistoryList()) {
@@ -193,6 +195,9 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 					}else if(event.getSource() == view.getDocumentsList()){
 						Document doc = (Document) selected.getValue();
 						showDocument(doc.id);
+					}else if(event.getSource() == view.getConversationList()){
+						ConversationStub stub = (ConversationStub) selected.getValue();
+						showConversation(stub.id);
 					}
 				}
 			}
@@ -202,8 +207,16 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		view.getSubCasualtyList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getConversationList().addSelectionChangedEventHandler(selectionChangedHandler);
 
 		bound = true;
+	}
+
+	protected void showConversation(String id) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "conversation");
+		item.setParameter("conversationid", id);
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	protected void onSubCasualtyReopen() {
@@ -380,10 +393,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		String type = process.dataTypeId;
 		
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
-			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "conversation");
-			item.setParameter("conversationid", process.dataId);
-			NavigationHistoryManager.getInstance().go(item);
+			showConversation(process.dataId);
 		}
 	}
 

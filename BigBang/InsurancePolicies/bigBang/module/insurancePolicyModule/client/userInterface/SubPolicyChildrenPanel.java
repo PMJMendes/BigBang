@@ -4,6 +4,7 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.userInterface.ContactsList;
+import bigBang.library.client.userInterface.ConversationList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
@@ -19,6 +20,7 @@ public class SubPolicyChildrenPanel extends View {
 	public DocumentsList documentsList;
 	public ReceiptsList receiptList;
 	public HistoryList historyList;
+	public ConversationList conversationList;
 	public SubProcessesList subProcessesList;
 	public ExpensesList expensesList;
 
@@ -31,6 +33,7 @@ public class SubPolicyChildrenPanel extends View {
 		documentsList = new DocumentsList();
 		receiptList = new ReceiptsList();
 		subProcessesList = new SubProcessesList();
+		conversationList = new ConversationList();
 		expensesList = new ExpensesList();
 		historyList = new HistoryList();
 
@@ -38,6 +41,7 @@ public class SubPolicyChildrenPanel extends View {
 		wrapper.add(documentsList, "Documentos");
 		wrapper.add(receiptList, "Recibos");
 		wrapper.add(expensesList, "Despesas de Saúde");
+		wrapper.add(conversationList, "Trocas de Mensagens");
 		wrapper.add(subProcessesList, "Sub-Processos");
 		wrapper.add(historyList, "Histórico");
 	}
@@ -59,6 +63,7 @@ public class SubPolicyChildrenPanel extends View {
 		this.receiptList.setOwner(subPolicyId);
 		this.expensesList.setOwner(subPolicyId);
 		this.subProcessesList.setOwner(subPolicyId);
+		this.conversationList.setOwner(subPolicyId);
 		this.historyList.setOwner(subPolicyId);
 	}
 

@@ -9,6 +9,7 @@ import bigBang.definitions.shared.Casualty;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
+import bigBang.library.client.userInterface.ConversationList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
@@ -24,6 +25,7 @@ public class CasualtyChildrenPanel extends View {
 	public SubCasualtyList subCasualtyList;
 	public SubProcessesList subProcessesList;
 	public HistoryList historyList;
+	public ConversationList conversationList;
 
 	public CasualtyChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
@@ -34,11 +36,13 @@ public class CasualtyChildrenPanel extends View {
 		documentsList = new DocumentsList();
 		subCasualtyList = new SubCasualtyList();
 		subProcessesList = new SubProcessesList();
+		conversationList = new ConversationList();
 		historyList = new HistoryList();
 
 		wrapper.add(subCasualtyList, "Sub-Sinistros");
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
+		wrapper.add(conversationList, "Trocas de Mensagens");
 		wrapper.add(subProcessesList, "Sub-Processos");
 		wrapper.add(historyList, "Histórico");
 		
@@ -63,6 +67,7 @@ public class CasualtyChildrenPanel extends View {
 		this.documentsList.allowCreation(allow);
 		this.subCasualtyList.setOwner(casualtyId);
 		this.subProcessesList.setOwner(casualtyId);
+		conversationList.setOwner(casualtyId);
 		this.historyList.setOwner(casualtyId);
 	}
 

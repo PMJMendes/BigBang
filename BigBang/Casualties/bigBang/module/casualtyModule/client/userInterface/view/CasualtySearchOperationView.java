@@ -9,6 +9,7 @@ import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SubCasualtyStub;
@@ -248,6 +249,11 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	@Override
 	public void allowReopenSubCasualty(boolean hasPermission) {
 		operationsToolbar.allowReopenSubCasualty(hasPermission);
+	}
+
+	@Override
+	public HasValueSelectables<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
 	}
 
 }

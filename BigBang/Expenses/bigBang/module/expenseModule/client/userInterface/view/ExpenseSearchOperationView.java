@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.ExpenseStub;
@@ -284,5 +285,10 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	public void addEntryToList(Entry entry) {
 		searchPanel.add(0, entry);
 		entry.setSelected(true, false);
+	}
+
+	@Override
+	public HasValueSelectables<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
 	}
 }

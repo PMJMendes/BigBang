@@ -131,6 +131,15 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/arrow_right.png")
 	ImageResource arrowRightIcon();
+
+	@Source("images/greyIcon.png")
+	ImageResource greyIcon();
 	
+	@Source("images/greenIcon.png")
+	ImageResource greenIcon();
+	
+	@Source("images/yellowIcon.png")
+	ImageResource yellowIcon();
+
 
 }

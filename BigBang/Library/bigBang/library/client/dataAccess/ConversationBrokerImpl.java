@@ -7,21 +7,30 @@ import java.util.List;
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.dataAccess.Search;
+import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.interfaces.ConversationService;
 import bigBang.library.interfaces.ConversationServiceAsync;
+import bigBang.library.shared.ConversationSearchParameter;
+import bigBang.library.shared.ConversationSortParameter;
 
 public class ConversationBrokerImpl extends DataBroker<Conversation> implements ConversationBroker{
-
+	
 	protected ConversationServiceAsync service;
-
+	protected SearchDataBroker<ConversationStub> searchBroker;
+	
 	public ConversationBrokerImpl(){
 		this(ConversationService.Util.getInstance());
 	}
@@ -29,6 +38,7 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 	public ConversationBrokerImpl(ConversationServiceAsync instance) {
 		this.service = instance;
 		this.dataElementId = BigBangConstants.EntityIds.CONVERSATION;
+		this.searchBroker = new ConversationSearchBrokerImpl();
 	}
 
 	@Override
@@ -230,7 +240,7 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 			}
 		});
 	}
-	
+
 	@Override
 	public void createConversationFromEmail(Conversation conv, final ResponseHandler<Conversation> handler){
 		service.createFromEmail(conv, new BigBangAsyncCallback<Conversation>() {
@@ -240,9 +250,9 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 				incrementDataVersion();
 				notifyItemUpdate(result.id);
 				handler.onResponse(result);
-				
+
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -250,8 +260,43 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 				});
 				super.onResponseFailure(caught);
 			}
-		
+
 		});
 	}
+	
+	@Override
+	public SearchDataBroker<ConversationStub> getSearchBroker() {
+		return this.searchBroker;
+	}
+
+
+	@Override
+	public void getConversationsForOwner(String ownerId,
+			final ResponseHandler<Collection<ConversationStub>> responseHandler) {
+		ConversationSearchParameter parameter = new ConversationSearchParameter();
+		parameter.ownerId = ownerId;
+
+		ConversationSortParameter sort = new ConversationSortParameter(ConversationSortParameter.SortableField.PENDINGDATE, SortOrder.DESC);
+
+		getSearchBroker().search(new SearchParameter[]{parameter}, new SortParameter[]{sort}, -1, new ResponseHandler<Search<ConversationStub>>() {
+
+			@Override
+			public void onResponse(Search<ConversationStub> response) {
+				responseHandler.onResponse(response.getResults());
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				responseHandler.onError(new String[]{
+						new String("Could not get the conversations for owner")
+				});
+			}
+		}, true);
+	}
+		
+		
 }
+
+
 

@@ -18,4 +18,5 @@ public class InsurancePolicyNegotiationView<T> extends NegotiationView<T> {
 	public void setParentHeaderTitle(String title) {
 		ownerHeader.setText(title);
 	}
+
 }

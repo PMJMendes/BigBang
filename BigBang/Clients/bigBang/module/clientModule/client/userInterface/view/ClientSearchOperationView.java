@@ -9,6 +9,7 @@ import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -378,6 +379,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		}else{
 			form.setForEdit();
 		}
+	}
+
+	@Override
+	public HasValueSelectables<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
 	}
 
 

@@ -9,6 +9,7 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
+import bigBang.library.client.userInterface.ConversationList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
@@ -23,6 +24,7 @@ public class ReceiptChildrenPanel extends View{
 	public DocumentsList documentsList;
 	public SubProcessesList subProcessesList;
 	public HistoryList historyList;
+	private ConversationList conversationList;
 	
 	public ReceiptChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
@@ -32,11 +34,13 @@ public class ReceiptChildrenPanel extends View{
 		contactsList = new ContactsList();
 		documentsList = new DocumentsList();
 		subProcessesList = new SubProcessesList();
+		conversationList = new ConversationList();
 		historyList = new HistoryList();
 		
 		wrapper.add(historyList, "Histórico");
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
+		wrapper.add(this.conversationList, "Trocas de Mensagens");
 		wrapper.add(subProcessesList, "Sub-Processos");
 		
 		
@@ -95,6 +99,7 @@ public class ReceiptChildrenPanel extends View{
 		this.documentsList.setOwner(receiptId);	
 		this.documentsList.setOwnerType(BigBangConstants.EntityIds.RECEIPT);
 		this.documentsList.allowCreation(allow);
+		conversationList.setOwner(receiptId);
 		subProcessesList.setOwner(receiptId);
 		historyList.setOwner(receiptId);
 	}

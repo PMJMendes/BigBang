@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.userInterface.view;
 
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.HasEditableValue;
@@ -196,5 +197,10 @@ public class AssessmentView extends View implements AssessmentViewPresenter.Disp
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessList(){
 		return childrenPanel.subProcessesList;
+	}
+
+	@Override
+	public HasValueSelectables<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
 	}
 }

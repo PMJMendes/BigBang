@@ -8,6 +8,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Negotiation;
@@ -62,6 +63,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 		HasValueSelectables<BigBangProcess> getSubProcessList();
 
+		HasValueSelectables<ConversationStub> getConversationList();
+		
 		HasEditableValue<Negotiation> getForm();
 
 		void setToolbarSaveMode(boolean b);
@@ -234,6 +237,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 						showHistory(((HistoryItemStub) selectable.getValue()).id);
 					} else if(event.getSource() == view.getSubProcessList()){ //SUB PROCESSES
 						showSubProcess(((BigBangProcess) selectable.getValue()).dataId);
+					}else if(event.getSource() == view.getConversationList()){
+						showConversation(((ConversationStub)selectable.getValue()).id);
 					}
 				}
 			}
@@ -281,6 +286,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getConversationList().addSelectionChangedEventHandler(selectionChangedHandler);
 
 		bound = true;
 	}
@@ -432,10 +438,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			public void onResponse(BigBangProcess response) {
 				String type = response.dataTypeId;
 				if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)) {
-					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.pushIntoStackParameter("display", "negotiationconversation");
-					item.setParameter("conversationid", response.dataId);
-					NavigationHistoryManager.getInstance().go(item);
+					showConversation(response.dataId);
 				}
 			}
 
@@ -444,6 +447,13 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 				view.getSubProcessList().clearSelection();
 			}
 		});
+	}
+
+	protected void showConversation(String dataId) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "negotiationconversation");
+		item.setParameter("conversationid", dataId);
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	private void showHistory(String itemId){

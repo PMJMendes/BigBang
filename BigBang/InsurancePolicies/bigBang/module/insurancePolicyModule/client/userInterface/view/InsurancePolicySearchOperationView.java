@@ -5,6 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.FieldContainer;
@@ -685,5 +686,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void allowReceiveMessage(boolean allow) {
 		toolbar.allowReceiveMessage(allow);
+	}
+
+	@Override
+	public HasValueSelectables<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
 	}
 }

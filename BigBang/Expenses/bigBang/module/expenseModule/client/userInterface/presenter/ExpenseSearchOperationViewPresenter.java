@@ -8,6 +8,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.ExpenseStub;
@@ -70,6 +71,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 		void allowReceiveRejection(boolean hasPermission);
 		void setEditMode();
 		void addEntryToList(Entry entry);
+		HasValueSelectables<ConversationStub> getConversationList();
 	}
 
 	protected boolean bound = false;
@@ -301,6 +303,18 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
+		
+		view.getConversationList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ConversationStub stub = event.getFirstSelected() == null ? null : ((ValueSelectable<ConversationStub>) event.getFirstSelected()).getValue();
+				if(stub != null){
+					showConversation(stub.id);
+				}
+			}
+		});
 
 		bound = true;
 	}
@@ -450,12 +464,16 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	private void showSubProcess(final BigBangProcess process){
 		String type = process.dataTypeId;
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
-			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "conversation");
-			item.setParameter("conversationid", process.dataId);
-			NavigationHistoryManager.getInstance().go(item);
+			showConversation(process.dataId);
 		}
 
+	}
+
+	private void showConversation(String dataId) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "conversation");
+		item.setParameter("conversationid", dataId);
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	private void showHistory(final HistoryItemStub historyItem) {

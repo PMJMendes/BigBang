@@ -4,6 +4,7 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.userInterface.ContactsList;
+import bigBang.library.client.userInterface.ConversationList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
@@ -20,6 +21,7 @@ public class ClientChildrenPanel extends View  {
 	public ClientPoliciesList insurancePoliciesList;
 	public ClientQuoteRequestsList quoteRequestsList;
 	public ClientCasualtyList casualtiesList;
+	public ConversationList conversationList;
 	public HistoryList historyList;
 	public SubProcessesList subProcessesList;
 	public ClientDeadPoliciesList deadInsurancePoliciesList;
@@ -37,12 +39,14 @@ public class ClientChildrenPanel extends View  {
 		historyList = new HistoryList();
 		subProcessesList = new SubProcessesList();
 		deadInsurancePoliciesList = new ClientDeadPoliciesList();
+		conversationList = new ConversationList();
 		
 		wrapper.add(this.contactsList, "Contactos");
 		wrapper.add(this.documentsList, "Documentos");
 		wrapper.add(this.insurancePoliciesList, "Apólices");
 		wrapper.add(this.quoteRequestsList, "Consultas de Mercado");
 		wrapper.add(this.casualtiesList, "Sinistros");
+		wrapper.add(this.conversationList, "Trocas de Mensagens");
 		wrapper.add(this.subProcessesList, "Sub-Processos");
 		wrapper.add(this.historyList, "Histórico");
 		wrapper.add(this.deadInsurancePoliciesList, "Apólices Antigas");
@@ -67,6 +71,7 @@ public class ClientChildrenPanel extends View  {
 		this.insurancePoliciesList.setOwner(clientId);	
 		this.quoteRequestsList.setOwner(clientId);
 		this.casualtiesList.setOwner(clientId);
+		this.conversationList.setOwner(clientId);
 		this.subProcessesList.setOwner(clientId);
 		this.historyList.setOwner(clientId);
 		this.deadInsurancePoliciesList.setOwner(clientId);

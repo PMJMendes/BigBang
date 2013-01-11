@@ -9,6 +9,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.EventBus;
@@ -60,6 +61,7 @@ public class AssessmentViewPresenter implements ViewPresenter{
 		void setOwner(String id);
 		HasValueSelectables<BigBangProcess> getSubProcessList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
+		HasValueSelectables<ConversationStub> getConversationList();
 	}
 
 	private Display view;
@@ -138,6 +140,8 @@ public class AssessmentViewPresenter implements ViewPresenter{
 						showHistory(((HistoryItemStub) selectable.getValue()).id);
 					} else if(event.getSource() == view.getSubProcessList()){ //SUB PROCESSES
 						showSubProcess(((BigBangProcess) selectable.getValue()).dataId);
+					} else if(event.getSource() == view.getConversationList()){
+						showConversation(((ConversationStub)selectable.getValue()).id);
 					}
 				}
 			}
@@ -145,6 +149,7 @@ public class AssessmentViewPresenter implements ViewPresenter{
 		
 		view.getSubProcessList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getConversationList().addSelectionChangedEventHandler(selectionChangedHandler);
 		
 		bound = true;
 	}
@@ -158,10 +163,7 @@ public class AssessmentViewPresenter implements ViewPresenter{
 			public void onResponse(BigBangProcess response) {
 				String type = response.dataTypeId;
 				if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)) {
-					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.pushIntoStackParameter("display", "assessmentconversation");
-					item.setParameter("conversationid", response.dataId);
-					NavigationHistoryManager.getInstance().go(item);
+					showConversation(response.dataId);
 				}
 			}
 
@@ -170,6 +172,13 @@ public class AssessmentViewPresenter implements ViewPresenter{
 				view.getSubProcessList().clearSelection();
 			}
 		});
+	}
+
+	protected void showConversation(String dataId) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "assessmentconversation");
+		item.setParameter("conversationid", dataId);
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	protected void showHistory(String id) {

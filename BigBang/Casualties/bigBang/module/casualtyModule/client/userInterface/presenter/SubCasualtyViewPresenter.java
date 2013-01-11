@@ -10,6 +10,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SubCasualty;
@@ -72,6 +73,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		void allowCreateMedicalFile(boolean hasPermission);
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
+		HasValueSelectables<ConversationStub> getConversationList();
 		void setReferenceParameters(HasParameters parameterHolder);
 		void openNewDetail();
 		void allowCreateAssessment(boolean allow);
@@ -192,6 +194,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 					}else if(event.getSource() == view.getDocumentsList()){
 						Document doc = (Document) selected.getValue();
 						showDocument(doc.id);
+					}else if(event.getSource() == view.getConversationList()){
+						ConversationStub stub = (ConversationStub) selected.getValue();
+						showConversation(stub.id);
 					}
 				}
 			}
@@ -201,6 +206,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		view.getDocumentsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getConversationList().addSelectionChangedEventHandler(selectionChangedHandler);
 	}
 
 	protected void onCreateMedicalFile() {
@@ -454,10 +460,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		String type = process.dataTypeId;
 
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
-			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "subcasualtyconversation");
-			item.setParameter("conversationid", process.dataId);
-			NavigationHistoryManager.getInstance().go(item);
+			showConversation(process.dataId);
 		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.ASSESSMENT)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 			item.pushIntoStackParameter("display", "assessment");
@@ -469,6 +472,13 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 			item.setParameter("medicalfileid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
+	}
+
+	private void showConversation(String dataId) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "subcasualtyconversation");
+		item.setParameter("conversationid", dataId);
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	protected void showHistory(String historyItemId){

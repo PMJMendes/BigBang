@@ -3,6 +3,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.ComplexFieldContainer.ExerciseData;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.FieldContainer;
@@ -567,5 +568,10 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	@Override
 	public void allowReceiveMessage(boolean b) {
 		toolbar.allowReceiveMessage(b);
+	}
+
+	@Override
+	public HasValueSelectables<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
 	}
 }

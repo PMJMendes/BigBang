@@ -2,14 +2,14 @@ package bigBang.module.casualtyModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.StackPanel;
 
-//import bigBang.library.client.userInterface.ConversationList;
+import bigBang.library.client.userInterface.ConversationList;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.View;
 
 public class HistoryAndConversationAndSubProcessChildrenPanel extends View{
 
-	//public ConversationList conversationList;
+	public ConversationList conversationList;
 	public SubProcessesList subProcessesList;
 	public HistoryList historyList;
 
@@ -20,9 +20,9 @@ public class HistoryAndConversationAndSubProcessChildrenPanel extends View{
 
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
-	//	conversationList = new ConversationList();
+		conversationList = new ConversationList();
 		
-		//wrapper.add(conversationList, "Trocas de Mensagens");
+		wrapper.add(conversationList, "Trocas de Mensagens");
 		wrapper.add(subProcessesList, "Sub-Processos");
 		wrapper.add(historyList, "Histórico");
 
@@ -37,7 +37,7 @@ public class HistoryAndConversationAndSubProcessChildrenPanel extends View{
 	public void setOwner(String requestId){
 		this.subProcessesList.setOwner(requestId);
 		this.historyList.setOwner(requestId);
-	//	conversationList.setOwner(requestId);
+		conversationList.setOwner(requestId);
 	}
 
 }

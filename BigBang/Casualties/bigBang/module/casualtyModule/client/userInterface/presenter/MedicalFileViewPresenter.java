@@ -7,6 +7,7 @@ import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.SubCasualty;
@@ -61,6 +62,7 @@ public class MedicalFileViewPresenter implements ViewPresenter{
 		void setOwner(String id);
 		HasValueSelectables<BigBangProcess> getSubProcessList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
+		HasValueSelectables<ConversationStub> getConversationList();
 	}
 
 	Display view;
@@ -141,6 +143,8 @@ public class MedicalFileViewPresenter implements ViewPresenter{
 						showHistory(((HistoryItemStub) selectable.getValue()).id);
 					} else if(event.getSource() == view.getSubProcessList()){ //SUB PROCESSES
 						showSubProcess(((BigBangProcess) selectable.getValue()).dataId);
+					} else if(event.getSource() == view.getConversationList()){
+						showConversation(((ConversationStub)selectable.getValue()).id);
 					}
 				}
 			}
@@ -148,8 +152,16 @@ public class MedicalFileViewPresenter implements ViewPresenter{
 
 		view.getSubProcessList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getConversationList().addSelectionChangedEventHandler(selectionChangedHandler);
 
 		bound = true;		
+	}
+
+	protected void showConversation(String id) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "medicalfileconversation");
+		item.setParameter("conversationid", id);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void showSubProcess(String dataId) {
@@ -161,10 +173,7 @@ public class MedicalFileViewPresenter implements ViewPresenter{
 			public void onResponse(BigBangProcess response) {
 				String type = response.dataTypeId;
 				if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)) {
-					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.pushIntoStackParameter("display", "medicalfileconversation");
-					item.setParameter("conversationid", response.dataId);
-					NavigationHistoryManager.getInstance().go(item);
+					showConversation(response.dataId);
 				}
 			}
 

@@ -9,6 +9,7 @@ import bigBang.definitions.shared.Expense;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
+import bigBang.library.client.userInterface.ConversationList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
@@ -22,6 +23,7 @@ public class ExpenseChildrenPanel extends View{
 	public ContactsList contactsList;
 	public DocumentsList documentsList;
 	public HistoryList historyList;
+	public ConversationList conversationList;
 	public SubProcessesList subProcessesList;
 
 	public ExpenseChildrenPanel(){
@@ -32,11 +34,13 @@ public class ExpenseChildrenPanel extends View{
 		contactsList = new ContactsList();
 		documentsList = new DocumentsList();
 		subProcessesList = new SubProcessesList();
+		conversationList = new ConversationList();
 		historyList = new HistoryList();
 		
 		wrapper.add(historyList, "Histórico");
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
+		wrapper.add(conversationList, "Trocas de Mensagens");
 		wrapper.add(subProcessesList, "Sub-Processos");
 		
 		expenseBrokerClient = getExpenseBrokerClient();
@@ -95,6 +99,7 @@ public class ExpenseChildrenPanel extends View{
 		documentsList.setOwnerType(BigBangConstants.EntityIds.EXPENSE);
 		documentsList.allowCreation(allow);
 		subProcessesList.setOwner(expenseId);
+		conversationList.setOwner(expenseId);
 		historyList.setOwner(expenseId);
 	}
 

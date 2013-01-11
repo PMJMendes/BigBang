@@ -1,13 +1,7 @@
 package bigBang.module.casualtyModule.client.userInterface.view;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.SubCasualty;
@@ -23,6 +17,13 @@ import bigBang.module.casualtyModule.client.userInterface.form.MedicalFileForm;
 import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileViewPresenter.Action;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class MedicalFileView extends View implements MedicalFileViewPresenter.Display{
 
@@ -203,6 +204,11 @@ public class MedicalFileView extends View implements MedicalFileViewPresenter.Di
 	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return childrenPanel.historyList;
+	}
+
+	@Override
+	public HasValueSelectables<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
 	}
 
 }
