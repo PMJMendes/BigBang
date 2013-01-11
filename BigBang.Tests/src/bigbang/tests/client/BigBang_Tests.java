@@ -58,6 +58,7 @@ public class BigBang_Tests
 //		TestMgrXferMassCreate.DoTest();
 //
 //		TestConversationGet.DoTest();
+//		TestConversationPrint.DoTest();
 //		TestConversationSendNew.DoTest();
 //		TestConversationReceiveNew.DoTest();
 //		TestConversationEdit.DoTest();
