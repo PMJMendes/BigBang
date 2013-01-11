@@ -12,6 +12,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
@@ -44,6 +45,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Conversation.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReSendMessage;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReceiveMessage;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.SendMessage;
+import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
 
 public class ConversationServiceImpl
 	extends SearchServiceBase
@@ -329,6 +331,9 @@ public class ConversationServiceImpl
 		MessageAddress[] larrAddrs;
 		StringBuilder lstrBuilder;
 		int i, j;
+		String[] larrContent;
+		FileXfer lobjFile;
+		UUID lidAux;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -363,7 +368,21 @@ public class ConversationServiceImpl
 		lstrBuilder = new StringBuilder();
 		lobjData.Describe(lstrBuilder, "<br>");
 
-		return lstrBuilder.toString();
+		larrContent = new String[] {lstrBuilder.toString()};
+
+		try
+		{
+			lobjFile = HTMLConnector.buildHTML(larrContent);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+    	lidAux = UUID.randomUUID();
+    	FileServiceImpl.GetFileXferStorage().put(lidAux, lobjFile);
+
+		return lidAux.toString();
 	}
 
 	public Conversation createFromEmail(Conversation conversation)
