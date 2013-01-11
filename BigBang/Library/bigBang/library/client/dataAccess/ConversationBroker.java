@@ -41,4 +41,7 @@ public interface ConversationBroker extends DataBrokerInterface<Conversation>{
 			ResponseHandler<Collection<ConversationStub>> responseHandler);
 
 	SearchDataBroker<ConversationStub> getSearchBroker();
+
+	void getForPrinting(String conversationId,
+			ResponseHandler<String> responseHandler);
 }

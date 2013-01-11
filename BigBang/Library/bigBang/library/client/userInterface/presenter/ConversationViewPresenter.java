@@ -30,7 +30,17 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.MessagesList;
+import bigBang.library.interfaces.FileService;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -76,6 +86,9 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		void setMainFormVisible(boolean b);
 		void setTypeAndOwnerId(String ownerTypeId, String ownerId);
 		void setSaveMode(boolean b);
+		HasClickHandlers getPrintButton();
+		Frame getPrintFrame();
+		void clearReportSections();
 	}
 
 	public ConversationViewPresenter(Display<T> view){
@@ -94,6 +107,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	protected Message currentMessage;
 	protected Conversation conversation;
 	private boolean toSend;
+	protected String currentPrintFileId;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -112,7 +126,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		if(bound){return;}
 
 		view.registerActionHandler(new ActionInvokedEventHandler<ConversationViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -204,7 +218,67 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 			}
 		});
 
+		view.getPrintButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				onPrintConversation();
+			}
+		});
+
+		view.getPrintFrame().addLoadHandler(new LoadHandler() {
+
+			@Override
+			public void onLoad(LoadEvent event) {
+				FileService.Util.getInstance().Discard(currentPrintFileId, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+					}
+				});
+				currentPrintFileId = null;
+				print();
+			}
+		});
+
 		bound = true;
+	}
+
+	protected void print(){
+		print(view.getPrintFrame().getElement());
+	}
+
+	protected native void print(Element frame) /*-{
+	 	frame = frame.contentWindow;
+    	frame.focus();
+    	frame.print();
+	}-*/;
+
+	protected void onPrintConversation() {
+		broker.getForPrinting(conversationId, new ResponseHandler<String>(){
+
+			@Override
+			public void onResponse(String response) {
+				currentPrintFileId = response;
+				Frame frame = ConversationViewPresenter.this.view.getPrintFrame();
+				frame.setUrl(GWT.getModuleBaseURL() + "bbfile?fileref=" + response);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onPrintFailure();
+			}
+
+
+		});
+	}
+
+	protected void onPrintFailure() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível imprimir a troca de mensagens"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	protected void resetView(){
@@ -366,9 +440,10 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		ownerId = parameterHolder.getParameter("ownerid");
 		ownerTypeId = parameterHolder.getParameter("ownertypeId");
 		conversationId = parameterHolder.getParameter("conversationid");
-
+		view.getPrintFrame().setUrl("");
+		view.clearReportSections();
 		view.setTypeAndOwnerId(ownerTypeId, ownerId);
-		
+
 		if(ownerId == null || ownerTypeId == null){			
 			onGetOwnerFailed();
 		}

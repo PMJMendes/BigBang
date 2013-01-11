@@ -294,6 +294,27 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 			}
 		}, true);
 	}
+
+	@Override
+	public void getForPrinting(String conversationId,
+			final ResponseHandler<String> responseHandler) {
+		service.getForPrinting(conversationId, new BigBangAsyncCallback<String>() {
+
+			@Override
+			public void onResponseSuccess(String result) {
+				responseHandler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not print.")
+				});
+			}
+		
+		
+		});
+	}
 		
 		
 }

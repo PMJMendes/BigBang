@@ -12,6 +12,7 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -110,6 +111,10 @@ public class ConversationForm extends FormView<Conversation>{
 		Message message = new Message();
 		
 		return message;
+	}
+
+	public HasClickHandlers getPrintButton() {
+		return printButton;
 	}
 
 

@@ -21,9 +21,12 @@ import bigBang.library.client.userInterface.form.SendMessageForm;
 import bigBang.library.client.userInterface.presenter.ConversationViewPresenter;
 
 import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -43,6 +46,8 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 	protected ReceiveMessageToolbar receiveMessageToolbar;
 	protected ConversationChildrenPanel childrenPanel;
 	private HorizontalPanel listConversWrapper;
+	private Frame printFrame;
+	private VerticalPanel sectionsContainer;
 
 	public ConversationView(FormView<T> ownerForm) {
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -186,6 +191,22 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 
 		sendMessageForm.getNonScrollableContent().setVisible(false);
 		receiveMessageForm.getNonScrollableContent().setVisible(false);
+		
+		printFrame = new Frame();
+		printFrame.setVisible(false);
+		
+		sectionsContainer = new VerticalPanel();
+		sectionsContainer.setWidth("100%");
+		sectionsContainer.getElement().getStyle().setPadding(10, Unit.PX);
+		
+		ScrollPanel scrollPanel2 = new ScrollPanel();
+		scrollPanel2.setSize("100%", "100%");
+		scrollPanel2.add(sectionsContainer);
+		
+		ownerWrapper.add(scrollPanel2);
+		ownerWrapper.setCellHeight(scrollPanel2, "100%");
+
+		clearReportSections();
 	}
 
 
@@ -325,5 +346,25 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 	@Override
 	public void setSaveMode(boolean b) {
 		toolbar.setSaveModeEnabled(b);
+	}
+
+
+	@Override
+	public HasClickHandlers getPrintButton() {
+		return conversationForm.getPrintButton();
+	}
+
+
+	@Override
+	public Frame getPrintFrame() {
+		return printFrame;
+	}
+
+
+	@Override
+	public void clearReportSections() {
+		this.sectionsContainer.clear();
+		this.sectionsContainer.add(this.printFrame);
+		this.sectionsContainer.setCellHeight(this.printFrame, "100%");		
 	}
 }
