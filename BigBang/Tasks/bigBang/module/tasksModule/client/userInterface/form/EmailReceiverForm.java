@@ -64,6 +64,7 @@ public class EmailReceiverForm extends FormView<Message>{
 		referenceType.addItem("Cliente", BigBangConstants.EntityIds.CLIENT);
 		referenceType.addItem("Apólice nº.", BigBangConstants.EntityIds.INSURANCE_POLICY);
 		referenceType.addItem("Apólice Adesão nº.", BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		referenceType.addItem("Recibo nº.", BigBangConstants.EntityIds.RECEIPT);
 		referenceType.addItem("Sinistro nº.", BigBangConstants.EntityIds.CASUALTY);
 		referenceType.addItem("Sub-Sinistro nº.", BigBangConstants.EntityIds.SUB_CASUALTY);
 		referenceType.addItem("Despesa de Saúde nº.", BigBangConstants.EntityIds.EXPENSE);
@@ -71,7 +72,7 @@ public class EmailReceiverForm extends FormView<Message>{
 		referenceType.addItem("Ficha Clínica nº.", BigBangConstants.EntityIds.MEDICAL_FILE);
 
 
-		references = new FormField[8];
+		references = new FormField[9];
 		referenceWrapper = new HorizontalPanel();
 		referenceWrapper.add(referenceType);
 		setReferences();
@@ -146,16 +147,18 @@ public class EmailReceiverForm extends FormView<Message>{
 			references[1].setVisible(true);
 		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
 			references[2].setVisible(true);
-		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.CASUALTY)){
+		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.RECEIPT)){
 			references[3].setVisible(true);
-		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
+		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.CASUALTY)){
 			references[4].setVisible(true);
-		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.EXPENSE)){
+		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
 			references[5].setVisible(true);
-		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.ASSESSMENT)){
+		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.EXPENSE)){
 			references[6].setVisible(true);
-		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.MEDICAL_FILE)){
+		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.ASSESSMENT)){
 			references[7].setVisible(true);
+		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.MEDICAL_FILE)){
+			references[8].setVisible(true);
 		}
 	}
 
@@ -173,26 +176,30 @@ public class EmailReceiverForm extends FormView<Message>{
 		references[2] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, new HasParameters());
 		referenceWrapper.add(references[2]);
 		registerFormField(references[2]);
-		//CASUALTY
-		references[3] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.CASUALTY, new HasParameters());
+		//RECEIPT
+		references[3] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.RECEIPT, new HasParameters());
 		referenceWrapper.add(references[3]);
 		registerFormField(references[3]);
-		//SUB_CASUALTY
-		references[4] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.SUB_CASUALTY, new HasParameters());
+		//CASUALTY
+		references[4] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.CASUALTY, new HasParameters());
 		referenceWrapper.add(references[4]);
 		registerFormField(references[4]);
-		//EXPENSE
-		references[5] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.EXPENSE, new HasParameters());
+		//SUB_CASUALTY
+		references[5] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.SUB_CASUALTY, new HasParameters());
 		referenceWrapper.add(references[5]);
 		registerFormField(references[5]);
-		//ASSESSMENT
-		references[6] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.ASSESSMENT, new HasParameters());
+		//EXPENSE
+		references[6] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.EXPENSE, new HasParameters());
 		referenceWrapper.add(references[6]);
 		registerFormField(references[6]);
-		//MEDICAL FILE
-		references[7] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.MEDICAL_FILE, new HasParameters());
+		//ASSESSMENT
+		references[7] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.ASSESSMENT, new HasParameters());
 		referenceWrapper.add(references[7]);
 		registerFormField(references[7]);
+		//MEDICAL FILE
+		references[8] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.MEDICAL_FILE, new HasParameters());
+		referenceWrapper.add(references[8]);
+		registerFormField(references[8]);
 
 		for(int i = 1; i<references.length; i++){
 			references[i].setVisible(false);
