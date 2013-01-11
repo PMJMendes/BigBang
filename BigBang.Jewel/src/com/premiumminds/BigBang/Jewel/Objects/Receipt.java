@@ -25,6 +25,8 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptExternAuditPaid;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptExternAuditPending;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptExternPendingPayment;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryImage;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptHistoryInsurerAccounting;
@@ -235,6 +237,18 @@ public class Receipt
 		throws BigBangJewelException
 	{
 		return new ReceiptExternPendingPayment().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportExternAuditPaid(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ReceiptExternAuditPaid().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportExternAuditPending(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ReceiptExternAuditPending().doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)
