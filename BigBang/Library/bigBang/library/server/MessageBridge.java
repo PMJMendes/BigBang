@@ -369,13 +369,13 @@ public class MessageBridge
 		{
 			lobjResult.mobjDocOps = null;
 
-			if ( pobjMessage.outgoingAttachmentIds == null )
+			if ( pobjMessage.attachments == null )
 				lobjResult.marrAttachments = null;
 			else
 			{
-				lobjResult.marrAttachments = new UUID[pobjMessage.outgoingAttachmentIds.length];
+				lobjResult.marrAttachments = new UUID[pobjMessage.attachments.length];
 				for ( i = 0; i < lobjResult.marrAttachments.length; i++ )
-					lobjResult.marrAttachments[i] = UUID.fromString(pobjMessage.outgoingAttachmentIds[i]);
+					lobjResult.marrAttachments[i] = UUID.fromString(pobjMessage.attachments[i].docId);
 			}
 		}
 

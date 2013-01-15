@@ -441,10 +441,11 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				msg.addresses[i] = addresses.get(i);
 			}
 
-			msg.outgoingAttachmentIds = new String[outgoingAttachment.size()];
+			msg.attachments = new Message.Attachment[outgoingAttachment.size()];
 
-			for(int i = 0; i<msg.outgoingAttachmentIds.length; i++){
-				msg.outgoingAttachmentIds[i] = outgoingAttachment.get(i);
+			for(int i = 0; i<msg.attachments.length; i++){
+				msg.attachments[i] = new Message.Attachment();
+				msg.attachments[i].docId = outgoingAttachment.get(i);
 			}
 		}else{
 			msg.text = note.getValue();
@@ -553,6 +554,10 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				case TO:
 					contactsFrom.setValue(msg.addresses[i].ownerId);
 					contactChosen = msg.addresses[i].contactInfoId; 
+					break;
+				case FROM:
+					break;
+				default:
 					break;
 				}
 			}
