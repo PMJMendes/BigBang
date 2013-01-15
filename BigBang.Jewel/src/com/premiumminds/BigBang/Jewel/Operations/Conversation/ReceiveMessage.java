@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Conversation;
 import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
+import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class ReceiveMessage
@@ -81,6 +82,7 @@ public class ReceiveMessage
 		AgendaItem lobjNewAgendaItem;
 		Message lobjMessage;
 		MessageAddress lobjAddr;
+		MessageAttachment lobjAttachment;
 		int i, j, k;
 		boolean b;
 
@@ -228,6 +230,27 @@ public class ReceiveMessage
 					mobjData.marrAddresses[i].ToObject(lobjAddr);
 					lobjAddr.SaveToDb(pdb);
 					mobjData.marrAddresses[i].mid = lobjAddr.getKey();
+				}
+			}
+
+			if ( mobjData.marrAttachments != null )
+			{
+				for ( i = 0; i < mobjData.marrAttachments.length; i++ )
+				{
+					if ( (mobjData.marrAttachments[i].midDocument == null) &&
+							(mobjData.mobjDocOps.marrCreate != null) &&
+							(mobjData.mobjDocOps.marrCreate.length > i) &&
+							(mobjData.mobjDocOps.marrCreate[i] != null) )
+						mobjData.marrAttachments[i].midDocument = mobjData.mobjDocOps.marrCreate[i].mid;
+
+					if ( mobjData.marrAttachments[i].midDocument == null )
+						continue;
+
+					mobjData.marrAttachments[i].midOwner = lobjMessage.getKey();
+					lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrAttachments[i].ToObject(lobjAttachment);
+					lobjAttachment.SaveToDb(pdb);
+					mobjData.marrAttachments[i].mid = lobjAttachment.getKey();
 				}
 			}
 		}

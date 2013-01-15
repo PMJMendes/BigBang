@@ -21,6 +21,7 @@ import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Conversation;
 import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
+import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public abstract class CreateConversationBase
@@ -65,6 +66,7 @@ public abstract class CreateConversationBase
 		Conversation lobjConv;
 		Message lobjMessage;
 		MessageAddress lobjAddr;
+		MessageAttachment lobjAttachment;
 		HashSet<UUID> larrUsers;
 		IScript lobjScript;
 		IProcess lobjProc;
@@ -191,6 +193,28 @@ public abstract class CreateConversationBase
 					mobjData.marrMessages[0].marrAddresses[i].ToObject(lobjAddr);
 					lobjAddr.SaveToDb(pdb);
 					mobjData.marrMessages[0].marrAddresses[i].mid = lobjAddr.getKey();
+				}
+			}
+
+			if ( mobjData.marrMessages[0].marrAttachments != null )
+			{
+				for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ )
+				{
+					if ( Constants.MsgDir_Incoming.equals(mobjData.midStartDir) &&
+							(mobjData.marrMessages[0].marrAttachments[i].midDocument == null) &&
+							(mobjData.marrMessages[0].mobjDocOps.marrCreate != null) &&
+							(mobjData.marrMessages[0].mobjDocOps.marrCreate.length > i) &&
+							(mobjData.marrMessages[0].mobjDocOps.marrCreate[i] != null) )
+						mobjData.marrMessages[0].marrAttachments[i].midDocument = mobjData.marrMessages[0].mobjDocOps.marrCreate[i].mid;
+
+					if ( mobjData.marrMessages[0].marrAttachments[i].midDocument == null )
+						continue;
+
+					mobjData.marrMessages[0].marrAttachments[i].midOwner = lobjMessage.getKey();
+					lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrMessages[0].marrAttachments[i].ToObject(lobjAttachment);
+					lobjAttachment.SaveToDb(pdb);
+					mobjData.marrMessages[0].marrAttachments[i].mid = lobjAttachment.getKey();
 				}
 			}
 		}

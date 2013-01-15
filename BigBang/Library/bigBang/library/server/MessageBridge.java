@@ -320,12 +320,15 @@ public class MessageBridge
 
 		if ( Constants.MsgDir_Incoming.equals(lobjResult.midDirection) )
 		{
-			lobjResult.marrAttachments = null;
-
 			if ( !lobjResult.mbIsEmail || (pobjMessage.attachments == null) )
+			{
+				lobjResult.marrAttachments = null;
 				lobjResult.mobjDocOps = null;
+			}
 			else
 			{
+				lobjResult.marrAttachments = new MessageAttachmentData[pobjMessage.attachments.length];
+
 				lobjResult.mobjDocOps = new DocOps();
 				lobjResult.mobjDocOps.marrModify = null;
 				lobjResult.mobjDocOps.marrDelete = null;

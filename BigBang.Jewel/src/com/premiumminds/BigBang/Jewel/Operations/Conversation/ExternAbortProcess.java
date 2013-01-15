@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Conversation;
 import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
+import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class ExternAbortProcess
@@ -47,6 +48,7 @@ public class ExternAbortProcess
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
+		MessageAttachment lobjAttachment;
 		MessageAddress lobjAddr;
 		Message lobjMsg;
 		Conversation lobjConv;
@@ -97,6 +99,15 @@ public class ExternAbortProcess
 				{
 					for ( i = 0; i < mobjData.marrMessages.length; i++ )
 					{
+						if ( mobjData.marrMessages[i].marrAttachments != null )
+						{
+							for ( j = 0; j < mobjData.marrMessages[i].marrAttachments.length; j++ )
+							{
+								lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(),
+										mobjData.marrMessages[i].marrAttachments[j].mid);
+								lobjAttachment.getDefinition().Delete(pdb, lobjAttachment.getKey());
+							}
+						}
 						if ( mobjData.marrMessages[i].marrAddresses != null )
 						{
 							for ( j = 0; j < mobjData.marrMessages[i].marrAddresses.length; j++ )

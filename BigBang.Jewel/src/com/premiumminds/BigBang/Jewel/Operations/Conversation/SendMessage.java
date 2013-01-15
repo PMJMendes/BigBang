@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Conversation;
 import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
+import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class SendMessage
@@ -78,6 +79,7 @@ public class SendMessage
 		AgendaItem lobjNewAgendaItem;
 		Message lobjMessage;
 		MessageAddress lobjAddr;
+		MessageAttachment lobjAttachment;
 		int i;
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
@@ -173,6 +175,18 @@ public class SendMessage
 					mobjData.marrAddresses[i].ToObject(lobjAddr);
 					lobjAddr.SaveToDb(pdb);
 					mobjData.marrAddresses[i].mid = lobjAddr.getKey();
+				}
+			}
+
+			if ( mobjData.marrAttachments != null )
+			{
+				for ( i = 0; i < mobjData.marrAttachments.length; i++ )
+				{
+					mobjData.marrAttachments[i].midOwner = lobjMessage.getKey();
+					lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrAttachments[i].ToObject(lobjAttachment);
+					lobjAttachment.SaveToDb(pdb);
+					mobjData.marrAttachments[i].mid = lobjAttachment.getKey();
 				}
 			}
 		}
