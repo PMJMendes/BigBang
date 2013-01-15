@@ -31,7 +31,7 @@ public class CreateCasualtyViewPresenter implements ViewPresenter {
 
 	public static enum Action {
 		SAVE,
-		CANCEL
+		CANCEL, BACK
 	}
 
 	public static interface Display {
@@ -89,11 +89,20 @@ public class CreateCasualtyViewPresenter implements ViewPresenter {
 				case CANCEL:
 					onCancel();
 					break;
+				case BACK:
+					onNavigateBack();
+					break;
 				}
 			}
 		});
 
 		bound = true;
+	}
+
+	protected void onNavigateBack() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.popFromStackParameter("display");
+		NavigationHistoryManager.getInstance().go(item);					
 	}
 
 	protected void clearView(){

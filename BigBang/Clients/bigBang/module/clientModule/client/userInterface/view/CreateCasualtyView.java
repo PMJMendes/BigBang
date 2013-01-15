@@ -1,5 +1,8 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -37,11 +40,27 @@ public class CreateCasualtyView extends View implements CreateCasualtyViewPresen
 		parentHeader.setHeight("30px");
 		parentWrapper.add(parentHeader);
 		
+		parentHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				handler.onActionInvoked(new ActionInvokedEvent<Action>(Action.BACK));
+			}
+		}));
+		
 		clientForm = new ClientForm();
 		clientForm.setReadOnly(true);
 		clientForm.setSize("100%", "100%");
 		parentWrapper.add(clientForm);
 		parentWrapper.setCellHeight(clientForm, "100%");
+		
+		parentHeader.setLeftWidget(new Button("Voltar", new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				handler.onActionInvoked(new ActionInvokedEvent<Action>(Action.BACK));
+			}
+		}));
 		
 		VerticalPanel casualtyWrapper = new VerticalPanel();
 		casualtyWrapper.setSize("100%", "100%");
