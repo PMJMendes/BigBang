@@ -30,9 +30,9 @@ public class TestNegotiationReceiveQuote
 
 		response = new Negotiation.Response();
 		response.negotiationId = "D5697A30-26E4-4913-9EDE-9FFE011B6F30";
-		response.message.notes = "Fazemos por 1500. Somos muita bons...";
-		response.message.emailId = null;
-		response.message.upgrades = null;
+//		response.message.notes = "Fazemos por 1500. Somos muita bons...";
+//		response.message.emailId = null;
+//		response.message.upgrades = null;
 
 		Services.negotiationService.receiveResponse(response, callback);
 	}

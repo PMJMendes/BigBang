@@ -38,8 +38,9 @@ public class TestConversationSendNew
 		conversation.messages[0].kind = Message.Kind.EMAIL;
 		conversation.messages[0].subject = "Pedido de Carta de Condução";
 		conversation.messages[0].text = "Por favor, envie-nos uma cópia digital da sua carta de condução.";
-		conversation.messages[0].outgoingAttachmentIds = new String[]
-				{"A6B657B0-9513-403B-859C-A10B0102B580", "ECB3070B-0494-4A50-BA70-A10B010C8963"};
+		conversation.messages[0].attachments = new Message.Attachment[] {new Message.Attachment(), new Message.Attachment()};
+		conversation.messages[0].attachments[0].docId = "A6B657B0-9513-403B-859C-A10B0102B580";
+		conversation.messages[0].attachments[1].docId = "ECB3070B-0494-4A50-BA70-A10B010C8963";
 
 		conversation.messages[0].addresses = new Message.MsgAddress[2];
 		conversation.messages[0].addresses[0] = new Message.MsgAddress();

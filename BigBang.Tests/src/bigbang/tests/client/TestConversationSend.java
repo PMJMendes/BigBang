@@ -34,8 +34,9 @@ public class TestConversationSend
 		message.kind = Message.Kind.EMAIL;
 		message.subject = "Resposta";
 		message.text = "Então é assim...";
-		message.outgoingAttachmentIds = new String[]
-				{"A6B657B0-9513-403B-859C-A10B0102B580", "ECB3070B-0494-4A50-BA70-A10B010C8963"};
+		message.attachments = new Message.Attachment[] {new Message.Attachment(), new Message.Attachment()};
+		message.attachments[0].docId = "A6B657B0-9513-403B-859C-A10B0102B580";
+		message.attachments[1].docId = "ECB3070B-0494-4A50-BA70-A10B010C8963";
 
 		message.addresses = new Message.MsgAddress[2];
 		message.addresses[0] = new Message.MsgAddress();
