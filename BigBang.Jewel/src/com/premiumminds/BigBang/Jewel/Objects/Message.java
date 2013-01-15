@@ -58,6 +58,7 @@ public class Message
 	}
 
 	private MessageAddress[] marrAddresses;
+	private MessageAttachment[] marrAttachments;
 
 	public void Initialize()
 		throws JewelEngineException
@@ -160,6 +161,75 @@ public class Message
 		}
 
 		return marrAddresses;
+	}
+
+	public MessageAttachment[] GetAttachments()
+		throws BigBangJewelException
+	{
+		MasterDB ldb;
+
+		if ( marrAttachments == null )
+		{
+			try
+			{
+				ldb = new MasterDB();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			try
+			{
+				GetAttachments(ldb);
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			try
+			{
+				ldb.Disconnect();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+
+		return marrAttachments;
+	}
+
+	public MessageAttachment[] GetAttachments(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		IEntity lrefAux;
+		ArrayList<MessageAttachment> larrAux;
+		ResultSet lrs;
+
+		lrs = null;
+		if ( marrAttachments == null )
+		{
+			larrAux = new ArrayList<MessageAttachment>();
+			try
+			{
+				lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_MessageAttachment));
+				lrs = lrefAux.SelectByMembers(pdb, new int[] {MessageAttachment.I.OWNER}, new java.lang.Object[] {getKey()}, new int[] {2, 0});
+				while ( lrs.next() )
+					larrAux.add(MessageAttachment.GetInstance(getNameSpace(), lrs));
+				lrs.close();
+			}
+			catch (Throwable e)
+			{
+				if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			marrAttachments = larrAux.toArray(new MessageAttachment[larrAux.size()]);
+		}
+
+		return marrAttachments;
 	}
 
 	public void setText(String pstrText)

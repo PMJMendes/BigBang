@@ -31,13 +31,16 @@ import bigBang.library.shared.ConversationSearchParameter;
 import bigBang.library.shared.ConversationSortParameter;
 import bigBang.library.shared.SessionExpiredException;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
+import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.CreateConversationBase;
@@ -128,11 +131,42 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
+	public static Message.Attachment sGetAttachment(UUID pid)
+		throws BigBangException
+	{
+		MessageAttachment lobjAttachment;
+		Document lobjDoc;
+		Message.Attachment lobjResult;
+
+		try
+		{
+			lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), pid);
+			lobjDoc = Document.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAttachment.getAt(MessageAttachment.I.DOCUMENT));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new Message.Attachment();
+		lobjResult.id = lobjAttachment.getKey().toString();
+
+		lobjResult.docId = lobjDoc.getKey().toString();
+
+		lobjResult.name = lobjDoc.getLabel();
+		lobjResult.attachmentId = null;
+		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();
+		lobjResult.storageId = null;
+
+		return lobjResult;
+	}
+
 	public static Message sGetMessage(UUID pid)
 		throws BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Message lobjMsg;
 		MessageAddress[] larrAddrs;
+		MessageAttachment[] larrAtts;
 		Message lobjResult;
 		int i;
 
@@ -140,6 +174,7 @@ public class ConversationServiceImpl
 		{
 			lobjMsg = com.premiumminds.BigBang.Jewel.Objects.Message.GetInstance(Engine.getCurrentNameSpace(), pid);
 			larrAddrs = lobjMsg.GetAddresses();
+			larrAtts = lobjMsg.GetAttachments();
 		}
 		catch (Throwable e)
 		{
@@ -165,6 +200,15 @@ public class ConversationServiceImpl
 			lobjResult.addresses = new Message.MsgAddress[larrAddrs.length];
 			for ( i = 0; i < larrAddrs.length; i++ )
 				lobjResult.addresses[i] = sGetAddress(larrAddrs[i].getKey());
+		}
+
+		if ( larrAtts == null )
+			lobjResult.attachments = null;
+		else
+		{
+			lobjResult.attachments = new Message.Attachment[larrAtts.length];
+			for ( i = 0; i < larrAtts.length; i++ )
+				lobjResult.attachments[i] = sGetAttachment(larrAtts[i].getKey());
 		}
 
 		return lobjResult;

@@ -13,12 +13,12 @@ public class DASRequest
 		private static final long serialVersionUID = 1L;
 
 		public String requestId;
-		public IncomingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
+//		public IncomingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
 
-		public Response()
-		{
-			message = new IncomingMessage();
-		}
+//		public Response()
+//		{
+//			message = new IncomingMessage();
+//		}
 	}
 
 	public static class Cancellation
@@ -33,10 +33,10 @@ public class DASRequest
 	public String receiptId;
 	public int replylimit;
 	public Receipt receiptAux;
-	public OutgoingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
+//	public OutgoingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
 
-	public DASRequest()
-	{
-		message = new OutgoingMessage();
-	}
+//	public DASRequest()
+//	{
+//		message = new OutgoingMessage();
+//	}
 }

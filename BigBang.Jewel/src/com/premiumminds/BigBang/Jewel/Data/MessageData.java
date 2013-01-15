@@ -27,10 +27,9 @@ public class MessageData
 	public String mstrBody;
 
 	public MessageAddressData[] marrAddresses;
+	public MessageAttachmentData[] marrAttachments;
 
 	public String mstrEmailID;
-
-	public UUID[] marrAttachments;
 
 	public DocOps mobjDocOps;
 	public ContactOps mobjContactOps;

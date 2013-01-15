@@ -536,7 +536,7 @@ public class MailConnector
 			larrFiles = new FileXfer[pobjMessage.marrAttachments.length];
 			for ( i = 0; i < larrFiles.length; i++ )
 			{
-				lobjDoc = Document.GetInstance(Engine.getCurrentNameSpace(), pobjMessage.marrAttachments[i]);
+				lobjDoc = Document.GetInstance(Engine.getCurrentNameSpace(), pobjMessage.marrAttachments[i].midDocument);
 				larrFiles[i] = lobjDoc.getFile();
 			}
 		}

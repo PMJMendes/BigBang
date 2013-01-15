@@ -105,6 +105,7 @@ public class Constants
 	public static final UUID ObjID_Conversation             = UUID.fromString("1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4");
 	public static final UUID ObjID_Message                  = UUID.fromString("BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD");
 	public static final UUID ObjID_MessageAddress           = UUID.fromString("C865EAD8-526A-4447-9CBB-9FE80109E9C5");
+	public static final UUID ObjID_MessageAttachment        = UUID.fromString("C677A6BD-20C2-4B97-9938-A14700CA8F52");
 
 	// Signature Request Objects
 	public static final UUID ObjID_SignatureRequest         = UUID.fromString("A864FABC-8DCE-4D97-9A50-A02A00F7CBB5");

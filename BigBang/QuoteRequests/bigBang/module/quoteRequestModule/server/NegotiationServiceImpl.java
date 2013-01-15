@@ -226,7 +226,7 @@ public class NegotiationServiceImpl
 		}
 
 		lopRQ = new ReceiveQuote(lobjNeg.GetProcessID());
-		lopRQ.mobjMessage = MessageBridge.incomingToServer(response.message, Constants.ObjID_Negotiation);
+//		lopRQ.mobjMessage = MessageBridge.incomingToServer(response.message, Constants.ObjID_Negotiation);
 
 		try
 		{

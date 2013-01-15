@@ -18,6 +18,8 @@ public class Message
 	{
 		private static final long serialVersionUID = 1L;
 
+		public String id;
+
 		// For incoming
 		public String name;
 		public String attachmentId; //Outlook ID
@@ -47,7 +49,7 @@ public class Message
 		public String address; //*
 		public Usage usage; //*
 		public String userId; //Só para REPLYTO //*
-		public String contactInfoId; //Só para FROM e TO //*
+		public String contactInfoId; //Só para FROM, TO e CC //*
 		public String display; //*
 		public String ownerTypeId; //Só para TO, para pre-preencher a form
 		public String ownerId; //Só para TO, para pre-preencher a form
@@ -58,14 +60,13 @@ public class Message
 	public String conversationId;
 	public Integer order;
 	public ConversationStub.Direction direction;
-	public Kind kind; //*
+	public Kind kind;
 	public String date; 
-	public String subject; //Só pode vir a null se tiver emailId. //*
-	public String text; //Só pode vir a null se tiver emailId. //*
-	public String emailId; //Se fôr incoming e kind=EMAIL, obrigatório. Se não, tem que vir a null. //*
+	public String subject; //Só pode vir a null se tiver emailId.
+	public String text; //Só pode vir a null se tiver emailId.
+	public String emailId; //Se fôr incoming e kind=EMAIL, obrigatório. Se não, tem que vir a null.
 
-	public Attachment[] attachments; //*
-	public String[] outgoingAttachmentIds; // Obsoleto
+	public Attachment[] attachments;
 
-	public MsgAddress[] addresses;  //*
+	public MsgAddress[] addresses;
 }

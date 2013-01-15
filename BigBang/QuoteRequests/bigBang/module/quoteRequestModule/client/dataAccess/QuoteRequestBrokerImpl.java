@@ -14,7 +14,6 @@ import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
@@ -531,12 +530,12 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 	}
 
-	@Override
-	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
-			ResponseHandler<InfoOrDocumentRequest> handler) {
-		// TODO Auto-generated method stub
-
-	}
+//	@Override
+//	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
+//			ResponseHandler<InfoOrDocumentRequest> handler) {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 	@Override
 	public void createQuoteRequestManagerTransfer(String[] requestIds,

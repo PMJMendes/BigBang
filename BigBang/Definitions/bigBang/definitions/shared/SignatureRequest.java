@@ -13,12 +13,12 @@ public class SignatureRequest
 		private static final long serialVersionUID = 1L;
 
 		public String requestId;
-		public IncomingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
+//		public IncomingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
 
-		public Response()
-		{
-			message = new IncomingMessage();
-		}
+//		public Response()
+//		{
+//			message = new IncomingMessage();
+//		}
 	}
 
 	public static class Cancellation
@@ -32,10 +32,10 @@ public class SignatureRequest
 
 	public String receiptId;
 	public int replylimit;
-	public OutgoingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
+//	public OutgoingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
 
-	public SignatureRequest()
-	{
-		message = new OutgoingMessage();
-	}
+//	public SignatureRequest()
+//	{
+//		message = new OutgoingMessage();
+//	}
 }

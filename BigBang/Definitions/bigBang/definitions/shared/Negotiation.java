@@ -43,12 +43,12 @@ public class Negotiation
 		private static final long serialVersionUID = 1L;
 
 		public String negotiationId;
-		public IncomingMessage message;
+//		public IncomingMessage message;
 
-		public Response()
-		{
-			message = new IncomingMessage();
-		}
+//		public Response()
+//		{
+//			message = new IncomingMessage();
+//		}
 	}
 
 	public static class Grant
