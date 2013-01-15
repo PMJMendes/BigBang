@@ -13,15 +13,19 @@ public class Message
 		NOTE
 	}
 
-	public static class AttachmentUpgrade
+	public static class Attachment
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
-	
+
+		// For incoming
 		public String name;
 		public String attachmentId; //Outlook ID
 		public String docTypeId;
 		public String storageId;
+
+		// For outgoing or display
+		public String docId;
 	}
 
 	public static class MsgAddress
@@ -60,8 +64,8 @@ public class Message
 	public String text; //Só pode vir a null se tiver emailId. //*
 	public String emailId; //Se fôr incoming e kind=EMAIL, obrigatório. Se não, tem que vir a null. //*
 
-	public AttachmentUpgrade[] incomingAttachments; //*
-	public String[] outgoingAttachmentIds; //*
+	public Attachment[] attachments; //*
+	public String[] outgoingAttachmentIds; // Obsoleto
 
 	public MsgAddress[] addresses;  //*
 }

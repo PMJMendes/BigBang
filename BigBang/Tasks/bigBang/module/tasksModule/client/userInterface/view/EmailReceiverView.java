@@ -3,7 +3,7 @@ package bigBang.module.tasksModule.client.userInterface.view;
 import java.util.List;
 
 import bigBang.definitions.shared.Message;
-import bigBang.definitions.shared.Message.AttachmentUpgrade;
+import bigBang.definitions.shared.Message.Attachment;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasSelectables;
@@ -191,18 +191,18 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 	}	
 	
 	@Override
-	public Message.AttachmentUpgrade[] getChecked() {
+	public Message.Attachment[] getChecked() {
 
 
 		int ammount = attachments.getChecked().size();
-		bigBang.definitions.shared.Message.AttachmentUpgrade[] attachs = new Message.AttachmentUpgrade[ammount];
+		bigBang.definitions.shared.Message.Attachment[] attachs = new Message.Attachment[ammount];
 		int counter = 0;
 
-		AttachmentUpgrade temp;
+		Attachment temp;
 
 		for(int i = 0; i<attachments.size(); i++){
 			if(attachments.get(i).isChecked()){
-				temp = new Message.AttachmentUpgrade();
+				temp = new Message.Attachment();
 				temp.docTypeId = ((AttachmentEntry)attachments.get(i)).getDocType().getValue();
 				temp.name =((AttachmentEntry)attachments.get(i)).getDocName().getValue();
 				temp.attachmentId = ((AttachmentEntry)attachments.get(i)).getValue().id;

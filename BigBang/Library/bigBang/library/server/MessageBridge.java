@@ -323,36 +323,36 @@ public class MessageBridge
 		{
 			lobjResult.marrAttachments = null;
 
-			if ( !lobjResult.mbIsEmail || (pobjMessage.incomingAttachments == null) )
+			if ( !lobjResult.mbIsEmail || (pobjMessage.attachments == null) )
 				lobjResult.mobjDocOps = null;
 			else
 			{
 				lobjResult.mobjDocOps = new DocOps();
 				lobjResult.mobjDocOps.marrModify = null;
 				lobjResult.mobjDocOps.marrDelete = null;
-				lobjResult.mobjDocOps.marrCreate = new DocumentData[pobjMessage.incomingAttachments.length];
-				for ( i = 0; i < pobjMessage.incomingAttachments.length; i++ )
+				lobjResult.mobjDocOps.marrCreate = new DocumentData[pobjMessage.attachments.length];
+				for ( i = 0; i < pobjMessage.attachments.length; i++ )
 				{
 					lobjResult.mobjDocOps.marrCreate[i] = new DocumentData();
-					lobjResult.mobjDocOps.marrCreate[i].mstrName = pobjMessage.incomingAttachments[i].name;
+					lobjResult.mobjDocOps.marrCreate[i].mstrName = pobjMessage.attachments[i].name;
 					lobjResult.mobjDocOps.marrCreate[i].midOwnerType = pidParentType;
 					lobjResult.mobjDocOps.marrCreate[i].midOwnerId = null;
-					lobjResult.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(pobjMessage.incomingAttachments[i].docTypeId);
+					lobjResult.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(pobjMessage.attachments[i].docTypeId);
 					lobjResult.mobjDocOps.marrCreate[i].mstrText = null;
 
-					if ( pobjMessage.incomingAttachments[i].storageId != null )
+					if ( pobjMessage.attachments[i].storageId != null )
 					{
-						lidFile = pobjMessage.incomingAttachments[i].storageId == null ? null :
-								UUID.fromString(pobjMessage.incomingAttachments[i].storageId);
+						lidFile = pobjMessage.attachments[i].storageId == null ? null :
+								UUID.fromString(pobjMessage.attachments[i].storageId);
 						lobjResult.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
 						FileServiceImpl.GetFileXferStorage().remove(lidFile);
 					}
-					else if ( pobjMessage.incomingAttachments[i].attachmentId != null )
+					else if ( pobjMessage.attachments[i].attachmentId != null )
 					{
 						try
 						{
 							lobjResult.mobjDocOps.marrCreate[i].mobjFile = MailConnector.DoGetAttachment(lobjResult.mstrEmailID,
-									pobjMessage.incomingAttachments[i].attachmentId).GetVarData();
+									pobjMessage.attachments[i].attachmentId).GetVarData();
 						}
 						catch (Throwable e)
 						{

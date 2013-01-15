@@ -1,7 +1,7 @@
 package bigBang.library.client.userInterface.presenter;
 
 import bigBang.definitions.shared.Message;
-import bigBang.definitions.shared.Message.AttachmentUpgrade;
+import bigBang.definitions.shared.Message.Attachment;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
@@ -58,7 +58,7 @@ HasValue<Message> {
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 
-		bigBang.definitions.shared.Message.AttachmentUpgrade[] getChecked();
+		bigBang.definitions.shared.Message.Attachment[] getChecked();
 
 		void enableGetAll(boolean b);
 
@@ -123,7 +123,7 @@ HasValue<Message> {
 					break;
 				}
 				case CONFIRM:{
-					AttachmentUpgrade[] checked = view.getChecked();
+					Attachment[] checked = view.getChecked();
 
 					for(int i = 0; i<checked.length; i++){
 						if(checked[i].docTypeId == null || checked[i].name == null){
@@ -229,7 +229,7 @@ HasValue<Message> {
 		newMessage.emailId = view.getForm().getValue().id;
 		newMessage.kind = Message.Kind.EMAIL;
 		newMessage.text = null;
-		newMessage.incomingAttachments = view.getChecked();
+		newMessage.attachments = view.getChecked();
 
 		return newMessage;
 	}

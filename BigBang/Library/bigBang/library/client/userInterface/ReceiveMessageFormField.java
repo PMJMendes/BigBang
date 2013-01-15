@@ -3,7 +3,7 @@ package bigBang.library.client.userInterface;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Message;
-import bigBang.definitions.shared.Message.AttachmentUpgrade;
+import bigBang.definitions.shared.Message.Attachment;
 import bigBang.definitions.shared.Message.Kind;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.FormField;
@@ -33,7 +33,7 @@ public class ReceiveMessageFormField extends FormField<Message>{
 	private TextBoxFormField subject;
 	private TextBoxFormField from;
 	private RichTextAreaFormField body;
-	private List<AttachmentUpgrade> attachList;
+	private List<Attachment> attachList;
 	VerticalPanel notePanel;
 	VerticalPanel emailPanel;
 	VerticalPanel right;
@@ -80,7 +80,7 @@ public class ReceiveMessageFormField extends FormField<Message>{
 		from = new TextBoxFormField("De");
 		body = new RichTextAreaFormField("Corpo da Mensagem");
 		body.showToolbar(false);
-		attachList = new List<Message.AttachmentUpgrade>();
+		attachList = new List<Message.Attachment>();
 		selectEmail = new Button("Seleccionar E-mail");
 		emailPanel.add(selectEmail);
 		emailPanel.add(from);
@@ -107,7 +107,7 @@ public class ReceiveMessageFormField extends FormField<Message>{
 		notePanel.setSize("100%","100%");
 		emailPanel.setSize("100%", "100%");
 
-		attachList = new List<Message.AttachmentUpgrade>();
+		attachList = new List<Message.Attachment>();
 		attachList.setSize("250px", "100%");
 		ListHeader header = new ListHeader("Novos Documentos");
 		attachList.setHeaderWidget(header);
@@ -190,11 +190,11 @@ public class ReceiveMessageFormField extends FormField<Message>{
 					subject.setValue(result.subject);
 					body.setValue(result.body);
 
-					for(int i = 0; i<value.incomingAttachments.length; i++){
-						ExpandableListBoxFormField type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, value.incomingAttachments[i].name);
+					for(int i = 0; i<value.attachments.length; i++){
+						ExpandableListBoxFormField type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, value.attachments[i].name);
 						type.setReadOnlyInternal(true);
-						ListEntry<AttachmentUpgrade> temp = new ListEntry<Message.AttachmentUpgrade>(value.incomingAttachments[i]);
-						type.setValue(value.incomingAttachments[i].docTypeId);
+						ListEntry<Attachment> temp = new ListEntry<Message.Attachment>(value.attachments[i]);
+						type.setValue(value.attachments[i].docTypeId);
 						temp.setWidget(type);
 						temp.setHeight("55px");
 						attachList.add(temp);

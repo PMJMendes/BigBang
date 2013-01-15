@@ -9,7 +9,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.TipifiedListItem;
-import bigBang.definitions.shared.Message.AttachmentUpgrade;
+import bigBang.definitions.shared.Message.Attachment;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -61,7 +61,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 		void clear();
 
-		AttachmentUpgrade[] getChecked();
+		Attachment[] getChecked();
 
 		Integer getReplyLimit();
 
@@ -196,7 +196,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 	}
 
 	protected void onConfirm() {
-		AttachmentUpgrade[] checked = view.getChecked();
+		Attachment[] checked = view.getChecked();
 
 		for(int i = 0; i<checked.length; i++){
 			if(checked[i].docTypeId == null || checked[i].name == null){
@@ -214,7 +214,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 			conversation.id = conversation.messages[0].conversationId;
 
 			conversation.messages[0].emailId = item.id;
-			conversation.messages[0].incomingAttachments = view.getChecked();
+			conversation.messages[0].attachments = view.getChecked();
 			conversation.parentDataObjectId = view.getParentId();
 			conversation.parentDataTypeId =  view.getParentType();
 			conversation.requestTypeId = view.getRequestType();
