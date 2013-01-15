@@ -301,6 +301,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os emails."), TYPE.ALERT_NOTIFICATION));
+				view.enableRefresh(true);
 				super.onResponseFailure(caught);
 			}
 		});		
