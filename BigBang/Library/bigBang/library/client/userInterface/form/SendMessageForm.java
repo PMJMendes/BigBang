@@ -75,7 +75,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	protected ListBoxFormField to;
 	protected NumericTextBoxFormField replyLimit;
 	protected AutoCompleteTextListFormField forwardReply;
-	protected TextBoxFormField internalCCAddresses;
+	protected SelectMessageAddressesForm internalCCAddresses;
 	protected TextBoxFormField externalCCAddresses;
 	private VerticalPanel noteWrapper;
 	protected RadioButtonFormField emailOrNote;
@@ -115,7 +115,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		replyLimit.setFieldWidth("70px");
 
 		forwardReply = new AutoCompleteTextListFormField("Utilizadores a envolver no processo");
-		internalCCAddresses = new TextBoxFormField("CC Endereços separados por ','");
+		internalCCAddresses = new SelectMessageAddressesForm("CCs");
 		externalCCAddresses = new TextBoxFormField("BCC Endereços separados por ','");
 
 		expectsResponse = new RadioButtonFormField("Espera resposta");
@@ -327,6 +327,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			}
 		});		
 
+		registerFormField(text.subject);
+		
 		setValidator(new SendMessageFormValidator(this));
 	}
 
@@ -493,16 +495,11 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			addresses.add(newAddress);
 		}
 
-		if(internalCCAddresses.getValue() != null){
-			String[] ccs = internalCCAddresses.getValue().split(",");
-
-			for(int i = 0; i<ccs.length; i++){
-				MsgAddress newAddress = new MsgAddress();
-				newAddress.usage =  MsgAddress.Usage.CC;
-				newAddress.address = ccs[i].trim();
-				addresses.add(newAddress);
-			}
+		for(MsgAddress m : internalCCAddresses.getValue()){
+			addresses.add(m);
 		}
+		
+		
 		if(externalCCAddresses.getValue() != null){
 			String[] bccs = externalCCAddresses.getValue().split(",");
 
@@ -539,6 +536,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 			List<String> forwardReplies = new ArrayList<String>();
 
+			List<MsgAddress> internal = new ArrayList<MsgAddress>();
+			
 			for(int i = 0; i<msg.addresses.length ; i++){
 				switch(msg.addresses[i].usage){
 				case BCC:
@@ -546,7 +545,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 							"" : externalCCAddresses.getValue() +", " ) + msg.addresses[i].address);
 					break;
 				case CC:
-					internalCCAddresses.setValue(( internalCCAddresses.getValue() == null ? "" : internalCCAddresses.getValue() + ", ") + msg.addresses[i].address);
+					internal.add(msg.addresses[i]);
 					break;
 				case REPLYTO:
 					forwardReplies.add(msg.addresses[i].display);
@@ -561,6 +560,16 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 					break;
 				}
 			}
+			
+			MsgAddress[] conts = new MsgAddress[internal.size()];
+			int i = 0;
+			for(MsgAddress ms : internal){
+				conts[i] = ms;
+				i++;
+			}
+			
+			
+			internalCCAddresses.setValue(conts);
 
 			forwardReply.setValue(forwardReplies);
 		}
@@ -578,6 +587,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 
 	public void setAvailableContacts(Contact[] contacts) {
+		internalCCAddresses.setContacts(contacts);
 		this.to.clearValues();
 		if(contacts != null){
 			for(int i = 0; i < contacts.length; i++){

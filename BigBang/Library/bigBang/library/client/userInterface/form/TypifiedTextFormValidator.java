@@ -24,7 +24,7 @@ public class TypifiedTextFormValidator extends FormValidator<TypifiedTextForm> {
 	}
 
 	private boolean validateSubject() {
-		return validateString(form.subject, 0, 250, true);
+		return validateString(form.subject, 1, 250, false);
 	}
 
 	private boolean validateText() {

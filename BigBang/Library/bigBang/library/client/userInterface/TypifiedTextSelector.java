@@ -26,7 +26,7 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 
 	private TypifiedTextBroker broker;
 	private ExpandableListBoxFormField labels;
-	private TextBoxFormField subject = new TextBoxFormField("Assunto");
+	public TextBoxFormField subject = new TextBoxFormField("Assunto");
 	private RichTextAreaFormField textBody = new RichTextAreaFormField();
 	private VerticalPanel wrapper = new VerticalPanel();
 	private HorizontalPanel labelPanel = new HorizontalPanel();

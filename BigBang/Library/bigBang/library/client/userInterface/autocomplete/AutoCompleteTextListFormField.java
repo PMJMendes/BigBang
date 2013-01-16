@@ -42,6 +42,7 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 
 		panel.add(this.label);
 
+
 		list = new BulletList();
 		list.setStyleName("token-input-list-facebook");
 		final ListItem item = new ListItem();
@@ -152,8 +153,11 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 		}else{
 			for(String s : value){
 				this.itemBox.setValue(this.itemBox.getValue() + " " + s);
+				deselectItem(itemBox, list);
 			}
 			this.itemBox.setValue(this.itemBox.getValue().trim());
+			
+			
 		}
 		if(fireEvents)
 			ValueChangeEvent.fire(this, value);	}

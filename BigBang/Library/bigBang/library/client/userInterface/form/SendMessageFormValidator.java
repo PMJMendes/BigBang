@@ -1,9 +1,10 @@
 package bigBang.library.client.userInterface.form;
 
+import bigBang.definitions.shared.Message;
 import bigBang.library.client.FormValidator;
 
 public class SendMessageFormValidator extends
-		FormValidator<SendMessageForm> {
+FormValidator<SendMessageForm> {
 
 	public SendMessageFormValidator(SendMessageForm form) {
 		super(form);
@@ -19,8 +20,18 @@ public class SendMessageFormValidator extends
 		valid &= validateForwardReply();
 		valid &= validateInternalCC();
 		valid &= validateExternalCC();
-		
+		valid &= validateText();
+
 		return new Result(valid, this.validationMessages);
+	}
+
+	private boolean validateText() {
+
+		if(form.emailOrNote.getValue() != null){
+			return (form.emailOrNote.getValue().equals(Message.Kind.EMAIL.toString()) ? validateString(form.text.subject, 1, 250, false) : true);
+		}
+		else
+			return true;
 	}
 
 	private boolean validateContactFrom() {
