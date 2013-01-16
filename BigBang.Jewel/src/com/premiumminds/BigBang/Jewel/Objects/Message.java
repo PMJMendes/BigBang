@@ -216,7 +216,7 @@ public class Message
 			try
 			{
 				lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_MessageAttachment));
-				lrs = lrefAux.SelectByMembers(pdb, new int[] {MessageAttachment.I.OWNER}, new java.lang.Object[] {getKey()}, new int[] {2, 0});
+				lrs = lrefAux.SelectByMembers(pdb, new int[] {MessageAttachment.I.OWNER}, new java.lang.Object[] {getKey()}, new int[0]);
 				while ( lrs.next() )
 					larrAux.add(MessageAttachment.GetInstance(getNameSpace(), lrs));
 				lrs.close();
