@@ -746,7 +746,7 @@ public class Receipt
 
 		try
 		{
-			setAt(6, ldblResult);
+			setAt(I.RETROCESSIONS, ldblResult);
 		}
 		catch (Throwable e)
 		{
@@ -769,14 +769,14 @@ public class Receipt
 		lstreamInput = null;
 		for ( i = 0; i < larrDocs.length; i++ )
 		{
-			if ( Constants.DocID_ReceiptScan.equals(larrDocs[i].getAt(3)) )
+			if ( Constants.DocID_ReceiptScan.equals(larrDocs[i].getAt(Document.I.TYPE)) )
 			{
-				if ( larrDocs[i].getAt(5) == null )
-					return null;
-		    	if ( larrDocs[i].getAt(5) instanceof FileXfer )
-		    		lobjFile = (FileXfer)larrDocs[i].getAt(5);
+				if ( larrDocs[i].getAt(Document.I.FILE) == null )
+					continue;
+		    	if ( larrDocs[i].getAt(Document.I.FILE) instanceof FileXfer )
+		    		lobjFile = (FileXfer)larrDocs[i].getAt(Document.I.FILE);
 		    	else
-		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(5));
+		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(Document.I.FILE));
 		    	lstreamInput = new ByteArrayInputStream(lobjFile.getData());
 		    	break;
 			}
@@ -807,14 +807,14 @@ public class Receipt
 		lobjFile = null;
 		for ( i = 0; i < larrDocs.length; i++ )
 		{
-			if ( Constants.DocID_CutReceiptImage.equals(larrDocs[i].getAt(3)) )
+			if ( Constants.DocID_CutReceiptImage.equals(larrDocs[i].getAt(Document.I.TYPE)) )
 			{
-				if ( larrDocs[i].getAt(5) == null )
-					return null;
-		    	if ( larrDocs[i].getAt(5) instanceof FileXfer )
-		    		lobjFile = (FileXfer)larrDocs[i].getAt(5);
+				if ( larrDocs[i].getAt(Document.I.FILE) == null )
+					continue;
+		    	if ( larrDocs[i].getAt(Document.I.FILE) instanceof FileXfer )
+		    		lobjFile = (FileXfer)larrDocs[i].getAt(Document.I.FILE);
 		    	else
-		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(5));
+		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(Document.I.FILE));
 		    	break;
 			}
 		}
@@ -834,14 +834,14 @@ public class Receipt
 		lobjFile = null;
 		for ( i = 0; i < larrDocs.length; i++ )
 		{
-			if ( Constants.DocID_DebitNoteReceipt.equals(larrDocs[i].getAt(3)) )
+			if ( Constants.DocID_DebitNoteReceipt.equals(larrDocs[i].getAt(Document.I.TYPE)) )
 			{
-				if ( larrDocs[i].getAt(5) == null )
-					return null;
-		    	if ( larrDocs[i].getAt(5) instanceof FileXfer )
-		    		lobjFile = (FileXfer)larrDocs[i].getAt(5);
+				if ( larrDocs[i].getAt(Document.I.FILE) == null )
+					continue;
+		    	if ( larrDocs[i].getAt(Document.I.FILE) instanceof FileXfer )
+		    		lobjFile = (FileXfer)larrDocs[i].getAt(Document.I.FILE);
 		    	else
-		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(5));
+		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(Document.I.FILE));
 		    	break;
 			}
 		}
@@ -867,7 +867,7 @@ public class Receipt
 		else
 		{
 			ldtAux = (Timestamp)getAt(I.DUEDATE);
-			if ( Constants.RecType_Continuing.equals((UUID)getAt(Receipt.I.TYPE)) )
+			if ( Constants.RecType_Continuing.equals((UUID)getAt(I.TYPE)) )
 			{
 		    	ldtAux2 = Calendar.getInstance();
 		    	ldtAux2.setTimeInMillis(ldtAux.getTime());
@@ -916,13 +916,13 @@ public class Receipt
 		if ( Constants.MCPID_Issuing.equals(lidProfile) )
 		{
 			ldblPercent = getAbsolutePolicy().GetSubLine().getPercent();
-			ldblBase = (BigDecimal)getAt(4);
-			if ( (ldblBase != null) && (getAt(17) != null) )
+			ldblBase = (BigDecimal)getAt(I.COMMERCIALPREMIUM);
+			if ( (ldblBase != null) && (getAt(I.BONUSMALUS) != null) )
 			{
-				if ( (getAt(18) == null) || !((Boolean)getAt(18)) )
-					ldblBase = ldblBase.subtract((BigDecimal)getAt(17));
+				if ( (getAt(I.ISMALUS) == null) || !((Boolean)getAt(I.ISMALUS)) )
+					ldblBase = ldblBase.subtract((BigDecimal)getAt(I.BONUSMALUS));
 				else
-					ldblBase = ldblBase.add((BigDecimal)getAt(17));
+					ldblBase = ldblBase.add((BigDecimal)getAt(I.BONUSMALUS));
 			}
 			lbFound = true;
 		}
@@ -932,7 +932,7 @@ public class Receipt
 			ldblPercent = getAbsolutePolicy().getPercentOverride();
 			if ( ldblPercent == null )
 				ldblPercent = lobjMed.getPercent();
-			ldblBase = (BigDecimal)getAt(5);
+			ldblBase = (BigDecimal)getAt(I.COMMISSIONS);
 			lbFound = true;
 		}
 
@@ -941,13 +941,13 @@ public class Receipt
 			ldblPercent = lobjMed.GetCurrentDealFor(getAbsolutePolicy().GetSubLine().getKey());
 			if ( ldblPercent == null )
 				ldblPercent = getAbsolutePolicy().GetSubLine().getPercent();
-			ldblBase = (BigDecimal)getAt(4);
-			if ( (ldblBase != null) && (getAt(17) != null) )
+			ldblBase = (BigDecimal)getAt(I.COMMERCIALPREMIUM);
+			if ( (ldblBase != null) && (getAt(I.BONUSMALUS) != null) )
 			{
-				if ( (getAt(18) == null) || !((Boolean)getAt(18)) )
-					ldblBase = ldblBase.subtract((BigDecimal)getAt(17));
+				if ( (getAt(I.ISMALUS) == null) || !((Boolean)getAt(I.ISMALUS)) )
+					ldblBase = ldblBase.subtract((BigDecimal)getAt(I.BONUSMALUS));
 				else
-					ldblBase = ldblBase.add((BigDecimal)getAt(17));
+					ldblBase = ldblBase.add((BigDecimal)getAt(I.BONUSMALUS));
 			}
 			lbFound = true;
 		}
