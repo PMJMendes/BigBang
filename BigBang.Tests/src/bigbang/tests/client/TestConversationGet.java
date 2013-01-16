@@ -50,7 +50,7 @@ public class TestConversationGet
 		};
 
 		parameter = new ConversationSearchParameter();
-		parameter.ownerId = "CB0A6B61-6589-4BA5-8120-A0FE01077042";
+//		parameter.ownerId = "CB0A6B61-6589-4BA5-8120-A0FE01077042";
 		sorts = new ConversationSortParameter();
 		sorts.field = ConversationSortParameter.SortableField.SUBJECT;
 		sorts.order = SortOrder.ASC;
