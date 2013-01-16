@@ -28,6 +28,9 @@ public class Message
 
 		// For outgoing or display
 		public String docId;
+
+		// For display
+		public String ownerId;
 	}
 
 	public static class MsgAddress

@@ -153,6 +153,8 @@ public class ConversationServiceImpl
 
 		lobjResult.docId = lobjDoc.getKey().toString();
 
+		lobjResult.ownerId = lobjDoc.getOwnerID().toString();
+
 		lobjResult.name = lobjDoc.getLabel();
 		lobjResult.attachmentId = null;
 		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();
