@@ -19,9 +19,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
-import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
-import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
 public class TriggerImageOnCreate
@@ -65,7 +63,6 @@ public class TriggerImageOnCreate
 		DocumentData lobjDoc;
 		IProcess lobjProc;
 		Receipt lobjReceipt;
-		Client lobjClient;
 		AgendaItem lobjItem;
 		Timestamp ldtAux;
 		Calendar ldtAux2;
@@ -113,11 +110,7 @@ public class TriggerImageOnCreate
 		{
 	    	try
 	    	{
-				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-					lobjClient = (Client)lobjProc.GetParent().GetParent().GetData();
-				else
-					lobjClient = Client.GetInstance(lobjReceipt.getNameSpace(), (UUID)((SubPolicy)lobjProc.GetParent().GetData()).getAt(2));
-				if ( !Constants.ProfID_Simple.equals((UUID)lobjClient.getAt(9)) )
+				if ( !Constants.ProfID_Simple.equals(lobjReceipt.getProfile()) )
 				{
 					ldtAux = new Timestamp(new java.util.Date().getTime());
 			    	ldtAux2 = Calendar.getInstance();
@@ -134,9 +127,9 @@ public class TriggerImageOnCreate
 					lobjItem.SaveToDb(pdb);
 					lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_Receipt_ValidateReceipt,
 							Constants.OPID_Receipt_SetReturnToInsurer}, pdb);
-		    	}
 
-				mbWithAgenda = true;
+					mbWithAgenda = true;
+		    	}
 			}
 			catch (Throwable e)
 			{

@@ -467,10 +467,8 @@ public class Receipt
     	Policy lobjPolicy;
     	SubPolicy lobjSubPolicy;
     	UUID lidProfile;
-    	IProcess lobjProcess;
-    	Client lobjClient;
 
-    	if ( getAt(9) != null )
+    	if ( getAt(I.MATURITYDATE) != null )
     	{
 	    	lobjPolicy = getDirectPolicy();
 	    	if ( lobjPolicy == null )
@@ -479,36 +477,18 @@ public class Receipt
 	    		if ( lobjSubPolicy == null )
 	    			return false;
 	    		if ( (lobjSubPolicy.getAt(4) != null) &&
-	    				(((Timestamp)lobjSubPolicy.getAt(4)).before((Timestamp)getAt(9))) )
+	    				(((Timestamp)lobjSubPolicy.getAt(4)).before((Timestamp)getAt(I.MATURITYDATE))) )
 	    			return false;
 	    	}
 	    	else
 	    	{
 	    		if ( (lobjPolicy.getAt(9) != null) &&
-	    				(((Timestamp)lobjPolicy.getAt(9)).before((Timestamp)getAt(9))) )
+	    				(((Timestamp)lobjPolicy.getAt(9)).before((Timestamp)getAt(I.MATURITYDATE))) )
 	    			return false;
 	    	}
     	}
 
-    	lidProfile = getAbsolutePolicy().getProfile();
-
-    	if ( lidProfile == null )
-    	{
-	    	try
-	    	{
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), GetProcessID());
-	
-		    	if ( Constants.ProcID_SubPolicy.equals(lobjProcess.GetParent().GetScriptID()) )
-		    		lobjClient = Client.GetInstance(getNameSpace(), (UUID)((SubPolicy)lobjProcess.GetParent().GetData()).getAt(2));
-		    	else
-		    		lobjClient = (Client)lobjProcess.GetParent().GetParent().GetData();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-	    	lidProfile = (UUID)lobjClient.getAt(9);
-    	}
+    	lidProfile = getProfile();
 
     	if ( Constants.ProfID_VIP.equals(lidProfile) || Constants.ProfID_VIPNoDAS.equals(lidProfile) )
     		return false;
