@@ -42,6 +42,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private String documentId;
 	private boolean newDocument;
 	private String ownerTypeId;
+	protected boolean allow = true;
 
 	public static enum Action {
 		SAVE,
@@ -137,7 +138,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				public void onResponse(Document response) {
 					view.getForm().setValue(response);
 					view.setEditable(false);
-					view.lockToolbar(false);
+					view.lockToolbar(!allow);
 				}
 
 				@Override
@@ -382,6 +383,10 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	public void updateDocument(String ownerId, Document document) {
 
 		return;
+	}
+
+	public void allowEdit(boolean b) {
+		allow = b;
 	}
 
 
