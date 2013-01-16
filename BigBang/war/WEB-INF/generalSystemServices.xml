@@ -26,6 +26,10 @@
 		<servlet-name>ClientGroupService</servlet-name>
 		<servlet-class>bigBang.module.generalSystemModule.server.ClientGroupServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>OtherEntityService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.OtherEntityServiceImpl</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>CostCenterService</servlet-name>
@@ -54,4 +58,8 @@
 	<servlet-mapping>
 		<servlet-name>ClientGroupService</servlet-name>
 		<url-pattern>/bigbang/ClientGroupService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>OtherEntityService</servlet-name>
+		<url-pattern>/bigbang/OtherEntityService</url-pattern>
 	</servlet-mapping>

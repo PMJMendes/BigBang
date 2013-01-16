@@ -30,7 +30,6 @@ public class InsuranceAgencyServiceImpl
 	extends EngineImplementor
 	implements InsuranceAgencyService
 {
-
 	private static final long serialVersionUID = 1L;
 
 	public InsuranceAgency[] getInsuranceAgencies()

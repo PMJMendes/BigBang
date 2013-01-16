@@ -29,6 +29,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
+import com.premiumminds.BigBang.Jewel.Objects.OtherEntity;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
 public class DocumentServiceImpl
@@ -413,7 +414,7 @@ public class DocumentServiceImpl
 			lobjOwner = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pidOwnerType), pidOwner);
 			lidTopType = lobjOwner.getDefinition().getDefObject().getKey();
 
-			if ( (lobjOwner instanceof Company) || (lobjOwner instanceof Mediator) )
+			if ( (lobjOwner instanceof Company) || (lobjOwner instanceof Mediator) || (lobjOwner instanceof OtherEntity) )
 				lobjOwner = GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace());
 		}
 		catch (Throwable e)
@@ -430,6 +431,8 @@ public class DocumentServiceImpl
 			lidOp = Constants.OPID_General_ManageCompanies;
 		else if ( Constants.ObjID_Mediator.equals(lidTopType) )
 			lidOp = Constants.OPID_General_ManageMediators;
+		else if ( Constants.ObjID_OtherEntity.equals(lidTopType) )
+			lidOp = Constants.OPID_General_ManageOtherEntities;
 		else if ( Constants.ObjID_Client.equals(lidTopType) )
 			lidOp = Constants.OPID_Client_ManageData;
 		else if ( Constants.ObjID_QuoteRequest.equals(lidTopType) )
@@ -482,6 +485,16 @@ public class DocumentServiceImpl
 			((com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators)lobjResult).marrDelete = null;
 			((com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators)lobjResult).mobjContactOps = null;
 			((com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators)lobjResult).mobjDocOps = pobjInner;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.General.ManageOtherEntities )
+		{
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageOtherEntities)lobjResult).marrCreate = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageOtherEntities)lobjResult).marrModify = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageOtherEntities)lobjResult).marrDelete = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageOtherEntities)lobjResult).mobjContactOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageOtherEntities)lobjResult).mobjDocOps = pobjInner;
 			lbFound = true;
 		}
 

@@ -46,6 +46,7 @@ public class Constants
 	public static final UUID ObjID_Coverage                 = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
 	public static final UUID ObjID_Tax                      = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
 	public static final UUID ObjID_ClientGroup              = UUID.fromString("DC89D454-CCCC-441E-BCE3-9EE600AFCCCD");
+	public static final UUID ObjID_OtherEntity              = UUID.fromString("CFB6356D-3B80-4F62-83D5-A148011D1308");
 
 	// Client Objects
 	public static final UUID ObjID_Client                   = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
@@ -147,6 +148,7 @@ public class Constants
 	public static final UUID ObjID_DamageType               = UUID.fromString("6D2B02AF-A092-475F-85C7-A035012321FE");
 	public static final UUID ObjID_CasualtyReopenMotives    = UUID.fromString("F4E500C7-5EFE-4A8B-AD8A-A12B00E0CDC1");
 	public static final UUID ObjID_DisabilityType           = UUID.fromString("027296D7-1573-46F2-BD95-A1340114B485");
+	public static final UUID ObjID_OtherEntityType          = UUID.fromString("A110EE56-A8A1-4E7A-B564-A148011C3FD9");
 
 	public static final UUID ObjID_FieldType                = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues              = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
@@ -182,6 +184,7 @@ public class Constants
 	public static final UUID OPID_General_ManageLines                    = UUID.fromString("7CE5A4B8-9E13-4F14-BDDA-9EB500A0D171");
 	public static final UUID OPID_General_ManageCoefficients             = UUID.fromString("BF76CE8C-C9A7-408B-B623-9EB500A0F07F");
 	public static final UUID OPID_General_ManageGroups                   = UUID.fromString("08E5A828-0AF2-4347-A57A-9EB500A11526");
+	public static final UUID OPID_General_ManageOtherEntities            = UUID.fromString("E422084B-7F43-4DD2-8335-A1480120992C");
 	public static final UUID OPID_General_CreateClient                   = UUID.fromString("214118B8-C43C-4941-9D1E-9EB500A1381C");
 	public static final UUID OPID_General_TriggerDeleteClient            = UUID.fromString("EA560433-17DF-4E0A-A7BC-9F3300EAFD78");
 	public static final UUID OPID_General_UndoGroups                     = UUID.fromString("742FCF0E-FD17-439A-A810-9F3300CCF026");
@@ -191,6 +194,7 @@ public class Constants
 	public static final UUID OPID_General_UndoLines                      = UUID.fromString("D4E44325-B8F8-450B-9949-9F3300E6AB0E");
 	public static final UUID OPID_General_UndoMediators                  = UUID.fromString("3A1572FF-B1C6-4DEC-9819-9F3300E6DA84");
 	public static final UUID OPID_General_UndoUsers                      = UUID.fromString("F71DF6CC-C58E-4AA7-9BE5-9F3300E6FD4F");
+	public static final UUID OPID_General_UndoOtherEntities              = UUID.fromString("63993739-7EA0-4FE3-8737-A14801201EB2");
 	public static final UUID OPID_General_UndoDeleteClient               = UUID.fromString("711B9533-8298-4DA5-BFD1-9F3D01211F51");
 
 	// Client Operations
