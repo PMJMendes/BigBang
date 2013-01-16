@@ -44,6 +44,8 @@ import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyService;
 import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.MediatorService;
 import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
+import bigBang.module.generalSystemModule.interfaces.OtherEntityService;
+import bigBang.module.generalSystemModule.interfaces.OtherEntityServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.UserService;
 import bigBang.module.generalSystemModule.interfaces.UserServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
@@ -113,6 +115,8 @@ public class Services
 			GWT.create(MediatorService.class);
 	public static final InsuranceAgencyServiceAsync insuranceAgencyService =
 			GWT.create(InsuranceAgencyService.class);
+	public static final OtherEntityServiceAsync otherEntityService =
+			GWT.create(OtherEntityService.class);
 	public static final ClientServiceAsync clientService =
 			GWT.create(ClientService.class);
 	public static final QuoteRequestServiceAsync quoteRequestService =

@@ -92,6 +92,11 @@ public class BigBang_Tests
 //		TestCompanyEdit.DoTest();
 //		TestCompanyDelete.DoTest();
 //
+//		TestOtherEntityGet.DoTest();
+//		TestOtherEntityCreate.DoTest();
+//		TestOtherEntityEdit.DoTest();
+//		TestOtherEntityDelete.DoTest();
+//
 //		TestUserGet.DoTest();
 //		TestUserCreate.DoTest();
 //		TestUserEdit.DoTest();
