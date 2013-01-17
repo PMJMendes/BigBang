@@ -49,7 +49,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SEND_RECEIPT,
 		INSURER_ACCOUNTING, AGENT_ACCOUNTING,
 		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY, REQUEST_DAS, NOT_PAYED_INDICATION,
-		RETURN_PAYMENT, GENERATE_RECEIPT, SEND_MESSAGE, RECEIVE_MESSAGE
+		RETURN_PAYMENT, GENERATE_RECEIPT, SEND_MESSAGE, RECEIVE_MESSAGE, CANCEL_PAYMENT_NOTICE
 	}
 
 	public interface Display {
@@ -105,6 +105,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowSendMessage(boolean hasPermission);
 
 		void allowReceiveMessage(boolean hasPermission);
+
+		void allowCancelPaymentNotice(boolean hasPermission);
 
 	}
 
@@ -239,6 +241,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case SEND_MESSAGE:
 					onSendMessage();
 					break;
+				case CANCEL_PAYMENT_NOTICE:
+					onCancelPaymentNotice();
+					break;
 				}
 
 			}
@@ -291,6 +296,24 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onCancelPaymentNotice() {
+		receiptBroker.cancelPaymentNotice(view.getForm().getInfo().id, new ResponseHandler<Receipt>() {
+
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Aviso de Cobrança cancelado com sucesso."), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();								
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar o aviso de cobrança."), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();												
+			}
+			
+		});
 	}
 
 	protected void onReceiveMessage() {
@@ -525,6 +548,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowGenerateReceipt(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RECEIPT_GENERATION));
 				view.allowSendMessage(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CONVERSATION));
 				view.allowReceiveMessage(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CONVERSATION));
+				view.allowCancelPaymentNotice(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CANCEL_PAYMENT_NOTICE));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

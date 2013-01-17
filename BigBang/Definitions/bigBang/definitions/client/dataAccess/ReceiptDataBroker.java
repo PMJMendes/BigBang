@@ -110,4 +110,7 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 	void receiveMessage(Conversation info,
 			ResponseHandler<Conversation> responseHandler);
 
+	public void cancelPaymentNotice(String id,
+			ResponseHandler<Receipt> responseHandler);
+
 }

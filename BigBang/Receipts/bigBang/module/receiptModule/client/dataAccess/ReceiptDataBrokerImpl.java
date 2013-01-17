@@ -1017,7 +1017,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 			@Override
 			public void onResponseSuccess(Conversation result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CONVERSATION, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CONVERSATION, result.id));
 				responseHandler.onResponse(result);
 			}
 
@@ -1040,7 +1040,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 			@Override
 			public void onResponseSuccess(Conversation result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CONVERSATION, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CONVERSATION, result.id));
 				responseHandler.onResponse(result);
 			}
 
@@ -1052,6 +1052,28 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				super.onResponseFailure(caught);
 			}
 		});					}
+
+	@Override
+	public void cancelPaymentNotice(String id,
+			final ResponseHandler<Receipt> responseHandler) {
+		service.cancelPaymentNotice(id, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CANCEL_PAYMENT_NOTICE, result.id));
+				responseHandler.onResponse(result);
+			}
+		
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not cancel the payment notice")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		
+		});
+	}
 
 }
 

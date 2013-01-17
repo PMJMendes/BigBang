@@ -22,6 +22,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	protected MenuItem setForReturn;
 	//client
 	protected MenuItem sendPaymentNotice;
+	protected MenuItem cancelPaymentNotice;
 	protected MenuItem sendSecondPaymentNotice;
 	protected MenuItem sendReceipt;
 	protected MenuItem sendPaymentToClient;
@@ -134,6 +135,16 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, sendPaymentNotice);
+		cancelPaymentNotice = new MenuItem("Cancelar Aviso de Cobrança", new Command(){
+
+			@Override
+			public void execute() {
+				onCancelPaymentNotice();
+			}
+			
+		});
+		addItem(SUB_MENU.EXECUTE, cancelPaymentNotice);
+		
 		sendSecondPaymentNotice = new MenuItem("Enviar Segundo Aviso de Cobrança", new Command() {
 
 			@Override
@@ -297,6 +308,8 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 
 	}
 
+	protected abstract void onCancelPaymentNotice();
+
 	public abstract void onGenerateReceipt();
 
 	protected abstract void onReceiveMessage();
@@ -433,4 +446,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		this.receiveMessage.setEnabled(hasPermission);
 	}
 
+	public void allowCancelPaymentNotice(boolean hasPermission){
+		this.cancelPaymentNotice.setEnabled(hasPermission);
+	}
 }

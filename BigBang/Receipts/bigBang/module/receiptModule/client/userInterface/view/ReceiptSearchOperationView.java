@@ -222,6 +222,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.SEND_MESSAGE));
 			}
 
+			@Override
+			protected void onCancelPaymentNotice() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.CANCEL_PAYMENT_NOTICE));
+			}
+
 		};
 		formWrapper.add(operationsToolbar);
 		formWrapper.setCellHeight(operationsToolbar, "21px");
@@ -431,6 +436,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowReceiveMessage(boolean hasPermission) {
 		operationsToolbar.allowReceiveMessage(hasPermission);	
+	}
+
+	@Override
+	public void allowCancelPaymentNotice(boolean hasPermission) {
+		operationsToolbar.allowCancelPaymentNotice(hasPermission);
 	}
 
 }
