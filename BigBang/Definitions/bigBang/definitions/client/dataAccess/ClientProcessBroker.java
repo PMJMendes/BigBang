@@ -77,5 +77,8 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	
 	void receiveMessage(Conversation conversation, ResponseHandler<Conversation> handler);
 
+	public void markAsInternational(String id,
+			ResponseHandler<Client> responseHandler);
+
 
 }

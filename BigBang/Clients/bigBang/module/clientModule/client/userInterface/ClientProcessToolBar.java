@@ -25,6 +25,7 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 	
 	//ADMIN
 	protected MenuItem deleteItem;
+	private MenuItem markAsInternational;
 	
 	//OTHER
 	
@@ -78,6 +79,18 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.EXECUTE, clientMergeItem);
 		
+		markAsInternational = new MenuItem("Marcar como Estrangeiro", new Command(){
+
+			@Override
+			public void execute() {
+				onMarkAsInternational();
+			}
+			
+			
+		});
+		
+		addItem(SUB_MENU.DATA, markAsInternational);
+		
 		//DATA
 		managerTransferItem = new MenuItem("Criar Transferência de Gestor", new Command() {
 
@@ -119,6 +132,7 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 		
 	}
 
+	protected abstract void onMarkAsInternational();
 	//CREATE
 	public abstract void onCreatePolicy();
 	public abstract void onCreateRiskAnalisys();
@@ -170,5 +184,9 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 	
 	public void allowReceiveMessage(boolean allow){
 		this.receiveMessage.setEnabled(allow);
+	}
+	
+	public void allowMarkAsInternational(boolean allow){
+		this.markAsInternational.setEnabled(allow);
 	}
 }

@@ -44,6 +44,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 		this.subProcessesService = BigBangProcessService.Util.getInstance();
 		this.dataElementId = BigBangConstants.EntityIds.CLIENT;
 		this.searchBroker = new ClientSearchDataBroker(this.service);
+		cache.setEnabled(false);
 	}
 
 	@Override
@@ -493,4 +494,27 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 		});		
 	}
 
+	@Override
+	public void markAsInternational(String id,
+			final ResponseHandler<Client> responseHandler) {
+		service.setInternational(id, new BigBangAsyncCallback<Client>() {
+
+			@Override
+			public void onResponseSuccess(Client result) {
+				requireDataRefresh();
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.MARK_AS_INTERNATIONAL, result.id));
+				responseHandler.onResponse(result);
+			}
+		
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not mark the client as international")		
+				});				
+				super.onResponseFailure(caught);
+			}
+			
+		
+		});
+	}
 }

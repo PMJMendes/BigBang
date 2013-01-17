@@ -160,6 +160,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			public void onReceiveMessage() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.RECEIVE_MESSAGE));
 			}
+
+			@Override
+			protected void onMarkAsInternational() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.MARK_AS_INTERNATIONAL));
+			}
 		};
 
 		this.form = new ClientForm();
@@ -384,6 +389,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public HasValueSelectables<ConversationStub> getConversationList() {
 		return childrenPanel.conversationList;
+	}
+
+	@Override
+	public void allowMarkAsInternational(boolean hasPermission) {
+		operationsToolbar.allowMarkAsInternational(hasPermission);
 	}
 
 

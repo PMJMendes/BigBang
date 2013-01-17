@@ -121,6 +121,7 @@ public class BigBangConstants {
 			public static final String CREATE_POLICY = "5903FA18-8F4D-4DD3-B4AE-9F090143186E";
 			public static final String CREATE_RISK_ANALISYS = "";
 			public static final String CONVERSATION = "26185760-A862-4CE4-9620-9F090142B18A";
+			public static String MARK_AS_INTERNATIONAL = "CA57DD58-CC1B-4359-81F5-A14900DFCB81";
 			
 		}
 		

@@ -41,7 +41,7 @@ public class ClientFormValidator extends FormValidator<ClientForm> {
 
 	private boolean validateTaxNumber() {
 		form.taxNumber.setWarning((form.clientType.getValue() == null) || (form.taxNumber.getValue() == null) || form.taxNumber.getValue().isEmpty() ||
-				!specialValidateTaxNumberFormat());
+				!(form.getValue().isInternational || specialValidateTaxNumberFormat()));
 		return validateString(form.taxNumber, 0, 250, true);
 	}
 

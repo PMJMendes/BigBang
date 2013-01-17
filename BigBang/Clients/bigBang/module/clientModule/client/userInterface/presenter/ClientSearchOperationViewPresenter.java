@@ -57,7 +57,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		MERGE_WITH_CLIENT,
 		TRANSFER_MANAGER,
 		SEND_MESSAGE,
-		ON_NEW_RESULTS, RECEIVE_MESSAGE
+		ON_NEW_RESULTS, RECEIVE_MESSAGE, MARK_AS_INTERNATIONAL
 	}
 
 	public interface Display {
@@ -104,6 +104,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 		Widget asWidget();
 		void allowReceiveMessage(boolean b);
+		void allowMarkAsInternational(boolean hasPermission);
 	}
 
 	private Display view;
@@ -250,6 +251,9 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					item.pushIntoStackParameter("display", "receivemessage");
 					item.setParameter("ownerid", view.getForm().getValue().id);
 					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case MARK_AS_INTERNATIONAL:
+					onMarkAsInternational();
 					break;
 				}
 			}
@@ -418,6 +422,25 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		this.bound = true;
 	}
 
+	protected void onMarkAsInternational() {
+		clientBroker.markAsInternational(view.getForm().getInfo().id, new ResponseHandler<Client>(){
+
+			@Override
+			public void onResponse(Client response) {
+				NavigationHistoryManager.getInstance().reload();
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Cliente marcado como estrangeiro."), TYPE.TRAY_NOTIFICATION));
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possivel marcar o cliente como estrangeiro."), TYPE.ERROR_NOTIFICATION));
+
+			}
+			
+			
+		});
+	}
+
 	private void clearView(){
 		view.setSaveModeEnabled(false);
 		view.clearAllowedPermissions();
@@ -508,7 +531,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				view.allowCreateRiskAnalysis(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_RISK_ANALISYS));
 				view.allowCreateQuoteRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_QUOTE_REQUEST));
 				view.allowcreateCasualty(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_CASUALTY));
-
+				view.allowMarkAsInternational(PermissionChecker.hasPermission(response,  BigBangConstants.OperationIds.ClientProcess.MARK_AS_INTERNATIONAL));
+				
 				view.setSaveModeEnabled(false);
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);

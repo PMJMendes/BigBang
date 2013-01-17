@@ -306,6 +306,9 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 		name.setValue(info.name);
 		number.setValue(info.clientNumber);
 		taxNumber.setValue(info.taxNumber);
+		
+		taxNumber.setLabelText(info.isInternational ? "NIF (Internacional)" : "NIF");
+		
 		address.setValue(info.address);
 		group.setValue(info.groupId);
 		NIB.setValue(info.NIB);
