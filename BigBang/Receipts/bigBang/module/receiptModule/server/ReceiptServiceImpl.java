@@ -1543,10 +1543,15 @@ public class ReceiptServiceImpl
 		UUID lidClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
+		MasterDB ldb;
 		UUID lidSet;
 		UUID lidSetClient;
 		DocOps lobjDocOps;
+		Boolean lbTryEmail;
+		ConversationData lobjConvData;
 		CreatePaymentNotice lopCPN;
+		Client lobjClient;
+		com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation lopCCC;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
@@ -1578,13 +1583,35 @@ public class ReceiptServiceImpl
 			larrByClient.add(lobjReceipt.getKey());
 		}
 
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
 		lidSet = null;
 		for(UUID lidC : larrReceipts.keySet())
 		{
 			lidSetClient = null;
 			lobjDocOps = null;
+			lbTryEmail = null;
+			lobjConvData = null;
 			larrByClient = larrReceipts.get(lidC);
 			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
+
+			try
+			{
+				ldb.BeginTrans();
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+
 			for ( i = 0; i < larrFinal.length; i++ )
 			{
 				try
@@ -1597,18 +1624,60 @@ public class ReceiptServiceImpl
 					lopCPN.midSet = lidSet;
 					lopCPN.midSetDocument = lidSetClient;
 					lopCPN.mobjDocOps = lobjDocOps;
+					lopCPN.mbTryEmail = lbTryEmail;
+					lopCPN.mobjConvData = lobjConvData;
 
-					lopCPN.Execute();
+					lopCPN.Execute(ldb);
 
+					lobjConvData = lopCPN.mobjConvData;
+					lbTryEmail = lopCPN.mbTryEmail;
 					lobjDocOps = lopCPN.mobjDocOps;
 					lidSetClient = lopCPN.midSetDocument;
 					lidSet = lopCPN.midSet;
 				}
 				catch (Throwable e)
 				{
+					try { ldb.Rollback(); } catch (Throwable e1) {}
+					try { ldb.Disconnect(); } catch (Throwable e1) {}
 					throw new BigBangException(e.getMessage(), e);
 				}
 			}
+
+			if ( lobjConvData != null )
+			{
+				try
+				{
+					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lidC);
+					lopCCC = new com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation(lobjClient.GetProcessID());
+					lopCCC.mobjData = lobjConvData;
+					lopCCC.Execute(ldb);
+				}
+				catch (Throwable e)
+				{
+					try { ldb.Rollback(); } catch (Throwable e1) {}
+					try { ldb.Disconnect(); } catch (Throwable e1) {}
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+
+			try
+			{
+				ldb.Commit();
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
 		}
 	}
 

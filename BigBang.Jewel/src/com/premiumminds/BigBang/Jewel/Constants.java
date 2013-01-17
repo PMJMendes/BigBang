@@ -583,11 +583,13 @@ public class Constants
 	public static final UUID SubTypeID_Condo = UUID.fromString("5C7A0424-126B-467B-977A-9EE600CC13A4");
 
 	// Client Profiles
-	public static final UUID ProfID_Normal   = UUID.fromString("9F871430-9BBC-449F-B125-9EE600BE5A9A");
-	public static final UUID ProfID_VIP      = UUID.fromString("63114D11-6087-4EFE-9A7E-9EE600BE52DA");
-	public static final UUID ProfID_Simple   = UUID.fromString("51ED12A4-95A9-44B0-928D-A01500DC83EB");
-	public static final UUID ProfID_External = UUID.fromString("8641B5C6-CABE-4260-AD70-A0A2010A028F");
-	public static final UUID ProfID_VIPNoDAS = UUID.fromString("624A580F-F961-457A-A699-A10301134BE0");
+	public static final UUID ProfID_Normal     = UUID.fromString("9F871430-9BBC-449F-B125-9EE600BE5A9A");
+	public static final UUID ProfID_VIP        = UUID.fromString("63114D11-6087-4EFE-9A7E-9EE600BE52DA");
+	public static final UUID ProfID_Simple     = UUID.fromString("51ED12A4-95A9-44B0-928D-A01500DC83EB");
+	public static final UUID ProfID_External   = UUID.fromString("8641B5C6-CABE-4260-AD70-A0A2010A028F");
+	public static final UUID ProfID_VIPNoDAS   = UUID.fromString("624A580F-F961-457A-A699-A10301134BE0");
+	public static final UUID ProfID_Email      = UUID.fromString("AAE32765-F04F-41C2-BA3B-A14900FB1628");
+	public static final UUID ProfID_EmailNoDAS = UUID.fromString("282FA883-C0B1-45C3-BDB8-A14900FB1ED4");
 
 	// Object Types
 	public static final UUID ObjTypeID_Person    = UUID.fromString("EDD94689-EFED-4B50-AA6E-9F9501402700");
@@ -676,9 +678,10 @@ public class Constants
 	public static final UUID TID_HealthReceipt       = UUID.fromString("06801686-C77A-4B90-A74A-A12A0120FE95");
 
 	// Contact Types
-	public static final UUID CtTypeID_General       = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");
-	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
-	public static final UUID CtTypeID_ExpenseMaps   = UUID.fromString("1607EEDB-C9C2-4E1A-B453-A03D00BEAB18");
+	public static final UUID CtTypeID_General        = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");
+	public static final UUID CtTypeID_ReceiptReturn  = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
+	public static final UUID CtTypeID_ExpenseMaps    = UUID.fromString("1607EEDB-C9C2-4E1A-B453-A03D00BEAB18");
+	public static final UUID CtTypeID_PaymentNotices = UUID.fromString("3FD740A3-CAD1-4C97-9FF7-A0210100A271");
 
 	// Contact Info Types
 	public static final UUID CInfoID_Email = UUID.fromString("96467849-6FE1-4113-928C-9EDF00F40FB9");
@@ -714,6 +717,9 @@ public class Constants
 	public static final UUID MsgDir_Incoming = UUID.fromString("405D7348-19FE-4556-B1A0-A11800F30E61");
 	public static final UUID MsgDir_Outgoing = UUID.fromString("4AFA1A58-3BB6-4F55-9CF6-A11800F3142A");
 
+	// Conversation Types
+	public static final UUID ConvTpID_PaymentNotice = UUID.fromString("C7226C4D-255A-4BFD-AE67-A14901080BFC");
+
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;
 	public static final int ZipCode_In_PostalCode = 0;
@@ -724,6 +730,7 @@ public class Constants
 	public static final int FKOwner_In_DocInfo = 0;
 	public static final int FKOwnerType_In_Document = 1;
 	public static final int FKOwner_In_Document = 2;
+	public static final int FKType_In_Document = 3;
 	public static final int FKCoverage_In_Tax = 1;
 	public static final int Order_In_Tax = 8;
 	public static final int FKSubLine_In_Coverage = 1;

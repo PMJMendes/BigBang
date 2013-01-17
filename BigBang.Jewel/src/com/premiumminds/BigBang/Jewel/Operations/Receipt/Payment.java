@@ -156,7 +156,8 @@ public class Payment
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( !lobjReceipt.isReverseCircuit() && !lbDirect && !Constants.ProfID_VIPNoDAS.equals(lidProfile))
+		if ( !lobjReceipt.isReverseCircuit() && !lbDirect &&
+				!Constants.ProfID_VIPNoDAS.equals(lidProfile) && !Constants.ProfID_EmailNoDAS.equals(lidProfile))
 		{
 			ldtToday = Calendar.getInstance();
 			ldtToday.set(Calendar.HOUR_OF_DAY, 0);

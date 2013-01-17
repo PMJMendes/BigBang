@@ -232,6 +232,78 @@ public class Client
 		return larrAux.toArray(new Document[larrAux.size()]);
     }
 
+    public Contact[] GetContactsByType(UUID pidType)
+    	throws BigBangJewelException
+    {
+    	ArrayList<Contact> larrAux;
+		IEntity lrefContactInfo;
+        MasterDB ldb;
+        ResultSet lrsInfo;
+
+		larrAux = new ArrayList<Contact>();
+
+		try
+		{
+			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Contact)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsInfo = lrefContactInfo.SelectByMembers(ldb,
+					new int[] {Constants.FKOwnerType_In_Contact, Constants.FKOwner_In_Contact, Constants.FKType_In_Contact},
+					new java.lang.Object[] {Constants.ObjID_Client, getKey(), pidType}, new int[] {0});
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsInfo.next() )
+				larrAux.add(Contact.GetInstance(getNameSpace(), lrsInfo));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsInfo.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new Contact[larrAux.size()]);
+    }
+
     public Mediator getMediator()
     	throws BigBangJewelException
     {

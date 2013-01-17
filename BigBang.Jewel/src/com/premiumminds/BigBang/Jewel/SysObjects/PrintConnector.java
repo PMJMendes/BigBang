@@ -206,7 +206,12 @@ public class PrintConnector
 
 		larrDocs = pobjSet.getCurrentDocs();
 		for ( i = 0; i < larrDocs.length; i++ )
+		{
+			if ( (pobjSet.getAt(PrintSet.I.PRINTEDON) == null) && (Boolean)larrDocs[i].getAt(PrintSetDocument.I.EXCLUDE) )
+				continue;
+
 			printSetDocument(larrDocs[i]);
+		}
 
 		if ( pobjSet.getAt(PrintSet.I.PRINTEDON) == null )
 		{

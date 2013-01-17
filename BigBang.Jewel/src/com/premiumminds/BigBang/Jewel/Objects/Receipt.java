@@ -14,6 +14,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -490,7 +491,8 @@ public class Receipt
 
     	lidProfile = getProfile();
 
-    	if ( Constants.ProfID_VIP.equals(lidProfile) || Constants.ProfID_VIPNoDAS.equals(lidProfile) )
+    	if ( Constants.ProfID_VIP.equals(lidProfile) || Constants.ProfID_VIPNoDAS.equals(lidProfile) || 
+    			Constants.ProfID_Email.equals(lidProfile) || Constants.ProfID_EmailNoDAS.equals(lidProfile) )
     		return false;
 
     	if ( Constants.RecType_Continuing.equals(getAt(1)) )
@@ -775,31 +777,67 @@ public class Receipt
 		}
     }
 
-    public FileXfer getStamped()
+    public Document getStamped(SQLServer pdb)
     	throws BigBangJewelException
     {
-		Document[] larrDocs;
-		int i;
-		FileXfer lobjFile;
+		Document lobjAux;
+		int[] larrMembers;
+		java.lang.Object[] larrParams;
+		IEntity lrefDocuments;
+        ResultSet lrsDocuments;
 
-		larrDocs = GetCurrentDocs();
+		lobjAux = null;
 
-		lobjFile = null;
-		for ( i = 0; i < larrDocs.length; i++ )
+		larrMembers = new int[3];
+		larrMembers[0] = Constants.FKOwnerType_In_Document;
+		larrMembers[1] = Constants.FKOwner_In_Document;
+		larrMembers[2] = Constants.FKType_In_Document;
+		larrParams = new java.lang.Object[3];
+		larrParams[0] = Constants.ObjID_Receipt;
+		larrParams[1] = getKey();
+		larrParams[2] = Constants.DocID_CutReceiptImage;
+
+		try
 		{
-			if ( Constants.DocID_CutReceiptImage.equals(larrDocs[i].getAt(Document.I.TYPE)) )
-			{
-				if ( larrDocs[i].getAt(Document.I.FILE) == null )
-					continue;
-		    	if ( larrDocs[i].getAt(Document.I.FILE) instanceof FileXfer )
-		    		lobjFile = (FileXfer)larrDocs[i].getAt(Document.I.FILE);
-		    	else
-		    		lobjFile = new FileXfer((byte[])larrDocs[i].getAt(Document.I.FILE));
-		    	break;
-			}
+			lrefDocuments = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Document)); 
+			lrsDocuments = lrefDocuments.SelectByMembers(pdb, larrMembers, larrParams, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return lobjFile;
+		try
+		{
+			while ( lrsDocuments.next() )
+			{
+				lobjAux = Document.GetInstance(getNameSpace(), lrsDocuments);
+				if ( lobjAux.getAt(Document.I.FILE) != null )
+					break;
+				lobjAux = null;
+			}
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsDocuments.close(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsDocuments.close(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDocuments.close();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lobjAux;
     }
 
     public FileXfer getInternal()
