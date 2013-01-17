@@ -192,7 +192,7 @@ public class OtherEntityServiceImpl
 			lopMOE.Execute();
 
         	lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_OtherEntityType),
-        			lopMOE.marrCreate[0].midType);
+        			lopMOE.marrModify[0].midType);
 		}
 		catch (Throwable e)
 		{
