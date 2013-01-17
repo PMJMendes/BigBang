@@ -14,7 +14,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyChildrenPanel;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyListEntry;
-import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyOperationsToolbar;
+import bigBang.module.generalSystemModule.client.userInterface.StandardGeneralSystemOperationsToolbar;
 import bigBang.module.generalSystemModule.client.userInterface.form.InsuranceAgencyForm;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter.Action;
@@ -34,7 +34,7 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	private InsuranceAgencyForm insuranceAgencyForm;
 	protected ToolButton newButton;
 	protected ActionInvokedEventHandler<InsuranceAgencyManagementOperationViewPresenter.Action> actionHandler;
-	protected InsuranceAgencyOperationsToolbar toolbar;
+	protected StandardGeneralSystemOperationsToolbar toolbar;
 	protected InsuranceAgencyChildrenPanel childrenPanel;
 
 	public InsuranceAgencyManagementOperationView() {
@@ -70,7 +70,7 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
 
-		this.toolbar = new InsuranceAgencyOperationsToolbar() {
+		this.toolbar = new StandardGeneralSystemOperationsToolbar() {
 
 			@Override
 			public void onSaveRequest() {

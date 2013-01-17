@@ -52,6 +52,7 @@ public class BigBangConstants {
 		public static final String CONVERSATION = "1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4";
 		public static final String ASSESSMENT = "CCCC8540-B2AF-45D6-951C-A1330100BC77";
 		public static final String MEDICAL_FILE = "835E3722-A13B-451B-AEC8-A13401125446";
+		public static final String OTHER_ENTITY = "CFB6356D-3B80-4F62-83D5-A148011D1308";
 
 	}
 
@@ -79,6 +80,7 @@ public class BigBangConstants {
 		public static final String CONVERSATION_CLOSING_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 		public static final String CASUALTY_SUB_CASUALTY_REOPEN = "F4E500C7-5EFE-4A8B-AD8A-A12B00E0CDC1";
 		public static final String DISABILITY_TYPE = "027296D7-1573-46F2-BD95-A1340114B485";
+		public static final String OTHER_ENTITIES_TYPE = "A110EE56-A8A1-4E7A-B564-A148011C3FD9";
 	}
 	
 	public static class TypifiedListValues {

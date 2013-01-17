@@ -27,7 +27,8 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 		GROUP,
 		TAX,
 		COVERAGE,
-		COST_CENTER
+		COST_CENTER,
+		OTHER_ENTITIES
 	}
 
 	public static interface Display {
@@ -122,6 +123,8 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 					case GROUP:
 						item.pushIntoStackParameter("display", "clientgroup");
 						break;
+					case OTHER_ENTITIES:
+						item.pushIntoStackParameter("display", "otherentities");
 					}
 				}
 
@@ -170,6 +173,9 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 					}else if(display.equalsIgnoreCase("user")){
 						view.selectOperation(SectionOperation.USER);
 						present("GENERAL_SYSTEM_USER_MANAGEMENT", parameters, true);
+					}else if(display.equalsIgnoreCase("otherentities")){
+						view.selectOperation(SectionOperation.OTHER_ENTITIES);
+						present("GENERAL_SYSTEM_OTHER_ENTITIES_MANAGEMENT", parameters, true);
 					}else{
 						goToDefault();
 					}

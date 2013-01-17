@@ -5,12 +5,12 @@ import com.google.gwt.user.client.ui.MenuItem;
 
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
-public abstract class InsuranceAgencyOperationsToolbar extends
+public abstract class StandardGeneralSystemOperationsToolbar extends
 		BigBangOperationsToolBar {
 
 	private MenuItem deleteItem;
 
-	public InsuranceAgencyOperationsToolbar(){
+	public StandardGeneralSystemOperationsToolbar(){
 		this.deleteItem = new MenuItem("Eliminar", new Command() {
 
 			@Override

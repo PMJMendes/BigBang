@@ -72,6 +72,7 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 		addDockItem("Ramos e Coberturas", r.coveragesIcon(), SectionOperation.COVERAGE);
 		addDockItem("Campos das Apólices", r.taxesIcon(), SectionOperation.TAX);
 		addDockItem("Grupos de Clientes", r.clientGroupIcon(), SectionOperation.GROUP);
+		addDockItem("Outras Entidades", r.otherEntitiesIcon(), SectionOperation.OTHER_ENTITIES);
 	}
 
 	protected void addDockItem(String text, ImageResource icon, final GeneralSystemSectionViewPresenter.SectionOperation action){

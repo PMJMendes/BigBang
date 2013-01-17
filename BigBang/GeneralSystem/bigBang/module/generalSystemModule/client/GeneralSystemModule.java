@@ -35,6 +35,7 @@ import bigBang.module.generalSystemModule.client.dataAccess.CostCenterBrokerImpl
 import bigBang.module.generalSystemModule.client.dataAccess.CoverageBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.InsuranceAgencyBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.MediatorBrokerImpl;
+import bigBang.module.generalSystemModule.client.dataAccess.OtherEntityBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.UserBrokerImpl;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
@@ -42,6 +43,7 @@ import bigBang.module.generalSystemModule.client.userInterface.presenter.Coverag
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.OtherEntityManagementViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.view.ClientGroupManagementOperationView;
@@ -50,6 +52,7 @@ import bigBang.module.generalSystemModule.client.userInterface.view.CoverageMana
 import bigBang.module.generalSystemModule.client.userInterface.view.GeneralSystemSectionView;
 import bigBang.module.generalSystemModule.client.userInterface.view.InsuranceAgencyManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.MediatorManagementOperationView;
+import bigBang.module.generalSystemModule.client.userInterface.view.OtherEntityManagementView;
 import bigBang.module.generalSystemModule.client.userInterface.view.TaxManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.UserManagementOperationView;
 import bigBang.module.generalSystemModule.interfaces.GeneralSystemService;
@@ -146,6 +149,16 @@ public class GeneralSystemModule implements Module {
 			public ViewPresenter getInstance() {
 				ClientGroupManagementOperationView view = (ClientGroupManagementOperationView) GWT.create(ClientGroupManagementOperationView.class);
 				ViewPresenter presenter = new ClientGroupManagementOperationViewPresenter(view);
+				return presenter;
+			}
+		});
+		
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_OTHER_ENTITIES_MANAGEMENT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				OtherEntityManagementView view = (OtherEntityManagementView) GWT.create(OtherEntityManagementView.class);
+				ViewPresenter presenter = new OtherEntityManagementViewPresenter(view);
 				return presenter;
 			}
 		});
@@ -276,6 +289,7 @@ public class GeneralSystemModule implements Module {
 				new ClientGroupBrokerImpl(),
 				new MediatorBrokerImpl(),
 				new CoverageBrokerImpl(),
+				new OtherEntityBrokerImpl()
 		};
 	}
 
@@ -288,6 +302,7 @@ public class GeneralSystemModule implements Module {
 				BigBangConstants.EntityIds.CLIENT_GROUP,
 				BigBangConstants.EntityIds.MEDIATOR,
 				BigBangConstants.EntityIds.COVERAGE,
+				BigBangConstants.EntityIds.OTHER_ENTITY
 		};
 	}
 }

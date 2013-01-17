@@ -302,6 +302,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 			InsuranceAgency listInsuranceAgency = entry.getValue();
 			if(listInsuranceAgency.id.equalsIgnoreCase(agencyId) && !entry.isSelected()){
 				entry.setSelected(true, true);
+				break;
 			}
 		}
 		//Gets the user to show

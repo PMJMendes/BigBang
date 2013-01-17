@@ -29,4 +29,6 @@ public interface Resources extends ClientBundle {
 	@Source("images/undoIcon.png")
 	ImageResource historyIcon();
 
+	@Source("images/otherEntitiesIcon.png")
+	ImageResource otherEntitiesIcon();
 }
