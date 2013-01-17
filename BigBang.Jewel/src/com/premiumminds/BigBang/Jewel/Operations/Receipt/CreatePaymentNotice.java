@@ -124,6 +124,11 @@ public class CreatePaymentNotice
 		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
 	}
 
+	public boolean LocalCanUndo()
+	{
+		return false;
+	}
+
 	public String UndoDesc(String pstrLineBreak)
 	{
 		return "O aviso de cobrança será cancelado. A documentação gerada será mantida, para preservar o histórico.";

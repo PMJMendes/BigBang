@@ -45,6 +45,7 @@ public interface ReceiptService
 	public Receipt setForReturn(Receipt.ReturnMessage message) throws SessionExpiredException, BigBangException;
 
 	public Receipt createPaymentNotice(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt cancelPaymentNotice(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt markPayed(Receipt.PaymentInfo info) throws SessionExpiredException, BigBangException;
 	public DebitNote[] getRelevantDebitNotes(String receiptId) throws SessionExpiredException, BigBangException;

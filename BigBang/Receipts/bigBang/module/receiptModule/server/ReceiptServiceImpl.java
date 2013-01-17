@@ -71,6 +71,7 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.CancelPaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateDASRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateInternalReceipt;
@@ -711,6 +712,39 @@ public class ReceiptServiceImpl
 		lopCPN = new CreatePaymentNotice(lobjReceipt.GetProcessID());
 		lopCPN.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
 		lopCPN.mbUseSets = false;
+
+		try
+		{
+			lopCPN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Receipt cancelPaymentNotice(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		CancelPaymentNotice lopCPN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCPN = new CancelPaymentNotice(lobjReceipt.GetProcessID());
 
 		try
 		{

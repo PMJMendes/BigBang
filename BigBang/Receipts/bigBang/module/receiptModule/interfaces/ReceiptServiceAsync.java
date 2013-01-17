@@ -25,6 +25,7 @@ public interface ReceiptServiceAsync
 	void validateReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void setForReturn(Receipt.ReturnMessage message, AsyncCallback<Receipt> callback);
 	void createPaymentNotice(String receiptId, AsyncCallback<Receipt> callback);
+	void cancelPaymentNotice(String receiptId, AsyncCallback<Receipt> callback);
 	void markPayed(Receipt.PaymentInfo info, AsyncCallback<Receipt> callback);
 	void getRelevantDebitNotes(String receiptId, AsyncCallback<DebitNote[]> callback);
 	void associateWithDebitNote(String receiptId, String debitNoteId, AsyncCallback<Receipt> callback);
