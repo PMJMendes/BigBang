@@ -9,6 +9,7 @@ import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.Message.Attachment;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.DocumentsBroker;
@@ -18,6 +19,7 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RichTextAreaFormField;
@@ -51,8 +53,8 @@ public class ConversationForm extends FormView<Conversation> implements Document
 	private DocumentViewPresenter documentViewPresenter;
 	private DocumentsBroker documentBroker;
 	protected bigBang.library.client.userInterface.List<Document> attachments;
-	
-	
+
+
 	public ConversationForm() {
 		addSection("Troca de Mensagens");
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Pedido");
@@ -64,54 +66,54 @@ public class ConversationForm extends FormView<Conversation> implements Document
 		replyLimit.setUnitsLabel("dias");
 		replyLimit.setFieldWidth("50px");
 		printButton = new Button("Imprimir Troca de Mensagens");
-		
+
 		HorizontalPanel panel = new HorizontalPanel();
-		
+
 		panel.add(subject);
 		panel.add(printButton);
-		
+
 		panel.setCellWidth(printButton, "100%");
 		printButton.getElement().getStyle().setRight(10, Unit.PX);
 		panel.setCellHorizontalAlignment(printButton, HasHorizontalAlignment.ALIGN_CENTER);
-		
+
 		registerFormField(subject);
-		
+
 		addWidget(panel);
 		addFormField(requestType, false);
 		addLineBreak();
 		addFormField(pendingAction, true);
 		addFormField(replyLimit, true);
-		
+
 		messageSection = new FormViewSection("");
 		addSection(messageSection);
 
 		VerticalPanel innerWrapper = new VerticalPanel();
-		
+
 		messageSubject = new TextBoxFormField("Assunto da Mensagem");
 		messageSubject.setEditable(false);
 		text = new RichTextAreaFormField();
 		text.setEditable(false);
 		text.getNativeField().setSize("98%", "600px");
-		
+
 		emailAndAttachmentsWrapper = new HorizontalPanel();
 		attachments = new List<Document>();
-		
+
 		documentViewPresenter = new DocumentViewPresenter(new DocumentView());
-		
+
 		attachments.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				if(event.getFirstSelected() != null){
-					
+
 					Document doc = ((DocumentsList.Entry)event.getFirstSelected()).getValue();
-					
+
 					HasParameters params = new HasParameters();
 					params.setParameter("ownerid", doc.ownerId);
 					params.setParameter("ownertypeid",doc.ownerTypeId);
 					params.setParameter("documentid", doc.id);
 					popup = new PopupPanel();
-					
+
 					documentViewPresenter.setParameters(params);
 					documentViewPresenter.go(popup);					
 					popup.center();				
@@ -120,24 +122,24 @@ public class ConversationForm extends FormView<Conversation> implements Document
 				}
 			}
 		});
-		
+
 		ListHeader firstHeader = new ListHeader("Anexos");		
 		attachments.setHeaderWidget(firstHeader);
-		
+
 		innerWrapper.add(messageSubject);
 		innerWrapper.add(text);
-		
+
 		emailAndAttachmentsWrapper.add(innerWrapper);
 		emailAndAttachmentsWrapper.add(attachments);
-		
+
 		emailAndAttachmentsWrapper.setSize("100%", "100%");
-		
+
 		messageSection.addWidget(emailAndAttachmentsWrapper);
-		
+
 		documentBroker = (DocumentsBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.DOCUMENT);
-		
+
 		setValidator(new ConversationFormValidator(this));
-		
+
 	}
 
 	@Override
@@ -156,43 +158,61 @@ public class ConversationForm extends FormView<Conversation> implements Document
 
 	@Override
 	public void setInfo(Conversation info) {
-		
+
 		subject.setValue(info.subject);
 		requestType.setValue(info.requestTypeId);
 		replyLimit.setValue(info.replylimit != null ? info.replylimit.doubleValue() : null);
 		pendingAction.setValue(ConversationStub.Direction.INCOMING.equals(info.pendingDir) ? "Receber Mensagem" : "Enviar Mensagem");
-		
-		if(info.messages[0].attachments.length > 0){
 
-			for(Message.Attachment att : info.messages[0].attachments){
+		setAttachments(info.messages[0].attachments);
+	}
+
+	private void setAttachments(Attachment[] info) {
+		
+		attachments.clear();
+		
+		if(info.length > 0){
+
+			for(Message.Attachment att : info){
 				documentBroker.registerClient(this, att.ownerId);
 				documentBroker.getDocument(att.ownerId, att.docId, new ResponseHandler<Document>() {
-				
+
 					@Override
 					public void onResponse(Document response) {
-						attachments.add(new DocumentsList.Entry(response));
+						addAttachment(new DocumentsList.Entry(response));
 					}
-					
+
 					@Override
 					public void onError(Collection<ResponseError> errors) {
 						return;
 					}
 				});
 			}
-		}
+		}		
 	}
-	
+
+	protected void addAttachment(DocumentsList.Entry entry) {
+		for(ListEntry<Document>  document: attachments){
+			if(document.getValue().id.equalsIgnoreCase(entry.getValue().id)){
+				return;
+			}
+		}
+		
+		attachments.add(entry);		
+	}
+
 	public void setCurrentMessage(Message info){
 		directionText = ConversationStub.Direction.INCOMING.equals(info.direction) ? " recebida" : " enviada";
 		messageSection.setHeaderText("Mensagem nº. " + (info.order+1) + directionText + " a: " + info.date);
 		text.setValue(info.text);
 		messageSubject.setValue(info.subject);
 		messageSection.setVisible(true);
+		setAttachments(info.attachments);
 	}
 
 	public Message getMessage() {
 		Message message = new Message();
-		
+
 		return message;
 	}
 

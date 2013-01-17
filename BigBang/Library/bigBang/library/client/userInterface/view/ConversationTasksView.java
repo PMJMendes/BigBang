@@ -143,7 +143,7 @@ public class ConversationTasksView<T> extends View implements ConversationTasksV
 		ownerWrapper = new ScrollPanel();
 		ownerWrapper.getElement().getStyle().setBackgroundColor("whiteSmoke");
 		ownerWrapper.getElement().getStyle().setOverflowX(Overflow.HIDDEN);
-		mainWrapper.addEast(ownerWrapper, 600);
+		mainWrapper.addEast(ownerWrapper, 270);
 		mainWrapper.getElement().getStyle().setBackgroundColor("whitesmoke");
 		mainWrapper.add(scroll);
 		

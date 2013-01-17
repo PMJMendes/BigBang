@@ -489,6 +489,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		addresses.add(me);
 
 		for(String userId : forwardReply.getValue()){
+			userId = userId.trim();
 			MsgAddress newAddress = new MsgAddress();
 			newAddress.display = userId;
 			newAddress.usage = MsgAddress.Usage.REPLYTO;
@@ -572,6 +573,25 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			internalCCAddresses.setValue(conts);
 
 			forwardReply.setValue(forwardReplies);
+			
+			if(info.messages[0].attachments.length > 0){
+
+				for(Message.Attachment att : info.messages[0].attachments){
+					documentBroker.registerClient(this, att.ownerId);
+					documentBroker.getDocument(att.ownerId, att.docId, new ResponseHandler<Document>() {
+					
+						@Override
+						public void onResponse(Document response) {
+							addDocument(response, true);
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							return;
+						}
+					});
+				}
+			}
 		}
 		else{
 			emailOrNote.setValue(Kind.EMAIL.toString());
@@ -584,6 +604,21 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			subject.setReadOnly(true);
 		}
 
+	}
+
+	protected void addDocument(Document response, boolean b) {
+		for(ListEntry<Document>  document: attachments){
+			if(document.getValue().id.equalsIgnoreCase(response.id)){
+				return;
+			}
+		}
+		
+		DocumentsList.Entry entry = new DocumentsList.Entry(response);
+		attachments.add(entry);
+		attachments.setCheckable(true);
+		attachments.setSelectableEntries(false);
+		entry.setCheckable(true);
+		entry.setChecked(b);
 	}
 
 	public void setAvailableContacts(Contact[] contacts) {
@@ -626,6 +661,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		super.clearInfo();
 		expectsResponse.setValue("YES");
 		emailOrNote.setValue(Kind.EMAIL.toString());
+		attachments.clear();
 	}
 
 	public ListBoxFormField getContactList() {
@@ -660,18 +696,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 
 	public void addDocument(Document doc){
-		for(ListEntry<Document>  document: attachments){
-			if(document.getValue().id.equalsIgnoreCase(doc.id)){
-				return;
-			}
-		}
-		
-		DocumentsList.Entry entry = new DocumentsList.Entry(doc);
-		attachments.add(entry);
-		attachments.setCheckable(true);
-		attachments.setSelectableEntries(false);
-		entry.setSelectable(false);
-		entry.setCheckable(true);
+		addDocument(doc, false);
 	}
 
 	public void addItemContactList(String name, String id, String ownerType) {
@@ -712,7 +737,6 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 	@Override
 	public void setDocuments(String ownerId, List<Document> documents) {
-		addDocuments(documents);
 	}
 
 	@Override
