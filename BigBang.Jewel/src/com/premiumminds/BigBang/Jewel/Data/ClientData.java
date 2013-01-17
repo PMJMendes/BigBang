@@ -38,6 +38,9 @@ public class ClientData
 	public UUID midSize;
 	public UUID midSales;
 	public String mstrNotes;
+	public Integer mlngMigrationID;
+	public String mstrDocushare;
+	public Boolean mbIsInternational;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -70,6 +73,9 @@ public class ClientData
 		midSales = (UUID)pobjSource.getAt(19);
 		mstrNotes = (String)pobjSource.getAt(20);
 		midProcess = (UUID)pobjSource.getAt(21);
+		mlngMigrationID = (Integer)pobjSource.getAt(22);
+		mstrDocushare = (String)pobjSource.getAt(23);
+		mbIsInternational = (Boolean)pobjSource.getAt(24);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -99,6 +105,9 @@ public class ClientData
 			pobjDest.setAt(19, midSales);
 			pobjDest.setAt(20, mstrNotes);
 			pobjDest.setAt(21, midProcess);
+			pobjDest.setAt(22, mlngMigrationID);
+			pobjDest.setAt(23, mstrDocushare);
+			pobjDest.setAt(24, mbIsInternational);
 		}
 		catch (Throwable e)
 		{
@@ -151,6 +160,8 @@ public class ClientData
 		pstrBuilder.append("NIF/NIPC: ");
 		if ( mstrFiscal != null )
 			pstrBuilder.append(mstrFiscal);
+		if ( (mbIsInternational != null) && mbIsInternational)
+			pstrBuilder.append(" (internacional)");
 		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("Tipo: ");

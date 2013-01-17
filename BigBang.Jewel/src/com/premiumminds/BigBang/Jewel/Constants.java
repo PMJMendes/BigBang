@@ -226,6 +226,8 @@ public class Constants
 	public static final UUID OPID_Client_UndoDeleteCasualty              = UUID.fromString("A7FB514E-B632-4247-9BCE-9F8B012B2DF6");
 	public static final UUID OPID_Client_DeleteClient                    = UUID.fromString("2227C32A-0AF5-4ECC-B807-9F090143401F");
 	public static final UUID OPID_Client_ExternResumeClient              = UUID.fromString("380BC979-5C71-4991-A382-9F8801257EB5");
+	public static final UUID OPID_Client_SetInternational                = UUID.fromString("CA57DD58-CC1B-4359-81F5-A14900DFCB81");
+	public static final UUID OPID_Client_UndoSetInternational            = UUID.fromString("39EB5130-F961-4EC8-8441-A14900DF4A3F");
 
 	// Quote Request Operations
 	public static final UUID OPID_QuoteRequest_AutoProcessSubs           = UUID.fromString("3062A359-E26D-4255-8A65-A00C01215B6D");

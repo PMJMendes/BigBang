@@ -17,6 +17,35 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class Client
 	extends ProcessData
 {
+	public static class I
+	{
+		public static int NAME          =  0;
+		public static int NUMBER        =  1;
+		public static int ADDRESS1      =  2;
+		public static int ADDRESS2      =  3;
+		public static int ZIPCODE       =  4;
+		public static int FISCALNUMBER  =  5;
+		public static int ENTITYTYPE    =  6;
+		public static int ENTITYSUBTYPE =  7;
+		public static int MEDIATOR      =  8;
+		public static int PROFILE       =  9;
+		public static int GROUP         = 10;
+		public static int BANKINGID     = 11;
+		public static int DATEOFBIRTH   = 12;
+		public static int SEX           = 13;
+		public static int MARITALSTATUS = 14;
+		public static int PROFESSION    = 15;
+		public static int ACTIVITYCODE  = 16;
+		public static int ACTIVITYNOTES = 17;
+		public static int SIZE          = 18;
+		public static int SALES         = 19;
+		public static int NOTES         = 20;
+		public static int PROCESS       = 21;
+		public static int MIGRATIONID   = 22;
+		public static int DOCUSHARE     = 23;
+		public static int INTERNATIONAL = 24;
+	}
+
     public static Client GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{

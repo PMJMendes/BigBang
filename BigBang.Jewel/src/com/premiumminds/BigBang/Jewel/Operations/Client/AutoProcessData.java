@@ -82,17 +82,18 @@ public class AutoProcessData
 			b = false;
 			mstrFiscal = "Ausente";
 		}
+		else if ( (lobjClient.getAt(Client.I.INTERNATIONAL) != null) && (Boolean)lobjClient.getAt(Client.I.INTERNATIONAL) )
+		{
+			mstrFiscal = "Não Verificado (Internacional)";
+		}
+		else if ( !IsValidNIF((String)lobjClient.getAt(5), (UUID)lobjClient.getAt(6), (UUID)lobjClient.getAt(7)) )
+		{
+			b = false;
+			mstrFiscal = "Inválido";
+		}
 		else
 		{
-			if ( !IsValidNIF((String)lobjClient.getAt(5), (UUID)lobjClient.getAt(6), (UUID)lobjClient.getAt(7)) )
-			{
-				b = false;
-				mstrFiscal = "Inválido";
-			}
-			else
-			{
-				mstrFiscal = "Válido";
-			}
+			mstrFiscal = "Válido";
 		}
 
 		if ( !b )

@@ -62,6 +62,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Client.MergeIntoAnother;
+import com.premiumminds.BigBang.Jewel.Operations.Client.SetInternational;
 import com.premiumminds.BigBang.Jewel.Operations.General.CreateClient;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
@@ -147,6 +148,7 @@ public class ClientServiceImpl
 		lobjResult.professionId = (lobjClient.getAt(15) == null ? null : lobjClient.getAt(15).toString());
 		lobjResult.notes = (String)lobjClient.getAt(20);
 		lobjResult.docushare = (String)lobjClient.getAt(23);
+		lobjResult.isInternational = ((lobjClient.getAt(24) != null) && (Boolean)lobjClient.getAt(24));
 
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
@@ -302,6 +304,38 @@ public class ClientServiceImpl
 		}
 
 		return getClient(client.id);
+	}
+
+	public Client setInternational(String clientId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		SetInternational lobjSI;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(clientId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjSI = new SetInternational(lobjClient.GetProcessID());
+
+		try
+		{
+			lobjSI.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return getClient(clientId);
 	}
 
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)

@@ -24,6 +24,7 @@ public class Client
 	public String professionId;
 	public String notes;
 	public String docushare;
+	public boolean isInternational;
 	public Contact[] contacts;
 	public Document[] documents;
 

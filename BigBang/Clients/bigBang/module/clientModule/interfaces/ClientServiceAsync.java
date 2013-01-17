@@ -16,6 +16,7 @@ public interface ClientServiceAsync
 	void getClient(String clientId, AsyncCallback<Client> callback);
 	void createClient(Client client, AsyncCallback<Client> callback);
 	void editClient(Client client, AsyncCallback<Client> callback);
+	void setInternational(String clientId, AsyncCallback<Client> callback);
 	void mergeWithClient(String clientId, String receptorId, AsyncCallback<Client> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 	void sendMessage(Conversation conversation, AsyncCallback<Conversation> callback);
