@@ -21,7 +21,7 @@ public class ReceiveMessageFormValidator extends
 	}
 
 	private boolean validateSubject() {
-		return validateString(form.subject, 1, 250, false);
+		return validateString(form.subject, 0, 250, true);
 	}
 
 	private boolean validateReplyLimit() {
