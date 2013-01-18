@@ -584,8 +584,7 @@ public class MailConnector
 				lmpMessage = new MimeMultipart();
 
 				lbp = new MimeBodyPart();
-				lbp.setText(pstrBody, "UTF-8");
-				lbp.addHeader("Content-Type", "text/html");
+				lbp.setContent(pstrBody, "text/html;charset=UTF-8");
 				lmpMessage.addBodyPart(lbp);
 
 				for ( i = 0; i < parrAttachments.length; i++ )
