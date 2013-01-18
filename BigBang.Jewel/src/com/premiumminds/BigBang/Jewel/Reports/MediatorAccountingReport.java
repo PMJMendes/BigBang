@@ -138,7 +138,7 @@ public class MediatorAccountingReport
 
 		if ( lobjMediator.getHasRetention() )
 		{
-			mdblRetention = mdblTotalRetros.multiply(new BigDecimal(0.215)).setScale(2, RoundingMode.HALF_UP);
+			mdblRetention = mdblTotalRetros.multiply(new BigDecimal(0.25)).setScale(2, RoundingMode.HALF_UP);
 			mdblNet = mdblTotalRetros.subtract(mdblRetention);
 			larrParams.put("TaxText", "Retenção na Fonte:");
 			larrParams.put("TaxValue", String.format("%,.2f", mdblRetention));
