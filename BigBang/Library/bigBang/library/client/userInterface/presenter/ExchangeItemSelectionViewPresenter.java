@@ -104,7 +104,7 @@ HasValue<Message> {
 
 						@Override
 						public void onResponseFailure(Throwable caught) {
-							super.onResponseFailure(caught);
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o e-mail."), TYPE.ERROR_NOTIFICATION));
 						};
 					});
 
@@ -168,7 +168,8 @@ HasValue<Message> {
 			
 
 			public void onResponseFailure(Throwable caught) {
-				super.onResponseFailure(caught);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os e-mails."), TYPE.ERROR_NOTIFICATION));
+				view.enableRefresh(true);
 			};
 		});
 		
@@ -190,7 +191,8 @@ HasValue<Message> {
 			}
 
 			public void onResponseFailure(Throwable caught) {
-				super.onResponseFailure(caught);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os e-mails."), TYPE.ERROR_NOTIFICATION));
+				view.enableRefresh(true);
 			};
 		});
 	}
