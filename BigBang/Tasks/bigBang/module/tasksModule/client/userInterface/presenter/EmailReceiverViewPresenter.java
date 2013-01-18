@@ -138,7 +138,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 						@Override
 						public void onResponseFailure(Throwable caught) {
-							super.onResponseFailure(caught);
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o e-mail."), TYPE.ERROR_NOTIFICATION));
 						};
 					});
 
@@ -232,6 +232,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a mensagem."), TYPE.ERROR_NOTIFICATION));
 					}
 				});
 
