@@ -577,7 +577,6 @@ public class MailConnector
 			if ( (parrAttachments == null) || (parrAttachments.length == 0) )
 			{
 				lmsg.setContent(pstrBody, "text/html; charset=UTF-8");
-//				lmsg.addHeader("Content-Type", "text/html");
 			}
 			else
 			{
@@ -599,8 +598,7 @@ public class MailConnector
 					lmpMessage.addBodyPart(lbp);
 				}
 
-				lmsg.setContent(lmpMessage);
-				lmsg.addHeader("Content-Type", lmpMessage.getContentType());
+				lmsg.setContent(lmpMessage, lmpMessage.getContentType());
 			}
 
 			lmsg.addHeader("MIME-Version", "1.0");
