@@ -50,14 +50,15 @@ public class TestPolicyGet
 		};
 
 		parameter = new InsurancePolicySearchParameter();
-		parameter.freeText = "2250800";
+//		parameter.freeText = "7100100207";
 //		parameter.ownerId = "CAABA817-DA4D-418B-AECE-A0FE00E1B27C";
 //		parameter.allowedStates = InsurancePolicySearchParameter.AllowedStates.NONLIVE;
 		sorts = new InsurancePolicySortParameter();
 		sorts.field = InsurancePolicySortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.DESC;
 
-		Services.insurancePolicyService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 50, callback);
+		Services.insurancePolicyService.openForOperation("C4117861-16EB-40DB-A771-9F8A00EA6B32",
+				new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 50, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
