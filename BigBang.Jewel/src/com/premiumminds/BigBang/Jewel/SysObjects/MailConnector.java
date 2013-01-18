@@ -576,15 +576,15 @@ public class MailConnector
 
 			if ( (parrAttachments == null) || (parrAttachments.length == 0) )
 			{
-				lmsg.setText(pstrBody, "UTF-8");
-				lmsg.addHeader("Content-Type", "text/html");
+				lmsg.setContent(pstrBody, "text/html; charset=UTF-8");
+//				lmsg.addHeader("Content-Type", "text/html");
 			}
 			else
 			{
 				lmpMessage = new MimeMultipart();
 
 				lbp = new MimeBodyPart();
-				lbp.setContent(pstrBody, "text/html;charset=UTF-8");
+				lbp.setContent(pstrBody, "text/html; charset=UTF-8");
 				lmpMessage.addBodyPart(lbp);
 
 				for ( i = 0; i < parrAttachments.length; i++ )
