@@ -335,6 +335,8 @@ public class MessageBridge
 				lobjResult.mobjDocOps.marrCreate = new DocumentData[pobjMessage.attachments.length];
 				for ( i = 0; i < pobjMessage.attachments.length; i++ )
 				{
+					lobjResult.marrAttachments[i] = new MessageAttachmentData();
+
 					lobjResult.mobjDocOps.marrCreate[i] = new DocumentData();
 					lobjResult.mobjDocOps.marrCreate[i].mstrName = pobjMessage.attachments[i].name;
 					lobjResult.mobjDocOps.marrCreate[i].midOwnerType = pidParentType;
