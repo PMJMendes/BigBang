@@ -75,7 +75,9 @@ public class MedicalFileSelectionView extends View implements MedicalFileSelecti
 		listWrapper.setCellHeight(list, "100%");
 		
 		wrapper.addWest(listWrapper, 300);
-		wrapper.add(formWrapper);	}
+		wrapper.add(formWrapper);	
+		
+	}
 	
 	@Override
 	protected void initializeView() {
