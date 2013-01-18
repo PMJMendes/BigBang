@@ -26,7 +26,7 @@ public class TestSpecialGetExchangeSingleItem
 			}
 		};
 
-		Services.exchangeService.getItem("AAMkADdmNDVhMDgyLWQzNDItNDRjNy04Mjk5LWY2YjgwZjA0YTAwOABGAAAAAADy5wo1GEKBQ7mf4MGQSeS5BwCo4XVv2UW6RZN0o9Yy+qctAClNyBCCAADDZpLTOBZZQoBQCyW3yamgAClNHAwDAAA=",
+		Services.exchangeService.getItem("AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwAfB8bLbZT3Q6D4HtPpCBWKAAAAAKnCAACY2siwYA8YR7NHNtCOoGdcAAAAAS4sAAA=",
 				callback);
 	}
 }
