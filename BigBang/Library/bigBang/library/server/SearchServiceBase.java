@@ -295,20 +295,29 @@ public abstract class SearchServiceBase
 				}
 				else
 				{
-					lstrBuffer.append("[PK] IN (SELECT [:Process:Data] FROM (");
+					lstrBuffer.append("[:Process] IN (SELECT [Process] FROM (");
 					try
 					{
 						lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 								Jewel.Petri.Constants.ObjID_PNStep));
-						lstrBuffer.append(lrefSteps.SQLForSelectForReports(new String[] {"[:Operation]", "[:Level]"},
-								new String[] {" = '" + prefWSpace.GetOpID() + "'", " != '" + Constants.LevelID_Invalid + "'"},
-								null));
+						lstrBuffer.append(lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step},
+								new java.lang.Object[] {prefWSpace.GetOpID()}, null));
 					}
 					catch (Throwable e)
 					{
 			    		throw new BigBangException(e.getMessage(), e);
 					}
-					lstrBuffer.append(") [AuxSteps0])");
+					lstrBuffer.append(") [AuxSteps0]) AND [:Process] NOT IN (SELECT [Process] FROM (");
+					try
+					{
+						lstrBuffer.append(lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
+								new java.lang.Object[] {prefWSpace.GetOpID(), Constants.LevelID_Invalid}, null));
+					}
+					catch (Throwable e)
+					{
+			    		throw new BigBangException(e.getMessage(), e);
+					}
+					lstrBuffer.append(") [AuxSteps1])");
 				}
 
 				buildFilter(lstrBuffer, parameters[i]);
