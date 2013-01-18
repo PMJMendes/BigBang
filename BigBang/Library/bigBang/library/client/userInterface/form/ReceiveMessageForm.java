@@ -16,7 +16,6 @@ import bigBang.library.client.userInterface.view.FormView;
 public class ReceiveMessageForm extends FormView<Conversation>{
 
 	protected ExpandableListBoxFormField requestType;
-	protected TextBoxFormField requestSubject = new TextBoxFormField("Assunto da mensagem");
 	protected RadioButtonFormField expectsResponse;
 	protected NumericTextBoxFormField replyLimit;
 	protected ReceiveMessageFormField messageFormField = new ReceiveMessageFormField();
@@ -54,7 +53,6 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 		addSection("Detalhes do Processo de Mensagem");
 		addFormField(requestType);
 		addFormField(subject, false);
-		addFormField(requestSubject, false);
 		addFormField(expectsResponse, true);
 		addFormField(replyLimit, true);
 		
@@ -83,7 +81,7 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 			request.replylimit = null;
 		}
 
-		request.subject = requestSubject.getValue();
+		request.subject = subject.getValue();
 		request.messages = new Message[1];
 		request.messages[0] = messageFormField.getValue();
 		request.messages[0].conversationId = request.id;
@@ -96,7 +94,6 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 
 		subject.setValue(info.subject);
 		requestType.setValue(info.requestTypeId);
-		requestSubject.setValue(info.subject);
 		messageFormField.setValue(info.messages[0]);
 		replyLimit.setValue(info.replylimit == null ? null : (double)info.replylimit);
 	
@@ -111,10 +108,10 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		if(requestSubject == null){
+		if(subject == null){
 			return;
 		}
-		requestSubject.setReadOnly(readOnly);
+		subject.setReadOnly(readOnly);
 		replyLimit.setReadOnly(readOnly);
 		messageFormField.setReadOnly(readOnly);
 	}
