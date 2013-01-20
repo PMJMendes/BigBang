@@ -2,6 +2,7 @@ package bigBang.module.tasksModule.client.userInterface.view;
 
 import java.util.List;
 
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Message.Attachment;
 import bigBang.definitions.shared.TipifiedListItem;
@@ -214,25 +215,6 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 		return attachs;
 	}
 
-
-	@Override
-	public Integer getReplyLimit() {
-		return form.getReplyLimit();
-	}
-
-
-	@Override
-	public String getParentType() {
-		return form.getParentType();
-	}
-
-
-	@Override
-	public String getParentId() {
-		return form.getParentId();
-	}
-
-
 	@Override
 	public void clearList() {
 		emails.clear();
@@ -252,12 +234,6 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 
 
 	@Override
-	public String getRequestType() {
-		return form.getRequestType();
-	}
-
-
-	@Override
 	public void enableRefresh(boolean b) {
 		header.getRefreshButton().setEnabled(b);
 	}
@@ -269,5 +245,11 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 			emails.remove(email);
 			break;
 		}
+	}
+
+
+	@Override
+	public Conversation getConversationFields() {
+		return form.getConversationFields();
 	}
 }

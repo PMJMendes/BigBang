@@ -17,12 +17,14 @@ import bigBang.library.client.userInterface.presenter.CasualtySelectionViewPrese
 import bigBang.library.client.userInterface.presenter.ExpenseSelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.OtherEntitySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.SubCasualtySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.CasualtySelectionView;
 import bigBang.library.client.userInterface.view.ExpenseSelectionView;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
+import bigBang.library.client.userInterface.view.OtherEntitySelectionView;
 import bigBang.library.client.userInterface.view.SubCasualtySelectionView;
 import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentSelectionViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileSelectionViewPresenter;
@@ -257,6 +259,17 @@ public class GeneralSystemModule implements Module {
 			public ExpandableSelectionFormFieldPanel getInstance() {
 				MedicalFileSelectionView view = (MedicalFileSelectionView) GWT.create(MedicalFileSelectionView.class);
 				MedicalFileSelectionViewPresenter presenter = new MedicalFileSelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.OTHER_ENTITY, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				OtherEntitySelectionView view = (OtherEntitySelectionView) GWT.create(OtherEntitySelectionView.class);
+				OtherEntitySelectionViewPresenter presenter = new OtherEntitySelectionViewPresenter(view);
 				presenter.go();
 				return presenter;
 			}

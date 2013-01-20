@@ -21,6 +21,7 @@ import bigBang.definitions.shared.TypifiedText;
 import bigBang.definitions.shared.User;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
@@ -34,6 +35,7 @@ import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.RichTextAreaFormField;
@@ -95,6 +97,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	private String contactChosen;
 	private TextBoxFormField subject;
 	private ListBoxFormField documentsFrom;
+	private FormField<String> otherEntityContacts;
 
 	public SendMessageForm(){
 
@@ -103,6 +106,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		contactsFrom = new ListBoxFormField("Contactos de:");
 		contactsFrom.setFieldWidth("400px");
 		to = new ListBoxFormField("Para:");
+		otherEntityContacts = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.OTHER_ENTITY, null);
 
 		documentsFrom = new ListBoxFormField("Documentos de:");
 		documentsFrom.setFieldWidth("400px");
@@ -149,6 +153,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		addSection("Detalhes da Mensagem");
 
 		addFormField(contactsFrom, true);
+		addFormField(otherEntityContacts, true);
 		addLineBreak();
 
 		HorizontalPanel toAndButtonWrapper = new HorizontalPanel();
@@ -173,6 +178,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		registerFormField(externalCCAddresses);
 		registerFormField(text);
 		registerFormField(to);
+		registerFormField(otherEntityContacts);
 		registerFormField(note);
 
 		emailAndAttachmentsWrapper = new HorizontalPanel();
@@ -249,15 +255,21 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			@Override
 			public void onClick(ClickEvent event) {
 				HasParameters params = new HasParameters();
-				params.setParameter("ownerid", contactsFrom.getValue());
-				params.setParameter("ownertypeid", getOwnerType(contactsFrom.getValue()));
+				if(contactsFrom.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.OTHER_ENTITY)){
+					params.setParameter("ownerid", otherEntityContacts.getValue());
+					params.setParameter("ownertypeid", BigBangConstants.EntityIds.OTHER_ENTITY);
+				}
+				else{
+					params.setParameter("ownerid", contactsFrom.getValue());
+					params.setParameter("ownertypeid", getOwnerType(contactsFrom.getValue()));
+				}
 				popup = new PopupPanel();
 				popup.addAttachHandler(new Handler() {
 
 					@Override
 					public void onAttachOrDetach(AttachEvent event) {
 						if (!event.isAttached()){
-							contactChoiceChanged(contactsFrom.getValue());
+							contactChoiceChanged(otherEntityContacts.isVisible() ? otherEntityContacts.getValue() : contactsFrom.getValue(), otherEntityContacts.isVisible());
 						}
 					}
 				});
@@ -276,7 +288,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				params.setParameter("ownertypeid", getOwnerType(documentOwnerId));
 				params.setParameter("documentid", "new");
 				popup = new PopupPanel();
-				
+
 				documentViewPresenter.setParameters(params);
 				documentViewPresenter.go(popup);
 				popup.center();				
@@ -328,8 +340,27 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		});		
 
 		registerFormField(text.subject);
-		
+
+		addOtherEntitiesContacts();
+
+		otherEntityContacts.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(event.getValue() != null)
+					contactChoiceChanged(event.getValue(), true);
+			}
+		});
+
+		otherEntityContacts.setVisible(false);
+
 		setValidator(new SendMessageFormValidator(this));
+	}
+
+	private void addOtherEntitiesContacts() {
+
+		contactsFrom.addItem("Outras Entidades", BigBangConstants.EntityIds.OTHER_ENTITY);
+
 	}
 
 	protected void documentOwnerChanged(String value) {
@@ -377,11 +408,26 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 
 	private void contactChoiceChanged(String id) {
+		contactChoiceChanged(id, false);
+	}
+
+
+	protected void contactChoiceChanged(String id, boolean isOtherEntity) {
+
 		if(id == null || id.isEmpty() || BigBangConstants.TypifiedListValues.MEDIATOR_IDS.DIRECT.equalsIgnoreCase(id)){
 			clearEmails();
 			addContactButton.setEnabled(false);
 			return;
 		}
+		else if(id.equalsIgnoreCase(BigBangConstants.EntityIds.OTHER_ENTITY)){
+			clearEmails();
+			otherEntityContacts.setVisible(true);
+			addContactButton.setEnabled(true);
+			return;
+		}
+
+		otherEntityContacts.setVisible(isOtherEntity);
+
 		ContactsServiceAsync contactsService = ContactsService.Util.getInstance();
 
 		contactsService.getFlatEmails(id, new BigBangAsyncCallback<Contact[]>() {
@@ -396,13 +442,13 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os e-mails"), TYPE.ERROR_TRAY_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os e-mails"), TYPE.ERROR_NOTIFICATION));
 				super.onResponseFailure(caught);
 			}
 
 		});
-	}
 
+	}
 
 	@Override
 	public Conversation getInfo() {
@@ -499,8 +545,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		for(MsgAddress m : internalCCAddresses.getValue()){
 			addresses.add(m);
 		}
-		
-		
+
+
 		if(externalCCAddresses.getValue() != null){
 			String[] bccs = externalCCAddresses.getValue().split(",");
 
@@ -518,14 +564,18 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	@Override
 	public void setInfo(Conversation info) {
 
+		internalCCAddresses.clear();
+		
 		replyLimit.setValue(info.replylimit != null ? info.replylimit.doubleValue() : null);
 		requestType.setValue(info.requestTypeId);
 		subject.setValue(info.subject);
-		TypifiedText textValue = new TypifiedText();
-		textValue.subject = info.subject;
 
 		if(info.messages != null && info.messages.length > 0 && info.messages[0] != null){
 			Message msg = info.messages[0];
+
+			TypifiedText textValue = new TypifiedText();
+			textValue.subject = msg.subject;
+			textValue.text = msg.text;
 
 			emailOrNote.setValue(msg.kind.toString());
 
@@ -538,7 +588,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			List<String> forwardReplies = new ArrayList<String>();
 
 			List<MsgAddress> internal = new ArrayList<MsgAddress>();
-			
+
 			for(int i = 0; i<msg.addresses.length ; i++){
 				switch(msg.addresses[i].usage){
 				case BCC:
@@ -552,7 +602,13 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 					forwardReplies.add(msg.addresses[i].display);
 					break;
 				case TO:
-					contactsFrom.setValue(msg.addresses[i].ownerId);
+					if(BigBangConstants.EntityIds.OTHER_ENTITY.equalsIgnoreCase(msg.addresses[i].ownerTypeId)){
+						contactsFrom.setValue(BigBangConstants.EntityIds.OTHER_ENTITY);
+						otherEntityContacts.setValue(msg.addresses[i].ownerId);
+					}
+					else{
+						contactsFrom.setValue(msg.addresses[i].ownerId);
+					}
 					contactChosen = msg.addresses[i].contactInfoId; 
 					break;
 				case FROM:
@@ -561,30 +617,30 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 					break;
 				}
 			}
-			
+
 			MsgAddress[] conts = new MsgAddress[internal.size()];
 			int i = 0;
 			for(MsgAddress ms : internal){
 				conts[i] = ms;
 				i++;
 			}
-			
-			
+
+
 			internalCCAddresses.setValue(conts);
 
 			forwardReply.setValue(forwardReplies);
-			
+
 			if(info.messages[0].attachments.length > 0){
 
 				for(Message.Attachment att : info.messages[0].attachments){
 					documentBroker.registerClient(this, att.ownerId);
 					documentBroker.getDocument(att.ownerId, att.docId, new ResponseHandler<Document>() {
-					
+
 						@Override
 						public void onResponse(Document response) {
 							addDocument(response, true);
 						}
-						
+
 						@Override
 						public void onError(Collection<ResponseError> errors) {
 							return;
@@ -612,7 +668,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				return;
 			}
 		}
-		
+
 		DocumentsList.Entry entry = new DocumentsList.Entry(response);
 		attachments.add(entry);
 		attachments.setCheckable(true);
@@ -671,6 +727,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 	public void clearEmails() {
 		to.clearValues();
+		otherEntityContacts.setValue(null);
 	}
 
 

@@ -63,23 +63,17 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 		Attachment[] getChecked();
 
-		Integer getReplyLimit();
-
-		String getParentType();
-
-		String getParentId();
-
 		void clearList();
 
 		HasEditableValue<Message> getMessageForm();
 
 		void enableAllToolbar();
 
-		String getRequestType();
-
 		void enableRefresh(boolean b);
 
 		void removeSelected();
+
+		Conversation getConversationFields();
 
 	}
 
@@ -207,17 +201,13 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 		if(view.getMessageForm().validate()){
 			ExchangeItem item = view.getForm().getInfo();
 
-			Conversation conversation = new Conversation();
+			Conversation conversation = view.getConversationFields();
 			conversation.messages = new Message[]{view.getMessageForm().getInfo()};
-			conversation.replylimit = view.getReplyLimit();
 
 			conversation.id = conversation.messages[0].conversationId;
-
+			
 			conversation.messages[0].emailId = item.id;
 			conversation.messages[0].attachments = view.getChecked();
-			conversation.parentDataObjectId = view.getParentId();
-			conversation.parentDataTypeId =  view.getParentType();
-			conversation.requestTypeId = view.getRequestType();
 
 			if(conversation.id == null){
 
@@ -238,7 +228,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 			}
 			else{
-				broker.receiveMessage(conversation.messages[0], view.getReplyLimit(), new ResponseHandler<Conversation>() {
+				broker.receiveMessage(conversation.messages[0], conversation.replylimit, new ResponseHandler<Conversation>() {
 
 					@Override
 					public void onResponse(Conversation response) {

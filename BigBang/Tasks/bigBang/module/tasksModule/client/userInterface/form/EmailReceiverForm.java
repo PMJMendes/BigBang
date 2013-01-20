@@ -1,6 +1,7 @@
 package bigBang.module.tasksModule.client.userInterface.form;
 
 import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Message.Kind;
@@ -13,6 +14,7 @@ import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
+import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -32,6 +34,7 @@ public class EmailReceiverForm extends FormView<Message>{
 	NumericTextBoxFormField replyLimit;
 	private RadioButtonFormField expectsResponse;
 	ExpandableListBoxFormField requestType;
+	TextBoxFormField subject;
 
 	public EmailReceiverForm(){
 
@@ -55,6 +58,7 @@ public class EmailReceiverForm extends FormView<Message>{
 					referenceWrapper.setVisible(!event.getValue().equalsIgnoreCase("OLD"));
 					conversationList.setVisible(event.getValue().equalsIgnoreCase("OLD"));
 					requestType.setVisible(!event.getValue().equalsIgnoreCase("OLD"));
+					subject.setVisible(!event.getValue().equalsIgnoreCase("OLD"));
 					validate();
 				}
 			}
@@ -96,8 +100,10 @@ public class EmailReceiverForm extends FormView<Message>{
 		addSection("Receber Mensagem");
 
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
+		subject = new TextBoxFormField("Tópico");
 		addFormField(requestType);
-
+		addFormField(subject);
+		
 		expectsResponse = new RadioButtonFormField("Espera resposta");
 		expectsResponse.addOption("YES", "Sim");
 		expectsResponse.addOption("NO", "Não");
@@ -255,8 +261,18 @@ public class EmailReceiverForm extends FormView<Message>{
 		newOrOldSubject.setValue("OLD");
 	}
 
-	public String getRequestType(){
-		return requestType.getValue();
+
+	public Conversation getConversationFields() {
+		
+		Conversation conv = new Conversation();
+		
+		conv.requestTypeId = requestType.getValue();
+		conv.replylimit = getReplyLimit();
+		conv.parentDataObjectId = getParentId();
+		conv.parentDataTypeId = getParentType();
+		conv.subject = subject.getValue();
+		
+		return conv;
 	}
 
 

@@ -1,7 +1,11 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.OtherEntityBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.OtherEntity;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -55,6 +59,20 @@ public class OtherEntityList extends FilterableList<OtherEntity> implements Othe
 		setHeaderWidget(header);
 		onSizeChanged();
 		showFilterField(false);
+		
+		broker.requireDataRefresh();
+		broker.getOtherEntities(new ResponseHandler<OtherEntity[]>() {
+			
+			@Override
+			public void onResponse(OtherEntity[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 	@Override
@@ -132,6 +150,16 @@ public class OtherEntityList extends FilterableList<OtherEntity> implements Othe
 				remove(ent);
 			}
 			break;
-		}
+		}		// TODO Auto-generated method stub
+
 	}
+
+	public void hideNewButton() {
+		header.getNewButton().setVisible(false);
+	}
+
+	public void hideRefreshButton() {
+		header.getRefreshButton().setVisible(false);
+	}
+
 }

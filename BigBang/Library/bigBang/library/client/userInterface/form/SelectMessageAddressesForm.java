@@ -57,15 +57,15 @@ public class SelectMessageAddressesForm extends FormField<MsgAddress[]>{
 
 	public SelectMessageAddressesForm() {
 		super();
-		
+
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
-		
+
 		mainWrapper.add(this.label);
 
 		contacts = new ListBoxFormField("");
 		list = new ArrayList<Contact>();
-		
+
 		HorizontalPanel textWrapper = new HorizontalPanel();
 		mainWrapper.add(textWrapper);
 
@@ -84,36 +84,36 @@ public class SelectMessageAddressesForm extends FormField<MsgAddress[]>{
 		textWrapper.add(add);
 		textWrapper.add(cancel);
 		textWrapper.add(clear);
-		
+
 		textWrapper.setSpacing(4);
-		
+
 		contacts.setVisible(false);
 		cancel.setVisible(false);
-		
-		
+
+
 		textField.setEditable(false);		
 		textField.getElement().getStyle().setBackgroundColor("white");
 		textField.getElement().getStyle().clearMargin();
 		textField.getParent().getElement().getStyle().clearMargin();
 		textField.getNativeField().getElement().getStyle().clearMargin();
-		
+
 		add.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				switchContext(true);
 			}
 		});
-		
+
 		cancel.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				switchContext(false);
 
 			}
 		});
-		
+
 		clear.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -157,7 +157,6 @@ public class SelectMessageAddressesForm extends FormField<MsgAddress[]>{
 	public void clear() {
 		contacts.clearValues();
 		list.clear();
-		
 	}
 
 	@Override
@@ -190,12 +189,12 @@ public class SelectMessageAddressesForm extends FormField<MsgAddress[]>{
 			contacts.addItem(add.name + " <" + info.value + ">", info.id);
 		}
 	}
-	
+
 	@Override
 	public MsgAddress[] getValue() {
-		
+
 		MsgAddress[] toReturn = new MsgAddress[list.size()];
-		
+
 		int i = 0;
 		for(Contact cont : list){
 			toReturn[i] = new MsgAddress();
@@ -203,16 +202,17 @@ public class SelectMessageAddressesForm extends FormField<MsgAddress[]>{
 			toReturn[i].contactInfoId = cont.info[0].id;
 			i++;
 		}
-		
+
 		return toReturn;
 	}
-	
-	
+
+
 	@Override
 	public void setValue(MsgAddress[] value) {
-		
+
 		for(MsgAddress add : value){
 			Contact cont = new Contact();
+			cont.info = new ContactInfo[1];
 			cont.info[0] = new ContactInfo();
 			cont.info[0].id = add.contactInfoId;
 			cont.info[0].value = add.address;
@@ -220,5 +220,6 @@ public class SelectMessageAddressesForm extends FormField<MsgAddress[]>{
 			textField.setValue((textField.getValue() != null ? textField.getValue() : "") + cont.info[0].value + ", ");
 		}		
 	}
+
 
 }
