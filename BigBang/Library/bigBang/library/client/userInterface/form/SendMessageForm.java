@@ -360,6 +360,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	private void addOtherEntitiesContacts() {
 
 		contactsFrom.addItem("Outras Entidades", BigBangConstants.EntityIds.OTHER_ENTITY);
+		internalCCAddresses.addOtherEntityEntry();
 
 	}
 
@@ -678,7 +679,6 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 
 	public void setAvailableContacts(Contact[] contacts) {
-		internalCCAddresses.setContacts(contacts);
 		this.to.clearValues();
 		if(contacts != null){
 			for(int i = 0; i < contacts.length; i++){
@@ -760,6 +760,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		contactsFrom.addItem(name, id);
 		documentsFrom.addItem(name, id);
 		ownerTypes.put(id, ownerType);
+		internalCCAddresses.addItemContactList(name, id, ownerType);
 	}
 
 	public String getOwnerType(String id){
