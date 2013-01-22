@@ -2359,7 +2359,7 @@ public class ReceiptServiceImpl
 			pstrBuffer.append(" OR ");
 			pstrBuffer.append("(LEFT(CONVERT(NVARCHAR, [:Maturity Date], 120), 10) LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("(CAST([:Total Premium] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("(CAST([:Total Premium] AS NVARCHAR(20)) = N'").append(lstrAux).append("')");
 			pstrBuffer.append(" OR ");
 			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
