@@ -451,4 +451,8 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	public void allowCancelPaymentNotice(boolean hasPermission){
 		this.cancelPaymentNotice.setEnabled(hasPermission);
 	}
+
+	public void allowCreateSecondPaymentNotice(boolean hasPermission) {
+		this.sendSecondPaymentNotice.setEnabled(hasPermission);
+	}
 }

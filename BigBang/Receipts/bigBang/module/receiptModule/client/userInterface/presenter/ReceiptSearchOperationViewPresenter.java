@@ -44,12 +44,12 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SAVE,
 		CANCEL,
 		DELETE, TRANSFER_TO_POLICY, ASSOCIATE_WITH_DEBIT_NOTE,
-		VALIDATE, SET_FOR_RETURN, ON_CREATE_PAYMENT_NOTE,
+		VALIDATE, SET_FOR_RETURN, SEND_PAYMENT_NOTICE,
 		MARK_FOR_PAYMENT,
 		SEND_RECEIPT,
 		INSURER_ACCOUNTING, AGENT_ACCOUNTING,
 		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY, REQUEST_DAS, NOT_PAYED_INDICATION,
-		RETURN_PAYMENT, GENERATE_RECEIPT, SEND_MESSAGE, RECEIVE_MESSAGE, CANCEL_PAYMENT_NOTICE
+		RETURN_PAYMENT, GENERATE_RECEIPT, SEND_MESSAGE, RECEIVE_MESSAGE, CANCEL_PAYMENT_NOTICE, SEND_SECOND_PAYMENT_NOTICE
 	}
 
 	public interface Display {
@@ -107,6 +107,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowReceiveMessage(boolean hasPermission);
 
 		void allowCancelPaymentNotice(boolean hasPermission);
+
+		void allowSendSecondPaymentNotice(boolean hasPermission);
 
 	}
 
@@ -196,7 +198,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case VALIDATE:
 					onValidate();
 					break;
-				case ON_CREATE_PAYMENT_NOTE:
+				case SEND_PAYMENT_NOTICE:
 					onCreatePaymentNote();
 					break;
 				case MARK_FOR_PAYMENT:
@@ -243,6 +245,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case CANCEL_PAYMENT_NOTICE:
 					onCancelPaymentNotice();
+					break;
+				case SEND_SECOND_PAYMENT_NOTICE:
+					onSendSecondPaymentNotice();
 					break;
 				}
 
@@ -296,6 +301,24 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onSendSecondPaymentNotice() {
+		receiptBroker.sendSecondPaymentNotice(view.getForm().getInfo().id, new ResponseHandler<Receipt>() {
+
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Segundo Aviso de Cobrança enviado com sucesso."), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();								
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar o segundo aviso de cobrança."), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();												
+			}
+			
+		});		
 	}
 
 	protected void onCancelPaymentNotice() {
@@ -549,6 +572,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowSendMessage(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CONVERSATION));
 				view.allowReceiveMessage(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CONVERSATION));
 				view.allowCancelPaymentNotice(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CANCEL_PAYMENT_NOTICE));
+				view.allowSendSecondPaymentNotice(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_SECOND_PAYMENT_NOTICE));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

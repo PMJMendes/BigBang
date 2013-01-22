@@ -113,4 +113,10 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 	public void cancelPaymentNotice(String id,
 			ResponseHandler<Receipt> responseHandler);
 
+	public void massCreateSecondPaymentNotice(String[] receiptIds,
+			ResponseHandler<Void> responseHandler);
+
+	public void sendSecondPaymentNotice(String id,
+			ResponseHandler<Receipt> responseHandler);
+
 }

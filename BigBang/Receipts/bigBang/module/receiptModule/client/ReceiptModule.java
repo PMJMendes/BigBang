@@ -22,6 +22,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestVie
 import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassAgentAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassCreateSecondPaymentNoticeViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassInsurerAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassReceiptGenerationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter;
@@ -52,6 +53,7 @@ import bigBang.module.receiptModule.client.userInterface.view.DASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.MarkForPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.MassAgentAccountingView;
 import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentNoticeView;
+import bigBang.module.receiptModule.client.userInterface.view.MassCreateSecondPaymentNoticeView;
 import bigBang.module.receiptModule.client.userInterface.view.MassInsurerAccountingView;
 import bigBang.module.receiptModule.client.userInterface.view.MassReceiptGenerationView;
 import bigBang.module.receiptModule.client.userInterface.view.MassReturnToInsurerView;
@@ -361,6 +363,14 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				ReceiptConversationView view = (ReceiptConversationView) GWT.create(ReceiptConversationView.class);
 				ViewPresenter presenter = new ReceiptConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_CREATE_SECOND_PAYMENT_NOTICE", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MassCreateSecondPaymentNoticeView view = (MassCreateSecondPaymentNoticeView) GWT.create(MassCreateSecondPaymentNoticeView.class);
+				MassCreateSecondPaymentNoticeViewPresenter presenter = new MassCreateSecondPaymentNoticeViewPresenter(view);
 				return presenter;
 			}
 		});

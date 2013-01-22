@@ -14,6 +14,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectio
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter.SectionOperation;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
@@ -25,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ReceiptSectionView extends View implements ReceiptSectionViewPresenter.Display{
 
 	private DockPanel operationDock;
+	private DockPanel operationDock2;
 	private SimplePanel operationViewContainer;
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
@@ -38,15 +40,26 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 
 		this.operationDock = new DockPanel();
 		panel.add(this.operationDock);
-		initializeDock();
 		this.operationDock.addValueChangeHandler(new ValueChangeHandler<Object>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<Object> event) {
 				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
 			}
 		});
 
+		this.operationDock2 = new DockPanel();
+		this.operationDock2.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		panel.add(this.operationDock2);
+		this.operationDock2.addValueChangeHandler(new ValueChangeHandler<Object>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Object> event) {
+				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));				
+			}
+		});
+
+		initializeDock();
 		this.operationViewContainer = new SimplePanel();
 		this.operationViewContainer.setSize("100%", "100%");
 		panel.add(operationViewContainer);
@@ -62,23 +75,25 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 
 	public void initializeDock() {
 		Resources r = GWT.create(Resources.class);
+
+		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS, 1);
+		addDockItem("Criação em Série", r.massCreationIcon(), SectionOperation.SERIAL_RECEIPT_CREATION, 2);
+		addDockItem("Avisos de Cobrança", r.sendReceiptIcon(), SectionOperation.MASS_CREATE_PAYMENT_NOTICE, 2);
+		addDockItem("Segundos Avisos de Cobrança", r.sendSecondReceiptIcon(), SectionOperation.MASS_CREATE_SECOND_PAYMENT_NOTICE, 2);
+		addDockItem("Pedidos de Assinatura", r.signatureRequestIcon(), SectionOperation.MASS_SIGNATURE_REQUEST, 2);
+		addDockItem("Cobranças", r.paymentIcon(), SectionOperation.SERIAL_RECEIPT_MARK_FOR_PAYMENT, 2);
+		addDockItem("Emissão de Recibos", r.receiptGenerationIcon(), SectionOperation.MASS_RECEIPT_GENERATION, 2);
+		addDockItem("Prestações de Contas", r.accountabilityIcon(), SectionOperation.MASS_INSURER_ACCOUNTING, 2);
+		addDockItem("Retrocessões", r.accountabilityIcon(), SectionOperation.MASS_AGENT_ACCOUNTING, 2);
+		addDockItem("Envio dos Recibos", r.sendReceiptIcon(), SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT, 2);
+		addDockItem("Envio de Pagamentos", r.sendPaymentIcon(), SectionOperation.MASS_SEND_PAYMENT, 2);
+		addDockItem("Devoluções à Seguradora", r.returnIcon(), SectionOperation.MASS_RETURN_TO_INSURER, 2);
+		addDockItem("Relatórios", r.reportIcon(), SectionOperation.REPORT, 1);
+		addDockItem("Importações / Outros", r.generalTasksIcon(), SectionOperation.GENERAL_TASKS, 1);
 		
-		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
-		addDockItem("Criação em Série", r.massCreationIcon(), SectionOperation.SERIAL_RECEIPT_CREATION);
-		addDockItem("Avisos de Cobrança", r.sendReceiptIcon(), SectionOperation.MASS_CREATE_PAYMENT_NOTICE);
-		addDockItem("Pedidos de Assinatura", r.signatureRequestIcon(), SectionOperation.MASS_SIGNATURE_REQUEST);
-		addDockItem("Cobranças", r.paymentIcon(), SectionOperation.SERIAL_RECEIPT_MARK_FOR_PAYMENT);
-		addDockItem("Emissão de Recibos", r.receiptGenerationIcon(), SectionOperation.MASS_RECEIPT_GENERATION);
-		addDockItem("Prestações de Contas", r.accountabilityIcon(), SectionOperation.MASS_INSURER_ACCOUNTING);
-		addDockItem("Retrocessões", r.accountabilityIcon(), SectionOperation.MASS_AGENT_ACCOUNTING);
-		addDockItem("Envio dos Recibos", r.sendReceiptIcon(), SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT);
-		addDockItem("Envio de Pagamentos", r.sendPaymentIcon(), SectionOperation.MASS_SEND_PAYMENT);
-		addDockItem("Devoluções à Seguradora", r.returnIcon(), SectionOperation.MASS_RETURN_TO_INSURER);
-		addDockItem("Relatórios", r.reportIcon(), SectionOperation.REPORT);
-		addDockItem("Importações / Outros", r.generalTasksIcon(), SectionOperation.GENERAL_TASKS);
 	}
 
-	protected void addDockItem(String text, ImageResource icon, final ReceiptSectionViewPresenter.SectionOperation action){
+	protected void addDockItem(String text, ImageResource icon, final ReceiptSectionViewPresenter.SectionOperation action,int dockIndex){
 		DockItem item = null;
 
 		if(icon == null){
@@ -88,7 +103,13 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 		}
 
 		item.setTitle(text);
-		this.operationDock.addItem(item);
+
+		if(dockIndex == 1)
+			this.operationDock.addItem(item);
+
+		else 
+			this.operationDock2.addItem(item);
+		
 	}
 
 	public HasWidgets getOperationViewContainer() {

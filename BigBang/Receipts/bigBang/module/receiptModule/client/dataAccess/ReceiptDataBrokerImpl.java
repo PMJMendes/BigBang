@@ -960,20 +960,20 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		});
 
 	}
-	
+
 	@Override
 	public void massGenerateReceipt(String[] array,
 			final ResponseHandler<Void> responseHandler) {
-		
+
 		service.massCreateInternalReceipt(array, new BigBangAsyncCallback<Void>() {
-			
+
 			@Override
 			public void onResponseSuccess(Void result) {
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.RECEIPT_GENERATION, null));
 				responseHandler.onResponse(null);
-				
+
 			}
-		
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
@@ -981,11 +981,11 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});
 				super.onResponseFailure(caught);
 			}
-		
+
 		});
-		
+
 	}
-	
+
 	@Override
 	public void generateReceipt(final String receiptId,
 			final ResponseHandler<Receipt> responseHandler) {
@@ -995,9 +995,9 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			public void onResponseSuccess(Receipt result) {
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.RECEIPT_GENERATION, receiptId));
 				responseHandler.onResponse(null);
-				
+
 			}
-		
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
@@ -1005,7 +1005,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
 
 	}
@@ -1032,7 +1032,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 		});				
 	}
-	
+
 	@Override
 	public void receiveMessage(Conversation info, 
 			final ResponseHandler<Conversation> responseHandler) {
@@ -1063,7 +1063,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CANCEL_PAYMENT_NOTICE, result.id));
 				responseHandler.onResponse(result);
 			}
-		
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
@@ -1071,8 +1071,58 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});	
 				super.onResponseFailure(caught);
 			}
-		
+
 		});
+	}
+
+	@Override
+	public void massCreateSecondPaymentNotice(String[] receiptIds, final
+			ResponseHandler<Void> responseHandler) {
+		service.massCreateSecondPaymentNotice(receiptIds, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CREATE_SECOND_PAYMENT_NOTICE, null));
+				responseHandler.onResponse(null);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not create the mass payment notice")
+				});
+				super.onResponseFailure(caught);
+			}
+
+		});
+	}
+
+	@Override
+	public void sendSecondPaymentNotice(String id,
+			final ResponseHandler<Receipt> responseHandler) {
+		service.createSecondPaymentNotice(id,new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CREATE_SECOND_PAYMENT_NOTICE, result.id));
+				responseHandler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not create second payment notice")
+				});
+				super.onResponseFailure(caught);
+			}
+
+		});		
 	}
 
 }
