@@ -186,9 +186,6 @@ public class LoginViewPresenter implements ViewPresenter {
 	}
 	
 	private void onLoginSuccess(LoginResponse loginResponse){
-		if ( Window.Location.getParameter("domain") != null )
-			Window.Location.replace(GWT.getHostPageBaseURL());
-
 		Session.setUserId(loginResponse.userId);
 		Session.setUsername(loginResponse.userName);
 		Session.setDisplayName("TODO");
