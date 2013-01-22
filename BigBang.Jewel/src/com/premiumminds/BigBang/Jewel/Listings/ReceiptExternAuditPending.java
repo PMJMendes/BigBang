@@ -229,7 +229,7 @@ public class ReceiptExternAuditPending
 		larrCells[1].setAlign("right");
 		lobjDiv.addElementToRegistry(new Strong(pstrClient));
 		lobjDiv.addElementToRegistry(new BR());
-		lobjDiv.addElementToRegistry("Recibos pagos no ano de " + plngYear);
+		lobjDiv.addElementToRegistry("Recibos pendentes à data de 31-12-" + plngYear);
 		lobjDiv.addElementToRegistry(new BR());
 		lobjDiv.addElementToRegistry(ReportBuilder.BuildValue(TypeDefGUIDs.T_Date, new Timestamp(new java.util.Date().getTime())));
 
