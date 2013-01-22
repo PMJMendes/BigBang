@@ -71,7 +71,14 @@ public class HealthDebitNoteReport
 		if ( larrObjects != null )
 		{
 			for ( i = 0; i < larrObjects.length; i++ )
+			{
+				if ( (larrObjects[i].getAt(SubPolicyObject.I.EXCLUSIONDATE) != null) &&
+						(((Timestamp)larrObjects[i].getAt(SubPolicyObject.I.EXCLUSIONDATE)).
+								before((Timestamp)lobjReceipt.getAt(Receipt.I.MATURITYDATE))) )
+					continue;
+
 				lstrDesc.append("\r").append(larrObjects[i].getLabel());
+			}
 		}
 
 		mstrNumber = lobjReceipt.getLabel();
