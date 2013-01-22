@@ -45,6 +45,7 @@ public interface ReceiptService
 	public Receipt setForReturn(Receipt.ReturnMessage message) throws SessionExpiredException, BigBangException;
 
 	public Receipt createPaymentNotice(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt createSecondPaymentNotice(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt cancelPaymentNotice(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt markPayed(Receipt.PaymentInfo info) throws SessionExpiredException, BigBangException;
@@ -75,6 +76,7 @@ public interface ReceiptService
 
 	public Receipt serialCreateReceipt(Receipt receipt, DocuShareHandle source) throws SessionExpiredException, BigBangException;
 	public void massCreatePaymentNotice(String[] receiptIds) throws SessionExpiredException, BigBangException;
+	public void massCreateSecondPaymentNotice(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massCreateSignatureRequest(String[] receiptIds, int replylimit) throws SessionExpiredException, BigBangException;
 	public void massSendPayment(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massCreateInternalReceipt(String[] receiptIds) throws SessionExpiredException, BigBangException;

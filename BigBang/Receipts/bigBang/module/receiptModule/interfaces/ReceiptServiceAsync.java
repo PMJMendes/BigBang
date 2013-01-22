@@ -25,6 +25,7 @@ public interface ReceiptServiceAsync
 	void validateReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void setForReturn(Receipt.ReturnMessage message, AsyncCallback<Receipt> callback);
 	void createPaymentNotice(String receiptId, AsyncCallback<Receipt> callback);
+	void createSecondPaymentNotice(String receiptId, AsyncCallback<Receipt> callback);
 	void cancelPaymentNotice(String receiptId, AsyncCallback<Receipt> callback);
 	void markPayed(Receipt.PaymentInfo info, AsyncCallback<Receipt> callback);
 	void getRelevantDebitNotes(String receiptId, AsyncCallback<DebitNote[]> callback);
@@ -45,6 +46,7 @@ public interface ReceiptServiceAsync
 	void deleteReceipt(String receiptId, AsyncCallback<Void> callback);
 	void serialCreateReceipt(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
 	void massCreatePaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);
+	void massCreateSecondPaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);
 	void massCreateSignatureRequest(String[] receiptIds, int replylimit, AsyncCallback<Void> callback);
 	void massSendPayment(String[] receiptIds, AsyncCallback<Void> callback);
 	void massCreateInternalReceipt(String[] receiptIds, AsyncCallback<Void> callback);

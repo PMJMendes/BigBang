@@ -76,6 +76,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateDASRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateInternalReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateSecondPaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateSignatureRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DASNotNecessary;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
@@ -716,6 +717,41 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopCPN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Receipt createSecondPaymentNotice(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		CreateSecondPaymentNotice lopCSPN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCSPN = new CreateSecondPaymentNotice(lobjReceipt.GetProcessID());
+		lopCSPN.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
+		lopCSPN.mbUseSets = false;
+
+		try
+		{
+			lopCSPN.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -1619,6 +1655,153 @@ public class ReceiptServiceImpl
 					lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
 
 					lopCPN = new CreatePaymentNotice(lobjReceipt.GetProcessID());
+					lopCPN.marrReceiptIDs = larrFinal;
+					lopCPN.mbUseSets = true;
+					lopCPN.midSet = lidSet;
+					lopCPN.midSetDocument = lidSetClient;
+					lopCPN.mobjDocOps = lobjDocOps;
+					lopCPN.mbTryEmail = lbTryEmail;
+					lopCPN.mobjConvData = lobjConvData;
+
+					lopCPN.Execute(ldb);
+
+					lobjConvData = lopCPN.mobjConvData;
+					lbTryEmail = lopCPN.mbTryEmail;
+					lobjDocOps = lopCPN.mobjDocOps;
+					lidSetClient = lopCPN.midSetDocument;
+					lidSet = lopCPN.midSet;
+				}
+				catch (Throwable e)
+				{
+					try { ldb.Rollback(); } catch (Throwable e1) {}
+					try { ldb.Disconnect(); } catch (Throwable e1) {}
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+
+			if ( lobjConvData != null )
+			{
+				try
+				{
+					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lidC);
+					lopCCC = new com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation(lobjClient.GetProcessID());
+					lopCCC.mobjData = lobjConvData;
+					lopCCC.Execute(ldb);
+				}
+				catch (Throwable e)
+				{
+					try { ldb.Rollback(); } catch (Throwable e1) {}
+					try { ldb.Disconnect(); } catch (Throwable e1) {}
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+
+			try
+			{
+				ldb.Commit();
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
+	public void massCreateSecondPaymentNotice(String[] receiptIds)
+		throws SessionExpiredException, BigBangException
+	{
+		HashMap<UUID, ArrayList<UUID>> larrReceipts;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		IProcess lobjProcess;
+		UUID lidClient;
+		ArrayList<UUID> larrByClient;
+		UUID[] larrFinal;
+		MasterDB ldb;
+		UUID lidSet;
+		UUID lidSetClient;
+		DocOps lobjDocOps;
+		Boolean lbTryEmail;
+		ConversationData lobjConvData;
+		CreateSecondPaymentNotice lopCPN;
+		Client lobjClient;
+		com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation lopCCC;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrReceipts = new HashMap<UUID, ArrayList<UUID>>();
+		for ( i = 0; i < receiptIds.length; i++ )
+		{
+			try
+			{
+				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(receiptIds[i]));
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
+				else
+					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			larrByClient = larrReceipts.get(lidClient);
+			if ( larrByClient == null )
+			{
+				larrByClient = new ArrayList<UUID>();
+				larrReceipts.put(lidClient, larrByClient);
+			}
+			larrByClient.add(lobjReceipt.getKey());
+		}
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lidSet = null;
+		for(UUID lidC : larrReceipts.keySet())
+		{
+			lidSetClient = null;
+			lobjDocOps = null;
+			lbTryEmail = null;
+			lobjConvData = null;
+			larrByClient = larrReceipts.get(lidC);
+			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
+
+			try
+			{
+				ldb.BeginTrans();
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			for ( i = 0; i < larrFinal.length; i++ )
+			{
+				try
+				{
+					lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
+
+					lopCPN = new CreateSecondPaymentNotice(lobjReceipt.GetProcessID());
 					lopCPN.marrReceiptIDs = larrFinal;
 					lopCPN.mbUseSets = true;
 					lopCPN.midSet = lidSet;

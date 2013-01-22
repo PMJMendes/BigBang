@@ -676,6 +676,7 @@ public class Constants
 	public static final UUID TID_Logo                = UUID.fromString("73297AD9-2741-4EFC-87D7-A0FA011A93F5");
 	public static final UUID TID_HealthDebitNote     = UUID.fromString("C4E53620-782C-4F34-B038-A11200E6F58A");
 	public static final UUID TID_HealthReceipt       = UUID.fromString("06801686-C77A-4B90-A74A-A12A0120FE95");
+	public static final UUID TID_SecondPaymentNotice = UUID.fromString("FFF69D88-A509-4795-8995-A14E0109CE99");
 
 	// Contact Types
 	public static final UUID CtTypeID_General        = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");
@@ -706,6 +707,7 @@ public class Constants
 	public static final UUID DocID_HealthExpenseDoc       = UUID.fromString("25469CCB-BF12-44D1-86D3-A0BC01319C41");
 	public static final UUID DocID_DASForm                = UUID.fromString("02DD080C-46FD-424D-A68A-A0C50114275A");
 	public static final UUID DocID_DebitNoteReceipt       = UUID.fromString("4468E611-CF2D-427A-9CFF-A12A012B5FDB");
+	public static final UUID DocID_SecondPaymentNotice    = UUID.fromString("476D0243-4FE2-4770-904B-A14E0109F1DA");
 
 	// Report Types
 	public static final UUID RTypeID_Parameter   = UUID.fromString("EFF85260-CB13-4599-8EFD-A032010C4AED");
