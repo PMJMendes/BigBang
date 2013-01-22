@@ -2,7 +2,6 @@ package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -24,11 +23,9 @@ import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
-import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
-import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.SecondPaymentNoticeReport;
@@ -89,8 +86,6 @@ public class CreateSecondPaymentNotice
 		PrintSet lobjSet;
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
-		Document lobjStamped;
-		FileXfer lobjFile;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midClient = GetProcess().GetParent().GetParent().GetDataKey();
@@ -137,21 +132,9 @@ public class CreateSecondPaymentNotice
 					midSetDocument = lobjSetClient.getKey();
 				}
 
-				lobjFile = null;
-				lobjStamped = ((Receipt)GetProcess().GetData()).getStamped(pdb);
-				if ( lobjStamped != null )
-				{
-			    	if ( lobjStamped.getAt(Document.I.FILE) instanceof FileXfer )
-			    		lobjFile = (FileXfer)lobjStamped.getAt(Document.I.FILE);
-			    	else
-			    		lobjFile = new FileXfer((byte[])lobjStamped.getAt(Document.I.FILE));
-			    	if ( mbTryEmail )
-			    		addAttachment(lobjStamped);
-				}
-
 				lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjSetReceipt.setAt(0, midSetDocument);
-				lobjSetReceipt.setAt(1, (lobjFile == null ? null : lobjFile.GetVarData()));
+				lobjSetReceipt.setAt(1, null);
 				lobjSetReceipt.SaveToDb(pdb);
 				midSetDetail = lobjSetReceipt.getKey();
 			}
@@ -261,18 +244,6 @@ public class CreateSecondPaymentNotice
 		mobjConvData.marrMessages[0].marrAttachments[0].midDocument = mobjDocOps.marrCreate[0].mid;
 
 		return true;
-	}
-
-	private void addAttachment(Document pobjDoc)
-	{
-		MessageAttachmentData[] larrAtts;
-
-		larrAtts = mobjConvData.marrMessages[0].marrAttachments;
-
-		mobjConvData.marrMessages[0].marrAttachments = Arrays.copyOf(larrAtts, larrAtts.length + 1);
-		mobjConvData.marrMessages[0].marrAttachments[larrAtts.length] = new MessageAttachmentData();
-		mobjConvData.marrMessages[0].marrAttachments[larrAtts.length].midOwner = null;
-		mobjConvData.marrMessages[0].marrAttachments[larrAtts.length].midDocument = pobjDoc.getKey();
 	}
 
 	private ContactInfo[] getRelevantEmails(Client pobjClient)

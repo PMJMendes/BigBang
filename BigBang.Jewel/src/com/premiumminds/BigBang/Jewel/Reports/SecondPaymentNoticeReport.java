@@ -31,7 +31,7 @@ public class SecondPaymentNoticeReport
 
 	protected UUID GetTemplateID()
 	{
-		return Constants.TID_PaymentNotice;
+		return Constants.TID_SecondPaymentNotice;
 	}
 
 	public FileXfer Generate()
