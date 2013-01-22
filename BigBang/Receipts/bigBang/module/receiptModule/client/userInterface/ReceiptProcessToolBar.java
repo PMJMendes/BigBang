@@ -294,8 +294,6 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.REQUESTS, receiveMessage);
-		requestsSubMenu.addSeparator();
-
 		
 
 		//ADMIN
