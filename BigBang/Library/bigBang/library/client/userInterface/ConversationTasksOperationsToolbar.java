@@ -48,7 +48,7 @@ public abstract class ConversationTasksOperationsToolbar extends BigBangOperatio
 		
 		addItem(receiveMenuItem);
 		
-		closeMenuItem = new MenuItem("Fechar processo", new Command() {
+		closeMenuItem = new MenuItem("Fechar Troca de Mensagens", new Command() {
 			
 			@Override
 			public void execute() {

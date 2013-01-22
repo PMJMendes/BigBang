@@ -24,6 +24,8 @@ public class OtherEntityForm extends FormView<OtherEntity>{
 		addFormField(type);
 		addFormField(notes);
 
+		type.allowEdition(false);
+		
 		setValidator(new OtherEntityFormValidator(this));
 	}
 
