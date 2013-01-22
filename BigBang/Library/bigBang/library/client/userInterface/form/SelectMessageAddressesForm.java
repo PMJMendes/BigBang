@@ -94,8 +94,12 @@ public class SelectMessageAddressesForm extends FormField<MsgAddress[]>{
 		add = new Button("Adicionar");
 		cancel = new Button("Cancelar");
 
-		mainWrapper.add(contactsFrom);
-		mainWrapper.add(otherEntityContacts);
+		HorizontalPanel contactsAndOtherEntities = new HorizontalPanel();
+		
+		contactsAndOtherEntities.add(contactsFrom);
+		contactsAndOtherEntities.add(otherEntityContacts);
+		
+		mainWrapper.add(contactsAndOtherEntities);
 		textWrapper.add(textField);
 		textWrapper.add(contacts);
 		textWrapper.add(add);
