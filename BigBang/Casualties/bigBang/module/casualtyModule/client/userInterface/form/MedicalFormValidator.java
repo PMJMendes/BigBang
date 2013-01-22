@@ -40,7 +40,7 @@ public class MedicalFormValidator extends FormValidator<MedicalFileForm> {
 		valid &= validateString(section.disabilityLocation, 0, 250, true);
 		valid &= validateNumber(section.disabilityPercent, true);
 		valid &= validateDate(section.endDate, true);
-		valid &= validateNumber(section.benefits,false);
+		valid &= validateNumber(section.benefits, true);
 		
 		return valid;
 	}

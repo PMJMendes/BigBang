@@ -154,7 +154,8 @@ public class MedicalFileServiceImpl
 						lobjResult.marrDetails[i].mlngPercent = pobjSource.details[i].percentDisability;
 						lobjResult.marrDetails[i].mdtEndDate = ( pobjSource.details[i].endDate == null ? null :
 								Timestamp.valueOf(pobjSource.details[i].endDate + " 00:00:00.0") );
-						lobjResult.marrDetails[i].mdblBenefits = new BigDecimal(pobjSource.details[i].benefits + "");
+						lobjResult.marrDetails[i].mdblBenefits = ( pobjSource.details[i].benefits == null ? null :
+								new BigDecimal(pobjSource.details[i].benefits + "") );
 					}
 				}
 			}
