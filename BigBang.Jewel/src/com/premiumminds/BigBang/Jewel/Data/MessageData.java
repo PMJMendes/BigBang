@@ -100,5 +100,12 @@ public class MessageData
 			for ( i = 0; i < marrAddresses.length; i++ )
 				marrAddresses[i].Describe(pstrBuilder, pstrLineBreak);
 		}
+
+		if ( mbIsEmail && (marrAttachments != null) && (marrAttachments.length > 0) )
+		{
+			pstrBuilder.append(pstrLineBreak).append("Anexos:").append(pstrLineBreak);
+			for ( i = 0; i < marrAttachments.length; i++ )
+				marrAttachments[i].Describe(pstrBuilder, pstrLineBreak);
+		}
 	}
 }
