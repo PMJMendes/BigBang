@@ -183,6 +183,7 @@ public class BigBang_Tests
 //		TestReceiptEditAndValidate.DoTest();
 //		TestReceiptSetReturn.DoTest();
 //		TestReceiptCreatePaymentNotice.DoTest();
+//		TestReceiptCreateSecondPaymentNotice.DoTest();
 //		TestReceiptPayment.DoTest();
 //		TestReceiptSend.DoTest();
 //		TestReceiptInsurerAccounting.DoTest();
