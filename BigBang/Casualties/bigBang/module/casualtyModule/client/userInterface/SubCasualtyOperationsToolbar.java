@@ -89,7 +89,7 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		
 		addItem(SUB_MENU.EXECUTE, markNotificationSent);
 		
-		createAssessment = new MenuItem("Criar Peritagem ou Averiguação", new Command() {
+		createAssessment = new MenuItem("Peritagem ou Averiguação", new Command() {
 			
 			@Override
 			public void execute() {
@@ -99,7 +99,7 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		
 		addItem(SUB_MENU.CREATE, createAssessment);
 		
-		createMedicalFile = new MenuItem("Criar Ficha Clínica", new Command() {
+		createMedicalFile = new MenuItem("Ficha Clínica", new Command() {
 			
 			@Override
 			public void execute() {

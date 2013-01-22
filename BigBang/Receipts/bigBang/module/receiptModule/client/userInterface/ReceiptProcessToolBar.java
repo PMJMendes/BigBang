@@ -67,7 +67,57 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.CREATE, issueDebitNote);
+		this.createSubMenu.addSeparator();
+		requestPurchaseOrderNumber = new MenuItem("Pedido de Número de Encomenda", new Command() {
 
+			@Override
+			public void execute() {
+				onRequestPurchaseOrderNumber();
+			}
+		});
+		addItem(SUB_MENU.CREATE, requestPurchaseOrderNumber);
+		requestDAS = new MenuItem("Pedido de DAS", new Command() {
+
+			@Override
+			public void execute() {
+				onRequestDAS();
+			}
+		});
+		addItem(SUB_MENU.CREATE, requestDAS);
+		requestSignature = new MenuItem("Pedido de Assinatura", new Command() {
+
+			@Override
+			public void execute() {
+				onRequestSignature();
+			}
+		});
+		addItem(SUB_MENU.CREATE, requestSignature);
+		this.createSubMenu.addSeparator();
+		requestPhysicalReceipt = new MenuItem("Pedido de Recibo Não Enviado", new Command() {
+
+			@Override
+			public void execute() {
+				onRequestPhysicalReceipt();
+			}
+		});
+		addItem(SUB_MENU.CREATE, requestPhysicalReceipt);
+		requestPhysicalReceiptCopy = new MenuItem("Pedido de Segunda Via de Recibo", new Command() {
+
+			@Override
+			public void execute() {
+				onRequestPhysicalReceiptCopy();
+			}
+		});
+		addItem(SUB_MENU.CREATE, requestPhysicalReceiptCopy);
+		requestAdvanceDebit = new MenuItem("Pedido de Débito Antecipado em Conta Efectiva", new Command() {
+
+			@Override
+			public void execute() {
+				onRequestAdvanceDebit();
+			}
+		});
+		addItem(SUB_MENU.CREATE, requestAdvanceDebit);
+		
 		//EXECUTE
 		enterPayment = new MenuItem("Cobrança", new Command() {
 
@@ -246,55 +296,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.REQUESTS, receiveMessage);
 		requestsSubMenu.addSeparator();
 
-		requestPurchaseOrderNumber = new MenuItem("Criar Pedido de Número de Encomenda", new Command() {
-
-			@Override
-			public void execute() {
-				onRequestPurchaseOrderNumber();
-			}
-		});
-		addItem(SUB_MENU.REQUESTS, requestPurchaseOrderNumber);
-		requestDAS = new MenuItem("Criar Pedido de DAS", new Command() {
-
-			@Override
-			public void execute() {
-				onRequestDAS();
-			}
-		});
-		addItem(SUB_MENU.REQUESTS, requestDAS);
-		requestSignature = new MenuItem("Criar Pedido de Assinatura", new Command() {
-
-			@Override
-			public void execute() {
-				onRequestSignature();
-			}
-		});
-		addItem(SUB_MENU.REQUESTS, requestSignature);
-		this.requestsSubMenu.addSeparator();
-		requestPhysicalReceipt = new MenuItem("Criar Pedido de Recibo Não Enviado", new Command() {
-
-			@Override
-			public void execute() {
-				onRequestPhysicalReceipt();
-			}
-		});
-		addItem(SUB_MENU.REQUESTS, requestPhysicalReceipt);
-		requestPhysicalReceiptCopy = new MenuItem("Criar Pedido de Segunda Via de Recibo", new Command() {
-
-			@Override
-			public void execute() {
-				onRequestPhysicalReceiptCopy();
-			}
-		});
-		addItem(SUB_MENU.REQUESTS, requestPhysicalReceiptCopy);
-		requestAdvanceDebit = new MenuItem("Criar Pedido de Débito Antecipado em Conta Efectiva", new Command() {
-
-			@Override
-			public void execute() {
-				onRequestAdvanceDebit();
-			}
-		});
-		addItem(SUB_MENU.REQUESTS, requestAdvanceDebit);
+		
 
 		//ADMIN
 		deleteReceipt = new MenuItem("Eliminar", new Command() {

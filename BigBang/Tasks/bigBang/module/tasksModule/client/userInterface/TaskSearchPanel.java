@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.Task;
 import bigBang.definitions.shared.TaskStub;
@@ -138,14 +139,18 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 		this.removedIds = new ArrayList<String>();
 
 		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
-		sortOptions.put(TaskSortParameter.SortableField.STATUS, "Urgência");
 		sortOptions.put(TaskSortParameter.SortableField.DUE_DATE, "Data limite");
+		sortOptions.put(TaskSortParameter.SortableField.TAG, "Descrição");
+		sortOptions.put(TaskSortParameter.SortableField.STATUS, "Urgência");
 		sortOptions.put(TaskSortParameter.SortableField.CREATION_DATE, "Data de criação");
-
+		
 		this.filtersPanel = new FiltersPanel(sortOptions);
+		
+		this.filtersPanel.setSortOrder(SortOrder.ASC);
+		
 		this.filtersPanel.addTypifiedListField(Filters.PROCESS, BigBangConstants.TypifiedListIds.PROCESS_TYPE, "Tipo de Processo");
 		this.filtersPanel.addTypifiedListField(Filters.OPERATION, BigBangConstants.TypifiedListIds.OPERATION_TYPE, "Tipo de Operação", Filters.PROCESS);
-
+		
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 
 			@Override

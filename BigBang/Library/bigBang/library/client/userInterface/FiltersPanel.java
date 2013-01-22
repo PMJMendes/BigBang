@@ -3,6 +3,10 @@ package bigBang.library.client.userInterface;
 import java.util.HashMap;
 import java.util.Map;
 
+import bigBang.definitions.shared.SortOrder;
+import bigBang.library.client.FormField;
+import bigBang.library.client.userInterface.view.View;
+
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -17,10 +21,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import bigBang.definitions.shared.SortOrder;
-import bigBang.library.client.FormField;
-import bigBang.library.client.userInterface.view.View;
 
 public class FiltersPanel extends View {
 
@@ -196,6 +196,10 @@ public class FiltersPanel extends View {
 		}else if(v instanceof CheckBoxFormField){
 			((CheckBoxFormField)v).setValue((Boolean)value);
 		}
+	}
+	
+	public void setSortOrder(SortOrder order){
+		sortOrderList.setSelectedIndex(order.toString().equalsIgnoreCase("DESC") ? 0 : 1);
 	}
 
 	public SortOrder getSortingOrder(){
