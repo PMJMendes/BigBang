@@ -25,6 +25,7 @@ public class BigBang_Tests
 
 //		Services.authenticationService.login("CrediteEGS", callback);
 		Services.authenticationService.login("jmendes", "maxhed.0", "CrediteEGS", callback);
+//		Services.authenticationService.login("jmendes", "maxhed.0", "AMartins", callback);
 	}
 
 	private void DoTests()

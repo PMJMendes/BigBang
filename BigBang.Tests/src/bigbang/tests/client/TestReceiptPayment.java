@@ -29,7 +29,7 @@ public class TestReceiptPayment
 		};
 
 		info = new Receipt.PaymentInfo();
-		info.receiptId = "E62C9524-408F-4A78-916F-A0E90057A04D";
+		info.receiptId = "3A6987A5-C8F0-490F-AC9E-A1110110EC3E";
 		info.payments = new Receipt.PaymentInfo.Payment[] {new Receipt.PaymentInfo.Payment()};
 		info.payments[0].paymentTypeId = "40B9ACC7-A99A-4DC2-BAEF-A02200EB59B3";
 		Services.receiptService.markPayed(info, callback);
