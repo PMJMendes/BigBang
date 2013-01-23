@@ -24,4 +24,6 @@ public class ReceiptSearchParameter
 	public String categoryId;
 	public String lineId;
 	public String subLineId;
+
+	public boolean internalOnly;
 }
