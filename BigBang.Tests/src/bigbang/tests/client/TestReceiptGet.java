@@ -50,13 +50,16 @@ public class TestReceiptGet
 		};
 
 		parameter = new ReceiptSearchParameter();
-		parameter.paymentFrom = "2012-12-01";
-		parameter.paymentTo = "2013-01-03";
+		parameter.freeText = "5601";
+		parameter.internalOnly = true;
+//		parameter.paymentFrom = "2012-12-01";
+//		parameter.paymentTo = "2013-01-03";
 		sorts = new ReceiptSortParameter();
 		sorts.field = ReceiptSortParameter.SortableField.RELEVANCE;
-		sorts.order = SortOrder.ASC;
+		sorts.order = SortOrder.DESC;
 
-		Services.receiptService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 50, callback);
+		Services.receiptService.openForOperation("F5F00701-69F7-4622-BB8C-9FB800DED93F", new SearchParameter[] {parameter},
+				new SortParameter[] {sorts}, 50, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
