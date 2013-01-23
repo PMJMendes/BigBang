@@ -14,6 +14,7 @@ public class MedicalFile
 
 		public String id; //Campo auxiliar para ajudar os serviços, manter inalterado
 		public String disabilityTypeId;
+		public String disabilityTypeLabel;
 		public String startDate;
 		public String place;
 		public Integer percentDisability;
