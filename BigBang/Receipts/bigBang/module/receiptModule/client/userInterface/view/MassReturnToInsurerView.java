@@ -59,7 +59,8 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 		PAYMENT_TO,
 		CATEGORY,
 		LINE,
-		SUB_LINE, AGENCY, MANAGER, MEDIATOR
+		SUB_LINE, AGENCY, MANAGER, MEDIATOR,
+		IS_INTERNAL
 	}
 
 	protected static class SelectedReceiptsList extends SelectedProcessesList<ReceiptStub>{
@@ -107,6 +108,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 			filtersPanel.addTypifiedListField(Filters.CATEGORY, BigBangConstants.EntityIds.CATEGORY, "Categoria");
 			filtersPanel.addTypifiedListField(Filters.LINE, BigBangConstants.EntityIds.LINE, "Ramo", Filters.CATEGORY);
 			filtersPanel.addTypifiedListField(Filters.SUB_LINE, BigBangConstants.EntityIds.SUB_LINE, "Modalidade", Filters.LINE);
+			filtersPanel.addCheckBoxField(Filters.IS_INTERNAL, "Só Notas de Débito");
 
 			filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 
@@ -161,6 +163,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 			parameter.categoryId = (String) filtersPanel.getFilterValue(Filters.CATEGORY);
 			parameter.lineId = (String) filtersPanel.getFilterValue(Filters.LINE);
 			parameter.subLineId = (String) filtersPanel.getFilterValue(Filters.SUB_LINE);
+			parameter.internalOnly = (Boolean) filtersPanel.getFilterValue(Filters.IS_INTERNAL);
 
 			SearchParameter[] parameters = new SearchParameter[] {
 					parameter
