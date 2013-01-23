@@ -3,28 +3,62 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-
 import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.MedicalFile.MedicalDetail;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
+import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.casualtyModule.client.userInterface.NewMedicalDetailItemSection;
+import bigBang.module.casualtyModule.client.userInterface.PaymentGridPanel;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class MedicalFileForm extends FormView<MedicalFile>{
 
 	DatePickerFormField nextAppointment;
 	NewMedicalDetailItemSection newItemSection;
 	Collection<MedicalDetailItemSection> medicalDetailItemSections;
+	Button showAllPayments = new Button("Resumo de Pagamentos");
+	private PopupPanel popup;
+	private PaymentGridPanel payments;
 
 	public MedicalFileForm() {
+		
+		popup = new PopupPanel();
+		payments = new PaymentGridPanel();
+		
+		popup.add(payments);
+		
 		nextAppointment = new DatePickerFormField("Data da próxima consulta");
 
 		addSection("Informação Geral");
 
-		addFormField(nextAppointment);
+		HorizontalPanel panel = new HorizontalPanel();
+
+		panel.add(nextAppointment);
+		panel.add(showAllPayments);
+
+		panel.setWidth("95%");
+
+		panel.setCellHorizontalAlignment(showAllPayments, HasHorizontalAlignment.ALIGN_RIGHT);
+
+		addWidget(panel);
+
+		registerFormField(nextAppointment);
+
+		showAllPayments.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				payments.setValue(MedicalFileForm.this.getValue().details);
+				popup.center();
+			}
+		});
 
 		newItemSection = new NewMedicalDetailItemSection();
 		newItemSection.getNewButton().addClickHandler(new ClickHandler() {
@@ -36,36 +70,36 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 		});
 
 		medicalDetailItemSections = new ArrayList<MedicalDetailItemSection>();
-		
+
 		addLastFields();
-		
+
 		setValue(new MedicalFile());
-		
+
 		setValidator(new MedicalFormValidator(this));
 	}
 
 	protected void addMedicalDetail(MedicalFile.MedicalDetail medicalDetail) {
 
 		if(!medicalDetail.deleted){
-			
+
 			final MedicalDetailItemSection section = new MedicalDetailItemSection(medicalDetail);
 			section.setReadOnly(this.isReadOnly());
 			this.medicalDetailItemSections.add(section);
 			addSection(section);
 			section.setItem(medicalDetail);
-			
+
 			if(medicalDetail.id == null){
 				section.expand();
 			}
-			
+
 			section.getRemoveButton().addClickHandler(new ClickHandler() {
-				
+
 				@Override
 				public void onClick(ClickEvent event) {
 					removeItemAndSection(section);
 				}
 			});
-			
+
 			addLastFields();
 		}
 	}
@@ -85,14 +119,14 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 	public MedicalFile getInfo() {
 
 		MedicalFile result = value;
-		
+
 		if(result != null){
 			result.nextDate = nextAppointment.getStringValue();
 			result.details = getMedicalDetails();
 		}
-		
+
 		return result;
-		
+
 	}
 
 	@Override
@@ -131,5 +165,4 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 
 		return details;
 	}
-
 }
