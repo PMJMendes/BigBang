@@ -31,10 +31,12 @@ import bigBang.module.casualtyModule.shared.MedicalFileSortParameter;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.MedicalAppointmentData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalDetailData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalFileData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalAppointment;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CloseProcess;
@@ -47,11 +49,43 @@ public class MedicalFileServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
+	public static MedicalFile.MedicalDetail sGetDetail(MedicalDetail pobjDetail)
+	{
+		MedicalFile.MedicalDetail lobjResult;
+
+		lobjResult = new MedicalFile.MedicalDetail();
+		lobjResult.id = pobjDetail.getKey().toString();
+		lobjResult.disabilityTypeId = ((UUID)pobjDetail.getAt(MedicalDetail.I.DISABILITYTYPE)).toString();
+		lobjResult.startDate = (pobjDetail.getAt(MedicalDetail.I.STARTDATE) == null ? null :
+				((Timestamp)pobjDetail.getAt(MedicalDetail.I.STARTDATE)).toString().substring(0, 10) );
+		lobjResult.place = (String)pobjDetail.getAt(MedicalDetail.I.PLACE);
+		lobjResult.percentDisability = (Integer)pobjDetail.getAt(MedicalDetail.I.PERCENT);
+		lobjResult.endDate = (pobjDetail.getAt(MedicalDetail.I.ENDDATE) == null ? null :
+				((Timestamp)pobjDetail.getAt(MedicalDetail.I.ENDDATE)).toString().substring(0, 10) );
+		lobjResult.benefits = (pobjDetail.getAt(MedicalDetail.I.BENEFITS) == null ? null :
+				((BigDecimal)pobjDetail.getAt(MedicalDetail.I.BENEFITS)).doubleValue());
+
+		return lobjResult;
+	}
+
+	public static MedicalFile.Appointment sGetAppointment(MedicalAppointment pobjAppt)
+	{
+		MedicalFile.Appointment lobjResult;
+
+		lobjResult = new MedicalFile.Appointment();
+		lobjResult.id = pobjAppt.getKey().toString();
+		lobjResult.label = (String)pobjAppt.getAt(MedicalAppointment.I.LABEL);
+		lobjResult.date = ((Timestamp)pobjAppt.getAt(MedicalAppointment.I.DATE)).toString().substring(0, 10);
+
+		return lobjResult;
+	}
+
 	public static MedicalFile sGetMedicalFile(UUID pidFile)
 		throws BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.MedicalFile lobjFile;
 		MedicalDetail[] larrDetails;
+		MedicalAppointment[] larrAppts;
 		SubCasualty lobjSubC;
 		Client lobjCli;
 		String lstrObj;
@@ -63,6 +97,7 @@ public class MedicalFileServiceImpl
 		{
 			lobjFile = com.premiumminds.BigBang.Jewel.Objects.MedicalFile.GetInstance(Engine.getCurrentNameSpace(), pidFile);
 			larrDetails = lobjFile.GetCurrentDetails();
+			larrAppts = lobjFile.GetCurrentAppts();
 			lobjSubC = SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
 					(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY));
 			lobjCli = lobjSubC.GetCasualty().GetClient();
@@ -92,22 +127,77 @@ public class MedicalFileServiceImpl
 		{
 			lobjResult.details = new MedicalFile.MedicalDetail[larrDetails.length];
 			for ( i = 0; i < larrDetails.length; i++ )
-			{
-				lobjResult.details[i] = new MedicalFile.MedicalDetail();
-				lobjResult.details[i].id = larrDetails[i].getKey().toString(); //Campo auxiliar para ajudar os serviços, manter inalterado
-				lobjResult.details[i].disabilityTypeId = ((UUID)larrDetails[i].getAt(MedicalDetail.I.DISABILITYTYPE)).toString();
-				lobjResult.details[i].startDate = (larrDetails[i].getAt(MedicalDetail.I.STARTDATE) == null ? null :
-						((Timestamp)larrDetails[i].getAt(MedicalDetail.I.STARTDATE)).toString().substring(0, 10) );
-				lobjResult.details[i].place = (String)larrDetails[i].getAt(MedicalDetail.I.PLACE);
-				lobjResult.details[i].percentDisability = (Integer)larrDetails[i].getAt(MedicalDetail.I.PERCENT);
-				lobjResult.details[i].endDate = (larrDetails[i].getAt(MedicalDetail.I.ENDDATE) == null ? null :
-						((Timestamp)larrDetails[i].getAt(MedicalDetail.I.ENDDATE)).toString().substring(0, 10) );
-				lobjResult.details[i].benefits = (larrDetails[i].getAt(MedicalDetail.I.BENEFITS) == null ? null :
-						((BigDecimal)larrDetails[i].getAt(MedicalDetail.I.BENEFITS)).doubleValue());
-			}
+				lobjResult.details[i] = sGetDetail(larrDetails[i]);
+		}
+
+		if ( larrAppts == null )
+			lobjResult.appointments = null;
+		else
+		{
+			lobjResult.appointments = new MedicalFile.Appointment[larrAppts.length];
+			for ( i = 0; i < larrAppts.length; i++ )
+				lobjResult.appointments[i] = sGetAppointment(larrAppts[i]);
 		}
 
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
+
+		return lobjResult;
+	}
+
+	public static MedicalDetailData sParseDetail(MedicalFile.MedicalDetail pobjSource, UUID pidFile)
+	{
+		MedicalDetailData lobjResult;
+
+		if ( (pobjSource.id == null) && pobjSource.deleted )
+			lobjResult = null;
+		else
+		{
+			lobjResult = new MedicalDetailData();
+			lobjResult.mid = ( pobjSource.id == null ? null : UUID.fromString(pobjSource.id) );
+			if ( pobjSource.deleted )
+				lobjResult.mbDeleted = true;
+			else
+			{
+				lobjResult.mbDeleted = false;
+				lobjResult.mbNew = (pobjSource.id == null);
+				lobjResult.midFile = pidFile;
+				lobjResult.midDisabilityType = ( pobjSource.disabilityTypeId == null ? null :
+						UUID.fromString(pobjSource.disabilityTypeId) );
+				lobjResult.mdtStartDate = ( pobjSource.startDate == null ? null :
+						Timestamp.valueOf(pobjSource.startDate + " 00:00:00.0") );
+				lobjResult.mstrPlace = pobjSource.place;
+				lobjResult.mlngPercent = pobjSource.percentDisability;
+				lobjResult.mdtEndDate = ( pobjSource.endDate == null ? null :
+						Timestamp.valueOf(pobjSource.endDate + " 00:00:00.0") );
+				lobjResult.mdblBenefits = ( pobjSource.benefits == null ? null :
+						new BigDecimal(pobjSource.benefits + "") );
+			}
+		}
+
+		return lobjResult;
+	}
+
+	public static MedicalAppointmentData sParseAppointment(MedicalFile.Appointment pobjSource, UUID pidFile)
+	{
+		MedicalAppointmentData lobjResult;
+
+		if ( (pobjSource.id == null) && pobjSource.deleted )
+			lobjResult = null;
+		else
+		{
+			lobjResult = new MedicalAppointmentData();
+			lobjResult.mid = ( pobjSource.id == null ? null : UUID.fromString(pobjSource.id) );
+			if ( pobjSource.deleted )
+				lobjResult.mbDeleted = true;
+			else
+			{
+				lobjResult.mbDeleted = false;
+				lobjResult.mbNew = (pobjSource.id == null);
+				lobjResult.midFile = pidFile;
+				lobjResult.mstrLabel = pobjSource.label;
+				lobjResult.mdtDate = Timestamp.valueOf(pobjSource.date + " 00:00:00.0");
+			}
+		}
 
 		return lobjResult;
 	}
@@ -131,34 +221,16 @@ public class MedicalFileServiceImpl
 		{
 			lobjResult.marrDetails = new MedicalDetailData[pobjSource.details.length];
 			for ( i = 0; i < pobjSource.details.length ; i++ )
-			{
-				if ( (pobjSource.details[i].id == null) && pobjSource.details[i].deleted )
-					lobjResult.marrDetails[i] = null;
-				else
-				{
-					lobjResult.marrDetails[i] = new MedicalDetailData();
-					lobjResult.marrDetails[i].mid = ( pobjSource.details[i].id == null ? null :
-							UUID.fromString(pobjSource.details[i].id) );
-					if ( pobjSource.details[i].deleted )
-						lobjResult.marrDetails[i].mbDeleted = true;
-					else
-					{
-						lobjResult.marrDetails[i].mbDeleted = false;
-						lobjResult.marrDetails[i].mbNew = (pobjSource.details[i].id == null);
-						lobjResult.marrDetails[i].midFile = lobjResult.mid;
-						lobjResult.marrDetails[i].midDisabilityType = ( pobjSource.details[i].disabilityTypeId == null ? null :
-								UUID.fromString(pobjSource.details[i].disabilityTypeId) );
-						lobjResult.marrDetails[i].mdtStartDate = ( pobjSource.details[i].startDate == null ? null :
-								Timestamp.valueOf(pobjSource.details[i].startDate + " 00:00:00.0") );
-						lobjResult.marrDetails[i].mstrPlace = pobjSource.details[i].place;
-						lobjResult.marrDetails[i].mlngPercent = pobjSource.details[i].percentDisability;
-						lobjResult.marrDetails[i].mdtEndDate = ( pobjSource.details[i].endDate == null ? null :
-								Timestamp.valueOf(pobjSource.details[i].endDate + " 00:00:00.0") );
-						lobjResult.marrDetails[i].mdblBenefits = ( pobjSource.details[i].benefits == null ? null :
-								new BigDecimal(pobjSource.details[i].benefits + "") );
-					}
-				}
-			}
+				lobjResult.marrDetails[i] = sParseDetail(pobjSource.details[i], lobjResult.mid);
+		}
+
+		if ( pobjSource.appointments == null )
+			lobjResult.marrAppts = null;
+		else
+		{
+			lobjResult.marrAppts = new MedicalAppointmentData[pobjSource.appointments.length];
+			for ( i = 0; i < pobjSource.appointments.length ; i++ )
+				lobjResult.marrAppts[i] = sParseAppointment(pobjSource.appointments[i], lobjResult.mid);
 		}
 
 		return lobjResult;

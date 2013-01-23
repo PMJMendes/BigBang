@@ -20,6 +20,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.MedicalFileData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalAppointment;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 
@@ -68,6 +69,7 @@ public class CreateMedicalFile
 	{
 		MedicalFile lobjAux;
 		MedicalDetail lobjDetail;
+		MedicalAppointment lobjAppt;
 		IScript lobjScript;
 		IProcess lobjProc;
 		AgendaItem lobjItem;
@@ -98,6 +100,21 @@ public class CreateMedicalFile
 					lobjDetail = MedicalDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrDetails[i].ToObject(lobjDetail);
 					lobjDetail.SaveToDb(pdb);
+				}
+			}
+
+			if ( mobjData.marrAppts != null )
+			{
+				for ( i = 0; i < mobjData.marrAppts.length; i++ )
+				{
+					if ( mobjData.marrAppts[i] == null )
+						continue;
+
+					mobjData.marrAppts[i].midFile = mobjData.mid;
+
+					lobjAppt = MedicalAppointment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrAppts[i].ToObject(lobjAppt);
+					lobjAppt.SaveToDb(pdb);
 				}
 			}
 

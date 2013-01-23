@@ -14,9 +14,11 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.MedicalAppointmentData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalDetailData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalFileData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalAppointment;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 
@@ -68,6 +70,7 @@ public class ManageData
 	{
 		MedicalFile lobjAux;
 		MedicalDetail lobjDetail;
+		MedicalAppointment lobjAppt;
 		HashMap<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
@@ -117,6 +120,39 @@ public class ManageData
 							mobjData.marrDetails[i].mobjPrevValues.FromObject(lobjDetail);
 							mobjData.marrDetails[i].ToObject(lobjDetail);
 							lobjDetail.SaveToDb(pdb);
+						}
+					}
+				}
+
+				if ( mobjData.marrAppts != null )
+				{
+					for ( i = 0; i < mobjData.marrAppts.length; i++ )
+					{
+						if ( mobjData.marrAppts[i] == null )
+							continue;
+
+						if ( mobjData.marrAppts[i].mbDeleted )
+						{
+							lobjAppt = MedicalAppointment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrAppts[i].mid);
+							mobjData.marrAppts[i].FromObject(lobjAppt);
+							lobjAppt.getDefinition().Delete(pdb, lobjAppt.getKey());
+						}
+						else if ( mobjData.marrAppts[i].mbNew )
+						{
+							mobjData.marrAppts[i].midFile = mobjData.mid;
+
+							lobjAppt = MedicalAppointment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrAppts[i].ToObject(lobjAppt);
+							lobjAppt.SaveToDb(pdb);
+							mobjData.marrAppts[i].mid = lobjAppt.getKey();
+						}
+						else
+						{
+							lobjAppt = MedicalAppointment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrAppts[i].mid);
+							mobjData.marrAppts[i].mobjPrevValues = new MedicalAppointmentData();
+							mobjData.marrAppts[i].mobjPrevValues.FromObject(lobjAppt);
+							mobjData.marrAppts[i].ToObject(lobjAppt);
+							lobjAppt.SaveToDb(pdb);
 						}
 					}
 				}
@@ -218,6 +254,7 @@ public class ManageData
 	{
 		MedicalFile lobjAux;
 		MedicalDetail lobjDetail;
+		MedicalAppointment lobjAppt;
 		HashMap<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
@@ -257,6 +294,33 @@ public class ManageData
 							lobjDetail = MedicalDetail.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrDetails[i].mid);
 							mobjData.marrDetails[i].mobjPrevValues.ToObject(lobjDetail);
 							lobjDetail.SaveToDb(pdb);
+						}
+					}
+				}
+
+				if ( mobjData.marrAppts != null )
+				{
+					for ( i = 0; i < mobjData.marrAppts.length; i++ )
+					{
+						if ( mobjData.marrAppts[i] == null )
+							continue;
+
+						if ( mobjData.marrAppts[i].mbDeleted )
+						{
+							lobjAppt = MedicalAppointment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrAppts[i].ToObject(lobjAppt);
+							lobjAppt.SaveToDb(pdb);
+						}
+						else if ( mobjData.marrAppts[i].mbNew )
+						{
+							lobjAppt = MedicalAppointment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrAppts[i].mid);
+							lobjAppt.getDefinition().Delete(pdb, lobjAppt.getKey());
+						}
+						else
+						{
+							lobjAppt = MedicalAppointment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrAppts[i].mid);
+							mobjData.marrAppts[i].mobjPrevValues.ToObject(lobjAppt);
+							lobjAppt.SaveToDb(pdb);
 						}
 					}
 				}

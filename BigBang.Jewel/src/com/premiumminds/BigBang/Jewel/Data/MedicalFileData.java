@@ -24,6 +24,8 @@ public class MedicalFileData
 
 	public MedicalDetailData[] marrDetails;
 
+	public MedicalAppointmentData[] marrAppts;
+
 	public MedicalFileData mobjPrevValues;
 
 	public void FromObject(ObjectBase pobjSource)
@@ -73,6 +75,16 @@ public class MedicalFileData
 			for ( i = 0; i < marrDetails.length; i++ )
 			{
 				marrDetails[i].Describe(pstrBuilder, pstrLineBreak);
+				pstrBuilder.append(pstrLineBreak);
+			}
+		}
+
+		if ( (marrAppts != null) && (marrAppts.length > 0) )
+		{
+			pstrBuilder.append(pstrLineBreak).append("Consultas:").append(pstrLineBreak).append(pstrLineBreak);
+			for ( i = 0; i < marrAppts.length; i++ )
+			{
+				marrAppts[i].Describe(pstrBuilder, pstrLineBreak);
 				pstrBuilder.append(pstrLineBreak);
 			}
 		}

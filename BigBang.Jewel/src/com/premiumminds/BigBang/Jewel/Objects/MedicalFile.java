@@ -123,4 +123,75 @@ public class MedicalFile
 
 		return larrAux.toArray(new MedicalDetail[larrAux.size()]);
     }
+
+    public MedicalAppointment[] GetCurrentAppts()
+    	throws BigBangJewelException
+    {
+		ArrayList<MedicalAppointment> larrAux;
+		IEntity lrefDetails;
+        MasterDB ldb;
+        ResultSet lrsDetails;
+
+		larrAux = new ArrayList<MedicalAppointment>();
+
+		try
+		{
+			lrefDetails = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MedicalAppointment)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDetails = lrefDetails.SelectByMembers(ldb, new int[] {MedicalAppointment.I.FILE},
+					new java.lang.Object[] {getKey()}, new int[] {MedicalAppointment.I.DATE});
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsDetails.next() )
+				larrAux.add(MedicalAppointment.GetInstance(getNameSpace(), lrsDetails));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsDetails.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsDetails.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDetails.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new MedicalAppointment[larrAux.size()]);
+    }
 }

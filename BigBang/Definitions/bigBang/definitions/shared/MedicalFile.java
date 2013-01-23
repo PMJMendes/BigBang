@@ -23,8 +23,21 @@ public class MedicalFile
 		public boolean deleted;
 	}
 
+	public static class Appointment
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String id; //Campo auxiliar para ajudar os serviços, manter inalterado
+		public String label;
+		public String date;
+
+		public boolean deleted;
+	}
+
 	public String subCasualtyId;
 	public String subCasualtyNumber;
 
 	public MedicalDetail[] details;
+	public Appointment[] appointments;
 }
