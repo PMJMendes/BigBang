@@ -8,6 +8,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
@@ -50,12 +51,25 @@ public class MedicalFileServiceImpl
 	private static final long serialVersionUID = 1L;
 
 	public static MedicalFile.MedicalDetail sGetDetail(MedicalDetail pobjDetail)
+		throws BigBangException
 	{
+		ObjectBase lobjType;
 		MedicalFile.MedicalDetail lobjResult;
+
+		try
+		{
+			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DisabilityType),
+					(UUID)pobjDetail.getAt(MedicalDetail.I.DISABILITYTYPE));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
 		lobjResult = new MedicalFile.MedicalDetail();
 		lobjResult.id = pobjDetail.getKey().toString();
-		lobjResult.disabilityTypeId = ((UUID)pobjDetail.getAt(MedicalDetail.I.DISABILITYTYPE)).toString();
+		lobjResult.disabilityTypeId = lobjType.getKey().toString();
+		lobjResult.disabilityTypeLabel = lobjType.getLabel();
 		lobjResult.startDate = (pobjDetail.getAt(MedicalDetail.I.STARTDATE) == null ? null :
 				((Timestamp)pobjDetail.getAt(MedicalDetail.I.STARTDATE)).toString().substring(0, 10) );
 		lobjResult.place = (String)pobjDetail.getAt(MedicalDetail.I.PLACE);
