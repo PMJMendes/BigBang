@@ -19,9 +19,13 @@ public class OtherEntity
 {
 	public static class I
 	{
-		public static int NAME  = 0;
-		public static int TYPE  = 1;
-		public static int NOTES = 2;
+		public static int NAME     = 0;
+		public static int TYPE     = 1;
+		public static int NOTES    = 2;
+		public static int ADDRESS1 = 3;
+		public static int ADDRESS2 = 4;
+		public static int ZIPCODE  = 5;
+		public static int FISCAL   = 6;
 	}
 
     public static OtherEntity GetInstance(UUID pidNameSpace, UUID pidKey)

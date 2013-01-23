@@ -12,6 +12,8 @@ public class OtherEntity
 	public String type;
 	public String typeLabel;
 	public String notes;
+	public Address address;
+	public String taxNumber;
 	public Contact[] contacts;
 	public Document[] documents;
 
@@ -28,6 +30,8 @@ public class OtherEntity
 		this.type = original.type;
 		this.typeLabel = original.typeLabel;
 		this.notes = original.notes;
+		this.address = original.address;
+		this.taxNumber = original.taxNumber;
 		this.contacts = original.contacts;
 		this.documents = original.documents;
 	}

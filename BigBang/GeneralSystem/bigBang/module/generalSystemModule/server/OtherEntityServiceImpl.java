@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.OtherEntity;
+import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.EngineImplementor;
@@ -21,6 +24,7 @@ import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageOtherEntities;
+import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class OtherEntityServiceImpl
 	extends EngineImplementor
@@ -33,10 +37,11 @@ public class OtherEntityServiceImpl
 	{
 		UUID lidOthers;
 		UUID lidTypes;
+		UUID lidZipCodes;
 	    MasterDB ldb;
 	    ResultSet lrsOthers;
 		ArrayList<OtherEntity> larrAux;
-		ObjectBase lobjAux, lobjType;
+		ObjectBase lobjAux, lobjType, lobjZipCode;
 		OtherEntity lobjTmp;
 
 		if ( Engine.getCurrentUser() == null )
@@ -48,6 +53,7 @@ public class OtherEntityServiceImpl
 		{
 			lidOthers = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_OtherEntity);
 			lidTypes = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_OtherEntityType);
+			lidZipCodes = Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode);
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -71,12 +77,23 @@ public class OtherEntityServiceImpl
 	        {
 	        	lobjAux = Engine.GetWorkInstance(lidOthers, lrsOthers);
 	        	lobjType = Engine.GetWorkInstance(lidTypes, (UUID)lobjAux.getAt(1));
+	        	lobjZipCode = Engine.GetWorkInstance(lidZipCodes, (UUID)lobjAux.getAt(5));
 	        	lobjTmp = new OtherEntity();
 	        	lobjTmp.id = lobjAux.getKey().toString();
 	        	lobjTmp.name = (String)lobjAux.getAt(0);
 	        	lobjTmp.type = ((UUID)lobjAux.getAt(1)).toString();
 	        	lobjTmp.typeLabel = (String)lobjType.getAt(0);
 	        	lobjTmp.notes = (String)lobjAux.getAt(2);
+	        	lobjTmp.address = new Address();
+	        	lobjTmp.address.street1 = (String)lobjAux.getAt(3);
+	        	lobjTmp.address.street2 = (String)lobjAux.getAt(4);
+	        	lobjTmp.address.zipCode = new ZipCode();
+	        	lobjTmp.address.zipCode.code = (String)lobjZipCode.getAt(0);
+	        	lobjTmp.address.zipCode.city = (String)lobjZipCode.getAt(1);
+	        	lobjTmp.address.zipCode.county = (String)lobjZipCode.getAt(2);
+	        	lobjTmp.address.zipCode.district = (String)lobjZipCode.getAt(3);
+	        	lobjTmp.address.zipCode.country = (String)lobjZipCode.getAt(4);
+	        	lobjTmp.taxNumber = (String)lobjAux.getAt(6);
 	        	larrAux.add(lobjTmp);
 	        }
 	    }
@@ -127,6 +144,24 @@ public class OtherEntityServiceImpl
 			lopMOE.marrCreate[0].mstrName = entity.name;
 			lopMOE.marrCreate[0].midType = UUID.fromString(entity.type);
 			lopMOE.marrCreate[0].mstrNotes = entity.notes;
+			if ( entity.address != null )
+			{
+				lopMOE.marrCreate[0].mstrAddress1 = entity.address.street1;
+				lopMOE.marrCreate[0].mstrAddress2 = entity.address.street2;
+				if ( entity.address.zipCode != null )
+					lopMOE.marrCreate[0].midZipCode = ZipCodeBridge.GetZipCode(entity.address.zipCode.code,
+							entity.address.zipCode.city, entity.address.zipCode.county, entity.address.zipCode.district,
+							entity.address.zipCode.country);
+				else
+					lopMOE.marrCreate[0].midZipCode = null;
+			}
+			else
+			{
+				lopMOE.marrCreate[0].mstrAddress1 = null;
+				lopMOE.marrCreate[0].mstrAddress2 = null;
+				lopMOE.marrCreate[0].midZipCode = null;
+			}
+			lopMOE.marrCreate[0].mstrFiscal = entity.taxNumber;
 			if ( (entity.contacts != null) && (entity.contacts.length > 0) )
 			{
 				lopMOE.marrCreate[0].mobjContactOps = new ContactOps();
@@ -184,6 +219,24 @@ public class OtherEntityServiceImpl
 			lopMOE.marrModify[0].mstrName = entity.name;
 			lopMOE.marrModify[0].midType = UUID.fromString(entity.type);
 			lopMOE.marrModify[0].mstrNotes = entity.notes;
+			if ( entity.address != null )
+			{
+				lopMOE.marrModify[0].mstrAddress1 = entity.address.street1;
+				lopMOE.marrModify[0].mstrAddress2 = entity.address.street2;
+				if ( entity.address.zipCode != null )
+					lopMOE.marrModify[0].midZipCode = ZipCodeBridge.GetZipCode(entity.address.zipCode.code,
+							entity.address.zipCode.city, entity.address.zipCode.county, entity.address.zipCode.district,
+							entity.address.zipCode.country);
+				else
+					lopMOE.marrModify[0].midZipCode = null;
+			}
+			else
+			{
+				lopMOE.marrModify[0].mstrAddress1 = null;
+				lopMOE.marrModify[0].mstrAddress2 = null;
+				lopMOE.marrModify[0].midZipCode = null;
+			}
+			lopMOE.marrModify[0].mstrFiscal = entity.taxNumber;
 			lopMOE.marrCreate = null;
 			lopMOE.marrDelete = null;
 			lopMOE.mobjContactOps = null;
@@ -221,6 +274,10 @@ public class OtherEntityServiceImpl
 			lopMOE.marrDelete[0].mstrName = null;
 			lopMOE.marrDelete[0].midType = null;
 			lopMOE.marrDelete[0].mstrNotes = null;
+			lopMOE.marrDelete[0].mstrAddress1 = null;
+			lopMOE.marrDelete[0].mstrAddress2 = null;
+			lopMOE.marrDelete[0].midZipCode = null;
+			lopMOE.marrDelete[0].mstrFiscal = null;
 			lopMOE.marrCreate = null;
 			lopMOE.marrModify = null;
 			lopMOE.mobjContactOps = null;

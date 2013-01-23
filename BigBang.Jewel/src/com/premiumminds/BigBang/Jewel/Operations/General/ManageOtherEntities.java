@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
@@ -34,6 +35,10 @@ public class ManageOtherEntities
 		public String mstrName;
 		public UUID midType;
 		public String mstrNotes;
+		public String mstrAddress1;
+		public String mstrAddress2;
+		public UUID midZipCode;
+		public String mstrFiscal;
 		public ContactOps mobjContactOps;
 		public DocOps mobjDocOps;
 		public EntityData mobjPrevValues;
@@ -200,6 +205,10 @@ public class ManageOtherEntities
 					lobjAux.setAt(0, marrCreate[i].mstrName);
 					lobjAux.setAt(1, marrCreate[i].midType);
 					lobjAux.setAt(2, marrCreate[i].mstrNotes);
+					lobjAux.setAt(3, marrCreate[i].mstrAddress1);
+					lobjAux.setAt(4, marrCreate[i].mstrAddress2);
+					lobjAux.setAt(5, marrCreate[i].midZipCode);
+					lobjAux.setAt(6, marrCreate[i].mstrFiscal);
 					lobjAux.SaveToDb(pdb);
 					if ( marrCreate[i].mobjContactOps != null )
 						marrCreate[i].mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
@@ -220,11 +229,19 @@ public class ManageOtherEntities
 					marrModify[i].mobjPrevValues.mstrName = (String)lobjAux.getAt(0);
 					marrModify[i].mobjPrevValues.midType = (UUID)lobjAux.getAt(1);
 					marrModify[i].mobjPrevValues.mstrNotes = (String)lobjAux.getAt(2);
+					marrModify[i].mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(3);
+					marrModify[i].mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(4);
+					marrModify[i].mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(5);
+					marrModify[i].mobjPrevValues.mstrFiscal = (String)lobjAux.getAt(6);
 					marrModify[i].mobjPrevValues.mobjContactOps = null;
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 					lobjAux.setAt(0, marrModify[i].mstrName);
 					lobjAux.setAt(1, marrModify[i].midType);
 					lobjAux.setAt(2, marrModify[i].mstrNotes);
+					lobjAux.setAt(3, marrModify[i].mstrAddress1);
+					lobjAux.setAt(4, marrModify[i].mstrAddress2);
+					lobjAux.setAt(5, marrModify[i].midZipCode);
+					lobjAux.setAt(6, marrModify[i].mstrFiscal);
 					lobjAux.SaveToDb(pdb);
 				}
 			}
@@ -240,6 +257,10 @@ public class ManageOtherEntities
 					marrDelete[i].mstrName = (String)lobjAux.getAt(0);
 					marrDelete[i].midType = (UUID)lobjAux.getAt(1);
 					marrDelete[i].mstrNotes = (String)lobjAux.getAt(2);
+					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(3);
+					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(4);
+					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(5);
+					marrDelete[i].mstrFiscal = (String)lobjAux.getAt(6);
 					larrContacts = lobjAux.GetCurrentContacts();
 					if ( (larrContacts == null) || (larrContacts.length == 0) )
 						marrDelete[i].mobjContactOps = null;
@@ -484,6 +505,10 @@ public class ManageOtherEntities
 					lobjAux.setAt(0, marrModify[i].mobjPrevValues.mstrName);
 					lobjAux.setAt(1, marrModify[i].mobjPrevValues.midType);
 					lobjAux.setAt(2, marrModify[i].mobjPrevValues.mstrNotes);
+					lobjAux.setAt(3, marrModify[i].mobjPrevValues.mstrAddress1);
+					lobjAux.setAt(4, marrModify[i].mobjPrevValues.mstrAddress2);
+					lobjAux.setAt(5, marrModify[i].mobjPrevValues.midZipCode);
+					lobjAux.setAt(6, marrModify[i].mobjPrevValues.mstrFiscal);
 					lobjAux.SaveToDb(pdb);
 				}
 			}
@@ -496,6 +521,10 @@ public class ManageOtherEntities
 					lobjAux.setAt(0, marrDelete[i].mstrName);
 					lobjAux.setAt(1, marrDelete[i].midType);
 					lobjAux.setAt(2, marrDelete[i].mstrNotes);
+					lobjAux.setAt(3, marrDelete[i].mstrAddress1);
+					lobjAux.setAt(4, marrDelete[i].mstrAddress2);
+					lobjAux.setAt(5, marrDelete[i].midZipCode);
+					lobjAux.setAt(6, marrDelete[i].mstrFiscal);
 					lobjAux.SaveToDb(pdb);
 					marrDelete[i].mid = lobjAux.getKey();
 					if ( marrDelete[i].mobjContactOps != null )
@@ -824,13 +853,16 @@ public class ManageOtherEntities
 	private void Describe(StringBuilder pstrString, EntityData pobjData, String pstrLineBreak)
 	{
 		ObjectBase lobjType;
+		ObjectBase lobjAux;
 		String lstrType;
 
 		lstrType = "(Erro a obter o tipo de entidade.)";
 		try
 		{
-			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_OtherEntityType), pobjData.midType);
+			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_OtherEntityType),
+					pobjData.midType);
 			lstrType = lobjType.getLabel();
+
 		}
 		catch (Throwable e)
 		{
@@ -839,9 +871,49 @@ public class ManageOtherEntities
 		pstrString.append("Nome: ");
 		pstrString.append(pobjData.mstrName);
 		pstrString.append(pstrLineBreak);
+
 		pstrString.append("Tipo: ");
 		pstrString.append(lstrType);
 		pstrString.append(pstrLineBreak);
+
+		pstrString.append("Morada:");
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+		if ( pobjData.mstrAddress1 != null )
+			pstrString.append(pobjData.mstrAddress1);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+		if ( pobjData.mstrAddress2 != null )
+			pstrString.append(pobjData.mstrAddress2);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+		if ( pobjData.midZipCode != null )
+		{
+			try
+			{
+				lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
+						pobjData.midZipCode);
+				pstrString.append((String)lobjAux.getAt(0));
+				pstrString.append(" ");
+				pstrString.append((String)lobjAux.getAt(1));
+				pstrString.append(pstrLineBreak);
+				pstrString.append("- ");
+				pstrString.append((String)lobjAux.getAt(4));
+			}
+			catch (Throwable e)
+			{
+				pstrString.append("(Erro a obter o código postal.)");
+			}
+		}
+		pstrString.append(pstrLineBreak);
+
+		if ( pobjData.mstrFiscal != null )
+		{
+			pstrString.append("NIF/NIPC: ");
+			pstrString.append(pobjData.mstrFiscal);
+			pstrString.append(pstrLineBreak);
+		}
+
 		pstrString.append("Notas: ");
 		pstrString.append(pstrLineBreak);
 		pstrString.append(pobjData.mstrNotes);
