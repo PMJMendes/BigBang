@@ -126,6 +126,8 @@ public class SubCasualtyServiceImpl
 			lobjResult.insuredObjectId = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SUBPOLICYOBJECT) == null ?
 					null : ((UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SUBPOLICYOBJECT)).toString() );
 		lobjResult.insuredObjectName = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.GENERICOBJECT);
+		lobjResult.serviceCenterId = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SERVICECENTER) == null ?
+				null : ((UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SERVICECENTER)).toString() );
 
 		ldblTotal = null;
 		lobjResult.items = new SubCasualty.SubCasualtyItem[larrItems.length];
@@ -211,6 +213,8 @@ public class SubCasualtyServiceImpl
 				(lbPolicy ? null : UUID.fromString(subCasualty.insuredObjectId)) );
 		lopMD.mobjData.mstrGenericObject = subCasualty.insuredObjectName;
 		lopMD.mobjData.midCasualty = (UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.CASUALTY);
+		lopMD.mobjData.midServiceCenter = ( subCasualty.serviceCenterId == null ? null :
+				UUID.fromString(subCasualty.serviceCenterId) );
 
 		if ( subCasualty.items != null )
 		{

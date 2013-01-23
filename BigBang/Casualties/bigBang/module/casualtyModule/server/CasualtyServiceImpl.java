@@ -350,6 +350,8 @@ public class CasualtyServiceImpl
 				(lbPolicy ? null : UUID.fromString(subCasualty.insuredObjectId)) );
 		lopCSC.mobjData.mstrGenericObject = subCasualty.insuredObjectName;
 		lopCSC.mobjData.midCasualty = lobjCasualty.getKey();
+		lopCSC.mobjData.midServiceCenter = ( subCasualty.serviceCenterId == null ? null :
+				UUID.fromString(subCasualty.serviceCenterId) );
 
 		if ( subCasualty.items != null )
 		{

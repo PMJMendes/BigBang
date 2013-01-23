@@ -38,6 +38,7 @@ public class SubCasualty
 		public static int SUBPOLICYOBJECT = 15;
 		public static int GENERICOBJECT   = 16;
 		public static int CASUALTY        = 17;
+		public static int SERVICECENTER   = 18;
 	}
 
     public static SubCasualty GetInstance(UUID pidNameSpace, UUID pidKey)

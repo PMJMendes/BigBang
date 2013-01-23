@@ -39,4 +39,5 @@ public class SubCasualty
 	public boolean hasJudicial;
 	public String text;
 	public String internalNotes;
+	public String serviceCenterId;
 }

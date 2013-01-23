@@ -7,6 +7,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Objects.OtherEntity;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
@@ -33,6 +34,7 @@ public class SubCasualtyData
 	public UUID midSubPolicyObject;
 	public String mstrGenericObject;
 	public UUID midCasualty;
+	public UUID midServiceCenter;
 
 	public OutgoingMessageData mobjNotification;
 	public Timestamp mdtLimitDate;
@@ -62,6 +64,7 @@ public class SubCasualtyData
 		midSubPolicyObject = (UUID)      pobjSource.getAt(SubCasualty.I.SUBPOLICYOBJECT);
 		mstrGenericObject  = (String)    pobjSource.getAt(SubCasualty.I.GENERICOBJECT);
 		midCasualty        = (UUID)      pobjSource.getAt(SubCasualty.I.CASUALTY);
+		midServiceCenter   = (UUID)      pobjSource.getAt(SubCasualty.I.SERVICECENTER);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -83,6 +86,7 @@ public class SubCasualtyData
 			pobjDest.setAt(SubCasualty.I.SUBPOLICYOBJECT, midSubPolicyObject);
 			pobjDest.setAt(SubCasualty.I.GENERICOBJECT,   mstrGenericObject);
 			pobjDest.setAt(SubCasualty.I.CASUALTY,        midCasualty);
+			pobjDest.setAt(SubCasualty.I.SERVICECENTER,   midServiceCenter);
 		}
 		catch (Throwable e)
 		{
@@ -96,6 +100,7 @@ public class SubCasualtyData
 		SubPolicy lobjSubPolicy;
 		PolicyObject lobjPObj;
 		SubPolicyObject lobjSPObj;
+		OtherEntity lobjSC;
 		int i;
 
 		pstrBuilder.append("Número do processo: ").append(mstrNumber).append(pstrLineBreak);
@@ -171,6 +176,21 @@ public class SubCasualtyData
 		{
 			pstrBuilder.append("Objecto seguro: ");
 			pstrBuilder.append(mstrGenericObject);
+			pstrBuilder.append(pstrLineBreak);
+		}
+
+		if ( midServiceCenter != null )
+		{
+			pstrBuilder.append("Oficina: ");
+			try
+			{
+				lobjSC = OtherEntity.GetInstance(Engine.getCurrentNameSpace(), midServiceCenter);
+			}
+			catch (Throwable e)
+			{
+				lobjSC = null;
+			}
+			pstrBuilder.append(lobjSC == null ? "(erro a obter a oficina)" : lobjSC.getLabel());
 			pstrBuilder.append(pstrLineBreak);
 		}
 
