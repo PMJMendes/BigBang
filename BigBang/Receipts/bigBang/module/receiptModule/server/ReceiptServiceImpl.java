@@ -2840,6 +2840,11 @@ public class ReceiptServiceImpl
 			pstrBuffer.append("')");
 		}
 
+		if ( lParam.internalOnly )
+		{
+			pstrBuffer.append(" AND [:Is Internal] = 1");
+		}
+
 		return true;
 	}
 
