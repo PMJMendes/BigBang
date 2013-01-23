@@ -40,22 +40,31 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 
 		this.operationDock = new DockPanel();
 		panel.add(this.operationDock);
+		this.operationDock2 = new DockPanel();
+		this.operationDock2.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		panel.add(this.operationDock2);
+
 		this.operationDock.addValueChangeHandler(new ValueChangeHandler<Object>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Object> event) {
-				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
+				if(event.getValue() != null){
+					operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
+					operationDock2.setValue(null);
+				}
 			}
 		});
 
-		this.operationDock2 = new DockPanel();
-		this.operationDock2.getElement().getStyle().setBorderWidth(1, Unit.PX);
-		panel.add(this.operationDock2);
+
 		this.operationDock2.addValueChangeHandler(new ValueChangeHandler<Object>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Object> event) {
-				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));				
+				if(event.getValue() != null){
+					operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
+					operationDock.setValue(null);
+				}
+
 			}
 		});
 
@@ -90,7 +99,7 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 		addDockItem("Devoluções à Seguradora", r.returnIcon(), SectionOperation.MASS_RETURN_TO_INSURER, 2);
 		addDockItem("Relatórios", r.reportIcon(), SectionOperation.REPORT, 1);
 		addDockItem("Importações / Outros", r.generalTasksIcon(), SectionOperation.GENERAL_TASKS, 1);
-		
+
 	}
 
 	protected void addDockItem(String text, ImageResource icon, final ReceiptSectionViewPresenter.SectionOperation action,int dockIndex){
@@ -109,7 +118,7 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 
 		else 
 			this.operationDock2.addItem(item);
-		
+
 	}
 
 	public HasWidgets getOperationViewContainer() {
