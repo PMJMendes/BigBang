@@ -47,6 +47,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Conversation.CreateConversation
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReSendMessage;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReceiveMessage;
+import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReopenProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.SendMessage;
 import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
 
@@ -705,6 +706,52 @@ public class ConversationServiceImpl
 		try
 		{
 			lopCP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
+	public void reopenConversation(String conversationId, String directionId, Integer replyLimit)
+		throws SessionExpiredException, BigBangException
+	{
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		com.premiumminds.BigBang.Jewel.Objects.Conversation lobjConv;
+		ReopenProcess lopRP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjConv = com.premiumminds.BigBang.Jewel.Objects.Conversation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversationId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( replyLimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, replyLimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		lopRP = new ReopenProcess(lobjConv.GetProcessID());
+		lopRP.midDir = UUID.fromString(directionId);
+		lopRP.mdtLimit = ldtLimit;
+
+		try
+		{
+			lopRP.Execute();
 		}
 		catch (Throwable e)
 		{

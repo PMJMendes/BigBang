@@ -16,4 +16,5 @@ public interface ConversationServiceAsync
 	void repeatMessage(Message message, Integer replylimit, AsyncCallback<Conversation> callback);
 	void receiveMessage(Message message, Integer replylimit, AsyncCallback<Conversation> callback);
 	void closeConversation(String conversationId, String motiveId, AsyncCallback<Void> callback);
+	void reopenConversation(String conversationId, String directionId, Integer replyLimit, AsyncCallback<Void> callback);
 }

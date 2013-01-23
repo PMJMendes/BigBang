@@ -37,4 +37,7 @@ public interface ConversationService
 	public Conversation receiveMessage(Message message, Integer replylimit) throws SessionExpiredException, BigBangException;
 
 	public void closeConversation(String conversationId, String motiveId) throws SessionExpiredException, BigBangException;
+
+	public void reopenConversation(String conversationId, String directionId, Integer replyLimit)
+			throws SessionExpiredException, BigBangException;
 }

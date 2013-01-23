@@ -519,6 +519,8 @@ public class Constants
 	public static final UUID OPID_Conversation_AutoLockProcess           = UUID.fromString("52C57472-23EF-479D-8AE5-A118013041A3");
 	public static final UUID OPID_Conversation_ExternAbortProcess        = UUID.fromString("0E9E5410-3D33-4B03-81BB-A11801308000");
 	public static final UUID OPID_Conversation_ExternInitialSend         = UUID.fromString("715EE067-CBFF-4F81-87E7-A11801323973");
+	public static final UUID OPID_Conversation_ReopenProcess             = UUID.fromString("AADFF5E7-4484-4FE8-980D-A14F01077479");
+	public static final UUID OPID_Conversation_UndoReopenProcess         = UUID.fromString("9F186501-A9E0-4B81-8A22-A14F01065125");
 
 	// Signature Request Operations
 	public static final UUID OPID_SigReq_ReceiveReply                    = UUID.fromString("4AAD2648-E6D7-47AF-A91E-A02A0100B3A5");
