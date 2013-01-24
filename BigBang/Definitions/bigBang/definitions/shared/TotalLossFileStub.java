@@ -6,7 +6,7 @@ public class TotalLossFileStub
 	private static final long serialVersionUID = 1L;
 
 	public String reference; // Read-only, criado no server
-	public String salvageTypeId;
+	public String salvageTypeId; // Lista trancada
 	public String salvageTypeLabel; // Só para mostrar
 	public String inheritClientName;
 	public String inheritObjectName;
