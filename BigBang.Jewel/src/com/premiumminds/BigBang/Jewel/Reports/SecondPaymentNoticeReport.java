@@ -9,15 +9,12 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
-import Jewel.Petri.Interfaces.IProcess;
-import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
-import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBase;
 
@@ -43,9 +40,7 @@ public class SecondPaymentNoticeReport
 		HashMap<String, String> larrParams;
 		String[][] larrTables;
 		Receipt lobjReceipt;
-		IProcess lobjProc;
 		Policy lobjPolicy;
-		SubPolicy lobjSubPolicy;
 		boolean lbReversals;
 		int i;
 
@@ -81,30 +76,13 @@ public class SecondPaymentNoticeReport
 		for ( i = 0; i < larrTables.length; i++ )
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
-			try
-			{
-				lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetData();
-					lobjSubPolicy = null;
-				}
-				else
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
-					lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
-				}
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
+			lobjPolicy = lobjReceipt.getAbsolutePolicy();
 
 			if ( lbReversals && !Constants.RecType_Reversal.equals((UUID)lobjReceipt.getAt(Receipt.I.TYPE)) )
 				lbReversals = false;
 
 			larrTables[i] = new String[9];
-			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
+			larrTables[i][0] = lobjPolicy.getLabel();
 			larrTables[i][1] = lobjReceipt.getLabel();
 			larrTables[i][2] = lobjPolicy.GetSubLine().getDescription();
 			larrTables[i][3] = (String)lobjPolicy.GetCompany().getAt(1);
