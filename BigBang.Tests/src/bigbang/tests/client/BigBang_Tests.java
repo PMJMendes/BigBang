@@ -230,6 +230,11 @@ public class BigBang_Tests
 //		TestMedicalFileEdit.DoTest();
 //		TestMedicalFileClose
 //
+//		TestTotalLossGet
+//		TestTotalLossCreate
+//		TestTotalLossEdit
+//		TestTotalLossClose
+//
 //		TestExpenseGet.DoTest();
 //		TestExpenseCreate.DoTest();
 //		TestExpenseEdit.DoTest();
