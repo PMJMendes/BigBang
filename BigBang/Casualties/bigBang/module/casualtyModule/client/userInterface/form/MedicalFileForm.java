@@ -32,12 +32,12 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 	private PaymentGridPanel payments;
 
 	public MedicalFileForm() {
-		
+
 		popup = new PopupPanel();
 		payments = new PaymentGridPanel();
-		
+
 		popup.add(payments);
-		
+
 		nextAppointment = new DatePickerFormField("Data do próximo contacto");
 
 		addSection("Informação Geral");
@@ -174,10 +174,12 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 
 		return details;
 	}
-	
+
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		showAllPayments.setEnabled(!readOnly);
+		if(showAllPayments != null){
+			showAllPayments.setEnabled(readOnly);
+		}
 		super.setReadOnly(readOnly);
 	}
 }
