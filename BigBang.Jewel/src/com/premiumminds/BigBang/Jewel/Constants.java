@@ -95,6 +95,7 @@ public class Constants
 	public static final UUID ObjID_MedicalFile              = UUID.fromString("835E3722-A13B-451B-AEC8-A13401125446");
 	public static final UUID ObjID_MedicalDetail            = UUID.fromString("10480936-9597-4D94-B1DC-A1340114071D");
 	public static final UUID ObjID_MedicalAppointment       = UUID.fromString("CE323715-1EA5-473C-87BC-A14F00DE2208");
+	public static final UUID ObjID_TotalLossFile            = UUID.fromString("1D05DA1F-873D-4CA6-BA62-A15001064C06");
 
 	// Expense Objects
 	public static final UUID ObjID_Expense                  = UUID.fromString("09963260-CDB1-4207-B856-A03800B8AFC8");
@@ -150,6 +151,7 @@ public class Constants
 	public static final UUID ObjID_CasualtyReopenMotives    = UUID.fromString("F4E500C7-5EFE-4A8B-AD8A-A12B00E0CDC1");
 	public static final UUID ObjID_DisabilityType           = UUID.fromString("027296D7-1573-46F2-BD95-A1340114B485");
 	public static final UUID ObjID_OtherEntityType          = UUID.fromString("A110EE56-A8A1-4E7A-B564-A148011C3FD9");
+	public static final UUID ObjID_SalvageType              = UUID.fromString("1E2C47DF-B4AA-4A7D-9512-A150010491EC");
 
 	public static final UUID ObjID_FieldType                = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues              = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
@@ -174,6 +176,7 @@ public class Constants
 	public static final UUID ProcID_DASRequest       = UUID.fromString("41F2CCA4-5114-4A1F-8E97-A03000F1F404");
 	public static final UUID ProcID_Assessment       = UUID.fromString("4FF7BFFD-C0F9-4E45-8E72-A1330105A7C7");
 	public static final UUID ProcID_MedicalFile      = UUID.fromString("8176CB8C-14D3-41E1-8AD2-A1340118AEEF");
+	public static final UUID ProcID_TotalLoss        = UUID.fromString("73A33C71-BD77-4072-9EEB-A1500110C896");
 
 	// Operations
 
@@ -552,6 +555,14 @@ public class Constants
 	public static final UUID OPID_MedicalFile_UndoCreateConversation     = UUID.fromString("7F368655-886A-4A54-A2B5-A134011A2A34");
 	public static final UUID OPID_MedicalFile_CloseProcess               = UUID.fromString("BE730E82-9393-4CEF-9BE5-A134011A4E1F");
 	public static final UUID OPID_MedicalFile_UndoCloseProcess           = UUID.fromString("E32DDC0E-26C0-48F3-958F-A134011A6DB2");
+
+	// Total Loss Operations
+	public static final UUID OPID_TotalLoss_ManageData                   = UUID.fromString("80EF0E57-D533-49E7-8FA5-A15001126AA7");
+	public static final UUID OPID_TotalLoss_UndoManageData               = UUID.fromString("B72F1DDE-7906-48BF-AE91-A1500111D57E");
+	public static final UUID OPID_TotalLoss_CreateConversation           = UUID.fromString("FB533A17-2CE3-4A40-9930-A15001129CEF");
+	public static final UUID OPID_TotalLoss_UndoCreateConversation       = UUID.fromString("C48C1F8C-A9A5-4417-A90D-A15001120A42");
+	public static final UUID OPID_TotalLoss_CloseProcess                 = UUID.fromString("2BD6538D-E8F2-485A-B99D-A1500113322C");
+	public static final UUID OPID_TotalLoss_UndoCloseProcess             = UUID.fromString("199D08B6-9F0C-4F71-9F36-A1500112348A");
 
 	// Urgency Levels
 	public static final UUID UrgID_Invalid   = UUID.fromString("6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5");
