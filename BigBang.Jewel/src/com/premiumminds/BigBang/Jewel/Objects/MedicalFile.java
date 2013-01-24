@@ -23,6 +23,7 @@ public class MedicalFile
 		public static int SUBCASUALTY = 1;
 		public static int PROCESS     = 2;
 		public static int NEXTDATE    = 3;
+		public static int NOTES       = 4;
 	}
 
     public static MedicalFile GetInstance(UUID pidNameSpace, UUID pidKey)

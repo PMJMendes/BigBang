@@ -36,6 +36,8 @@ public class MedicalFile
 		public boolean deleted;
 	}
 
+	public String notes;
+
 	public String subCasualtyId;
 	public String subCasualtyNumber;
 

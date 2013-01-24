@@ -18,6 +18,7 @@ public class MedicalFileData
 	public String mstrReference;
 	public UUID midSubCasualty;
 	public Timestamp mdtNextDate;
+	public String mstrNotes;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -32,10 +33,11 @@ public class MedicalFileData
 	{
 		mid = pobjSource.getKey();
 
-		mstrReference =  (String)pobjSource.getAt(MedicalFile.I.REFERENCE);
-		midSubCasualty =   (UUID)pobjSource.getAt(MedicalFile.I.SUBCASUALTY);
-		midProcess =       (UUID)pobjSource.getAt(MedicalFile.I.PROCESS);
-		mdtNextDate = (Timestamp)pobjSource.getAt(MedicalFile.I.NEXTDATE);
+		mstrReference  = (String)   pobjSource.getAt(MedicalFile.I.REFERENCE);
+		midSubCasualty = (UUID)     pobjSource.getAt(MedicalFile.I.SUBCASUALTY);
+		midProcess     = (UUID)     pobjSource.getAt(MedicalFile.I.PROCESS);
+		mdtNextDate    = (Timestamp)pobjSource.getAt(MedicalFile.I.NEXTDATE);
+		mstrNotes      = (String)   pobjSource.getAt(MedicalFile.I.NOTES);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -47,6 +49,7 @@ public class MedicalFileData
 			pobjDest.setAt(MedicalFile.I.SUBCASUALTY, midSubCasualty);
 			pobjDest.setAt(MedicalFile.I.PROCESS,     midProcess);
 			pobjDest.setAt(MedicalFile.I.NEXTDATE,    mdtNextDate);
+			pobjDest.setAt(MedicalFile.I.NOTES,       mstrNotes);
 		}
 		catch (Throwable e)
 		{
@@ -66,6 +69,14 @@ public class MedicalFileData
 		{
 			pstrBuilder.append("Data da Próxima Consulta: ");
 			pstrBuilder.append(mdtNextDate.toString().substring(0, 10));
+			pstrBuilder.append(pstrLineBreak);
+		}
+
+		if ( mstrNotes != null )
+		{
+			pstrBuilder.append("Notas: ");
+			pstrBuilder.append(pstrLineBreak);
+			pstrBuilder.append(mstrNotes);
 			pstrBuilder.append(pstrLineBreak);
 		}
 

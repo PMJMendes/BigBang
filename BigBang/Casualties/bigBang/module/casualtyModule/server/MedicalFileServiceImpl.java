@@ -129,6 +129,7 @@ public class MedicalFileServiceImpl
 		lobjResult.reference = lobjFile.getLabel();
 		lobjResult.nextDate = (lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.NEXTDATE) == null ? null :
 			((Timestamp)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.NEXTDATE)).toString().substring(0, 10) );
+		lobjResult.notes = (String)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.NOTES);
 		lobjResult.inheritClientName = lobjCli.getLabel();
 		lobjResult.inheritObjectName = lstrObj;
 		lobjResult.isRunning = lobjProcess.IsRunning();
@@ -228,6 +229,7 @@ public class MedicalFileServiceImpl
 		lobjResult.midSubCasualty = UUID.fromString(pobjSource.subCasualtyId);
 		lobjResult.midProcess = ( pobjSource.processId == null ? null : UUID.fromString(pobjSource.processId) );
 		lobjResult.mdtNextDate = ( pobjSource.nextDate == null ? null : Timestamp.valueOf(pobjSource.nextDate + " 00:00:00.0") );
+		lobjResult.mstrNotes = pobjSource.notes;
 
 		if ( pobjSource.details == null )
 			lobjResult.marrDetails = null;
