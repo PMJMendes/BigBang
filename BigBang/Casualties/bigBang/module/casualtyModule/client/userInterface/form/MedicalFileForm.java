@@ -62,8 +62,10 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 				if(getValue().details == null || getValue().details.length == 0){
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é há pagamentos para apresentar"), TYPE.ALERT_NOTIFICATION));
 				}
-				payments.setValue(MedicalFileForm.this.getValue().details);
-				popup.center();
+				else{
+					payments.setValue(MedicalFileForm.this.getValue().details);
+					popup.center();
+				}
 			}
 		});
 
@@ -171,5 +173,11 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 		}
 
 		return details;
+	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		showAllPayments.setEnabled(!readOnly);
+		super.setReadOnly(readOnly);
 	}
 }
