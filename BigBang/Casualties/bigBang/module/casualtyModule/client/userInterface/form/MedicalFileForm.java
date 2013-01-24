@@ -5,6 +5,10 @@ import java.util.Collection;
 
 import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.MedicalFile.MedicalDetail;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
@@ -34,7 +38,7 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 		
 		popup.add(payments);
 		
-		nextAppointment = new DatePickerFormField("Data da próxima consulta");
+		nextAppointment = new DatePickerFormField("Data do próximo contacto");
 
 		addSection("Informação Geral");
 
@@ -55,6 +59,9 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 
 			@Override
 			public void onClick(ClickEvent event) {
+				if(getValue().details == null || getValue().details.length == 0){
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é há pagamentos para apresentar"), TYPE.ALERT_NOTIFICATION));
+				}
 				payments.setValue(MedicalFileForm.this.getValue().details);
 				popup.center();
 			}
