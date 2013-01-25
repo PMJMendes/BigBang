@@ -316,7 +316,7 @@ public class ReceiptExternAuditPending
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[7];
+		larrCells = new TD[8];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Recibo");
 		ReportBuilder.styleCell(larrCells[0], false, false);
@@ -333,11 +333,14 @@ public class ReceiptExternAuditPending
 		larrCells[4] = ReportBuilder.buildHeaderCell("Prémio");
 		ReportBuilder.styleCell(larrCells[4], false, true);
 
-		larrCells[5] = ReportBuilder.buildHeaderCell("Data Vencimento");
+		larrCells[5] = ReportBuilder.buildHeaderCell("Data Início");
 		ReportBuilder.styleCell(larrCells[5], false, true);
 
-		larrCells[6] = ReportBuilder.buildHeaderCell("Data Limite");
+		larrCells[6] = ReportBuilder.buildHeaderCell("Data Fim");
 		ReportBuilder.styleCell(larrCells[6], false, true);
+
+		larrCells[7] = ReportBuilder.buildHeaderCell("Data Limite");
+		ReportBuilder.styleCell(larrCells[7], false, true);
 
 		setWidths(larrCells);
 
@@ -363,7 +366,7 @@ public class ReceiptExternAuditPending
 			lobjSubPolicy = null;
 		}
 
-		larrCells = new TD[7];
+		larrCells = new TD[8];
 
 		larrCells[0] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.NUMBER), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -383,8 +386,11 @@ public class ReceiptExternAuditPending
 		larrCells[5] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.MATURITYDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
-		larrCells[6] = ReportBuilder.buildCell(pobjReceipt.getExternalDueDate(), TypeDefGUIDs.T_String);
+		larrCells[6] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.ENDDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[6], true, true);
+
+		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getExternalDueDate(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[7], true, true);
 
 		setWidths(larrCells);
 
@@ -400,6 +406,7 @@ public class ReceiptExternAuditPending
 		parrCells[ 4].setWidth( 80);
 		parrCells[ 5].setWidth(110);
 		parrCells[ 6].setWidth(110);
+		parrCells[ 7].setWidth(110);
 	}
 
 	private GenericElement[] doNotValid()
