@@ -65,8 +65,9 @@ public class ExcelConnector
 			lobjAux = ltd.getElement((String)ltd.keys().nextElement());
 			if ( lobjAux instanceof StringElement )
 				buildSheet(pobjWBook.createSheet(lobjAux.toString()), ltbl);
+			else if ( lobjAux instanceof Table )
+				buildSheet(pobjWBook.createSheet("Relatório"), (Table)lobjAux);
 		}
-		
 	}
 
 	private static void buildSheet(Sheet pobjSheet, Table pobjSource)
