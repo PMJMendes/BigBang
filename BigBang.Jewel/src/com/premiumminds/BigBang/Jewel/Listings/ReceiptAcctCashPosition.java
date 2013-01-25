@@ -40,9 +40,6 @@ public class ReceiptAcctCashPosition
 		GenericElement[] larrResult;
 		int i;
 
-		if ( (parrParams[0] == null) || "".equals(parrParams[0]) )
-			parrParams[0] = new Timestamp(new java.util.Date().getTime()).toString().substring(0, 10);
-
 		larrAux = getPendingForOperation(parrParams);
 
 		larrMap = new HashMap<UUID, ArrayList<Receipt>>();
