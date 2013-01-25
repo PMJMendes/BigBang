@@ -11,10 +11,11 @@ public class MedicalFormValidator extends FormValidator<MedicalFileForm> {
 	@Override
 	protected Result validateImpl() {
 		boolean valid = true;
-		
+
 		valid &= validateDateNextAppointment();
+		valid &= validateString(form.notes, 0, 250, true);
 		valid &= validateDetails();
-		
+
 		return new Result(valid, this.validationMessages);
 	}
 
@@ -24,23 +25,25 @@ public class MedicalFormValidator extends FormValidator<MedicalFileForm> {
 
 	private boolean validateDetails() {
 		boolean valid = true;
-		
+
 		for(MedicalDetailItemSection section : form.medicalDetailItemSections){
 			valid &= validateDetailSection(section);
 		}
-		
+
 		return valid;
 	}
 
 	private boolean validateDetailSection(MedicalDetailItemSection section) {
 		boolean valid = true;
-		
-		valid &= validateDate(section.startDate, false);
-		valid &= validateGuid(section.disabilityType, false);
-		valid &= validateString(section.disabilityLocation, 0, 250, true);
-		valid &= validateNumber(section.disabilityPercent, true);
-		valid &= validateDate(section.endDate, true);
-		valid &= validateNumber(section.benefits, true);
+
+		if(!section.getItem().deleted){
+			valid &= validateDate(section.startDate, false);
+			valid &= validateGuid(section.disabilityType, false);
+			valid &= validateString(section.disabilityLocation, 0, 250, true);
+			valid &= validateNumber(section.disabilityPercent, true);
+			valid &= validateDate(section.endDate, true);
+			valid &= validateNumber(section.benefits, true);
+		}
 		
 		return valid;
 	}

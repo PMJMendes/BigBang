@@ -10,6 +10,7 @@ import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.DatePickerFormField;
+import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.library.client.userInterface.view.PopupPanel;
@@ -28,6 +29,7 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 	NewMedicalDetailItemSection newItemSection;
 	Collection<MedicalDetailItemSection> medicalDetailItemSections;
 	Button showAllPayments = new Button("Resumo de Pagamentos");
+	TextBoxFormField notes;
 	private PopupPanel popup;
 	private PaymentGridPanel payments;
 
@@ -35,7 +37,9 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 
 		popup = new PopupPanel();
 		payments = new PaymentGridPanel();
-
+		notes = new TextBoxFormField("Notas");
+		notes.setFieldWidth("250px");
+		
 		popup.add(payments);
 
 		nextAppointment = new DatePickerFormField("Data do próximo contacto");
@@ -55,12 +59,14 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 
 		registerFormField(nextAppointment);
 
+		addFormField(notes);
+		
 		showAllPayments.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 				if(getValue().details == null || getValue().details.length == 0){
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é há pagamentos para apresentar"), TYPE.ALERT_NOTIFICATION));
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não há pagamentos para apresentar"), TYPE.ALERT_NOTIFICATION));
 				}
 				else{
 					payments.setValue(MedicalFileForm.this.getValue().details);
@@ -132,6 +138,7 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 		if(result != null){
 			result.nextDate = nextAppointment.getStringValue();
 			result.details = getMedicalDetails();
+			result.notes = notes.getValue();
 		}
 
 		return result;
@@ -143,6 +150,7 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 
 		if(info != null){
 			nextAppointment.setValue(info.nextDate);
+			notes.setValue(info.notes);
 			setMedicalDetails(info.details);
 		}
 
