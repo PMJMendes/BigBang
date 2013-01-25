@@ -26,7 +26,6 @@ public class TestReportGetParam
 			}
 		};
 
-		Services.reportService.generateParamReport("D4AD4585-539D-454E-97A4-A0BE0112D1CE",
-				new String[] {null, null, "07093702-6149-4BED-BACC-A0FE00E1AEDB", null, null, null, null}, callback);
+		Services.reportService.generateParamReport("299703A8-CC71-4338-9245-A1510106869A", new String[] {null}, callback);
 	}
 }
