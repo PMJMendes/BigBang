@@ -164,6 +164,12 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("reopenconversation")){
+					present("REOPEN_CONVERSATION", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("closeconversation")){
+					present("CONVERSATION_CLOSE", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 			

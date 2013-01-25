@@ -104,6 +104,11 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ConversationViewPresenter.Action>(ConversationViewPresenter.Action.TOOLBAR_CLOSE));
 
 			}
+
+			@Override
+			protected void onReopenConversation() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ConversationViewPresenter.Action>(ConversationViewPresenter.Action.TOOLBAR_REPOEN));
+			}
 		};
 
 		VerticalPanel ownerWrapper = new VerticalPanel();
@@ -366,5 +371,11 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 		this.sectionsContainer.clear();
 		this.sectionsContainer.add(this.printFrame);
 		this.sectionsContainer.setCellHeight(this.printFrame, "100%");		
+	}
+
+
+	@Override
+	public void allowReopen(boolean hasPermission) {
+		toolbar.allowReopen(hasPermission);
 	}
 }

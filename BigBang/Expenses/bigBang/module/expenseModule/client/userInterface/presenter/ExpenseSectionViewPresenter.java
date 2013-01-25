@@ -191,26 +191,11 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("deleteexpense")){
 					present("EXPENSE_DELETE", parameters);
 					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("cancelinforequest")){
-					present("INFO_OR_DOCUMENT_REQUEST_CANCELLATION", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("replyinforequest")){
-					present("INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("repeatinforequest")){
-					present("INFO_OR_DOCUMENT_REQUEST_REPEAT", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("replyexternalrequest")){
-					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("closeexternalrequest")){
-					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CLOSING", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("continueexternalrequest")){
-					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CONTINUATION", parameters);
-					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("conversationclose")){
 					present("CONVERSATION_CLOSE", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("reopenconversation")){
+					present("REOPEN_CONVERSATION", parameters);
 					view.showOverlayViewContainer(true);
 				}
 			}

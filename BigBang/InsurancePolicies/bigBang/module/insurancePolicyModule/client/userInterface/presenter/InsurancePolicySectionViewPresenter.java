@@ -186,18 +186,6 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 				}else if(show.equalsIgnoreCase("grantnegotiation")){
 					present("NEGOTIATION_GRANT", parameters);
 					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("responsenegotiation")){
-					present("INSURANCE_POLICY_NEGOTIATION_RESPONSE", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("replyexternalrequest")){
-					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("continueexternalrequest")){
-					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CONTINUATION", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("closeexternalrequest")){
-					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CLOSING", parameters);
-					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("transfermanager")){
 					present("INSURANCE_POLICY_MANAGER_TRANSFER", parameters);
 					view.showOverlayViewContainer(true);
@@ -209,6 +197,9 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("conversationclose")){
 					present("CONVERSATION_CLOSE", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("reopenconversation")){
+					present("REOPEN_CONVERSATION", parameters);
 					view.showOverlayViewContainer(true);
 				}
 			}

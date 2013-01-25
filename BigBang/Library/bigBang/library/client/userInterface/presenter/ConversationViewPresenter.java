@@ -58,7 +58,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		TOOLBAR_REPEAT,
 		TOOLBAR_CLOSE, 
 		TOOLBAR_RECEIVE, 
-		TOOLBAR_SAVE, CONVERSATION_BUTTON_CLICKED, FORM_CANCEL
+		TOOLBAR_SAVE, CONVERSATION_BUTTON_CLICKED, FORM_CANCEL, TOOLBAR_REPOEN
 	}
 
 	public static interface Display<T extends ProcessBase>{
@@ -80,6 +80,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		void allowRepeatMessage(boolean hasPermission);
 		void allowReceiveMessage(boolean hasPermission);
 		void allowClose(boolean hasPermission);
+		void allowReopen(boolean hasPermission);
 		void setOwner(Conversation convers);
 		void setHistoryOwner(Conversation conversation);
 		List<HistoryItemStub> getHistoryList();
@@ -174,6 +175,9 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 				case FORM_CANCEL:
 					resetView();
 					break;
+				case TOOLBAR_REPOEN:
+					onReopen();
+					break;
 				}
 
 			}
@@ -246,6 +250,14 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		});
 
 		bound = true;
+	}
+
+	protected void onReopen() {
+
+		NavigationHistoryItem navigationItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navigationItem.setParameter("show", "reopenconversation");
+		NavigationHistoryManager.getInstance().go(navigationItem);
+
 	}
 
 	protected void print(){
@@ -495,6 +507,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		view.allowRepeatMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT) && (currentMessage == null || !ConversationStub.Direction.INCOMING.equals(currentMessage.direction)));
 		view.allowReceiveMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.RECEIVE));
 		view.allowClose(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.CLOSE));
+		view.allowReopen(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REOPEN));
 	}
 
 	private void onGetConversationFailed() {

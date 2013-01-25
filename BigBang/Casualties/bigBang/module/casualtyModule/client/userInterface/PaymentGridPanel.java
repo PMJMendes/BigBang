@@ -48,7 +48,7 @@ public class PaymentGridPanel extends View{
 			((Label)grid.getWidget(i, 1)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 			grid.setWidget(i, 2, new Label(details[i-1].disabilityTypeLabel));
 			((Label)grid.getWidget(i, 2)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			grid.setWidget(i, 3, new Label(nf.format(details[i-1].benefits)));
+			grid.setWidget(i, 3, new Label(details[i-1].benefits != null ? nf.format(details[i-1].benefits) : ""));
 			((Label)grid.getWidget(i, 3)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
 			if((i % 2) != 0){

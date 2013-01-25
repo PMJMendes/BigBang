@@ -122,20 +122,18 @@ public class ConversationClosingViewPresenter implements ViewPresenter {
 	}
 
 	protected void onCloseSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Pedido foi Encerrado com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Troca de Mensagens foi fechada com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
-		item.removeParameter("conversationid");
-		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onCloseFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Encerrar o Pedido"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível fechar a Troca de Mensagens"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	protected void onFailure(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível Encerrar o Pedido"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível fechar a Troca de Mensagens"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);

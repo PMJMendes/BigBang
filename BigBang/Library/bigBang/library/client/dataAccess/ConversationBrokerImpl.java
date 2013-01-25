@@ -27,10 +27,10 @@ import bigBang.library.shared.ConversationSearchParameter;
 import bigBang.library.shared.ConversationSortParameter;
 
 public class ConversationBrokerImpl extends DataBroker<Conversation> implements ConversationBroker{
-	
+
 	protected ConversationServiceAsync service;
 	protected SearchDataBroker<ConversationStub> searchBroker;
-	
+
 	public ConversationBrokerImpl(){
 		this(ConversationService.Util.getInstance());
 	}
@@ -263,7 +263,7 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 
 		});
 	}
-	
+
 	@Override
 	public SearchDataBroker<ConversationStub> getSearchBroker() {
 		return this.searchBroker;
@@ -304,19 +304,39 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 			public void onResponseSuccess(String result) {
 				responseHandler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
 						new String("Could not print.")
 				});
 			}
-		
-		
+
+
 		});
 	}
-		
-		
+
+	@Override
+	public void reopenConversation(String conversationId, String directionId, int replyLimit,
+			final ResponseHandler<Conversation> responseHandler) {
+		service.reopenConversation(conversationId, directionId, replyLimit, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess( Void result) {
+				responseHandler.onResponse(null);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not reopen.")
+				});
+			}
+
+		});
+	}
+
+
 }
 
 

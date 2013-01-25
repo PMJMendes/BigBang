@@ -53,6 +53,8 @@ public class BigBangConstants {
 		public static final String ASSESSMENT = "CCCC8540-B2AF-45D6-951C-A1330100BC77";
 		public static final String MEDICAL_FILE = "835E3722-A13B-451B-AEC8-A13401125446";
 		public static final String OTHER_ENTITY = "CFB6356D-3B80-4F62-83D5-A148011D1308";
+		public static final String CONVERSATION_DIRECTION_OUTGOING = "4AFA1A58-3BB6-4F55-9CF6-A11800F3142A";
+		public static final String CONVERSATION_DIRECTION_INCOMING = "405D7348-19FE-4556-B1A0-A11800F30E61";
 
 	}
 
@@ -292,6 +294,7 @@ public class BigBangConstants {
 			public static final String REPEAT = "62217CB6-5B54-4E43-870C-A118011AECE2";
 			public static final String RECEIVE = "5928AB00-2DED-45A6-B66E-A118011B1BC5";
 			public static final String CLOSE = "0712A1EB-867F-409D-AC1B-A118011B6FD8";
+			public static final String REOPEN = "AADFF5E7-4484-4FE8-980D-A14F01077479";
 			
 		}
 		

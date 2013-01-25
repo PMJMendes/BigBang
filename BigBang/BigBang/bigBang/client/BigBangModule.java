@@ -20,6 +20,7 @@ import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.ConversationClosingViewPresenter;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
+import bigBang.library.client.userInterface.presenter.ReopenConversationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ReportTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.ReportViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
@@ -30,6 +31,7 @@ import bigBang.library.client.userInterface.view.DocumentView;
 import bigBang.library.client.userInterface.view.ConversationClosingView;
 import bigBang.library.client.userInterface.view.HistoryView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
+import bigBang.library.client.userInterface.view.ReopenConversationView;
 import bigBang.library.client.userInterface.view.ReportTasksView;
 import bigBang.library.client.userInterface.view.ReportView;
 import com.google.gwt.core.client.GWT;
@@ -141,6 +143,16 @@ public class BigBangModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("REOPEN_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ReopenConversationView view = (ReopenConversationView) GWT.create(ReopenConversationView.class);
+				ReopenConversationViewPresenter presenter = new ReopenConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		
 	}
 
 	@Override

@@ -9,6 +9,7 @@ public abstract class ConversationOperationsToolbar extends BigBangOperationsToo
 	protected MenuItem repeatMessage;
 	protected MenuItem receiveMessage;
 	protected MenuItem closeConversation;
+	protected MenuItem reopenConversation;
 	
 	public ConversationOperationsToolbar() {
 		hideAll();
@@ -45,7 +46,7 @@ public abstract class ConversationOperationsToolbar extends BigBangOperationsToo
 		
 		addItem(receiveMessage);
 		
-		closeConversation = new MenuItem("Fechar Processo", new Command() {
+		closeConversation = new MenuItem("Fechar Troca de Mensagens", new Command() {
 			
 			@Override
 			public void execute() {
@@ -53,7 +54,20 @@ public abstract class ConversationOperationsToolbar extends BigBangOperationsToo
 			}
 		});
 		addItem(closeConversation);
+		
+		reopenConversation = new MenuItem("Reabrir", new Command(){
+			
+			@Override
+			public void execute() {
+				onReopenConversation();
+			}
+			
+		});
+		
+		addItem(reopenConversation);
 	}
+
+	protected abstract void onReopenConversation();
 
 	protected abstract void onSendMessage();
 	
@@ -81,6 +95,10 @@ public abstract class ConversationOperationsToolbar extends BigBangOperationsToo
 
 	public void allowClose(boolean hasPermission) {
 		this.closeConversation.setEnabled(hasPermission);
+	}
+
+	public void allowReopen(boolean hasPermission) {
+		reopenConversation.setEnabled(hasPermission);
 	}
 
 }

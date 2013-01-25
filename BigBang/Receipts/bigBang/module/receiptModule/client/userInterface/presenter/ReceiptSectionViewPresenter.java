@@ -255,6 +255,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("repeatdasrequest")){
 					present("REPEAT_DAS_REQUEST", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("reopenconversation")){
+					present("REOPEN_CONVERSATION", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 

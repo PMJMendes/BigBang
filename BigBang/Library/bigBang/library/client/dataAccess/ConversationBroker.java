@@ -44,4 +44,7 @@ public interface ConversationBroker extends DataBrokerInterface<Conversation>{
 
 	void getForPrinting(String conversationId,
 			ResponseHandler<String> responseHandler);
+
+	void reopenConversation(String id, String directionId, int replyLimit,
+			ResponseHandler<Conversation> responseHandler);
 }

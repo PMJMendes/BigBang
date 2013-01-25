@@ -163,20 +163,14 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
 					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("cancelinforequest")){
-					present("INFO_OR_DOCUMENT_REQUEST_CANCELLATION", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("replyinforequest")){
-					present("INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
-					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("repeatinforequest")){
-					present("INFO_OR_DOCUMENT_REQUEST_REPEAT", parameters);
-					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("delete")){
 					present("CLIENT_DELETE", parameters);
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("conversationclose")){
 					present("CONVERSATION_CLOSE", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("reopenconversation")){
+					present("REOPEN_CONVERSATION", parameters);
 					view.showOverlayViewContainer(true);
 				}
 			}
