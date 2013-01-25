@@ -26,6 +26,7 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptAcctCashPosition;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptExternAuditPaid;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptExternAuditPending;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptExternPendingPayment;
@@ -215,19 +216,19 @@ public class Receipt
 	{
 		return new ReceiptHistoryPaymentAcct().doReport(parrParams);
 	}
-	
+
 	public static GenericElement[] printReportHistoryValidation(String[] parrParams)
 		throws BigBangJewelException
 	{
 		return new ReceiptHistoryValidation().doReport(parrParams);
 	}
-	
+
 	public static GenericElement[] printReportHistoryAutoValidation(String[] parrParams)
 		throws BigBangJewelException
 	{
 		return new ReceiptHistoryAutoValidation().doReport(parrParams);
 	}
-	
+
 	public static GenericElement[] printReportHistorySendReceipt(String[] parrParams)
 		throws BigBangJewelException
 	{
@@ -250,6 +251,12 @@ public class Receipt
 		throws BigBangJewelException
 	{
 		return new ReceiptExternAuditPending().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportAcctCashPosition(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ReceiptAcctCashPosition().doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)

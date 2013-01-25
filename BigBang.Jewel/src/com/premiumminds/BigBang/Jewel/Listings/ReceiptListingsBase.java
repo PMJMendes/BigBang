@@ -351,7 +351,7 @@ public class ReceiptListingsBase
 		}
 	}
 
-	protected void filterByClient(StringBuilder lstrSQL, UUID pidClient)
+	protected void filterByClient(StringBuilder pstrSQL, UUID pidClient)
 		throws BigBangJewelException
 	{
 		IEntity lrefProcesses;
@@ -364,7 +364,7 @@ public class ReceiptListingsBase
 			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
 			lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
 
-			lstrSQL.append(" AND ([Process] IN (SELECT [PK] FROM (")
+			pstrSQL.append(" AND ([Process] IN (SELECT [PK] FROM (")
 					.append(lrefProcesses.SQLForSelectAll()).append(") [AuxProcs] WHERE [Parent] IN (SELECT [Process] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {17}, new java.lang.Object[] {pidClient}, null))
 					.append(") [AuxPols]) OR [Parent] IN (SELECT [Process] FROM (")
@@ -377,7 +377,7 @@ public class ReceiptListingsBase
 		}
 	}
 
-	protected void filterByClientGroup(StringBuilder lstrSQL, UUID pidGroup)
+	protected void filterByClientGroup(StringBuilder pstrSQL, UUID pidGroup)
 		throws BigBangJewelException
 	{
 		IEntity lrefProcesses;
@@ -392,7 +392,7 @@ public class ReceiptListingsBase
 			lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
 			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
 
-			lstrSQL.append(" AND ([Process] IN (SELECT [PK] FROM (")
+			pstrSQL.append(" AND ([Process] IN (SELECT [PK] FROM (")
 					.append(lrefProcesses.SQLForSelectAll()).append(") [AuxProcs] WHERE [Parent] IN (SELECT [Process] FROM (")
 					.append(lrefPolicies.SQLForSelectAll()).append(") [AuxPols] WHERE [Client] IN (SELECT [PK] FROM (")
 					.append(lrefClients.SQLForSelectByMembers(new int[] {10}, new java.lang.Object[] {pidGroup}, null))
@@ -407,7 +407,7 @@ public class ReceiptListingsBase
 		}
 	}
 
-	protected void filterByAgent(StringBuilder lstrSQL, UUID pidAgent)
+	protected void filterByAgent(StringBuilder pstrSQL, UUID pidAgent)
 		throws BigBangJewelException
 	{
 		IEntity lrefProcesses;
@@ -420,7 +420,7 @@ public class ReceiptListingsBase
 			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
 			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
 
-			lstrSQL.append(" AND ([Process] IN (SELECT [PK] FROM (")
+			pstrSQL.append(" AND ([Process] IN (SELECT [PK] FROM (")
 					.append(lrefProcesses.SQLForSelectAll()).append(") [AuxProcs] WHERE [Parent] IN (SELECT [Process] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {11}, new java.lang.Object[] {pidAgent}, null))
 					.append(") [AuxPols1]) OR ([Parent] IN (SELECT [Process] FROM (")
@@ -437,6 +437,31 @@ public class ReceiptListingsBase
 					.append(lrefPolicies.SQLForSelectAll()).append(") [AuxPolsS3] WHERE [Client] IN (SELECT [PK] FROM (")
 					.append(lrefClients.SQLForSelectByMembers(new int[] {8}, new java.lang.Object[] {pidAgent}, null))
 					.append(") [AuxSCli]))))))");
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	protected void filterByCompany(StringBuilder pstrSQL, UUID pidCompany)
+		throws BigBangJewelException
+	{
+		IEntity lrefProcesses;
+		IEntity lrefPolicies;
+
+		try
+		{
+			lrefProcesses = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNProcess));
+			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+
+			pstrSQL.append(" AND ([Process] IN (SELECT [PK] FROM (")
+					.append(lrefProcesses.SQLForSelectAll()).append(") [AuxProcs] WHERE [Parent] IN (SELECT [Process] FROM (")
+					.append(lrefPolicies.SQLForSelectByMembers(new int[] {2}, new java.lang.Object[] {pidCompany}, null))
+					.append(") [AuxPols1]) OR [Parent] IN (SELECT [Process] FROM (")
+					.append(lrefProcesses.SQLForSelectAll()).append(") [AuxsSProcs] WHERE [Parent] IN (SELECT [Process] FROM (")
+					.append(lrefPolicies.SQLForSelectByMembers(new int[] {2}, new java.lang.Object[] {pidCompany}, null))
+					.append(") [AuxPolsS1]))))");
 		}
 		catch (Throwable e)
 		{
