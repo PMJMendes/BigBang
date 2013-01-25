@@ -458,7 +458,7 @@ public class ReceiptListingsBase
 			pstrSQL.append(" AND ([Process] IN (SELECT [PK] FROM (")
 					.append(lrefProcesses.SQLForSelectAll()).append(") [AuxProcs] WHERE [Parent] IN (SELECT [Process] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {2}, new java.lang.Object[] {pidCompany}, null))
-					.append(") [AuxPols1]) OR [Parent] IN (SELECT [Process] FROM (")
+					.append(") [AuxPols1]) OR [Parent] IN (SELECT [PK] FROM (")
 					.append(lrefProcesses.SQLForSelectAll()).append(") [AuxsSProcs] WHERE [Parent] IN (SELECT [Process] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {2}, new java.lang.Object[] {pidCompany}, null))
 					.append(") [AuxPolsS1]))))");

@@ -75,7 +75,10 @@ public class ReceiptAcctCashPosition
 
 			lstrSQL = new StringBuilder();
 			lstrSQL.append("SELECT * FROM (" +
-					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM (" +
+					lrefReceipts.SQLForSelectByMembers(new int[] {Receipt.I.ISINTERNAL}, new java.lang.Object[] {null}, null) +
+					" UNION ALL " + 
+					lrefReceipts.SQLForSelectByMembers(new int[] {Receipt.I.ISINTERNAL}, new java.lang.Object[] {false}, null) +
+					") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM (" +
 					lrefSteps.SQLForSelectByMembers(
 							new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
 							new java.lang.Object[] {Constants.OPID_Receipt_Payment, Constants.UrgID_Pending}, null) +
@@ -83,6 +86,10 @@ public class ReceiptAcctCashPosition
 					lrefSteps.SQLForSelectByMembers(
 							new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
 							new java.lang.Object[] {Constants.OPID_Receipt_InsurerAccounting, Constants.UrgID_Pending}, null) +
+					" UNION ALL " +
+					lrefSteps.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
+							new java.lang.Object[] {Constants.OPID_Receipt_ExternAllowSendPayment, Constants.UrgID_Valid}, null) +
 					") [AuxSteps])");
 		}
 		catch (Throwable e)
