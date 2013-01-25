@@ -29,8 +29,8 @@ public class TestReportExcel
 			}
 		};
 
-		Services.reportService.generateParamAsXL("7612C979-1937-4B83-BA9A-A0F301100E28",
-				new String[] {"C77DDD1B-13D8-495F-AF7D-A0E80184B5E9"}, callback);
+		Services.reportService.generateParamAsXL(/*"D4AD4585-539D-454E-97A4-A0BE0112D1CE", */"7612C979-1937-4B83-BA9A-A0F301100E28",
+				new String[] {"F38731EB-1FC4-4453-B026-A0FE00E1B27C", null/*, null, null, null, null, null*/}, callback);
 	}
 
 	private static void DoStep2(final String pstrRef)
