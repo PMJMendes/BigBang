@@ -291,6 +291,7 @@ public class ClientServiceImpl
 			lopMD.mobjData.midSize = ( client.sizeId == null ? null : UUID.fromString(client.sizeId) );
 			lopMD.mobjData.midSales = ( client.revenueId == null ? null : UUID.fromString(client.revenueId) );
 			lopMD.mobjData.mstrNotes = client.notes;
+			lopMD.mobjData.mbIsInternational = client.isInternational;
 
 			lopMD.mobjContactOps = null;
 			lopMD.mobjDocOps = null;
