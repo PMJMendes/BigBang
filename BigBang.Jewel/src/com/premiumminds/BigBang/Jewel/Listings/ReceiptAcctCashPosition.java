@@ -197,6 +197,7 @@ public class ReceiptAcctCashPosition
 		{
 			larrRows[i] = ReportBuilder.buildRow(buildInnerRow(lid, parrMap.get(lid), ldblPending, ldblPaid, ldblComissions));
 			ReportBuilder.styleRow(larrRows[i], false);
+			i++;
 		}
 
 		larrRows[i] = ReportBuilder.buildRow(buildInnerFooterRow(ldblPending.get(), ldblPaid.get(), ldblComissions.get()));
@@ -304,8 +305,8 @@ public class ReceiptAcctCashPosition
 		setWidths(larrCells);
 
 		pdblPending.set(pdblPending.get().add(ldblPending));
-		pdblPaid.set(pdblPending.get().add(ldblPaid));
-		pdblComissions.set(pdblPending.get().add(ldblCommissions));
+		pdblPaid.set(pdblPaid.get().add(ldblPaid));
+		pdblComissions.set(pdblComissions.get().add(ldblCommissions));
 
 		return larrCells;
 	}
