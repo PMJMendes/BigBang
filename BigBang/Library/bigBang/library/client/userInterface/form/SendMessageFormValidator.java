@@ -35,7 +35,7 @@ FormValidator<SendMessageForm> {
 	}
 
 	private boolean validateContactFrom() {
-		return validateGuid(form.contactsFrom, false);
+		return validateGuid(form.contactsFrom, Message.Kind.NOTE.toString().equalsIgnoreCase(form.emailOrNote.getValue()));
 	}
 
 	private boolean validateType() {
@@ -47,7 +47,7 @@ FormValidator<SendMessageForm> {
 	}
 
 	private boolean validateTo() {
-		return validateGuid(form.to, false);
+		return validateGuid(form.to, Message.Kind.NOTE.toString().equalsIgnoreCase(form.emailOrNote.getValue()));
 	}
 
 	private boolean validateForwardReply() {
