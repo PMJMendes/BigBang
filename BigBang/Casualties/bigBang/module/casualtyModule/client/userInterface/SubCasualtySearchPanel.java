@@ -17,7 +17,6 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.module.casualtyModule.client.resources.Resources;
 import bigBang.module.casualtyModule.shared.SubCasualtySearchParameter;
-import bigBang.module.insurancePolicyModule.shared.SubPolicySearchParameter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -157,7 +156,7 @@ public class SubCasualtySearchPanel extends SearchPanel<SubCasualtyStub> impleme
 		subCasualtiesToRemove.clear();
 		subCasualtiesToUpdate.clear();
 
-		SubPolicySearchParameter parameter = new SubPolicySearchParameter();
+		SubCasualtySearchParameter parameter = new SubCasualtySearchParameter();
 		parameter.freeText = this.textBoxFilter.getValue();
 
 		SearchParameter[] parameters = new SearchParameter[]{
