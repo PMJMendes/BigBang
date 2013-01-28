@@ -50,7 +50,8 @@ public class TestSubCasualtyGet
 		};
 
 		parameter = new SubCasualtySearchParameter();
-		parameter.ownerId = "CA38CF67-FB1C-4213-9ABE-A03C011459A1";
+		parameter.freeText = "20122318";
+//		parameter.ownerId = "CA38CF67-FB1C-4213-9ABE-A03C011459A1";
 		sorts = new SubCasualtySortParameter();
 		sorts.field = SubCasualtySortParameter.SortableField.NUMBER;
 		sorts.order = SortOrder.ASC;
