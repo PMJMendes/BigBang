@@ -84,8 +84,36 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 			getConversationNavigationProcessItem(instanceId);
 		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.MEDICAL_FILE)){
 			getMedicalFileNavigationProcessItem(instanceId);
+		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.ASSESSMENT)){
+			getAssessmentNavigationProcessItem(instanceId);
 		}
 
+	}
+
+	private void getAssessmentNavigationProcessItem(String instanceId) {
+		assessmentBroker.getAssessment(instanceId, new ResponseHandler<Assessment>() {
+			
+			@Override
+			public void onResponse(Assessment response) {
+				final NavigationHistoryItem item = new NavigationHistoryItem();
+				
+				item.setStackParameter("display");
+				item.setParameter("section", "casualty");
+				item.pushIntoStackParameter("display", "search");
+				item.pushIntoStackParameter("display", "subcasualty");
+				item.pushIntoStackParameter("display", "assessment");
+				item.setParameter("subcasualtyid", response.subCasualtyId);
+				item.setParameter("assessmentid", response.id);
+				
+				handler.onResponse(item);				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));
+				
+			}
+		});
 	}
 
 	private void getMedicalFileNavigationProcessItem(String instanceId) {
