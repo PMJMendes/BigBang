@@ -17,8 +17,14 @@ public class OtherEntityFormValidator extends
 		valid &= validateName();
 		valid &= validateType();
 		valid &= validateNotes();
+		valid &= validateTaxNumber();
+		valid &= validateAddress(form.address, true);
 		
 		return new Result(valid, this.validationMessages);
+	}
+
+	private boolean validateTaxNumber() {
+		return validateString(form.taxNumber, 0, 15, true);
 	}
 
 	private boolean validateName() {

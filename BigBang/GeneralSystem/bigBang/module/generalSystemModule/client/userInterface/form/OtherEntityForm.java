@@ -2,6 +2,7 @@ package bigBang.module.generalSystemModule.client.userInterface.form;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.OtherEntity;
+import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -12,20 +13,30 @@ public class OtherEntityForm extends FormView<OtherEntity>{
 	protected TextBoxFormField name;
 	protected ExpandableListBoxFormField type;
 	protected TextAreaFormField notes;
+	protected TextBoxFormField taxNumber;
+	protected AddressFormField address;
 
 	public OtherEntityForm() {
 		name = new TextBoxFormField("Nome");
 		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OTHER_ENTITIES_TYPE, "Tipo");
 		notes = new TextAreaFormField("Notas");
+		address = new AddressFormField();
+		taxNumber = new TextBoxFormField("NIF");
+		taxNumber.setFieldWidth("100px");
+
 
 		addSection("Informação Geral");
 
 		addFormField(name);
-		addFormField(type);
+		addFormField(type, true);
+		addFormField(taxNumber, true);
+		addSection("Morada");
+		addFormField(address);
+		addSection("Notas");
 		addFormField(notes);
 
 		type.allowEdition(false);
-		
+
 		setValidator(new OtherEntityFormValidator(this));
 	}
 
@@ -36,6 +47,8 @@ public class OtherEntityForm extends FormView<OtherEntity>{
 		toReturn.name = name.getValue();
 		toReturn.type = type.getValue();
 		toReturn.notes = notes.getValue();
+		toReturn.address = address.getValue();
+		toReturn.taxNumber = taxNumber.getValue();
 
 		return toReturn;
 	}
@@ -46,7 +59,10 @@ public class OtherEntityForm extends FormView<OtherEntity>{
 		name.setValue(info.name);
 		type.setValue(info.type);
 		notes.setValue(info.notes);
-		
+		address.setValue(info.address);
+		taxNumber.setValue(info.taxNumber);
+
+
 	}
 
 }

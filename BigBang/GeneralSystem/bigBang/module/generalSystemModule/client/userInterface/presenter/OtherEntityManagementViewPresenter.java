@@ -354,6 +354,7 @@ public class OtherEntityManagementViewPresenter implements ViewPresenter {
 
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
+				view.setSaveModeEnabled(false);
 			}
 
 			@Override
