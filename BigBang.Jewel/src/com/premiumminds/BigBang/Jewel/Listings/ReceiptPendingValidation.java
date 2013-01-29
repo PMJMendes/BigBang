@@ -110,16 +110,19 @@ public class ReceiptPendingValidation
 			filterByAgent(lstrSQL, UUID.fromString(parrParams[2]));
 
 		if ( parrParams[3] != null )
-			lstrSQL.append(" AND [Maturity Date] >= '").append(parrParams[3]).append("'");
+			filterByCompany(lstrSQL, UUID.fromString(parrParams[3]));
 
 		if ( parrParams[4] != null )
-			lstrSQL.append(" AND [Maturity Date] <= '").append(parrParams[4]).append("'");
+			lstrSQL.append(" AND [Maturity Date] >= '").append(parrParams[4]).append("'");
 
 		if ( parrParams[5] != null )
-			lstrSQL.append(" AND [Due Date] >= '").append(parrParams[5]).append("'");
+			lstrSQL.append(" AND [Maturity Date] < DATEADD(d, 1, '").append(parrParams[5]).append("')");
 
 		if ( parrParams[6] != null )
-			lstrSQL.append(" AND [Due Date] <= '").append(parrParams[6]).append("'");
+			lstrSQL.append(" AND [Due Date] >= '").append(parrParams[6]).append("'");
+
+		if ( parrParams[7] != null )
+			lstrSQL.append(" AND [Due Date] < DATEADD(d, 1, '").append(parrParams[7]).append("')");
 
 		larrAux = new ArrayList<Receipt>();
 
