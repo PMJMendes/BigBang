@@ -17,12 +17,12 @@ public class ReopenConversationForm extends FormView<String[]>{
 		days.setFieldWidth("50px");
 		days.setUnitsLabel("dias");
 		
-		direction = new ListBoxFormField("Direcção da próxima mensagem");
+		direction = new ListBoxFormField("Próxima mensagem");
 		direction.addItem("Enviar", BigBangConstants.EntityIds.CONVERSATION_DIRECTION_OUTGOING);
 		direction.addItem("Receber", BigBangConstants.EntityIds.CONVERSATION_DIRECTION_INCOMING);
 		
-		addFormField(days);
-		addFormField(direction);
+		addFormField(direction, true);
+		addFormField(days, true);
 	
 		setValidator(new ReopenConversationFormValidator(this));
 	}

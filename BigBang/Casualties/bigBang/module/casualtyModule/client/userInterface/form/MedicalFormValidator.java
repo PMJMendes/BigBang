@@ -1,6 +1,7 @@
 package bigBang.module.casualtyModule.client.userInterface.form;
 
 import bigBang.library.client.FormValidator;
+import bigBang.module.casualtyModule.client.userInterface.AppointmentForm;
 
 public class MedicalFormValidator extends FormValidator<MedicalFileForm> {
 
@@ -15,37 +16,37 @@ public class MedicalFormValidator extends FormValidator<MedicalFileForm> {
 		valid &= validateDateNextAppointment();
 		valid &= validateString(form.notes, 0, 250, true);
 		valid &= validateDetails();
-
+		valid &= validateAppointments();
+		
 		return new Result(valid, this.validationMessages);
+	}
+
+	private boolean validateDetails() {
+		
+		boolean valid = true;
+		for(MedicalDetailForm detailForm : form.medicalDetailForms){
+			if(detailForm.getNonScrollableContent().isVisible()){
+				valid &= detailForm.validate();
+			}
+		}
+		
+		return valid;
+	}
+	
+	private boolean validateAppointments(){
+		
+		boolean valid = true;
+		for(AppointmentForm assForm : form.appointmentForms){
+			if(assForm.getNonScrollableContent().isVisible()){
+				valid &= assForm.validate();
+			}
+		}
+		
+		return valid;
+		
 	}
 
 	private boolean validateDateNextAppointment() {
 		return validateDate(form.nextAppointment, true);
 	}
-
-	private boolean validateDetails() {
-		boolean valid = true;
-
-		for(MedicalDetailItemSection section : form.medicalDetailItemSections){
-			valid &= validateDetailSection(section);
-		}
-
-		return valid;
-	}
-
-	private boolean validateDetailSection(MedicalDetailItemSection section) {
-		boolean valid = true;
-
-		if(!section.getItem().deleted){
-			valid &= validateDate(section.startDate, false);
-			valid &= validateGuid(section.disabilityType, false);
-			valid &= validateString(section.disabilityLocation, 0, 250, true);
-			valid &= validateNumber(section.disabilityPercent, true);
-			valid &= validateDate(section.endDate, true);
-			valid &= validateNumber(section.benefits, true);
-		}
-		
-		return valid;
-	}
-
 }
