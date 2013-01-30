@@ -45,7 +45,7 @@ import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingImage;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingInsurerAccounting;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingMediatorAccounting;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingPayment;
-import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingPendingPaymentReturn;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingPaymentReturn;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingSendPayment;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingSendPaymentNotice;
@@ -139,7 +139,7 @@ public class Receipt
 	public static GenericElement[] printReportPendingPaymentReturn(String[] parrParams)
 		throws BigBangJewelException
 	{
-		return new ReceiptPendingPendingPaymentReturn().doReport(parrParams);
+		return new ReceiptPendingPaymentReturn().doReport(parrParams);
 	}
 
 	public static GenericElement[] printReportPendingReturnToInsurer(String[] parrParams)

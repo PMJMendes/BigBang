@@ -19,7 +19,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
-public class ReceiptPendingPendingPaymentReturn
+public class ReceiptPendingPaymentReturn
 	extends ReceiptListingsBase
 {
 	public GenericElement[] doReport(String[] parrParams)
