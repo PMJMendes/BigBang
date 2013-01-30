@@ -50,6 +50,7 @@ import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingSendPayment;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingSendPaymentNotice;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingSendReceipt;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingSignature;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptPendingValidation;
 import com.premiumminds.BigBang.Jewel.SysObjects.MediatorBase;
 
@@ -129,7 +130,13 @@ public class Receipt
 	{
 		return new ReceiptPendingCreateSignatureRequest().doReport(parrParams);
 	}
-	
+
+	public static GenericElement[] printReportPendingSignature(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ReceiptPendingSignature().doReport(parrParams);
+	}
+
 	public static GenericElement[] printReportPendingCreateDASRequest(String[] parrParams)
 		throws BigBangJewelException
 	{
