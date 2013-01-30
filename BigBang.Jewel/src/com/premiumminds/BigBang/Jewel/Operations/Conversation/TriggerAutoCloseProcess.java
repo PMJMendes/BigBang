@@ -42,7 +42,7 @@ public class TriggerAutoCloseProcess
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "A troca de mensagens, não sendo necessárias mensagens adicionais para este assunto.";
+		return "A troca de mensagens foi encerrada, não sendo necessárias mensagens adicionais para este tópico.";
 	}
 
 	public UUID GetExternalProcess()
