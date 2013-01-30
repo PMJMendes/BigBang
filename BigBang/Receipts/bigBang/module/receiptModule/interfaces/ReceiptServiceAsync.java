@@ -31,6 +31,7 @@ public interface ReceiptServiceAsync
 	void getRelevantDebitNotes(String receiptId, AsyncCallback<DebitNote[]> callback);
 	void associateWithDebitNote(String receiptId, String debitNoteId, AsyncCallback<Receipt> callback);
 	void markNotPayed(String receiptId, AsyncCallback<Receipt> callback);
+	void voidInternal(Receipt.ReturnMessage message, AsyncCallback<Receipt> callback);
 	void setDASNotNecessary(String receiptId, AsyncCallback<Receipt> callback);
 	void createDASRequest(DASRequest request, AsyncCallback<Receipt> callback);
 	void createSignatureRequest(SignatureRequest request, AsyncCallback<Receipt> callback);

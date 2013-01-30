@@ -93,6 +93,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.SendReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SetReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ValidateReceipt;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.VoidInternal;
 import com.premiumminds.BigBang.Jewel.SysObjects.ImageHelper;
 import com.premiumminds.BigBang.Jewel.SysObjects.PDFHelper;
 
@@ -1007,6 +1008,40 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopNPI.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Receipt voidInternal(Receipt.ReturnMessage message)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		VoidInternal lopVI;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(message.receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopVI = new VoidInternal(lobjReceipt.GetProcessID());
+		lopVI.midMotive = UUID.fromString(message.motiveId);
+
+		try
+		{
+			lopVI.Execute();
 		}
 		catch (Throwable e)
 		{

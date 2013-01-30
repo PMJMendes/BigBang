@@ -422,6 +422,8 @@ public class Constants
 	public static final UUID OPID_Receipt_CreateInternalReceipt          = UUID.fromString("E870B538-B7AE-4B33-B13E-A12A011BD386");
 	public static final UUID OPID_Receipt_CreateConversation             = UUID.fromString("E7305369-657B-4CC3-B769-A13300EEF0CD");
 	public static final UUID OPID_Receipt_UndoCreateConversation         = UUID.fromString("A58119C9-7B91-4B64-BF1F-A13300EF84B1");
+	public static final UUID OPID_Receipt_VoidInternal                   = UUID.fromString("36A6571E-0601-47CE-A53E-A15600BA69D5");
+	public static final UUID OPID_Receipt_UndoVoidInternal               = UUID.fromString("1427C47A-EDB0-4B93-8BDF-A15600BA07A2");
 
 	//Casualty Operations
 	public static final UUID OPID_Casualty_AutoProcessVents              = UUID.fromString("4DB7EF2A-DB71-4BF4-810B-A02E00FA9F94");
