@@ -469,6 +469,7 @@ public class Constants
 	public static final UUID OPID_SubCasualty_CreateBudgetAcceptance     = UUID.fromString("4C7F01F3-A6DF-497E-B840-A03600FCD16D");
 	public static final UUID OPID_SubCasualty_CreateReplacementVehicle   = UUID.fromString("64EBC7FA-646D-4F6E-9EBB-A03600FD1473");
 	public static final UUID OPID_SubCasualty_CreateMedicalFile          = UUID.fromString("F2AE7668-271F-4BE4-AB20-A03600FD320B");
+	public static final UUID OPID_SubCasualty_CreateTotalLoss            = UUID.fromString("8C3D3E86-C1AB-4D40-873D-A15600DA7F73");
 	public static final UUID OPID_SubCasualty_CreateThirdPartySettlement = UUID.fromString("92D495E7-F32C-4F44-A912-A03600FD5081");
 	public static final UUID OPID_SubCasualty_CreateSettlementFollowup   = UUID.fromString("0ACEA6D6-F14A-4885-AE83-A03600FD7301");
 	public static final UUID OPID_SubCasualty_CreateCapitalReinstatement = UUID.fromString("B20E61F4-4CDF-4785-A228-A03600FDDF6C");
