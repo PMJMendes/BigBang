@@ -108,7 +108,7 @@ public class CreateTotalLoss
 		try
 		{
 	        lstrFilter = GetProcess().GetData().getLabel() + ".PT%";
-			lrefCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MedicalFile)); 
+			lrefCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_TotalLossFile)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
