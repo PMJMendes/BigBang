@@ -55,6 +55,7 @@ public class BigBangConstants {
 		public static final String OTHER_ENTITY = "CFB6356D-3B80-4F62-83D5-A148011D1308";
 		public static final String CONVERSATION_DIRECTION_OUTGOING = "4AFA1A58-3BB6-4F55-9CF6-A11800F3142A";
 		public static final String CONVERSATION_DIRECTION_INCOMING = "405D7348-19FE-4556-B1A0-A11800F30E61";
+		public static final String TOTAL_LOSS_FILE = "1D05DA1F-873D-4CA6-BA62-A15001064C06";
 
 	}
 
@@ -83,6 +84,7 @@ public class BigBangConstants {
 		public static final String CASUALTY_SUB_CASUALTY_REOPEN = "F4E500C7-5EFE-4A8B-AD8A-A12B00E0CDC1";
 		public static final String DISABILITY_TYPE = "027296D7-1573-46F2-BD95-A1340114B485";
 		public static final String OTHER_ENTITIES_TYPE = "A110EE56-A8A1-4E7A-B564-A148011C3FD9";
+		public static final String SALVAGE_TYPE = "1E2C47DF-B4AA-4A7D-9512-A150010491EC";
 	}
 	
 	public static class TypifiedListValues {
@@ -263,6 +265,7 @@ public class BigBangConstants {
 			public static final String CONVERSATION = "94DEF8C7-6740-4C66-85A3-A03600FC056A";
 			public static final String CREATE_ASSESSMENT = "634A8C33-50A7-41D6-AF28-A03600FC9F95";
 			public static final String CREATE_MEDICAL_FILE = "F2AE7668-271F-4BE4-AB20-A03600FD320B";
+			public static final String CREATE_TOTAL_LOSSES = "8C3D3E86-C1AB-4D40-873D-A15600DA7F73";
 		}
 
 		public static class DASRequestProcess{
@@ -311,6 +314,11 @@ public class BigBangConstants {
 			public static final String CONVERSATION = "13E508E5-51AC-4C9C-86FA-A134011A08D4";
 			public static final String CLOSE = "BE730E82-9393-4CEF-9BE5-A134011A4E1F";
 		}
+
+		public static class TotalLossFileProcess{
+			public static final String EDIT = "80EF0E57-D533-49E7-8FA5-A15001126AA7";
+			public static final String CONVERSATION = "FB533A17-2CE3-4A40-9930-A15001129CEF";
+			public static final String CLOSE = "2BD6538D-E8F2-485A-B99D-A1500113322C";		}
 		
 	}
 	

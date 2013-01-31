@@ -11,6 +11,7 @@ import bigBang.module.casualtyModule.client.dataAccess.AssessmentBrokerImpl;
 import bigBang.module.casualtyModule.client.dataAccess.CasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.dataAccess.MedicalFileBrokerImpl;
 import bigBang.module.casualtyModule.client.dataAccess.SubCasualtyDataBrokerImpl;
+import bigBang.module.casualtyModule.client.dataAccess.TotalLossFileBrokerImpl;
 import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentConversationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentReceiveMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentSendMessageViewPresenter;
@@ -41,6 +42,10 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyR
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtySendMessageViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyTasksViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.TotalLossFileConversationViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.TotalLossFileReceiveMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.TotalLossFileSendMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.TotalLossFileViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.AssessmentConversationView;
 import bigBang.module.casualtyModule.client.userInterface.view.AssessmentReceiveMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.AssessmentSendMessageView;
@@ -71,6 +76,10 @@ import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReopen
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtySendMessageView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyTasksView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyView;
+import bigBang.module.casualtyModule.client.userInterface.view.TotalLossFileConversationView;
+import bigBang.module.casualtyModule.client.userInterface.view.TotalLossFileReceiveMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.TotalLossFileSendMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.TotalLossFileView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -372,6 +381,42 @@ public class CasualtyModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TOTAL_LOSS_FILE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				TotalLossFileView view = (TotalLossFileView) GWT.create(TotalLossFileView.class);
+				TotalLossFileViewPresenter presenter = new TotalLossFileViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TOTAL_LOSS_FILE_SEND_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				TotalLossFileSendMessageView view = (TotalLossFileSendMessageView) GWT.create(TotalLossFileSendMessageView.class);
+				ViewPresenter presenter = new TotalLossFileSendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TOTAL_LOSS_FILE_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				TotalLossFileReceiveMessageView view = (TotalLossFileReceiveMessageView) GWT.create(TotalLossFileReceiveMessageView.class);
+				ViewPresenter presenter = new TotalLossFileReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TOTAL_LOSS_FILE_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				TotalLossFileConversationView view = (TotalLossFileConversationView) GWT.create(TotalLossFileConversationView.class);
+				ViewPresenter presenter = new TotalLossFileConversationViewPresenter(view);
+				return presenter;
+			}
+		});
 	}
 
 	@Override
@@ -380,7 +425,8 @@ public class CasualtyModule implements Module {
 				new CasualtyDataBrokerImpl(),
 				new SubCasualtyDataBrokerImpl(),
 				new AssessmentBrokerImpl(),
-				new MedicalFileBrokerImpl()
+				new MedicalFileBrokerImpl(),
+				new TotalLossFileBrokerImpl()
 		};
 	}
 

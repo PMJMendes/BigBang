@@ -9,30 +9,30 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
-import bigBang.definitions.shared.MedicalFile;
-import bigBang.definitions.shared.MedicalFileStub;
+import bigBang.definitions.shared.TotalLossFile;
+import bigBang.definitions.shared.TotalLossFileStub;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.dataAccess.MedicalFileBrokerClient;
 import bigBang.library.client.event.OperationWasExecutedEvent;
-import bigBang.module.casualtyModule.interfaces.MedicalFileService;
-import bigBang.module.casualtyModule.interfaces.MedicalFileServiceAsync;
+import bigBang.module.casualtyModule.interfaces.TotalLossService;
+import bigBang.module.casualtyModule.interfaces.TotalLossServiceAsync;
 
-public class MedicalFileBrokerImpl extends DataBroker<MedicalFile> implements MedicalFileBroker{
+public class TotalLossFileBrokerImpl extends DataBroker<TotalLossFile> implements TotalLossFileBroker{
 
-	protected MedicalFileServiceAsync service;
-	protected MedicalFileSearchBroker searchBroker;
-	
-	public MedicalFileBrokerImpl(){
-		this.service = MedicalFileService.Util.getInstance();
-		this.dataElementId = BigBangConstants.EntityIds.MEDICAL_FILE;
-		searchBroker = new MedicalFileSearchBroker();
+	protected TotalLossServiceAsync service;
+	protected TotalLossFileSearchBroker searchBroker;
+
+	public TotalLossFileBrokerImpl(){
+		this.service = TotalLossService.Util.getInstance();
+		this.dataElementId = BigBangConstants.EntityIds.TOTAL_LOSS_FILE;
+		searchBroker = new TotalLossFileSearchBroker();
 	}
 
 	@Override
 	public void requireDataRefresh() {
-		return;
+		return;		
 	}
+
 
 	@Override
 	public void notifyItemCreation(String itemId) {
@@ -46,10 +46,10 @@ public class MedicalFileBrokerImpl extends DataBroker<MedicalFile> implements Me
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
-		getMedicalFile(itemId, new ResponseHandler<MedicalFile>(){
+		getTotalLossFile(itemId, new ResponseHandler<TotalLossFile>(){
 
 			@Override
-			public void onResponse(MedicalFile response) {
+			public void onResponse(TotalLossFile response) {
 				return;
 			}
 
@@ -62,49 +62,49 @@ public class MedicalFileBrokerImpl extends DataBroker<MedicalFile> implements Me
 	}
 
 	@Override
-	public void getMedicalFile(String id, final ResponseHandler<MedicalFile> handler) {
-		service.getMedicalFile(id, new BigBangAsyncCallback<MedicalFile>() {
+	public void getTotalLossFile(String id,
+			final ResponseHandler<TotalLossFile> handler) {
+		service.getTotalLossFile(id, new BigBangAsyncCallback<TotalLossFile>() {
 
 			@Override
-			public void onResponseSuccess(MedicalFile result) {
+			public void onResponseSuccess(TotalLossFile result) {
 				incrementDataVersion();
-				for(DataBrokerClient<MedicalFile> client: clients){
-					((MedicalFileBrokerClient) client).updateMedicalFile(result);
+				for(DataBrokerClient<TotalLossFile> client : clients){
+					((TotalLossFileBrokerClient)client).updateTotalLossFile(result);
 				}
 				handler.onResponse(result);
 			}
 
-
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not get the medical file")
+						new String("Could not get the total loss file")
 				});
-
 				super.onResponseFailure(caught);
-
 			}
 
 		});
 	}
 
 	@Override
-	public void editMedicalFile(MedicalFile file,
-			final ResponseHandler<MedicalFile> handler) {
-		service.editMedicalFile(file, new BigBangAsyncCallback<MedicalFile>() {
+	public void editTotalLossFile(TotalLossFile file,
+			final ResponseHandler<TotalLossFile> handler) {
+		service.editTotalLossFile(file, new BigBangAsyncCallback<TotalLossFile>() {
 
 			@Override
-			public void onResponseSuccess(MedicalFile result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.MedicalFileProcess.EDIT, result.id));
+			public void onResponseSuccess(TotalLossFile result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.TotalLossFileProcess.EDIT, result.id));
 				incrementDataVersion();
-				notifyItemUpdate(result.id);
+				for(DataBrokerClient<TotalLossFile> client : clients){
+					((TotalLossFileBrokerClient)client).updateTotalLossFile(result);
+				}
 				handler.onResponse(result);
 			}
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not edit the assessment")
+						new String("Could not get the total loss file")
 				});
 				super.onResponseFailure(caught);
 			}
@@ -119,7 +119,7 @@ public class MedicalFileBrokerImpl extends DataBroker<MedicalFile> implements Me
 
 			@Override
 			public void onResponseSuccess(Conversation result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.AssessmentProcess.CONVERSATION, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.TotalLossFileProcess.CONVERSATION, result.id));
 				handler.onResponse(result);
 			}
 
@@ -142,7 +142,7 @@ public class MedicalFileBrokerImpl extends DataBroker<MedicalFile> implements Me
 
 			@Override
 			public void onResponseSuccess(Conversation result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.MedicalFileProcess.CONVERSATION, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.TotalLossFileProcess.CONVERSATION, result.id));
 				handler.onResponse(result);
 			}
 
@@ -157,13 +157,13 @@ public class MedicalFileBrokerImpl extends DataBroker<MedicalFile> implements Me
 	}
 
 	@Override
-	public void closeProcess(String id, final ResponseHandler<MedicalFile> handler) {
-		service.closeProcess(id, new BigBangAsyncCallback<MedicalFile>(){
+	public void closeProcess(String id, final ResponseHandler<TotalLossFile> handler) {
+		service.closeProcess(id, new BigBangAsyncCallback<TotalLossFile>(){
 
 
 			@Override
-			public void onResponseSuccess(MedicalFile result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.MedicalFileProcess.CLOSE, result.id));
+			public void onResponseSuccess(TotalLossFile result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.TotalLossFileProcess.CLOSE, result.id));
 				incrementDataVersion();
 				notifyItemUpdate(result.id);
 				handler.onResponse(result);
@@ -181,8 +181,8 @@ public class MedicalFileBrokerImpl extends DataBroker<MedicalFile> implements Me
 	}
 
 	@Override
-	public SearchDataBroker<MedicalFileStub> getSearchBroker() {
-		return this.searchBroker;
+	public SearchDataBroker<TotalLossFileStub> getSearchBroker() {
+		return searchBroker;
 	}
 
 }

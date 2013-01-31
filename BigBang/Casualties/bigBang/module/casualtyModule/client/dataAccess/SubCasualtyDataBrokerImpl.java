@@ -19,6 +19,7 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualtyStub;
+import bigBang.definitions.shared.TotalLossFile;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.OperationWasExecutedEvent;
@@ -383,6 +384,29 @@ implements SubCasualtyDataBroker{
 			}
 		});
 
+	}
+
+	@Override
+	public void createTotalLossFile(TotalLossFile info,
+			final ResponseHandler<TotalLossFile> responseHandler) {
+		service.createTotalLoss(info, new BigBangAsyncCallback<TotalLossFile>() {
+			
+
+			@Override
+			public void onResponseSuccess(TotalLossFile result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_MEDICAL_FILE, result.id));
+				responseHandler.onResponse(result);								
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not create the total loss file")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		});
+				
 	}
 
 }

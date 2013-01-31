@@ -89,8 +89,15 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 					present("MEDICAL_FILE_SEND_MESSAGE", parameters);
 				}else if(display.equalsIgnoreCase("medicalfileconversation")){
 					present("MEDICAL_FILE_CONVERSATION", parameters);
-				}
-				else{
+				}else if(display.equalsIgnoreCase("totallossfile")){
+					present("TOTAL_LOSS_FILE", parameters);
+				}else if(display.equalsIgnoreCase("totallossfilesendmessage")){
+					present("TOTAL_LOSS_FILE_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("totallossfilereceivemessage")){
+					present("TOTAL_LOSS_FILE_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("totallossfileconversation")){
+					present("TOTAL_LOSS_FILE_CONVERSATION", parameters);
+				}else{
 						goToDefault();
 				}
 			}

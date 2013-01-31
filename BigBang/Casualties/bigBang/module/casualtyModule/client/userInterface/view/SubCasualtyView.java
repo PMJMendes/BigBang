@@ -138,6 +138,11 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 			protected void onCreateMedicalFile() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.CREATE_MEDICAL_FILE));
 			}
+
+			@Override
+			protected void onCreateTotalLosses() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.CREATE_TOTAL_LOSSES));
+			}
 		};
 		formWrapper.add(this.toolbar);
 
@@ -264,6 +269,11 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	@Override
 	public void allowCreateMedicalFile(boolean hasPermission) {
 		toolbar.allowCreateMedicalFile(hasPermission);
+	}
+	
+	@Override
+	public void allowCreateTotalLosses(boolean hasPermission) {
+		toolbar.allowCreateTotalLosses(hasPermission);
 	}
 
 	@Override

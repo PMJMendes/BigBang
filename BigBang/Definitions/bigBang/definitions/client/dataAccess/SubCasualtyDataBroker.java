@@ -8,6 +8,7 @@ import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualtyStub;
+import bigBang.definitions.shared.TotalLossFile;
 
 public interface SubCasualtyDataBroker extends DataBrokerInterface<SubCasualty> {
 
@@ -39,4 +40,7 @@ public interface SubCasualtyDataBroker extends DataBrokerInterface<SubCasualty> 
 			ResponseHandler<Assessment> handler);
 
 	public void createMedicalFile(MedicalFile info, ResponseHandler<MedicalFile> responseHandler);
+
+	public void createTotalLossFile(TotalLossFile info,
+			ResponseHandler<TotalLossFile> responseHandler);
 }

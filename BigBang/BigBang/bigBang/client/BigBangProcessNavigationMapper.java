@@ -17,6 +17,7 @@ import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubPolicy;
+import bigBang.definitions.shared.TotalLossFile;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
 import bigBang.library.client.ProcessNavigationMapper;
@@ -26,6 +27,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.module.casualtyModule.client.dataAccess.MedicalFileBroker;
+import bigBang.module.casualtyModule.client.dataAccess.TotalLossFileBroker;
 
 public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 
@@ -37,6 +39,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 	ConversationBroker conversationBroker;
 	AssessmentBroker assessmentBroker;
 	MedicalFileBroker medicalFileBroker;
+	TotalLossFileBroker totalLossFileBroker;
 
 	public BigBangProcessNavigationMapper() {
 		subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
@@ -46,6 +49,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 		conversationBroker = (ConversationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CONVERSATION);
 		assessmentBroker = (AssessmentBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.ASSESSMENT);
 		medicalFileBroker = (MedicalFileBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.MEDICAL_FILE);
+		totalLossFileBroker = (TotalLossFileBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.TOTAL_LOSS_FILE);
 	}
 
 	@Override
@@ -86,17 +90,46 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 			getMedicalFileNavigationProcessItem(instanceId);
 		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.ASSESSMENT)){
 			getAssessmentNavigationProcessItem(instanceId);
-		}
+		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.TOTAL_LOSS_FILE)){
+			getTotalLossFileNavigationProcessItem(instanceId);
+		}	
 
 	}
+	
+	private void getTotalLossFileNavigationProcessItem(String id) {
+		totalLossFileBroker.getTotalLossFile(id, new ResponseHandler<TotalLossFile>() {
+			
+			@Override
+			public void onResponse(TotalLossFile response) {
+				final NavigationHistoryItem item = new NavigationHistoryItem();
+
+				item.setStackParameter("display");
+				item.setParameter("section", "casualty");
+				item.pushIntoStackParameter("display", "search");
+				item.pushIntoStackParameter("display", "subcasualty");
+				item.pushIntoStackParameter("display", "totallossfile");
+				item.setParameter("subcasualtyid", response.subCasualtyId);
+				item.setParameter("totallossfileid", response.id);
+
+				handler.onResponse(item);								
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));				
+			}
+		});
+		
+	}
+
 
 	private void getAssessmentNavigationProcessItem(String instanceId) {
 		assessmentBroker.getAssessment(instanceId, new ResponseHandler<Assessment>() {
-			
+
 			@Override
 			public void onResponse(Assessment response) {
 				final NavigationHistoryItem item = new NavigationHistoryItem();
-				
+
 				item.setStackParameter("display");
 				item.setParameter("section", "casualty");
 				item.pushIntoStackParameter("display", "search");
@@ -104,26 +137,26 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 				item.pushIntoStackParameter("display", "assessment");
 				item.setParameter("subcasualtyid", response.subCasualtyId);
 				item.setParameter("assessmentid", response.id);
-				
+
 				handler.onResponse(item);				
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));
-				
+
 			}
 		});
 	}
 
 	private void getMedicalFileNavigationProcessItem(String instanceId) {
 		medicalFileBroker.getMedicalFile(instanceId, new ResponseHandler<MedicalFile>() {
-			
+
 			@Override
 			public void onResponse(MedicalFile response) {
-				
+
 				final NavigationHistoryItem item = new NavigationHistoryItem();
-				
+
 				item.setStackParameter("display");
 				item.setParameter("section", "casualty");
 				item.pushIntoStackParameter("display", "search");
@@ -131,14 +164,14 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 				item.pushIntoStackParameter("display", "medicalfile");
 				item.setParameter("subcasualtyid", response.subCasualtyId);
 				item.setParameter("medicalfileid", response.id);
-				
+
 				handler.onResponse(item);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));
-				
+
 			}
 		});
 	}
@@ -148,7 +181,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 
 			@Override
 			public void onResponse(Conversation response) {
-				
+
 				final NavigationHistoryItem navigationItem = new NavigationHistoryItem();
 				navigationItem.setStackParameter("display");
 				navigationItem.pushIntoStackParameter("display", "search");
@@ -244,10 +277,10 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 					navigationItem.setParameter("expenseid", response.parentDataObjectId);
 					navigationItem.pushIntoStackParameter("display","conversation");
 					handler.onResponse(navigationItem);
-					
+
 				}else if(BigBangConstants.EntityIds.ASSESSMENT.equalsIgnoreCase(response.parentDataTypeId)){
 					assessmentBroker.getAssessment(response.parentDataObjectId, new ResponseHandler<Assessment>() {
-						
+
 						@Override
 						public void onResponse(Assessment response) {
 							navigationItem.setParameter("section", "casualty");
@@ -258,17 +291,17 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 							navigationItem.setParameter("subcasualtyid", response.subCasualtyId);
 							handler.onResponse(navigationItem);							
 						}
-						
+
 						@Override
 						public void onError(Collection<ResponseError> errors) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));						
 						}
 					});
-					
+
 				}
 				else if(BigBangConstants.EntityIds.MEDICAL_FILE.equalsIgnoreCase(response.parentDataTypeId)){
 					medicalFileBroker.getMedicalFile(response.parentDataObjectId, new ResponseHandler<MedicalFile>() {
-						
+
 						@Override
 						public void onResponse(MedicalFile response) {
 							navigationItem.setParameter("section", "casualty");
@@ -279,13 +312,34 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 							navigationItem.setParameter("subcasualtyid", response.subCasualtyId);
 							handler.onResponse(navigationItem);							
 						}
-						
+
 						@Override
 						public void onError(Collection<ResponseError> errors) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));						
 						}
 					});
-					
+
+				}
+				else if(BigBangConstants.EntityIds.TOTAL_LOSS_FILE.equalsIgnoreCase(response.parentDataTypeId)){
+					totalLossFileBroker.getTotalLossFile(response.parentDataObjectId, new ResponseHandler<TotalLossFile>() {
+
+						@Override
+						public void onResponse(TotalLossFile response) {
+							navigationItem.setParameter("section", "casualty");
+							navigationItem.pushIntoStackParameter("display", "subcasualty");
+							navigationItem.pushIntoStackParameter("display", "totallossfile");
+							navigationItem.pushIntoStackParameter("display", "totallossfileconversation");
+							navigationItem.setParameter("totallossfileid", response.id);
+							navigationItem.setParameter("subcasualtyid", response.subCasualtyId);
+							handler.onResponse(navigationItem);							
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));						
+						}
+					});
+
 				}
 				else{
 					navigationItem.setParameter("section", "receipt");
@@ -301,7 +355,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 			}
 		});
 	}
-	
+
 	private void getRiskAnalysisNavigationProcessItem(String instanceId) {
 		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
 		navigationItem.setStackParameter("display");

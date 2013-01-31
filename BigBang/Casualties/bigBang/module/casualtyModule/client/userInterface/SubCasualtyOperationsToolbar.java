@@ -12,6 +12,7 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 	protected MenuItem sendMessage;
 	protected MenuItem createAssessment;
 	protected MenuItem createMedicalFile;
+	protected MenuItem createTotalLosses;
 	protected MenuItem receiveMessage;
 	protected MenuItem markNotificationSent;
 
@@ -108,8 +109,21 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		});
 		
 		addItem(SUB_MENU.CREATE, createMedicalFile);
+	
+		createTotalLosses = new MenuItem("Perda Total", new Command(){
+			
+			@Override
+			public void execute() {
+				onCreateTotalLosses();
+			}
+			
+		});
+		
+		addItem(SUB_MENU.CREATE, createTotalLosses);
 	}
 
+	protected abstract void onCreateTotalLosses();
+	
 	protected abstract void onCreateMedicalFile();
 	
 	protected abstract void onCreateAssessment();
@@ -166,6 +180,10 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 
 	public void allowCreateMedicalFile(boolean hasPermission) {
 		createMedicalFile.setEnabled(hasPermission);
+	}
+	
+	public void allowCreateTotalLosses(boolean hasPermission){
+		createTotalLosses.setEnabled(hasPermission);
 	}
 
 }
