@@ -1,9 +1,11 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
@@ -23,6 +25,7 @@ import microsoft.exchange.webservices.data.EmailAddress;
 import microsoft.exchange.webservices.data.EmailAddressCollection;
 import microsoft.exchange.webservices.data.EmailMessage;
 import microsoft.exchange.webservices.data.ExchangeService;
+import microsoft.exchange.webservices.data.ExchangeVersion;
 import microsoft.exchange.webservices.data.FileAttachment;
 import microsoft.exchange.webservices.data.Folder;
 import microsoft.exchange.webservices.data.FolderView;
@@ -32,11 +35,14 @@ import microsoft.exchange.webservices.data.ItemSchema;
 import microsoft.exchange.webservices.data.ItemView;
 import microsoft.exchange.webservices.data.PropertySet;
 import microsoft.exchange.webservices.data.SortDirection;
+import microsoft.exchange.webservices.data.WebCredentials;
 import microsoft.exchange.webservices.data.WellKnownFolderName;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.Security.Password;
 import Jewel.Engine.SysObjects.FileXfer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -50,9 +56,75 @@ import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
 public class MailConnector
 {
-	private static Session GetMailSession()
+	private static String getUserName()
+		throws BigBangJewelException
 	{
-		return (Session)Engine.getUserData().get("MailSession");
+		User lobjUser;
+
+		try
+		{
+			lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
+			return lobjUser.getUserName();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static String getUserPassword()
+		throws BigBangJewelException
+	{
+		User lobjUser;
+		Password lobjPass;
+
+		try
+		{
+			lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
+			if ( lobjUser.getAt(2) instanceof Password )
+				lobjPass = (Password)lobjUser.getAt(2);
+			else
+				lobjPass = new Password((String)lobjUser.getAt(2), true);
+			return lobjPass.GetClear();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static String getUserEmail()
+		throws BigBangJewelException
+	{
+		UserDecoration lobjDeco;
+
+    	lobjDeco = UserDecoration.GetByUserID(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
+		if ( lobjDeco == null )
+			return null;
+
+		return (String)lobjDeco.getAt(UserDecoration.I.EMAIL);
+	}
+
+	private static Session GetMailSession()
+		throws BigBangJewelException
+	{
+		String lstrServer;
+		JewelAuthenticator lauth;
+		Properties lprops;
+
+		lstrServer = (String)Engine.getUserData().get("MailServer");
+
+		lauth = new JewelAuthenticator(getUserName(), getUserPassword());
+
+		lprops = new Properties();
+		lprops.put("mail.host", lstrServer);
+		lprops.put("mail.from", getUserEmail());
+		lprops.put("mail.smtp.submitter", lauth.getPasswordAuthentication().getUserName());
+		lprops.put("mail.smtp.auth", "true");
+		lprops.put("mail.smtp.host", lstrServer);
+		lprops.put("mail.smtp.port", "25");
+
+		return Session.getInstance(lprops, lauth);
 	}
 
 //	private static Store GetMailStore()
@@ -96,16 +168,33 @@ public class MailConnector
 	}
 
 	private static ExchangeService GetService()
+		throws BigBangJewelException
 	{
-		return (ExchangeService)Engine.getUserData().get("MailService");
+		String lstrServer;
+		ExchangeService lsvc;
+
+		lstrServer = (String)Engine.getUserData().get("MailServer");
+
+		try
+		{
+			lsvc = new ExchangeService(ExchangeVersion.Exchange2007_SP1);
+			lsvc.setCredentials(new WebCredentials(getUserName(), getUserPassword()));
+			lsvc.setUrl(new URI("https://" + lstrServer + "/EWS/Exchange.asmx"));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lsvc;
 	}
 
-	private static Folder GetFolder()
+	private static Folder GetFolder(ExchangeService psvc)
 		throws BigBangJewelException
 	{
 		try
 		{
-			return Folder.bind(GetService(), WellKnownFolderName.Inbox);
+			return Folder.bind(psvc, WellKnownFolderName.Inbox);
 		}
 		catch (Throwable e)
 		{
@@ -113,7 +202,7 @@ public class MailConnector
 		}
 	}
 
-	private static Folder GetBigBangFolder()
+	private static Folder GetBigBangFolder(ExchangeService psvc)
 		throws BigBangJewelException
 	{
 		Folder lobjFolder;
@@ -124,7 +213,7 @@ public class MailConnector
 
 		try
 		{
-			larrFolders = GetService().findFolders(WellKnownFolderName.MsgFolderRoot,
+			larrFolders = psvc.findFolders(WellKnownFolderName.MsgFolderRoot,
 					new FolderView(Integer.MAX_VALUE)).getFolders();
 
 			for ( i = 0; i < larrFolders.size(); i++ )
@@ -151,7 +240,7 @@ public class MailConnector
 		return lobjFolder;
 	}
 
-	private static Folder GetProcessedFolder()
+	private static Folder GetProcessedFolder(ExchangeService psvc)
 		throws BigBangJewelException
 	{
 		Folder lobjFolder;
@@ -160,11 +249,11 @@ public class MailConnector
 		int i;
 
 		lobjFolder = null;
-		lobjParent = GetBigBangFolder();
+		lobjParent = GetBigBangFolder(psvc);
 
 		try
 		{
-			larrFolders = GetService().findFolders(lobjParent.getId(), new FolderView(Integer.MAX_VALUE)).getFolders();
+			larrFolders = psvc.findFolders(lobjParent.getId(), new FolderView(Integer.MAX_VALUE)).getFolders();
 
 			for ( i = 0; i < larrFolders.size(); i++ )
 			{
@@ -188,6 +277,22 @@ public class MailConnector
 		}
 
 		return lobjFolder;
+	}
+
+	private static Item GetItem(ExchangeService psvc, String pstrUniqueID)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return Item.bind(psvc, new ItemId(pstrUniqueID), new PropertySet(BasePropertySet.FirstClassProperties/*,
+					ItemSchema.Id, ItemSchema.Subject,
+					ItemSchema.Body, EmailMessageSchema.From, ItemSchema.DateTimeSent, ItemSchema.Attachments,
+					ItemSchema.MimeContent*/));
+		}
+		catch (Exception e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	public static void DoSendMail(OutgoingMessageData pobjMessage, SQLServer pdb)
@@ -332,11 +437,14 @@ public class MailConnector
 	public static Item[] DoGetMail()
 		throws BigBangJewelException
 	{
+		ExchangeService lsvc;
 		Folder lobjFolder;
 		ItemView lobjView;
 		ArrayList<Item> larrTmp;
 
-		lobjFolder = GetFolder();
+		lsvc = GetService();
+
+		lobjFolder = GetFolder(lsvc);
 
 		if ( lobjFolder == null )
 			return null;
@@ -346,7 +454,7 @@ public class MailConnector
 		try
 		{
 			lobjView.getOrderBy().add(ItemSchema.DateTimeReceived, SortDirection.Descending);
-			larrTmp = GetService().findItems(lobjFolder.getId(), lobjView).getItems();
+			larrTmp = lsvc.findItems(lobjFolder.getId(), lobjView).getItems();
 		}
 		catch (Throwable e)
 		{
@@ -359,11 +467,14 @@ public class MailConnector
 	public static Item[] DoGetMailAll()
 		throws BigBangJewelException
 	{
+		ExchangeService lsvc;
 		Folder lobjFolder;
 		ItemView lobjView;
 		ArrayList<Item> larrTmp;
 
-		lobjFolder = GetFolder();
+		lsvc = GetService();
+
+		lobjFolder = GetFolder(lsvc);
 
 		if ( lobjFolder == null )
 			return null;
@@ -373,7 +484,7 @@ public class MailConnector
 		try
 		{
 			lobjView.getOrderBy().add(ItemSchema.DateTimeReceived, SortDirection.Descending);
-			larrTmp = GetService().findItems(lobjFolder.getId(), lobjView).getItems();
+			larrTmp = lsvc.findItems(lobjFolder.getId(), lobjView).getItems();
 		}
 		catch (Throwable e)
 		{
@@ -386,25 +497,19 @@ public class MailConnector
 	public static Item DoGetItem(String pstrUniqueID)
 		throws BigBangJewelException
 	{
-		try
-		{
-			return Item.bind(GetService(), new ItemId(pstrUniqueID), new PropertySet(BasePropertySet.FirstClassProperties/*,
-					ItemSchema.Id, ItemSchema.Subject,
-					ItemSchema.Body, EmailMessageSchema.From, ItemSchema.DateTimeSent, ItemSchema.Attachments,
-					ItemSchema.MimeContent*/));
-		}
-		catch (Exception e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
+		return GetItem(GetService(), pstrUniqueID);
 	}
 
 	public static Item DoProcessItem(String pstrUniqueID)
 		throws BigBangJewelException
 	{
+		ExchangeService lsvc;
+
+		lsvc = GetService();
+
 		try
 		{
-			return Item.bind(GetService(), new ItemId(pstrUniqueID)).move(GetProcessedFolder().getId());
+			return Item.bind(lsvc, new ItemId(pstrUniqueID)).move(GetProcessedFolder(lsvc).getId());
 		}
 		catch (BigBangJewelException e)
 		{
@@ -419,9 +524,13 @@ public class MailConnector
 	public static Item DoUnprocessItem(String pstrUniqueID)
 		throws BigBangJewelException
 	{
+		ExchangeService lsvc;
+
+		lsvc = GetService();
+
 		try
 		{
-			return Item.bind(GetService(), new ItemId(pstrUniqueID)).move(GetFolder().getId());
+			return Item.bind(lsvc, new ItemId(pstrUniqueID)).move(GetFolder(lsvc).getId());
 		}
 		catch (BigBangJewelException e)
 		{
@@ -436,13 +545,17 @@ public class MailConnector
 	public static FileXfer DoGetAttachment(String pstrEmailId, String pstrAttachmentId)
 		throws BigBangJewelException
 	{
+		ExchangeService lsvc;
+
 		Item lobjItem;
 		byte[] larrBytes;
 		FileXfer lobjFile;
 
+		lsvc = GetService();
+
 		try
 		{
-			lobjItem = DoGetItem(pstrEmailId);
+			lobjItem = GetItem(lsvc, pstrEmailId);
 			lobjItem.load();
 
 			for ( Attachment lobjAtt: lobjItem.getAttachments() )
