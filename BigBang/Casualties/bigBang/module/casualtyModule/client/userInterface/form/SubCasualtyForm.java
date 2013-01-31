@@ -23,6 +23,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.definitions.shared.SubPolicy;
+import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.history.NavigationHistoryItem;
@@ -30,6 +31,7 @@ import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
@@ -58,7 +60,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected RadioButtonFormField belongsToPolicy;
 	protected TextBoxFormField insuredObjectName;
 	protected Image statusIcon;
-	protected ExpandableListBoxFormField carRepair;
+	protected FormField<String> carRepair;
 
 	protected FormViewSection notesSection, internalNotesSection;
 
@@ -114,8 +116,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		belongsToPolicy = new RadioButtonFormField(true);
 		belongsToPolicy.addOption("true", "Presente na apólice");
 		belongsToPolicy.addOption("false", "Outra");
-		carRepair = new ExpandableListBoxFormField(BigBangConstants.EntityIds.OTHER_ENTITY, "Oficina");
-		carRepair.allowEdition(false);
+		carRepair = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.TOTAL_LOSS_FILE, null);
+		carRepair.setLabelText("Oficina");
 		
 		addSection("Informação Geral");
 		addFormField(casualty, false);

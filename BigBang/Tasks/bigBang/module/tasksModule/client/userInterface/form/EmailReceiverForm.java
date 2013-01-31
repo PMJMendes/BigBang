@@ -41,8 +41,8 @@ public class EmailReceiverForm extends FormView<Message>{
 		addSection("Referência");
 
 		newOrOldSubject = new RadioButtonFormField("Assunto");
-		newOrOldSubject.addOption("OLD", "Assunto Activo");
-		newOrOldSubject.addOption("NEW", "Novo Assunto");
+		newOrOldSubject.addOption("OLD", "Tópico Pendente");
+		newOrOldSubject.addOption("NEW", "Novo Tópico");
 
 		addFormField(newOrOldSubject);
 
@@ -74,9 +74,10 @@ public class EmailReceiverForm extends FormView<Message>{
 		referenceType.addItem("Despesa de Saúde nº.", BigBangConstants.EntityIds.EXPENSE);
 		referenceType.addItem("Peritagem ou Averiguação nº.", BigBangConstants.EntityIds.ASSESSMENT);
 		referenceType.addItem("Ficha Clínica nº.", BigBangConstants.EntityIds.MEDICAL_FILE);
+		referenceType.addItem("Perda Total nº.", BigBangConstants.EntityIds.TOTAL_LOSS_FILE);
 
 
-		references = new FormField[9];
+		references = new FormField[10];
 		referenceWrapper = new HorizontalPanel();
 		referenceWrapper.add(referenceType);
 		setReferences();
@@ -165,6 +166,8 @@ public class EmailReceiverForm extends FormView<Message>{
 			references[7].setVisible(true);
 		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.MEDICAL_FILE)){
 			references[8].setVisible(true);
+		}else if(value.equalsIgnoreCase(BigBangConstants.EntityIds.TOTAL_LOSS_FILE)){
+			references[9].setVisible(true);
 		}
 	}
 
@@ -206,6 +209,11 @@ public class EmailReceiverForm extends FormView<Message>{
 		references[8] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.MEDICAL_FILE, new HasParameters());
 		referenceWrapper.add(references[8]);
 		registerFormField(references[8]);
+		//TOTAL LOSS FILE
+		references[9] = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.TOTAL_LOSS_FILE, new HasParameters());
+		referenceWrapper.add(references[9]);
+		registerFormField(references[9]);
+		
 
 		for(int i = 1; i<references.length; i++){
 			references[i].setVisible(false);

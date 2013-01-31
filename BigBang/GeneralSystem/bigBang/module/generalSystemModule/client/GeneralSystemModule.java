@@ -28,8 +28,10 @@ import bigBang.library.client.userInterface.view.OtherEntitySelectionView;
 import bigBang.library.client.userInterface.view.SubCasualtySelectionView;
 import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentSelectionViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileSelectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.TotalLossFileSelectionViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.AssessmentSelectionView;
 import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileSelectionView;
+import bigBang.module.casualtyModule.client.userInterface.view.TotalLossFileSelectionView;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSelectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientSelectionView;
 import bigBang.module.generalSystemModule.client.dataAccess.ClientGroupBrokerImpl;
@@ -270,6 +272,17 @@ public class GeneralSystemModule implements Module {
 			public ExpandableSelectionFormFieldPanel getInstance() {
 				OtherEntitySelectionView view = (OtherEntitySelectionView) GWT.create(OtherEntitySelectionView.class);
 				OtherEntitySelectionViewPresenter presenter = new OtherEntitySelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.TOTAL_LOSS_FILE, new ExpandableSelectionManagementPanelInstantiator() {
+
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				TotalLossFileSelectionView view = (TotalLossFileSelectionView) GWT.create(TotalLossFileSelectionView.class);
+				TotalLossFileSelectionViewPresenter presenter = new TotalLossFileSelectionViewPresenter(view);
 				presenter.go();
 				return presenter;
 			}
