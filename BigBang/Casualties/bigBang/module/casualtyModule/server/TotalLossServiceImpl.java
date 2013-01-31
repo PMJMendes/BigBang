@@ -468,7 +468,7 @@ public class TotalLossServiceImpl
 
 		lobjResult.id = pid.toString();
 		lobjResult.reference = (String)parrValues[0];
-		lobjResult.salvageTypeId = parrValues[2].toString();
+		lobjResult.salvageTypeId = ((UUID)parrValues[2]).toString();
 		lobjResult.salvageTypeLabel = (String)parrValues[3];
 		lobjResult.inheritClientName = (lobjCli == null ? "(Erro a obter o nome do cliente.)" : lobjCli.getLabel());
 		lobjResult.inheritObjectName = lstrObj;
