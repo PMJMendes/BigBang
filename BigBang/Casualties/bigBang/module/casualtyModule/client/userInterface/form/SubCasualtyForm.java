@@ -58,6 +58,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected RadioButtonFormField belongsToPolicy;
 	protected TextBoxFormField insuredObjectName;
 	protected Image statusIcon;
+	protected ExpandableListBoxFormField carRepair;
 
 	protected FormViewSection notesSection, internalNotesSection;
 
@@ -113,6 +114,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		belongsToPolicy = new RadioButtonFormField(true);
 		belongsToPolicy.addOption("true", "Presente na apólice");
 		belongsToPolicy.addOption("false", "Outra");
+		carRepair = new ExpandableListBoxFormField(BigBangConstants.EntityIds.OTHER_ENTITY, "Oficina");
+		carRepair.allowEdition(false);
 		
 		addSection("Informação Geral");
 		addFormField(casualty, false);
@@ -158,6 +161,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		addFormField(insuredObject, true);
 		addFormField(insuredObjectName, true);
 		addFormField(belongsToPolicy, true);
+		addFormField(carRepair, true);
 		
 		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -235,6 +239,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			result.items = getSubCasualtyItems();
 			result.insuredObjectId = insuredObject.getValue();
 			result.insuredObjectName = insuredObjectName.getValue();
+			result.serviceCenterId = carRepair.getValue();
 		}
 
 		return result;
@@ -358,7 +363,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			hasJudicial.setValue(info.hasJudicial);
 			notes.setValue(info.text);
 			internalNotes.setValue(info.internalNotes);
-
+			
+			carRepair.setValue(info.serviceCenterId);
+			
 			setSubCasualtyItems(info.items);
 		}
 		addLastFields();
