@@ -80,7 +80,7 @@ public class CreateTotalLoss
 			lobjAux.SaveToDb(pdb);
 			mobjData.mid = lobjAux.getKey();
 
-			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MedicalFile);
+			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_TotalLoss);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(), GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
