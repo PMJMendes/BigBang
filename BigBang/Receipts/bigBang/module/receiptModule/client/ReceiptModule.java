@@ -44,6 +44,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.SerialMarkFor
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.VoidDebitNoteViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.CancelDASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.CancelSignatureRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.CreateDASRequestView;
@@ -75,6 +76,7 @@ import bigBang.module.receiptModule.client.userInterface.view.SerialMarkForPayme
 import bigBang.module.receiptModule.client.userInterface.view.SerialReceiptCreationView;
 import bigBang.module.receiptModule.client.userInterface.view.SignatureRequestTasksView;
 import bigBang.module.receiptModule.client.userInterface.view.SignatureRequestView;
+import bigBang.module.receiptModule.client.userInterface.view.VoidDebitNoteView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -371,6 +373,14 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				MassCreateSecondPaymentNoticeView view = (MassCreateSecondPaymentNoticeView) GWT.create(MassCreateSecondPaymentNoticeView.class);
 				MassCreateSecondPaymentNoticeViewPresenter presenter = new MassCreateSecondPaymentNoticeViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VOID_DEBIT_NOTE", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				VoidDebitNoteView view = (VoidDebitNoteView) GWT.create(VoidDebitNoteView.class);
+				VoidDebitNoteViewPresenter presenter = new VoidDebitNoteViewPresenter(view);
 				return presenter;
 			}
 		});

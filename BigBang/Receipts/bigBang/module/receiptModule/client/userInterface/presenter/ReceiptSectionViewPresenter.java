@@ -258,6 +258,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("reopenconversation")){
 					present("REOPEN_CONVERSATION", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("voiddebitnote")){
+					present("VOID_DEBIT_NOTE", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 

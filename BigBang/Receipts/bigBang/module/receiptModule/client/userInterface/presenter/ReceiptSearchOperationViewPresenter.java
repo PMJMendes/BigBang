@@ -49,7 +49,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SEND_RECEIPT,
 		INSURER_ACCOUNTING, AGENT_ACCOUNTING,
 		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY, REQUEST_DAS, NOT_PAYED_INDICATION,
-		RETURN_PAYMENT, GENERATE_RECEIPT, SEND_MESSAGE, RECEIVE_MESSAGE, CANCEL_PAYMENT_NOTICE, SEND_SECOND_PAYMENT_NOTICE
+		RETURN_PAYMENT, GENERATE_RECEIPT, SEND_MESSAGE, RECEIVE_MESSAGE, CANCEL_PAYMENT_NOTICE, SEND_SECOND_PAYMENT_NOTICE, VOID_DEBIT_NOTE
 	}
 
 	public interface Display {
@@ -109,6 +109,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowCancelPaymentNotice(boolean hasPermission);
 
 		void allowSendSecondPaymentNotice(boolean hasPermission);
+
+		void allowVoidDebitNote(boolean hasPermission);
 
 	}
 
@@ -249,6 +251,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case SEND_SECOND_PAYMENT_NOTICE:
 					onSendSecondPaymentNotice();
 					break;
+				case VOID_DEBIT_NOTE:
+					onVoidDebitNote();
+					break;
 				}
 
 			}
@@ -301,6 +306,12 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onVoidDebitNote() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "voiddebitnote");
+		NavigationHistoryManager.getInstance().go(item);			
 	}
 
 	protected void onSendSecondPaymentNotice() {
@@ -573,6 +584,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowReceiveMessage(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CONVERSATION));
 				view.allowCancelPaymentNotice(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CANCEL_PAYMENT_NOTICE));
 				view.allowSendSecondPaymentNotice(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_SECOND_PAYMENT_NOTICE));
+				view.allowVoidDebitNote(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.VOID_DEBIT_NOTE));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

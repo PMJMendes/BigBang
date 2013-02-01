@@ -1125,5 +1125,33 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		});		
 	}
 
+	@Override
+	public void voidDebitNote(ReturnMessage info, final
+			ResponseHandler<Receipt> responseHandler) {
+		service.voidInternal(info, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.VOID_DEBIT_NOTE, result.id));
+				responseHandler.onResponse(result);
+				
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not void the debit note")
+				});
+				super.onResponseFailure(caught);
+				}
+		});
+	}
+
 }
 

@@ -226,6 +226,12 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.CANCEL_PAYMENT_NOTICE));
 			}
 
+			@Override
+			protected void onVoidDebitNote() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.VOID_DEBIT_NOTE));
+				
+			}
+
 		};
 		formWrapper.add(operationsToolbar);
 		formWrapper.setCellHeight(operationsToolbar, "21px");
@@ -445,6 +451,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowSendSecondPaymentNotice(boolean hasPermission) {
 		operationsToolbar.allowCreateSecondPaymentNotice(hasPermission);
+	}
+	
+	@Override
+	public void allowVoidDebitNote(boolean hasPermission){
+		operationsToolbar.allowVoidDebitNote(hasPermission);
 	}
 
 }

@@ -208,6 +208,7 @@ public class BigBangConstants {
 			public static final String CONVERSATION = "E7305369-657B-4CC3-B769-A13300EEF0CD";
 			public static final String CANCEL_PAYMENT_NOTICE = "0A5C1C90-E45B-4C6C-9A8E-A0E700C982EA";
 			public static final String CREATE_SECOND_PAYMENT_NOTICE = "6BC653FD-3265-4A3C-9307-A01300C8B2BC";
+			public static final String VOID_DEBIT_NOTE = "36A6571E-0601-47CE-A53E-A15600BA69D5";
 
 			public static class ReceiptType {
 				public static final String CONTINUING = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";

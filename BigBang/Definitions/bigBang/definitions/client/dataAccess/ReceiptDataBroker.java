@@ -119,4 +119,7 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 	public void sendSecondPaymentNotice(String id,
 			ResponseHandler<Receipt> responseHandler);
 
+	public void voidDebitNote(ReturnMessage info,
+			ResponseHandler<Receipt> responseHandler);
+
 }

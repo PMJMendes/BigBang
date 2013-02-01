@@ -33,6 +33,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	protected MenuItem sendPaymentToMediator;
 	//other
 	protected MenuItem generateReceipt;
+	protected MenuItem voidDebitNote;
 	//DATA
 	protected MenuItem receivePhysicalReceipt;
 	protected MenuItem associateWithDebitNote;
@@ -258,6 +259,17 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 
 		addItem(SUB_MENU.EXECUTE, generateReceipt);
+		
+		voidDebitNote = new MenuItem("Anular Nota de Débito", new Command(){
+
+			@Override
+			public void execute() {
+				onVoidDebitNote();
+			}
+
+		});
+
+		addItem(SUB_MENU.EXECUTE, voidDebitNote);
 		//DATA
 		receivePhysicalReceipt = new MenuItem("Associar Imagem", new Command() { //TODO remove or add
 
@@ -307,6 +319,8 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.ADMIN, deleteReceipt);
 
 	}
+
+	protected abstract void onVoidDebitNote();
 
 	protected abstract void onCancelPaymentNotice();
 
@@ -452,5 +466,9 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 
 	public void allowCreateSecondPaymentNotice(boolean hasPermission) {
 		this.sendSecondPaymentNotice.setEnabled(hasPermission);
+	}
+	
+	public void allowVoidDebitNote(boolean hasPermission){
+		this.voidDebitNote.setEnabled(hasPermission);
 	}
 }
