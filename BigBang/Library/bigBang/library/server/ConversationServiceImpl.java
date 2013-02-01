@@ -1,0 +1,1015 @@
+package bigBang.library.server;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.UUID;
+
+import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
+import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Interfaces.IScript;
+import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.SysObjects.ProcessData;
+import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
+import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.interfaces.ConversationService;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.ConversationSearchParameter;
+import bigBang.library.shared.ConversationSortParameter;
+import bigBang.library.shared.SessionExpiredException;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Objects.Contact;
+import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
+import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
+import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
+import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
+import com.premiumminds.BigBang.Jewel.Operations.Conversation.CloseProcess;
+import com.premiumminds.BigBang.Jewel.Operations.Conversation.CreateConversationBase;
+import com.premiumminds.BigBang.Jewel.Operations.Conversation.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReSendMessage;
+import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReceiveMessage;
+import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReopenProcess;
+import com.premiumminds.BigBang.Jewel.Operations.Conversation.SendMessage;
+import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
+
+public class ConversationServiceImpl
+	extends SearchServiceBase
+	implements ConversationService
+{
+	private static final long serialVersionUID = 1L;
+
+	public static ConversationStub.Direction sGetDirection(UUID pid)
+	{
+		if (Constants.MsgDir_Incoming.equals(pid) )
+			return ConversationStub.Direction.INCOMING;
+
+		if (Constants.MsgDir_Outgoing.equals(pid) )
+			return ConversationStub.Direction.OUTGOING;
+
+		return null;
+	}
+
+	public static Message.MsgAddress.Usage sGetUsage(UUID pid)
+	{
+		if ( Constants.UsageID_From.equals(pid) )
+			return Message.MsgAddress.Usage.FROM;
+
+		if ( Constants.UsageID_To.equals(pid) )
+			return Message.MsgAddress.Usage.TO;
+
+		if ( Constants.UsageID_ReplyTo.equals(pid) )
+			return Message.MsgAddress.Usage.REPLYTO;
+
+		if ( Constants.UsageID_CC.equals(pid) )
+			return Message.MsgAddress.Usage.CC;
+
+		if ( Constants.UsageID_BCC.equals(pid) )
+			return Message.MsgAddress.Usage.BCC;
+
+		return null;
+	}
+
+	public static Message.MsgAddress sGetAddress(UUID pid)
+		throws BigBangException
+	{
+		ContactInfo lobjInfo;
+		Contact lobjContact;
+		MessageAddress lobjAddr;
+		UUID lidUsage;
+		Message.MsgAddress lobjResult;
+
+		lobjInfo = null;
+		lobjContact = null;
+		try
+		{
+			lobjAddr = MessageAddress.GetInstance(Engine.getCurrentNameSpace(), pid);
+			lidUsage = (UUID)lobjAddr.getAt(MessageAddress.I.USAGE);
+			if ( lobjAddr.getAt(MessageAddress.I.CONTACTINFO) != null )
+				lobjInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
+						(UUID)lobjAddr.getAt(MessageAddress.I.CONTACTINFO));
+			if ( Constants.UsageID_To.equals(lidUsage) && (lobjInfo != null) )
+				lobjContact = ( lobjInfo == null ? null : lobjInfo.getOwner() );
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new Message.MsgAddress();
+		lobjResult.id = lobjAddr.getKey().toString();
+
+		lobjResult.address = (String)lobjAddr.getAt(MessageAddress.I.ADDRESS);
+		lobjResult.usage = sGetUsage(lidUsage);
+		lobjResult.userId = ( lobjAddr.getAt(MessageAddress.I.USER) == null ? null :
+				((UUID)lobjAddr.getAt(MessageAddress.I.USER)).toString() );
+		lobjResult.contactInfoId = ( lobjInfo == null ? null : lobjInfo.getKey().toString() );
+		lobjResult.display = (String)lobjAddr.getAt(MessageAddress.I.DISPLAYNAME);
+		if ( lobjContact != null )
+		{
+			lobjResult.ownerTypeId = lobjContact.getOwnerType().toString();
+			lobjResult.ownerId = lobjContact.getOwnerID().toString();
+		}
+
+		return lobjResult;
+	}
+
+	public static Message.Attachment sGetAttachment(UUID pid)
+		throws BigBangException
+	{
+		MessageAttachment lobjAttachment;
+		Document lobjDoc;
+		Message.Attachment lobjResult;
+
+		try
+		{
+			lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), pid);
+			lobjDoc = Document.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAttachment.getAt(MessageAttachment.I.DOCUMENT));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new Message.Attachment();
+		lobjResult.id = lobjAttachment.getKey().toString();
+
+		lobjResult.docId = lobjDoc.getKey().toString();
+
+		lobjResult.ownerId = lobjDoc.getOwnerID().toString();
+
+		lobjResult.name = lobjDoc.getLabel();
+		lobjResult.attachmentId = null;
+		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();
+		lobjResult.storageId = null;
+
+		return lobjResult;
+	}
+
+	public static Message sGetMessage(UUID pid)
+		throws BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Message lobjMsg;
+		MessageAddress[] larrAddrs;
+		MessageAttachment[] larrAtts;
+		Message lobjResult;
+		int i;
+
+		try
+		{
+			lobjMsg = com.premiumminds.BigBang.Jewel.Objects.Message.GetInstance(Engine.getCurrentNameSpace(), pid);
+			larrAddrs = lobjMsg.GetAddresses();
+			larrAtts = lobjMsg.GetAttachments();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new Message();
+		lobjResult.id = lobjMsg.getKey().toString();
+
+		lobjResult.conversationId = ((UUID)lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.OWNER)).toString();
+		lobjResult.order = (Integer)lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.NUMBER);
+		lobjResult.direction = sGetDirection((UUID)lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DIRECTION));
+		lobjResult.kind = ( ((Boolean)lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.ISEMAIL)) ?
+				Message.Kind.EMAIL : Message.Kind.NOTE );
+		lobjResult.date = ((Timestamp)lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE)).toString().substring(0, 10);
+		lobjResult.subject = (String)lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.SUBJECT);
+		lobjResult.text = lobjMsg.getText();
+
+		if ( larrAddrs == null )
+			lobjResult.addresses = null;
+		else
+		{
+			lobjResult.addresses = new Message.MsgAddress[larrAddrs.length];
+			for ( i = 0; i < larrAddrs.length; i++ )
+				lobjResult.addresses[i] = sGetAddress(larrAddrs[i].getKey());
+		}
+
+		if ( larrAtts == null )
+			lobjResult.attachments = null;
+		else
+		{
+			lobjResult.attachments = new Message.Attachment[larrAtts.length];
+			for ( i = 0; i < larrAtts.length; i++ )
+				lobjResult.attachments[i] = sGetAttachment(larrAtts[i].getKey());
+		}
+
+		return lobjResult;
+	}
+
+	public static Conversation sGetConversation(UUID pid)
+		throws BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Conversation lobjConv;
+		com.premiumminds.BigBang.Jewel.Objects.Message[] larrMsgs;
+		IProcess lobjProcess;
+		IProcess lobjParent;
+		IScript lobjScript;
+		Conversation lobjResult;
+		int i;
+
+		try
+		{
+			lobjConv = com.premiumminds.BigBang.Jewel.Objects.Conversation.GetInstance(Engine.getCurrentNameSpace(), pid);
+			larrMsgs = lobjConv.GetCurrentMessages();
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjConv.GetProcessID());
+			lobjParent = lobjProcess.GetParent();
+			lobjScript = lobjParent.GetScript();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new Conversation();
+		lobjResult.id = lobjConv.getKey().toString();
+
+		lobjResult.parentDataObjectId = lobjParent.GetDataKey().toString();
+		lobjResult.parentDataTypeId = lobjScript.GetDataType().toString();
+		lobjResult.managerId = lobjProcess.GetManagerID().toString();
+		lobjResult.requestTypeId = ((UUID)lobjConv.getAt(com.premiumminds.BigBang.Jewel.Objects.Conversation.I.TYPE)).toString();
+		lobjResult.subject = (String)lobjConv.getAt(com.premiumminds.BigBang.Jewel.Objects.Conversation.I.SUBJECT);
+		lobjResult.startDir = sGetDirection((UUID)lobjConv.getAt(com.premiumminds.BigBang.Jewel.Objects.Conversation.I.STARTDIRECTION));
+		lobjResult.pendingDir = sGetDirection((UUID)lobjConv.getAt(com.premiumminds.BigBang.Jewel.Objects.Conversation.I.PENDINGDIRECTION));
+		lobjResult.replylimit = ( lobjConv.getAt(com.premiumminds.BigBang.Jewel.Objects.Conversation.I.DUEDATE) != null ?
+				((int)((((Timestamp)lobjConv.getAt(com.premiumminds.BigBang.Jewel.Objects.Conversation.I.DUEDATE)).getTime() -
+				(new Timestamp(new java.util.Date().getTime())).getTime()) / 86400000L)) : null );
+
+		if ( larrMsgs == null )
+			lobjResult.messages = null;
+		else
+		{
+			lobjResult.messages = new Message[larrMsgs.length];
+			for ( i = 0; i < larrMsgs.length; i++ )
+				lobjResult.messages[i] = sGetMessage(larrMsgs[i].getKey());
+		}
+
+		lobjResult.processId = lobjProcess.getKey().toString();
+		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
+
+		return lobjResult;
+	}
+
+	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
+		throws SessionExpiredException, BigBangException
+	{
+		HashSet<UUID> lsetUsers;
+		IEntity lrefProcess;
+        MasterDB ldb;
+        ResultSet lrsProcesses;
+		ArrayList<TipifiedListItem> larrAux;
+        IProcess lobjProcess;
+        TipifiedListItem lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( !Constants.ObjID_Conversation.equals(UUID.fromString(listId)) )
+			throw new BigBangException("Erro: Lista inválida para o espaço de trabalho.");
+
+		lsetUsers = getDelegates();
+
+		try
+		{
+			lrefProcess = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Jewel.Petri.Constants.ObjID_PNProcess));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsProcesses = lrefProcess.SelectByMembers(ldb,
+					new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+					new java.lang.Object[] {Constants.ProcID_Conversation},
+					new int[] {com.premiumminds.BigBang.Jewel.Objects.Conversation.I.SUBJECT});
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		larrAux = new ArrayList<TipifiedListItem>();
+
+		try
+		{
+			while ( lrsProcesses.next() )
+			{
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lrsProcesses);
+				if ( !lobjProcess.IsRunning() )
+					continue;
+				if ( !lsetUsers.contains(lobjProcess.GetManagerID()) )
+					continue;
+
+				lobjResult = new TipifiedListItem();
+				lobjResult.id = lobjProcess.GetDataKey().toString();
+				lobjResult.value = lobjProcess.GetData().getLabel();
+				larrAux.add(lobjResult);
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsProcesses.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsProcesses.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new TipifiedListItem[larrAux.size()]);
+	}
+
+	public Conversation getConversation(String id)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return sGetConversation(UUID.fromString(id));
+	}
+
+	public String getForPrinting(String id)
+		throws SessionExpiredException, BigBangException
+	{
+		ConversationData lobjData;
+		com.premiumminds.BigBang.Jewel.Objects.Conversation lobjConv;
+		com.premiumminds.BigBang.Jewel.Objects.Message[] larrMsgs;
+		MessageAddress[] larrAddrs;
+		StringBuilder lstrBuilder;
+		int i, j;
+		String[] larrContent;
+		FileXfer lobjFile;
+		UUID lidAux;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjConv = com.premiumminds.BigBang.Jewel.Objects.Conversation.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(id));
+			lobjData = new ConversationData();
+			lobjData.FromObject(lobjConv);
+
+			larrMsgs = lobjConv.GetCurrentMessages();
+			lobjData.marrMessages = new MessageData[larrMsgs.length];
+			for ( i = 0; i < larrMsgs.length; i++ )
+			{
+				lobjData.marrMessages[i] = new MessageData();
+				lobjData.marrMessages[i].FromObject(larrMsgs[i]);
+
+				larrAddrs = larrMsgs[i].GetAddresses();
+				lobjData.marrMessages[i].marrAddresses = new MessageAddressData[larrAddrs.length];
+				for ( j = 0; j < larrAddrs.length; j++ )
+				{
+					lobjData.marrMessages[i].marrAddresses[j] = new MessageAddressData();
+					lobjData.marrMessages[i].marrAddresses[j].FromObject(larrAddrs[j]);
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lstrBuilder = new StringBuilder();
+		lobjData.Describe(lstrBuilder, "<br />");
+
+		larrContent = new String[] {lstrBuilder.toString()};
+
+		try
+		{
+			lobjFile = HTMLConnector.buildHTML(larrContent);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+    	lidAux = UUID.randomUUID();
+    	FileServiceImpl.GetFileXferStorage().put(lidAux, lobjFile);
+
+		return lidAux.toString();
+	}
+
+	public Conversation createFromEmail(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		UUID lidParentType;
+		UUID lidParentID;
+		CreateConversationBase lopCCB;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		lidParentType = UUID.fromString(conversation.parentDataTypeId);
+		lidParentID = UUID.fromString(conversation.parentDataObjectId);
+
+		lopCCB = getOperation(lidParentType, lidParentID);
+
+		lopCCB.mobjData = new ConversationData();
+		lopCCB.mobjData.mid = null;
+		lopCCB.mobjData.mstrSubject = conversation.subject;
+		lopCCB.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCCB.mobjData.midProcess = null;
+		lopCCB.mobjData.midStartDir = Constants.MsgDir_Incoming;
+		lopCCB.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCCB.mobjData.mdtDueDate = ldtLimit;
+
+		lopCCB.mobjData.marrMessages = new MessageData[1];
+		lopCCB.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], lidParentType, lidParentID,
+				Constants.MsgDir_Incoming);
+
+		try
+		{
+			lopCCB.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetConversation(lopCCB.mobjData.mid);
+	}
+
+	public Conversation saveConversation(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		ManageData lopMD;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lopMD = new ManageData(UUID.fromString(conversation.processId));
+			lopMD.mobjData = new ConversationData();
+
+			lopMD.mobjData.mid = UUID.fromString(conversation.id);
+
+			lopMD.mobjData.mstrSubject = conversation.subject;
+			lopMD.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+			lopMD.mobjData.midPendingDir = ( conversation.pendingDir == null ? null :
+					(ConversationStub.Direction.INCOMING.equals(conversation.pendingDir) ?
+					Constants.MsgDir_Incoming : Constants.MsgDir_Outgoing) );
+			lopMD.mobjData.mdtDueDate = ldtLimit;
+
+			lopMD.Execute();
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetConversation(lopMD.mobjData.mid);
+	}
+
+	public Conversation sendMessage(Message message, Integer replylimit)
+		throws SessionExpiredException, BigBangException
+	{
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		com.premiumminds.BigBang.Jewel.Objects.Conversation lobjConv;
+		SendMessage lopSM;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjConv = com.premiumminds.BigBang.Jewel.Objects.Conversation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(message.conversationId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		lopSM = new SendMessage(lobjConv.GetProcessID());
+		lopSM.mdtDueDate = ldtLimit;
+
+		try
+		{
+			lopSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentContainerType(), lobjConv.getParentContainer(),
+					Constants.MsgDir_Outgoing);
+
+			lopSM.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetConversation(lobjConv.getKey());
+	}
+
+	public Conversation repeatMessage(Message message, Integer replylimit)
+		throws SessionExpiredException, BigBangException
+	{
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		com.premiumminds.BigBang.Jewel.Objects.Conversation lobjConv;
+		ReSendMessage lopRSM;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjConv = com.premiumminds.BigBang.Jewel.Objects.Conversation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(message.conversationId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		lopRSM = new ReSendMessage(lobjConv.GetProcessID());
+		lopRSM.mdtDueDate = ldtLimit;
+
+		try
+		{
+			lopRSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentContainerType(), lobjConv.getParentContainer(),
+					Constants.MsgDir_Outgoing);
+
+			lopRSM.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetConversation(lobjConv.getKey());
+	}
+
+	public Conversation receiveMessage(Message message, Integer replylimit)
+		throws SessionExpiredException, BigBangException
+	{
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		com.premiumminds.BigBang.Jewel.Objects.Conversation lobjConv;
+		ReceiveMessage lopRM;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjConv = com.premiumminds.BigBang.Jewel.Objects.Conversation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(message.conversationId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		lopRM = new ReceiveMessage(lobjConv.GetProcessID());
+		lopRM.mdtDueDate = ldtLimit;
+
+		try
+		{
+			lopRM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentContainerType(), lobjConv.getParentContainer(),
+					Constants.MsgDir_Incoming);
+
+			lopRM.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetConversation(lobjConv.getKey());
+	}
+
+	public void closeConversation(String conversationId, String motiveId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Conversation lobjConv;
+		CloseProcess lopCP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjConv = com.premiumminds.BigBang.Jewel.Objects.Conversation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversationId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCP = new CloseProcess(lobjConv.GetProcessID());
+		lopCP.midMotive = UUID.fromString(motiveId);
+
+		try
+		{
+			lopCP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
+	public void reopenConversation(String conversationId, String directionId, Integer replyLimit)
+		throws SessionExpiredException, BigBangException
+	{
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		com.premiumminds.BigBang.Jewel.Objects.Conversation lobjConv;
+		ReopenProcess lopRP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjConv = com.premiumminds.BigBang.Jewel.Objects.Conversation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversationId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( replyLimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, replyLimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		lopRP = new ReopenProcess(lobjConv.GetProcessID());
+		lopRP.midDir = UUID.fromString(directionId);
+		lopRP.mdtLimit = ldtLimit;
+
+		try
+		{
+			lopRP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
+	protected UUID getObjectID()
+	{
+		return Constants.ObjID_Conversation;
+	}
+
+	protected String[] getColumns()
+	{
+		return new String[] {"[:Process:Data]", "[:Process:Script:Data Class]", "[:Request Type]", "[:Request Type:Type]",
+				"[:Subject]", "[:Pending Direction]"};
+	}
+
+	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
+		throws BigBangException
+	{
+		ConversationSearchParameter lParam;
+		String lstrAux;
+		IEntity lrefProcesses;
+
+		if ( !(pParam instanceof ConversationSearchParameter) )
+			return false;
+		lParam = (ConversationSearchParameter)pParam;
+
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Subject] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:Request Type:Type] LIKE N'%").append(lstrAux).append("%')");
+		}
+
+		if ( lParam.ownerId != null )
+		{
+			pstrBuffer.append(" AND ([:Process:Parent] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefProcesses = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Jewel.Petri.Constants.ObjID_PNProcess));
+				pstrBuffer.append(lrefProcesses.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxProcs] WHERE [:Data] = '").append(lParam.ownerId).append("'))");
+		}
+
+		return true;
+	}
+
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		ConversationSortParameter lParam;
+
+		if ( !(pParam instanceof ConversationSortParameter) )
+			return false;
+		lParam = (ConversationSortParameter)pParam;
+
+		if ( lParam.field == ConversationSortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return false;
+		}
+
+		if ( lParam.field == ConversationSortParameter.SortableField.SUBJECT )
+			pstrBuffer.append("[:Subject]");
+
+		if ( lParam.field == ConversationSortParameter.SortableField.TYPE )
+			pstrBuffer.append("[:Request Type:Type]");
+
+		if ( lParam.field == ConversationSortParameter.SortableField.PENDINGDATE )
+			pstrBuffer.append("[:Due Date]");
+
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
+
+		return true;
+	}
+
+	protected SearchResult buildResult(UUID pid, Object[] parrValues)
+	{
+		ConversationStub lobjResult;
+
+		lobjResult = new ConversationStub();
+
+		lobjResult.id = pid.toString();
+		lobjResult.parentDataObjectId = ((UUID)parrValues[0]).toString();
+		lobjResult.parentDataTypeId = ((UUID)parrValues[1]).toString();
+		lobjResult.requestTypeId = ((UUID)parrValues[2]).toString();
+		lobjResult.requestTypeLabel = (String)parrValues[3];
+		lobjResult.subject = (String)parrValues[4];
+		lobjResult.pendingDir = sGetDirection((UUID)parrValues[5]);
+
+		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		ConversationSearchParameter lParam;
+		String lstrAux;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof ConversationSearchParameter) )
+				continue;
+			lParam = (ConversationSearchParameter) parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("CASE WHEN [:Subject] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Subject]) ELSE ");
+
+			pstrBuffer.append("CASE WHEN [:Request Type:Type] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000*PATINDEX(N'%").append(lstrAux).append("%', [:Request Type:Type]) ELSE ");
+
+			pstrBuffer.append("0 END END");
+		}
+
+		return lbFound;
+	}
+
+	private CreateConversationBase getOperation(UUID pidParentType, UUID pidParentID)
+		throws BigBangException
+	{
+		ProcessData lobjData;
+
+		try
+		{
+			lobjData = (ProcessData)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pidParentType),
+					pidParentID);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( Constants.ObjID_Client.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_QuoteRequest.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_Negotiation.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_Policy.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.Policy.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_SubPolicy.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_Receipt.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_Casualty.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_SubCasualty.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_Expense.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.Expense.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_Assessment.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.Assessment.CreateConversation(lobjData.GetProcessID());
+
+		if ( Constants.ObjID_MedicalFile.equals(pidParentType) )
+			return new com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CreateConversation(lobjData.GetProcessID());
+
+		return null;
+	}
+
+	private HashSet<UUID> getDelegates()
+		throws BigBangException
+	{
+		HashSet<UUID> lsetResult;
+		IEntity lrefDecoration;
+		MasterDB ldb;
+        ResultSet lrsDecos;
+        UserDecoration lobjDeco;
+
+		lsetResult = new HashSet<UUID>();
+		lsetResult.add(Engine.getCurrentUser());
+
+		try
+		{
+			lrefDecoration = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDecos = lrefDecoration.SelectByMembers(ldb, new int[] {UserDecoration.I.SURROGATE},
+					new java.lang.Object[] {Engine.getCurrentUser()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsDecos.next() )
+			{
+				lobjDeco = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrsDecos);
+				lsetResult.add(lobjDeco.getBaseUser().getKey());
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsDecos.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDecos.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return lsetResult;
+	}
+}

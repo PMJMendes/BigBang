@@ -1,0 +1,34 @@
+package bigBang.library.interfaces;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.RemoteService;
+
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortParameter;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.NewSearchResult;
+import bigBang.library.shared.SessionExpiredException;
+
+public interface SearchService
+	extends RemoteService
+{
+	/**
+	 * Utility class for simplifying access to the instance of async service.
+	 */
+	public static class Util {
+		private static SearchServiceAsync instance;
+		public static SearchServiceAsync getInstance(){
+			if (instance == null) {
+				instance = GWT.create(SearchService.class);
+			}
+			return instance;
+		}
+	}
+	
+	NewSearchResult openSearch(SearchParameter[] parameters, SortParameter[] sorts, int size) throws SessionExpiredException, BigBangException;
+	NewSearchResult openForOperation(String opId, SearchParameter[] parameters, SortParameter[] sorts, int size) throws SessionExpiredException, BigBangException;
+	NewSearchResult search(String workspaceId, SearchParameter[] parameters, SortParameter[] sorts, int size) throws SessionExpiredException, BigBangException;
+	SearchResult[] getResults(String workspaceId, int from, int size) throws SessionExpiredException, BigBangException;
+	void closeSearch(String workspaceId) throws SessionExpiredException, BigBangException;
+}

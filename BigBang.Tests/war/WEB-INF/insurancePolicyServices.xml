@@ -1,0 +1,39 @@
+<servlet>
+	<servlet-name>InsurancePolicyService</servlet-name>
+	<servlet-class>bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceImpl</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>PolicyObjectService</servlet-name>
+	<servlet-class>bigBang.module.insurancePolicyModule.server.PolicyObjectServiceImpl</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>SubPolicyService</servlet-name>
+	<servlet-class>bigBang.module.insurancePolicyModule.server.SubPolicyServiceImpl</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>SubPolicyObjectService</servlet-name>
+	<servlet-class>bigBang.module.insurancePolicyModule.server.SubPolicyObjectServiceImpl</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>InsurancePolicyService</servlet-name>
+	<url-pattern>/bigbang_tests/InsurancePolicyService</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>PolicyObjectService</servlet-name>
+	<url-pattern>/bigbang_tests/PolicyObjectService</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>SubPolicyService</servlet-name>
+	<url-pattern>/bigbang_tests/SubPolicyService</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>SubPolicyObjectService</servlet-name>
+	<url-pattern>/bigbang_tests/SubPolicyObjectService</url-pattern>
+</servlet-mapping>

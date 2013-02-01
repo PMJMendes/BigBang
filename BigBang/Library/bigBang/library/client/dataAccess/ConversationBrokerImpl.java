@@ -1,0 +1,343 @@
+package bigBang.library.client.dataAccess;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.dataAccess.Search;
+import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
+import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
+import bigBang.library.interfaces.ConversationService;
+import bigBang.library.interfaces.ConversationServiceAsync;
+import bigBang.library.shared.ConversationSearchParameter;
+import bigBang.library.shared.ConversationSortParameter;
+
+public class ConversationBrokerImpl extends DataBroker<Conversation> implements ConversationBroker{
+
+	protected ConversationServiceAsync service;
+	protected SearchDataBroker<ConversationStub> searchBroker;
+
+	public ConversationBrokerImpl(){
+		this(ConversationService.Util.getInstance());
+	}
+
+	public ConversationBrokerImpl(ConversationServiceAsync instance) {
+		this.service = instance;
+		this.dataElementId = BigBangConstants.EntityIds.CONVERSATION;
+		this.searchBroker = new ConversationSearchBrokerImpl();
+	}
+
+	@Override
+	public void getConversation(final String conversationId, final ResponseHandler<Conversation> handler){
+		service.getConversation(conversationId, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				incrementDataVersion();
+				for(DataBrokerClient<Conversation> client : clients){
+					((ConversationBrokerClient) client).updateConversation(result);
+				}
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the conversation")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void notifyItemCreation(String itemId) {
+		return; //NAO FAZ SENTIDO EM CONVERSAÇÃO, visto que só se vÊ uma de cada vez.
+	}
+
+	@Override
+	public void notifyItemDeletion(String itemId) {
+		return; //NAO ACONTECE
+
+	}
+
+	@Override
+	public void notifyItemUpdate(String itemId) {
+		getConversation(itemId, new ResponseHandler<Conversation>() {
+
+			@Override
+			public void onResponse(Conversation response) {
+				return;
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+
+		});
+	}
+
+	@Override
+	public void requireDataRefresh() {
+		return;		
+	}
+
+
+	@Override
+	public void sendMessage(Message message, Integer replyLimit,
+			final ResponseHandler<Conversation> handler) {
+		service.sendMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.SEND, result.id));
+				incrementDataVersion();
+				notifyItemUpdate(result.id);
+				handler.onResponse(result);				
+			}
+
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the message")
+				});			
+				super.onResponseFailure(caught);
+			}
+
+		});
+	}
+
+	@Override
+	public void repeatMessage(Message message, Integer replyLimit,
+			final ResponseHandler<Conversation> handler) {
+		service.repeatMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.REPEAT, result.id));
+				incrementDataVersion();
+				notifyItemUpdate(result.id);
+				handler.onResponse(result);						
+			}
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not repeat the message")
+				});			
+				super.onResponseFailure(caught);			}
+		})
+		;
+	}
+
+	@Override
+	public void receiveMessage(Message message, Integer replyLimit,
+			final ResponseHandler<Conversation> handler) {
+		service.receiveMessage(message, replyLimit, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.RECEIVE, result.id));
+				incrementDataVersion();
+				notifyItemUpdate(result.id);
+				handler.onResponse(result);							
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not receive the message")
+				});			
+				super.onResponseFailure(caught);
+			}
+
+		});
+	}
+
+	@Override
+	public void closeConversation(final String conversationId, String motiveId,
+			final ResponseHandler<Void> handler) {
+		service.closeConversation(conversationId, motiveId, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ConversationProcess.CLOSE, conversationId));
+				incrementDataVersion();
+				notifyItemUpdate(conversationId);
+				handler.onResponse(result);			
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not close the conversation")
+				});
+				super.onResponseFailure(caught);
+			}
+
+		});
+	}
+
+	@Override
+	public void saveConversation(Conversation conversation,
+			final ResponseHandler<Conversation> handler) {
+		service.saveConversation(conversation, new BigBangAsyncCallback<Conversation>() {
+
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not save the conversation")
+				});
+				super.onResponseFailure(caught);
+			}
+
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				incrementDataVersion();
+				notifyItemUpdate(result.id);
+				handler.onResponse(result);			
+
+			}
+		});
+	}
+
+	@Override
+	public void getConversations(String listId,String filterId, final ResponseHandler<List<TipifiedListItem>> handler){
+		service.getListItemsFilter(listId, filterId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+
+			@Override
+			public void onResponseSuccess(TipifiedListItem[] result) {
+				List<TipifiedListItem> toReturn = new ArrayList<TipifiedListItem>();
+				for(TipifiedListItem item : result){
+					toReturn.add(0, item);
+				}
+				handler.onResponse(toReturn);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the conversations")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void createConversationFromEmail(Conversation conv, final ResponseHandler<Conversation> handler){
+		service.createFromEmail(conv, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				incrementDataVersion();
+				notifyItemUpdate(result.id);
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create the conversation")
+				});
+				super.onResponseFailure(caught);
+			}
+
+		});
+	}
+
+	@Override
+	public SearchDataBroker<ConversationStub> getSearchBroker() {
+		return this.searchBroker;
+	}
+
+
+	@Override
+	public void getConversationsForOwner(String ownerId,
+			final ResponseHandler<Collection<ConversationStub>> responseHandler) {
+		ConversationSearchParameter parameter = new ConversationSearchParameter();
+		parameter.ownerId = ownerId;
+
+		ConversationSortParameter sort = new ConversationSortParameter(ConversationSortParameter.SortableField.PENDINGDATE, SortOrder.DESC);
+
+		getSearchBroker().search(new SearchParameter[]{parameter}, new SortParameter[]{sort}, -1, new ResponseHandler<Search<ConversationStub>>() {
+
+			@Override
+			public void onResponse(Search<ConversationStub> response) {
+				responseHandler.onResponse(response.getResults());
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				responseHandler.onError(new String[]{
+						new String("Could not get the conversations for owner")
+				});
+			}
+		}, true);
+	}
+
+	@Override
+	public void getForPrinting(String conversationId,
+			final ResponseHandler<String> responseHandler) {
+		service.getForPrinting(conversationId, new BigBangAsyncCallback<String>() {
+
+			@Override
+			public void onResponseSuccess(String result) {
+				responseHandler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not print.")
+				});
+			}
+
+
+		});
+	}
+
+	@Override
+	public void reopenConversation(String conversationId, String directionId, int replyLimit,
+			final ResponseHandler<Conversation> responseHandler) {
+		service.reopenConversation(conversationId, directionId, replyLimit, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess( Void result) {
+				responseHandler.onResponse(null);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not reopen.")
+				});
+			}
+
+		});
+	}
+
+
+}
+
+
+
