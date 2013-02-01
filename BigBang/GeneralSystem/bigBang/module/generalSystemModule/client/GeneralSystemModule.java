@@ -10,7 +10,6 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.event.LoginSuccessEventHandler;
-import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.presenter.CasualtySelectionViewPresenter;
@@ -66,6 +65,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSelect
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSelectionView;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 
 public class GeneralSystemModule implements Module {
 
@@ -299,7 +299,7 @@ public class GeneralSystemModule implements Module {
 					@Override
 					public void onResponseSuccess(GeneralSystem result) {
 						SessionGeneralSystem.setGeneralSystem(result);
-						NavigationHistoryManager.getInstance().reload();
+						Window.Location.replace(Window.Location.createUrlBuilder().removeParameter("domain").buildString());
 					}
 				});
 			}
