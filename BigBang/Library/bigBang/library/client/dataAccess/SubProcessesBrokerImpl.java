@@ -30,6 +30,10 @@ public class SubProcessesBrokerImpl extends DataBroker<BigBangProcess>
 	@Override
 	public void getSubProcesses(final String ownerId,
 			final ResponseHandler<Collection<BigBangProcess>> handler) {
+		if(ownerId.equalsIgnoreCase("new")){
+			handler.onResponse(null);
+			return;
+		}
 		service.getSubProcesses(ownerId, new BigBangAsyncCallback<BigBangProcess[]>() {
 
 			@Override

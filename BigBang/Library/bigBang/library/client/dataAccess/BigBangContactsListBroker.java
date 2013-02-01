@@ -203,6 +203,10 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 
 	@Override
 	public void getContacts(final String ownerId, final ResponseHandler<List<Contact>> handler) {
+		if(ownerId.equalsIgnoreCase("new")){
+			handler.onResponse(null);
+			return;
+		}
 		if(!clients.containsKey(ownerId)){
 			return;
 		}
