@@ -18,7 +18,7 @@ public class UndoVoidInternal
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_Receipt_VoidInternal;
+		return Constants.OPID_Receipt_UndoVoidInternal;
 	}
 
 	public String ShortDesc()
