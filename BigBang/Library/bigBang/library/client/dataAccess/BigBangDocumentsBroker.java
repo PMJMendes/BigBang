@@ -183,6 +183,10 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 	@Override
 	public void getDocuments(final String ownerId,
 			final ResponseHandler<Collection<Document>> handler) {
+		if(ownerId.equalsIgnoreCase("new")){
+			handler.onResponse(null);
+			return;
+		}
 		if(!clients.containsKey(ownerId)){
 			throw new RuntimeException("The documents for the owner with id " + ownerId + " are not being managed by this broker.");
 		}
