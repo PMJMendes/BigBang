@@ -109,7 +109,7 @@ public class TotalLossFileSearchPanel extends SearchPanel<TotalLossFileStub> imp
 			this.reference.setText("#" + (file.reference == null ? "" : file.reference));
 			this.reference.setTitle("Número da Ficha Clínica");
 
-			this.salvageTypeLabel.setText(file.salvageTypeLabel);
+			this.salvageTypeLabel.setText(file.salvageTypeLabel != null ? "Salvado: " + file.salvageTypeLabel : "");
 			this.salvageTypeLabel.setTitle("Posse do Salvado");
 
 			this.inheritClientName.setText(file.inheritClientName);

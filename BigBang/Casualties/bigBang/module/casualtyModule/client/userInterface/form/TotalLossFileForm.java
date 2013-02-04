@@ -18,6 +18,7 @@ public class TotalLossFileForm extends FormView<TotalLossFile>{
 		addSection("Informação Geral");
 		
 		salvageType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.SALVAGE_TYPE, "Posse do Salvado");	
+		salvageType.allowEdition(false);
 		capital = new NumericTextBoxFormField("Capital", true);
 		capital.setUnitsLabel("€");
 		deductible = new NumericTextBoxFormField("Franquia", true);
@@ -31,6 +32,7 @@ public class TotalLossFileForm extends FormView<TotalLossFile>{
 		addFormField(salvageType);
 		addFormField(capital, true);
 		addFormField(deductible, true);
+		addLineBreak();
 		addFormField(settlement, true);
 		addFormField(salvageValue, true);
 		addLineBreak();
