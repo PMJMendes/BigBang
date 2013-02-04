@@ -560,6 +560,9 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 					}
 				});
 			}
+			else{
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível gravar a imagem de um recibo existente sem indicar a imagem."), TYPE.ALERT_NOTIFICATION));				
+			}
 		}
 	}
 
