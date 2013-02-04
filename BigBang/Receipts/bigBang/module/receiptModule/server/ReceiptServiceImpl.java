@@ -548,7 +548,7 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 	
-	public Receipt receiveImage(String receiptId, DocuShareHandle source)
+	public Receipt receiveImage(Receipt receipt, DocuShareHandle source)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
@@ -560,7 +560,7 @@ public class ReceiptServiceImpl
 		try
 		{
 			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(receiptId));
+					UUID.fromString(receipt.id));
 		}
 		catch (Throwable e)
 		{
@@ -568,6 +568,7 @@ public class ReceiptServiceImpl
 		}
 
 		lopRI = new ReceiveImage(lobjReceipt.GetProcessID());
+		lopRI.mobjData = toServerData(receipt);
 		lopRI.mobjImage = new DSBridgeData();
 		lopRI.mobjImage.mstrDSHandle = source.handle;
 		lopRI.mobjImage.mstrDSLoc = source.locationHandle;

@@ -20,7 +20,7 @@ public interface ReceiptServiceAsync
 	void getReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void editReceipt(Receipt receipt, AsyncCallback<Receipt> callback);
 	void editAndValidateReceipt(Receipt receipt, Rectangle rect, AsyncCallback<Receipt> callback);
-	void receiveImage(String receiptId, DocuShareHandle source, AsyncCallback<Receipt> callback);
+	void receiveImage(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
 	void transferToPolicy(String receiptId, String newPolicyId, AsyncCallback<Receipt> callback);
 	void validateReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void setForReturn(Receipt.ReturnMessage message, AsyncCallback<Receipt> callback);

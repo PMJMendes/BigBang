@@ -541,7 +541,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 					}
 				});
 			}else{
-				receiptBroker.receiveImage(toSend.receipt.id, handle.handle != null ? handle : null, new ResponseHandler<Receipt>() {
+				receiptBroker.receiveImage(toSend.receipt, handle.handle != null ? handle : null, new ResponseHandler<Receipt>() {
 
 					@Override
 					public void onResponse(Receipt response) {

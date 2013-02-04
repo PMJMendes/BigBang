@@ -18,6 +18,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -27,6 +28,7 @@ public class ReceiveImage
 {
 	private static final long serialVersionUID = 1L;
 
+	public ReceiptData mobjData;
 	public transient DSBridgeData mobjImage;
 	private UUID midReceipt;
 	private DocOps mobjDocOps;
@@ -73,6 +75,23 @@ public class ReceiveImage
 
 		lobjProc = GetProcess();
 		midReceipt = lobjProc.GetDataKey();
+		lobjReceipt = (Receipt)lobjProc.GetData();
+
+		if ( mobjData != null )
+		{
+			mobjData.mobjPrevValues = new ReceiptData();
+			mobjData.mobjPrevValues.FromObject(lobjReceipt);
+
+			try
+			{
+				mobjData.ToObject(lobjReceipt);
+				lobjReceipt.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
 
 		lobjDoc = new DocumentData();
 		lobjDoc.mstrName = "Original";
@@ -91,7 +110,6 @@ public class ReceiveImage
 
 		mobjDocOps.RunSubOp(pdb, midReceipt);
 
-		lobjReceipt = (Receipt)lobjProc.GetData();
 		try
 		{
 			b = lobjReceipt.canAutoValidate();
@@ -155,6 +173,7 @@ public class ReceiveImage
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
+		Receipt lobjAux;
 
 		if ( mbWithAgenda )
 		{
@@ -187,6 +206,20 @@ public class ReceiveImage
 		}
 
 		mobjDocOps.UndoSubOp(pdb, midReceipt);
+
+		if ( mobjData != null )
+		{
+			try
+			{
+				lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+				mobjData.mobjPrevValues.ToObject(lobjAux);
+				lobjAux.SaveToDb(pdb);
+	    	}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
 	}
 
 	public UndoSet[] GetSets()
