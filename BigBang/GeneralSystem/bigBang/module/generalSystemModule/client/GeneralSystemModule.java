@@ -156,7 +156,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_OTHER_ENTITIES_MANAGEMENT", new ViewPresenterInstantiator() {
 
 			@Override
@@ -188,7 +188,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, new ExpandableSelectionManagementPanelInstantiator() {
 
 			@Override
@@ -199,7 +199,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.RECEIPT, new ExpandableSelectionManagementPanelInstantiator() {
 
 			@Override
@@ -210,7 +210,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.CASUALTY, new ExpandableSelectionManagementPanelInstantiator() {
 
 			@Override
@@ -221,7 +221,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.SUB_CASUALTY, new ExpandableSelectionManagementPanelInstantiator() {
 
 			@Override
@@ -232,7 +232,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.EXPENSE, new ExpandableSelectionManagementPanelInstantiator() {
 
 			@Override
@@ -243,7 +243,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.ASSESSMENT, new ExpandableSelectionManagementPanelInstantiator() {
 
 			@Override
@@ -254,7 +254,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.MEDICAL_FILE, new ExpandableSelectionManagementPanelInstantiator() {
 
 			@Override
@@ -265,7 +265,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.OTHER_ENTITY, new ExpandableSelectionManagementPanelInstantiator() {
 
 			@Override
@@ -276,7 +276,7 @@ public class GeneralSystemModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.TOTAL_LOSS_FILE, new ExpandableSelectionManagementPanelInstantiator() {
 
 			@Override
@@ -299,7 +299,9 @@ public class GeneralSystemModule implements Module {
 					@Override
 					public void onResponseSuccess(GeneralSystem result) {
 						SessionGeneralSystem.setGeneralSystem(result);
-						Window.Location.replace(Window.Location.createUrlBuilder().removeParameter("domain").buildString());
+						if(Window.Location.getParameter("domain") != null){
+							Window.Location.replace(Window.Location.createUrlBuilder().removeParameter("domain").buildString());
+						}
 					}
 				});
 			}

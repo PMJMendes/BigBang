@@ -37,7 +37,7 @@ public interface ReceiptService
 	public Receipt getReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt editReceipt(Receipt receipt) throws SessionExpiredException, BigBangException;
-	public Receipt receiveImage(String receiptId, DocuShareHandle source) throws SessionExpiredException, BigBangException;
+	public Receipt receiveImage(Receipt receipt, DocuShareHandle source) throws SessionExpiredException, BigBangException;
 	public Receipt transferToPolicy(String receiptId, String newPolicyId) throws SessionExpiredException, BigBangException;
 
 	public Receipt editAndValidateReceipt(Receipt receipt, Rectangle rect) throws SessionExpiredException, BigBangException;

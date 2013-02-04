@@ -49,7 +49,7 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 	void serialCreateReceipt(Receipt receipt, DocuShareHandle source,
 			ResponseHandler<Receipt> handler);
 
-	void receiveImage(String receiptId, DocuShareHandle source, ResponseHandler<Receipt> handler);
+	void receiveImage(Receipt receipt, DocuShareHandle source, ResponseHandler<Receipt> handler);
 
 	void massCreatePaymentNotice(String[] receiptIds,
 			ResponseHandler<Void> handler);

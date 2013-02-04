@@ -436,9 +436,9 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	}
 
 	@Override
-	public void receiveImage(String receiptId, DocuShareHandle source,
+	public void receiveImage(Receipt receipt, DocuShareHandle source,
 			final ResponseHandler<Receipt> handler) {
-		service.receiveImage(receiptId, source, new BigBangAsyncCallback<Receipt>() {
+		service.receiveImage(receipt, source, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
 			public void onResponseSuccess(Receipt result) {

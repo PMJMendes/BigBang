@@ -647,7 +647,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 			});
 		}else if(objectIds.length > 1){
-			service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
+			service.massCreateManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
 
 				@Override
 				public void onResponseSuccess(ManagerTransfer result) {
