@@ -51,7 +51,21 @@ public class ReceiveImage
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "Foi criado um documento com a imagem digitalizada do recibo.";
+		StringBuilder lstrResult;
+
+		lstrResult = new StringBuilder();
+
+		lstrResult.append("Foi criado um documento com a imagem digitalizada do recibo.");
+
+		if ( mobjData != null )
+		{
+			lstrResult.append(pstrLineBreak);
+			lstrResult.append("Novos dados do recibo:");
+			lstrResult.append(pstrLineBreak);
+			mobjData.Describe(lstrResult, pstrLineBreak);
+		}
+
+		return lstrResult.toString();
 	}
 
 	public UUID GetExternalProcess()
@@ -158,12 +172,40 @@ public class ReceiveImage
 
 	public String UndoDesc(String pstrLineBreak)
 	{
-		return "O documento será apagado. A imagem digitalizada será disponibilizada para outro recibo.";
+		StringBuilder lstrResult;
+
+		lstrResult = new StringBuilder();
+
+		lstrResult.append("O documento será apagado. A imagem digitalizada será disponibilizada para outro recibo.");
+
+		if ( mobjData != null )
+		{
+			lstrResult.append(pstrLineBreak);
+			lstrResult.append("Os dados anteriores serão repostos:");
+			lstrResult.append(pstrLineBreak);
+			mobjData.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+		}
+
+		return lstrResult.toString();
 	}
 
 	public String UndoLongDesc(String pstrLineBreak)
 	{
-		return "O documento com a imagem digitalizada do recibo foi apagado. A imagem foi disponibilizada para outro recibo.";
+		StringBuilder lstrResult;
+
+		lstrResult = new StringBuilder();
+
+		lstrResult.append("O documento com a imagem digitalizada do recibo foi apagado. A imagem foi disponibilizada para outro recibo.");
+
+		if ( mobjData != null )
+		{
+			lstrResult.append(pstrLineBreak);
+			lstrResult.append("Os dados anteriores foram repostos:");
+			lstrResult.append(pstrLineBreak);
+			mobjData.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+		}
+
+		return lstrResult.toString();
 	}
 
 	protected void Undo(SQLServer pdb)
