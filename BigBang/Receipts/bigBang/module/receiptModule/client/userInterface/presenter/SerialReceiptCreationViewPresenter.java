@@ -373,11 +373,11 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			@Override
 			public void onResponse(Receipt response) {
 				receiptPolicyWrapper.receipt = response;
-				
+
 				boolean hasImage = !PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ReceiptProcess.SET_ORIGINAL_IMAGE);
 				view.setReceiptReadOnly(hasImage);
 				view.showImageAlreadyDefinedWarning(hasImage);
-				
+
 				getPolicy(response.policyId);
 			}
 
@@ -540,8 +540,8 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o recibo."), TYPE.ALERT_NOTIFICATION));				
 					}
 				});
-			}else{
-				receiptBroker.receiveImage(toSend.receipt, handle.handle != null ? handle : null, new ResponseHandler<Receipt>() {
+			}else if(handle.handle != null){
+				receiptBroker.receiveImage(toSend.receipt, handle, new ResponseHandler<Receipt>() {
 
 					@Override
 					public void onResponse(Receipt response) {
