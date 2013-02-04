@@ -18,7 +18,7 @@ public class DockPanel extends Composite implements HasValue <Object>, HasValueC
 	private HorizontalPanel toolbarPanel;
 	private List<DockItem> dockItems;
 	private ValueChangeHandler<Boolean> valueChangeHandler;
-	
+
 
 	private boolean valueChangeHandlerInitialized = false;
 
@@ -90,14 +90,18 @@ public class DockPanel extends Composite implements HasValue <Object>, HasValueC
 	}
 
 	public void setValue(Object value, boolean fireEvents) {
+		boolean selected = false;
 		if(value != null) {
 			for(DockItem item : this.dockItems) {
 				if(item.getRepresentedValue().equals(value)){
 					setSelectedItem(item);
+					selected = true;
 					break;
 				}
 			}
-		}else{
+		}
+		
+		if(!selected){
 			setSelectedItem(null);
 		}
 
@@ -109,5 +113,5 @@ public class DockPanel extends Composite implements HasValue <Object>, HasValueC
 	public Object getSelectedValue(){
 		return this.selectedItem == null ? null : selectedItem.getRepresentedValue();
 	}
-	
+
 }

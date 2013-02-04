@@ -163,6 +163,7 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 	@Override
 	public void selectOperation(SectionOperation operation) {
 		this.operationDock.setValue(operation, false);
+		this.operationDock2.setValue(operation, false);
 	}
 
 	@Override
