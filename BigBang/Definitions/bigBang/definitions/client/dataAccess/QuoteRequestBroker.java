@@ -12,8 +12,17 @@ import bigBang.definitions.shared.RiskAnalysis;
 
 public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 
-	public void getQuoteRequest(String id, ResponseHandler<QuoteRequest> handler);
+	//GET & SET
+
+	public void getQuoteRequest(String requestId, ResponseHandler<QuoteRequest> handler);
+
+	public void getEmptyQuoteRequest(String clientId, ResponseHandler<QuoteRequest> handler);
+
 	public void getQuoteRequestsForClient(String clientId, ResponseHandler<Collection<QuoteRequestStub>> handler);
+
+	public QuoteRequest getRequestHeader(String requestId);
+
+	public QuoteRequest updateRequestHeader(QuoteRequest request);
 
 	public void openRequestResource(String requestId, ResponseHandler<QuoteRequest> handler);
 	public void commitRequest(QuoteRequest request, ResponseHandler<QuoteRequest> handler);

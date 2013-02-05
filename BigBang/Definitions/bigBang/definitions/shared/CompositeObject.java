@@ -1,7 +1,7 @@
 package bigBang.definitions.shared;
 
-public class InsuredObject
-	extends InsuredObjectStub
+public class CompositeObject
+	extends CompositeObjectStub
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -39,15 +39,11 @@ public class InsuredObject
 	public String cityRegistryNumber;
 	public String electronicIdTag;
 
-	public InsuredObject()
+	public CompositeObject()
 	{
-		headerFields = new HeaderField[0];
-		columnFields = new ColumnField[0];
-		extraFields = new ExtraField[0];
-		exerciseData = new ExerciseData[0];
 	}
 
-	public InsuredObject(InsuredObject orig)
+	public CompositeObject(CompositeObject orig)
 	{
 		super(orig);
 
@@ -81,7 +77,7 @@ public class InsuredObject
 		this.electronicIdTag = orig.electronicIdTag;
 	}
 
-	public InsuredObject(InsuredObject data, InsuredObject struct)
+	public CompositeObject(CompositeObject data, CompositeObject struct)
 	{
 		super(data, struct);
 

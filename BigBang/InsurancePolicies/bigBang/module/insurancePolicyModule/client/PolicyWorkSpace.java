@@ -79,8 +79,7 @@ public class PolicyWorkSpace {
 
 		originalPolicy.changedObjects = new InsuredObject[alteredObjects.size()];
 		i = 0;
-		for ( InsuredObject object : alteredObjects )
-		{
+		for ( InsuredObject object : alteredObjects ) {
 			originalPolicy.changedObjects[i] = new InsuredObject(object);
 			originalPolicy.changedObjects[i].headerFields = splitArray(originalPolicy.changedObjects[i].headerFields, originalPolicy.headerFields.length);
 			if ( InsuredObjectStub.Change.CREATED.equals(originalPolicy.changedObjects[i].change) )
@@ -263,7 +262,7 @@ public class PolicyWorkSpace {
 		}
 
 		return null;
-	} 
+	}
 
 	public InsuredObjectStub deleteObject(String policyId, String objectId) {
 		if ( !isPolicyLoaded(policyId) )

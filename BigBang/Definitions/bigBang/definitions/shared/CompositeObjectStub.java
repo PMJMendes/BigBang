@@ -1,7 +1,7 @@
 package bigBang.definitions.shared;
 
-public class InsuredObjectStub
-	extends ComplexFieldContainer
+public class CompositeObjectStub
+	extends CompositeFieldContainer
 {
 	private static final long serialVersionUID = 1L;
 
@@ -19,21 +19,17 @@ public class InsuredObjectStub
 	public String exclusionDate;
 	public String typeId;
 	public String typeText;
-	
+
 	public Change change;
-	
-	public InsuredObjectStub()
+
+	public CompositeObjectStub()
 	{
-		headerFields = null;
-		columnFields = null;
-		extraFields = null;
-		exerciseData = null;
 	}
 
-	public InsuredObjectStub(InsuredObjectStub orig)
+	public CompositeObjectStub(CompositeObjectStub orig)
 	{
 		super(orig);
-
+	
 		this.unitIdentification = orig.unitIdentification;
 		this.address = (orig.address == null ? null : new Address(orig.address));
 		this.inclusionDate = orig.inclusionDate;
@@ -43,10 +39,10 @@ public class InsuredObjectStub
 		this.change = orig.change;
 	}
 
-	public InsuredObjectStub(InsuredObjectStub data, InsuredObjectStub struct)
+	public CompositeObjectStub(CompositeObjectStub data, CompositeObjectStub struct)
 	{
 		super(struct);
-
+	
 		this.unitIdentification = data.unitIdentification;
 		this.address = (data.address == null ? null : new Address(data.address));
 		this.inclusionDate = data.inclusionDate;
