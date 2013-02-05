@@ -1,6 +1,5 @@
 package bigBang.library.client.userInterface;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -87,12 +86,12 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 
 				@Override
 				public void onResponse(Collection<Document> response) {
-					setDocuments(ownerId, new ArrayList<Document>(response));
+					return;
 				}
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					GWT.log("Could not get the documents for owner " + ownerId);
+					return;
 				}
 			});
 		}

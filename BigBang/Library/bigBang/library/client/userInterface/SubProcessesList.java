@@ -45,10 +45,7 @@ public class SubProcessesList extends FilterableList<BigBangProcess> implements 
 
 				@Override
 				public void onResponse(Collection<BigBangProcess> response) {
-					clear();
-					for(BigBangProcess process : response) {
-						addEntry(process);
-					}
+					return;
 				}
 
 				@Override

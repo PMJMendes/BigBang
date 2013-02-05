@@ -223,7 +223,9 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_QUOTE_REQUEST:
-					item.pushIntoStackParameter("display", "createquoterequest");
+					item.setParameter("section", "quoterequest");
+					item.popFromStackParameter("display");
+					item.pushIntoStackParameter("display", "search");
 					item.setParameter("quoterequestid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
