@@ -272,7 +272,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					onEdit();
 					break;
 				case CANCEL_EDIT:
-					NavigationHistoryManager.getInstance().reload();
+					NavigationHistoryManager.getInstance().reload(); //TODO QUANDO SE CANCELA NOVO está um onCancelEdit lá em baixo comentado.
 					break;
 				case SAVE:
 					onSave();
@@ -1155,8 +1155,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.allowTransferBrokerage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_BROKERAGE));
 		view.allowCreateSubstitutePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUBSTITUTE_POLICY));
 		//TODO REQUESTS
-		view.allowSendMessage(true);
-		view.allowReceiveMessage(true);
+		view.allowSendMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION));
+		view.allowReceiveMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION));
 		view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER));
 		view.allowExecuteDetailedCalculations(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS));
 		view.allowCreateSubPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY));
