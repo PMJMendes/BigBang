@@ -62,7 +62,7 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	public void saveContextForInsuredObject(String policyId, String objectId, String exerciseId, FieldContainer contents);
 
 
-	// OTHER OPS
+	//OTHER OPS
 
 	public SearchDataBroker<InsurancePolicyStub> getSearchBroker();
 
