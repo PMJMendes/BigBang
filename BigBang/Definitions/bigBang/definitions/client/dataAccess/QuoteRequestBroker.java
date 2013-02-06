@@ -4,8 +4,8 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.CompositeFieldContainer;
-import bigBang.definitions.shared.CompositeObject;
-import bigBang.definitions.shared.CompositeObjectStub;
+import bigBang.definitions.shared.QuoteRequestObject;
+import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
@@ -36,15 +36,15 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 	public CompositeFieldContainer.SubLineFieldContainer updateSubLineCoverages(String requestId, String subLineId,
 			StructuredFieldContainer.Coverage[] coverages);
 
-	public CompositeObjectStub[] getAlteredObjects(String requestId);
+	public QuoteRequestObjectStub[] getAlteredObjects(String requestId);
 
-	public void getCompositeObject(String requestId, String objectId, ResponseHandler<CompositeObject> handler);
+	public void getCompositeObject(String requestId, String objectId, ResponseHandler<QuoteRequestObject> handler);
 
-	public CompositeObject createCompositeObject(String requestId);
+	public QuoteRequestObject createCompositeObject(String requestId);
 
-	public CompositeObject updateCompositeObject(String requestId, CompositeObject object);
+	public QuoteRequestObject updateCompositeObject(String requestId, QuoteRequestObject object);
 
-	public CompositeObjectStub removeCompositeObject(String requestId, String objectId);
+	public QuoteRequestObjectStub removeCompositeObject(String requestId, String objectId);
 
 	public FieldContainer getContextForRequest(String requestId, String subLineId);
 

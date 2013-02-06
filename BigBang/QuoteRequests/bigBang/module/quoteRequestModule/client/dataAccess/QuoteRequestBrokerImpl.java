@@ -15,8 +15,8 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.CompositeFieldContainer.SubLineFieldContainer;
-import bigBang.definitions.shared.CompositeObject;
-import bigBang.definitions.shared.CompositeObjectStub;
+import bigBang.definitions.shared.QuoteRequestObject;
+import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
@@ -165,33 +165,33 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
-	public CompositeObjectStub[] getAlteredObjects(String requestId) {
+	public QuoteRequestObjectStub[] getAlteredObjects(String requestId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void getCompositeObject(String requestId, String objectId,
-			ResponseHandler<CompositeObject> handler) {
+			ResponseHandler<QuoteRequestObject> handler) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public CompositeObject createCompositeObject(String requestId) {
+	public QuoteRequestObject createCompositeObject(String requestId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public CompositeObject updateCompositeObject(String requestId,
-			CompositeObject object) {
+	public QuoteRequestObject updateCompositeObject(String requestId,
+			QuoteRequestObject object) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public CompositeObjectStub removeCompositeObject(String requestId,
+	public QuoteRequestObjectStub removeCompositeObject(String requestId,
 			String objectId) {
 		// TODO Auto-generated method stub
 		return null;

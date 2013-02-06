@@ -5,8 +5,8 @@ public class GlobalFieldContainer
 {
 	private static final long serialVersionUID = 1L;
 
-	public CompositeObject emptyObject;
-	public CompositeObject[] changedObjects;
+	public QuoteRequestObject emptyObject;
+	public QuoteRequestObject[] changedObjects;
 
 	public GlobalFieldContainer()
 	{
@@ -18,15 +18,15 @@ public class GlobalFieldContainer
 
 		int i;
 
-		this.emptyObject = (orig.emptyObject == null ? null : new CompositeObject(orig.emptyObject));
+		this.emptyObject = (orig.emptyObject == null ? null : new QuoteRequestObject(orig.emptyObject));
 
 		if ( orig.changedObjects == null )
 			this.changedObjects = null;
 		else
 		{
-			this.changedObjects = new CompositeObject[orig.changedObjects.length];
+			this.changedObjects = new QuoteRequestObject[orig.changedObjects.length];
 			for ( i = 0; i < this.changedObjects.length; i++ )
-				this.changedObjects[i] = (orig.changedObjects[i] == null ? null : new CompositeObject(orig.changedObjects[i]));
+				this.changedObjects[i] = (orig.changedObjects[i] == null ? null : new QuoteRequestObject(orig.changedObjects[i]));
 		}
 	}
 }

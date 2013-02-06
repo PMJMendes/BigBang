@@ -4,9 +4,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -15,6 +12,9 @@ import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.ProcessData;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 
 public class QuoteRequest
 	extends ProcessData
@@ -61,6 +61,15 @@ public class QuoteRequest
     	{
     		throw new BigBangJewelException(e.getMessage(), e);
 		}
+    }
+
+	public Mediator getMediator()
+    	throws BigBangJewelException
+    {
+    	if ( getAt(2) == null )
+    		return GetClient().getMediator();
+
+    	return Mediator.GetInstance(getNameSpace(), (UUID)getAt(2));
     }
 
     public Contact[] GetCurrentContacts()

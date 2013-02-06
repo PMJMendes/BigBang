@@ -43,8 +43,6 @@ public class CompositeFieldContainer
 
 	public CompositeFieldContainer(CompositeFieldContainer orig)
 	{
-//		super(orig);
-
 		int i;
 
 		if ( orig.subLineData == null )

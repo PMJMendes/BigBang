@@ -205,19 +205,23 @@ public class ServerToClient
 		}
 	}
 
-	private SubLine mobjSubLine;
-	private Coverage[] marrCoverages;
-	private Tax[][] marrFields;
+	protected SubLine mobjSubLine;
+	protected Coverage[] marrCoverages;
+	protected Tax[][] marrFields;
 	private Policy mobjPolicy;
 	private com.premiumminds.BigBang.Jewel.Objects.SubPolicy mobjSubPolicy;
 	private boolean mbForSubPolicy;
 
-	private class FieldContainerBuilder
+	protected class FieldContainerBuilder
 	{
-		private class FieldContents
+		protected class FieldContents
 		{
 			public UUID midValue;
 			public String mstrValue;
+
+			public FieldContents()
+			{
+			}
 		}
 		
 		private class ContainerObject
@@ -228,10 +232,10 @@ public class ServerToClient
 		}
 
 		private Stack<ContainerObject> marrStack;
-		private FieldContainer mobjContainer;
-		private boolean mbForObject;
+		protected FieldContainer mobjContainer;
+		protected boolean mbForObject;
 		private boolean mbForExercise;
-		private Map<UUID, FieldContents> mmapData;
+		protected Map<UUID, FieldContents> mmapData;
 
 		public FieldContainerBuilder withSource(SubLine pobjSubLine, boolean pbForSubPolicy)
 			throws BigBangException
@@ -411,7 +415,7 @@ public class ServerToClient
 			return lobjResult;
 		}
 
-		private void buildField(FieldContainer.HeaderField pobjResult, Tax pobjSource)
+		protected void buildField(FieldContainer.HeaderField pobjResult, Tax pobjSource)
 		{
 			pobjResult.fieldId = pobjSource.getKey().toString();
 			pobjResult.fieldName = pobjSource.getLabel();
@@ -558,9 +562,9 @@ public class ServerToClient
 		}
 	}
 
-	private FieldContainerBuilder mobjBaseBuilder;
-	
-	private FieldContainerBuilder getBaseBuilder()
+	protected FieldContainerBuilder mobjBaseBuilder;
+
+	protected FieldContainerBuilder getBaseBuilder()
 	{
 		if ( mobjBaseBuilder == null )
 			mobjBaseBuilder = new FieldContainerBuilder();
@@ -647,13 +651,13 @@ public class ServerToClient
 		}
 	}
 
-	private class ComplexFieldContainerBuilder
+	protected class ComplexFieldContainerBuilder
 	{
-		private ComplexFieldContainer mobjContainer;
-		private UUID midExerciseType;
-		private boolean mbIsEmpty;
-		private boolean mbForObject;
-		private UUID midObject;
+		protected ComplexFieldContainer mobjContainer;
+		protected UUID midExerciseType;
+		protected boolean mbIsEmpty;
+		protected boolean mbForObject;
+		protected UUID midObject;
 		private PolicyExercise[] marrExercises;
 
 		public ComplexFieldContainerBuilder withSource(SubLine pobjSubLine)
@@ -851,9 +855,9 @@ public class ServerToClient
 		}
 	}
 
-	private ComplexFieldContainerBuilder mobjComplexBuilder;
+	protected ComplexFieldContainerBuilder mobjComplexBuilder;
 
-	private ComplexFieldContainerBuilder getComplexBuilder()
+	protected ComplexFieldContainerBuilder getComplexBuilder()
 	{
 		if ( mobjComplexBuilder == null )
 			mobjComplexBuilder = new ComplexFieldContainerBuilder();
@@ -1176,16 +1180,20 @@ public class ServerToClient
 		}
 	}
 
-	private class StructuredBuilder
+	protected class StructuredBuilder
 	{
-		private class CoverageContents
+		protected class CoverageContents
 		{
 			public UUID cid;
 			public Boolean present;
+
+			public CoverageContents()
+			{
+			}
 		}
 
-		private StructuredFieldContainer mobjContainer;
-		private Map<UUID, CoverageContents> mmapCoverages;
+		protected StructuredFieldContainer mobjContainer;
+		protected Map<UUID, CoverageContents> mmapCoverages;
 
 		public StructuredBuilder withSource(SubLine pobjSubLine)
 			throws BigBangException
@@ -1283,15 +1291,15 @@ public class ServerToClient
 				}
 			}
 
-			mobjContainer.coverages = new InsurancePolicy.Coverage[llngLen];
-			mobjContainer.columns = new InsurancePolicy.ColumnHeader[llngMaxCol + 1];
+			mobjContainer.coverages = new StructuredFieldContainer.Coverage[llngLen];
+			mobjContainer.columns = new StructuredFieldContainer.ColumnHeader[llngMaxCol + 1];
 
 			l = 0;
 			for ( i = 0; i < marrCoverages.length; i++ )
 			{
 				if ( !marrCoverages[i].IsHeader() )
 				{
-					mobjContainer.coverages[l] = new InsurancePolicy.Coverage();
+					mobjContainer.coverages[l] = new StructuredFieldContainer.Coverage();
 					mobjContainer.coverages[l].coverageId = marrCoverages[i].getKey().toString();
 					mobjContainer.coverages[l].coverageName = marrCoverages[i].getLabel();
 					mobjContainer.coverages[l].mandatory = marrCoverages[i].IsMandatory();
@@ -1307,7 +1315,7 @@ public class ServerToClient
 						k = marrFields[i][j].GetColumnOrder();
 						if ( (k >= 0) && (mobjContainer.columns[k] == null) )
 						{
-							mobjContainer.columns[k] = new InsurancePolicy.ColumnHeader();
+							mobjContainer.columns[k] = new StructuredFieldContainer.ColumnHeader();
 							mobjContainer.columns[k].label = marrFields[i][j].getLabel();
 							mobjContainer.columns[k].type = sGetFieldTypeByID(marrFields[i][j].GetFieldType());
 							mobjContainer.columns[k].unitsLabel = marrFields[i][j].GetUnitsLabel();

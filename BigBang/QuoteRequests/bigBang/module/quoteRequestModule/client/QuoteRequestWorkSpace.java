@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import bigBang.definitions.shared.CompositeFieldContainer;
-import bigBang.definitions.shared.CompositeObject;
-import bigBang.definitions.shared.CompositeObjectStub;
+import bigBang.definitions.shared.QuoteRequestObject;
+import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.QuoteRequest;
 
 public class QuoteRequestWorkSpace {
@@ -16,11 +16,11 @@ public class QuoteRequestWorkSpace {
 	protected QuoteRequest originalRequest;
 
 	protected QuoteRequest request;
-	protected List<CompositeObject> alteredObjects;
+	protected List<QuoteRequestObject> alteredObjects;
 	protected int idCounter;
 
 	public QuoteRequestWorkSpace() {
-		this.alteredObjects = new ArrayList<CompositeObject>();
+		this.alteredObjects = new ArrayList<QuoteRequestObject>();
 	}
 
 	private boolean isRequestLoaded(String id) {
@@ -69,12 +69,12 @@ public class QuoteRequestWorkSpace {
 		if ( NEWID.equals(originalRequest.id) )
 			originalRequest.id = null;
 
-		originalRequest.changedObjects = new CompositeObject[alteredObjects.size()];
+		originalRequest.changedObjects = new QuoteRequestObject[alteredObjects.size()];
 		i = 0;
-		for ( CompositeObject object : alteredObjects ) {
-			originalRequest.changedObjects[i] = new CompositeObject(object);
+		for ( QuoteRequestObject object : alteredObjects ) {
+			originalRequest.changedObjects[i] = new QuoteRequestObject(object);
 //			originalRequest.changedObjects[i].headerFields = splitArray(originalRequest.changedObjects[i].headerFields, originalRequest.headerFields.length);
-			if ( CompositeObjectStub.Change.CREATED.equals(originalRequest.changedObjects[i].change) )
+			if ( QuoteRequestObjectStub.Change.CREATED.equals(originalRequest.changedObjects[i].change) )
 				originalRequest.changedObjects[i].id = null;
 			i++;
 		}
@@ -196,46 +196,46 @@ public class QuoteRequestWorkSpace {
 
 	//INSURED OBJECTS
 
-	public CompositeObjectStub[] getLocalObjects(String requestId) {
+	public QuoteRequestObjectStub[] getLocalObjects(String requestId) {
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		CompositeObjectStub[] result;
+		QuoteRequestObjectStub[] result;
 		int i;
 
-		result = new CompositeObjectStub[alteredObjects.size()];
+		result = new QuoteRequestObjectStub[alteredObjects.size()];
 		for ( i = 0; i < result.length; i++ )
-			result[i] = new CompositeObjectStub(alteredObjects.get(i));
+			result[i] = new QuoteRequestObjectStub(alteredObjects.get(i));
 
 		return result;
 	}
 
-	public CompositeObject getObjectHeader(String requestId, String objectId) {
+	public QuoteRequestObject getObjectHeader(String requestId, String objectId) {
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		for ( CompositeObject object : alteredObjects )
+		for ( QuoteRequestObject object : alteredObjects )
 			if(object.id.equalsIgnoreCase(objectId))
 				return object;
 
 		return null;
 	}
 
-	public CompositeObject loadExistingObject(String requestId, CompositeObject object) {
-		CompositeObject newObject;
+	public QuoteRequestObject loadExistingObject(String requestId, QuoteRequestObject object) {
+		QuoteRequestObject newObject;
 
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		for ( CompositeObject oldObject : alteredObjects )
+		for ( QuoteRequestObject oldObject : alteredObjects )
 		{
 			if(oldObject.id.equalsIgnoreCase(object.id)) {
 				return object;
 			}
 		}
 
-		newObject = new CompositeObject(object);
-		newObject.change = CompositeObjectStub.Change.NONE;
+		newObject = new QuoteRequestObject(object);
+		newObject.change = QuoteRequestObjectStub.Change.NONE;
 
 		try {
 //			newObject.headerFields = mergeHeaderArrays(new FieldContainer.HeaderField[][] {request.headerFields, object.headerFields},
@@ -249,14 +249,14 @@ public class QuoteRequestWorkSpace {
 		return newObject;
 	}
 
-	public CompositeObject createLocalObject(String requestId) {
-		CompositeObject newObject;
+	public QuoteRequestObject createLocalObject(String requestId) {
+		QuoteRequestObject newObject;
 
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		newObject = new CompositeObject(request.emptyObject);
-		newObject.change = CompositeObjectStub.Change.CREATED;
+		newObject = new QuoteRequestObject(request.emptyObject);
+		newObject.change = QuoteRequestObjectStub.Change.CREATED;
 		newObject.id = idCounter+"";
 		idCounter++;
 
@@ -272,17 +272,17 @@ public class QuoteRequestWorkSpace {
 		return newObject;
 	}
 
-	public CompositeObject updateObject(String requestId, CompositeObject alteredObject) {
+	public QuoteRequestObject updateObject(String requestId, QuoteRequestObject alteredObject) {
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		ListIterator<CompositeObject> iterator = this.alteredObjects.listIterator();
+		ListIterator<QuoteRequestObject> iterator = this.alteredObjects.listIterator();
 
 		while(iterator.hasNext()) {
-			CompositeObject object = iterator.next();
+			QuoteRequestObject object = iterator.next();
 			if(object.id.equalsIgnoreCase(alteredObject.id)) {
-				if (CompositeObjectStub.Change.NONE.equals(alteredObject.change))
-					alteredObject.change = CompositeObjectStub.Change.MODIFIED;
+				if (QuoteRequestObjectStub.Change.NONE.equals(alteredObject.change))
+					alteredObject.change = QuoteRequestObjectStub.Change.MODIFIED;
 				iterator.remove();
 				iterator.add(alteredObject);
 				return alteredObject;
@@ -292,13 +292,13 @@ public class QuoteRequestWorkSpace {
 		return null;
 	}
 
-	public CompositeObjectStub deleteObject(String requestId, String objectId) {
+	public QuoteRequestObjectStub deleteObject(String requestId, String objectId) {
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		for( CompositeObject object : alteredObjects ) {
+		for( QuoteRequestObject object : alteredObjects ) {
 			if(object.id.equalsIgnoreCase(objectId)) {
-				object.change = CompositeObjectStub.Change.DELETED;
+				object.change = QuoteRequestObjectStub.Change.DELETED;
 				return object;
 			}
 		}
