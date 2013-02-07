@@ -65,13 +65,27 @@ public class CompositeFieldContainer
 	{
 		int i;
 
-		if ( (orig == null) || (orig.subLineData == null) )
+		if ( orig == null )
+		{
+			this.id = null;
+			this.processId = null;
+			this.permissions = null;
 			this.subLineData = null;
+		}
 		else
 		{
-			this.subLineData = new SubLineFieldContainer[orig.subLineData.length];
-			for ( i = 0; i < this.subLineData.length; i++ )
-				this.subLineData[i] = (orig.subLineData[i] == null ? null : new SubLineFieldContainer(orig.subLineData[i]));
+			this.id = orig.id;
+			this.processId = orig.processId;
+			this.permissions = orig.permissions;
+
+			if ( orig.subLineData == null )
+				this.subLineData = null;
+			else
+			{
+				this.subLineData = new SubLineFieldContainer[orig.subLineData.length];
+				for ( i = 0; i < this.subLineData.length; i++ )
+					this.subLineData[i] = (orig.subLineData[i] == null ? null : new SubLineFieldContainer(orig.subLineData[i]));
+			}
 		}
 	}
 }
