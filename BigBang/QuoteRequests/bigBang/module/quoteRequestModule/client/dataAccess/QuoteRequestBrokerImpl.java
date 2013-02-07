@@ -139,10 +139,30 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
-	public void getEmptyQuoteRequest(String clientId,
-			ResponseHandler<QuoteRequest> handler) {
-		// TODO Auto-generated method stub
-		
+	public void getEmptyQuoteRequest(String clientId, final ResponseHandler<QuoteRequest> handler) {
+		this.service.getEmptyRequest(clientId, new BigBangAsyncCallback<QuoteRequest>() {
+
+			@Override
+			public void onResponseSuccess(QuoteRequest result) {
+				workspace.loadRequest(result);
+
+				incrementDataVersion();
+				for(DataBrokerClient<QuoteRequest> bc : getClients()){
+					((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
+					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+				requiresRefresh = false;
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the empty quote request")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 	@Override
