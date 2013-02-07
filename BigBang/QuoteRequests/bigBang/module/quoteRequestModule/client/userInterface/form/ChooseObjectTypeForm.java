@@ -9,7 +9,7 @@ public class ChooseObjectTypeForm extends FormView<String>{
 	protected ExpandableListBoxFormField objectType;
 	
 	public ChooseObjectTypeForm() {
-		addSection("Escolha do tipo de Unidade de Risco");
+		addSection("Tipo de Unidade de Risco");
 		
 		objectType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OBJECT_TYPE, "Tipo de Unidade de Risco");
 		

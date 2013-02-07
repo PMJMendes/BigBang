@@ -43,6 +43,7 @@ public class ChooseObjectTypePanel extends PopupPanel implements HasValue<String
 		};
 
 		form = new ChooseObjectTypeForm();
+		wrapper.add(toolbar);
 		wrapper.add(form.getNonScrollableContent());
 	}
 

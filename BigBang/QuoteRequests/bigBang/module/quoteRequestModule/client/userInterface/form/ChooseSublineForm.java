@@ -15,7 +15,7 @@ public class ChooseSublineForm extends FormView<String>{
 	protected ExpandableListBoxFormField subLine;
 
 	public ChooseSublineForm() {
-		addSection("Escolha da Modalidade");
+		addSection("Modalidade");
 
 		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
 		category.setMandatory(true);
