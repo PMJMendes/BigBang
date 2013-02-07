@@ -19,6 +19,7 @@ import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -216,6 +217,13 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				super.onResponseFailure(caught);			
 			}
 		});
+	}
+
+	@Override
+	public void createQuoteRequest(QuoteRequest request,
+			ResponseHandler<QuoteRequest> handler) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
