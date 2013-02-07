@@ -15,6 +15,7 @@ public class QuoteRequestData
 
 	public UUID mid;
 	
+	public UUID midClient;
 	public String mstrNumber;
 	public UUID midMediator;
 	public String mstrNotes;
