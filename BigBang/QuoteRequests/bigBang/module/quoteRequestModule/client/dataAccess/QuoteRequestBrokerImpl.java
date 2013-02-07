@@ -167,21 +167,72 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 	@Override
 	public QuoteRequest getRequestHeader(String requestId) {
-		// TODO Auto-generated method stub
-		return null;
+		return workspace.getRequestHeader(requestId);
 	}
 
 	@Override
 	public QuoteRequest updateRequestHeader(QuoteRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		return workspace.updateRequestHeader(request);
 	}
 
 	@Override
 	public void persistQuoteRequest(String requestId,
-			ResponseHandler<QuoteRequest> handler) {
-		// TODO Auto-generated method stub
-		
+			final ResponseHandler<QuoteRequest> handler) {
+		QuoteRequest request;
+
+		request = workspace.getWholeRequest(requestId);
+
+		if(request != null) {
+			if ( request.id == null ) {
+				clientBroker.createQuoteRequest(request, new ResponseHandler<QuoteRequest>() {
+
+					@Override
+					public void onResponse(QuoteRequest response) {
+						workspace.loadRequest(response);
+
+						incrementDataVersion();
+						for(DataBrokerClient<QuoteRequest> bc : getClients()) {
+							((QuoteRequestDataBrokerClient) bc).addQuoteRequest(response);
+							((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
+						}
+						handler.onResponse(response);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						handler.onError(errors);
+					}
+				});
+			} else {
+				this.service.editRequest(request, new BigBangAsyncCallback<QuoteRequest>() {
+	
+					@Override
+					public void onResponseSuccess(QuoteRequest result) {
+						workspace.loadRequest(result);
+
+						incrementDataVersion();
+						for(DataBrokerClient<QuoteRequest> bc : getClients()){
+							((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
+							((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
+						}
+						handler.onResponse(result);
+						requiresRefresh = false;
+					}
+	
+					@Override
+					public void onResponseFailure(Throwable caught) {
+						handler.onError(new String[]{
+								"Could not update the quote request"	
+						});
+						super.onResponseFailure(caught);
+					}
+				});
+			}
+		} else {
+			handler.onError(new String[]{
+					"Could not update the quote request"	
+			});
+		}
 	}
 
 	@Override
