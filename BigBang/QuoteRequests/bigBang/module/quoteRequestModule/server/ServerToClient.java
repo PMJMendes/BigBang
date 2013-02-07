@@ -65,7 +65,6 @@ public class ServerToClient
 		mobjDest.isOpen = lobjProc.IsRunning();
 	}
 
-	private com.premiumminds.BigBang.Jewel.Objects.QuoteRequest mobjRequest;
 	private QuoteRequestSubLine mobjQRSubLine;
 
 	protected class FieldContainerBuilder
@@ -226,27 +225,15 @@ public class ServerToClient
 			return this;
 		}
 
-		public ComplexFieldContainerBuilder withSource(QuoteRequestSubLine pobjQRSubLine)
+		public ComplexFieldContainerBuilder withSource(QuoteRequestSubLine pobjQRSubLine, UUID pidObject)
 			throws BigBangException
 		{
 			mbIsEmpty = false;
-			mbForObject = false;
-			midObject = null;
+			mbForObject = (pidObject != null);
+			midObject = pidObject;
 			midExerciseType = Constants.ExID_None;
 
 			getLocalBaseBuilder().withSource(pobjQRSubLine);
-			return this;
-		}
-
-		public ComplexFieldContainerBuilder withSource(com.premiumminds.BigBang.Jewel.Objects.QuoteRequestObject pobjObject)
-			throws BigBangException
-		{
-			mbIsEmpty = false;
-			mbForObject = true;
-			midObject = pobjObject.getKey();
-			midExerciseType = Constants.ExID_None;
-
-//			getBaseBuilder().withSource(pobjObject.GetOwner());
 			return this;
 		}
 
@@ -297,11 +284,11 @@ public class ServerToClient
 	protected class StructuredBuilder
 		extends bigBang.module.insurancePolicyModule.server.ServerToClient.StructuredBuilder
 	{
-		public StructuredBuilder withSource(QuoteRequestSubLine pobjQRSubLine)
+		public StructuredBuilder withSource(QuoteRequestSubLine pobjQRSubLine, UUID pidObject)
 			throws BigBangException
 		{
 			getLocalComplexBuilder()
-					.withSource(pobjQRSubLine);
+					.withSource(pobjQRSubLine, pidObject);
 
 			return this;
 		}
@@ -371,11 +358,11 @@ public class ServerToClient
 	{
 		private CompositeFieldContainer.SubLineFieldContainer mobjContainer;
 
-		public SubLineFieldContainerBuilder withSource(QuoteRequestSubLine pobjQRSubLine)
+		public SubLineFieldContainerBuilder withSource(QuoteRequestSubLine pobjQRSubLine, UUID pidObject)
 			throws BigBangException
 		{
 			getStructuredBuilder()
-					.withSource(pobjQRSubLine);
+					.withSource(pobjQRSubLine, pidObject);
 			return this;
 		}
 
@@ -411,23 +398,24 @@ public class ServerToClient
 	{
 		private CompositeFieldContainer mobjContainer;
 		private QuoteRequestSubLine[] marrSubLines;
+		private UUID midObject;
 
 		public CompositeBuilder withSource()
 			throws BigBangException
 		{
-			mobjRequest = null;
 			marrSubLines = new QuoteRequestSubLine[0];
+			midObject = null;
 			return this;
 		}
 
 		public CompositeBuilder withSource(com.premiumminds.BigBang.Jewel.Objects.QuoteRequest pobjRequest)
 			throws BigBangException
 		{
-			mobjRequest = pobjRequest;
+			midObject = null;
 
 			try
 			{
-				marrSubLines = mobjRequest.GetCurrentSubLines();
+				marrSubLines = pobjRequest.GetCurrentSubLines();
 			}
 			catch (Throwable e)
 			{
@@ -438,7 +426,19 @@ public class ServerToClient
 		}
 
 		public CompositeBuilder withSource(com.premiumminds.BigBang.Jewel.Objects.QuoteRequestObject pobjObject)
+			throws BigBangException
 		{
+			midObject = pobjObject.getKey();
+
+			try
+			{
+				marrSubLines = pobjObject.GetOwner().GetCurrentSubLines();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
 			return this;
 		}
 
@@ -449,11 +449,6 @@ public class ServerToClient
 		}
 
 		public CompositeBuilder build()
-		{
-			return this;
-		}
-
-		public CompositeBuilder fill()
 			throws BigBangException
 		{
 			SubLineFieldContainerBuilder lobjAux;
@@ -465,7 +460,7 @@ public class ServerToClient
 			for ( i = 0; i < marrSubLines.length; i++ )
 			{
 				mobjContainer.subLineData[i] = lobjAux
-						.withSource(marrSubLines[i])
+						.withSource(marrSubLines[i], midObject)
 						.withContainer(new CompositeFieldContainer.SubLineFieldContainer())
 						.build()
 						.result();
@@ -491,37 +486,18 @@ public class ServerToClient
 
 	private class ObjectBuilder
 	{
-		private boolean mbIsEmpty;
 		private com.premiumminds.BigBang.Jewel.Objects.QuoteRequestObject mobjObject;
 		private QuoteRequestObject mobjOutObject;
-
-		public ObjectBuilder withSource()
-			throws BigBangException
-		{
-			mbIsEmpty = true;
-			mobjObject = null;
-
-			mobjOutObject = (QuoteRequestObject)getCompositeBuilder()
-					.withSource()
-					.withContainer(new QuoteRequestObject())
-					.build()
-					.fill()
-					.result();
-
-			return this;
-		}
 
 		public ObjectBuilder withSource(com.premiumminds.BigBang.Jewel.Objects.QuoteRequestObject pobjObject)
 			throws BigBangException
 		{
-			mbIsEmpty = false;
 			mobjObject = pobjObject;
 
 			mobjOutObject = (QuoteRequestObject)getCompositeBuilder()
 					.withSource(pobjObject)
 					.withContainer(new QuoteRequestObject())
 					.build()
-					.fill()
 					.result();
 
 			return this;
@@ -530,9 +506,7 @@ public class ServerToClient
 		public ObjectBuilder build()
 			throws BigBangException
 		{
-			if ( !mbIsEmpty )
-				buildHeader();
-
+			buildHeader();
 			return this;
 		}
 
@@ -662,7 +636,6 @@ public class ServerToClient
 			mobjContainer = (GlobalFieldContainer)getCompositeBuilder()
 					.withContainer(quoteRequest)
 					.build()
-					.fill()
 					.result();
 
 			return this;
@@ -676,6 +649,7 @@ public class ServerToClient
 
 	private class RequestBuilder
 	{
+		private com.premiumminds.BigBang.Jewel.Objects.QuoteRequest mobjRequest;
 		private boolean mbIsEmpty;
 		private Client mobjClient;
 		private QuoteRequest mobjOutRequest;
@@ -683,6 +657,7 @@ public class ServerToClient
 		public RequestBuilder withSource(Client pobjClient)
 			throws BigBangException
 		{
+			mobjRequest = null;
 			mbIsEmpty = true;
 			mobjClient = pobjClient;
 
@@ -697,6 +672,7 @@ public class ServerToClient
 		public RequestBuilder withSource(com.premiumminds.BigBang.Jewel.Objects.QuoteRequest pobjRequest)
 			throws BigBangException
 		{
+			mobjRequest = pobjRequest;
 			mbIsEmpty = false;
 			mobjClient = null;
 

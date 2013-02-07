@@ -1,15 +1,13 @@
 package bigBang.module.quoteRequestModule.client.dataAccess;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
 import bigBang.definitions.client.dataAccess.QuoteRequestDataBrokerClient;
-import bigBang.definitions.client.dataAccess.QuoteRequestObjectDataBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -26,7 +24,11 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.OperationWasExecutedEvent;
+import bigBang.module.quoteRequestModule.client.QuoteRequestWorkSpace;
+import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectService;
+import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectServiceAsync;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestServiceAsync;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSearchParameter;
@@ -37,15 +39,22 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 	protected QuoteRequestServiceAsync service;
 	protected SearchDataBroker<QuoteRequestStub> searchBroker;
-	protected Map<String, String> requestsInScratchPad;
-	protected QuoteRequestObjectDataBroker requestObjectsBroker;
+	protected ClientProcessBroker clientBroker;
+	protected QuoteRequestObjectServiceAsync requestObjectService;
+	protected QuoteRequestWorkSpace workspace;
+	public boolean requiresRefresh;
 
-	public QuoteRequestBrokerImpl(QuoteRequestObjectDataBroker requestObjectsBroker){
-		this.service = QuoteRequestService.Util.getInstance();
+	public QuoteRequestBrokerImpl(){
+		this(QuoteRequestService.Util.getInstance(), QuoteRequestObjectService.Util.getInstance());
+	}
+
+	public QuoteRequestBrokerImpl(QuoteRequestServiceAsync service, QuoteRequestObjectServiceAsync requestObjectService){
+		this.service = service;
+		this.requestObjectService = requestObjectService;
+		this.clientBroker = (ClientProcessBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CLIENT);
 		this.dataElementId = BigBangConstants.EntityIds.QUOTE_REQUEST;
 		this.searchBroker = new QuoteRequestSearchDataBroker(this.service);
-		this.requestsInScratchPad = new HashMap<String, String>();
-		this.requestObjectsBroker = requestObjectsBroker;
+		this.workspace = new QuoteRequestWorkSpace();
 	}
 
 	@Override
@@ -104,8 +113,29 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 	@Override
 	public void getQuoteRequest(String id, final ResponseHandler<QuoteRequest> handler) {
-		// TODO Auto-generated method stub
-		
+		this.service.getRequest(id, new BigBangAsyncCallback<QuoteRequest>() {
+
+			@Override
+			public void onResponseSuccess(QuoteRequest result) {
+				workspace.loadRequest(result);
+
+				incrementDataVersion();
+				for(DataBrokerClient<QuoteRequest> bc : getClients()){
+					((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
+					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+				requiresRefresh = false;
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the requested quote request")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 	@Override

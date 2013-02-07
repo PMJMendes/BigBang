@@ -200,7 +200,7 @@ public class QuoteRequestModule implements Module {
 		QuoteRequestInsuredObjectBrokerImpl requestObjectsBroker = new QuoteRequestInsuredObjectBrokerImpl();
 		
 		return new DataBroker<?>[]{
-				new QuoteRequestBrokerImpl(requestObjectsBroker),
+				new QuoteRequestBrokerImpl(),
 				new NegotiationBrokerImpl(),
 				requestObjectsBroker
 		};
