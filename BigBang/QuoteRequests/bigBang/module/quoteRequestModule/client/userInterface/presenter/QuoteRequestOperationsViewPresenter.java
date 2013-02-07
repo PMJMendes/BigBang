@@ -52,13 +52,15 @@ public class QuoteRequestOperationsViewPresenter implements ViewPresenter {
 					present("QUOTE_REQUEST_SEARCH", parameters, true);
 				}else if(display.equalsIgnoreCase("viewinsuredobject")){
 					present("QUOTE_REQUEST_INSURED_OBJECT", parameters);
-				}else if(display.equalsIgnoreCase("sendmessage")){
-					present("QUOTE_REQUEST_CREATE_INFO_OR_DOCUMENT_REQUEST", parameters);
-				}else if(display.equalsIgnoreCase("viewinforequest")){
-					present("QUOTE_REQUEST_VIEW_INFO_OR_DOCUMENT_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("history")){
 					present("HISTORY", parameters, true);
-				} else {
+				} else if(display.equalsIgnoreCase("sendmessage")){
+					present("QUOTE_REQUEST_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("receivemessage")){
+					present("QUOTE_REQUEST_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("conversation")){
+					present("QUOTE_REQUEST_CONVERSATION", parameters);
+				}else {
 					goToDefault();
 				}
 			}

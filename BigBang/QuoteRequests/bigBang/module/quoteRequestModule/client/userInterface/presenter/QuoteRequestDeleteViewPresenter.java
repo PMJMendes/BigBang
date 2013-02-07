@@ -119,22 +119,22 @@ public class QuoteRequestDeleteViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(QuoteRequest response) {
-				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST)){
-					onDeleteFailed();
-				}else{
-					broker.deleteQuoteRequest(response.id, view.getForm().getInfo(), new ResponseHandler<String>() {
-
-						@Override
-						public void onResponse(String response) {
-							onDeleteSuccess();
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onDeleteFailed();
-						}
-					});
-				}
+//				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST)){
+//					onDeleteFailed();
+//				}else{
+//					broker.deleteQuoteRequest(response.id, view.getForm().getInfo(), new ResponseHandler<String>() {
+//
+//						@Override
+//						public void onResponse(String response) {
+//							onDeleteSuccess();
+//						}
+//
+//						@Override
+//						public void onError(Collection<ResponseError> errors) {
+//							onDeleteFailed();
+//						}
+//					});
+//				}
 			}
 
 			@Override

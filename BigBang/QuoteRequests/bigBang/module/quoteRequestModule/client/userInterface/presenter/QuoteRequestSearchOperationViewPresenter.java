@@ -6,36 +6,29 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangProcess;
-import bigBang.definitions.shared.Contact;
-import bigBang.definitions.shared.Document;
-import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.QuoteRequestStub;
-import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.AsyncRequest;
-import bigBang.library.client.event.AsyncRequestHandler;
-import bigBang.library.client.event.FiresAsyncRequests;
 import bigBang.library.client.event.NewNotificationEvent;
-import bigBang.library.client.event.SelectionChangedEvent;
-import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearchPanel;
 
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -43,52 +36,87 @@ import com.google.gwt.user.client.ui.Widget;
 public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	public static enum Action {
-		EDIT,
-		SAVE,
-		CANCEL,
-		DELETE,
-		CLOSE,
-		CREATE_INSURED_OBJECT, CREATE_PERSON_INSURED_OBJECT, CREATE_COMPANY_INSURED_OBJECT, CREATE_EQUIPMENT_INSURED_OBJECT, CREATE_LOCATION_INSURED_OBJECT, CREATE_ANIMAL_INSURED_OBJECT,
-		CREATE_MANAGER_TRANSFER,
-		CREATE_INFO_OR_DOCUMENT_REQUEST,
+		SAVE, 
+		RECEIVE_MESSAGE, 
+		CLOSE, 
+		MANAGER_TRANSFER, 
+		CREATE_NEGOTIATION,
+		DELETE, SEND_MESSAGE, 
+		SEND_RESPONSE_TO_CLIENT, 
+		CANCEL, 
+		EDIT, QUOTE_REQUEST_SELECTED, NEW_OBJECT, NEW_SUBLINE, NEW_OBJECT_CHOSEN
 
-		ON_NEW_RESULTS
 	}
 
 	public interface Display {
-		HasValueSelectables<QuoteRequestStub> getList();
-		HasEditableValue<QuoteRequest> getForm();
-		FiresAsyncRequests getFormAsFiresAsyncRequests();
-		ValueSelectable<QuoteRequestStub> addQuoteRequestListEntry(QuoteRequestStub quoteRequest);
-		
-		//Permissions
-		void clearAllowedPermissions();
-		void allowEdit(boolean allow);
-		void allowDelete(boolean allow);
-		void allowClose(boolean allow);
-		void allowCreateInsuredObject(boolean allow);
-		void allowCreateManagerTransfer(boolean allow);
-		void allowCreateInfoorDocumentRequest(boolean allow);
 
-		//Children lists
-		HasValueSelectables<Contact> getContactsList();
-		HasValueSelectables<Document> getDocumentsList();
-		HasValueSelectables<QuoteRequestObjectStub> getObjectsList();
-		HasValueSelectables<BigBangProcess> getSubProcessesList();
-		HasValueSelectables<HistoryItemStub> getHistoryList();
+		void doSearch(boolean b);
 
-		void setSaveModeEnabled(boolean enabled);
-		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
+
+		void registerActionHandler(
+				ActionInvokedEventHandler<Action> actionInvokedEventHandler);
+
+		void clear();
+
+		void setToolbarEditMode(boolean b);
+
+		void allowEdit(boolean b);
+
+		HasValue<QuoteRequestStub> getQuoteRequestSelector();
+
+		void clearObjectsList();
+
+		HasValue<String> getQuoteRequestNotesForm();
+
+		void setReadOnly(boolean b);
+
+		HasValueSelectables<QuoteRequestStub> getList();
+
+		void addEntryToList(QuoteRequestSearchPanel.Entry entry);
+
+		void removeElementFromList(ValueSelectable<QuoteRequestStub> stub);
+
+		HasValueSelectables<QuoteRequestObjectStub> getInsuredObjectsList();
+
+		HasEditableValue<QuoteRequest> getQuoteRequestHeaderForm();
+
+		void showObjectForm(boolean b);
+
+		void showQuoteRequestForm(boolean b);
+
+		void setNotesReadOnly(boolean b);
+
+		void setQuoteRequestEntrySelected(boolean b);
+
+		void allowSendMessage(boolean hasPermission);
+
+		void allowReceiveMessage(boolean hasPermission);
+
+		void allowDelete(boolean hasPermission);
+
+		HasEditableValue<QuoteRequestObject> getObjectForm();
+
+		void clearQuoteRequestSelection();
+
+		void dealWithObject(QuoteRequestObject info);
+
+		void setOwner(QuoteRequest object);
+
+		void focusObjectForm();
+
 	}
 
 	protected QuoteRequestBroker broker;
 	protected Display view;
 	protected boolean bound = false;
+	private String quoteRequestId;
+	protected boolean isEditModeEnabled;
+	private boolean onQuoteRequest;
 
 	public QuoteRequestSearchOperationViewPresenter(View view) {
-		setView(view);
-		broker = (QuoteRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.QUOTE_REQUEST);
+		this.broker = (QuoteRequestBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.QUOTE_REQUEST);
+		setView((UIObject)view);
 	}
 
 	@Override
@@ -105,444 +133,334 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String quoteRequestId = parameterHolder.getParameter("quoterequestid");
+		view.clear();
 
-		if(quoteRequestId == null || quoteRequestId.isEmpty()) {
-			clearView();
-		}else{
-			showQuoteRequest(quoteRequestId);
+		quoteRequestId = parameterHolder.getParameter("quoteRequestId");
+
+		if(quoteRequestId != null){
+			if(quoteRequestId.equalsIgnoreCase("new")){
+				String clientId = parameterHolder.getParameter("clientid");
+				broker.getEmptyQuoteRequest(clientId, new ResponseHandler<QuoteRequest>() {
+
+					@Override
+					public void onResponse(QuoteRequest response) {
+						isEditModeEnabled = true;
+						view.setToolbarEditMode(true);
+						view.allowEdit(true);
+						view.getQuoteRequestSelector().setValue(response);
+						view.setOwner(null);
+						view.clearObjectsList();
+						view.getQuoteRequestNotesForm().setValue(response.notes);
+						fillQuoteRequest();
+						view.setReadOnly(false);
+						ensureListedAndSelected(response);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar uma nova Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
+					}
+				});
+			}
+			else{
+				broker.getQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {
+
+					@Override
+					public void onResponse(QuoteRequest response) {
+						isEditModeEnabled = false;
+						view.setOwner(response);
+						view.setToolbarEditMode(false);
+						view.getQuoteRequestSelector().setValue(response);
+						setPermissions(response);
+						view.getQuoteRequestNotesForm().setValue(response.notes);
+						fillQuoteRequest();
+						view.setReadOnly(true);		
+						ensureListedAndSelected(response);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
+					}
+				});
+			}
 		}
+		else{
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));					
+		}
+
+	}
+
+	protected void setPermissions(QuoteRequest response) {
+		view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.UPDATE_QUOTE_REQUEST));
+		view.allowSendMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CONVERSATION));
+		view.allowReceiveMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CONVERSATION));
+		view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST));
+	}
+
+	protected void ensureListedAndSelected(QuoteRequest response) {
+		boolean found = false;
+		for(ValueSelectable<QuoteRequestStub> stub : view.getList().getAll()){
+			if(stub.getValue().id.equals(response.id)){
+				found  = true;
+				stub.setSelected(true, false);
+			}
+			else{
+				stub.setSelected(false,false);
+			}
+		}
+		if(!found){
+			QuoteRequestSearchPanel.Entry entry = new QuoteRequestSearchPanel.Entry(response);
+			view.addEntryToList(entry);
+		}
+
+		if(view.getList().getAll().size() > 0 && !quoteRequestId.equals("new")){
+			removeNewListEntry();
+		}
+
+	}
+
+	private void removeNewListEntry() {
+		for(ValueSelectable<QuoteRequestStub> stub : view.getList().getAll()){
+			if(stub.getValue().id.equalsIgnoreCase("new")){
+				view.removeElementFromList(stub);
+				return;
+			}
+		}		
+	}
+
+	protected void fillQuoteRequest() {
+		QuoteRequest quote = broker.getRequestHeader(quoteRequestId);
+		view.getInsuredObjectsList().clearSelection();
+		view.getQuoteRequestHeaderForm().setValue(quote);
+		view.showObjectForm(false);
+		view.showQuoteRequestForm(true);
+		view.setNotesReadOnly(false);
+		view.setQuoteRequestEntrySelected(true);
+		
+		onQuoteRequest = true;
+		view.getQuoteRequestHeaderForm().validate();
 	}
 
 	public void bind() {
-		if(bound)
+		if(this.bound)
 			return;
 
-		view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				ValueSelectable<?> selected = (ValueSelectable<?>) event.getFirstSelected();
-				QuoteRequestStub quoteRequest = (QuoteRequestStub) (selected == null ? null : selected.getValue());
-
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				if(quoteRequest == null) {
-					item.removeParameter("quoterequestid");
-				}else{
-					item.setParameter("quoterequestid", quoteRequest.id);
-				}
-				NavigationHistoryManager.getInstance().go(item);
-			}
-		});
-
-		view.registerActionHandler(new ActionInvokedEventHandler<QuoteRequestSearchOperationViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<Action>(){
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
-				switch (action.getAction()) {
-				case EDIT:
-					onEdit();
-					break;
-				case SAVE:
-					onSave();
-					break;
+				switch(action.getAction()){
 				case CANCEL:
 					onCancel();
-					break;
-				case DELETE:
-					onDelete();
 					break;
 				case CLOSE:
 					onClose();
 					break;
-				case CREATE_INSURED_OBJECT:
+				case CREATE_NEGOTIATION:
+					onCreateNegotiation();
 					break;
-				case CREATE_PERSON_INSURED_OBJECT:
-					onCreateInsuredObject(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PERSON);
+				case DELETE:
+					onDelete();
 					break;
-				case CREATE_COMPANY_INSURED_OBJECT:
-					onCreateInsuredObject(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_COMPANY);
+				case EDIT:
+					onEdit();
 					break;
-				case CREATE_EQUIPMENT_INSURED_OBJECT:
-					onCreateInsuredObject(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_EQUIPMENT);
+				case MANAGER_TRANSFER:
+					onManagerTransfer();
 					break;
-				case CREATE_LOCATION_INSURED_OBJECT:
-					onCreateInsuredObject(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PLACE);
+				case RECEIVE_MESSAGE:
+					onReceiveMessage();
 					break;
-				case CREATE_ANIMAL_INSURED_OBJECT:
-					onCreateInsuredObject(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_ANIMAL);
+				case SAVE:
+					onSave();
 					break;
-				case CREATE_MANAGER_TRANSFER:
-					onCreateManagerTransfer();
+				case SEND_MESSAGE:
+					onSendMessage();
 					break;
-				case CREATE_INFO_OR_DOCUMENT_REQUEST:
-					onCreateInfoOrDocumentRequest();
+				case SEND_RESPONSE_TO_CLIENT:
+					onSendResponseToClient();
 					break;
-				case ON_NEW_RESULTS:
-					onNewResults();
+				case QUOTE_REQUEST_SELECTED:
+					onQuoteRequestSelected();
 					break;
-				default:
-					break;
+				case NEW_OBJECT:
+					onNewObject();
 				}
 			}
+
 		});
+	}
 
-		view.getFormAsFiresAsyncRequests().registerRequestHandler(new AsyncRequestHandler() {
 
-			@Override
-			public void onRequest(final AsyncRequest<Object> request) {
-				String subLineId = request.getParameters().getParameter("subLineId");
-				String operation = request.getParameters().getParameter("operation");
-
-				if(operation.equalsIgnoreCase("getsublinedefinition")){
-					broker.addSubLine(view.getForm().getValue().id, subLineId, new ResponseHandler<QuoteRequest.RequestSubLine>() {
-
-						@Override
-						public void onResponse(RequestSubLine response) {
-							request.onResponse(response);
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onGetSubLineDefinitionFailed();
-							request.onError(null);
-						}
-					});
-				}else if(operation.equalsIgnoreCase("deletesubline")){
-					broker.deleteSubLine(subLineId, new ResponseHandler<Void>() {
-
-						@Override
-						public void onResponse(Void response) {
-							request.onResponse(response);
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							request.onError(null);
-						}
-					});
-				}
-			}
-		});
-
-		SelectionChangedEventHandler selectionChangedHandler = new SelectionChangedEventHandler() {
-
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				ValueSelectable<?> selected = (ValueSelectable<?>) event.getFirstSelected();
-				if(selected != null) {				
-					if(event.getSource() == view.getObjectsList()){
-						QuoteRequestObjectStub object = (QuoteRequestObjectStub) selected.getValue();
-						showObject(object.id);
-					}else if(event.getSource() == view.getSubProcessesList()) {
-						BigBangProcess process = (BigBangProcess) selected.getValue();
-						showSubProcess(process);
-					}else if(event.getSource() == view.getHistoryList()) {
-						HistoryItemStub historyItem = (HistoryItemStub) selected.getValue();
-						showHistory(historyItem.id);
-					}
-				}
-			}
-		};
+	protected void onNewObject() {
+		if(onQuoteRequest){
+			view.clearQuoteRequestSelection();
+		}
+		saveInternally();
 		
-		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				@SuppressWarnings("unchecked")
-				ValueSelectable<Contact> selected = (ValueSelectable<Contact>) event.getFirstSelected();
-				Contact item = selected == null ? null : selected.getValue();
-				String itemId = item == null ? null : item.id;
-				itemId = itemId == null ? new String() : itemId;
-
-				if(!itemId.isEmpty()){
-					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-					navItem.setParameter("show", "contactmanagement");
-					navItem.setParameter("ownerid", view.getForm().getValue().id);
-					navItem.setParameter("contactid", itemId);
-					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
-					NavigationHistoryManager.getInstance().go(navItem);
-				}
-			}
-		});
-		view.getDocumentsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				@SuppressWarnings("unchecked")
-				ValueSelectable<Document> selected = (ValueSelectable<Document>) event.getFirstSelected();
-				Document item = selected == null ? null : selected.getValue();
-				String itemId = item == null ? null : item.id;
-				itemId = itemId == null ? new String() : itemId;
-
-				if(!itemId.isEmpty()){
-					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-					navItem.setParameter("show", "documentmanagement");
-					navItem.setParameter("ownerid", item.ownerId);
-					navItem.setParameter("documentid", itemId);
-					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
-					NavigationHistoryManager.getInstance().go(navItem);
-				}
-			}
-		});
-
-		view.getObjectsList().addSelectionChangedEventHandler(selectionChangedHandler);
-		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
-		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
-
-		bound = true;
+		fillObject(null);
+		onQuoteRequest = false;
+		
 	}
 
-	protected void clearView(){
-		view.clearAllowedPermissions();
-		view.getForm().setValue(null);
-		view.getForm().setReadOnly(true);
-		view.getList().clearSelection();
-	}
+	private void fillObject(String id) {
 
-	protected void showQuoteRequest(String quoteRequestId) {
-		if(broker.isTemp(quoteRequestId)){
-			showQuoteRequestInPad(quoteRequestId);
-		}else{
-			broker.getQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {
-
+		if(id == null){
+			QuoteRequestObject newQuoteRequestObject = broker.createCompositeObject(quoteRequestId);
+			newQuoteRequestObject.unitIdentification = "Nova Unidade de Risco";
+			view.getObjectForm().setValue(newQuoteRequestObject);
+			view.showObjectForm(true);
+			view.showQuoteRequestForm(false);
+			view.dealWithObject(newQuoteRequestObject);
+			
+			view.focusObjectForm();
+			view.getObjectForm().validate();
+		}
+		else{
+			broker.getCompositeObject(quoteRequestId, id, new ResponseHandler<QuoteRequestObject>() {
+				
 				@Override
-				public void onResponse(QuoteRequest response) {
-					view.clearAllowedPermissions();
-					view.getForm().setReadOnly(true);
-					view.setSaveModeEnabled(false);
-
-					//TODO PERMISSIONS
-					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.UPDATE_QUOTE_REQUEST));
-					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST));
-					view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST));
-					view.allowCreateInsuredObject(false);
-					view.allowCreateManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER));
-					//TODO REQUESTS view.allowCreateInfoorDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_INFO_OR_DOCUMENT_REQUEST));
-
-					view.getForm().setValue(response);
+				public void onResponse(QuoteRequestObject response) {
+					view.getObjectForm().setValue(response);
+					view.showObjectForm(true);
+					view.showQuoteRequestForm(false);
+					view.dealWithObject(response);
+					view.setNotesReadOnly(true);
 					
-					ensureListedAndSelected(response);
+					view.getObjectForm().validate();
 				}
-
+				
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					onGetQuoteRequestFailed();
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Unidade de Risco."), TYPE.ALERT_NOTIFICATION));					
+
 				}
 			});
 		}
+		
 	}
 
-	protected void showQuoteRequestInPad(final String requestId) {
-		broker.getQuoteRequest(requestId, new ResponseHandler<QuoteRequest>() {
-
-			@Override
-			public void onResponse(QuoteRequest response) {
-				view.clearAllowedPermissions();
-				view.allowEdit(true);
-				view.allowCreateInsuredObject(true);
-				view.setSaveModeEnabled(true);
-
-				//TODO
-				view.getForm().setValue(response);
-				view.getForm().setReadOnly(false);
-				
-				ensureListedAndSelected(response);
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				broker.discardTemp(requestId);
-				onOpenRequestResourceFailed();
-			}
-		});
+	protected void onQuoteRequestSelected() {
+		if(onQuoteRequest)
+			return;
+		
+		saveInternally();
+		fillQuoteRequest();
 	}
 
-	protected void onEdit() {
-		broker.openRequestResource(view.getForm().getValue().id, new ResponseHandler<QuoteRequest>() {
+	protected void onCancel() {
+		NavigationHistoryManager.getInstance().reload(); //TODO REGRESSAR A CLEINTE QUANDO CONSULTA É NOVA??
+	}
 
-			@Override
-			public void onResponse(QuoteRequest response) {
-				NavigationHistoryManager.getInstance().reload();
-			}
+	protected void onSendResponseToClient() {
+		// TODO Auto-generated method stub
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onOpenRequestResourceFailed();
-			}
-		});
+	}
+
+	protected void onSendMessage() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "sendmessage");
+		item.setParameter("ownerid", quoteRequestId);
+		NavigationHistoryManager.getInstance().go(item);
+
 	}
 
 	protected void onSave() {
-		broker.commitRequest(view.getForm().getInfo(), new ResponseHandler<QuoteRequest>() {
-
-			@Override
-			public void onResponse(QuoteRequest response) {
-				onSaveSuccess();
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onSaveFailed();
-			}
-		});
-	}
-
-	protected void saveWorkState(){
-		QuoteRequest request = view.getForm().getValue();
-		if(request != null && broker.isTemp(request.id)) {
-			broker.updateQuoteRequest(view.getForm().getInfo(), new ResponseHandler<QuoteRequest>() {
-
+		saveInternally();
+		broker.updateCompositeObject(quoteRequestId, view.getObjectForm().getInfo());
+		//TODO UPDATE SUBLINES
+		if(view.getQuoteRequestHeaderForm().validate()){
+			broker.persistQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {
+				
 				@Override
 				public void onResponse(QuoteRequest response) {
-					return;
+					if(quoteRequestId.equalsIgnoreCase("new")){
+						removeNewListEntry();
+					}
+					onSaveQuoteRequestSuccess(response.id);
+					isEditModeEnabled = false;
 				}
-
+				
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					return;
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar a Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
 				}
 			});
 		}
-	}
-
-	protected void onCancel(){
-		broker.closeRequestResource(view.getForm().getValue().id, new ResponseHandler<Void>() {
-
-			@Override
-			public void onResponse(Void response) {
-				NavigationHistoryManager.getInstance().reload();
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onResponse(null);
-			}
-		});
-	}
-
-	protected void onDelete(){
-		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.setParameter("show", "deleterequest");
-		NavigationHistoryManager.getInstance().go(navItem);
-	}
-
-	protected void onClose(){
-		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.setParameter("show", "closerequest");
-		NavigationHistoryManager.getInstance().go(navItem);
-	}
-
-	protected void onCreateInsuredObject(String objectType){
-		saveWorkState();
-		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.pushIntoStackParameter("display", "viewinsuredobject");
-		navItem.setParameter("objectid", "new");
-		navItem.setParameter("type", objectType);
-		NavigationHistoryManager.getInstance().go(navItem);
-	}
-
-	protected void onCreateManagerTransfer(){
-		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.setParameter("show", "managertransfer");
-		NavigationHistoryManager.getInstance().go(navItem);
-	}
-	
-	protected void onCreateInfoOrDocumentRequest(){
-		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.pushIntoStackParameter("display", "sendmessage");
-		navItem.setParameter("ownerid", view.getForm().getValue().id);
-		NavigationHistoryManager.getInstance().go(navItem);
-	}
-	
-	protected void showObject(String objectId) {
-		saveWorkState();
-		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.pushIntoStackParameter("display", "viewinsuredobject");
-		navItem.setParameter("objectid", objectId);
-		NavigationHistoryManager.getInstance().go(navItem);
-	}
-
-	protected void showSubProcess(BigBangProcess process){
-		saveWorkState();
-		String type = process.dataTypeId;
-
-		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
-			showNegotiation(process.dataId);
-		}		//TODO REQUESTS else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)) {
-		//TODO REQUESTS 	showInfoRequest(process.dataId);
-		//TODO REQUESTS }
-	}
-
-	protected void showNegotiation(String negotiationId) {
-		saveWorkState();
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("negotiation", negotiationId);
-		NavigationHistoryManager.getInstance().go(item);
-	}
-
-	protected void showInfoRequest(String requestId) {
-		saveWorkState();
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("viewinforequest", requestId);
-		NavigationHistoryManager.getInstance().go(item);
-	}
-
-	protected void showHistory(String historyItemId){
-		saveWorkState();
-		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.pushIntoStackParameter("display", "history");
-		navItem.setParameter("historyownerid", view.getForm().getValue().id);
-		navItem.setParameter("historyItemId", historyItemId);
-		NavigationHistoryManager.getInstance().go(navItem);
-	}
-	
-	private void onNewResults(){
-		//TODO
-	}
-
-	protected void onGetQuoteRequestFailed(){
-		saveWorkState();
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível Apresentar a Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("quoterequestid");
-		NavigationHistoryManager.getInstance().go(item);
-	}
-
-	protected void onSaveFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Guardar a Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
-	}
-
-	protected void onSaveSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Consulta de Mercado foi Guardada com Sucesso"), TYPE.TRAY_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
-	}
-
-	protected void onOpenRequestResourceFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível editar a Consulta de Mercado"), TYPE.TRAY_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
-	}
-
-	protected void onGetSubLineDefinitionFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível acrescentar a Modalidade à Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
-	}
-	
-	private void ensureListedAndSelected(QuoteRequest client) {
-		boolean found = false;
-		for(ValueSelectable<QuoteRequestStub> entry : view.getList().getAll()) {
-			QuoteRequestStub entryValue = entry.getValue();
-			if(entryValue.id.equalsIgnoreCase(client.id)) {
-				entry.setSelected(true, false);
-				found = true;
-			}else{
-				entry.setSelected(false, false);
-			}
+		else{
+			onFormValidationFailed();
 		}
+	
+	}
+
+	protected void onSaveQuoteRequestSuccess(String id) {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Consulta de Mercado guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
+
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("quoterequestid",id);
+		NavigationHistoryManager.getInstance().go(item);
 		
-		if(!found) {
-			ValueSelectable<QuoteRequestStub> newEntry = view.addQuoteRequestListEntry(client);
-			newEntry.setSelected(true, false);
+	}
+
+	private void saveInternally() {
+		if(!isEditModeEnabled){
+			return;
+		}
+		if(!onQuoteRequest){
+			broker.updateCompositeObject(quoteRequestId, view.getObjectForm().getInfo());
+			// ?? o que são os fieldIds? broker.saveContextForCompositeObject(quoteRequestId, subLineId, view.getObjectForm().getValue().id, )
+			view.dealWithObject(view.getObjectForm().getInfo());
+		}else{
+			QuoteRequest changedRequest = view.getQuoteRequestHeaderForm().getInfo();
+			changedRequest.notes = view.getQuoteRequestNotesForm().getValue();
+			///TODO broker.saveContextForRequest(quoteRequestId, subLineId, )
 		}
 	}
 
+	protected void onReceiveMessage() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "receivemessage");
+		item.setParameter("ownerid", quoteRequestId);
+		NavigationHistoryManager.getInstance().go(item);
+
+	}
+
+	protected void onManagerTransfer() {
+		
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "transfermanager");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	protected void onEdit() {
+		view.setReadOnly(false);
+		isEditModeEnabled = true;
+		view.setToolbarEditMode(true);
+
+	}
+
+	protected void onDelete() {
+		// TODO Auto-generated method stub
+
+	}
+
+	protected void onCreateNegotiation() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		
+		item.pushIntoStackParameter("display", "negotiation");
+		item.setParameter("negotiationid", "new");
+		NavigationHistoryManager.getInstance().go(item);
+
+	}
+
+	protected void onClose() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	private void onFormValidationFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
+	}
 }
+

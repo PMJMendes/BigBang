@@ -891,7 +891,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o objecto"), TYPE.ALERT_NOTIFICATION));					
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Unidade de Risco."), TYPE.ALERT_NOTIFICATION));					
 				}
 			});
 		}
@@ -1154,7 +1154,6 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.allowVoidPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY));
 		view.allowTransferBrokerage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_BROKERAGE));
 		view.allowCreateSubstitutePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUBSTITUTE_POLICY));
-		//TODO REQUESTS
 		view.allowSendMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION));
 		view.allowReceiveMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION));
 		view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER));

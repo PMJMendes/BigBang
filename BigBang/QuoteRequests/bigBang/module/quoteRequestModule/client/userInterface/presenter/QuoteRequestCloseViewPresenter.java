@@ -119,22 +119,22 @@ public class QuoteRequestCloseViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(QuoteRequest response) {
-				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST)){
-					onCloseFailed();
-				}else{
-					broker.closeQuoteRequest(response.id, view.getForm().getInfo(), new ResponseHandler<QuoteRequest>() {
-
-						@Override
-						public void onResponse(QuoteRequest response) {
-							onCloseSuccess();
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onCloseFailed();
-						}
-					});
-				}
+//				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST)){
+//					onCloseFailed();
+//				}else{
+//					broker.closeQuoteRequest(response.id, view.getForm().getInfo(), new ResponseHandler<QuoteRequest>() {
+//
+//						@Override
+//						public void onResponse(QuoteRequest response) {
+//							onCloseSuccess();
+//						}
+//
+//						@Override
+//						public void onError(Collection<ResponseError> errors) {
+//							onCloseFailed();
+//						}
+//					});
+//				}
 			}
 
 			@Override

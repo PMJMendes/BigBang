@@ -17,7 +17,6 @@ public class QuoteRequestChildrenPanel extends View {
 	
 	public ContactsList contactsList;
 	public DocumentsList documentsList;
-	public QuoteRequestInsuredObjectsList insuredObjectsList;
 	public SubProcessesList subProcessesList;
 	public HistoryList historyList;
 	
@@ -28,13 +27,11 @@ public class QuoteRequestChildrenPanel extends View {
 		
 		contactsList = new ContactsList();
 		documentsList = new DocumentsList();
-		insuredObjectsList = new QuoteRequestInsuredObjectsList();
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
 		
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
-		wrapper.add(insuredObjectsList, "Unidades de Risco");
 		wrapper.add(subProcessesList, "Sub-Processos");
 		wrapper.add(historyList, "Histórico");
 	}
@@ -57,7 +54,6 @@ public class QuoteRequestChildrenPanel extends View {
 		this.documentsList.allowCreation(allow);
 		contactsList.setOwner(ownerId);
 		documentsList.setOwner(ownerId);
-		insuredObjectsList.setOwner(ownerId);
 		subProcessesList.setOwner(ownerId);
 		historyList.setOwner(ownerId);
 	}

@@ -1,15 +1,14 @@
-package bigBang.module.insurancePolicyModule.client.userInterface;
+package bigBang.library.client.userInterface;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
-public abstract class CreateInsurancePolicyToolbar extends BigBangOperationsToolBar {
+public abstract class ConfirmCancelToolbar extends BigBangOperationsToolBar {
 
 	protected MenuItem confirm, cancel;
 	
-	public CreateInsurancePolicyToolbar(){
+	public ConfirmCancelToolbar(){
 		hideAll();
 		
 		confirm = new MenuItem("Confirmar", new Command() {

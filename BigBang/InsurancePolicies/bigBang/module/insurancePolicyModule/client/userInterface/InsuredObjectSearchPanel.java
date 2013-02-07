@@ -173,12 +173,9 @@ public class InsuredObjectSearchPanel extends SearchPanel<InsuredObjectStub> imp
 		for(InsuredObjectStub s : results){
 
 			if(!localObjects.containsKey(s.id)){
-				//	if(!objectsToRemove.containsKey(s.id)){
-				//	if(objectsToUpdate.containsKey(s.id)){
-				//	s = objectsToUpdate.get(s.id);
-				//}
+				
 				addSearchResult(s);
-				//}
+				
 			}
 		}
 
