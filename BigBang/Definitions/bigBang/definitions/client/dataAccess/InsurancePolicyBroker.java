@@ -31,7 +31,7 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	public InsurancePolicy updatePolicyHeader(InsurancePolicy policy);
 	
-	public void updateCoverages(StructuredFieldContainer.Coverage[] coverages);
+	public void updateCoverages(String policyId, StructuredFieldContainer.Coverage[] coverages);
 
 	public void persistPolicy(String policyId, ResponseHandler<InsurancePolicy> handler);
 

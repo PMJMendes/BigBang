@@ -5,7 +5,6 @@ public class GlobalFieldContainer
 {
 	private static final long serialVersionUID = 1L;
 
-	public QuoteRequestObject emptyObject;
 	public QuoteRequestObject[] changedObjects;
 
 	public GlobalFieldContainer()
@@ -17,8 +16,6 @@ public class GlobalFieldContainer
 		super(orig);
 
 		int i;
-
-		this.emptyObject = (orig.emptyObject == null ? null : new QuoteRequestObject(orig.emptyObject));
 
 		if ( orig.changedObjects == null )
 			this.changedObjects = null;

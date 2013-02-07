@@ -108,8 +108,11 @@ public class PolicyWorkSpace {
 		return policy;
 	}
 
-	public void updateCoverages(StructuredFieldContainer.Coverage[] coverages) {
+	public void updateCoverages(String policyId, StructuredFieldContainer.Coverage[] coverages) {
 		int i;
+
+		if ( !isPolicyLoaded(policyId) )
+			return;
 
 		for ( i = 0; i < policy.coverages.length; i++ )
 			policy.coverages[i].presentInPolicy = coverages[i].presentInPolicy;

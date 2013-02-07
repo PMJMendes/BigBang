@@ -43,16 +43,20 @@ public class InsuredObjectStub
 		this.change = orig.change;
 	}
 
-	public InsuredObjectStub(InsuredObjectStub data, InsuredObjectStub struct)
+	public InsuredObjectStub(QuoteRequestObjectStub orig, ComplexFieldContainer data)
 	{
-		super(struct);
+		super(data);
 
-		this.unitIdentification = data.unitIdentification;
-		this.address = (data.address == null ? null : new Address(data.address));
-		this.inclusionDate = data.inclusionDate;
-		this.exclusionDate = data.exclusionDate;
-		this.typeId = data.typeId;
-		this.typeText = data.typeText;
-		this.change = data.change;
+		this.id = orig.id;
+		this.processId = orig.processId;
+		this.permissions = orig.permissions;
+
+		this.unitIdentification = orig.unitIdentification;
+		this.address = (orig.address == null ? null : new Address(orig.address));
+		this.inclusionDate = null;
+		this.exclusionDate = null;
+		this.typeId = orig.typeId;
+		this.typeText = orig.typeText;
+		this.change = orig.change;
 	}
 }

@@ -19,6 +19,10 @@ public class CompositeFieldContainer
 		}
 
 		public String subLineId;
+		public String categoryName;
+		public String lineName;
+		public String subLineName;
+		public String objectTypeId;
 		
 		public Change change;
 
@@ -31,6 +35,22 @@ public class CompositeFieldContainer
 			super(orig);
 
 			this.subLineId = orig.subLineId;
+			this.categoryName = orig.categoryName;
+			this.lineName = orig.lineName;
+			this.subLineName = orig.subLineName;
+			this.objectTypeId = orig.objectTypeId;
+			this.change = orig.change;
+		}
+
+		public SubLineFieldContainer(SubLineFieldContainer orig, ComplexFieldContainer data)
+		{
+			super(data);
+
+			this.subLineId = orig.subLineId;
+			this.categoryName = orig.categoryName;
+			this.lineName = orig.lineName;
+			this.subLineName = orig.subLineName;
+			this.objectTypeId = orig.objectTypeId;
 			this.change = orig.change;
 		}
 	}
@@ -45,7 +65,7 @@ public class CompositeFieldContainer
 	{
 		int i;
 
-		if ( orig.subLineData == null )
+		if ( (orig == null) || (orig.subLineData == null) )
 			this.subLineData = null;
 		else
 		{

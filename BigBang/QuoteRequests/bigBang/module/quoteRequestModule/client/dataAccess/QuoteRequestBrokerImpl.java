@@ -15,14 +15,12 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.CompositeFieldContainer.SubLineFieldContainer;
-import bigBang.definitions.shared.QuoteRequestObject;
-import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.QuoteRequestObject;
+import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.QuoteRequestStub;
-import bigBang.definitions.shared.Remap;
-import bigBang.definitions.shared.Remap.RemapId;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
@@ -34,8 +32,6 @@ import bigBang.module.quoteRequestModule.interfaces.QuoteRequestServiceAsync;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSearchParameter;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter.SortableField;
-
-import com.google.gwt.core.client.GWT;
 
 public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	QuoteRequestBroker {
 
@@ -358,75 +354,6 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 				}
 			});
 		}		
-	}
-
-
-	@Override
-	public boolean isTemp(String quoteRequestId) {
-		return this.requestsInScratchPad.containsKey(quoteRequestId) || this.requestsInScratchPad.containsValue(quoteRequestId);
-	}
-
-	@Override
-	public void discardTemp(String policyId) {
-		requestsInScratchPad.remove(policyId);
-		String finalId = getFinalMapping(policyId);
-		this.requestsInScratchPad.remove(finalId);
-	}
-
-	public String getEffectiveId(String id){
-		if(this.requestsInScratchPad.containsKey(id)){
-			return this.requestsInScratchPad.get(id);
-		}
-		return id;
-	}
-
-	public String getFinalMapping(String tempId){
-		for(String key : this.requestsInScratchPad.keySet()){
-			if(this.requestsInScratchPad.get(key).equalsIgnoreCase(tempId)){
-				return key;
-			}
-		}
-		return tempId;
-	}
-
-	protected void doRemapping(Remap[] remappings){
-		for(int i = 0; i < remappings.length; i++) {
-			Remap remap = remappings[i];
-
-			//REQUEST
-			if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.QUOTE_REQUEST)){
-				for(int j = 0; j < remap.remapIds.length; j++){
-					RemapId remapId = remap.remapIds[j];
-					remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
-				}
-
-				//OBJECTS
-			}
-			else if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.QUOTE_REQUEST_INSURED_OBJECT)){
-				for(int j = 0; j < remap.remapIds.length; j++){
-					RemapId remapId = remap.remapIds[j];
-					this.requestObjectsBroker.remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
-				}
-			}else{
-				GWT.log("Could not remap item id for typeId = " + remap.typeId);
-			}
-		}
-	}
-
-	@Override
-	public void remapItemId(String oldId, String newId, boolean newInScratchPad) {
-		if(newInScratchPad){
-			this.requestsInScratchPad.put(oldId, newId);
-		}else if(newId == null){
-			discardTemp(oldId);
-		}else {
-			this.requestsInScratchPad.remove(newId);
-		}
-		//		incrementDataVersion();
-		//		for(DataBrokerClient<QuoteRequest> bc : getClients()){
-		//			((QuoteRequestDataBrokerClient) bc).remapItemId(oldId, newId);
-		//			((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
-		//		}
 	}
 
 }

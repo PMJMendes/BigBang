@@ -68,6 +68,11 @@ public class StructuredFieldContainer
 	{
 	}
 
+	public StructuredFieldContainer(ComplexFieldContainer orig)
+	{
+		super(orig);
+	}
+
 	public StructuredFieldContainer(StructuredFieldContainer orig)
 	{
 		super(orig);

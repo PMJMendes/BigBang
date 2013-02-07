@@ -393,6 +393,10 @@ public class ServerToClient
 		public SubLineFieldContainerBuilder build()
 		{
 			mobjContainer.subLineId = mobjSubLine.getKey().toString();
+			mobjContainer.categoryName = mobjSubLine.getLine().getCategory().getLabel();
+			mobjContainer.lineName = mobjSubLine.getLine().getLabel();
+			mobjContainer.subLineName = mobjSubLine.getLabel();
+			mobjContainer.objectTypeId = mobjSubLine.getObjectType().toString();
 			mobjContainer.change = CompositeFieldContainer.SubLineFieldContainer.Change.NONE;
 			return this;
 		}
@@ -664,25 +668,9 @@ public class ServerToClient
 			return this;
 		}
 
-		public GlobalBuilder build()
-			throws BigBangException
-		{
-			buildEmptyObject();
-			return this;
-		}
-
 		public GlobalFieldContainer result()
 		{
 			return mobjContainer;
-		}
-
-		private void buildEmptyObject()
-			throws BigBangException
-		{
-			mobjContainer.emptyObject = new ObjectBuilder()
-				.withSource()
-				.build()
-				.result();
 		}
 	}
 
@@ -701,7 +689,6 @@ public class ServerToClient
 			mobjOutRequest = (QuoteRequest)new GlobalBuilder()
 					.withSource()
 					.withContainer(new QuoteRequest())
-					.build()
 					.result();
 
 			return this;
@@ -716,7 +703,6 @@ public class ServerToClient
 			mobjOutRequest = (QuoteRequest)new GlobalBuilder()
 					.withSource(pobjRequest)
 					.withContainer(new QuoteRequest())
-					.build()
 					.result();
 
 			return this;

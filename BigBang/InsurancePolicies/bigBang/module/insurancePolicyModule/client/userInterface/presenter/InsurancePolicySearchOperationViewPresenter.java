@@ -785,7 +785,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	protected void onSave() {
 		saveInternally();
 		broker.updateExercise(policyId, view.getExerciseForm().getInfo());
-		broker.updateCoverages(view.getPresentCoverages());
+		broker.updateCoverages(policyId, view.getPresentCoverages());
 		if(view.getPolicyHeaderForm().validate()) {
 			broker.persistPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
 

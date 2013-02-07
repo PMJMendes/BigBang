@@ -65,11 +65,6 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 
 	public void createRiskAnalysis(RiskAnalysis riskAnalysis, ResponseHandler<RiskAnalysis> handler);
 
-	public boolean isTemp(String policyId);
-	public void discardTemp(String policyId);
-	public String getEffectiveId(String ownerId);
-	public String getFinalMapping(String ownerId);
-	public void remapItemId(String oldId, String newId, boolean newInScratchPad);
 	public void createManagerTransfer(String[] processIds, String newManagerId,
 			ResponseHandler<ManagerTransfer> responseHandler);
 	
