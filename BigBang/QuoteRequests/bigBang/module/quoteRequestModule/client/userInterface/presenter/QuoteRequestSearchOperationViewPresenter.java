@@ -44,7 +44,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		DELETE, SEND_MESSAGE, 
 		SEND_RESPONSE_TO_CLIENT, 
 		CANCEL, 
-		EDIT, QUOTE_REQUEST_SELECTED, NEW_OBJECT, NEW_SUBLINE, NEW_OBJECT_CHOSEN
+		EDIT, QUOTE_REQUEST_SELECTED, NEW_OBJECT, NEW_SUBLINE, NEW_OBJECT_CHOSEN, NEW_SUBLINE_CHOSEN
 
 	}
 
@@ -105,6 +105,10 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 		void focusObjectForm();
 
+		void showSubLineChooser();
+
+		void showObjectTypeChooser();
+
 	}
 
 	protected QuoteRequestBroker broker;
@@ -133,7 +137,6 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		view.clear();
 
 		quoteRequestId = parameterHolder.getParameter("quoteRequestId");
 
@@ -150,7 +153,6 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 						view.getQuoteRequestSelector().setValue(response);
 						view.setOwner(null);
 						view.clearObjectsList();
-						view.getQuoteRequestNotesForm().setValue(response.notes);
 						fillQuoteRequest();
 						view.setReadOnly(false);
 						ensureListedAndSelected(response);
@@ -286,6 +288,15 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case NEW_OBJECT:
 					onNewObject();
+					break;
+				case NEW_OBJECT_CHOSEN:
+					onNewObjectChosen();
+					break;
+				case NEW_SUBLINE:
+					onNewSubLine();
+					break;
+				case NEW_SUBLINE_CHOSEN:
+					onNewSublineChosen();
 				}
 			}
 
@@ -293,7 +304,17 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 
-	protected void onNewObject() {
+	protected void onNewSubLine() {
+		view.showSubLineChooser();
+	}
+
+	protected void onNewSublineChosen() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	protected void onNewObjectChosen() {
+		// TODO Auto-generated method stub
 		if(onQuoteRequest){
 			view.clearQuoteRequestSelection();
 		}
@@ -302,6 +323,11 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		fillObject(null);
 		onQuoteRequest = false;
 		
+	}
+
+	protected void onNewObject() {
+		view.showObjectTypeChooser();
+
 	}
 
 	private void fillObject(String id) {

@@ -21,7 +21,7 @@ public class ChooseSublinePanel extends PopupPanel implements HasValue<String>{
 	public ChooseSublinePanel() {
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
-		initWidget(wrapper);
+		add(wrapper);
 		toolbar = new ConfirmCancelToolbar() {
 			
 			@Override
@@ -42,6 +42,7 @@ public class ChooseSublinePanel extends PopupPanel implements HasValue<String>{
 		};
 		
 		form = new ChooseSublineForm();
+		wrapper.add(toolbar);
 		wrapper.add(form.getNonScrollableContent());
 		
 	}

@@ -34,11 +34,15 @@ public class QuoteRequestHeaderForm extends FormView<QuoteRequest>{
 
 		client = new NavigationFormField("Cliente");
 		number = new TextBoxFormField("Número");
+		number.setEditable(false);
 		clientMediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Gestor do Cliente");
-		clientMediator.allowEdition(false);
+		clientMediator.setEditable(false);
 		status = new TextBoxFormField("Estado");
+		status.setEditable(false);
 		policyMediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador das Apólices");
+		policyMediator.setEmptyValueString("(O mesmo do Cliente)");
 		quoteRequestManager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor da Consulta");
+		quoteRequestManager.setEmptyValueString("(O mesmo do Cliente)");
 		caseStudy = new CheckBoxFormField("Case Study");
 		
 		addFormField(client);

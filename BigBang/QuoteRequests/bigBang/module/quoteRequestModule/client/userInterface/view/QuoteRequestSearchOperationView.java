@@ -24,6 +24,7 @@ import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearch
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSelectButton;
 import bigBang.module.quoteRequestModule.client.userInterface.form.CompositeObjectForm;
 import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestHeaderForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestSublineForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter.Action;
 
@@ -48,10 +49,11 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	private QuoteRequestObjectSearchPanel objectsList;
 	private QuoteRequestHeaderForm quoteRequestForm;
 	private CompositeObjectForm objectForm;
-	private QuoteRequestNotesFormSection quoteRequestNotesForm;
+	private QuoteRequestNotesFormSection quoteRequestNotesFormSection;
 	private QuoteRequestSelectButton quoteRequestSelectButton;
 	private ChooseSublinePanel chooseSublinePanel;
 	private ChooseObjectTypePanel chooseObjectTypePanel;
+	private QuoteRequestSublineForm subLineForm;
 
 
 	public QuoteRequestSearchOperationView(){
@@ -193,7 +195,8 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		formPanel.setSize("100%", "100%");
 		formContainer.add(formPanel);
 		formContainer.setCellHeight(formPanel, "100%");
-
+		formContainer.add(objectForm);
+		
 		ScrollPanel scrollContainer = new ScrollPanel();
 		scrollContainer.setSize("100%", "100%");
 		scrollContainer.getElement().getStyle().setProperty("overflowx","hidden");
@@ -210,8 +213,20 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		VerticalPanel detailTableContainer = new VerticalPanel();
 		detailTableContainer.setSize("100%", "100%");
 
-		quoteRequestNotesForm = new QuoteRequestNotesFormSection();
-		centerWrapper.add(quoteRequestNotesForm);
+		subLineForm = new QuoteRequestSublineForm();
+		
+		subLineForm.getAddFieldButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.NEW_SUBLINE));
+			}
+		});
+		
+		centerWrapper.add(subLineForm.getNonScrollableContent());
+		
+		quoteRequestNotesFormSection = new QuoteRequestNotesFormSection();
+		centerWrapper.add(quoteRequestNotesFormSection);
 
 		scrollContainer.add(centerWrapper);
 		scrollContainer.getElement().getStyle().setBackgroundColor("whiteSmoke");
@@ -221,24 +236,25 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
 		contentWrapper.add(toolbarAndCenterWrapper);
 		mainWrapper.add(contentWrapper);
-		
+
 		chooseSublinePanel = new ChooseSublinePanel();
-		
+
 		chooseSublinePanel.addAttachHandler(new Handler() {
-			
+
 			@Override
 			public void onAttachOrDetach(AttachEvent event) {
 				if(!event.isAttached()){
 					if(chooseSublinePanel.getValue() != null){
-						actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.NEW_SUBLINE));
+						actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.NEW_SUBLINE_CHOSEN));
 					}
 				}
 			}
 		});
 
-		
+		chooseObjectTypePanel = new ChooseObjectTypePanel();
+
 		chooseObjectTypePanel.addAttachHandler(new Handler() {
-			
+
 			@Override
 			public void onAttachOrDetach(AttachEvent event) {
 				if(!event.isAttached()){
@@ -310,14 +326,14 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 	@Override
 	public void clearObjectsList() {
-		
+
 	}
 
 
 
 	@Override
 	public HasValue<String> getQuoteRequestNotesForm() {
-		return quoteRequestNotesForm;
+		return quoteRequestNotesFormSection;
 	}
 
 
@@ -326,7 +342,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	public void setReadOnly(boolean b) {
 		objectForm.setReadOnly(b);
 		quoteRequestForm.setReadOnly(b);
-		quoteRequestNotesForm.setReadOnly(b);
+		quoteRequestNotesFormSection.setReadOnly(b);
 	}
 
 
@@ -377,14 +393,14 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 	@Override
 	public void setNotesReadOnly(boolean b) {
-		quoteRequestNotesForm.setReadOnly(b);
+		quoteRequestNotesFormSection.setReadOnly(b);
 	}
 
 
 
 	@Override
 	public void setQuoteRequestEntrySelected(boolean b) {
-		quoteRequestSelectButton.setSelected(b);
+		quoteRequestSelectButton.setSelected(b, false);
 	}
 
 
@@ -443,9 +459,23 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	public void focusObjectForm() {
 		objectForm.focus();
 	}
-	
+
 	public String getChosenSubline(){
 		return chooseSublinePanel.getValue();
+	}
+
+
+
+	@Override
+	public void showSubLineChooser() {
+		chooseSublinePanel.center();
+	}
+
+
+
+	@Override
+	public void showObjectTypeChooser() {
+		chooseObjectTypePanel.center();
 	}
 
 

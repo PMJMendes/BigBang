@@ -76,7 +76,7 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 					setRightWidget(statusIcon);
 				}
 				
-				numberLabel.setText("#" + value.processNumber);
+				numberLabel.setText(value.processNumber != null ? "#" + value.processNumber : "Nova Consulta de Mercado");
 				clientLabel.setText("#" + value.clientNumber + " - " + value.clientName);
 
 				Resources resources = GWT.create(Resources.class);

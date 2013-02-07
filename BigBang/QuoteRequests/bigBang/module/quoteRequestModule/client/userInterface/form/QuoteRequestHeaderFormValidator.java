@@ -12,8 +12,9 @@ public class QuoteRequestHeaderFormValidator extends
 
 	@Override
 	protected bigBang.library.client.FormValidator.Result validateImpl() {
-		// TODO Auto-generated method stub
-		return null;
+		boolean valid = true;
+		
+		return new Result(valid, validationMessages);
 	}
 
 }

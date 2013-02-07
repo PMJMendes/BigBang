@@ -7,13 +7,13 @@ public class CompositeObjectFormValidator extends
 
 	public CompositeObjectFormValidator(CompositeObjectForm form) {
 		super(form);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	protected bigBang.library.client.FormValidator.Result validateImpl() {
-		// TODO Auto-generated method stub
-		return null;
+		boolean valid = true;
+		
+		return new Result(valid, validationMessages);
 	}
 
 }

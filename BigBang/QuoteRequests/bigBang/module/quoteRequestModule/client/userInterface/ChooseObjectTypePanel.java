@@ -22,7 +22,7 @@ public class ChooseObjectTypePanel extends PopupPanel implements HasValue<String
 
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
-		initWidget(wrapper);
+		add(wrapper);
 		toolbar = new ConfirmCancelToolbar() {
 
 			@Override

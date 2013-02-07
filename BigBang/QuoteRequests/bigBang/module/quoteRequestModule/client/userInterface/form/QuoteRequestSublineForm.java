@@ -1,4 +1,4 @@
-package bigBang.module.quoteRequestModule.client.userInterface;
+package bigBang.module.quoteRequestModule.client.userInterface.form;
 
 import java.util.List;
 
@@ -7,13 +7,14 @@ import com.google.gwt.user.client.ui.Button;
 
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.library.client.userInterface.view.FormView;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSublineFormSection;
 
-public class QuoteRequestSublineFormField extends FormView<FieldContainer[]>{
+public class QuoteRequestSublineForm extends FormView<FieldContainer[]>{
 
 	List<QuoteRequestSublineFormSection> fields;
 	Button addField;
 	
-	public QuoteRequestSublineFormField() {
+	public QuoteRequestSublineForm() {
 		
 		addSection("Modalidades");
 		addField = new Button("Adicionar Modalidade");
@@ -39,7 +40,7 @@ public class QuoteRequestSublineFormField extends FormView<FieldContainer[]>{
 	
 	}
 
-	HasClickHandlers getAddFieldButton(){
+	public HasClickHandlers getAddFieldButton(){
 		return addField;
 	}
 
