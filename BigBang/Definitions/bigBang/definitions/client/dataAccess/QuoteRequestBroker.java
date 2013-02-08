@@ -34,16 +34,15 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 	public void createSubLine(String requestId, String subLineId,
 			ResponseHandler<CompositeFieldContainer.SubLineFieldContainer> handler);
 
-	public CompositeFieldContainer.SubLineFieldContainer updateSubLineCoverages(String requestId, String subLineId,
-			StructuredFieldContainer.Coverage[] coverages);
+	public void updateSubLineCoverages(String requestId, String subLineId, StructuredFieldContainer.Coverage[] coverages);
 
-	public void removeSubLine(String requestId, String subLineId);
+	public CompositeFieldContainer.SubLineFieldContainer removeSubLine(String requestId, String subLineId);
 
 	public QuoteRequestObjectStub[] getAlteredObjects(String requestId);
 
-	public void getCompositeObject(String requestId, String objectId, ResponseHandler<QuoteRequestObject> handler);
+	public void getRequestObject(String requestId, String objectId, ResponseHandler<QuoteRequestObject> handler);
 
-	public QuoteRequestObject createCompositeObject(String requestId);
+	public QuoteRequestObject createRequestObject(String requestId, String typeId);
 
 	public QuoteRequestObject updateCompositeObject(String requestId, QuoteRequestObject object);
 

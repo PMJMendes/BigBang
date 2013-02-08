@@ -288,35 +288,50 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
-	public CompositeFieldContainer.SubLineFieldContainer updateSubLineCoverages(String requestId,
+	public void updateSubLineCoverages(String requestId,
 			String subLineId, Coverage[] coverages) {
-		// TODO Auto-generated method stub
-		return null;
+		workspace.updateCoverages(requestId, subLineId, coverages);
 	}
 
 	@Override
-	public void removeSubLine(String requestId, String subLineId) {
-		// TODO Auto-generated method stub
-		
+	public CompositeFieldContainer.SubLineFieldContainer removeSubLine(String requestId, String subLineId) {
+		return workspace.deleteSubLine(requestId, subLineId);
 	}
 
 	@Override
 	public QuoteRequestObjectStub[] getAlteredObjects(String requestId) {
-		// TODO Auto-generated method stub
-		return null;
+		return workspace.getLocalObjects(requestId);
 	}
 
 	@Override
-	public void getCompositeObject(String requestId, String objectId,
-			ResponseHandler<QuoteRequestObject> handler) {
-		// TODO Auto-generated method stub
-		
+	public void getRequestObject(final String requestId, String objectId,
+			final ResponseHandler<QuoteRequestObject> handler) {
+		QuoteRequestObject object = workspace.getObjectHeader(requestId, objectId);
+
+		if(object != null) {
+			handler.onResponse(object);
+		} else {
+			requestObjectService.getObject(objectId, new BigBangAsyncCallback<QuoteRequestObject>() {
+
+				@Override
+				public void onResponseSuccess(QuoteRequestObject result) {
+					handler.onResponse(workspace.loadExistingObject(requestId, result));
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not get the object")
+					});
+					super.onResponseFailure(caught);
+				}
+			});
+		}
 	}
 
 	@Override
-	public QuoteRequestObject createCompositeObject(String requestId) {
-		// TODO Auto-generated method stub
-		return null;
+	public QuoteRequestObject createRequestObject(String requestId, String typeId) {
+		return workspace.createLocalObject(requestId, typeId);
 	}
 
 	@Override

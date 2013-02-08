@@ -289,7 +289,7 @@ public class QuoteRequestWorkSpace {
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		newObject = new QuoteRequestObject(/*request.emptyObject*/);
+		newObject = new QuoteRequestObject();
 		newObject.typeId = typeId;
 		newObject.change = InsuredObjectStub.Change.CREATED;
 		newObject.id = idCounter+"";
