@@ -122,7 +122,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 		String getNewSublineId();
 
-		void createSublineFormSection(SubLineFieldContainer container);
+		QuoteRequestSublineFormSection createSublineFormSection(SubLineFieldContainer container);
 
 		void deleteSubLine(QuoteRequestSublineFormSection currentSubline);
 
@@ -165,7 +165,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		quoteRequestId = parameterHolder.getParameter("quoteRequestId");
 
 		clearListSelectionNoFireEvent();
-		
+
 		if(quoteRequestId != null){
 			if(quoteRequestId.equalsIgnoreCase("new")){
 				String clientId = parameterHolder.getParameter("clientid");
@@ -236,7 +236,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	private void clearListSelectionNoFireEvent() {
-		
+
 		if(view.getQuoteRequestHeaderForm() != null && view.getQuoteRequestHeaderForm().getValue() != null && view.getQuoteRequestHeaderForm().getValue().id != null){
 			for(ValueSelectable<QuoteRequestStub> stub : view.getList().getSelected()){
 				if(!stub.getValue().id.equals(quoteRequestId)){
@@ -367,14 +367,14 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 			}
 
 		});
-		
+
 		view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
 				ValueSelectable<QuoteRequestStub> selected = (ValueSelectable<QuoteRequestStub>) event.getFirstSelected();
-				
+
 				if(selected != null && selected.getValue().id.equals("new")){
 					return;
 				}
@@ -395,17 +395,18 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 
 	protected void onOpenSublineSection() {
-		view.closeSublineSection(currentSubline);
-		
+		if(currentSubline != null)
+			view.closeSublineSection(currentSubline);
+
 		currentSubline = view.getOpenedSection();
-		
+
 		if(onQuoteRequest){
 			currentSubline.setData(broker.getContextForRequest(quoteRequestId, currentSubline.getValue().subLineId));
 		}
 		else{
 			currentSubline.setData(broker.getContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId, view.getObjectForm().getInfo().id));
 		}
-		
+
 	}
 
 	protected void onCloseSublineSection() {
@@ -413,7 +414,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 			broker.saveContextForRequest(quoteRequestId, currentSubline.getValue().subLineId, currentSubline.getValue());
 		}else{
 			broker.saveContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId,view.getObjectForm().getInfo().id, currentSubline.getValue());
-		}	
+		}
+
+		currentSubline = null;
 	}
 
 	protected void onDeleteSubLine() {
@@ -428,18 +431,20 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onNewSublineChosen() {
 		broker.createSubLine(quoteRequestId, view.getNewSublineId(), new ResponseHandler<CompositeFieldContainer.SubLineFieldContainer>() {
-			
+
 			@Override
 			public void onResponse(SubLineFieldContainer response) {
-				view.createSublineFormSection(response);				
+				QuoteRequestSublineFormSection section = view.createSublineFormSection(response);
+				section.setValue(response);
+				section.expand();
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar uma nova modalidade."), TYPE.ALERT_NOTIFICATION));					
 			}
 		});		
-		
+
 	}
 
 	protected void onNewObjectChosen() {
@@ -447,7 +452,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 			view.clearQuoteRequestSelection();
 		}
 		saveInternally();
-		
+
 		fillObject(null);
 		onQuoteRequest = false;
 
@@ -561,16 +566,17 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		if(!isEditModeEnabled){
 			return;
 		}
-		if(!onQuoteRequest){
-			broker.updateRequestObject(quoteRequestId, view.getObjectForm().getInfo());
-			broker.saveContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId, view.getObjectForm().getInfo().id , view.getOpenedSection().getValue());
-			view.dealWithObject(view.getObjectForm().getInfo());
-		}else{
+		if(onQuoteRequest){
 			QuoteRequest changedRequest = view.getQuoteRequestHeaderForm().getInfo();
 			changedRequest.notes = view.getQuoteRequestNotesForm().getValue();
 			broker.updateRequestHeader(changedRequest);
-			broker.saveContextForRequest(quoteRequestId, currentSubline.getValue().id, view.getOpenedSection().getValue());
-			}
+			broker.saveContextForRequest(quoteRequestId, currentSubline.getValue().subLineId, view.getOpenedSection().getValue());
+		}else{
+			broker.updateRequestObject(quoteRequestId, view.getObjectForm().getInfo());
+			broker.saveContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId, view.getObjectForm().getInfo().id , view.getOpenedSection().getValue());
+			view.dealWithObject(view.getObjectForm().getInfo());
+			
+		}
 	}
 
 	protected void onReceiveMessage() {

@@ -526,7 +526,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 
 	@Override
-	public void createSublineFormSection(CompositeFieldContainer.SubLineFieldContainer container) {
+	public QuoteRequestSublineFormSection createSublineFormSection(CompositeFieldContainer.SubLineFieldContainer container) {
 		final QuoteRequestSublineFormSection newSection = new QuoteRequestSublineFormSection(container.categoryName + " / " + container.lineName + " / " + container.subLineName);
 
 		newSection.getDeleteButton().addClickHandler(new ClickHandler() {
@@ -556,6 +556,8 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 		sublineFormSections.add(newSection);
 		subLineForm.addSection(newSection);
+		
+		return newSection;
 	}
 
 
@@ -568,8 +570,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 
 	@Override
-	public void closeSublineSection(
-			QuoteRequestSublineFormSection currentSubline) {
+	public void closeSublineSection(QuoteRequestSublineFormSection currentSubline) {
 		currentSubline.collapse();
 	}
 

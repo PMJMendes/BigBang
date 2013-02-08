@@ -426,7 +426,7 @@ public class QuoteRequestWorkSpace {
 			subLine.prevChange = subLine.change;
 		}
 
-		if ( InsuredObjectStub.Change.NONE.equals(object.change) )
+		if ( (object != null) && InsuredObjectStub.Change.NONE.equals(object.change) )
 			object.change = InsuredObjectStub.Change.MODIFIED;
 	}
 
