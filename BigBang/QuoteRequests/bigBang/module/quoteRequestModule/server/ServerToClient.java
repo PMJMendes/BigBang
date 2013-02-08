@@ -357,17 +357,21 @@ public class ServerToClient
 	private class SubLineFieldContainerBuilder
 	{
 		private CompositeFieldContainer.SubLineFieldContainer mobjContainer;
+		private boolean mbIsEmpty;
 
 		public SubLineFieldContainerBuilder withSource(SubLine pobjSubLine)
 			throws BigBangException
 		{
-			getStructuredBuilder().withSource(pobjSubLine);
+			mbIsEmpty = true;
+			getStructuredBuilder()
+					.withSource(pobjSubLine);
 			return this;
 		}
 
 		public SubLineFieldContainerBuilder withSource(QuoteRequestSubLine pobjQRSubLine, UUID pidObject)
 			throws BigBangException
 		{
+			mbIsEmpty = false;
 			getStructuredBuilder()
 					.withSource(pobjQRSubLine, pidObject);
 			return this;
@@ -376,11 +380,21 @@ public class ServerToClient
 		public SubLineFieldContainerBuilder withContainer(CompositeFieldContainer.SubLineFieldContainer pobjContainer)
 			throws BigBangException
 		{
-			mobjContainer = (CompositeFieldContainer.SubLineFieldContainer)getStructuredBuilder()
-					.withContainer(pobjContainer)
-					.build()
-					.fill()
-					.result();
+			if ( mbIsEmpty )
+			{
+				mobjContainer = (CompositeFieldContainer.SubLineFieldContainer)getStructuredBuilder()
+						.withContainer(pobjContainer)
+						.build()
+						.fill()
+						.result();
+			}
+			else
+			{
+				mobjContainer = (CompositeFieldContainer.SubLineFieldContainer)getStructuredBuilder()
+						.withContainer(pobjContainer)
+						.build()
+						.result();
+			}
 			return this;
 		}
 
