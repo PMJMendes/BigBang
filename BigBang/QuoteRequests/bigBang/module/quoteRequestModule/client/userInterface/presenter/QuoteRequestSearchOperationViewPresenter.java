@@ -522,7 +522,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onSave() {
 		saveInternally();
-		broker.updateCompositeObject(quoteRequestId, view.getObjectForm().getInfo());
+		broker.updateRequestObject(quoteRequestId, view.getObjectForm().getInfo());
 		//TODO UPDATE SUBLINES
 		if(view.getQuoteRequestHeaderForm().validate()){
 			broker.persistQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {
@@ -562,7 +562,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 			return;
 		}
 		if(!onQuoteRequest){
-			broker.updateCompositeObject(quoteRequestId, view.getObjectForm().getInfo());
+			broker.updateRequestObject(quoteRequestId, view.getObjectForm().getInfo());
 			broker.saveContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId, view.getObjectForm().getInfo().id , view.getOpenedSection().getValue());
 			view.dealWithObject(view.getObjectForm().getInfo());
 		}else{

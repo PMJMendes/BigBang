@@ -335,14 +335,12 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
-	public QuoteRequestObject updateCompositeObject(String requestId,
-			QuoteRequestObject object) {
-		// TODO Auto-generated method stub
+	public QuoteRequestObject updateRequestObject(String requestId, QuoteRequestObject object) {
 		return null;
 	}
 
 	@Override
-	public QuoteRequestObjectStub removeCompositeObject(String requestId,
+	public QuoteRequestObjectStub removeRequestObject(String requestId,
 			String objectId) {
 		// TODO Auto-generated method stub
 		return null;

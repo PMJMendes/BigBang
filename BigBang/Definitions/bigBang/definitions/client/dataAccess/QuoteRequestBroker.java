@@ -44,9 +44,9 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 
 	public QuoteRequestObject createRequestObject(String requestId, String typeId);
 
-	public QuoteRequestObject updateCompositeObject(String requestId, QuoteRequestObject object);
+	public QuoteRequestObject updateRequestObject(String requestId, QuoteRequestObject object);
 
-	public QuoteRequestObjectStub removeCompositeObject(String requestId, String objectId);
+	public QuoteRequestObjectStub removeRequestObject(String requestId, String objectId);
 
 	public FieldContainer getContextForRequest(String requestId, String subLineId);
 
