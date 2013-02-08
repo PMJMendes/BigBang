@@ -131,7 +131,15 @@ public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBa
 	}
 
 	public void allowReceiveMessage(boolean hasPermission) {
-		this.allowReceiveMessage(hasPermission);
+		this.receiveMessage.setEnabled(hasPermission);
+	}
+
+	public void allowCreateNegotiation(boolean hasPermission) {
+		this.createNegotiation.setEnabled(hasPermission);
+	}
+
+	public void allowManagerTransfer(boolean hasPermission) {
+		this.createManagerTransfer.setEnabled(hasPermission);
 	}
 
 }

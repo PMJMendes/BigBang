@@ -239,6 +239,7 @@ public class BigBangConstants {
 			public static final String CLOSE_QUOTE_REQUEST = "2E49B889-594C-49A6-B25D-A00C012876B8";
 			public static final String CREATE_MANAGER_TRANSFER = "D47D25C0-E8AE-4AC7-AB76-A00C01252C9F";
 			public static final String CONVERSATION = "113799FC-D92B-42DB-A472-A00C0124AB91";
+			public static final String CREATE_NEGOTIATION = "97C06D8F-B1DD-4687-B507-A00C0126B601";
 		}
 
 		public static class SignatureRequestProcess {

@@ -1,30 +1,43 @@
 package bigBang.module.quoteRequestModule.client.userInterface;
 
+import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
 import bigBang.module.insurancePolicyModule.client.userInterface.CoverageFieldsGrid;
 import bigBang.module.insurancePolicyModule.client.userInterface.ExtraFieldsSection;
 import bigBang.module.insurancePolicyModule.client.userInterface.HeaderFieldsSection;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 
-public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection implements HasValue<FieldContainer>{
+public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection implements HasValue<CompositeFieldContainer.SubLineFieldContainer>{
 
 	HeaderFieldsSection headerFieldSection;
 	CoverageFieldsGrid table;
 	ExtraFieldsSection extraFieldsSection;
-	
 	Button deleteSubline;
-	private FieldContainer value;
+	private CompositeFieldContainer.SubLineFieldContainer value;
 	
 	public QuoteRequestSublineFormSection(String title) {
 		super(title);
-		
-		
+
 		deleteSubline = new Button();
+		
+		headerFieldSection = new HeaderFieldsSection();
+		table = new CoverageFieldsGrid() {
+			
+			@Override
+			public void enableExtraFields(int i, boolean b) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		extraFieldsSection = new ExtraFieldsSection();
+		
 		addWidget(deleteSubline);
 		addWidget(headerFieldSection);
 		addWidget(table);
@@ -33,14 +46,13 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<FieldContainer> handler) {
-		// TODO Auto-generated method stub
+			ValueChangeHandler<CompositeFieldContainer.SubLineFieldContainer> handler) {
 		return null;
 	}
 
 	@Override
-	public FieldContainer getValue() {
-		FieldContainer fields = this.value;
+	public CompositeFieldContainer.SubLineFieldContainer getValue() {
+		CompositeFieldContainer.SubLineFieldContainer fields = this.value;
 		
 		fields.columnFields = table.getValue();
 		fields.headerFields = headerFieldSection.getValue();
@@ -50,19 +62,35 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 	}
 
 	@Override
-	public void setValue(FieldContainer value) {
+	public void setValue(CompositeFieldContainer.SubLineFieldContainer value) {
 		this.value = value;
+
+		table.setHeaders(value.coverages, value.columns);
+		extraFieldsSection.setCoveragesExtraFields(value.coverages);
+
 		headerFieldSection.setValue(value.headerFields);
 		table.setValue(value.columnFields);
 		extraFieldsSection.setValue(value.extraFields);
+		
+
+	}
+
+	public void setData(FieldContainer data) {
+		headerFieldSection.setValue(data.headerFields);
+		table.setValue(data.columnFields);
+		extraFieldsSection.setValue(data.extraFields);
 	}
 
 	@Override
-	public void setValue(FieldContainer value, boolean fireEvents) {
+	public void setValue(CompositeFieldContainer.SubLineFieldContainer value, boolean fireEvents) {
 		this.value = value;
 		headerFieldSection.setValue(value.headerFields, fireEvents);
 		table.setValue(value.columnFields, fireEvents);
 		extraFieldsSection.setValue(value.extraFields, fireEvents);
+	}
+	
+	public HasClickHandlers getDeleteButton(){
+		return deleteSubline;
 	}
 
 }

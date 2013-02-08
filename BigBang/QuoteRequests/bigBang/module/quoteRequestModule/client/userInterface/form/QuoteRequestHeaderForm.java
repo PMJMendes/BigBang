@@ -1,15 +1,8 @@
 package bigBang.module.quoteRequestModule.client.userInterface.form;
 
-import java.util.Collection;
-
 import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.dataAccess.ClientProcessBroker;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.library.client.FormField;
-import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
@@ -81,26 +74,13 @@ public class QuoteRequestHeaderForm extends FormView<QuoteRequest>{
 	@Override
 	public void setInfo(QuoteRequest info) {
 
-		if(info.clientId != null){
-			ClientProcessBroker clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
-			clientBroker.getClient(info.clientId, new ResponseHandler<Client>() {
-
-				@Override
-				public void onResponse(Client response) {
-					NavigationHistoryItem item = new NavigationHistoryItem();
-					item.setParameter("section", "client");
-					item.setStackParameter("display");
-					item.pushIntoStackParameter("display", "search");
-					item.setParameter("clientid", response.id);
-					client.setValue(item);
-
-					client.setValueName("#" + response.clientNumber + " - " + response.name);
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {}
-			});
-		}
+		NavigationHistoryItem item = new NavigationHistoryItem();
+		item.setParameter("section", "client");
+		item.setStackParameter("display");
+		item.pushIntoStackParameter("display", "search");
+		item.setParameter("clientid", info.clientId);
+		client.setValue(item);
+		client.setValueName("#" + info.clientNumber+ " - " + info.clientName);
 
 		number.setValue(info.processNumber);
 		clientMediator.setValue(info.inheritMediatorId);

@@ -6,6 +6,8 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.CompositeFieldContainer;
+import bigBang.definitions.shared.CompositeFieldContainer.SubLineFieldContainer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.QuoteRequestObjectStub;
@@ -22,11 +24,14 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearchPanel;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSublineFormSection;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -44,7 +49,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		DELETE, SEND_MESSAGE, 
 		SEND_RESPONSE_TO_CLIENT, 
 		CANCEL, 
-		EDIT, QUOTE_REQUEST_SELECTED, NEW_OBJECT, NEW_SUBLINE, NEW_OBJECT_CHOSEN, NEW_SUBLINE_CHOSEN
+		EDIT, QUOTE_REQUEST_SELECTED, NEW_OBJECT, NEW_SUBLINE, NEW_OBJECT_CHOSEN, NEW_SUBLINE_CHOSEN, DELETE_SUBLINE, CLOSE_SUBLINE_SECTION, OPEN_SUBLINE_SECTION
 
 	}
 
@@ -109,6 +114,24 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 		void showObjectTypeChooser();
 
+		void lockToolbar();
+
+		void allowCreateNegotiation(boolean hasPermission);
+
+		void allowManagerTransfer(boolean hasPermission);
+
+		String getNewSublineId();
+
+		void createSublineFormSection(SubLineFieldContainer container);
+
+		void deleteSubLine(QuoteRequestSublineFormSection currentSubline);
+
+		void closeSublineSection(QuoteRequestSublineFormSection currentSubline);
+
+		QuoteRequestSublineFormSection getOpenedSection();
+
+		String getObjectType();
+
 	}
 
 	protected QuoteRequestBroker broker;
@@ -117,6 +140,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	private String quoteRequestId;
 	protected boolean isEditModeEnabled;
 	private boolean onQuoteRequest;
+	private QuoteRequestSublineFormSection currentSubline;
 
 	public QuoteRequestSearchOperationViewPresenter(View view) {
 		this.broker = (QuoteRequestBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.QUOTE_REQUEST);
@@ -140,6 +164,8 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 		quoteRequestId = parameterHolder.getParameter("quoteRequestId");
 
+		clearListSelectionNoFireEvent();
+		
 		if(quoteRequestId != null){
 			if(quoteRequestId.equalsIgnoreCase("new")){
 				String clientId = parameterHolder.getParameter("clientid");
@@ -148,6 +174,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					@Override
 					public void onResponse(QuoteRequest response) {
 						isEditModeEnabled = true;
+						view.lockToolbar();
 						view.setToolbarEditMode(true);
 						view.allowEdit(true);
 						view.getQuoteRequestSelector().setValue(response);
@@ -173,11 +200,12 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 						view.setOwner(response);
 						view.setToolbarEditMode(false);
 						view.getQuoteRequestSelector().setValue(response);
-						setPermissions(response);
 						view.getQuoteRequestNotesForm().setValue(response.notes);
 						fillQuoteRequest();
+						setSublines(response.subLineData);
 						view.setReadOnly(true);		
 						ensureListedAndSelected(response);
+						setPermissions(response);
 					}
 
 					@Override
@@ -188,9 +216,36 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 			}
 		}
 		else{
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));					
+			view.lockToolbar();
+			view.getQuoteRequestHeaderForm().setValue(null);
+			view.getObjectForm().setValue(null);
+			view.getQuoteRequestNotesForm().setValue(null);
+			view.setOwner(null);
+			view.getQuoteRequestSelector().setValue(null);
+			view.clearObjectsList();
+			view.setReadOnly(true);
+			view.setQuoteRequestEntrySelected(false);
 		}
 
+	}
+
+	protected void setSublines(SubLineFieldContainer[] subLineData) {
+		for(SubLineFieldContainer cont : subLineData){
+			view.createSublineFormSection(cont);
+		}
+	}
+
+	private void clearListSelectionNoFireEvent() {
+		
+		if(view.getQuoteRequestHeaderForm() != null && view.getQuoteRequestHeaderForm().getValue() != null && view.getQuoteRequestHeaderForm().getValue().id != null){
+			for(ValueSelectable<QuoteRequestStub> stub : view.getList().getSelected()){
+				if(!stub.getValue().id.equals(quoteRequestId)){
+					stub.setSelected(false, false);
+					return;
+				}
+
+			}
+		}		
 	}
 
 	protected void setPermissions(QuoteRequest response) {
@@ -198,6 +253,8 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		view.allowSendMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CONVERSATION));
 		view.allowReceiveMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CONVERSATION));
 		view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST));
+		view.allowCreateNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_NEGOTIATION));
+		view.allowManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER));
 	}
 
 	protected void ensureListedAndSelected(QuoteRequest response) {
@@ -239,7 +296,6 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		view.showQuoteRequestForm(true);
 		view.setNotesReadOnly(false);
 		view.setQuoteRequestEntrySelected(true);
-		
 		onQuoteRequest = true;
 		view.getQuoteRequestHeaderForm().validate();
 	}
@@ -297,24 +353,96 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case NEW_SUBLINE_CHOSEN:
 					onNewSublineChosen();
+					break;
+				case DELETE_SUBLINE:
+					onDeleteSubLine();
+					break;
+				case CLOSE_SUBLINE_SECTION:
+					onCloseSublineSection();
+					break;
+				case OPEN_SUBLINE_SECTION:
+					onOpenSublineSection();
+					break;
 				}
 			}
 
 		});
+		
+		view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<QuoteRequestStub> selected = (ValueSelectable<QuoteRequestStub>) event.getFirstSelected();
+				
+				if(selected != null && selected.getValue().id.equals("new")){
+					return;
+				}
+				removeNewListEntry();
+				QuoteRequestStub selectedValue = selected == null ? null : selected.getValue();
+				String selectedQuoteRequestId = selectedValue == null ? new String() : selectedValue.id;
+				selectedQuoteRequestId = selectedQuoteRequestId == null ? new String() : selectedQuoteRequestId;
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				if(selectedQuoteRequestId.isEmpty()){
+					item.removeParameter("quoterequestid");
+				}else{
+					item.setParameter("quoterequestid", selectedQuoteRequestId);
+				}
+				NavigationHistoryManager.getInstance().go(item);
+			}
+		});
 	}
 
+
+	protected void onOpenSublineSection() {
+		view.closeSublineSection(currentSubline);
+		
+		currentSubline = view.getOpenedSection();
+		
+		if(onQuoteRequest){
+			currentSubline.setData(broker.getContextForRequest(quoteRequestId, currentSubline.getValue().subLineId));
+		}
+		else{
+			currentSubline.setData(broker.getContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId, view.getObjectForm().getInfo().id));
+		}
+		
+	}
+
+	protected void onCloseSublineSection() {
+		if(onQuoteRequest){
+			broker.saveContextForRequest(quoteRequestId, currentSubline.getValue().subLineId, currentSubline.getValue());
+		}else{
+			broker.saveContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId,view.getObjectForm().getInfo().id, currentSubline.getValue());
+		}	
+	}
+
+	protected void onDeleteSubLine() {
+		broker.removeSubLine(quoteRequestId, currentSubline.getValue().subLineId);
+		view.deleteSubLine(currentSubline);
+		currentSubline = null;
+	}
 
 	protected void onNewSubLine() {
 		view.showSubLineChooser();
 	}
 
 	protected void onNewSublineChosen() {
-		// TODO Auto-generated method stub
+		broker.createSubLine(quoteRequestId, view.getNewSublineId(), new ResponseHandler<CompositeFieldContainer.SubLineFieldContainer>() {
+			
+			@Override
+			public void onResponse(SubLineFieldContainer response) {
+				view.createSublineFormSection(response);				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar uma nova modalidade."), TYPE.ALERT_NOTIFICATION));					
+			}
+		});		
 		
 	}
 
 	protected void onNewObjectChosen() {
-		// TODO Auto-generated method stub
 		if(onQuoteRequest){
 			view.clearQuoteRequestSelection();
 		}
@@ -322,7 +450,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		
 		fillObject(null);
 		onQuoteRequest = false;
-		
+
 	}
 
 	protected void onNewObject() {
@@ -333,19 +461,19 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	private void fillObject(String id) {
 
 		if(id == null){
-			QuoteRequestObject newQuoteRequestObject = broker.createCompositeObject(quoteRequestId);
+			QuoteRequestObject newQuoteRequestObject = broker.createRequestObject(quoteRequestId, view.getObjectType());
 			newQuoteRequestObject.unitIdentification = "Nova Unidade de Risco";
 			view.getObjectForm().setValue(newQuoteRequestObject);
 			view.showObjectForm(true);
 			view.showQuoteRequestForm(false);
 			view.dealWithObject(newQuoteRequestObject);
-			
+
 			view.focusObjectForm();
 			view.getObjectForm().validate();
 		}
 		else{
-			broker.getCompositeObject(quoteRequestId, id, new ResponseHandler<QuoteRequestObject>() {
-				
+			broker.getRequestObject(quoteRequestId, id, new ResponseHandler<QuoteRequestObject>() {
+
 				@Override
 				public void onResponse(QuoteRequestObject response) {
 					view.getObjectForm().setValue(response);
@@ -353,10 +481,10 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					view.showQuoteRequestForm(false);
 					view.dealWithObject(response);
 					view.setNotesReadOnly(true);
-					
+
 					view.getObjectForm().validate();
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Unidade de Risco."), TYPE.ALERT_NOTIFICATION));					
@@ -364,13 +492,13 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 				}
 			});
 		}
-		
+
 	}
 
 	protected void onQuoteRequestSelected() {
 		if(onQuoteRequest)
 			return;
-		
+
 		saveInternally();
 		fillQuoteRequest();
 	}
@@ -398,7 +526,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		//TODO UPDATE SUBLINES
 		if(view.getQuoteRequestHeaderForm().validate()){
 			broker.persistQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {
-				
+
 				@Override
 				public void onResponse(QuoteRequest response) {
 					if(quoteRequestId.equalsIgnoreCase("new")){
@@ -407,7 +535,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					onSaveQuoteRequestSuccess(response.id);
 					isEditModeEnabled = false;
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar a Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
@@ -417,7 +545,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		else{
 			onFormValidationFailed();
 		}
-	
+
 	}
 
 	protected void onSaveQuoteRequestSuccess(String id) {
@@ -426,7 +554,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("quoterequestid",id);
 		NavigationHistoryManager.getInstance().go(item);
-		
+
 	}
 
 	private void saveInternally() {
@@ -435,13 +563,14 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		}
 		if(!onQuoteRequest){
 			broker.updateCompositeObject(quoteRequestId, view.getObjectForm().getInfo());
-			// ?? o que são os fieldIds? broker.saveContextForCompositeObject(quoteRequestId, subLineId, view.getObjectForm().getValue().id, )
+			broker.saveContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId, view.getObjectForm().getInfo().id , view.getOpenedSection().getValue());
 			view.dealWithObject(view.getObjectForm().getInfo());
 		}else{
 			QuoteRequest changedRequest = view.getQuoteRequestHeaderForm().getInfo();
 			changedRequest.notes = view.getQuoteRequestNotesForm().getValue();
-			///TODO broker.saveContextForRequest(quoteRequestId, subLineId, )
-		}
+			broker.updateRequestHeader(changedRequest);
+			broker.saveContextForRequest(quoteRequestId, currentSubline.getValue().id, view.getOpenedSection().getValue());
+			}
 	}
 
 	protected void onReceiveMessage() {
@@ -453,7 +582,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onManagerTransfer() {
-		
+
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "transfermanager");
 		NavigationHistoryManager.getInstance().go(item);
@@ -467,13 +596,12 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onDelete() {
-		// TODO Auto-generated method stub
-
+		//TODO
 	}
 
 	protected void onCreateNegotiation() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		
+
 		item.pushIntoStackParameter("display", "negotiation");
 		item.setParameter("negotiationid", "new");
 		NavigationHistoryManager.getInstance().go(item);
@@ -484,7 +612,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	private void onFormValidationFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Existem erros no preechimento do formulário"), TYPE.ERROR_TRAY_NOTIFICATION));
 	}
