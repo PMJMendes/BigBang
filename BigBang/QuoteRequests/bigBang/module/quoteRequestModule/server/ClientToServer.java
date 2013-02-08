@@ -740,4 +740,10 @@ public class ClientToServer
 	{
 		return new QuoteRequestReader().readRequest(pobjSource, null);
 	}
+
+	public QuoteRequestData getQRDataForEdit(com.premiumminds.BigBang.Jewel.Objects.QuoteRequest pobjOriginal, QuoteRequest pobjSource)
+		throws BigBangException
+	{
+		return new QuoteRequestReader().readRequest(pobjSource, pobjOriginal);
+	}
 }

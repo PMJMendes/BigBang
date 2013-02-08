@@ -29,9 +29,10 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 
 	public QuoteRequest discardEditData(String requestId);
 
-	public void removeQuoteRequest(String requestId, ResponseHandler<QuoteRequest> handler);
+	public void removeQuoteRequest(String requestId, String reason, ResponseHandler<String> handler);
 
-	public CompositeFieldContainer.SubLineFieldContainer createSubLine(String requestId, String subLineId);
+	public void createSubLine(String requestId, String subLineId,
+			ResponseHandler<CompositeFieldContainer.SubLineFieldContainer> handler);
 
 	public CompositeFieldContainer.SubLineFieldContainer updateSubLineCoverages(String requestId, String subLineId,
 			StructuredFieldContainer.Coverage[] coverages);

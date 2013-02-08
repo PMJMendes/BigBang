@@ -1,5 +1,6 @@
 package bigBang.module.quoteRequestModule.interfaces;
 
+import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
@@ -31,6 +32,8 @@ public interface QuoteRequestService
 	public QuoteRequest getEmptyRequest(String clientId) throws SessionExpiredException, BigBangException;
 
 	public QuoteRequest getRequest(String requestId) throws SessionExpiredException, BigBangException;
+
+	public CompositeFieldContainer.SubLineFieldContainer getEmptySubLine(String subLineId) throws SessionExpiredException, BigBangException;
 
 	public QuoteRequest editRequest(QuoteRequest request) throws SessionExpiredException, BigBangException;
 

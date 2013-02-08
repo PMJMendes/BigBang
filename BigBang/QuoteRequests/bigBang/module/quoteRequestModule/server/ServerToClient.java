@@ -13,11 +13,11 @@ import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.ComplexFieldContainer;
 import bigBang.definitions.shared.CompositeFieldContainer;
-import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.GlobalFieldContainer;
 import bigBang.definitions.shared.Permission;
 import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.BigBangPermissionServiceImpl;
@@ -357,6 +357,13 @@ public class ServerToClient
 	private class SubLineFieldContainerBuilder
 	{
 		private CompositeFieldContainer.SubLineFieldContainer mobjContainer;
+
+		public SubLineFieldContainerBuilder withSource(SubLine pobjSubLine)
+			throws BigBangException
+		{
+			getStructuredBuilder().withSource(pobjSubLine);
+			return this;
+		}
 
 		public SubLineFieldContainerBuilder withSource(QuoteRequestSubLine pobjQRSubLine, UUID pidObject)
 			throws BigBangException
@@ -790,6 +797,27 @@ public class ServerToClient
 
 		return new ObjectBuilder()
 				.withSource(lobjObject)
+				.build()
+				.result();
+	}
+
+	public CompositeFieldContainer.SubLineFieldContainer getEmptySubLine(UUID pidSubLine)
+		throws BigBangException
+	{
+		SubLine lobjSubLine;
+
+		try
+		{
+			lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), pidSubLine);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return new SubLineFieldContainerBuilder()
+				.withSource(lobjSubLine)
+				.withContainer(new CompositeFieldContainer.SubLineFieldContainer())
 				.build()
 				.result();
 	}

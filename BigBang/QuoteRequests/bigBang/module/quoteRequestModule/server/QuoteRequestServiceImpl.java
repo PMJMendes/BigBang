@@ -9,6 +9,7 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
+import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
@@ -31,11 +32,13 @@ import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Data.QuoteRequestData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.DeleteQuoteRequest;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ExecMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData;
 
 public class QuoteRequestServiceImpl
 	extends SearchServiceBase
@@ -70,11 +73,54 @@ public class QuoteRequestServiceImpl
 		return new ServerToClient().getRequest(UUID.fromString(requestId));
 	}
 
+	public CompositeFieldContainer.SubLineFieldContainer getEmptySubLine(String subLineId)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return new ServerToClient().getEmptySubLine(UUID.fromString(subLineId));
+	}
+
 	@Override
 	public QuoteRequest editRequest(QuoteRequest request)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.QuoteRequest lobjRequest;
+		QuoteRequestData lobjData;
+		ManageData lopMPD;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.QuoteRequest.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.id));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjData = new ClientToServer().getQRDataForEdit(lobjRequest, request);
+
+		try
+		{
+			lopMPD = new ManageData(lobjRequest.GetProcessID());
+			lopMPD.mobjData = lobjData;
+
+			lopMPD.mobjContactOps = null;
+			lopMPD.mobjDocOps = null;
+
+			lopMPD.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return new ServerToClient().getRequest(lobjRequest.getKey());
 	}
 
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)

@@ -12,7 +12,7 @@ import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.CompositeFieldContainer.SubLineFieldContainer;
+import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
@@ -237,25 +237,58 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 	@Override
 	public QuoteRequest discardEditData(String requestId) {
-		// TODO Auto-generated method stub
-		return null;
+		return workspace.reset(requestId);
 	}
 
 	@Override
-	public void removeQuoteRequest(String requestId,
-			ResponseHandler<QuoteRequest> handler) {
-		// TODO Auto-generated method stub
-		
+	public void removeQuoteRequest(final String requestId, String reason, final ResponseHandler<String> handler) {
+		this.service.deleteRequest(requestId, reason, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				workspace.loadRequest(null);
+
+				incrementDataVersion();
+				for(DataBrokerClient<QuoteRequest> bc : getClients()){
+					((QuoteRequestDataBrokerClient) bc).removeQuoteRequest(requestId);
+					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
+				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST, requestId));
+				handler.onResponse(requestId);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not remove the quote request")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 	@Override
-	public SubLineFieldContainer createSubLine(String requestId, String subLineId) {
-		// TODO Auto-generated method stub
-		return null;
+	public void createSubLine(final String requestId, String subLineId,
+			final ResponseHandler<CompositeFieldContainer.SubLineFieldContainer> handler) {
+		this.service.getEmptySubLine(subLineId, new BigBangAsyncCallback<CompositeFieldContainer.SubLineFieldContainer>() {
+
+			@Override
+			public void onResponseSuccess(CompositeFieldContainer.SubLineFieldContainer result) {
+				handler.onResponse(workspace.loadSubLine(requestId, result));				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not obtain the empty subline")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 	@Override
-	public SubLineFieldContainer updateSubLineCoverages(String requestId,
+	public CompositeFieldContainer.SubLineFieldContainer updateSubLineCoverages(String requestId,
 			String subLineId, Coverage[] coverages) {
 		// TODO Auto-generated method stub
 		return null;
