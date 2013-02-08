@@ -249,7 +249,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
-	public SubLineFieldContainer createSubLine(String requestId) {
+	public SubLineFieldContainer createSubLine(String requestId, String subLineId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
