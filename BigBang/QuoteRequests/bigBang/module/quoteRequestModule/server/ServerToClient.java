@@ -385,7 +385,6 @@ public class ServerToClient
 				mobjContainer = (CompositeFieldContainer.SubLineFieldContainer)getStructuredBuilder()
 						.withContainer(pobjContainer)
 						.build()
-						.fill()
 						.result();
 			}
 			else
@@ -393,6 +392,7 @@ public class ServerToClient
 				mobjContainer = (CompositeFieldContainer.SubLineFieldContainer)getStructuredBuilder()
 						.withContainer(pobjContainer)
 						.build()
+						.fill()
 						.result();
 			}
 			return this;
