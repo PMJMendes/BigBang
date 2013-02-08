@@ -340,38 +340,28 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
-	public QuoteRequestObjectStub removeRequestObject(String requestId,
-			String objectId) {
-		// TODO Auto-generated method stub
-		return null;
+	public QuoteRequestObjectStub removeRequestObject(String requestId, String objectId) {
+		return workspace.deleteObject(requestId, objectId);
 	}
 
 	@Override
-	public FieldContainer getContextForRequest(String requestId,
-			String subLineId) {
-		// TODO Auto-generated method stub
-		return null;
+	public FieldContainer getContextForRequest(String requestId, String subLineId) {
+		return workspace.getContext(requestId, subLineId, null);
 	}
 
 	@Override
-	public void saveContextForRequest(String requestId, String subLineId,
-			FieldContainer contents) {
-		// TODO Auto-generated method stub
-		
+	public void saveContextForRequest(String requestId, String subLineId, FieldContainer contents) {
+		workspace.updateContext(requestId, subLineId, null, contents);
 	}
 
 	@Override
-	public FieldContainer getContextForCompositeObject(String requestId,
-			String subLineId, String objectId) {
-		// TODO Auto-generated method stub
-		return null;
+	public FieldContainer getContextForCompositeObject(String requestId, String subLineId, String objectId) {
+		return workspace.getContext(requestId, subLineId, objectId);
 	}
 
 	@Override
-	public void saveContextForCompositeObject(String requestId,
-			String subLineId, String objectId, FieldContainer contents) {
-		// TODO Auto-generated method stub
-		
+	public void saveContextForCompositeObject(String requestId, String subLineId, String objectId, FieldContainer contents) {
+		workspace.updateContext(requestId, subLineId, objectId, contents);
 	}
 
 
