@@ -262,6 +262,12 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
+	public void removeSubLine(String requestId, String subLineId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public QuoteRequestObjectStub[] getAlteredObjects(String requestId) {
 		// TODO Auto-generated method stub
 		return null;
@@ -456,5 +462,4 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 			});
 		}		
 	}
-
 }
