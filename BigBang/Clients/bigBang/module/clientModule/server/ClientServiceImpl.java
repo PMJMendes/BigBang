@@ -40,8 +40,6 @@ import bigBang.module.casualtyModule.server.CasualtyServiceImpl;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter;
-import bigBang.module.insurancePolicyModule.server.ClientToServer;
-import bigBang.module.insurancePolicyModule.server.ServerToClient;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -50,6 +48,7 @@ import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
+import com.premiumminds.BigBang.Jewel.Data.QuoteRequestData;
 import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
@@ -58,6 +57,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
+import com.premiumminds.BigBang.Jewel.Operations.Client.CreateQuoteRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageData;
@@ -529,7 +529,7 @@ public class ClientServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lobjData = new ClientToServer().getPDataForCreate(policy);
+		lobjData = new bigBang.module.insurancePolicyModule.server.ClientToServer().getPDataForCreate(policy);
 
 		try
 		{
@@ -546,7 +546,7 @@ public class ClientServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return new ServerToClient().getPolicy(lopMPD.mobjData.mid);
+		return new bigBang.module.insurancePolicyModule.server.ServerToClient().getPolicy(lopMPD.mobjData.mid);
 	}
 
 	@Override
@@ -559,7 +559,41 @@ public class ClientServiceImpl
 	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request)
 		throws SessionExpiredException, BigBangException
 	{
-		throw new BigBangException("Erro: Operação de crição directa não suportada.");
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		QuoteRequestData lobjData;
+		CreateQuoteRequest lopCQR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.clientId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjData = new bigBang.module.quoteRequestModule.server.ClientToServer().getQRDataForCreate(request);
+
+		try
+		{
+			lopCQR = new CreateQuoteRequest(lobjClient.GetProcessID());
+			lopCQR.mobjData = lobjData;
+
+			lopCQR.mobjContactOps = null;
+			lopCQR.mobjDocOps = null;
+
+			lopCQR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return new bigBang.module.quoteRequestModule.server.ServerToClient().getRequest(lopCQR.mobjData.mid);
 	}
 
 	public Casualty createCasualty(Casualty casualty)

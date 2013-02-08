@@ -116,9 +116,6 @@ public class CreateQuoteRequest
 			{
 				for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 				{
-					if ( mobjData.marrSubLines[i].mbDeleted )
-						continue;
-
 					mobjData.marrSubLines[i].midQuoteRequest = mobjData.mid;
 					lobjQRSubLine = QuoteRequestSubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrSubLines[i].ToObject(lobjQRSubLine);
@@ -129,9 +126,6 @@ public class CreateQuoteRequest
 					{
 						for ( j = 0; j < mobjData.marrSubLines[i].marrCoverages.length; j++ )
 						{
-							if ( mobjData.marrSubLines[i].marrCoverages[j].mbDeleted )
-								continue;
-
 							mobjData.marrSubLines[i].marrCoverages[j].midQRSubLine = mobjData.marrSubLines[i].mid;
 							lobjCoverage = QuoteRequestCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 							mobjData.marrSubLines[i].marrCoverages[j].ToObject(lobjCoverage);
@@ -144,9 +138,6 @@ public class CreateQuoteRequest
 					{
 						for ( j = 0; j < mobjData.marrSubLines[i].marrValues.length; j++ )
 						{
-							if ( mobjData.marrSubLines[i].marrValues[j].mbDeleted )
-								continue;
-
 							mobjData.marrSubLines[i].marrValues[j].midQRSubLine = mobjData.marrSubLines[i].mid;
 							mobjData.marrSubLines[i].marrValues[j].midObject = ( mobjData.marrSubLines[i].marrValues[j].mlngObject < 0 ?
 									null : mobjData.marrObjects[mobjData.marrSubLines[i].marrValues[j].mlngObject].mid );

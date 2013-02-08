@@ -36,18 +36,18 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class ClientToServer
 {
+	protected UUID midParent;
 	private UUID midOwner;
-	private UUID midParent;
 	private boolean mbForSubPolicy;
 	private Policy mobjPolicy;
 	private com.premiumminds.BigBang.Jewel.Objects.SubPolicy mobjSubPolicy;
 
-	private class FieldContainerReader
+	protected class FieldContainerReader
 	{
-		private boolean mbIsEmpty;
+		protected boolean mbIsEmpty;
+		protected HashSet<UUID> msetDeletia;
 		private ArrayList<PolicyValueData> marrPData;
 		private ArrayList<SubPolicyValueData> marrSPData;
-		private HashSet<UUID> msetDeletia;
 
 		public void withOriginal(boolean pbForSubPolicy)
 		{
@@ -246,9 +246,9 @@ public class ClientToServer
 		}
 	}
 
-	private FieldContainerReader mobjBaseReader;
+	protected FieldContainerReader mobjBaseReader;
 	
-	private FieldContainerReader getBaseReader()
+	protected FieldContainerReader getBaseReader()
 	{
 		if ( mobjBaseReader == null )
 			mobjBaseReader = new FieldContainerReader();
@@ -351,13 +351,16 @@ public class ClientToServer
 		return mobjComplexReader;
 	}
 
-	private class StructuredReader
+	protected class StructuredReader
 	{
+		protected HashSet<UUID> msetCDeletia;
 		private ArrayList<PolicyCoverageData> marrPCData;
 		private ArrayList<PolicyObjectData> marrPOData;
 		private ArrayList<SubPolicyCoverageData> marrSPCData;
 		private ArrayList<SubPolicyObjectData> marrSPOData;
-		private HashSet<UUID> msetCDeletia;
+
+		public StructuredReader() {
+		}
 
 		public void withOriginal(boolean pbForSubPolicy)
 		{

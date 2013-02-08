@@ -44,18 +44,34 @@ public class QuoteRequestSubLine
 		}
 	}
 
-	SubLine mrefSubLine;
+	private QuoteRequest mrefOwner;
+	private SubLine mrefSubLine;
 
 	public void Initialize() 
 		throws JewelEngineException
 	{
-		try
+		if ( mrefSubLine == null )
 		{
-			mrefSubLine = SubLine.GetInstance(getNameSpace(), (UUID)getAt(1));
+			try
+			{
+				mrefSubLine = SubLine.GetInstance(getNameSpace(), (UUID)getAt(1));
+			}
+			catch (Throwable e)
+			{
+				throw new JewelEngineException(e.getMessage(), e);
+			}
 		}
-		catch (Throwable e)
+
+		if ( mrefOwner == null )
 		{
-			throw new JewelEngineException(e.getMessage(), e);
+			try
+			{
+				mrefOwner = QuoteRequest.GetInstance(getNameSpace(), (UUID)getAt(0));
+			}
+			catch (Throwable e)
+			{
+				throw new JewelEngineException(e.getMessage(), e);
+			}
 		}
 	}
 
@@ -66,6 +82,22 @@ public class QuoteRequestSubLine
     		Initialize();
 
         return "";
+    }
+
+    public QuoteRequest GetOwner()
+    {
+    	if ( mrefOwner == null )
+    	{
+			try
+			{
+				Initialize();
+			}
+			catch (Throwable e)
+			{
+			}
+    	}
+
+    	return mrefOwner;
     }
 
 	public SubLine GetSubLine()
