@@ -24,15 +24,14 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 	public QuoteRequestSublineFormSection(String title) {
 		super(title);
 
-		deleteSubline = new Button();
+		deleteSubline = new Button("Apagar Modalidade");
 		
 		headerFieldSection = new HeaderFieldsSection();
 		table = new CoverageFieldsGrid() {
 			
 			@Override
 			public void enableExtraFields(int i, boolean b) {
-				// TODO Auto-generated method stub
-				
+				extraFieldsSection.enableFields(i, b);
 			}
 		};
 		
@@ -42,6 +41,8 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 		addWidget(headerFieldSection);
 		addWidget(table);
 		addWidget(extraFieldsSection);
+		
+		this.setSize("100%", "100%");
 	}
 
 	@Override

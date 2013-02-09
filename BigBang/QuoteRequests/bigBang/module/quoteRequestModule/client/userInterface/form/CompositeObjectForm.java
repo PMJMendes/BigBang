@@ -269,7 +269,7 @@ public class CompositeObjectForm extends FormView<QuoteRequestObject>{
 	}
 
 	private void showSectionForTypeWithId(String typeId) {
-		
+		showTypeSpecificDataSection(false, null);
 		if(typeId == null){
 			return;
 		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PERSON)){
@@ -283,6 +283,18 @@ public class CompositeObjectForm extends FormView<QuoteRequestObject>{
 		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_ANIMAL)){
 			this.animalSection.setVisible(true);
 		}		
+	}
+	
+	protected void showTypeSpecificDataSection(boolean show, String id){
+		if(show){
+			showSectionForTypeWithId(id);
+		}else{
+			this.personSection.setVisible(false);
+			this.companySection.setVisible(false);
+			this.equipmentSection.setVisible(false);
+			this.locationSection.setVisible(false);
+			this.animalSection.setVisible(false);
+		}
 	}
 
 }

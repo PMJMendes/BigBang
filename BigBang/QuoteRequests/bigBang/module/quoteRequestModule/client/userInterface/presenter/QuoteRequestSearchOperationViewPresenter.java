@@ -8,6 +8,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.CompositeFieldContainer.SubLineFieldContainer;
+import bigBang.definitions.shared.InsuredObjectStub.Change;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.QuoteRequestObjectStub;
@@ -82,7 +83,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 		void removeElementFromList(ValueSelectable<QuoteRequestStub> stub);
 
-		HasValueSelectables<QuoteRequestObjectStub> getInsuredObjectsList();
+		HasValueSelectables<QuoteRequestObjectStub> getObjectList();
 
 		HasEditableValue<QuoteRequest> getQuoteRequestHeaderForm();
 
@@ -132,6 +133,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 		String getObjectType();
 
+		void setSelectedObject(String id);
 	}
 
 	protected QuoteRequestBroker broker;
@@ -290,7 +292,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void fillQuoteRequest() {
 		QuoteRequest quote = broker.getRequestHeader(quoteRequestId);
-		view.getInsuredObjectsList().clearSelection();
+		view.getObjectList().clearSelection();
 		view.getQuoteRequestHeaderForm().setValue(quote);
 		view.showObjectForm(false);
 		view.showQuoteRequestForm(true);
@@ -391,8 +393,39 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 				NavigationHistoryManager.getInstance().go(item);
 			}
 		});
+
+		view.getObjectList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				if(event.getFirstSelected() != null){
+					@SuppressWarnings("unchecked")
+					QuoteRequestObjectStub stub = ((ValueSelectable<QuoteRequestObjectStub>)event.getFirstSelected()).getValue();
+					if(stub.change != Change.DELETED){
+						onObjectSelected(stub);
+					}
+					else{
+						if(onQuoteRequest){
+							view.getObjectList().clearSelection();
+						}else{
+							view.setSelectedObject(view.getObjectForm().getValue().id);
+						}
+					}
+				}
+			}
+		});
 	}
 
+
+	protected void onObjectSelected(QuoteRequestObjectStub stub) {
+		if(onQuoteRequest){
+			view.clearQuoteRequestSelection();
+		}
+		saveInternally();
+
+		fillObject(stub.id);
+
+		onQuoteRequest = false;		
+	}
 
 	protected void onOpenSublineSection() {
 		if(currentSubline != null)
@@ -528,7 +561,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	protected void onSave() {
 		saveInternally();
 		broker.updateRequestObject(quoteRequestId, view.getObjectForm().getInfo());
-		//TODO UPDATE SUBLINES
+		broker.updateRequestHeader(view.getQuoteRequestHeaderForm().getInfo());
+		broker.updateSubLineCoverages(quoteRequestId, currentSubline.getValue().subLineId, view.getOpenedSection().getValue().coverages);
+		
 		if(view.getQuoteRequestHeaderForm().validate()){
 			broker.persistQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {
 
@@ -570,12 +605,15 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 			QuoteRequest changedRequest = view.getQuoteRequestHeaderForm().getInfo();
 			changedRequest.notes = view.getQuoteRequestNotesForm().getValue();
 			broker.updateRequestHeader(changedRequest);
-			broker.saveContextForRequest(quoteRequestId, currentSubline.getValue().subLineId, view.getOpenedSection().getValue());
+			if(view.getOpenedSection() != null){
+				broker.saveContextForRequest(quoteRequestId, currentSubline.getValue().subLineId, view.getOpenedSection().getValue());
+			}
 		}else{
 			broker.updateRequestObject(quoteRequestId, view.getObjectForm().getInfo());
-			broker.saveContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId, view.getObjectForm().getInfo().id , view.getOpenedSection().getValue());
+			if(view.getOpenedSection() != null){
+				broker.saveContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId, view.getObjectForm().getInfo().id , view.getOpenedSection().getValue());
+			}
 			view.dealWithObject(view.getObjectForm().getInfo());
-			
 		}
 	}
 

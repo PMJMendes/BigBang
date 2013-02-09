@@ -273,8 +273,8 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 			@Override
 			public void onAttachOrDetach(AttachEvent event) {
 				if(!event.isAttached()){
-					if(chooseSublinePanel.getValue() != null){
-						newObjectId = chooseSublinePanel.getValue();
+					if(chooseObjectTypePanel.getValue() != null){
+						newObjectId = chooseObjectTypePanel.getValue();
 						actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.NEW_OBJECT_CHOSEN));
 					}
 				}
@@ -381,7 +381,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 
 	@Override
-	public HasValueSelectables<QuoteRequestObjectStub> getInsuredObjectsList() {
+	public HasValueSelectables<QuoteRequestObjectStub> getObjectList() {
 		return objectsList;
 	}
 
@@ -396,14 +396,14 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 	@Override
 	public void showObjectForm(boolean b) {
-		objectForm.setVisible(b);
+		objectForm.getNonScrollableContent().setVisible(b);
 	}
 
 
 
 	@Override
 	public void showQuoteRequestForm(boolean b) {
-		this.quoteRequestForm.setVisible(b);
+		this.quoteRequestForm.getNonScrollableContent().setVisible(b);
 	}
 
 
@@ -587,4 +587,12 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	public String getObjectType() {
 		return newObjectId;
 	}
+
+
+
+	@Override
+	public void setSelectedObject(String id) {
+		objectsList.setSelected(id);
+	}
+
 }
