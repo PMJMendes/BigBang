@@ -557,6 +557,8 @@ public class ServerToClient
 				throw new BigBangException(e.getMessage(), e);
 			}
 
+			mobjOutObject.id = mobjObject.getKey().toString();
+
 			mobjOutObject.unitIdentification = mobjObject.getLabel();
 			if ( (mobjObject.getAt(3) != null) || (mobjObject.getAt(4) != null) || (lobjZipCode != null) )
 			{
@@ -577,8 +579,6 @@ public class ServerToClient
 			}
 			mobjOutObject.typeId = lobjType.getKey().toString();
 			mobjOutObject.typeText = lobjType.getLabel();
-
-			mobjOutObject.id = mobjObject.getKey().toString();
 
 			if ( Constants.ObjTypeID_Person.equals(lobjType.getKey()) )
 			{

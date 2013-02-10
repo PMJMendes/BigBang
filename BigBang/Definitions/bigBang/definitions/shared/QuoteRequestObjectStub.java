@@ -30,7 +30,9 @@ public class QuoteRequestObjectStub
 	public QuoteRequestObjectStub(QuoteRequestObjectStub orig, QuoteRequestObjectStub data)
 	{
 		super(data);
-	
+
+		this.id = orig.id;
+
 		this.unitIdentification = orig.unitIdentification;
 		this.address = (orig.address == null ? null : new Address(orig.address));
 		this.typeId = orig.typeId;
