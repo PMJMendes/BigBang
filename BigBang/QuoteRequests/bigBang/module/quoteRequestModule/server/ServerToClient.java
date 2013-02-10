@@ -722,10 +722,25 @@ public class ServerToClient
 		}
 
 		private void buildEmptyHeader()
+			throws BigBangException
 		{
+			Mediator lobjMed;
+
+			try
+			{
+				lobjMed = mobjClient.getMediator();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
 			mobjOutRequest.clientId = mobjClient.getKey().toString();
 			mobjOutRequest.clientNumber = ((Integer)mobjClient.getAt(1)).toString();
 			mobjOutRequest.clientName = mobjClient.getLabel();
+
+			mobjOutRequest.inheritMediatorId = lobjMed.getKey().toString();
+			mobjOutRequest.inheritMediatorName = lobjMed.getLabel();
 		}
 
 		private void buildFullHeader()
