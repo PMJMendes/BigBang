@@ -345,7 +345,15 @@ public class QuoteRequestWorkSpace {
 		if ( object == null )
 			return null;
 
-		object.change = InsuredObjectStub.Change.DELETED;
+		if ( !InsuredObjectStub.Change.DELETED.equals(object.change) )
+		{
+			object.change = InsuredObjectStub.Change.DELETED;
+			for ( SubLineWorkSpace subLine : localSubLines.values() )
+			{
+				if ( CompositeFieldContainer.SubLineFieldContainer.Change.NONE.equals(subLine.change) )
+					subLine.change = CompositeFieldContainer.SubLineFieldContainer.Change.MODIFIED;
+			}
+		}
 
 		return new QuoteRequestObject(object, null);
 	}
