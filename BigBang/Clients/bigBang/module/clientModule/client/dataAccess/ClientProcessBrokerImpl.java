@@ -221,9 +221,26 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 	@Override
 	public void createQuoteRequest(QuoteRequest request,
-			ResponseHandler<QuoteRequest> handler) {
-		// TODO Auto-generated method stub
-		
+			final ResponseHandler<QuoteRequest> handler) {
+		service.createQuoteRequest(request, new BigBangAsyncCallback<QuoteRequest>() {
+
+			@Override
+			public void onResponseSuccess(QuoteRequest result) {
+				//TODO
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_QUOTE_REQUEST, result.clientId));
+
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create new Policy")	
+				});
+				super.onResponseFailure(caught);			
+			}
+		});
 	}
 
 	@Override

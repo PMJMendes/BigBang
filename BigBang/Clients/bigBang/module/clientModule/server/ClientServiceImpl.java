@@ -509,6 +509,46 @@ public class ClientServiceImpl
 		return getClient(receptorId);
 	}
 
+	public QuoteRequest createQuoteRequest(QuoteRequest request)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		QuoteRequestData lobjData;
+		CreateQuoteRequest lopCQR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.clientId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjData = new bigBang.module.quoteRequestModule.server.ClientToServer().getQRDataForCreate(request);
+
+		try
+		{
+			lopCQR = new CreateQuoteRequest(lobjClient.GetProcessID());
+			lopCQR.mobjData = lobjData;
+
+			lopCQR.mobjContactOps = null;
+			lopCQR.mobjDocOps = null;
+
+			lopCQR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return new bigBang.module.quoteRequestModule.server.ServerToClient().getRequest(lopCQR.mobjData.mid);
+	}
+
 	public InsurancePolicy createPolicy(InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
@@ -554,46 +594,6 @@ public class ClientServiceImpl
 			BigBangException {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request)
-		throws SessionExpiredException, BigBangException
-	{
-		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
-		QuoteRequestData lobjData;
-		CreateQuoteRequest lopCQR;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(request.clientId));
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjData = new bigBang.module.quoteRequestModule.server.ClientToServer().getQRDataForCreate(request);
-
-		try
-		{
-			lopCQR = new CreateQuoteRequest(lobjClient.GetProcessID());
-			lopCQR.mobjData = lobjData;
-
-			lopCQR.mobjContactOps = null;
-			lopCQR.mobjDocOps = null;
-
-			lopCQR.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return new bigBang.module.quoteRequestModule.server.ServerToClient().getRequest(lopCQR.mobjData.mid);
 	}
 
 	public Casualty createCasualty(Casualty casualty)
