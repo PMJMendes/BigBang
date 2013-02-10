@@ -3,9 +3,9 @@ package bigBang.module.quoteRequestModule.client.userInterface.form;
 import bigBang.library.client.FormValidator;
 
 public class CompositeObjectFormValidator extends
-		FormValidator<CompositeObjectForm> {
+		FormValidator<QuoteRequestObjectForm> {
 
-	public CompositeObjectFormValidator(CompositeObjectForm form) {
+	public CompositeObjectFormValidator(QuoteRequestObjectForm form) {
 		super(form);
 	}
 

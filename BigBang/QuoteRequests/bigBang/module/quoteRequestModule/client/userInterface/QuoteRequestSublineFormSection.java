@@ -20,29 +20,31 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 	ExtraFieldsSection extraFieldsSection;
 	Button deleteSubline;
 	private CompositeFieldContainer.SubLineFieldContainer value;
-	
+
 	public QuoteRequestSublineFormSection(String title) {
 		super(title);
 
 		deleteSubline = new Button("Apagar Modalidade");
-		
+
 		headerFieldSection = new HeaderFieldsSection();
 		table = new CoverageFieldsGrid() {
-			
+
 			@Override
 			public void enableExtraFields(int i, boolean b) {
 				extraFieldsSection.enableFields(i, b);
 			}
 		};
-		
+		table.setSize("100%", "100%");
+
 		extraFieldsSection = new ExtraFieldsSection();
-		
+		extraFieldsSection.setSize("100%", "100%");
 		addWidget(deleteSubline);
 		addWidget(headerFieldSection);
+		headerFieldSection.setSize("100%", "100%");
 		addWidget(table);
 		addWidget(extraFieldsSection);
 		
-		this.setSize("100%", "100%");
+		this.disclosurePanel.setSize("100%", "100%");
 	}
 
 	@Override
@@ -54,11 +56,11 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 	@Override
 	public CompositeFieldContainer.SubLineFieldContainer getValue() {
 		CompositeFieldContainer.SubLineFieldContainer fields = this.value;
-		
+
 		fields.columnFields = table.getValue();
 		fields.headerFields = headerFieldSection.getValue();
 		fields.extraFields = extraFieldsSection.getValue();
-		
+
 		return fields;
 	}
 
@@ -72,7 +74,7 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 		headerFieldSection.setValue(value.headerFields);
 		table.setValue(value.columnFields);
 		extraFieldsSection.setValue(value.extraFields);
-		
+
 
 	}
 
@@ -89,7 +91,7 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 		table.setValue(value.columnFields, fireEvents);
 		extraFieldsSection.setValue(value.extraFields, fireEvents);
 	}
-	
+
 	public HasClickHandlers getDeleteButton(){
 		return deleteSubline;
 	}

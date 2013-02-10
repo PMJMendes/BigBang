@@ -34,6 +34,9 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearchPanel;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSublineFormSection;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -105,7 +108,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 		void clearQuoteRequestSelection();
 
-		void dealWithObject(QuoteRequestObject info);
+		void dealWithObject(QuoteRequestObjectStub quoteRequestObjectStub);
 
 		void setOwner(QuoteRequest object);
 
@@ -134,6 +137,8 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		String getObjectType();
 
 		void setSelectedObject(String id);
+
+		HasClickHandlers getObjectDeleteButton();
 	}
 
 	protected QuoteRequestBroker broker;
@@ -232,8 +237,10 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void setSublines(SubLineFieldContainer[] subLineData) {
-		for(SubLineFieldContainer cont : subLineData){
-			view.createSublineFormSection(cont);
+		if(subLineData != null){
+			for(SubLineFieldContainer cont : subLineData){
+				view.createSublineFormSection(cont);
+			}
 		}
 	}
 
@@ -303,8 +310,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	public void bind() {
-		if(this.bound)
+		if(bound){
 			return;
+		}
 
 		view.registerActionHandler(new ActionInvokedEventHandler<Action>(){
 
@@ -413,8 +421,24 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
+
+		view.getObjectDeleteButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				onRemoveQuoteRequestObject();
+			}
+		});
+
+
+		bound = true;
 	}
 
+
+	protected void onRemoveQuoteRequestObject() {
+		view.dealWithObject(broker.removeRequestObject(quoteRequestId, view.getObjectForm().getValue().id));
+		onQuoteRequestSelected();
+	}
 
 	protected void onObjectSelected(QuoteRequestObjectStub stub) {
 		if(onQuoteRequest){
@@ -560,10 +584,14 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onSave() {
 		saveInternally();
-		broker.updateRequestObject(quoteRequestId, view.getObjectForm().getInfo());
+		if(view.getObjectForm().getInfo() != null){
+			broker.updateRequestObject(quoteRequestId, view.getObjectForm().getInfo());
+		}
 		broker.updateRequestHeader(view.getQuoteRequestHeaderForm().getInfo());
-		broker.updateSubLineCoverages(quoteRequestId, currentSubline.getValue().subLineId, view.getOpenedSection().getValue().coverages);
-		
+		if(currentSubline != null){
+			broker.updateSubLineCoverages(quoteRequestId, currentSubline.getValue().subLineId, view.getOpenedSection().getValue().coverages);
+		}
+
 		if(view.getQuoteRequestHeaderForm().validate()){
 			broker.persistQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {
 

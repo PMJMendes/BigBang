@@ -27,11 +27,12 @@ import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearch
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearchPanel.Entry;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSelectButton;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSublineFormSection;
-import bigBang.module.quoteRequestModule.client.userInterface.form.CompositeObjectForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestObjectForm;
 import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestHeaderForm;
 import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestSublineForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter.Action;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -59,7 +60,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	protected QuoteRequestProcessToolBar toolbar;
 	private QuoteRequestObjectSearchPanel objectsList;
 	private QuoteRequestHeaderForm quoteRequestForm;
-	private CompositeObjectForm objectForm;
+	private QuoteRequestObjectForm objectForm;
 	private QuoteRequestNotesFormSection quoteRequestNotesFormSection;
 	private QuoteRequestSelectButton quoteRequestSelectButton;
 	private ChooseSublinePanel chooseSublinePanel;
@@ -82,7 +83,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		searchPanelWrapper.add(searchPanelHeader);
 
 		quoteRequestForm = new QuoteRequestHeaderForm();
-		objectForm = new CompositeObjectForm();
+		objectForm = new QuoteRequestObjectForm();
 
 		searchPanel = new QuoteRequestSearchPanel();
 
@@ -459,7 +460,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 
 	@Override
-	public void dealWithObject(QuoteRequestObject info) {
+	public void dealWithObject(QuoteRequestObjectStub info) {
 		objectsList.dealWithObject(info);
 	}
 
@@ -566,6 +567,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 		subLineForm.removeSection(currentSubline);
 		sublineFormSections.remove(currentSubline);
+		currentOpenedSection = null;
 	}
 
 
@@ -593,6 +595,13 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	@Override
 	public void setSelectedObject(String id) {
 		objectsList.setSelected(id);
+	}
+
+
+
+	@Override
+	public HasClickHandlers getObjectDeleteButton() {
+		return objectForm.getDeleteButton();
 	}
 
 }

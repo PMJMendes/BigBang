@@ -34,11 +34,11 @@ public class QuoteRequestObjectSearchPanel extends SearchPanel<QuoteRequestObjec
 
 	protected ToolButton createNew;
 
-	protected Label name;
-	protected Image invalidIcon;
-
 	public class Entry extends ListEntry<QuoteRequestObjectStub>{
 
+		protected Label name;
+		protected Image invalidIcon;
+		
 		public Entry(QuoteRequestObjectStub value) {
 			super(value);
 			setHeight("25px");		
@@ -203,7 +203,7 @@ public class QuoteRequestObjectSearchPanel extends SearchPanel<QuoteRequestObjec
 		return;		
 	}
 
-	public void dealWithObject(QuoteRequestObject info) {
+	public void dealWithObject(QuoteRequestObjectStub info) {
 		localObjects.put(info.id, info);
 
 		for(ListEntry<QuoteRequestObjectStub> s : this){

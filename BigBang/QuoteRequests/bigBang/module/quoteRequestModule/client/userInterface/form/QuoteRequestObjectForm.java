@@ -11,9 +11,10 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 
-public class CompositeObjectForm extends FormView<QuoteRequestObject>{
+public class QuoteRequestObjectForm extends FormView<QuoteRequestObject>{
 
 	//COMMON
 	private TextBoxFormField identification;
@@ -57,7 +58,7 @@ public class CompositeObjectForm extends FormView<QuoteRequestObject>{
 
 	protected FormViewSection commonSection, personSection, companySection, equipmentSection, locationSection, animalSection;
 	
-	public CompositeObjectForm() {
+	public QuoteRequestObjectForm() {
 
 		//COMMON
 		deleteObject = new Button("Apagar Unidade de Risco");
@@ -65,8 +66,9 @@ public class CompositeObjectForm extends FormView<QuoteRequestObject>{
 		address = new AddressFormField("Morada");
 		
 		commonSection = new FormViewSection("Cabeçalho de Unidade de Risco");		
-		commonSection.addWidget(deleteObject);
-		commonSection.addFormField(identification);
+		commonSection.addFormField(identification, true);
+		commonSection.addWidget(deleteObject, true);
+		commonSection.addLineBreak();
 		commonSection.addFormField(address);
 		addSection(commonSection);
 
@@ -173,6 +175,11 @@ public class CompositeObjectForm extends FormView<QuoteRequestObject>{
 
 	@Override
 	public QuoteRequestObject getInfo() {
+		
+		if(value == null){
+			return null;
+		}
+		
 		QuoteRequestObject result = value;
 
 		//common fields
@@ -295,6 +302,10 @@ public class CompositeObjectForm extends FormView<QuoteRequestObject>{
 			this.locationSection.setVisible(false);
 			this.animalSection.setVisible(false);
 		}
+	}
+
+	public HasClickHandlers getDeleteButton() {
+		return deleteObject;
 	}
 
 }
