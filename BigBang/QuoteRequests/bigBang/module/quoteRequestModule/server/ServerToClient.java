@@ -738,6 +738,7 @@ public class ServerToClient
 			mobjOutRequest.clientId = mobjClient.getKey().toString();
 			mobjOutRequest.clientNumber = ((Integer)mobjClient.getAt(1)).toString();
 			mobjOutRequest.clientName = mobjClient.getLabel();
+			mobjOutRequest.isOpen = true;
 
 			mobjOutRequest.inheritMediatorId = lobjMed.getKey().toString();
 			mobjOutRequest.inheritMediatorName = lobjMed.getLabel();
