@@ -104,6 +104,9 @@ public class CreateQuoteRequest
 			{
 				for ( i = 0; i < mobjData.marrObjects.length; i++ )
 				{
+					if ( mobjData.marrObjects[i] == null )
+						continue;
+
 					mobjData.marrObjects[i].midOwner = mobjData.mid;
 					lobjObject = QuoteRequestObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrObjects[i].ToObject(lobjObject);
@@ -116,6 +119,9 @@ public class CreateQuoteRequest
 			{
 				for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 				{
+					if ( mobjData.marrSubLines[i] == null )
+						continue;
+
 					mobjData.marrSubLines[i].midQuoteRequest = mobjData.mid;
 					lobjQRSubLine = QuoteRequestSubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrSubLines[i].ToObject(lobjQRSubLine);

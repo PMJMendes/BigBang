@@ -174,6 +174,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrObjects.length; i++ )
 					{
+						if ( mobjData.marrObjects[i] == null )
+							continue;
+
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
 							//Aqui não há código. Ver mais abaixo.
@@ -203,6 +206,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 					{
+						if ( mobjData.marrSubLines[i] == null )
+							continue;
+
 						if ( mobjData.marrSubLines[i].mbDeleted )
 						{
 							//Aqui não há código. Ver mais abaixo.
@@ -318,6 +324,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrObjects.length; i++ )
 					{
+						if ( mobjData.marrObjects[i] == null )
+							continue;
+
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
 							if ( mobjData.marrObjects[i].mid == null )
@@ -577,6 +586,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrObjects.length; i++ )
 					{
+						if ( mobjData.marrObjects[i] == null )
+							continue;
+
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
 							if ( mobjData.marrObjects[i].mid == null )
@@ -603,6 +615,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 					{
+						if ( mobjData.marrSubLines[i] == null )
+							continue;
+
 						if ( mobjData.marrSubLines[i].mbDeleted )
 						{
 							if ( mobjData.marrSubLines[i].mid == null )
@@ -698,6 +713,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrObjects.length; i++ )
 					{
+						if ( mobjData.marrObjects[i] == null )
+							continue;
+
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
 						}
