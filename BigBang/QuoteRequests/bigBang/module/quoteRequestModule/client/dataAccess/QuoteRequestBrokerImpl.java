@@ -268,6 +268,11 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
+	public CompositeFieldContainer.SubLineFieldContainer[] getLocalSubLines(String requestId) {
+		return workspace.getLocalSubLines(requestId);
+	}
+
+	@Override
 	public void createSubLine(final String requestId, String subLineId,
 			final ResponseHandler<CompositeFieldContainer.SubLineFieldContainer> handler) {
 		this.service.getEmptySubLine(subLineId, new BigBangAsyncCallback<CompositeFieldContainer.SubLineFieldContainer>() {

@@ -31,6 +31,8 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 
 	public void removeQuoteRequest(String requestId, String reason, ResponseHandler<String> handler);
 
+	public CompositeFieldContainer.SubLineFieldContainer[] getLocalSubLines(String requestId);
+
 	public void createSubLine(String requestId, String subLineId,
 			ResponseHandler<CompositeFieldContainer.SubLineFieldContainer> handler);
 
