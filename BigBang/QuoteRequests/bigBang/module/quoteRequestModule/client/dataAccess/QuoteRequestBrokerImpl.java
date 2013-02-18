@@ -336,7 +336,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 	@Override
 	public QuoteRequestObject updateRequestObject(String requestId, QuoteRequestObject object) {
-		return null;
+		return workspace.updateObjectHeader(requestId, object);
 	}
 
 	@Override
