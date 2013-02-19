@@ -194,9 +194,9 @@ public class ClientToServer
 			getLocalBaseReader().withOriginal(pobjOriginal, plngQRSubLine);
 		}
 
-		public void withMaster(StructuredFieldContainer pobjContainer)
+		public void withMaster(StructuredFieldContainer pobjContainer, boolean pbForceDelete)
 		{
-			readRequestCoverages(pobjContainer);
+			readRequestCoverages(pobjContainer, pbForceDelete);
 		}
 
 		public void read(StructuredFieldContainer pobjContainer, UUID pidObject, int plngObject, boolean pbForceDelete)
@@ -222,34 +222,37 @@ public class ClientToServer
 			return mrefLocalBase;
 		}
 
-		private void readRequestCoverages(StructuredFieldContainer pobjContainer)
+		private void readRequestCoverages(StructuredFieldContainer pobjContainer, boolean pbForceDelete)
 		{
 			QuoteRequestCoverageData lobjAux;
 			int i;
 
-			for ( i = 0; i < pobjContainer.coverages.length; i++ )
+			if ( !pbForceDelete )
 			{
-				lobjAux = new QuoteRequestCoverageData();
-
-				if ( pobjContainer.coverages[i].serverId == null )
+				for ( i = 0; i < pobjContainer.coverages.length; i++ )
 				{
-					lobjAux.mid = null;
-					lobjAux.mbNew = true;
+					lobjAux = new QuoteRequestCoverageData();
+	
+					if ( pobjContainer.coverages[i].serverId == null )
+					{
+						lobjAux.mid = null;
+						lobjAux.mbNew = true;
+					}
+					else
+					{
+						lobjAux.mid = UUID.fromString(pobjContainer.coverages[i].serverId);
+						lobjAux.mbNew = false;
+						msetCDeletia.remove(lobjAux.mid);
+					}
+	
+					lobjAux.midQRSubLine = midOwner;
+					lobjAux.mlngQRSubLine = mlngOwner;
+					lobjAux.midCoverage = UUID.fromString(pobjContainer.coverages[i].coverageId);
+					lobjAux.mbPresent = pobjContainer.coverages[i].presentInPolicy;
+					lobjAux.mbDeleted = false;
+	
+					marrQRCData.add(lobjAux);
 				}
-				else
-				{
-					lobjAux.mid = UUID.fromString(pobjContainer.coverages[i].serverId);
-					lobjAux.mbNew = false;
-					msetCDeletia.remove(lobjAux.mid);
-				}
-
-				lobjAux.midQRSubLine = midOwner;
-				lobjAux.mlngQRSubLine = mlngOwner;
-				lobjAux.midCoverage = UUID.fromString(pobjContainer.coverages[i].coverageId);
-				lobjAux.mbPresent = pobjContainer.coverages[i].presentInPolicy;
-				lobjAux.mbDeleted = false;
-
-				marrQRCData.add(lobjAux);
 			}
 
 			for (UUID lid: msetCDeletia)
@@ -303,7 +306,7 @@ public class ClientToServer
 					getLocalStructuredReader().withOriginal(mlngOwner, lbForDelete);
 				else
 					getLocalStructuredReader().withOriginal(mobjQRSubLine, mlngOwner, lbForDelete);
-				getLocalStructuredReader().withMaster(pobjContainer);
+				getLocalStructuredReader().withMaster(pobjContainer, lbForDelete);
 			}
 			else if ( mobjQRSLData == null )
 			{
@@ -393,6 +396,7 @@ public class ClientToServer
 			QuoteRequestSubLine[] larrSLines;
 			int i;
 
+			midParent = pobjOriginal.getKey();
 			marrSLines = new HashMap<UUID, QuoteRequestSubLine>();
 
 			try

@@ -307,10 +307,16 @@ public class QuoteRequestWorkSpace {
 	}
 
 	public QuoteRequestObject getObjectHeader(String requestId, String objectId) {
+		QuoteRequestObject lobjAux;
+
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		return new QuoteRequestObject(alteredObjects.get(objectId), null);
+		lobjAux = alteredObjects.get(objectId);
+		if ( lobjAux == null )
+			return null;
+
+		return new QuoteRequestObject(lobjAux, null);
 	}
 
 	public QuoteRequestObject updateObjectHeader(String requestId, QuoteRequestObject alteredObject) {
