@@ -564,7 +564,8 @@ public class ClientToServer
 
 			lbDeleted = ( InsuredObjectStub.Change.DELETED.equals(pobjObject.change) );
 
-			getCompositeReader() .readComposite(pobjObject, lidObject, plngObject, lbDeleted);
+			getCompositeReader()
+					.readComposite(pobjObject, lidObject, plngObject, lbDeleted);
 
 			if ( lbDeleted )
 				return readPDeleteHeader(pobjObject);

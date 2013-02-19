@@ -400,6 +400,11 @@ public class ServerToClient
 
 		public SubLineFieldContainerBuilder build()
 		{
+			if ( mbIsEmpty )
+				mobjContainer.id = null;
+			else
+				mobjContainer.id = mobjQRSubLine.getKey().toString();
+
 			mobjContainer.subLineId = mobjSubLine.getKey().toString();
 			mobjContainer.categoryName = mobjSubLine.getLine().getCategory().getLabel();
 			mobjContainer.lineName = mobjSubLine.getLine().getLabel();
