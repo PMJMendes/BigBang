@@ -637,4 +637,30 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		currentOpenedSection = null;
 	}
 
+
+
+	@Override
+	public boolean containsSubLine(String sublineId) {
+		
+		for(QuoteRequestSublineFormSection cont : sublineFormSections){
+			if(cont.getValue().subLineId.equalsIgnoreCase(sublineId)){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+
+	@Override
+	public void setSelectedSubline(String sublineId) {
+		for(QuoteRequestSublineFormSection cont : sublineFormSections){
+			if(cont.getValue().subLineId.equalsIgnoreCase(sublineId)){
+				cont.expand();
+				return;
+			}
+		}
+	}
+
 }

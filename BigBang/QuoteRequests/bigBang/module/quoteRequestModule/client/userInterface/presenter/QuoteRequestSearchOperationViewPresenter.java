@@ -143,6 +143,10 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		String getSublineId();
 
 		void clearSubLines();
+
+		boolean containsSubLine(String sublineId);
+
+		void setSelectedSubline(String sublineId);
 	}
 
 	protected QuoteRequestBroker broker;
@@ -242,7 +246,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void setSublines(SubLineFieldContainer[] subLineData) {
 		view.clearSubLines();
-		
+
 		if(subLineData != null){
 			for(SubLineFieldContainer cont : subLineData){
 				view.createSublineFormSection(cont);
@@ -493,20 +497,24 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onNewSublineChosen() {
-		broker.createSubLine(quoteRequestId, view.getNewSublineId(), new ResponseHandler<CompositeFieldContainer.SubLineFieldContainer>() {
+		if (!view.containsSubLine(view.getNewSublineId())){
+			broker.createSubLine(quoteRequestId, view.getNewSublineId(), new ResponseHandler<CompositeFieldContainer.SubLineFieldContainer>() {
 
-			@Override
-			public void onResponse(SubLineFieldContainer response) {
-				QuoteRequestSublineFormSection section = view.createSublineFormSection(response);
-				section.setValue(response);
-				section.expand();
-			}
+				@Override
+				public void onResponse(SubLineFieldContainer response) {
+					QuoteRequestSublineFormSection section = view.createSublineFormSection(response);
+					section.setValue(response);
+					section.expand();
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar uma nova modalidade."), TYPE.ALERT_NOTIFICATION));					
-			}
-		});		
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar uma nova modalidade."), TYPE.ALERT_NOTIFICATION));					
+				}
+			});		
+		}else{
+			view.setSelectedSubline(view.getNewSublineId());
+		}
 
 	}
 
