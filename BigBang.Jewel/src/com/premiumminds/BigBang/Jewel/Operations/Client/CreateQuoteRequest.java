@@ -53,12 +53,57 @@ public class CreateQuoteRequest
 	public String LongDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrResult;
+		int i, j;
 
 		lstrResult = new StringBuilder();
 		lstrResult.append("Foi criada a seguinte consulta de mercado:");
 		lstrResult.append(pstrLineBreak);
 
 		mobjData.Describe(lstrResult, pstrLineBreak);
+
+		if ( mobjData.marrObjects != null )
+		{
+			for ( i = 0; i < mobjData.marrObjects.length; i++ )
+			{
+				if ( mobjData.marrObjects[i] == null )
+					continue;
+
+				lstrResult.append("Unidade de risco:").append(pstrLineBreak);
+				mobjData.marrObjects[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+		}
+
+		if ( mobjData.marrSubLines != null )
+		{
+			for ( i = 0; i < mobjData.marrSubLines.length; i++ )
+			{
+				if ( mobjData.marrSubLines[i] == null )
+					continue;
+
+				lstrResult.append("Modalidade:").append(pstrLineBreak);
+				mobjData.marrSubLines[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+
+				if ( mobjData.marrSubLines[i].marrCoverages != null )
+				{
+					for ( j = 0; j < mobjData.marrSubLines[i].marrCoverages.length; j++ )
+					{
+						lstrResult.append("Cobertura:").append(pstrLineBreak);
+						mobjData.marrSubLines[i].marrCoverages[j].Describe(lstrResult, pstrLineBreak);
+						lstrResult.append(pstrLineBreak);
+					}
+				}
+
+				if ( mobjData.marrSubLines[i].marrValues != null )
+				{
+					for ( j = 0; j < mobjData.marrSubLines[i].marrValues.length; j++ )
+					{
+						mobjData.marrSubLines[i].marrValues[j].Describe(lstrResult, pstrLineBreak);
+					}
+				}
+			}
+		}
 
 		if ( mobjContactOps != null )
 			mobjContactOps.LongDesc(lstrResult, pstrLineBreak);

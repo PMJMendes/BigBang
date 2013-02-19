@@ -422,6 +422,9 @@ public class ClientToServer
 
 			for ( i = 0; i < pobjContainer.subLineData.length; i++ )
 			{
+				if ( pobjContainer.subLineData[i] == null )
+					continue;
+
 				llngIndex = marrMap.get(pobjContainer.subLineData[i].subLineId);
 				if ( llngIndex == null )
 					continue;
