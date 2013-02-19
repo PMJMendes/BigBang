@@ -141,6 +141,8 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		HasClickHandlers getObjectDeleteButton();
 
 		String getSublineId();
+
+		void clearSubLines();
 	}
 
 	protected QuoteRequestBroker broker;
@@ -239,6 +241,8 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void setSublines(SubLineFieldContainer[] subLineData) {
+		view.clearSubLines();
+		
 		if(subLineData != null){
 			for(SubLineFieldContainer cont : subLineData){
 				view.createSublineFormSection(cont);

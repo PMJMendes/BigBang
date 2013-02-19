@@ -339,7 +339,15 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 	@Override
 	public void setOwner(QuoteRequest object) {
+		setObjectListOwner(object == null ? null : object.id);
 		childrenPanel.setOwner(object);
+		
+	}
+
+
+
+	private void setObjectListOwner(String string) {
+		objectsList.setOwner(string);		
 	}
 
 
@@ -615,6 +623,18 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	@Override
 	public String getSublineId() {
 		return subLineId;
+	}
+
+
+
+	@Override
+	public void clearSubLines() {
+		for(QuoteRequestSublineFormSection cont : sublineFormSections){
+			subLineForm.removeSection(cont);
+		}
+
+		sublineFormSections =  new ArrayList<QuoteRequestSublineFormSection>();
+		currentOpenedSection = null;
 	}
 
 }

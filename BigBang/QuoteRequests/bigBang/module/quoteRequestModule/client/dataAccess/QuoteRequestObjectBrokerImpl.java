@@ -20,7 +20,7 @@ import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectServiceAsy
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestServiceAsync;
 
-public class QuoteRequestInsuredObjectBrokerImpl extends DataBroker<QuoteRequestObject>
+public class QuoteRequestObjectBrokerImpl extends DataBroker<QuoteRequestObject>
 		implements QuoteRequestObjectDataBroker {
 
 	protected QuoteRequestObjectServiceAsync service;
@@ -31,7 +31,7 @@ public class QuoteRequestInsuredObjectBrokerImpl extends DataBroker<QuoteRequest
 	protected QuoteRequestBroker quoteRequestBroker;
 	protected boolean requiresRefresh;
 
-	public QuoteRequestInsuredObjectBrokerImpl(){
+	public QuoteRequestObjectBrokerImpl(){
 		this.dataElementId = BigBangConstants.EntityIds.QUOTE_REQUEST_INSURED_OBJECT;
 		this.service = QuoteRequestObjectService.Util.getInstance();
 		this.requestService = QuoteRequestService.Util.getInstance();
@@ -109,8 +109,7 @@ public class QuoteRequestInsuredObjectBrokerImpl extends DataBroker<QuoteRequest
 
 	@Override
 	public SearchDataBroker<QuoteRequestObjectStub> getSearchBroker() {
-		// TODO Auto-generated method stub
-		return null;
+		return searchBroker;
 	}
 
 }

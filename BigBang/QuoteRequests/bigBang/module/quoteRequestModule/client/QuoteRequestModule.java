@@ -8,7 +8,7 @@ import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.quoteRequestModule.client.dataAccess.NegotiationBrokerImpl;
 import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestBrokerImpl;
-import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestInsuredObjectBrokerImpl;
+import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestObjectBrokerImpl;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationCancellationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationGrantViewPresenter;
@@ -197,7 +197,7 @@ public class QuoteRequestModule implements Module {
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
-		QuoteRequestInsuredObjectBrokerImpl requestObjectsBroker = new QuoteRequestInsuredObjectBrokerImpl();
+		QuoteRequestObjectBrokerImpl requestObjectsBroker = new QuoteRequestObjectBrokerImpl();
 		
 		return new DataBroker<?>[]{
 				new QuoteRequestBrokerImpl(),

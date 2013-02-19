@@ -21,7 +21,6 @@ import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestObjectSearchParameter;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -89,6 +88,8 @@ public class QuoteRequestObjectSearchPanel extends SearchPanel<QuoteRequestObjec
 	private int quoteRequestDataVersion = 0;
 	private Map<String, QuoteRequestObjectStub> localObjects;
 
+	private String ownerId;
+
 
 	public QuoteRequestObjectSearchPanel(){
 		super(((QuoteRequestObjectDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.QUOTE_REQUEST_INSURED_OBJECT)).getSearchBroker());
@@ -119,7 +120,8 @@ public class QuoteRequestObjectSearchPanel extends SearchPanel<QuoteRequestObjec
 
 		QuoteRequestObjectSearchParameter parameter = new QuoteRequestObjectSearchParameter();
 		parameter.freeText = this.textBoxFilter.getValue();
-
+		parameter.requestId = ownerId;
+		
 		SearchParameter[] parameters = new SearchParameter[]{
 				parameter
 		};
@@ -226,5 +228,27 @@ public class QuoteRequestObjectSearchPanel extends SearchPanel<QuoteRequestObjec
 		for(ListEntry<QuoteRequestObjectStub> s : this){
 			s.setSelected(s.getValue().id.equalsIgnoreCase(id), false);
 		}
+	}
+
+	public void setOwner(String ownerId) {
+		localObjects.clear();
+
+		if(ownerId != null){
+			this.ownerId = ownerId;
+		}
+		else{
+			lockSearchButton(true);
+			clear();
+			return;
+		}
+
+		QuoteRequestObjectSearchParameter parameter = new QuoteRequestObjectSearchParameter();
+		parameter.requestId = ownerId;
+
+		SearchParameter[] parameters = new SearchParameter[]{parameter};
+
+		doSearch(parameters, null);
+		lockSearchButton(false);
+		
 	}
 }
