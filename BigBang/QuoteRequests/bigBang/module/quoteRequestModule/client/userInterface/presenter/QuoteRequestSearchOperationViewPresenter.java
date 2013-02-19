@@ -139,6 +139,8 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		void setSelectedObject(String id);
 
 		HasClickHandlers getObjectDeleteButton();
+
+		String getSublineId();
 	}
 
 	protected QuoteRequestBroker broker;
@@ -209,7 +211,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 						view.getQuoteRequestSelector().setValue(response);
 						view.getQuoteRequestNotesForm().setValue(response.notes);
 						fillQuoteRequest();
-						setSublines(response.subLineData);
+						setSublines(broker.getLocalSubLines(response.id));
 						view.setReadOnly(true);		
 						ensureListedAndSelected(response);
 						setPermissions(response);
@@ -458,10 +460,10 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		currentSubline = view.getOpenedSection();
 
 		if(onQuoteRequest){
-			currentSubline.setData(broker.getContextForRequest(quoteRequestId, currentSubline.getValue().subLineId));
+			currentSubline.setData(broker.getContextForRequest(quoteRequestId, view.getSublineId()));
 		}
 		else{
-			currentSubline.setData(broker.getContextForCompositeObject(quoteRequestId, currentSubline.getValue().subLineId, view.getObjectForm().getInfo().id));
+			currentSubline.setData(broker.getContextForCompositeObject(quoteRequestId, view.getSublineId(), view.getObjectForm().getInfo().id));
 		}
 
 	}

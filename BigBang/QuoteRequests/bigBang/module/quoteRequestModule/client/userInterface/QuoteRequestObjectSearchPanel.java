@@ -143,6 +143,10 @@ public class QuoteRequestObjectSearchPanel extends SearchPanel<QuoteRequestObjec
 	public HasClickHandlers getNewObjectButton(){
 		return createNew;
 	}
+	
+	public void allowCreateNew(boolean allow){
+		createNew.setEnabled(allow);
+	}
 
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {

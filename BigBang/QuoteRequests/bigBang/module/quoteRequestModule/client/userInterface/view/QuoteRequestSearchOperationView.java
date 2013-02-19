@@ -27,16 +27,16 @@ import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearch
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearchPanel.Entry;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSelectButton;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSublineFormSection;
-import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestObjectForm;
 import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestHeaderForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestObjectForm;
 import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestSublineForm;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter.Action;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -69,6 +69,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	private QuoteRequestSublineForm subLineForm;
 	protected String openedSectionId;
 	protected String newObjectId;
+	private String subLineId;
 
 	public QuoteRequestSearchOperationView(){
 
@@ -282,6 +283,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 			}
 		});
 
+		objectsList.lockSearchButton(false);
 	}
 
 
@@ -361,6 +363,8 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		objectForm.setReadOnly(b);
 		quoteRequestForm.setReadOnly(b);
 		quoteRequestNotesFormSection.setReadOnly(b);
+		subLineForm.setReadOnly(b);
+		objectsList.allowCreateNew(!b);
 	}
 
 
@@ -551,10 +555,12 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 				currentOpenedSection = newSection;
+				subLineId = newSection.getValue().subLineId;
 				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.OPEN_SUBLINE_SECTION));
 			}
 		});
 
+		newSection.setValue(container);
 		sublineFormSections.add(newSection);
 		subLineForm.addSection(newSection);
 		
@@ -602,6 +608,13 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	@Override
 	public HasClickHandlers getObjectDeleteButton() {
 		return objectForm.getDeleteButton();
+	}
+
+
+
+	@Override
+	public String getSublineId() {
+		return subLineId;
 	}
 
 }

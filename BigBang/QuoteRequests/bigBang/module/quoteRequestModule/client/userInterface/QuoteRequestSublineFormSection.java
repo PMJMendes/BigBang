@@ -27,6 +27,7 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 		deleteSubline = new Button("Apagar Modalidade");
 
 		headerFieldSection = new HeaderFieldsSection();
+		headerFieldSection.showHeader(false);
 		table = new CoverageFieldsGrid() {
 
 			@Override
@@ -38,6 +39,7 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 
 		extraFieldsSection = new ExtraFieldsSection();
 		extraFieldsSection.setSize("100%", "100%");
+		extraFieldsSection.showHeader(false);
 		addWidget(deleteSubline);
 		addWidget(headerFieldSection);
 		headerFieldSection.setSize("100%", "100%");
@@ -94,6 +96,22 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 
 	public HasClickHandlers getDeleteButton(){
 		return deleteSubline;
+	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		if(headerFieldSection != null){
+			headerFieldSection.setReadOnly(readOnly);
+		}
+		if(extraFieldsSection != null){
+			extraFieldsSection.setReadOnly(readOnly);
+		}
+		if(table != null){
+			table.setReadOnly(readOnly);
+		}
+		if(deleteSubline != null){
+			deleteSubline.setVisible(!readOnly);
+		}
 	}
 
 }
