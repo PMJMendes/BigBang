@@ -554,6 +554,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
+				currentOpenedSection = null;
 				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CLOSE_SUBLINE_SECTION));
 			}
 		});
