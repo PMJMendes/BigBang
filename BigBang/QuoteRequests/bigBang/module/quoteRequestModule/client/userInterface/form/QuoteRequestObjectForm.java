@@ -20,6 +20,7 @@ public class QuoteRequestObjectForm extends FormView<QuoteRequestObject>{
 
 	//COMMON
 	private TextBoxFormField identification;
+	private ExpandableListBoxFormField type;
 	private AddressFormField address;	
 	protected Button deleteObject;
 
@@ -69,10 +70,14 @@ public class QuoteRequestObjectForm extends FormView<QuoteRequestObject>{
 		deleteObject.getElement().getStyle().setMarginTop(15, Unit.PX);
 
 		identification = new TextBoxFormField("Identificação");
+		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OBJECT_TYPE, "Tipo de Unidade de Risco");
+		type.setEditable(false);
+		type.allowEdition(false);
 		address = new AddressFormField("Morada");
 		
 		commonSection = new FormViewSection("Cabeçalho de Unidade de Risco");		
 		commonSection.addFormField(identification, true);
+		commonSection.addFormField(type, true);
 		commonSection.addWidget(deleteObject, true);
 		commonSection.addLineBreak();
 		commonSection.addFormField(address);
@@ -240,6 +245,7 @@ public class QuoteRequestObjectForm extends FormView<QuoteRequestObject>{
 
 		//common fields
 		identification.setValue(info.unitIdentification);
+		type.setValue(info.typeId);
 		address.setValue(info.address);
 		
 		showSectionForTypeWithId(info.typeId);
