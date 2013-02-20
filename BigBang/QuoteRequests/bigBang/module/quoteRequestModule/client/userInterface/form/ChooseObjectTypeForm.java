@@ -12,7 +12,7 @@ public class ChooseObjectTypeForm extends FormView<String>{
 		addSection("Tipo de Unidade de Risco");
 		
 		objectType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OBJECT_TYPE, "Tipo de Unidade de Risco");
-		
+		objectType.allowEdition(false);
 		addFormField(objectType);
 		
 		setValidator(new ChooseObjectTypeFormValidator(this));
