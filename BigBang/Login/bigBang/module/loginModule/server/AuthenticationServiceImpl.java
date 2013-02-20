@@ -111,6 +111,7 @@ public class AuthenticationServiceImpl
 		User lobjUser;
 		NameSpace lobjNSpace;
 		LoginResponse lobjResult;
+		boolean lbSave;
 
 		lobjUser = null;
 
@@ -136,20 +137,43 @@ public class AuthenticationServiceImpl
 
 			lrefUser = Entity.GetInstance(Engine.FindEntity(lidNSpace, ObjectGUIDs.O_User));
 
-			ldb = new MasterDB();
-			lrs = lrefUser.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+			lobjUser = null;
+			lbSave = false;
 
+			ldb = new MasterDB();
+
+			lrs = lrefUser.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
 			if (lrs.next())
 			{
 				lobjUser = User.GetInstance(lidNSpace, lrs);
 				if (lrs.next())
 					throw new BigBangException("Unexpected: Username is not unique!");
 			}
-			else
-				throw new BigBangException("Invalid Username or Password!");
-
 			lrs.close();
+
+			if ( (lobjUser == null) && (larrParams[1] != null) )
+			{
+				((Password)larrParams[1]).setShort(password);
+				lrs = lrefUser.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+				if (lrs.next())
+				{
+					lobjUser = (User)Engine.GetWorkInstance(Engine.FindEntity(lidNSpace, ObjectGUIDs.O_User), lrs);
+					if (lrs.next())
+						throw new BigBangException("Unexpected: Username is not unique!");
+					lbSave = true;
+				}
+				lrs.close();
+				if ( lbSave )
+				{
+					lobjUser.setAt(Jewel.Engine.Constants.Miscellaneous.Password_In_User, new Password(password, false));
+					lobjUser.SaveToDb(ldb);
+				}
+			}
+
 			ldb.Disconnect();
+
+			if ( lobjUser == null )
+				throw new BigBangException("Invalid Username or Password!");
 
 			if ( larrParams[1] == null )
 				throw new BigBangException("User restricted to integrated logon!");
