@@ -45,7 +45,7 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 		headerFieldSection.setSize("100%", "100%");
 		addWidget(table);
 		addWidget(extraFieldsSection);
-		
+
 		this.disclosurePanel.setSize("100%", "100%");
 	}
 
@@ -81,9 +81,11 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 	}
 
 	public void setData(FieldContainer data) {
-		headerFieldSection.setValue(data.headerFields);
-		table.setValue(data.columnFields);
-		extraFieldsSection.setValue(data.extraFields);
+		if(data != null){
+			headerFieldSection.setValue(data.headerFields);
+			table.setValue(data.columnFields);
+			extraFieldsSection.setValue(data.extraFields);
+		}
 	}
 
 	@Override
@@ -97,7 +99,7 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 	public HasClickHandlers getDeleteButton(){
 		return deleteSubline;
 	}
-	
+
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		if(headerFieldSection != null){

@@ -317,6 +317,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		view.setQuoteRequestEntrySelected(true);
 		onQuoteRequest = true;
 		view.getQuoteRequestHeaderForm().validate();
+		if(currentSubline != null){
+			currentSubline.setData(broker.getContextForRequest(quoteRequestId, view.getSublineId()));
+		}
 	}
 
 	public void bind() {
@@ -477,6 +480,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onCloseSublineSection() {
+		
+		broker.updateSubLineCoverages(quoteRequestId, currentSubline.getValue().subLineId, view.getOpenedSection().getValue().coverages);
+		
 		if(onQuoteRequest){
 			broker.saveContextForRequest(quoteRequestId, currentSubline.getValue().subLineId, currentSubline.getValue());
 		}else{
@@ -543,9 +549,11 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 			view.showObjectForm(true);
 			view.showQuoteRequestForm(false);
 			view.dealWithObject(newQuoteRequestObject);
-
 			view.focusObjectForm();
 			view.getObjectForm().validate();
+			if(currentSubline != null){
+				currentSubline.setData(broker.getContextForCompositeObject(quoteRequestId, view.getSublineId(), newQuoteRequestObject.id));	
+			}
 		}
 		else{
 			broker.getRequestObject(quoteRequestId, id, new ResponseHandler<QuoteRequestObject>() {
@@ -557,8 +565,10 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					view.showQuoteRequestForm(false);
 					view.dealWithObject(response);
 					view.setNotesReadOnly(true);
-
 					view.getObjectForm().validate();
+					if(currentSubline != null){
+						currentSubline.setData(broker.getContextForCompositeObject(quoteRequestId, view.getSublineId(), response.id));			
+					}
 				}
 
 				@Override

@@ -11,6 +11,8 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
+import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 
@@ -61,7 +63,11 @@ public class QuoteRequestObjectForm extends FormView<QuoteRequestObject>{
 	public QuoteRequestObjectForm() {
 
 		//COMMON
-		deleteObject = new Button("Apagar Unidade de Risco");
+		deleteObject = new Button("Eliminar");
+		deleteObject.getElement().getStyle().setFloat(Float.RIGHT);
+		deleteObject.getElement().getStyle().setMarginRight(15,Unit.PX);
+		deleteObject.getElement().getStyle().setMarginTop(15, Unit.PX);
+
 		identification = new TextBoxFormField("Identificação");
 		address = new AddressFormField("Morada");
 		
@@ -306,6 +312,14 @@ public class QuoteRequestObjectForm extends FormView<QuoteRequestObject>{
 
 	public HasClickHandlers getDeleteButton() {
 		return deleteObject;
+	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		if(deleteObject != null){
+			deleteObject.setVisible(!readOnly);
+		}
 	}
 
 }
