@@ -58,24 +58,24 @@ public class QuoteRequestWorkSpace {
 		localSubLines.clear();
 		idCounter = 0;
 
-		if ( request == null )
+		if ( originalRequest == null )
 		{
 			this.request = null;
 			return null;
 		}
 
 		try {
-			if ( request.id == null )
+			if ( originalRequest.id == null )
 				originalRequest.id = NEWID;
 			this.request = new QuoteRequest(originalRequest);
-			for ( i = 0; i < request.subLineData.length; i++ )
+			for ( i = 0; i < this.request.subLineData.length; i++ )
 			{
-				subLine = new SubLineWorkSpace(request.subLineData[i]);
+				subLine = new SubLineWorkSpace(this.request.subLineData[i]);
 				subLine.change = CompositeFieldContainer.SubLineFieldContainer.Change.NONE;
 				subLine.prevChange = subLine.change;
 				localSubLines.put(subLine.subLineId, subLine);
 			}
-			request.subLineData = null;
+			this.request.subLineData = null;
 		} catch (Exception e) {
 			this.request = null;
 		}
@@ -155,10 +155,20 @@ public class QuoteRequestWorkSpace {
 	//SUBLINES
 
 	public CompositeFieldContainer.SubLineFieldContainer[] getLocalSubLines(String requestId) {
+		CompositeFieldContainer.SubLineFieldContainer[] result;
+		int i;
+
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		return localSubLines.values().toArray(new CompositeFieldContainer.SubLineFieldContainer[localSubLines.size()]);
+		result = localSubLines.values().toArray(new CompositeFieldContainer.SubLineFieldContainer[localSubLines.size()]);
+		for ( i = 0; i < result.length; i++ )
+		{
+			if ( result[i] != null )
+				result[i] = new CompositeFieldContainer.SubLineFieldContainer(result[i]);
+		}
+
+		return result;
 	}
 
 	public CompositeFieldContainer.SubLineFieldContainer loadSubLine(String requestId,
