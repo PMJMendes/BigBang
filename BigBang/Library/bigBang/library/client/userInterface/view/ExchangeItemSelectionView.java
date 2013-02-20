@@ -78,6 +78,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 				docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "");
 				docType.showLabel(false);
 				docType.setReadOnly(true);
+				docType.allowEdition(false);
 				mimeImg = new Image();
 				filename = getFormatedLabel();
 				filename.getElement().getStyle().setFontSize(11, Unit.PX);
