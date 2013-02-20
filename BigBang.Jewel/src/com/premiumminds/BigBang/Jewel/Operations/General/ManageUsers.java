@@ -263,7 +263,7 @@ public class ManageUsers
 					marrDelete[i].mstrUsername = (String)lobjAuxBase.getAt(1);
 					marrDelete[i].mobjPassword = (lobjAuxBase.getAt(2) == null ? null :
 							(lobjAuxBase.getAt(2) instanceof Password ? (Password)lobjAuxBase.getAt(2) :
-							new Password((String)lobjAuxBase.getAt(2), false)));
+							new Password((String)lobjAuxBase.getAt(2), true)));
 					marrDelete[i].midProfile = (UUID)lobjAuxBase.getAt(3);
 					marrDelete[i].mstrEmail = (String)lobjAuxOuter.getAt(1);
 					marrDelete[i].midCostCenter = (UUID)lobjAuxOuter.getAt(2);
