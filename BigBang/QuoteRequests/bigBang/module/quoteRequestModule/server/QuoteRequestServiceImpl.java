@@ -176,6 +176,7 @@ public class QuoteRequestServiceImpl
 			lopCN.mobjData = new NegotiationData();
 
 			lopCN.mobjData.mid = null;
+			lopCN.mobjData.midCompany = ( negotiation.companyId == null ? null : UUID.fromString(negotiation.companyId) );
 			lopCN.mobjData.mstrNotes = negotiation.notes;
 			lopCN.mobjData.mdtLimitDate = (negotiation.limitDate == null ? null :
 					Timestamp.valueOf(negotiation.limitDate + " 00:00:00.0"));
