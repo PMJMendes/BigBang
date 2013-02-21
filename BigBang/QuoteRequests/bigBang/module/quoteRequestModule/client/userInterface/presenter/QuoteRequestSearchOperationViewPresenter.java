@@ -754,10 +754,6 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onSave() {
 		saveInternally();
-		if(view.getObjectForm().getInfo() != null){
-			broker.updateRequestObject(quoteRequestId, view.getObjectForm().getInfo());
-		}
-		broker.updateRequestHeader(view.getQuoteRequestHeaderForm().getInfo());
 		if(currentSubline != null && currentSubline.isOpen()){
 			broker.updateSubLineCoverages(quoteRequestId, currentSubline.getValue().subLineId, view.getOpenedSection().getValue().coverages);
 		}

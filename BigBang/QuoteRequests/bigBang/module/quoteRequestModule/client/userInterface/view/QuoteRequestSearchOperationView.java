@@ -565,6 +565,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 				}else{
 					toRunEvent = true;
 				}
+				currentOpenedSection = null;
 			}
 		});
 
