@@ -1,48 +1,56 @@
 package bigBang.module.quoteRequestModule.client.userInterface.presenter;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.UIObject;
+import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.library.client.HasParameters;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.presenter.ReceiveMessageViewPresenter;
 
 public class QuoteRequestReceiveMessageViewPresenter extends ReceiveMessageViewPresenter<QuoteRequest> {
 
+	private QuoteRequestBroker broker;
 	
 	public QuoteRequestReceiveMessageViewPresenter(Display<QuoteRequest> view) {
 		super(view);
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public void setView(UIObject view) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void go(HasWidgets container) {
-		// TODO Auto-generated method stubs
-
-	}
-
-	@Override
-	public void setParameters(HasParameters parameterHolder) {
-		// TODO Auto-generated method stub
-
+		broker = (QuoteRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.QUOTE_REQUEST);
 	}
 
 	@Override
 	protected void receive() {
-		// TODO Auto-generated method stub
+		broker.receiveMessage(view.getForm().getInfo(), new ResponseHandler<Conversation>() {
+			@Override
+			public void onResponse(Conversation response) {
+				onReceiveMessageSuccess();
+				navigateBack();
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onReceiveMessageFailed();
+			}
+		});
 		
 	}
 
 	@Override
 	protected void showOwner(String ownerId) {
-		// TODO Auto-generated method stub
-		
+		broker.getQuoteRequest(ownerId, new ResponseHandler<QuoteRequest>() {
+			
+			@Override
+			public void onResponse(QuoteRequest response) {
+				view.getOwnerForm().setValue(response);				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetOwnerFailed();								
+			}
+		});
 	}
 
 }

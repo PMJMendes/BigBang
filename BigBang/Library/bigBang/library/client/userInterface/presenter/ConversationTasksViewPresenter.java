@@ -10,6 +10,7 @@ import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
+import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -25,6 +26,7 @@ import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.ProcessBase;
+import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubPolicy;
@@ -59,6 +61,7 @@ import bigBang.module.expenseModule.client.userInterface.form.ExpenseForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyHeaderForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.SubPolicyHeaderForm;
 import bigBang.module.quoteRequestModule.client.userInterface.form.NegotiationForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestHeaderForm;
 import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
 
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -558,6 +561,26 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.SUB_CASUALTY, response.subCasualtyId);
 					
 					view.addContact("Sub-Sinistro (" + response.subCasualtyNumber + ")", response.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);		
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetOwnerFailed();
+				}
+			});
+		}else if(BigBangConstants.EntityIds.QUOTE_REQUEST.equalsIgnoreCase(response.parentDataTypeId)){
+			QuoteRequestBroker broker = (QuoteRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.QUOTE_REQUEST);
+			broker.getQuoteRequest(response.parentDataObjectId, new ResponseHandler<QuoteRequest>() {
+
+				@Override
+				public void onResponse(QuoteRequest response) {
+					view.setOwnerForm(new QuoteRequestHeaderForm());
+					view.setOwnerFormValue(response);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.QUOTE_REQUEST, response.id);
+					
+					view.addContact("Consulta (" + response.processNumber +")", response.id, BigBangConstants.EntityIds.QUOTE_REQUEST);
+					view.addContact("Cliente (" + response.clientName + ")", response.clientId, BigBangConstants.EntityIds.CLIENT);
+					view.addContact("Mediador (" + response.inheritMediatorName + ")", response.inheritMediatorId, BigBangConstants.EntityIds.MEDIATOR);
 				}
 
 				@Override

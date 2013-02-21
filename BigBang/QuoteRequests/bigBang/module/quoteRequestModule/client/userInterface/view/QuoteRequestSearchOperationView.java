@@ -3,7 +3,12 @@ package bigBang.module.quoteRequestModule.client.userInterface.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.CompositeFieldContainer;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.QuoteRequestObjectStub;
@@ -53,6 +58,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class QuoteRequestSearchOperationView extends View implements QuoteRequestSearchOperationViewPresenter.Display {
 
 	protected static final int SEARCH_PANEL_WIDTH = 400; //PX
+	protected boolean toRunEvent = true;
 	private QuoteRequestSublineFormSection currentOpenedSection;
 	private QuoteRequestSearchPanel searchPanel;
 	protected ActionInvokedEventHandler<QuoteRequestSearchOperationViewPresenter.Action> actionHandler;
@@ -341,7 +347,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	public void setOwner(QuoteRequest object) {
 		setObjectListOwner(object == null ? null : object.id);
 		childrenPanel.setOwner(object);
-		
+
 	}
 
 
@@ -554,8 +560,11 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
-				currentOpenedSection = null;
-				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CLOSE_SUBLINE_SECTION));
+				if (toRunEvent){
+					actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CLOSE_SUBLINE_SECTION));
+				}else{
+					toRunEvent = true;
+				}
 			}
 		});
 
@@ -563,6 +572,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CLOSE_ON_OPEN_SUBLINE_SECTION));
 				currentOpenedSection = newSection;
 				subLineId = newSection.getValue().subLineId;
 				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.OPEN_SUBLINE_SECTION));
@@ -572,7 +582,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		newSection.setValue(container);
 		sublineFormSections.add(newSection);
 		subLineForm.addSection(newSection);
-		
+
 		return newSection;
 	}
 
@@ -587,8 +597,9 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 
 	@Override
-	public void closeSublineSection(QuoteRequestSublineFormSection currentSubline) {
-		currentSubline.collapse();
+	public void closeSublineSection(boolean toRunEvent) {
+		this.toRunEvent = toRunEvent;
+		currentOpenedSection.collapse();
 	}
 
 
@@ -642,7 +653,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 	@Override
 	public boolean containsSubLine(String sublineId) {
-		
+
 		for(QuoteRequestSublineFormSection cont : sublineFormSections){
 			if(cont.getValue().subLineId.equalsIgnoreCase(sublineId)){
 				return true;
@@ -662,6 +673,48 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 				return;
 			}
 		}
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<HistoryItemStub> getHistoryList() {
+		return childrenPanel.historyList;
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<Contact> getContactsList() {
+		return childrenPanel.contactsList;
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<Document> getDocumentsList() {
+		return childrenPanel.documentsList;
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<BigBangProcess> getSubProcessesList() {
+		return childrenPanel.subProcessesList;
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
+	}
+
+
+
+	@Override
+	public void allowCloseProcess(boolean hasPermission) {
+		toolbar.allowClose(hasPermission);
 	}
 
 }

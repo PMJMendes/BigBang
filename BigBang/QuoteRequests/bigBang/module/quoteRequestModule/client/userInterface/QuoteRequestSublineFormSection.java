@@ -116,4 +116,8 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 		}
 	}
 
+	public boolean isOpen() {
+		return disclosurePanel.isOpen();
+	}
+
 }

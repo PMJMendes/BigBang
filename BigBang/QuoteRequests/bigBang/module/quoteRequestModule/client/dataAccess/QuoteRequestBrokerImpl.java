@@ -13,6 +13,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.CompositeFieldContainer;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
@@ -502,5 +503,49 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 				}
 			});
 		}		
+	}
+
+	@Override
+	public void receiveMessage(Conversation info,
+			final ResponseHandler<Conversation> responseHandler) {
+		service.receiveMessage(info, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION, result.id));
+				responseHandler.onResponse(result);
+			}
+		
+		
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not receive the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void sendMessage(Conversation info,
+			final ResponseHandler<Conversation> responseHandler) {
+		service.sendMessage(info, new BigBangAsyncCallback<Conversation>() {
+
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION, result.id));
+				responseHandler.onResponse(result);
+			}
+		
+		
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
+		});		
 	}
 }

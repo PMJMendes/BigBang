@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.CompositeFieldContainer;
+import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.FieldContainer;
@@ -71,6 +72,12 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 
 	public void createManagerTransfer(String[] processIds, String newManagerId,
 			ResponseHandler<ManagerTransfer> responseHandler);
+
+	public void receiveMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
+
+	public void sendMessage(Conversation info,
+			ResponseHandler<Conversation> responseHandler);
 	
 }
 
