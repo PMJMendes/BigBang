@@ -380,9 +380,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 				case SEND_MESSAGE:
 					onSendMessage();
 					break;
-				case SEND_RESPONSE_TO_CLIENT:
-					onSendResponseToClient();
-					break;
+//				case SEND_RESPONSE_TO_CLIENT:
+//					onSendResponseToClient();
+//					break;
 				case QUOTE_REQUEST_SELECTED:
 					onQuoteRequestSelected();
 					break;
@@ -739,10 +739,10 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().reload(); //TODO REGRESSAR A CLEINTE QUANDO CONSULTA É NOVA??
 	}
 
-	protected void onSendResponseToClient() {
-		// TODO Auto-generated method stub
-
-	}
+//	protected void onSendResponseToClient() {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 	protected void onSendMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -834,22 +834,38 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onDelete() {
-		//TODO
+//		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+//		item.setParameter("show", "deleterequest");
+//		NavigationHistoryManager.getInstance().go(item);
+		
+		broker.removeQuoteRequest(quoteRequestId, null, new ResponseHandler<String>() {
+			
+			@Override
+			public void onResponse(String response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.removeParameter("quoterequestid");
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Consulta de Mercado eliminada com sucesso"), TYPE.TRAY_NOTIFICATION));
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
+			}
+		});
 	}
 
 	protected void onCreateNegotiation() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-
 		item.pushIntoStackParameter("display", "negotiation");
 		item.setParameter("negotiationid", "new");
 		NavigationHistoryManager.getInstance().go(item);
-
-
 	}
 
 	protected void onClose() {
-		// TODO Auto-generated method stub
-
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "closerequest");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onFormValidationFailed() {

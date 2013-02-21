@@ -244,7 +244,9 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		toolbar.allowReceiveMessage(hasPermission);
 	}
 
-	public abstract void setParentHeaderTitle(String title);
+	public void setParentHeaderTitle(String title){
+		ownerHeader.setText(title);
+	}
 
 	@Override
 	public void applyOwnerToList(String negotiationId) {

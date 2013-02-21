@@ -60,6 +60,8 @@ public class QuoteRequestOperationsViewPresenter implements ViewPresenter {
 					present("QUOTE_REQUEST_RECEIVE_MESSAGE", parameters);
 				}else if(display.equalsIgnoreCase("conversation")){
 					present("QUOTE_REQUEST_CONVERSATION", parameters);
+				}else if(display.equalsIgnoreCase("negotiation")){
+					present("QUOTE_REQUEST_NEGOTIATION", parameters);
 				}else {
 					goToDefault();
 				}

@@ -16,6 +16,7 @@ import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.QuoteRequestObjectStub;
@@ -206,7 +207,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 				});
 			} else {
 				this.service.editRequest(request, new BigBangAsyncCallback<QuoteRequest>() {
-	
+
 					@Override
 					public void onResponseSuccess(QuoteRequest result) {
 						workspace.loadRequest(result);
@@ -219,7 +220,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 						handler.onResponse(result);
 						requiresRefresh = false;
 					}
-	
+
 					@Override
 					public void onResponseFailure(Throwable caught) {
 						handler.onError(new String[]{
@@ -411,8 +412,28 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 	@Override
 	public void createQuoteRequestManagerTransfer(String[] requestIds,
-			String managerId, ResponseHandler<QuoteRequest> handler) {
-		// TODO Auto-generated method stub
+			String managerId, final ResponseHandler<QuoteRequest> handler) {
+		ManagerTransfer transfer = new ManagerTransfer();
+		transfer.dataObjectIds = requestIds;
+		transfer.newManagerId = managerId;
+
+
+		service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
+
+			@Override
+			public void onResponseSuccess(ManagerTransfer result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER, result.id));
+				handler.onResponse(null);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not transfer the processes")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 
 	}
 
@@ -422,7 +443,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public void createManagerTransfer(String[] dataObjectIds, String managerId,
 			final ResponseHandler<ManagerTransfer> handler) {
@@ -512,11 +533,11 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 			@Override
 			public void onResponseSuccess(Conversation result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CONVERSATION, result.id));
 				responseHandler.onResponse(result);
 			}
-		
-		
+
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
@@ -534,11 +555,11 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 			@Override
 			public void onResponseSuccess(Conversation result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CONVERSATION, result.id));
 				responseHandler.onResponse(result);
 			}
-		
-		
+
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
@@ -547,5 +568,48 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 				super.onResponseFailure(caught);
 			}
 		});		
+	}
+
+	@Override
+	public void createNegotiation(Negotiation negotiation,
+			final ResponseHandler<Negotiation> responseHandler) {
+		service.createNegotiation(negotiation, new BigBangAsyncCallback<Negotiation>() {
+		
+		@Override
+		public void onResponseSuccess(Negotiation result) {
+			EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_NEGOTIATION, result.id));
+			responseHandler.onResponse(result);				
+		}
+		
+		@Override
+			public void onResponseFailure(Throwable caught) {
+			responseHandler.onError(new String[]{
+					new String("Could not create Negotiation")		
+			});	
+			super.onResponseFailure(caught);			}
+		
+		});
+	}
+
+	@Override
+	public void closeQuoteRequest(String id, String info,
+			final ResponseHandler<QuoteRequest> responseHandler) {
+		service.closeProcess(id, info, new BigBangAsyncCallback<QuoteRequest>() {
+
+			@Override
+			public void onResponseSuccess(QuoteRequest result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST, result.id));
+				responseHandler.onResponse(result);				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not close the quote request")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+		});
 	}
 }

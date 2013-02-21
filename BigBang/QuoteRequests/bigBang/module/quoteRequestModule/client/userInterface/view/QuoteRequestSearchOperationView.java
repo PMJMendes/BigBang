@@ -346,6 +346,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	@Override
 	public void setOwner(QuoteRequest object) {
 		setObjectListOwner(object == null ? null : object.id);
+		searchPanel.doSearch();
 		childrenPanel.setOwner(object);
 
 	}

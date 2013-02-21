@@ -60,6 +60,7 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 		CompositeFieldContainer.SubLineFieldContainer fields = this.value;
 
 		fields.columnFields = table.getValue();
+		fields.coverages = table.getPresentCoverages();
 		fields.headerFields = headerFieldSection.getValue();
 		fields.extraFields = extraFieldsSection.getValue();
 
@@ -72,7 +73,6 @@ public class QuoteRequestSublineFormSection extends CollapsibleFormViewSection i
 
 		table.setHeaders(value.coverages, value.columns);
 		extraFieldsSection.setCoveragesExtraFields(value.coverages);
-
 		headerFieldSection.setValue(value.headerFields);
 		table.setValue(value.columnFields);
 		extraFieldsSection.setValue(value.extraFields);

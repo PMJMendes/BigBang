@@ -17,6 +17,7 @@ import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteReq
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestConversationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestMassManagerTransferViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestNegotiationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestOperationsViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestReceiveMessageViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
@@ -31,6 +32,7 @@ import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestC
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestConversationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestMassManagerTransferView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestNegotiationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestOperationsView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestReceiveMessageView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSearchOperationView;
@@ -193,6 +195,16 @@ public class QuoteRequestModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_NEGOTIATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestNegotiationView view = (QuoteRequestNegotiationView) GWT.create(QuoteRequestNegotiationView.class);
+				ViewPresenter presenter = new QuoteRequestNegotiationViewPresenter(view);
+				return presenter;
+			}
+		});
+		
 	}
 
 	@Override

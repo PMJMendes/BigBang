@@ -5,6 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.FieldContainer;
@@ -78,6 +79,12 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 
 	public void sendMessage(Conversation info,
 			ResponseHandler<Conversation> responseHandler);
+
+	public void createNegotiation(Negotiation negotiation,
+			ResponseHandler<Negotiation> responseHandler);
+
+	public void closeQuoteRequest(String id, String info,
+			ResponseHandler<QuoteRequest> responseHandler);
 	
 }
 

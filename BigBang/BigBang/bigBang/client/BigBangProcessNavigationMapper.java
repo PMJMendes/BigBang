@@ -92,7 +92,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 			getAssessmentNavigationProcessItem(instanceId);
 		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.TOTAL_LOSS_FILE)){
 			getTotalLossFileNavigationProcessItem(instanceId);
-		}	
+		}
 
 	}
 	
@@ -340,6 +340,13 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 						}
 					});
 
+				}else if(BigBangConstants.EntityIds.QUOTE_REQUEST.equalsIgnoreCase(response.parentDataTypeId)){
+					navigationItem.setParameter("section", "quoterequest");
+					navigationItem.pushIntoStackParameter("display", "search");
+					navigationItem.setParameter("quoterequestid", response.parentDataObjectId);
+					navigationItem.pushIntoStackParameter("display","conversation");
+					handler.onResponse(navigationItem);
+
 				}
 				else{
 					navigationItem.setParameter("section", "receipt");
@@ -351,7 +358,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-
+				
 			}
 		});
 	}

@@ -30,6 +30,7 @@ import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubPolicy;
+import bigBang.definitions.shared.TotalLossFile;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasOperationPermissions;
@@ -52,10 +53,12 @@ import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.MessagesList;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.casualtyModule.client.dataAccess.MedicalFileBroker;
+import bigBang.module.casualtyModule.client.dataAccess.TotalLossFileBroker;
 import bigBang.module.casualtyModule.client.userInterface.form.AssessmentForm;
 import bigBang.module.casualtyModule.client.userInterface.form.CasualtyForm;
 import bigBang.module.casualtyModule.client.userInterface.form.MedicalFileForm;
 import bigBang.module.casualtyModule.client.userInterface.form.SubCasualtyForm;
+import bigBang.module.casualtyModule.client.userInterface.form.TotalLossFileForm;
 import bigBang.module.clientModule.client.userInterface.form.ClientForm;
 import bigBang.module.expenseModule.client.userInterface.form.ExpenseForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.form.InsurancePolicyHeaderForm;
@@ -354,7 +357,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerForm(new ClientForm());
 					view.setOwnerFormValue(response);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.CLIENT, response.id);
-					
+
 					view.addContact("Cliente (" + response.name +")", response.id, BigBangConstants.EntityIds.CLIENT);
 					view.addContact("Mediador (" + response.mediatorName + ")", response.mediatorId, BigBangConstants.EntityIds.MEDIATOR);
 				}
@@ -373,8 +376,8 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerForm(new InsurancePolicyHeaderForm());
 					view.setOwnerFormValue(response);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.INSURANCE_POLICY, response.id);
-					
-					
+
+
 					view.addContact("Apólice (" + response.number + ")", response.id, BigBangConstants.EntityIds.INSURANCE_POLICY);
 					view.addContact("Seguradora (" + response.insuranceAgencyName + ")", response.insuranceAgencyId, BigBangConstants.EntityIds.INSURANCE_AGENCY);
 					view.addContact("Mediador (" + response.inheritMediatorName + ")", response.inheritMediatorId, BigBangConstants.EntityIds.MEDIATOR);
@@ -395,7 +398,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerForm(new SubPolicyHeaderForm());
 					view.setOwnerFormValue(response);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, response.id);
-					
+
 					view.addContact("Apólice Adesão (" + response.number + ")", response.id, BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 					view.addContact("Apólice (" + response.mainPolicyNumber + ")", response.mainPolicyId, BigBangConstants.EntityIds.INSURANCE_POLICY);
 					view.addContact("Tomador (" + response.inheritClientName + ")", response.inheritClientId, BigBangConstants.EntityIds.CLIENT);
@@ -417,7 +420,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerForm(new CasualtyForm());
 					view.setOwnerFormValue(response);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.CASUALTY, response.id);
-					
+
 					view.addContact("Sinistro (" + response.processNumber + ")", response.id, BigBangConstants.EntityIds.CASUALTY);
 					view.addContact("Cliente (" + response.clientName + ")", response.clientId, BigBangConstants.EntityIds.CLIENT);		
 					view.addContact("Mediador (" + response.inheritMediatorName + ")", response.inheritMediatorId, BigBangConstants.EntityIds.MEDIATOR);
@@ -489,7 +492,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerForm(new ExpenseForm());
 					view.setOwnerFormValue(response);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.EXPENSE, response.id);
-					
+
 					view.addContact("Despesa de Saúde (" + response.number + ")", response.id , BigBangConstants.EntityIds.EXPENSE);
 					view.addContact("Apólice " + (BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(response.referenceTypeId) ? "Adesão " : "") + "(" + response.referenceNumber + ")", response.referenceId, response.referenceTypeId);
 					view.addContact("Seguradora (" + response.inheritInsurerName + ")", response.inheritInsurerId, BigBangConstants.EntityIds.INSURANCE_AGENCY);
@@ -519,7 +522,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerForm(new ReceiptForm());
 					view.setOwnerFormValue(receipt);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.RECEIPT, receipt.id);
-					
+
 					view.addContact("Recibo (" + receipt.number + ")",receipt.id ,BigBangConstants.EntityIds.RECEIPT);
 					view.addContact("Apólice " + (BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(receipt.ownerTypeId) ? "Adesão " : "") + "(" + receipt.policyNumber + ")", receipt.policyId, receipt.ownerTypeId);
 					view.addContact("Cliente (" + receipt.clientName + ")", receipt.clientId, BigBangConstants.EntityIds.CLIENT);
@@ -541,7 +544,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerForm(new AssessmentForm());
 					view.setOwnerFormValue(response);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.SUB_CASUALTY, response.subCasualtyId);
-					
+
 					view.addContact("Sub-Sinistro (" + response.subCasualtyNumber + ")", response.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);		
 				}
 
@@ -559,7 +562,25 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerForm(new MedicalFileForm());
 					view.setOwnerFormValue(response);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.SUB_CASUALTY, response.subCasualtyId);
-					
+
+					view.addContact("Sub-Sinistro (" + response.subCasualtyNumber + ")", response.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);		
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetOwnerFailed();
+				}
+			});
+		}else if(BigBangConstants.EntityIds.TOTAL_LOSS_FILE.equalsIgnoreCase(response.parentDataTypeId)){
+			TotalLossFileBroker broker = (TotalLossFileBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.TOTAL_LOSS_FILE);
+			broker.getTotalLossFile(response.parentDataObjectId, new ResponseHandler<TotalLossFile>() {
+
+				@Override
+				public void onResponse(TotalLossFile response) {
+					view.setOwnerForm(new TotalLossFileForm());
+					view.setOwnerFormValue(response);
+					view.setTypeAndOwnerId(BigBangConstants.EntityIds.SUB_CASUALTY, response.subCasualtyId);
+
 					view.addContact("Sub-Sinistro (" + response.subCasualtyNumber + ")", response.subCasualtyId , BigBangConstants.EntityIds.SUB_CASUALTY);		
 				}
 
@@ -577,7 +598,7 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 					view.setOwnerForm(new QuoteRequestHeaderForm());
 					view.setOwnerFormValue(response);
 					view.setTypeAndOwnerId(BigBangConstants.EntityIds.QUOTE_REQUEST, response.id);
-					
+
 					view.addContact("Consulta (" + response.processNumber +")", response.id, BigBangConstants.EntityIds.QUOTE_REQUEST);
 					view.addContact("Cliente (" + response.clientName + ")", response.clientId, BigBangConstants.EntityIds.CLIENT);
 					view.addContact("Mediador (" + response.inheritMediatorName + ")", response.inheritMediatorId, BigBangConstants.EntityIds.MEDIATOR);
