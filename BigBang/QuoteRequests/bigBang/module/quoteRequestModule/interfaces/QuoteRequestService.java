@@ -3,6 +3,7 @@ package bigBang.module.quoteRequestModule.interfaces;
 import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.interfaces.SearchService;
@@ -38,6 +39,7 @@ public interface QuoteRequestService
 	public QuoteRequest editRequest(QuoteRequest request) throws SessionExpiredException, BigBangException;
 
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
+	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
 
 	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;

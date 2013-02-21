@@ -12,6 +12,7 @@ import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.definitions.shared.SearchParameter;
@@ -19,7 +20,9 @@ import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.ConversationServiceImpl;
+import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
@@ -32,10 +35,14 @@ import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Data.QuoteRequestData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CreateConversation;
+import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CreateNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.DeleteQuoteRequest;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData;
@@ -149,6 +156,58 @@ public class QuoteRequestServiceImpl
 		}
 
 		return transfer;
+	}
+
+	public Negotiation createNegotiation(Negotiation negotiation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.QuoteRequest lobjRequest;
+		CreateNegotiation lopCN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.QuoteRequest.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(negotiation.ownerId));
+
+			lopCN = new CreateNegotiation(lobjRequest.GetProcessID());
+			lopCN.mobjData = new NegotiationData();
+
+			lopCN.mobjData.mid = null;
+			lopCN.mobjData.mstrNotes = negotiation.notes;
+			lopCN.mobjData.mdtLimitDate = (negotiation.limitDate == null ? null :
+					Timestamp.valueOf(negotiation.limitDate + " 00:00:00.0"));
+
+			lopCN.mobjData.midManager = null;
+			lopCN.mobjData.midProcess = null;
+
+			lopCN.mobjData.mobjPrevValues = null;
+
+			if ( (negotiation.contacts != null) && (negotiation.contacts.length > 0) )
+			{
+				lopCN.mobjContactOps = new ContactOps();
+				lopCN.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(negotiation.contacts);
+			}
+			else
+				lopCN.mobjContactOps = null;
+			if ( (negotiation.documents != null) && (negotiation.documents.length > 0) )
+			{
+				lopCN.mobjDocOps = new DocOps();
+				lopCN.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(negotiation.documents);
+			}
+			else
+				lopCN.mobjDocOps = null;
+
+			lopCN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return NegotiationServiceImpl.sGetNegotiation(lopCN.mobjData.mid);
 	}
 
 	public Conversation sendMessage(Conversation conversation)
