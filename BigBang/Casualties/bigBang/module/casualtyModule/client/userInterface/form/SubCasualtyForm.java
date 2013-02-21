@@ -116,7 +116,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		belongsToPolicy = new RadioButtonFormField(true);
 		belongsToPolicy.addOption("true", "Presente na apólice");
 		belongsToPolicy.addOption("false", "Outra");
-		carRepair = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.TOTAL_LOSS_FILE, null);
+		carRepair = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.OTHER_ENTITY, null);
 		carRepair.setLabelText("Oficina");
 		
 		addSection("Informação Geral");
