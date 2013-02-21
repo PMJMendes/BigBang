@@ -451,7 +451,6 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 		transfer.newManagerId = managerId;
 		transfer.dataObjectIds = dataObjectIds;
 
-		if(dataObjectIds.length > 1){
 			service.massCreateManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
 
 				@Override
@@ -488,42 +487,6 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 				}
 
 			});
-		}else{
-			service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
-
-				@Override
-				public void onResponseSuccess(ManagerTransfer result) {
-					for(int i = 0; i < result.dataObjectIds.length; i++) {
-						getQuoteRequest(result.dataObjectIds[i], new ResponseHandler<QuoteRequest>(){
-
-							@Override
-							public void onResponse(QuoteRequest response) {
-								for(DataBrokerClient<QuoteRequest> c : QuoteRequestBrokerImpl.this.clients) {
-									QuoteRequestDataBrokerClient b = (QuoteRequestDataBrokerClient)c;
-									b.updateQuoteRequest(response);
-								}
-								EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER, response.id));
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								return;
-							}
-						});
-					}
-					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not create manager transfer")	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}		
 	}
 
 	@Override
@@ -600,6 +563,11 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 			public void onResponseSuccess(QuoteRequest result) {
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST, result.id));
 				responseHandler.onResponse(result);				
+				incrementDataVersion();
+				for(DataBrokerClient<QuoteRequest> bc : getClients()){
+					((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
+					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(result.id, getCurrentDataVersion());
+				}
 			}
 
 			@Override

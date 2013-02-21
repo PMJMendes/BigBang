@@ -6,7 +6,6 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -123,10 +122,10 @@ public class SingleQuoteRequestManagerTransferViewPresenter implements ViewPrese
 	}
 	
 	private void transferClient(String quoteRequestId, String newManagerId){
-		this.broker.createManagerTransfer(new String[]{quoteRequestId}, newManagerId, new ResponseHandler<ManagerTransfer>() {
+		this.broker.createQuoteRequestManagerTransfer(new String[]{quoteRequestId}, newManagerId, new ResponseHandler<QuoteRequest>() {
 
 			@Override
-			public void onResponse(ManagerTransfer response) {
+			public void onResponse(QuoteRequest response) {
 				onManagerTransferSuccess();
 			}
 
