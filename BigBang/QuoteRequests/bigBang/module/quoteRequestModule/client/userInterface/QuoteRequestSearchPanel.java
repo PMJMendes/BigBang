@@ -102,7 +102,6 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 		CATEGORY,
 		LINE,
 		SUBLINE,
-		INSURANCE_AGENCY,
 		MEDIATOR,
 		MANAGER,
 		CASE_STUDY
@@ -126,7 +125,6 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 
 		filtersPanel = new FiltersPanel(sortOptions);
 		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor de Consulta");
-		filtersPanel.addTypifiedListField(Filters.INSURANCE_AGENCY, BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 		filtersPanel.addTypifiedListField(Filters.MEDIATOR, BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		filtersPanel.addTypifiedListField(Filters.CATEGORY, BigBangConstants.EntityIds.CATEGORY, "Categoria");
 		filtersPanel.addTypifiedListField(Filters.LINE, BigBangConstants.EntityIds.LINE, "Ramo", Filters.CATEGORY);
@@ -162,7 +160,6 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 		parameter.freeText = this.textBoxFilter.getValue();
 		parameter.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
 		parameter.mediatorId = (String) filtersPanel.getFilterValue(Filters.MEDIATOR);
-		parameter.insuranceAgencyId = (String) filtersPanel.getFilterValue(Filters.INSURANCE_AGENCY);
 		parameter.categoryId = (String) filtersPanel.getFilterValue(Filters.CATEGORY);
 		parameter.lineId = (String) filtersPanel.getFilterValue(Filters.LINE);
 		parameter.subLineId = (String) filtersPanel.getFilterValue(Filters.SUBLINE);
