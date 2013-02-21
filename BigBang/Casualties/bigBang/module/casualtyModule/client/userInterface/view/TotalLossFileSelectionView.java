@@ -56,7 +56,7 @@ public class TotalLossFileSelectionView extends View implements TotalLossFileSel
 		buttonsWrapper.add(confirmButton);
 		buttonsWrapper.add(cancelButton);
 
-		ListHeader header = new ListHeader("Ficha Clínica");
+		ListHeader header = new ListHeader("Perda Total");
 		header.setRightWidget(buttonsWrapper);
 
 		form = new TotalLossFileForm();
@@ -69,7 +69,7 @@ public class TotalLossFileSelectionView extends View implements TotalLossFileSel
 
 		VerticalPanel listWrapper = new VerticalPanel();
 		listWrapper.setSize("100%", "100%");
-		listWrapper.add(new ListHeader("Lista de Fichas Clínicas"));
+		listWrapper.add(new ListHeader("Lista de Perdas Totais"));
 		listWrapper.add(list);
 		listWrapper.setCellHeight(list, "100%");
 
