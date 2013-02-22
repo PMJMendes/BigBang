@@ -40,6 +40,7 @@ public class MediatorForm extends FormView<Mediator> {
 	protected AddressFormField address;
 	protected CheckBoxFormField hasRetention;
 	protected TextBoxFormField NIB;
+	protected TextBoxFormField acctCode;
 	protected NewExceptionSection newException;
 
 	protected Collection<MediatorCategoryFormSection> categorySections;
@@ -54,15 +55,20 @@ public class MediatorForm extends FormView<Mediator> {
 
 		name = new TextBoxFormField("Nome");
 		ISPNumber = new TextBoxFormField("Número do ISP");
+		ISPNumber.setFieldWidth("100px");
 		taxNumber = new TextBoxFormField("NIF/NIPC");
+		taxNumber.setFieldWidth("100px");
 		comissionProfile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CommissionProfiles, "Perfil de comissão");
 		commissionPercentage = new NumericTextBoxFormField("Comissão", false);
 		commissionPercentage.setUnitsLabel("%");
+		acctCode = new TextBoxFormField("Terminação (278 XXX)");
+		acctCode.setFieldWidth("100px");
 		NIB = new TextBoxFormField("NIB/IBAN");
 		hasRetention = new CheckBoxFormField("Retenção na Fonte");
 
 		addFormField(name);
 		addFormField(taxNumber);
+		addFormField(acctCode);
 		addFormField(NIB);
 		addFormField(ISPNumber);
 		addFormField(comissionProfile, true);
@@ -117,6 +123,7 @@ public class MediatorForm extends FormView<Mediator> {
 		info.comissionProfile.value = comissionProfile.getSelectedItemText();
 		info.address = address.getValue();
 		info.NIB = NIB.getValue();
+		info.accountingCode = acctCode.getValue();
 		info.basePercent = commissionPercentage.getValue();
 		info.hasRetention = this.hasRetention.getValue();
 
@@ -158,6 +165,7 @@ public class MediatorForm extends FormView<Mediator> {
 		taxNumber.setValue(info.taxNumber);
 		comissionProfile.setValue(info.comissionProfile.id);
 		commissionPercentage.setValue(info.basePercent);
+		acctCode.setValue(info.accountingCode);
 		address.setValue(info.address);
 		NIB.setValue(info.NIB);
 		hasRetention.setValue(info.hasRetention);

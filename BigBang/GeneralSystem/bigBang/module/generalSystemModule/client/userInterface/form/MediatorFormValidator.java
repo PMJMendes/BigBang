@@ -19,9 +19,14 @@ public class MediatorFormValidator extends FormValidator<MediatorForm> {
 		valid &= validateCommissionPercentage();
 		valid &= validateAddress();
 		valid &= validateHasRetention();
+		valid &= validateAcctCode();
 		valid &= validateNib();
 		
 		return new Result(valid, this.validationMessages);
+	}
+	
+	private boolean validateAcctCode() {
+		return validateString(form.acctCode, 3, 3, true);
 	}
 	
 	private boolean validateName(){

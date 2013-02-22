@@ -16,6 +16,7 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 	protected ArrayList<TextBoxFormField> ownMediatorCodeList;
 	protected TextBoxFormField taxNumber;
 	protected TextBoxFormField NIB;
+	protected TextBoxFormField acctCode;
 	protected AddressFormField address;
 	
 	protected FormViewSection ownMediatorCodeSection;
@@ -25,8 +26,13 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		
 		name = new TextBoxFormField("Nome");
 		acronym = new TextBoxFormField("Sigla");
+		acronym.setFieldWidth("100px");
 		ISPNumber = new TextBoxFormField("Número do ISP");
+		ISPNumber.setFieldWidth("100px");
 		taxNumber = new TextBoxFormField("NIF/NIPC");
+		taxNumber.setFieldWidth("100px");
+		acctCode = new TextBoxFormField("Terminação (72113 XXX 1)");
+		acctCode.setFieldWidth("100px");
 		NIB = new TextBoxFormField("NIB");
 		address = new AddressFormField();
 
@@ -36,6 +42,7 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		addFormField(acronym);
 		addFormField(taxNumber);
 		addFormField(ISPNumber);
+		addFormField(acctCode);
 		addFormField(NIB);
 		
 		ownMediatorCodeSection = new FormViewSection("Códigos de Mediador");
@@ -56,6 +63,7 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		info.acronym = acronym.getValue();
 		info.ISPNumber = ISPNumber.getValue();
 		info.taxNumber = taxNumber.getValue();
+		info.accountingCode = acctCode.getValue();
 		info.address = address.getValue();
 		info.NIB = NIB.getValue();
 		info.address = address.getValue();
@@ -75,6 +83,7 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		acronym.setValue(info.acronym);
 		ISPNumber.setValue(info.ISPNumber);
 		taxNumber.setValue(info.taxNumber);
+		acctCode.setValue(info.accountingCode);
 		address.setValue(info.address);
 		NIB.setValue(info.NIB);
 		address.setValue(info.address);

@@ -18,11 +18,16 @@ public class InsuranceAgencyFormValidator extends
 		valid &= validateOwnMediatorCode();
 		valid &= validateTaxNumber();
 		valid &= validateNib();
+		valid &= validateAcctCode();
 		valid &= validateAddress();
 		
 		return new Result(valid, this.validationMessages);
 	}
 	
+	private boolean validateAcctCode() {
+		return validateString(form.acctCode, 3, 3, true);
+	}
+
 	private boolean validateName(){
 		return validateString(form.name, 1, 250, false);
 	}
