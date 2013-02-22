@@ -17,6 +17,21 @@ import Jewel.Engine.SysObjects.ObjectBase;
 public class Company
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int NAME         =  0;
+		public static int ACRONYM      =  1;
+		public static int ISPNUMBER    =  2;
+		public static int MEDIATORCODE =  3;
+		public static int FISCALNUMBER =  4;
+		public static int BANKINGID    =  5;
+		public static int ADDRESS1     =  6;
+		public static int ADDRESS2     =  7;
+		public static int ZIPCODE      =  8;
+		public static int MIGRATIONID  =  9;
+		public static int ACCTCODE     = 10;
+	}
+
     public static Company GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{

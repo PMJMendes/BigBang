@@ -84,6 +84,7 @@ public class InsuranceAgencyServiceImpl
 	        	lobjTmp.ownMediatorCodes[0] = (String)lobjAux.getAt(3);
 	        	lobjTmp.taxNumber = (String)lobjAux.getAt(4);
 	        	lobjTmp.NIB = (String)lobjAux.getAt(5);
+	        	lobjTmp.accountingCode = (String)lobjAux.getAt(9);
 	        	lobjTmp.address = new Address();
 	        	lobjTmp.address.street1 = (String)lobjAux.getAt(6);
 	        	lobjTmp.address.street2 = (String)lobjAux.getAt(7);
@@ -142,6 +143,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.marrCreate[0].mstrName = agency.name;
 			lopMIC.marrCreate[0].mstrAcronym = agency.acronym;
 			lopMIC.marrCreate[0].mstrISPNumber = agency.ISPNumber;
+			lopMIC.marrCreate[0].mstrAcctCode = agency.accountingCode;
 			if ( (agency.ownMediatorCodes != null) && (agency.ownMediatorCodes.length > 0) )
 				lopMIC.marrCreate[0].mstrMedCode = agency.ownMediatorCodes[0];
 			else
@@ -217,6 +219,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.marrModify[0].mstrName = agency.name;
 			lopMIC.marrModify[0].mstrAcronym = agency.acronym;
 			lopMIC.marrModify[0].mstrISPNumber = agency.ISPNumber;
+			lopMIC.marrModify[0].mstrAcctCode = agency.accountingCode;
 			if ( (agency.ownMediatorCodes != null) && (agency.ownMediatorCodes.length > 0) )
 				lopMIC.marrModify[0].mstrMedCode = agency.ownMediatorCodes[0];
 			else

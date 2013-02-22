@@ -102,6 +102,7 @@ public class MediatorServiceImpl
 	        	lobjResult.basePercent = (lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PERCENT) == null ? null :
 	        			((BigDecimal)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PERCENT)).doubleValue());
 	        	lobjResult.hasRetention = (Boolean)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.HASRETENTION);
+	        	lobjResult.accountingCode = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ACCTCODE);
 	        	lobjResult.address = new Address();
 	        	lobjResult.address.street1 = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ADDRESS1);
 	        	lobjResult.address.street2 = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ADDRESS2);
@@ -190,6 +191,7 @@ public class MediatorServiceImpl
 			lopMM.marrCreate[0].mobjMainValues.mstrISPNumber = mediator.ISPNumber;
 			lopMM.marrCreate[0].mobjMainValues.mstrFiscalNumber = mediator.taxNumber;
 			lopMM.marrCreate[0].mobjMainValues.mstrBankID = mediator.NIB;
+			lopMM.marrCreate[0].mobjMainValues.mstrAcctCode = mediator.accountingCode;
 			if ( mediator.comissionProfile != null )
 				lopMM.marrCreate[0].mobjMainValues.midProfile = UUID.fromString(mediator.comissionProfile.id);
 			else
@@ -303,6 +305,7 @@ public class MediatorServiceImpl
 			lopMM.marrModify[0].mobjMainValues.mstrISPNumber = mediator.ISPNumber;
 			lopMM.marrModify[0].mobjMainValues.mstrFiscalNumber = mediator.taxNumber;
 			lopMM.marrModify[0].mobjMainValues.mstrBankID = mediator.NIB;
+			lopMM.marrModify[0].mobjMainValues.mstrAcctCode = mediator.accountingCode;
 			if ( mediator.comissionProfile != null )
 				lopMM.marrModify[0].mobjMainValues.midProfile = UUID.fromString(mediator.comissionProfile.id);
 			else

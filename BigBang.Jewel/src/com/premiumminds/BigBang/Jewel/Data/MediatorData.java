@@ -29,6 +29,7 @@ public class MediatorData
 	public BigDecimal mdblPercent;
 	public String mstrCalcClass;
 	public Boolean mbHasRetention;
+	public String mstrAcctCode;
 	public MediatorDealData[] marrDeals;
 	public MediatorExceptionData[] marrExceptions;
 
@@ -49,6 +50,7 @@ public class MediatorData
 		mdblPercent = (BigDecimal)pobjSource.getAt(Mediator.I.PERCENT);
 		mstrCalcClass = (String)pobjSource.getAt(Mediator.I.CALCCLASS);
 		mbHasRetention = (Boolean)pobjSource.getAt(Mediator.I.HASRETENTION);
+		mstrAcctCode = (String)pobjSource.getAt(Mediator.I.ACCTCODE);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -67,6 +69,7 @@ public class MediatorData
 			pobjDest.setAt(Mediator.I.PERCENT, mdblPercent);
 			pobjDest.setAt(Mediator.I.CALCCLASS, mstrCalcClass);
 			pobjDest.setAt(Mediator.I.HASRETENTION, mbHasRetention);
+			pobjDest.setAt(Mediator.I.ACCTCODE, mstrAcctCode);
 		}
 		catch (Throwable e)
 		{
@@ -115,6 +118,15 @@ public class MediatorData
 		if ( (mbHasRetention != null) && mbHasRetention )
 		{
 			pstrBuilder.append("Com retenção na fonte.");
+			pstrBuilder.append(pstrLineBreak);
+		}
+
+		if ( mstrAcctCode != null )
+		{
+			pstrBuilder.append("Contabilidade: 278");
+			pstrBuilder.append(mstrAcctCode);
+			pstrBuilder.append(" / 6225");
+			pstrBuilder.append(mstrAcctCode);
 			pstrBuilder.append(pstrLineBreak);
 		}
 
