@@ -161,11 +161,14 @@ public class QuoteRequestWorkSpace {
 		if ( !isRequestLoaded(requestId) )
 			return null;
 
-		result = localSubLines.values().toArray(new CompositeFieldContainer.SubLineFieldContainer[localSubLines.size()]);
-		for ( i = 0; i < result.length; i++ )
+		result = new CompositeFieldContainer.SubLineFieldContainer[localSubLines.size()];
+
+		i = 0;
+		for ( SubLineWorkSpace subline : localSubLines.values() )
 		{
-			if ( result[i] != null )
-				result[i] = new CompositeFieldContainer.SubLineFieldContainer(result[i]);
+			if ( subline != null )
+				result[i] = new CompositeFieldContainer.SubLineFieldContainer(subline);
+			i++;
 		}
 
 		return result;
@@ -183,7 +186,7 @@ public class QuoteRequestWorkSpace {
 		{
 			if ( CompositeFieldContainer.SubLineFieldContainer.Change.DELETED.equals(subLineAux.change) )
 				subLineAux.change = subLineAux.prevChange;
-			return subLineAux;
+			return new CompositeFieldContainer.SubLineFieldContainer(subLineAux);
 		}
 
 		subLineAux = new SubLineWorkSpace(subLine);
@@ -196,7 +199,7 @@ public class QuoteRequestWorkSpace {
 		}
 		localSubLines.put(subLineAux.subLineId, subLineAux);
 
-		return subLineAux;
+		return new CompositeFieldContainer.SubLineFieldContainer(subLineAux);
 	}
 
 	public void updateCoverages(String requestId, String subLineId, StructuredFieldContainer.Coverage[] coverages) {
@@ -232,7 +235,7 @@ public class QuoteRequestWorkSpace {
 		if ( subLine != null )
 			subLine.change = CompositeFieldContainer.SubLineFieldContainer.Change.DELETED;
 
-		return subLine;
+		return new CompositeFieldContainer.SubLineFieldContainer(subLine);
 	}
 
 
