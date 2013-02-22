@@ -214,7 +214,7 @@ public class ManageInsurers
 					lobjAux.setAt(6, marrCreate[i].mstrAddress1);
 					lobjAux.setAt(7, marrCreate[i].mstrAddress2);
 					lobjAux.setAt(8, marrCreate[i].midZipCode);
-					lobjAux.setAt(9,  marrCreate[i].mstrAcctCode);
+					lobjAux.setAt(10,  marrCreate[i].mstrAcctCode);
 					lobjAux.SaveToDb(pdb);
 					if ( marrCreate[i].mobjContactOps != null )
 						marrCreate[i].mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
@@ -241,7 +241,7 @@ public class ManageInsurers
 					marrModify[i].mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(6);
 					marrModify[i].mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(7);
 					marrModify[i].mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(8);
-					marrModify[i].mobjPrevValues.mstrAcctCode = (String)lobjAux.getAt(9);
+					marrModify[i].mobjPrevValues.mstrAcctCode = (String)lobjAux.getAt(10);
 					marrModify[i].mobjPrevValues.mobjContactOps = null;
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 					lobjAux.setAt(0, marrModify[i].mstrName);
@@ -253,7 +253,7 @@ public class ManageInsurers
 					lobjAux.setAt(6, marrModify[i].mstrAddress1);
 					lobjAux.setAt(7, marrModify[i].mstrAddress2);
 					lobjAux.setAt(8, marrModify[i].midZipCode);
-					lobjAux.setAt(9, marrModify[i].mstrAcctCode);
+					lobjAux.setAt(10, marrModify[i].mstrAcctCode);
 					lobjAux.SaveToDb(pdb);
 				}
 			}
@@ -275,7 +275,7 @@ public class ManageInsurers
 					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(6);
 					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(7);
 					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(8);
-					marrDelete[i].mstrAcctCode = (String)lobjAux.getAt(9);
+					marrDelete[i].mstrAcctCode = (String)lobjAux.getAt(10);
 					larrContacts = lobjAux.GetCurrentContacts();
 					if ( (larrContacts == null) || (larrContacts.length == 0) )
 						marrDelete[i].mobjContactOps = null;
@@ -526,7 +526,7 @@ public class ManageInsurers
 					lobjAux.setAt(6, marrModify[i].mobjPrevValues.mstrAddress1);
 					lobjAux.setAt(7, marrModify[i].mobjPrevValues.mstrAddress2);
 					lobjAux.setAt(8, marrModify[i].mobjPrevValues.midZipCode);
-					lobjAux.setAt(9, marrModify[i].mobjPrevValues.mstrAcctCode);
+					lobjAux.setAt(10, marrModify[i].mobjPrevValues.mstrAcctCode);
 					lobjAux.SaveToDb(pdb);
 				}
 			}
@@ -545,7 +545,7 @@ public class ManageInsurers
 					lobjAux.setAt(6, marrDelete[i].mstrAddress1);
 					lobjAux.setAt(7, marrDelete[i].mstrAddress2);
 					lobjAux.setAt(8, marrDelete[i].midZipCode);
-					lobjAux.setAt(9,  marrDelete[i].mstrAcctCode);
+					lobjAux.setAt(10,  marrDelete[i].mstrAcctCode);
 					lobjAux.SaveToDb(pdb);
 					marrDelete[i].mid = lobjAux.getKey();
 					if ( marrDelete[i].mobjContactOps != null )

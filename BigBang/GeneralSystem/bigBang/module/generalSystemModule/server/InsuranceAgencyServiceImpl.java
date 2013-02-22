@@ -84,7 +84,7 @@ public class InsuranceAgencyServiceImpl
 	        	lobjTmp.ownMediatorCodes[0] = (String)lobjAux.getAt(3);
 	        	lobjTmp.taxNumber = (String)lobjAux.getAt(4);
 	        	lobjTmp.NIB = (String)lobjAux.getAt(5);
-	        	lobjTmp.accountingCode = (String)lobjAux.getAt(9);
+	        	lobjTmp.accountingCode = (String)lobjAux.getAt(10);
 	        	lobjTmp.address = new Address();
 	        	lobjTmp.address.street1 = (String)lobjAux.getAt(6);
 	        	lobjTmp.address.street2 = (String)lobjAux.getAt(7);
