@@ -171,6 +171,7 @@ public class ManageData
 					mobjData.mobjPrevValues.FromObject(lobjAux);
 					mobjData.mobjPrevValues.mobjPrevValues = null;
 
+					mobjData.midClient = mobjData.mobjPrevValues.midClient;
 					mobjData.midManager = GetProcess().GetManagerID();
 					mobjData.ToObject(lobjAux);
 					lobjAux.SaveToDb(pdb);

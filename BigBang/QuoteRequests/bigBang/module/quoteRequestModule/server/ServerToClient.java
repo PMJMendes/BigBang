@@ -773,6 +773,7 @@ public class ServerToClient
 			mobjOutRequest.inheritMediatorName = lobjMed.getLabel();
 			mobjOutRequest.notes = (String)mobjRequest.getAt(3);
 			mobjOutRequest.docushare = (String)mobjRequest.getAt(5);
+			mobjOutRequest.clientId = ((UUID)mobjRequest.getAt(6)).toString();
 		}
 	}
 
