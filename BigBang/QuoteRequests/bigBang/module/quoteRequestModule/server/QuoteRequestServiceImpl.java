@@ -412,7 +412,6 @@ public class QuoteRequestServiceImpl
 	{
 		QuoteRequestSearchParameter lParam;
 		String lstrAux;
-		IEntity lrefClients;
 		IEntity lrefQRSubLines;
 		IEntity lrefNegotiations;
 
@@ -433,17 +432,7 @@ public class QuoteRequestServiceImpl
 
 		if ( lParam.ownerId != null )
 		{
-			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+			pstrBuffer.append(" AND [:Client] = '").append(lParam.ownerId).append("'");
 		}
 
 		if ( lParam.subLineId != null )
@@ -505,7 +494,7 @@ public class QuoteRequestServiceImpl
 			{
         		throw new BigBangException(e.getMessage(), e);
 			}
-			pstrBuffer.append(") [AuxNegotiations] WHERE [:Company] = '").append(lParam.insuranceAgencyId).append("'");
+			pstrBuffer.append(") [AuxNegotiations] WHERE [:Company] = '").append(lParam.insuranceAgencyId).append("')");
 		}
 
 		if ( lParam.mediatorId != null )
