@@ -580,7 +580,16 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		}
 		else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.CONVERSATION)){
 			showConversation(process.dataId);
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
+			showNegotiation(process.dataId);
 		}
+	}
+
+	private void showNegotiation(String dataId) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "negotiation");
+		item.setParameter("negotiationid", dataId);
+		NavigationHistoryManager.getInstance().go(item);		
 	}
 
 	protected void onCloseSublineSection() {
@@ -856,10 +865,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onCreateNegotiation() {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "negotiation");
-		item.setParameter("negotiationid", "new");
-		NavigationHistoryManager.getInstance().go(item);
+		showNegotiation("new");
 	}
 
 	protected void onClose() {

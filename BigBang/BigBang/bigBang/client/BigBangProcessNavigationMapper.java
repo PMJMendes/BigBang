@@ -537,13 +537,15 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 				navigationItem.setStackParameter("display");
 				if(response.ownerTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
 					navigationItem.setParameter("section", "insurancepolicy");
+					navigationItem.setParameter("policyid", response.ownerId);
 				}
 				else{
 					navigationItem.setParameter("section", "quoterequest");
+					navigationItem.setParameter("quoterequestid", response.ownerId);
+
 				}
 				navigationItem.pushIntoStackParameter("display", "negotiation");
 				navigationItem.setParameter("ownertypeid", response.ownerTypeId);
-				navigationItem.setParameter("policyid", response.ownerId);
 				navigationItem.setParameter("negotiationid", instanceId);
 				handler.onResponse(navigationItem);
 			}
