@@ -10,6 +10,7 @@ import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 
 /**
@@ -61,6 +62,8 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	public void createRiskAnalisys(RiskAnalysis riskAnalisys, ResponseHandler<RiskAnalysis> handler);
 
 	public void createPolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
+
+	public void createQuoteRequest(QuoteRequest request, ResponseHandler<QuoteRequest> handler);
 
 	public void createCasualty(Casualty casualty, ResponseHandler<Casualty> handler);
 	

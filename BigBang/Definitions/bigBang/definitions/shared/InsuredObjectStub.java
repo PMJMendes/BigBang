@@ -42,4 +42,21 @@ public class InsuredObjectStub
 		this.typeText = orig.typeText;
 		this.change = orig.change;
 	}
+
+	public InsuredObjectStub(QuoteRequestObjectStub orig, ComplexFieldContainer data)
+	{
+		super(data);
+
+		this.id = orig.id;
+		this.processId = orig.processId;
+		this.permissions = orig.permissions;
+
+		this.unitIdentification = orig.unitIdentification;
+		this.address = (orig.address == null ? null : new Address(orig.address));
+		this.inclusionDate = null;
+		this.exclusionDate = null;
+		this.typeId = orig.typeId;
+		this.typeText = orig.typeText;
+		this.change = orig.change;
+	}
 }

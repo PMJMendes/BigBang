@@ -1,41 +1,35 @@
 package bigBang.module.quoteRequestModule.client.userInterface.form;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequestObject;
-import bigBang.definitions.shared.QuoteRequestObject.SubLineData;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
-import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestObjectSubLineDataSection;
 
-import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 
-public class QuoteRequestObjectForm extends FormView<QuoteRequestObject> {
+public class QuoteRequestObjectForm extends FormView<QuoteRequestObject>{
 
-	//common fields
-	protected TextBoxFormField identification;
-	protected AddressFormField address;
-	protected DatePickerFormField inclusionDate;
-	protected DatePickerFormField exclusionDate;
-	protected RadioButtonFormField type;
+	//COMMON
+	private TextBoxFormField identification;
+	private ExpandableListBoxFormField type;
+	private AddressFormField address;	
+	protected Button deleteObject;
 
 	//person fields
 	protected TextBoxFormField personTaxNumber;
 	protected ExpandableListBoxFormField personGender;
 	protected DatePickerFormField personBirthDate;
 	protected TextBoxFormField personClientNumber;
-	protected ExpandableListBoxFormField personInsurangeAgency; 
+	protected TextBoxFormField personCompanyNumber; 
 
 	//company fields
 	protected TextBoxFormField companyTaxNumber;
@@ -65,242 +59,185 @@ public class QuoteRequestObjectForm extends FormView<QuoteRequestObject> {
 	protected TextBoxFormField animalCityRegistryNumber;
 	protected TextBoxFormField animalElectronicTagId;
 
-	protected FormViewSection commonSection, typeSection, personSection, companySection, equipmentSection, locationSection, animalSection, dynamicHeaderSection;
-	protected Map<String, QuoteRequestObjectSubLineDataSection> subLineSections;
+	protected FormViewSection commonSection, personSection, companySection, equipmentSection, locationSection, animalSection;
+	
+	public QuoteRequestObjectForm() {
 
-	public QuoteRequestObjectForm(){
-		this.scrollWrapper.getElement().getStyle().setOverflowX(Overflow.SCROLL);
-		this.subLineSections = new HashMap<String, QuoteRequestObjectSubLineDataSection>();
+		//COMMON
+		deleteObject = new Button("Eliminar");
+		deleteObject.getElement().getStyle().setFloat(Float.RIGHT);
+		deleteObject.getElement().getStyle().setMarginRight(15,Unit.PX);
+		deleteObject.getElement().getStyle().setMarginTop(15, Unit.PX);
 
-		//common fields
-		this.commonSection = new FormViewSection("Informação Geral");
-		this.identification = new TextBoxFormField("Identificação");
-		this.identification.setFieldWidth("300px");
-		this.inclusionDate = new DatePickerFormField("Data de Inclusão");
-		this.exclusionDate = new DatePickerFormField("Data de Exclusão");
+		identification = new TextBoxFormField("Identificação");
+		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OBJECT_TYPE, "Tipo de Unidade de Risco");
+		type.setEditable(false);
+		type.allowEdition(false);
+		address = new AddressFormField("Morada");
+		
+		commonSection = new FormViewSection("Cabeçalho de Unidade de Risco");		
+		commonSection.addFormField(identification, true);
+		commonSection.addFormField(type, true);
+		commonSection.addWidget(deleteObject, true);
+		commonSection.addLineBreak();
+		commonSection.addFormField(address);
+		addSection(commonSection);
 
-		this.commonSection.addFormField(this.identification, true);
-		this.commonSection.addFormField(this.inclusionDate, true);
-		this.commonSection.addFormField(this.exclusionDate, true);
-		this.addSection(this.commonSection);
+		//PERSON
+		personSection = new FormViewSection("Pessoa");
+		personTaxNumber = new TextBoxFormField("NIF");
+		personGender = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.GENDERS, "Sexo");
+		personBirthDate = new DatePickerFormField("Data de Nascimento");
+		personClientNumber = new TextBoxFormField("Número de Cliente Interno");
+		personCompanyNumber = new TextBoxFormField("Número na Seguradora");
 
-		FormViewSection addressSection = new FormViewSection("Morada de Risco");
-		this.address = new AddressFormField("Morada");
-		addressSection.addFormField(this.address);
-		addSection(addressSection);
-
-		//type
-		this.typeSection = new FormViewSection("Tipo de Objecto");
-		this.type = new RadioButtonFormField();
-
-		this.typeSection.addFormField(this.type);
-		this.addSection(this.typeSection);
-
-		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PERSON, "Pessoa");
-		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_COMPANY, "Empresa ou Grupo");
-		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_EQUIPMENT, "Objecto ou Equipamento");
-		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PLACE, "Local");
-		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_ANIMAL, "Animal");
-		this.type.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				showSectionForTypeWithId(event.getValue());
-			}
-		});
-
-		//person fields
-		this.personSection = new FormViewSection("Pessoa");
-		this.personTaxNumber = new TextBoxFormField("NIF");
-		this.personTaxNumber.setFieldWidth("175px");
-		this.personGender = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.GENDERS, "Sexo");
-		this.personBirthDate = new DatePickerFormField("Data de Nascimento");
-		this.personClientNumber = new TextBoxFormField("Número de Cliente Interno");
-		this.personInsurangeAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
-
-		this.personSection.addFormFieldGroup(new FormField[]{
-				this.personTaxNumber,
-				this.personGender,
-				this.personBirthDate
+		personSection.addFormFieldGroup(new FormField[]{
+				personTaxNumber,
+				personGender,
+				personBirthDate
 		}, true);
-		this.personSection.addFormFieldGroup(new FormField[]{
-				this.personClientNumber,
-				this.personInsurangeAgency
+		personSection.addFormFieldGroup(new FormField[]{
+				personClientNumber,
+				personCompanyNumber
 		}, true);
-		this.addSection(this.personSection);
+		addSection(personSection);
 
-		//company fields
-		this.companySection = new FormViewSection("Empresa ou Grupo");
-		this.companyTaxNumber = new TextBoxFormField("NIPC");
-		this.companyTaxNumber.setFieldWidth("200px");
-		this.companyCAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE Principal");
-		this.companyGrievousCAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE Mais Gravoso");
-		this.companyActivityNotes = new TextAreaFormField("Notas da Actividade");
-		this.companyProductNotes = new TextAreaFormField("Notas do Produto");
-		this.companyBusinessVolume = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.SALES_VOLUMES, "Volume de Facturação");
-		this.companyEuropeanUnionEntity = new TextBoxFormField("Entidade da União Europeia");
-		this.companyClientNumber = new TextBoxFormField("Número de Cliente Interno");
+		//COMPANY
+		companySection = new FormViewSection("Empresa ou Grupo");
+		companyTaxNumber = new TextBoxFormField("NIPC");
+		companyTaxNumber.setFieldWidth("200px");
+		companyCAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE Principal");
+		companyGrievousCAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE Mais Gravoso");
+		companyActivityNotes = new TextAreaFormField("Notas da Actividade");
+		companyProductNotes = new TextAreaFormField("Notas do Produto");
+		companyBusinessVolume = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.SALES_VOLUMES, "Volume de Facturação");
+		companyEuropeanUnionEntity = new TextBoxFormField("Entidade da União Europeia");
+		companyClientNumber = new TextBoxFormField("Número de Cliente Interno");
 
-		this.companySection.addFormFieldGroup(new FormField[]{
-				this.companyTaxNumber,
-				this.companyCAE,
-				this.companyGrievousCAE
+		companySection.addFormFieldGroup(new FormField[]{
+				companyTaxNumber,
+				companyCAE,
+				companyGrievousCAE
 		}, true);
-		this.companySection.addFormFieldGroup(new FormField[]{
-				this.companyActivityNotes,
-				this.companyProductNotes,
-				this.companyBusinessVolume
+		companySection.addFormFieldGroup(new FormField[]{
+				companyActivityNotes,
+				companyProductNotes,
+				companyBusinessVolume
 		}, true);
-		this.companySection.addFormFieldGroup(new FormField[]{
-				this.companyEuropeanUnionEntity,
-				this.companyClientNumber,
+		companySection.addFormFieldGroup(new FormField[]{
+				companyEuropeanUnionEntity,
+				companyClientNumber,
 		}, true);
-		this.addSection(this.companySection);
+		addSection(companySection);
 
-		//equipment fields
-		this.equipmentSection = new FormViewSection("Objecto ou Equipamento");
-		this.equipmentMakeAndModel = new TextBoxFormField("Marca e Modelo");
-		this.equipmentDescription = new TextAreaFormField("Descrição");
-		this.equipmentFirstRegistryDate = new DatePickerFormField("Data do Primeiro Registo");
-		this.equipmentManufactureYear = new TextBoxFormField("Ano de Fabrico");
-		this.equipmentManufactureYear.setFieldWidth("100px");
-		this.equipmentClientInternalId = new TextBoxFormField("Identificação no Cliente");
-		this.equipmentInsuranceCompanyInternalVehicleId = new TextBoxFormField("Identificação na Seguradora");
+		//EQUIPMENT
+		equipmentSection = new FormViewSection("Objecto ou Equipamento");
+		equipmentMakeAndModel = new TextBoxFormField("Marca e Modelo");
+		equipmentDescription = new TextAreaFormField("Descrição");
+		equipmentFirstRegistryDate = new DatePickerFormField("Data da Primeira Matrícula");
+		equipmentManufactureYear = new TextBoxFormField("Ano de Fabrico");
+		equipmentManufactureYear.setFieldWidth("100px");
+		equipmentClientInternalId = new TextBoxFormField("Identificação no Cliente");
+		equipmentInsuranceCompanyInternalVehicleId = new TextBoxFormField("Identificação na Seguradora");
 
-		this.equipmentSection.addFormFieldGroup(new FormField[]{
-				this.equipmentMakeAndModel,
-				this.equipmentDescription
+		equipmentSection.addFormFieldGroup(new FormField[]{
+				equipmentMakeAndModel,
+				equipmentDescription
 		}, true);
-		this.equipmentSection.addFormFieldGroup(new FormField[]{
-				this.equipmentFirstRegistryDate,
-				this.equipmentManufactureYear
+		equipmentSection.addFormFieldGroup(new FormField[]{
+				equipmentFirstRegistryDate,
+				equipmentManufactureYear
 		}, true);
-		this.equipmentSection.addFormFieldGroup(new FormField[]{
-				this.equipmentClientInternalId,
-				this.equipmentInsuranceCompanyInternalVehicleId
+		equipmentSection.addFormFieldGroup(new FormField[]{
+				equipmentClientInternalId,
+				equipmentInsuranceCompanyInternalVehicleId
 		}, true);
-		this.addSection(this.equipmentSection);
+		addSection(equipmentSection);
 
-		//location fields
-		this.locationSection = new FormViewSection("Local");
-		this.locationDescription = new TextAreaFormField("Descrição");
+		//PLACE
+		locationSection = new FormViewSection("Local");
+		locationDescription = new TextAreaFormField("Descrição");
 
-		this.locationSection.addFormField(this.locationDescription);
-		this.addSection(this.locationSection);
+		locationSection.addFormField(this.locationDescription);
+		addSection(locationSection);
 
-		//animal fields
-		this.animalSection = new FormViewSection("Animal");
-		this.animalSpecies = new TextBoxFormField("Espécie");
-		this.animalRace = new TextBoxFormField("Raça");
-		this.animalBirthYear = new TextBoxFormField("Ano de Nascimento");
-		this.animalBirthYear.setFieldWidth("100px");
-		this.animalCityRegistryNumber = new TextBoxFormField("Número de Registo");
-		this.animalElectronicTagId = new TextBoxFormField("Identificação Electrónica");
+		//ANIMAL
+		animalSection = new FormViewSection("Animal");
+		animalSpecies = new TextBoxFormField("Espécie");
+		animalRace = new TextBoxFormField("Raça");
+		animalBirthYear = new TextBoxFormField("Ano de Nascimento");
+		animalBirthYear.setFieldWidth("100px");
+		animalCityRegistryNumber = new TextBoxFormField("Número de Registo");
+		animalElectronicTagId = new TextBoxFormField("Identificação Electrónica");
 
-		this.animalSection.addFormFieldGroup(new FormField[]{
-				this.animalSpecies,
-				this.animalRace,
-				this.animalBirthYear
+		animalSection.addFormFieldGroup(new FormField[]{
+				animalSpecies,
+				animalRace,
+				animalBirthYear
 		}, true);
-		this.animalSection.addFormFieldGroup(new FormField[]{
-				this.animalCityRegistryNumber,
-				this.animalElectronicTagId
+		animalSection.addFormFieldGroup(new FormField[]{
+				animalCityRegistryNumber,
+				animalElectronicTagId
 		}, true);
-		this.addSection(this.animalSection);
+		addSection(animalSection);
 
-		this.dynamicHeaderSection = new FormViewSection("");
-		this.dynamicHeaderSection.showHeader(false);
-		this.addSection(dynamicHeaderSection);
-
-		this.setValue(new QuoteRequestObject());
-	}
-
-	protected void showSectionForTypeWithId(String typeId) {
-		showTypeSpecificDataSection(false);
-		if(typeId == null){
-			return;
-		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PERSON)){
-			this.personSection.setVisible(true);
-		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_COMPANY)){
-			this.companySection.setVisible(true);
-		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_EQUIPMENT)){
-			this.equipmentSection.setVisible(true);
-		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PLACE)){
-			this.locationSection.setVisible(true);
-		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_ANIMAL)){
-			this.animalSection.setVisible(true);
-		}
-	}
-
-	public void showTypeSection(boolean show){
-		this.typeSection.setVisible(show);
-	}
-
-	protected void showTypeSpecificDataSection(boolean show){
-		if(show){
-			showSectionForTypeWithId(this.type.getValue());
-		}else{
-			this.personSection.setVisible(false);
-			this.companySection.setVisible(false);
-			this.equipmentSection.setVisible(false);
-			this.locationSection.setVisible(false);
-			this.animalSection.setVisible(false);
-		}
+		setValidator(new CompositeObjectFormValidator(this));
 	}
 
 	@Override
 	public QuoteRequestObject getInfo() {
-		QuoteRequestObject result = this.value;
-
-		if(result != null) {
-			//common fields
-			result.unitIdentification = identification.getValue();
-			result.address = address.getValue();
-			result.typeId = type.getValue();
-
-			//person fields
-			result.taxNumberPerson = personTaxNumber.getValue();
-			result.genderId = personGender.getValue();
-			result.birthDate = personBirthDate.getStringValue();
-			result.clientNumberPerson = personClientNumber.getValue();
-			result.insuranceCompanyInternalIdPerson = personInsurangeAgency.getValue();
-
-			//company fields
-			result.taxNumberCompany = companyTaxNumber.getValue();
-			result.caeId = companyCAE.getValue();
-			result.grievousCaeId = companyGrievousCAE.getValue();
-			result.activityNotes = companyActivityNotes.getValue();
-			result.productNotes = companyProductNotes.getValue();
-			result.businessVolumeId = companyBusinessVolume.getValue();
-			result.europeanUnionEntity = companyEuropeanUnionEntity.getValue();
-			result.clientNumberGroup = companyClientNumber.getValue();
-
-			//equipment fields
-			result.makeAndModel = equipmentMakeAndModel.getValue();
-			result.equipmentDescription = equipmentDescription.getValue();
-			result.firstRegistryDate = equipmentFirstRegistryDate.getStringValue();
-			result.manufactureYear = equipmentManufactureYear.getValue();
-			result.clientInternalId = equipmentClientInternalId.getValue();
-			result.insuranceCompanyInternalIdVehicle = equipmentInsuranceCompanyInternalVehicleId.getValue();
-
-			//location fields
-			result.siteDescription = locationDescription.getValue();
-
-			//animal fields
-			result.species = animalSpecies.getValue();
-			result.race = animalRace.getValue();
-			result.birthYear = animalBirthYear.getValue();
-			result.cityRegistryNumber = animalCityRegistryNumber.getValue();
-			result.electronicIdTag = animalElectronicTagId.getValue();
-
-			result.objectData = getSubLinesData();
+		
+		if(value == null){
+			return null;
 		}
+		
+		QuoteRequestObject result = value;
 
+		//common fields
+		result.unitIdentification = identification.getValue();
+		result.address = address.getValue();
+
+		//person fields
+		result.taxNumberPerson = personTaxNumber.getValue();
+		result.genderId = personGender.getValue();
+		result.birthDate = personBirthDate.getStringValue();
+		result.clientNumberPerson = personClientNumber.getValue();
+		result.insuranceCompanyInternalIdPerson = personCompanyNumber.getValue();
+
+		//company fields
+		result.taxNumberCompany = companyTaxNumber.getValue();
+		result.caeId = companyCAE.getValue();
+		result.grievousCaeId = companyGrievousCAE.getValue();
+		result.activityNotes = companyActivityNotes.getValue();
+		result.productNotes = companyProductNotes.getValue();
+		result.businessVolumeId = companyBusinessVolume.getValue();
+		result.europeanUnionEntity = companyEuropeanUnionEntity.getValue();
+		result.clientNumberGroup = companyClientNumber.getValue();
+
+		//equipment fields
+		result.makeAndModel = equipmentMakeAndModel.getValue();
+		result.equipmentDescription = equipmentDescription.getValue();
+		result.firstRegistryDate = equipmentFirstRegistryDate.getStringValue();
+		result.manufactureYear = equipmentManufactureYear.getValue();
+		result.clientInternalId = equipmentClientInternalId.getValue();
+		result.insuranceCompanyInternalIdVehicle = equipmentInsuranceCompanyInternalVehicleId.getValue();
+
+		//location fields
+		result.siteDescription = locationDescription.getValue();
+
+		//animal fields
+		result.species = animalSpecies.getValue();
+		result.race = animalRace.getValue();
+		result.birthYear = animalBirthYear.getValue();
+		result.cityRegistryNumber = animalCityRegistryNumber.getValue();
+		result.electronicIdTag = animalElectronicTagId.getValue();
+	
 		return result;
 	}
 
 	@Override
 	public void setInfo(QuoteRequestObject info) {
+
 		if(info == null){
 			this.setValue(new QuoteRequestObject());
 			return;
@@ -308,15 +245,17 @@ public class QuoteRequestObjectForm extends FormView<QuoteRequestObject> {
 
 		//common fields
 		identification.setValue(info.unitIdentification);
+		type.setValue(info.typeId);
 		address.setValue(info.address);
-		type.setValue(info.typeId, true);
+		
+		showSectionForTypeWithId(info.typeId);
 
 		//person fields
 		personTaxNumber.setValue(info.taxNumberPerson);
 		personGender.setValue(info.genderId);
 		personBirthDate.setValue(info.birthDate);
 		personClientNumber.setValue(info.clientNumberPerson);
-		personInsurangeAgency.setValue(info.insuranceCompanyInternalIdPerson);
+		personCompanyNumber.setValue(info.insuranceCompanyInternalIdPerson);
 
 		//company fields
 		companyTaxNumber.setValue(info.taxNumberCompany);
@@ -346,45 +285,47 @@ public class QuoteRequestObjectForm extends FormView<QuoteRequestObject> {
 		animalCityRegistryNumber.setValue(info.cityRegistryNumber);
 		animalElectronicTagId.setValue(info.electronicIdTag);
 
-		setSubLineData(info.objectData);
 	}
 
-	protected void setSubLineData(SubLineData[] data){
-		clearSubLineData();
-
-		if(data != null){
-			for(SubLineData subLineData : data) {
-				addSubLineDataSection(subLineData, true);
-			}
+	private void showSectionForTypeWithId(String typeId) {
+		showTypeSpecificDataSection(false, null);
+		if(typeId == null){
+			return;
+		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PERSON)){
+			this.personSection.setVisible(true);
+		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_COMPANY)){
+			this.companySection.setVisible(true);
+		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_EQUIPMENT)){
+			this.equipmentSection.setVisible(true);
+		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PLACE)){
+			this.locationSection.setVisible(true);
+		}else if(typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_ANIMAL)){
+			this.animalSection.setVisible(true);
+		}		
+	}
+	
+	protected void showTypeSpecificDataSection(boolean show, String id){
+		if(show){
+			showSectionForTypeWithId(id);
+		}else{
+			this.personSection.setVisible(false);
+			this.companySection.setVisible(false);
+			this.equipmentSection.setVisible(false);
+			this.locationSection.setVisible(false);
+			this.animalSection.setVisible(false);
 		}
 	}
 
-
-	protected SubLineData[] getSubLinesData(){
-		SubLineData[] result = new SubLineData[this.subLineSections.size()];
-
-		int i = 0;
-		for(QuoteRequestObjectSubLineDataSection section : subLineSections.values()) {
-			result[i] = section.getSubLineData();
-			i++;
-		}
-
-		return result;
+	public HasClickHandlers getDeleteButton() {
+		return deleteObject;
 	}
-
-	protected void clearSubLineData(){
-		for(String key : subLineSections.keySet()) {
-			QuoteRequestObjectSubLineDataSection section = subLineSections.get(key);
-			this.removeSection(section);
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		if(deleteObject != null){
+			deleteObject.setVisible(!readOnly);
 		}
-		this.subLineSections.clear();
-	}
-
-	protected void addSubLineDataSection(SubLineData data, boolean collapsed) {
-		QuoteRequestObjectSubLineDataSection section = new QuoteRequestObjectSubLineDataSection(this.value.id, data, collapsed);
-		section.setReadOnly(this.isReadOnly());
-		this.subLineSections.put(data.subLineId, section);
-		addSection(section);
 	}
 
 }

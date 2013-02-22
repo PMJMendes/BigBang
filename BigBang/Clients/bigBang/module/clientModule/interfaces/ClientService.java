@@ -5,6 +5,7 @@ import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
@@ -43,6 +44,7 @@ public interface ClientService
 	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 
+	public QuoteRequest createQuoteRequest(QuoteRequest request) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy createPolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 	public RiskAnalysis createRiskAnalisys(RiskAnalysis riskAnalisys) throws SessionExpiredException, BigBangException;
 	public Casualty createCasualty(Casualty casualty) throws SessionExpiredException, BigBangException;

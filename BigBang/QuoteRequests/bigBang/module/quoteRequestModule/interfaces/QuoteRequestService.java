@@ -1,14 +1,13 @@
 package bigBang.module.quoteRequestModule.interfaces;
 
+import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.QuoteRequestObject;
-import bigBang.definitions.shared.Remap;
 import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
@@ -31,36 +30,16 @@ public interface QuoteRequestService
 		}
 	}
 
+	public QuoteRequest getEmptyRequest(String clientId) throws SessionExpiredException, BigBangException;
+
 	public QuoteRequest getRequest(String requestId) throws SessionExpiredException, BigBangException;
-	public QuoteRequest.TableSection getPage(String requestId, String subLineId, String objectId)
-			throws SessionExpiredException, BigBangException;
 
-	public Remap[] openRequestScratchPad(String requestId) throws SessionExpiredException, BigBangException;
-	public QuoteRequest initRequestInPad(QuoteRequest request) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public QuoteRequest getRequestInPad(String requestId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public QuoteRequest updateHeader(QuoteRequest request)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public CompositeFieldContainer.SubLineFieldContainer getEmptySubLine(String subLineId) throws SessionExpiredException, BigBangException;
 
-	public QuoteRequest.RequestSubLine addSubLineToPad(String requestId, String subLineId)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public void deleteSubLineFromPad(String subLineId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-
-	public QuoteRequest.TableSection getPageForEdit(String requestId, String subLineId, String objectId)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public QuoteRequest.TableSection savePage(QuoteRequest.TableSection data)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-
-	public QuoteRequestObject getObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public QuoteRequestObject createObjectInPad(String requestId, String objectTypeId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public QuoteRequestObject createObjectFromClientInPad(String requestId) throws SessionExpiredException, BigBangException;
-	public QuoteRequestObject updateObjectInPad(QuoteRequestObject data)
-			throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public void deleteObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-
-	public Remap[] commitPad(String requestId) throws SessionExpiredException, BigBangException, CorruptedPadException;
-	public Remap[] discardPad(String requestId) throws SessionExpiredException, BigBangException;
+	public QuoteRequest editRequest(QuoteRequest request) throws SessionExpiredException, BigBangException;
 
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
+	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
 
 	public Conversation sendMessage(Conversation conversation) throws SessionExpiredException, BigBangException;
 	public Conversation receiveMessage(Conversation conversation) throws SessionExpiredException, BigBangException;

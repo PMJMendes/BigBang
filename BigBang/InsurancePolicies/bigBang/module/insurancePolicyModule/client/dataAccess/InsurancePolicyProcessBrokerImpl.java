@@ -188,8 +188,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void updateCoverages(Coverage[] coverages) {
-		workspace.updateCoverages(coverages);
+	public void updateCoverages(String policyId, Coverage[] coverages) {
+		workspace.updateCoverages(policyId, coverages);
 	}
 
 	@Override

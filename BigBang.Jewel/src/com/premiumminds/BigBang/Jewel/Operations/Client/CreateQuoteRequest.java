@@ -53,12 +53,57 @@ public class CreateQuoteRequest
 	public String LongDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrResult;
+		int i, j;
 
 		lstrResult = new StringBuilder();
 		lstrResult.append("Foi criada a seguinte consulta de mercado:");
 		lstrResult.append(pstrLineBreak);
 
 		mobjData.Describe(lstrResult, pstrLineBreak);
+
+		if ( mobjData.marrObjects != null )
+		{
+			for ( i = 0; i < mobjData.marrObjects.length; i++ )
+			{
+				if ( mobjData.marrObjects[i] == null )
+					continue;
+
+				lstrResult.append("Unidade de risco:").append(pstrLineBreak);
+				mobjData.marrObjects[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+		}
+
+		if ( mobjData.marrSubLines != null )
+		{
+			for ( i = 0; i < mobjData.marrSubLines.length; i++ )
+			{
+				if ( mobjData.marrSubLines[i] == null )
+					continue;
+
+				lstrResult.append("Modalidade:").append(pstrLineBreak);
+				mobjData.marrSubLines[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+
+				if ( mobjData.marrSubLines[i].marrCoverages != null )
+				{
+					for ( j = 0; j < mobjData.marrSubLines[i].marrCoverages.length; j++ )
+					{
+						lstrResult.append("Cobertura:").append(pstrLineBreak);
+						mobjData.marrSubLines[i].marrCoverages[j].Describe(lstrResult, pstrLineBreak);
+						lstrResult.append(pstrLineBreak);
+					}
+				}
+
+				if ( mobjData.marrSubLines[i].marrValues != null )
+				{
+					for ( j = 0; j < mobjData.marrSubLines[i].marrValues.length; j++ )
+					{
+						mobjData.marrSubLines[i].marrValues[j].Describe(lstrResult, pstrLineBreak);
+					}
+				}
+			}
+		}
 
 		if ( mobjContactOps != null )
 			mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
@@ -104,6 +149,9 @@ public class CreateQuoteRequest
 			{
 				for ( i = 0; i < mobjData.marrObjects.length; i++ )
 				{
+					if ( mobjData.marrObjects[i] == null )
+						continue;
+
 					mobjData.marrObjects[i].midOwner = mobjData.mid;
 					lobjObject = QuoteRequestObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrObjects[i].ToObject(lobjObject);
@@ -116,7 +164,7 @@ public class CreateQuoteRequest
 			{
 				for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 				{
-					if ( mobjData.marrSubLines[i].mbDeleted )
+					if ( mobjData.marrSubLines[i] == null )
 						continue;
 
 					mobjData.marrSubLines[i].midQuoteRequest = mobjData.mid;
@@ -129,9 +177,6 @@ public class CreateQuoteRequest
 					{
 						for ( j = 0; j < mobjData.marrSubLines[i].marrCoverages.length; j++ )
 						{
-							if ( mobjData.marrSubLines[i].marrCoverages[j].mbDeleted )
-								continue;
-
 							mobjData.marrSubLines[i].marrCoverages[j].midQRSubLine = mobjData.marrSubLines[i].mid;
 							lobjCoverage = QuoteRequestCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 							mobjData.marrSubLines[i].marrCoverages[j].ToObject(lobjCoverage);
@@ -144,9 +189,6 @@ public class CreateQuoteRequest
 					{
 						for ( j = 0; j < mobjData.marrSubLines[i].marrValues.length; j++ )
 						{
-							if ( mobjData.marrSubLines[i].marrValues[j].mbDeleted )
-								continue;
-
 							mobjData.marrSubLines[i].marrValues[j].midQRSubLine = mobjData.marrSubLines[i].mid;
 							mobjData.marrSubLines[i].marrValues[j].midObject = ( mobjData.marrSubLines[i].marrValues[j].mlngObject < 0 ?
 									null : mobjData.marrObjects[mobjData.marrSubLines[i].marrValues[j].mlngObject].mid );

@@ -5,6 +5,7 @@ import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.interfaces.SearchServiceAsync;
 
@@ -21,6 +22,7 @@ public interface ClientServiceAsync
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 	void sendMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void receiveMessage(Conversation conversation, AsyncCallback<Conversation> callback);
+	void createQuoteRequest(QuoteRequest request, AsyncCallback<QuoteRequest> callback);
 	void createPolicy(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void createRiskAnalisys(RiskAnalysis riskAnalisys, AsyncCallback<RiskAnalysis> callback);
 	void createCasualty(Casualty casualty, AsyncCallback<Casualty> callback);

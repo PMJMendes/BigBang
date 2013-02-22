@@ -17,7 +17,6 @@ import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionV
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSendMessageViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateCasualtyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.CreateQuoteRequestViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.DeleteClientViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.SingleClientManagerTransferViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientConversationView;
@@ -30,7 +29,6 @@ import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSendMessageView;
 import bigBang.module.clientModule.client.userInterface.view.CreateCasualtyView;
 import bigBang.module.clientModule.client.userInterface.view.CreateInsurancePolicyView;
-import bigBang.module.clientModule.client.userInterface.view.CreateQuoteRequestView;
 import bigBang.module.clientModule.client.userInterface.view.DeleteClientView;
 import bigBang.module.clientModule.client.userInterface.view.SingleClientManagerTransferView;
 
@@ -140,15 +138,6 @@ public class ClientModule implements Module {
 			public ViewPresenter getInstance() {
 				ClientConversationView view = (ClientConversationView) GWT.create(ClientConversationView.class);
 				ViewPresenter presenter = new ClientConversationViewPresenter(view);
-				return presenter;
-			}
-		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_CREATE_QUOTE_REQUEST", new ViewPresenterInstantiator() {
-
-			@Override
-			public ViewPresenter getInstance() {
-				CreateQuoteRequestView view = (CreateQuoteRequestView) GWT.create(CreateQuoteRequestView.class);
-				ViewPresenter presenter = new CreateQuoteRequestViewPresenter(view);
 				return presenter;
 			}
 		});

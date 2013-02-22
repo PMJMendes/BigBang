@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 //EXTENDS GRID por causa do layout da form (de outra forma a scrollbar nao aparece)
 public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldContainer.ColumnField[]>{ 
-	
+
 
 
 	class Field extends GenericFormField{
@@ -76,72 +76,74 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	}
 
 	public void setHeaders(StructuredFieldContainer.Coverage[] coverages, StructuredFieldContainer.ColumnHeader[] headers){
-		
-		this.coverages = coverages;
-		fields = new Field[coverages.length+1][headers.length+2];
-		labels = new String[headers.length];
-		grid.clear();
-		grid.resize(coverages.length+1, headers.length+2);
 
-		fields[0][0] = new Field(TYPE.TEXT);
-		fields[0][0].setEditable(false);
-		fields[0][0].setValue("Incluir");
-		grid.setWidget(0, 0, fields[0][0]);
-		fields[0][0].setFieldWidth("100px");
-		fields[0][0].setTextAlignment(TextAlignment.CENTER);
-		grid.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
-		grid.getCellFormatter().setWidth(0, 0, "150px");
+		if(coverages.length > 0){
+			this.coverages = coverages;
+			fields = new Field[coverages.length+1][headers.length+2];
+			labels = new String[headers.length];
+			grid.clear();
+			grid.resize(coverages.length+1, headers.length+2);
 
-		fields[0][1] = new Field(TYPE.TEXT);
-		fields[0][1].setEditable(false);
-		fields[0][1].setValue("Coberturas");
-		grid.setWidget(0, 1, fields[0][1]);
-		fields[0][1].setFieldWidth("100px");
-		fields[0][1].setTextAlignment(TextAlignment.CENTER);
-		grid.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
+			fields[0][0] = new Field(TYPE.TEXT);
+			fields[0][0].setEditable(false);
+			fields[0][0].setValue("Incluir");
+			grid.setWidget(0, 0, fields[0][0]);
+			fields[0][0].setFieldWidth("100px");
+			fields[0][0].setTextAlignment(TextAlignment.CENTER);
+			grid.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
+			grid.getCellFormatter().setWidth(0, 0, "150px");
 
-		for(int i = 1; i<fields.length; i++){
-			fields[i][0] = new Field(TYPE.BOOLEAN);
-			fields[i][0].id = coverages[i-1].coverageId;
-			if(coverages[i-1].presentInPolicy == null){
-				if(coverages[i-1].mandatory){
-					fields[i][0].setValue("1");
+			fields[0][1] = new Field(TYPE.TEXT);
+			fields[0][1].setEditable(false);
+			fields[0][1].setValue("Coberturas");
+			grid.setWidget(0, 1, fields[0][1]);
+			fields[0][1].setFieldWidth("100px");
+			fields[0][1].setTextAlignment(TextAlignment.CENTER);
+			grid.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
+
+			for(int i = 1; i<fields.length; i++){
+				fields[i][0] = new Field(TYPE.BOOLEAN);
+				fields[i][0].id = coverages[i-1].coverageId;
+				if(coverages[i-1].presentInPolicy == null){
+					if(coverages[i-1].mandatory){
+						fields[i][0].setValue("1");
+					}
 				}
-			}
-			else{
-				fields[i][0].setValue(coverages[i-1].presentInPolicy ? "1" : "0");
-			}
-			fields[i][0].addValueChangeHandler(new ValueChangeHandler<String>() {
-
-				@Override
-				public void onValueChange(ValueChangeEvent<String> event) {
-					setEnabledRows();
+				else{
+					fields[i][0].setValue(coverages[i-1].presentInPolicy ? "1" : "0");
 				}
-			});
-			fields[i][0].setEditable(coverages[i-1].mandatory ? false : true);
-			fields[i][1] = new Field(TYPE.TEXT);
-			fields[i][1].setEditable(false);
-			fields[i][1].setValue(coverages[i-1].coverageName);
+				fields[i][0].addValueChangeHandler(new ValueChangeHandler<String>() {
 
-			grid.setWidget(i, 0, fields[i][0]);
-			grid.setWidget(i, 1, fields[i][1]);
-			if((i % 2) != 0){
-				grid.getRowFormatter().getElement(i).getStyle().setBackgroundColor("#CCC");
+					@Override
+					public void onValueChange(ValueChangeEvent<String> event) {
+						setEnabledRows();
+					}
+				});
+				fields[i][0].setEditable(coverages[i-1].mandatory ? false : true);
+				fields[i][1] = new Field(TYPE.TEXT);
+				fields[i][1].setEditable(false);
+				fields[i][1].setValue(coverages[i-1].coverageName);
+
+				grid.setWidget(i, 0, fields[i][0]);
+				grid.setWidget(i, 1, fields[i][1]);
+				if((i % 2) != 0){
+					grid.getRowFormatter().getElement(i).getStyle().setBackgroundColor("#CCC");
+				}
+				fields[i][1].setTextAlignment(TextAlignment.CENTER);
+				fields[i][1].setFieldWidth("200px");
+				grid.getCellFormatter().setHorizontalAlignment(i, 0, HasHorizontalAlignment.ALIGN_CENTER);
+				grid.getCellFormatter().setHorizontalAlignment(i, 1, HasHorizontalAlignment.ALIGN_CENTER);
 			}
-			fields[i][1].setTextAlignment(TextAlignment.CENTER);
-			fields[i][1].setFieldWidth("200px");
-			grid.getCellFormatter().setHorizontalAlignment(i, 0, HasHorizontalAlignment.ALIGN_CENTER);
-			grid.getCellFormatter().setHorizontalAlignment(i, 1, HasHorizontalAlignment.ALIGN_CENTER);
-		}
-		for(int j = 2; j<fields[0].length; j++){
-			fields[0][j] = new Field(TYPE.TEXT);
-			fields[0][j].setValue(headers[j-2].label + (headers[j-2].unitsLabel == null ? "" : " ("+headers[j-2].unitsLabel+")"));
-			labels[j-2] = headers[j-2].unitsLabel;
-			fields[0][j].setEditable(false);
-			fields[0][j].setTextAlignment(TextAlignment.CENTER);
-			fields[0][j].setFieldWidth("140px");
-			grid.setWidget(0, j, fields[0][j]);
-			grid.getCellFormatter().setHorizontalAlignment(0, j, HasHorizontalAlignment.ALIGN_CENTER);
+			for(int j = 2; j<fields[0].length; j++){
+				fields[0][j] = new Field(TYPE.TEXT);
+				fields[0][j].setValue(headers[j-2].label + (headers[j-2].unitsLabel == null ? "" : " ("+headers[j-2].unitsLabel+")"));
+				labels[j-2] = headers[j-2].unitsLabel;
+				fields[0][j].setEditable(false);
+				fields[0][j].setTextAlignment(TextAlignment.CENTER);
+				fields[0][j].setFieldWidth("140px");
+				grid.setWidget(0, j, fields[0][j]);
+				grid.getCellFormatter().setHorizontalAlignment(0, j, HasHorizontalAlignment.ALIGN_CENTER);
+			}
 		}
 
 	}
@@ -171,7 +173,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 	public void fillTable(FieldContainer.ColumnField[] formFields) {
 		int row;
 		int column;
-		
+
 		if(formFields == null){
 			return;
 		}

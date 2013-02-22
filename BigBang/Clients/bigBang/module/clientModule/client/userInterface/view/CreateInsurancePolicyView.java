@@ -6,10 +6,10 @@ import bigBang.module.clientModule.client.userInterface.form.CreateInsurancePoli
 import bigBang.module.clientModule.client.userInterface.form.CreateInsurancePolicyFormValidator;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter.Action;
-import bigBang.module.insurancePolicyModule.client.userInterface.CreateInsurancePolicyToolbar;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ConfirmCancelToolbar;
 import bigBang.library.client.userInterface.view.View;
 
 public class CreateInsurancePolicyView extends View implements CreateInsurancePolicyViewPresenter.Display {
@@ -21,7 +21,7 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		
-		CreateInsurancePolicyToolbar toolbar = new CreateInsurancePolicyToolbar() {
+		ConfirmCancelToolbar toolbar = new ConfirmCancelToolbar() {
 			
 			@Override
 			public void onConfirm() {

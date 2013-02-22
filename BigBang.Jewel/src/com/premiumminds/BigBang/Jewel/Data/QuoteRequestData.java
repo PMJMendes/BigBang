@@ -15,6 +15,7 @@ public class QuoteRequestData
 
 	public UUID mid;
 	
+	public UUID midClient;
 	public String mstrNumber;
 	public UUID midMediator;
 	public String mstrNotes;
@@ -41,6 +42,7 @@ public class QuoteRequestData
 		mstrDocuShare = pobjSource.mstrDocuShare;
 		midManager = pobjSource.midManager;
 		midProcess = pobjSource.midProcess;
+		midClient = pobjSource.midClient;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
@@ -53,6 +55,7 @@ public class QuoteRequestData
 		mstrNotes = (String)pobjSource.getAt(3);
 		mbCaseStudy = (Boolean)pobjSource.getAt(4);
 		mstrDocuShare = (String)pobjSource.getAt(5);
+		midClient = (UUID)pobjSource.getAt(6);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -65,7 +68,8 @@ public class QuoteRequestData
 			pobjDest.setAt(2, midMediator);
 			pobjDest.setAt(3, mstrNotes);
 			pobjDest.setAt(4, mbCaseStudy);
-//			pobjDest.setAt(5, mstrDocuShare); JMMM: Nunca gravar por cima disto
+			pobjDest.setAt(5, mstrDocuShare); //JMMM: Nunca gravar por cima disto
+			pobjDest.setAt(6, midClient);
 		}
 		catch (Throwable e)
 		{

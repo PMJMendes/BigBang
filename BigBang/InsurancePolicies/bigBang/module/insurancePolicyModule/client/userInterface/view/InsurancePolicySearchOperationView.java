@@ -41,15 +41,14 @@ import bigBang.module.insurancePolicyModule.client.userInterface.form.InsuredObj
 import bigBang.module.insurancePolicyModule.client.userInterface.form.PolicyCrossFormValidator;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -59,7 +58,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	private InsurancePolicySearchPanel searchPanel;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	private InsurancePolicyChildrenPanel childrenPanel;
-	protected HasWidgets childrenPresentersPanel;
 	private InsurancePolicyOperationsToolBar toolbar;
 	private InsuredObjectSearchPanel objectsList;
 	private InsurancePolicyHeaderForm policyForm;
@@ -100,10 +98,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");
-
-		SimplePanel childrenPresentersPanel = new SimplePanel();
-		childrenPresentersPanel.setSize("100%", "100%");
-		this.childrenPresentersPanel = childrenPresentersPanel;
 
 		childrenPanel = new InsurancePolicyChildrenPanel();
 		childrenPanel.setSize("100%", "100%");

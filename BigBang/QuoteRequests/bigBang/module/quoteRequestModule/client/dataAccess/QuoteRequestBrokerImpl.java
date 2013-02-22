@@ -1,54 +1,62 @@
 package bigBang.module.quoteRequestModule.client.dataAccess;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
 import bigBang.definitions.client.dataAccess.QuoteRequestDataBrokerClient;
-import bigBang.definitions.client.dataAccess.QuoteRequestObjectDataBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.CompositeFieldContainer;
+import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
-import bigBang.definitions.shared.QuoteRequest.TableSection;
+import bigBang.definitions.shared.QuoteRequestObject;
+import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.QuoteRequestStub;
-import bigBang.definitions.shared.Remap;
-import bigBang.definitions.shared.Remap.RemapId;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.OperationWasExecutedEvent;
-import bigBang.library.shared.CorruptedPadException;
+import bigBang.module.quoteRequestModule.client.QuoteRequestWorkSpace;
+import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectService;
+import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectServiceAsync;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestServiceAsync;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSearchParameter;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter.SortableField;
 
-import com.google.gwt.core.client.GWT;
-
 public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	QuoteRequestBroker {
 
 	protected QuoteRequestServiceAsync service;
 	protected SearchDataBroker<QuoteRequestStub> searchBroker;
-	protected Map<String, String> requestsInScratchPad;
-	protected QuoteRequestObjectDataBroker requestObjectsBroker;
+	protected ClientProcessBroker clientBroker;
+	protected QuoteRequestObjectServiceAsync requestObjectService;
+	protected QuoteRequestWorkSpace workspace;
+	public boolean requiresRefresh;
 
-	public QuoteRequestBrokerImpl(QuoteRequestObjectDataBroker requestObjectsBroker){
-		this.service = QuoteRequestService.Util.getInstance();
+	public QuoteRequestBrokerImpl(){
+		this(QuoteRequestService.Util.getInstance(), QuoteRequestObjectService.Util.getInstance());
+	}
+
+	public QuoteRequestBrokerImpl(QuoteRequestServiceAsync service, QuoteRequestObjectServiceAsync requestObjectService){
+		this.service = service;
+		this.requestObjectService = requestObjectService;
+		this.clientBroker = (ClientProcessBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CLIENT);
 		this.dataElementId = BigBangConstants.EntityIds.QUOTE_REQUEST;
 		this.searchBroker = new QuoteRequestSearchDataBroker(this.service);
-		this.requestsInScratchPad = new HashMap<String, String>();
-		this.requestObjectsBroker = requestObjectsBroker;
+		this.workspace = new QuoteRequestWorkSpace();
 	}
 
 	@Override
@@ -107,54 +115,268 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 	@Override
 	public void getQuoteRequest(String id, final ResponseHandler<QuoteRequest> handler) {
-		final String requestId = getEffectiveId(id);
-		if(isTemp(requestId)){
-			this.service.getRequestInPad(requestId, new BigBangAsyncCallback<QuoteRequest>() {
+		this.service.getRequest(id, new BigBangAsyncCallback<QuoteRequest>() {
 
-				@Override
-				public void onResponseSuccess(QuoteRequest result) {
-					result.id = getFinalMapping(result.id);
-					incrementDataVersion();
-					for(DataBrokerClient<QuoteRequest> bc : getClients()){
-						((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
-						((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
-					}
-					handler.onResponse(result);
-				}
+			@Override
+			public void onResponseSuccess(QuoteRequest result) {
+				workspace.loadRequest(result);
 
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(requestId);
-					}
-					handler.onError(new String[]{
-							new String("Could not get the quote request")
-					});
-					super.onResponseFailure(caught);
+				incrementDataVersion();
+				for(DataBrokerClient<QuoteRequest> bc : getClients()){
+					((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
+					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
 				}
+				handler.onResponse(result);
+				requiresRefresh = false;
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the requested quote request")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void getEmptyQuoteRequest(String clientId, final ResponseHandler<QuoteRequest> handler) {
+		this.service.getEmptyRequest(clientId, new BigBangAsyncCallback<QuoteRequest>() {
+
+			@Override
+			public void onResponseSuccess(QuoteRequest result) {
+				workspace.loadRequest(result);
+
+				incrementDataVersion();
+				for(DataBrokerClient<QuoteRequest> bc : getClients()){
+					((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
+					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+				requiresRefresh = false;
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the empty quote request")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public QuoteRequest getRequestHeader(String requestId) {
+		return workspace.getRequestHeader(requestId);
+	}
+
+	@Override
+	public QuoteRequest updateRequestHeader(QuoteRequest request) {
+		return workspace.updateRequestHeader(request);
+	}
+
+	@Override
+	public void persistQuoteRequest(String requestId,
+			final ResponseHandler<QuoteRequest> handler) {
+		QuoteRequest request;
+
+		request = workspace.getWholeRequest(requestId);
+
+		if(request != null) {
+			if ( request.id == null ) {
+				clientBroker.createQuoteRequest(request, new ResponseHandler<QuoteRequest>() {
+
+					@Override
+					public void onResponse(QuoteRequest response) {
+						workspace.loadRequest(response);
+
+						incrementDataVersion();
+						for(DataBrokerClient<QuoteRequest> bc : getClients()) {
+							((QuoteRequestDataBrokerClient) bc).addQuoteRequest(response);
+							((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
+						}
+						handler.onResponse(response);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						handler.onError(errors);
+					}
+				});
+			} else {
+				this.service.editRequest(request, new BigBangAsyncCallback<QuoteRequest>() {
+
+					@Override
+					public void onResponseSuccess(QuoteRequest result) {
+						workspace.loadRequest(result);
+
+						incrementDataVersion();
+						for(DataBrokerClient<QuoteRequest> bc : getClients()){
+							((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
+							((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
+						}
+						handler.onResponse(result);
+						requiresRefresh = false;
+					}
+
+					@Override
+					public void onResponseFailure(Throwable caught) {
+						handler.onError(new String[]{
+								"Could not update the quote request"	
+						});
+						super.onResponseFailure(caught);
+					}
+				});
+			}
+		} else {
+			handler.onError(new String[]{
+					"Could not update the quote request"	
 			});
-		}else{
-			this.service.getRequest(requestId, new BigBangAsyncCallback<QuoteRequest>() {
+		}
+	}
+
+	@Override
+	public QuoteRequest discardEditData(String requestId) {
+		return workspace.reset(requestId);
+	}
+
+	@Override
+	public void removeQuoteRequest(final String requestId, String reason, final ResponseHandler<String> handler) {
+		this.service.deleteRequest(requestId, reason, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				workspace.loadRequest(null);
+
+				incrementDataVersion();
+				for(DataBrokerClient<QuoteRequest> bc : getClients()){
+					((QuoteRequestDataBrokerClient) bc).removeQuoteRequest(requestId);
+					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
+				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST, requestId));
+				handler.onResponse(requestId);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not remove the quote request")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public CompositeFieldContainer.SubLineFieldContainer[] getLocalSubLines(String requestId) {
+		return workspace.getLocalSubLines(requestId);
+	}
+
+	@Override
+	public void createSubLine(final String requestId, String subLineId,
+			final ResponseHandler<CompositeFieldContainer.SubLineFieldContainer> handler) {
+		this.service.getEmptySubLine(subLineId, new BigBangAsyncCallback<CompositeFieldContainer.SubLineFieldContainer>() {
+
+			@Override
+			public void onResponseSuccess(CompositeFieldContainer.SubLineFieldContainer result) {
+				handler.onResponse(workspace.loadSubLine(requestId, result));				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not obtain the empty subline")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void updateSubLineCoverages(String requestId,
+			String subLineId, Coverage[] coverages) {
+		workspace.updateCoverages(requestId, subLineId, coverages);
+	}
+
+	@Override
+	public CompositeFieldContainer.SubLineFieldContainer removeSubLine(String requestId, String subLineId) {
+		return workspace.deleteSubLine(requestId, subLineId);
+	}
+
+	@Override
+	public QuoteRequestObjectStub[] getAlteredObjects(String requestId) {
+		return workspace.getLocalObjects(requestId);
+	}
+
+	@Override
+	public void getRequestObject(final String requestId, String objectId,
+			final ResponseHandler<QuoteRequestObject> handler) {
+		QuoteRequestObject object = workspace.getObjectHeader(requestId, objectId);
+
+		if(object != null) {
+			handler.onResponse(object);
+		} else {
+			requestObjectService.getObject(objectId, new BigBangAsyncCallback<QuoteRequestObject>() {
 
 				@Override
-				public void onResponseSuccess(QuoteRequest result) {
-					incrementDataVersion();
-					for(DataBrokerClient<QuoteRequest> bc : getClients()){
-						((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
-						((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
-					}
-					handler.onResponse(result);
+				public void onResponseSuccess(QuoteRequestObject result) {
+					handler.onResponse(workspace.loadExistingObject(requestId, result));
 				}
 
 				@Override
 				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
-							new String("Could not get the quote request")
+							new String("Could not get the object")
 					});
 					super.onResponseFailure(caught);
 				}
 			});
 		}
+	}
+
+	@Override
+	public QuoteRequestObject createRequestObject(String requestId, String typeId) {
+		return workspace.createLocalObject(requestId, typeId);
+	}
+
+	@Override
+	public QuoteRequestObject updateRequestObject(String requestId, QuoteRequestObject object) {
+		return workspace.updateObjectHeader(requestId, object);
+	}
+
+	@Override
+	public QuoteRequestObjectStub removeRequestObject(String requestId, String objectId) {
+		return workspace.deleteObject(requestId, objectId);
+	}
+
+	@Override
+	public FieldContainer getContextForRequest(String requestId, String subLineId) {
+		return workspace.getContext(requestId, subLineId, null);
+	}
+
+	@Override
+	public void saveContextForRequest(String requestId, String subLineId, FieldContainer contents) {
+		workspace.updateContext(requestId, subLineId, null, contents);
+	}
+
+	@Override
+	public FieldContainer getContextForCompositeObject(String requestId, String subLineId, String objectId) {
+		return workspace.getContext(requestId, subLineId, objectId);
+	}
+
+	@Override
+	public void saveContextForCompositeObject(String requestId, String subLineId, String objectId, FieldContainer contents) {
+		workspace.updateContext(requestId, subLineId, objectId, contents);
+	}
+
+
+	//Other operations
+
+	@Override
+	public SearchDataBroker<QuoteRequestStub> getSearchBroker() {
+		return this.searchBroker;
 	}
 
 	@Override
@@ -189,358 +411,29 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
-	public void openRequestResource(final String requestId,
-			final ResponseHandler<QuoteRequest> handler) {
-		//NEW REQUEST
-		if(requestId == null){
-			service.openRequestScratchPad(requestId, new BigBangAsyncCallback<Remap[]>() {
+	public void createQuoteRequestManagerTransfer(String[] requestIds,
+			String managerId, final ResponseHandler<QuoteRequest> handler) {
+		ManagerTransfer transfer = new ManagerTransfer();
+		transfer.dataObjectIds = requestIds;
+		transfer.newManagerId = managerId;
 
-				@Override
-				public void onResponseSuccess(Remap[] result) {
-					//If new policy
-					if(result.length == 1 && result[0].remapIds.length == 1 && result[0].remapIds[0].oldId == null){
-						QuoteRequest request = new QuoteRequest();
-						RemapId remapId = result[0].remapIds[0];
-						request.id = remapId.newId;
-						requestsInScratchPad.put(request.id, request.id);
-						
-						service.initRequestInPad(request, new BigBangAsyncCallback<QuoteRequest>() {
 
-							@Override
-							public void onResponseSuccess(QuoteRequest result) {
-								handler.onResponse(result);
-							}
-							
-							@Override
-							public void onResponseFailure(Throwable caught) {
-								handler.onError(new String[]{
-									new String("Could not initialize the quote request")	
-								});
-								super.onResponseFailure(caught);
-							}
-						});
-					}
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(requestId);
-					}
-					handler.onError(new String[]{
-							new String("Could not open the new request resource")
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
-		}else if(!isTemp(requestId)){
-			//EXISTING POLICY
-			service.openRequestScratchPad(requestId, new BigBangAsyncCallback<Remap[]>() {
-
-				@Override
-				public void onResponseSuccess(Remap[] result) {
-					doRemapping(result);
-					getQuoteRequest(requestId, handler);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(requestId);
-					}
-					handler.onError(new String[]{
-							new String("Could not open the request resource")
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
-		}else{
-			handler.onError(new String[]{
-					new String("Cannot open a request resource twice for the same policy")	
-			});
-		}
-	}
-
-	@Override
-	public void commitRequest(final QuoteRequest request,
-			final ResponseHandler<QuoteRequest> handler) {
-		String tempId = request.id;
-		request.id = getEffectiveId(request.id);
-		this.updateQuoteRequest(request, new ResponseHandler<QuoteRequest>() {
+		service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
 
 			@Override
-			public void onResponse(QuoteRequest response) {
-				service.commitPad(getEffectiveId(response.id), new BigBangAsyncCallback<Remap[]>() {
-
-					@Override
-					public void onResponseSuccess(Remap[] result) {
-						String finalId = result[0].remapIds[0].newId;
-						
-						final boolean newQuoteRequest = result[0].remapIds[0].oldId == null;
-						
-						doRemapping(result);
-						getQuoteRequest(finalId, new ResponseHandler<QuoteRequest>() {
-
-							@Override
-							public void onResponse(QuoteRequest response) {
-								incrementDataVersion();
-								for(DataBrokerClient<QuoteRequest> client : getClients()) {
-									if(newQuoteRequest) {
-										((QuoteRequestDataBrokerClient) client).addQuoteRequest(response);
-									}else{
-										((QuoteRequestDataBrokerClient) client).updateQuoteRequest(response);
-									}
-									((QuoteRequestDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
-								}
-								EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.UPDATE_QUOTE_REQUEST, response.id));
-								handler.onResponse(response);
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								handler.onError(errors);
-							}
-						});
-					}
-
-					@Override
-					public void onResponseFailure(Throwable caught) {
-						request.id = getFinalMapping(request.id);
-						if(caught instanceof CorruptedPadException){
-							onPadCorrupted(request.id);
-						}
-						handler.onError(new String[]{
-								new String("Could not commit the scratch pad")	
-						});
-						super.onResponseFailure(caught);
-					}
-
-				});
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				request.id = getFinalMapping(request.id);
-				handler.onError(new String[]{
-						new String("Could not commit the scratch pad")	
-				});
-			}
-		});
-		request.id = tempId;
-	}
-
-	@Override
-	public void closeRequestResource(String requestId,
-			final ResponseHandler<Void> handler) {
-		requestId = getEffectiveId(requestId);
-		if(isTemp(requestId)){
-			service.discardPad(requestId, new BigBangAsyncCallback<Remap[]>() {
-
-				@Override
-				public void onResponseSuccess(Remap[] result) {
-					doRemapping(result);
-					handler.onResponse(null);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not close the request resource")	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
-			handler.onError(new String[]{
-					new String("Cannot close an unopened request resource")
-			});
-		}
-	}
-
-	@Override
-	public void openCoverageDetailsPage(String quoteRequestId,
-			String subLineId, String insuredObjectId, final ResponseHandler<TableSection> handler) {
-		final String requestId = getEffectiveId(quoteRequestId);
-		if(isTemp(requestId)){
-			service.getPageForEdit(requestId, subLineId, insuredObjectId, new BigBangAsyncCallback<QuoteRequest.TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(requestId);
-					}
-					handler.onError(new String[]{
-							new String("Could not get the requested page for edit")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
-			service.getPage(requestId, subLineId, insuredObjectId, new BigBangAsyncCallback<QuoteRequest.TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not get the requested page")
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}
-	}
-
-	@Override
-	public void saveCoverageDetailsPage(String quoteRequestId, String subLineId,
-			String insuredObjectId, TableSection data,
-			final ResponseHandler<TableSection> handler) {
-		final String requestId = getEffectiveId(quoteRequestId);
-		if(isTemp(requestId)){
-			this.service.savePage(data, new BigBangAsyncCallback<QuoteRequest.TableSection>() {
-
-				@Override
-				public void onResponseSuccess(TableSection result) {
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(requestId);
-					}
-					handler.onError(new String[]{
-							new String("Coulg not save the page")	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}else{
-			handler.onError(new String[]{
-					new String("Could not save the page on an unopened request resource")
-			});
-		}
-	}
-
-	@Override
-	public void updateQuoteRequest(QuoteRequest request,
-			final ResponseHandler<QuoteRequest> handler) {
-		final String requestId = getEffectiveId(request.id);
-		if(isTemp(requestId)){
-			String tempRequestId = request.id;
-			request.id = requestId;
-			service.updateHeader(request, new BigBangAsyncCallback<QuoteRequest>() {
-
-				@Override
-				public void onResponseSuccess(QuoteRequest result) {
-					result.id = getFinalMapping(result.id);
-					incrementDataVersion();
-					for(DataBrokerClient<QuoteRequest> bc : getClients()){
-						((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
-						((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
-					}
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					if(caught instanceof CorruptedPadException){
-						onPadCorrupted(requestId);
-					}
-					handler.onError(new String[]{
-							new String("Could not save request header")	
-					});
-					super.onResponseFailure(caught);
-				}
-
-			});
-			request.id = tempRequestId;
-		}else{
-			handler.onError(new String[]{
-					new String("Could not save the request header. The request is not in scratch pad")
-			});
-		}
-	}
-
-	@Override
-	public void closeQuoteRequest(String id, String notes,
-			final ResponseHandler<QuoteRequest> handler) {
-		service.closeProcess(id, notes, new BigBangAsyncCallback<QuoteRequest>() {
-
-			@Override
-			public void onResponseSuccess(QuoteRequest result) {
-				incrementDataVersion();
-				for(DataBrokerClient<QuoteRequest> bc : getClients()){
-					((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
-					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
-				}
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST, result.id));
-				handler.onResponse(result);
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not close the request process")
-				});
-				super.onResponseFailure(caught);
-			}
-		});
-	}
-
-	@Override
-	public void deleteQuoteRequest(final String id, String reason, final ResponseHandler<String> handler) {
-		service.deleteRequest(id, reason, new BigBangAsyncCallback<Void>() {
-
-			@Override
-			public void onResponseSuccess(Void result) {
-				incrementDataVersion();
-				for(DataBrokerClient<QuoteRequest> bc : getClients()){
-					((QuoteRequestDataBrokerClient) bc).removeQuoteRequest(id);
-					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
-				}
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST, id));
+			public void onResponseSuccess(ManagerTransfer result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER, result.id));
 				handler.onResponse(null);
 			}
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not delete the quote request")
+						new String("Could not transfer the processes")
 				});
 				super.onResponseFailure(caught);
 			}
 		});
-	}
-
-	@Override
-	public void insertInsuredObject(InsuredObject object,
-			ResponseHandler<InsuredObject> handler) {
-		// TODO Auto-generated method stub
-
-	}
-
-//	@Override
-//	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
-//			ResponseHandler<InfoOrDocumentRequest> handler) {
-//		// TODO Auto-generated method stub
-//
-//	}
-
-	@Override
-	public void createQuoteRequestManagerTransfer(String[] requestIds,
-			String managerId, ResponseHandler<QuoteRequest> handler) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -552,53 +445,12 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 	}
 
 	@Override
-	public void addSubLine(String requestId, String subLineId,
-			final ResponseHandler<RequestSubLine> handler) {
-		String id = getEffectiveId(requestId);
-		service.addSubLineToPad(id, subLineId, new BigBangAsyncCallback<QuoteRequest.RequestSubLine>() {
-
-			@Override
-			public void onResponseSuccess(RequestSubLine result) {
-				handler.onResponse(result);
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not add the subline to scratch pad")
-				});
-				super.onResponseFailure(caught);
-			}
-		});
-	}
-
-	@Override
-	public void deleteSubLine(String requestSubLineId, final ResponseHandler<Void> handler) {
-		service.deleteSubLineFromPad(requestSubLineId, new BigBangAsyncCallback<Void>() {
-
-			@Override
-			public void onResponseSuccess(Void result) {
-				handler.onResponse(null);
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not delete sub line in pad")
-				});
-				super.onResponseFailure(caught);
-			}
-		});
-	}
-	
-	@Override
 	public void createManagerTransfer(String[] dataObjectIds, String managerId,
 			final ResponseHandler<ManagerTransfer> handler) {
 		ManagerTransfer transfer = new ManagerTransfer();
 		transfer.newManagerId = managerId;
 		transfer.dataObjectIds = dataObjectIds;
 
-		if(dataObjectIds.length > 1){
 			service.massCreateManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
 
 				@Override
@@ -635,127 +487,97 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 				}
 
 			});
-		}else{
-			service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
-
-				@Override
-				public void onResponseSuccess(ManagerTransfer result) {
-					for(int i = 0; i < result.dataObjectIds.length; i++) {
-						getQuoteRequest(result.dataObjectIds[i], new ResponseHandler<QuoteRequest>(){
-
-							@Override
-							public void onResponse(QuoteRequest response) {
-								for(DataBrokerClient<QuoteRequest> c : QuoteRequestBrokerImpl.this.clients) {
-									QuoteRequestDataBrokerClient b = (QuoteRequestDataBrokerClient)c;
-									b.updateQuoteRequest(response);
-								}
-								EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER, response.id));
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								return;
-							}
-						});
-					}
-					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
-					handler.onResponse(result);
-				}
-
-				@Override
-				public void onResponseFailure(Throwable caught) {
-					handler.onError(new String[]{
-							new String("Could not create manager transfer")	
-					});
-					super.onResponseFailure(caught);
-				}
-			});
-		}		
 	}
 
 	@Override
-	public SearchDataBroker<QuoteRequestStub> getSearchBroker() {
-		return this.searchBroker;
-	}
+	public void receiveMessage(Conversation info,
+			final ResponseHandler<Conversation> responseHandler) {
+		service.receiveMessage(info, new BigBangAsyncCallback<Conversation>() {
 
-
-	@Override
-	public boolean isTemp(String quoteRequestId) {
-		return this.requestsInScratchPad.containsKey(quoteRequestId) || this.requestsInScratchPad.containsValue(quoteRequestId);
-	}
-
-	@Override
-	public void discardTemp(String policyId) {
-		requestsInScratchPad.remove(policyId);
-		String finalId = getFinalMapping(policyId);
-		this.requestsInScratchPad.remove(finalId);
-	}
-
-	public String getEffectiveId(String id){
-		if(this.requestsInScratchPad.containsKey(id)){
-			return this.requestsInScratchPad.get(id);
-		}
-		return id;
-	}
-
-	public String getFinalMapping(String tempId){
-		for(String key : this.requestsInScratchPad.keySet()){
-			if(this.requestsInScratchPad.get(key).equalsIgnoreCase(tempId)){
-				return key;
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CONVERSATION, result.id));
+				responseHandler.onResponse(result);
 			}
-		}
-		return tempId;
-	}
 
-	private void onPadCorrupted(String requestId){
-		closeRequestResource(requestId, new ResponseHandler<Void>() {
 
 			@Override
-			public void onResponse(Void response) {}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not receive the message")		
+				});	
+				super.onResponseFailure(caught);
+			}
 		});
 	}
 
-	protected void doRemapping(Remap[] remappings){
-		for(int i = 0; i < remappings.length; i++) {
-			Remap remap = remappings[i];
+	@Override
+	public void sendMessage(Conversation info,
+			final ResponseHandler<Conversation> responseHandler) {
+		service.sendMessage(info, new BigBangAsyncCallback<Conversation>() {
 
-			//REQUEST
-			if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.QUOTE_REQUEST)){
-				for(int j = 0; j < remap.remapIds.length; j++){
-					RemapId remapId = remap.remapIds[j];
-					remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
-				}
+			@Override
+			public void onResponseSuccess(Conversation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CONVERSATION, result.id));
+				responseHandler.onResponse(result);
+			}
 
-				//OBJECTS
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not send the message")		
+				});	
+				super.onResponseFailure(caught);
 			}
-			else if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.QUOTE_REQUEST_INSURED_OBJECT)){
-				for(int j = 0; j < remap.remapIds.length; j++){
-					RemapId remapId = remap.remapIds[j];
-					this.requestObjectsBroker.remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
-				}
-			}else{
-				GWT.log("Could not remap item id for typeId = " + remap.typeId);
-			}
-		}
+		});		
 	}
 
 	@Override
-	public void remapItemId(String oldId, String newId, boolean newInScratchPad) {
-		if(newInScratchPad){
-			this.requestsInScratchPad.put(oldId, newId);
-		}else if(newId == null){
-			discardTemp(oldId);
-		}else {
-			this.requestsInScratchPad.remove(newId);
+	public void createNegotiation(Negotiation negotiation,
+			final ResponseHandler<Negotiation> responseHandler) {
+		service.createNegotiation(negotiation, new BigBangAsyncCallback<Negotiation>() {
+		
+		@Override
+		public void onResponseSuccess(Negotiation result) {
+			EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_NEGOTIATION, result.id));
+			responseHandler.onResponse(result);				
 		}
-		//		incrementDataVersion();
-		//		for(DataBrokerClient<QuoteRequest> bc : getClients()){
-		//			((QuoteRequestDataBrokerClient) bc).remapItemId(oldId, newId);
-		//			((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
-		//		}
+		
+		@Override
+			public void onResponseFailure(Throwable caught) {
+			responseHandler.onError(new String[]{
+					new String("Could not create Negotiation")		
+			});	
+			super.onResponseFailure(caught);			}
+		
+		});
 	}
 
+	@Override
+	public void closeQuoteRequest(String id, String info,
+			final ResponseHandler<QuoteRequest> responseHandler) {
+		service.closeProcess(id, info, new BigBangAsyncCallback<QuoteRequest>() {
+
+			@Override
+			public void onResponseSuccess(QuoteRequest result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST, result.id));
+				responseHandler.onResponse(result);				
+				incrementDataVersion();
+				for(DataBrokerClient<QuoteRequest> bc : getClients()){
+					((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
+					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(result.id, getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not close the quote request")		
+				});	
+				super.onResponseFailure(caught);
+			}
+
+		});
+	}
 }

@@ -85,6 +85,7 @@ public class BigBangConstants {
 		public static final String DISABILITY_TYPE = "027296D7-1573-46F2-BD95-A1340114B485";
 		public static final String OTHER_ENTITIES_TYPE = "A110EE56-A8A1-4E7A-B564-A148011C3FD9";
 		public static final String SALVAGE_TYPE = "1E2C47DF-B4AA-4A7D-9512-A150010491EC";
+		public static final String OBJECT_TYPE = "6ADF0A94-5004-41AF-A7FF-9F95013DABB8";
 	}
 	
 	public static class TypifiedListValues {
@@ -237,6 +238,8 @@ public class BigBangConstants {
 			public static final String DELETE_QUOTE_REQUEST = "57172AC9-8CDF-4C34-825F-A00C01294D35";
 			public static final String CLOSE_QUOTE_REQUEST = "2E49B889-594C-49A6-B25D-A00C012876B8";
 			public static final String CREATE_MANAGER_TRANSFER = "D47D25C0-E8AE-4AC7-AB76-A00C01252C9F";
+			public static final String CONVERSATION = "113799FC-D92B-42DB-A472-A00C0124AB91";
+			public static final String CREATE_NEGOTIATION = "97C06D8F-B1DD-4687-B507-A00C0126B601";
 		}
 
 		public static class SignatureRequestProcess {

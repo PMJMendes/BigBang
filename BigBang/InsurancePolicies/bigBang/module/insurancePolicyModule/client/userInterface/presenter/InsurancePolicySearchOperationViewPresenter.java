@@ -272,7 +272,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					onEdit();
 					break;
 				case CANCEL_EDIT:
-					NavigationHistoryManager.getInstance().reload();
+					NavigationHistoryManager.getInstance().reload(); //TODO QUANDO SE CANCELA NOVO está um onCancelEdit lá em baixo comentado.
 					break;
 				case SAVE:
 					onSave();
@@ -785,7 +785,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 	protected void onSave() {
 		saveInternally();
 		broker.updateExercise(policyId, view.getExerciseForm().getInfo());
-		broker.updateCoverages(view.getPresentCoverages());
+		broker.updateCoverages(policyId, view.getPresentCoverages());
 		if(view.getPolicyHeaderForm().validate()) {
 			broker.persistPolicy(policyId,new ResponseHandler<InsurancePolicy>() {
 
@@ -891,7 +891,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o objecto"), TYPE.ALERT_NOTIFICATION));					
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Unidade de Risco."), TYPE.ALERT_NOTIFICATION));					
 				}
 			});
 		}
@@ -1154,9 +1154,8 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.allowVoidPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY));
 		view.allowTransferBrokerage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_BROKERAGE));
 		view.allowCreateSubstitutePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUBSTITUTE_POLICY));
-		//TODO REQUESTS
-		view.allowSendMessage(true);
-		view.allowReceiveMessage(true);
+		view.allowSendMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION));
+		view.allowReceiveMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION));
 		view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER));
 		view.allowExecuteDetailedCalculations(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS));
 		view.allowCreateSubPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY));

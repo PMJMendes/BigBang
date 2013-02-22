@@ -8,30 +8,36 @@ import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.quoteRequestModule.client.dataAccess.NegotiationBrokerImpl;
 import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestBrokerImpl;
-import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestInsuredObjectBrokerImpl;
+import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestObjectBrokerImpl;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationCancellationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationGrantViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationTasksViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestCloseViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestConversationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestMassManagerTransferViewPresenter;
-import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestObjectViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestNegotiationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestOperationsViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestReceiveMessageViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSendMessageViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.SingleQuoteRequestManagerTransferViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationCancellationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationGrantView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationTasksView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestCloseView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestConversationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestMassManagerTransferView;
-import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestObjectView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestNegotiationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestOperationsView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestReceiveMessageView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSearchOperationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSectionView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSendMessageView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.SingleQuoteRequestManagerTransferView;
 
 import com.google.gwt.core.client.GWT;
@@ -98,16 +104,6 @@ public class QuoteRequestModule implements Module {
 				return presenter;
 			}
 		});
-
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_INSURED_OBJECT", new ViewPresenterInstantiator() {
-
-			@Override
-			public ViewPresenter getInstance() {
-				QuoteRequestObjectView view = (QuoteRequestObjectView) GWT.create(QuoteRequestObjectView.class); 
-				QuoteRequestObjectViewPresenter presenter = new QuoteRequestObjectViewPresenter(view);
-				return presenter;
-			}
-		});
 		
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_DELETE", new ViewPresenterInstantiator() {
 
@@ -145,15 +141,6 @@ public class QuoteRequestModule implements Module {
 				return presenter;
 			}
 		});
-//		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_CREATE_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
-//
-//			@Override
-//			public ViewPresenter getInstance() {
-//				CreateQuoteRequestInfoOrDocumentRequestView view = (CreateQuoteRequestInfoOrDocumentRequestView) GWT.create(CreateQuoteRequestInfoOrDocumentRequestView.class);
-//				ViewPresenter presenter = new CreateQuoteRequestInfoOrDocumentRequestViewPresenter(view);
-//				return presenter;
-//			}
-//		});
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("NEGOTIATION_CANCEL", new ViewPresenterInstantiator() {
 
 			@Override
@@ -181,14 +168,51 @@ public class QuoteRequestModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_SEND_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestSendMessageView view = (QuoteRequestSendMessageView) GWT.create(QuoteRequestSendMessageView.class);
+				ViewPresenter presenter = new QuoteRequestSendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestReceiveMessageView view = (QuoteRequestReceiveMessageView) GWT.create(QuoteRequestReceiveMessageView.class);
+				ViewPresenter presenter = new QuoteRequestReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestConversationView view = (QuoteRequestConversationView) GWT.create(QuoteRequestConversationView.class);
+				ViewPresenter presenter = new QuoteRequestConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_NEGOTIATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestNegotiationView view = (QuoteRequestNegotiationView) GWT.create(QuoteRequestNegotiationView.class);
+				ViewPresenter presenter = new QuoteRequestNegotiationViewPresenter(view);
+				return presenter;
+			}
+		});
+		
 	}
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
-		QuoteRequestInsuredObjectBrokerImpl requestObjectsBroker = new QuoteRequestInsuredObjectBrokerImpl();
+		QuoteRequestObjectBrokerImpl requestObjectsBroker = new QuoteRequestObjectBrokerImpl();
 		
 		return new DataBroker<?>[]{
-				new QuoteRequestBrokerImpl(requestObjectsBroker),
+				new QuoteRequestBrokerImpl(),
 				new NegotiationBrokerImpl(),
 				requestObjectsBroker
 		};

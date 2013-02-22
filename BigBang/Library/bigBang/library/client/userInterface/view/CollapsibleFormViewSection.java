@@ -8,6 +8,8 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.HasCloseHandlers;
+import com.google.gwt.event.logical.shared.HasOpenHandlers;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -97,4 +99,11 @@ public class CollapsibleFormViewSection extends FormViewSection {
 		this.headerExpandImage.setResource(r.arrowDown());
 	}
 
+	public HasOpenHandlers<DisclosurePanel> getCollapsiblePanelOpenHandler(){
+		return disclosurePanel;
+	}
+	
+	public HasCloseHandlers<DisclosurePanel> getCollapsiblePanelCloseHandler(){
+		return disclosurePanel;
+	}
 }

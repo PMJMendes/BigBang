@@ -76,7 +76,7 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 					setRightWidget(statusIcon);
 				}
 				
-				numberLabel.setText("#" + value.processNumber);
+				numberLabel.setText(value.processNumber != null ? "#" + value.processNumber : "Nova Consulta de Mercado");
 				clientLabel.setText("#" + value.clientNumber + " - " + value.clientName);
 
 				Resources resources = GWT.create(Resources.class);
@@ -105,7 +105,8 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 		INSURANCE_AGENCY,
 		MEDIATOR,
 		MANAGER,
-		CASE_STUDY
+		CASE_STUDY,
+		CLOSED
 	}
 	protected FiltersPanel filtersPanel;
 	
@@ -131,6 +132,7 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 		filtersPanel.addTypifiedListField(Filters.CATEGORY, BigBangConstants.EntityIds.CATEGORY, "Categoria");
 		filtersPanel.addTypifiedListField(Filters.LINE, BigBangConstants.EntityIds.LINE, "Ramo", Filters.CATEGORY);
 		filtersPanel.addTypifiedListField(Filters.SUBLINE, BigBangConstants.EntityIds.SUB_LINE, "Modalidade", Filters.LINE);
+		filtersPanel.addCheckBoxField(Filters.CLOSED, "Incluir Fechados");
 		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
 
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
@@ -168,6 +170,8 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 		parameter.subLineId = (String) filtersPanel.getFilterValue(Filters.SUBLINE);
 		boolean caseStudy = (Boolean) filtersPanel.getFilterValue(Filters.CASE_STUDY);
 		parameter.caseStudy = caseStudy ? true : null;
+		boolean includeClosed = (Boolean) filtersPanel.getFilterValue(Filters.CLOSED);
+		parameter.includeClosed = includeClosed;
 
 		SearchParameter[] parameters = new SearchParameter[]{
 				parameter

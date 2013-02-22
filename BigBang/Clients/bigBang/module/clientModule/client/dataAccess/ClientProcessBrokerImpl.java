@@ -19,6 +19,7 @@ import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -203,6 +204,30 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onResponseSuccess(InsurancePolicy result) {
 				//TODO
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_POLICY, result.clientId));
+
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create new Policy")	
+				});
+				super.onResponseFailure(caught);			
+			}
+		});
+	}
+
+	@Override
+	public void createQuoteRequest(QuoteRequest request,
+			final ResponseHandler<QuoteRequest> handler) {
+		service.createQuoteRequest(request, new BigBangAsyncCallback<QuoteRequest>() {
+
+			@Override
+			public void onResponseSuccess(QuoteRequest result) {
+				//TODO
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_QUOTE_REQUEST, result.clientId));
 
 				handler.onResponse(result);
 

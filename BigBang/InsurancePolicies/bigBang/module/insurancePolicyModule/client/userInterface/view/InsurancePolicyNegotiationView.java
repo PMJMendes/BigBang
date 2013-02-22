@@ -13,10 +13,4 @@ public class InsurancePolicyNegotiationView<T> extends NegotiationView<T> {
 		getForm().setInsurancePolicyLocked(true);
 		setParentHeaderTitle("Ficha da Apólice");
 	}
-
-	@Override
-	public void setParentHeaderTitle(String title) {
-		ownerHeader.setText(title);
-	}
-
 }

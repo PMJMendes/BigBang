@@ -69,6 +69,9 @@ public class ManageData
 			{
 				for ( i = 0; i < mobjData.marrObjects.length; i++ )
 				{
+					if ( mobjData.marrObjects[i] == null )
+						continue;
+
 					if ( mobjData.marrObjects[i].mbDeleted )
 						lstrResult.append("Objecto removido:").append(pstrLineBreak);
 					else if ( mobjData.marrObjects[i].mbNew )
@@ -84,6 +87,9 @@ public class ManageData
 			{
 				for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 				{
+					if ( mobjData.marrSubLines[i] == null )
+						continue;
+
 					if ( mobjData.marrSubLines[i].mbDeleted )
 						lstrResult.append("Modalidade removida:").append(pstrLineBreak);
 					else if ( mobjData.marrSubLines[i].mbNew )
@@ -165,6 +171,7 @@ public class ManageData
 					mobjData.mobjPrevValues.FromObject(lobjAux);
 					mobjData.mobjPrevValues.mobjPrevValues = null;
 
+					mobjData.midClient = mobjData.mobjPrevValues.midClient;
 					mobjData.midManager = GetProcess().GetManagerID();
 					mobjData.ToObject(lobjAux);
 					lobjAux.SaveToDb(pdb);
@@ -174,6 +181,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrObjects.length; i++ )
 					{
+						if ( mobjData.marrObjects[i] == null )
+							continue;
+
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
 							//Aqui não há código. Ver mais abaixo.
@@ -203,6 +213,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 					{
+						if ( mobjData.marrSubLines[i] == null )
+							continue;
+
 						if ( mobjData.marrSubLines[i].mbDeleted )
 						{
 							//Aqui não há código. Ver mais abaixo.
@@ -318,6 +331,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrObjects.length; i++ )
 					{
+						if ( mobjData.marrObjects[i] == null )
+							continue;
+
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
 							if ( mobjData.marrObjects[i].mid == null )
@@ -365,6 +381,9 @@ public class ManageData
 			{
 				for ( i = 0; i < mobjData.marrObjects.length; i++ )
 				{
+					if ( mobjData.marrObjects[i] == null )
+						continue;
+
 					if ( mobjData.marrObjects[i].mbDeleted )
 					{
 						lstrResult.append("O seguinte objecto será reposto:").append(pstrLineBreak);
@@ -388,6 +407,9 @@ public class ManageData
 			{
 				for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 				{
+					if ( mobjData.marrSubLines[i] == null )
+						continue;
+
 					if ( mobjData.marrSubLines[i].mbDeleted )
 					{
 						lstrResult.append("A seguinte modalidade será reposta:").append(pstrLineBreak);
@@ -482,6 +504,9 @@ public class ManageData
 			{
 				for ( i = 0; i < mobjData.marrObjects.length; i++ )
 				{
+					if ( mobjData.marrObjects[i] == null )
+						continue;
+
 					if ( mobjData.marrObjects[i].mbDeleted )
 						lstrResult.append("Objecto reposto:").append(pstrLineBreak);
 					else if ( mobjData.marrObjects[i].mbNew )
@@ -497,6 +522,9 @@ public class ManageData
 			{
 				for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 				{
+					if ( mobjData.marrSubLines[i] == null )
+						continue;
+
 					if ( mobjData.marrSubLines[i].mbDeleted )
 						lstrResult.append("Modalidade reposta:").append(pstrLineBreak);
 					else if ( mobjData.marrSubLines[i].mbNew )
@@ -577,6 +605,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrObjects.length; i++ )
 					{
+						if ( mobjData.marrObjects[i] == null )
+							continue;
+
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
 							if ( mobjData.marrObjects[i].mid == null )
@@ -603,6 +634,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 					{
+						if ( mobjData.marrSubLines[i] == null )
+							continue;
+
 						if ( mobjData.marrSubLines[i].mbDeleted )
 						{
 							if ( mobjData.marrSubLines[i].mid == null )
@@ -698,6 +732,9 @@ public class ManageData
 				{
 					for ( i = 0; i < mobjData.marrObjects.length; i++ )
 					{
+						if ( mobjData.marrObjects[i] == null )
+							continue;
+
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
 						}
