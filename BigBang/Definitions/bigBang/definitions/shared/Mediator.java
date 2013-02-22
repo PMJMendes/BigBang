@@ -28,6 +28,7 @@ public class Mediator
 	public Double basePercent;
 	public boolean hasRetention; // Novo!
 	public Address address;
+	public String accountingCode;
 	public Map<String, Double> dealPercents;
 	public MediatorException[] exceptions;
 	public Contact[] contacts;
@@ -52,6 +53,7 @@ public class Mediator
 		this.comissionProfile = original.comissionProfile;
 		this.basePercent = original.basePercent;
 		this.address = original.address;
+		this.accountingCode = original.accountingCode;
 		this.dealPercents = original.dealPercents;
 		this.exceptions = original.exceptions;
 		this.contacts = original.contacts;

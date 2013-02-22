@@ -15,6 +15,7 @@ public class InsuranceAgency
 	public String taxNumber;
 	public String NIB;
 	public Address address;
+	public String accountingCode;
 	public Contact[] contacts;
 	public Document[] documents;
 
@@ -34,6 +35,7 @@ public class InsuranceAgency
 		this.taxNumber = original.taxNumber;
 		this.NIB = original.NIB;
 		this.address = original.address;
+		this.accountingCode = original.accountingCode;
 		this.contacts = original.contacts;
 		this.documents = original.documents;
 	}
