@@ -1,7 +1,5 @@
 @echo off
 setlocal ENABLEDELAYEDEXPANSION
 if defined CLASSPATH (set CLASSPATH=%CLASSPATH%;.) else (set CLASSPATH=.)
-FOR /R .\lib %%G IN (*.jar) DO set CLASSPATH=!CLASSPATH!;%%G
-Echo The Classpath definition is %CLASSPATH%
-...
+FOR /R . %%G IN (*.jar) DO set CLASSPATH=!CLASSPATH!;%%G
 java Jewel.Batch.JewelBatchRunner
