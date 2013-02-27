@@ -130,6 +130,30 @@ public class Company
 	{
 	}
 
+	public String getEffectiveAccount()
+	{
+		String lstrCode;
+
+		lstrCode = (String)getAt(I.ACCTCODE);
+
+		if ( lstrCode == null )
+			return null;
+
+		return "21111" + lstrCode.substring(0, 1) + "0" + lstrCode.substring(1);
+	}
+
+	public String getEarningsAccount()
+	{
+		String lstrCode;
+
+		lstrCode = (String)getAt(I.ACCTCODE);
+
+		if ( lstrCode == null )
+			return null;
+
+		return "72113" + lstrCode + "1";
+	}
+
     public Contact[] GetCurrentContacts()
     	throws BigBangJewelException
     {

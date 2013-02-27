@@ -12,7 +12,9 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
+import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class Payment
@@ -22,6 +24,7 @@ public class Payment
 
 	public PaymentData[] marrData;
 	private UUID midReceipt;
+	private AccountingData[] marrAccounting;
 
 	public Payment(UUID pidProcess)
 	{
@@ -55,6 +58,16 @@ public class Payment
 			}
 		}
 
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+		{
+			lstrBuilder.append(pstrLineBreak).append("Movimentos contabilísticos:").append(pstrLineBreak);
+			for ( i = 0; i < marrAccounting.length; i++ )
+			{
+				marrAccounting[i].Describe(lstrBuilder, pstrLineBreak);
+				lstrBuilder.append(pstrLineBreak);
+			}
+		}
+
 		return lstrBuilder.toString();
 	}
 
@@ -66,14 +79,16 @@ public class Payment
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Receipt lobjReceipt;
+		Receipt lobjReceipt, lobjCounter;
 		Payment lopRemote;
-		BigDecimal ldblTotal;
+		BigDecimal ldblTotal, ldblTotal119;
 		int i;
 		Calendar ldtToday;
 		boolean lbDirect;
 		UUID lidProfile;
 		UUID lidType;
+		boolean lbDAS;
+		AccountingEntry lobjEntry;
 
 		if ( (marrData == null) || (marrData.length == 0) )
 			throw new JewelPetriException("Erro: Deve especificar o(s) meio(s) de pagamento.");
@@ -101,12 +116,13 @@ public class Payment
 		lbDirect = true;
 		for ( i = 0; i < marrData.length; i++ )
 		{
-			ldblTotal = ldblTotal.add(marrData[i].mdblValue);
 			if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter && midReceipt.equals(marrData[i].midReceipt) )
 					throw new JewelPetriException("Erro: Não pode compensar um recibo consigo próprio.");
 
 			if ( !Constants.PayID_DirectToInsurer.equals(marrData[i].midPaymentType) )
 				lbDirect = false;
+
+			ldblTotal = ldblTotal.add(marrData[i].mdblValue);
 		}
 
 		if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
@@ -127,14 +143,14 @@ public class Payment
 			{
 				try
 				{
-					lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrData[i].midReceipt);
+					lobjCounter = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrData[i].midReceipt);
 				}
 				catch (Throwable e)
 				{
 					throw new JewelPetriException(e.getMessage(), e);
 				}
 
-				lopRemote = new Payment(lobjReceipt.GetProcessID());
+				lopRemote = new Payment(lobjCounter.GetProcessID());
 				lopRemote.marrData = new PaymentData[] {new PaymentData()};
 				lopRemote.marrData[0].midPaymentType = marrData[i].midPaymentType;
 				lopRemote.marrData[0].mdblValue = marrData[i].mdblValue;
@@ -158,16 +174,107 @@ public class Payment
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
+		lbDAS = false;
+		ldtToday = Calendar.getInstance();
+		ldtToday.set(Calendar.HOUR_OF_DAY, 0);
+		ldtToday.set(Calendar.MINUTE, 0);
+		ldtToday.set(Calendar.SECOND, 0);
+		ldtToday.set(Calendar.MILLISECOND, 0);
 		if ( !lobjReceipt.isReverseCircuit() && !lbDirect && !Constants.RecType_Backcharge.equals(lidType) &&
 				!Constants.ProfID_VIPNoDAS.equals(lidProfile) && !Constants.ProfID_EmailNoDAS.equals(lidProfile))
 		{
-			ldtToday = Calendar.getInstance();
-			ldtToday.set(Calendar.HOUR_OF_DAY, 0);
-			ldtToday.set(Calendar.MINUTE, 0);
-			ldtToday.set(Calendar.SECOND, 0);
-			ldtToday.set(Calendar.MILLISECOND, 0);
 			if ( ldtToday.getTime().getTime() > ((Timestamp)lobjReceipt.getAt(11)).getTime() )
+			{
 				TriggerOp(new TriggerForceDAS(GetProcess().getKey()), pdb);
+				lbDAS = true;
+			}
+		}
+
+		try
+		{
+			if ( !lbDAS && !lbDirect && (lobjReceipt.getAbsolutePolicy().GetCompany().getEffectiveAccount() != null) )
+			{
+				lobjReceipt.initAccounting(pdb, ldtToday.get(Calendar.YEAR));
+
+				ldblTotal = BigDecimal.ZERO;
+				ldblTotal119 = BigDecimal.ZERO;
+				for ( i = 0; i < marrData.length; i++ )
+				{
+					if ( Constants.PayID_DirectToInsurer.equals(marrData[i].midPaymentType) )
+						continue;
+					if ( Constants.PayID_DirectCheque.equals(marrData[i].midPaymentType) )
+						ldblTotal119 = ldblTotal119.add(marrData[i].mdblValue);
+					else
+						ldblTotal = ldblTotal.add(marrData[i].mdblValue);
+				}
+
+				if ( !ldblTotal.equals(BigDecimal.ZERO) && !ldblTotal119.equals(BigDecimal.ZERO) )
+					marrAccounting = new AccountingData[3];
+				else
+					marrAccounting = new AccountingData[2];
+
+				i = 0;
+
+				if ( !ldblTotal.equals(BigDecimal.ZERO) )
+				{
+					marrAccounting[i] = new AccountingData();
+					marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
+					marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
+					marrAccounting[i].mdblAccount = new BigDecimal("1024");
+					marrAccounting[i].mdblValue = ldblTotal.abs();
+					marrAccounting[i].mstrSign = (ldblTotal.compareTo(BigDecimal.ZERO) > 0 ? "D" : "C");
+					marrAccounting[i].mlngBook = 1;
+					marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
+					marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
+					marrAccounting[i].midDocType = Constants.ObjID_Receipt;
+					marrAccounting[i].mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
+					marrAccounting[i].midFile = null;
+					i++;
+				}
+
+				if ( !ldblTotal119.equals(BigDecimal.ZERO) )
+				{
+					marrAccounting[i] = new AccountingData();
+					marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
+					marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
+					marrAccounting[i].mdblAccount = new BigDecimal("119");
+					marrAccounting[i].mdblValue = ldblTotal119.abs();
+					marrAccounting[i].mstrSign = (ldblTotal119.compareTo(BigDecimal.ZERO) > 0 ? "D" : "C");
+					marrAccounting[i].mlngBook = 1;
+					marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
+					marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
+					marrAccounting[i].midDocType = Constants.ObjID_Receipt;
+					marrAccounting[i].mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
+					marrAccounting[i].midFile = null;
+					i++;
+				}
+
+				ldblTotal = ldblTotal.add(ldblTotal119);
+
+				marrAccounting[i] = new AccountingData();
+				marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
+				marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
+				marrAccounting[i].mdblAccount = new BigDecimal(lobjReceipt.getAbsolutePolicy().GetCompany().getEffectiveAccount());
+				marrAccounting[i].mdblValue = ldblTotal.abs();
+				marrAccounting[i].mstrSign = (ldblTotal.compareTo(BigDecimal.ZERO) > 0 ? "C" : "D");
+				marrAccounting[i].mlngBook = 1;
+				marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
+				marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
+				marrAccounting[i].midDocType = Constants.ObjID_Receipt;
+				marrAccounting[i].mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
+				marrAccounting[i].midFile = null;
+
+				for ( i = 0; i < marrAccounting.length; i++ )
+				{
+					lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					marrAccounting[i].ToObject(lobjEntry);
+					lobjEntry.SaveToDb(pdb);
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
 		}
 	}
 
@@ -190,6 +297,9 @@ public class Payment
 				}
 			}
 		}
+
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+			lstrBuilder.append(pstrLineBreak).append("Serão gerados movimentos contabilísticos de compensação.").append(pstrLineBreak);
 
 		return lstrBuilder.toString();
 	}
@@ -214,6 +324,16 @@ public class Payment
 			}
 		}
 
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+		{
+			lstrBuilder.append(pstrLineBreak).append("Movimentos contabilísticos compensados:").append(pstrLineBreak);
+			for ( i = 0; i < marrAccounting.length; i++ )
+			{
+				marrAccounting[i].Describe(lstrBuilder, pstrLineBreak);
+				lstrBuilder.append(pstrLineBreak);
+			}
+		}
+
 		return lstrBuilder.toString();
 	}
 
@@ -223,6 +343,7 @@ public class Payment
 		Receipt lobjReceipt;
 		UndoPayment lopRemote;
 		int i;
+		AccountingEntry lobjEntry;
 
 		midReceipt = GetProcess().GetDataKey();
 
@@ -257,6 +378,28 @@ public class Payment
 					lopRemote.midNameSpace = Engine.getCurrentNameSpace();
 					lopRemote.Execute(pdb);
 				}
+			}
+		}
+
+		if ( marrAccounting != null )
+		{
+			try
+			{
+				for ( i = 0; i < marrAccounting.length; i++ )
+				{
+					if ( marrAccounting[i].mstrSign.equals("D") )
+						marrAccounting[i].mstrSign = "C";
+					else
+						marrAccounting[i].mstrSign = "D";
+					marrAccounting[i].mstrDesc = "Reversão de " + marrAccounting[i].mstrDesc;
+					lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					marrAccounting[i].ToObject(lobjEntry);
+					lobjEntry.SaveToDb(pdb);
+				}
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
 			}
 		}
 	}

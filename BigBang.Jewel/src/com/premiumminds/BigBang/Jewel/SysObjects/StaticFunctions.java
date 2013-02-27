@@ -7,6 +7,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.PetriEngine;
 
@@ -84,5 +85,54 @@ public class StaticFunctions
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public static void AcctMovGen(UUID pidNameSpace)
+		throws BigBangJewelException
+	{
+		if ( !Constants.NSID_BigBang.equals(pidNameSpace) )
+			return;
+
+		try
+		{
+			Engine.pushNameSpace(Constants.NSID_CredEGS);
+		}
+		catch (JewelEngineException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		AccountingExporter.Export();
+
+		try
+		{
+			Engine.popNameSpace();
+		}
+		catch (JewelEngineException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			Engine.pushNameSpace(Constants.NSID_AMartins);
+		}
+		catch (JewelEngineException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		AccountingExporter.Export();
+
+		try
+		{
+			Engine.popNameSpace();
+		}
+		catch (JewelEngineException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return;
 	}
 }

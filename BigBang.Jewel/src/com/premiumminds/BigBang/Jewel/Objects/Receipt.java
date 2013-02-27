@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -59,26 +60,28 @@ public class Receipt
 {
 	public static class I
 	{
-		public static int NUMBER            =  0;
-		public static int TYPE              =  1;
-		public static int PROCESS           =  2;
-		public static int TOTALPREMIUM      =  3;
-		public static int COMMERCIALPREMIUM =  4;
-		public static int COMMISSIONS       =  5;
-		public static int RETROCESSIONS     =  6;
-		public static int FAT               =  7;
-		public static int ISSUEDATE         =  8;
-		public static int MATURITYDATE      =  9;
-		public static int ENDDATE           = 10;
-		public static int DUEDATE           = 11;
-		public static int MEDIATOR          = 12;
-		public static int NOTES             = 13;
-		public static int DESCRIPTION       = 14;
-		public static int RETURNTEXT        = 15;
-		public static int MIGRATIONID       = 16;
-		public static int BONUSMALUS        = 17;
-		public static int ISMALUS           = 18;
-		public static int ISINTERNAL        = 19;
+		public static final int NUMBER            =  0;
+		public static final int TYPE              =  1;
+		public static final int PROCESS           =  2;
+		public static final int TOTALPREMIUM      =  3;
+		public static final int COMMERCIALPREMIUM =  4;
+		public static final int COMMISSIONS       =  5;
+		public static final int RETROCESSIONS     =  6;
+		public static final int FAT               =  7;
+		public static final int ISSUEDATE         =  8;
+		public static final int MATURITYDATE      =  9;
+		public static final int ENDDATE           = 10;
+		public static final int DUEDATE           = 11;
+		public static final int MEDIATOR          = 12;
+		public static final int NOTES             = 13;
+		public static final int DESCRIPTION       = 14;
+		public static final int RETURNTEXT        = 15;
+		public static final int MIGRATIONID       = 16;
+		public static final int BONUSMALUS        = 17;
+		public static final int ISMALUS           = 18;
+		public static final int ISINTERNAL        = 19;
+		public static final int ENTRYNUMBER       = 20;
+		public static final int ENTRYYEAR         = 21;
 	}
 
     public static Receipt GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -912,6 +915,28 @@ public class Receipt
 		return lstrDtAux;
 	}
 
+	public void initAccounting(SQLServer pdb, int plngYear)
+		throws BigBangJewelException
+	{
+		int llngNumber;
+
+		if ( getAt(I.ENTRYNUMBER) != null )
+			return;
+
+		llngNumber = GetNewAccountingNumber(pdb, plngYear);
+
+		try
+		{
+			setAt(I.ENTRYNUMBER, llngNumber);
+			setAt(I.ENTRYYEAR, plngYear);
+			SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
     private BigDecimal internalCalcRetrocession()
     	throws BigBangJewelException
     {
@@ -992,4 +1017,50 @@ public class Receipt
 
 		return ldblPercent.abs().multiply(ldblBase).divide(new BigDecimal(100.00)).setScale(2, RoundingMode.HALF_UP);
     }
+
+	private int GetNewAccountingNumber(SQLServer pdb, int plngYear)
+		throws BigBangJewelException
+	{
+		IEntity lrefReceipts;
+        ResultSet lrsReceipts;
+        int llngResult;
+
+		try
+		{
+			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt)); 
+
+			lrsReceipts = lrefReceipts.SelectByMembers(pdb, new int[] {I.ENTRYYEAR}, new java.lang.Object[] {plngYear},
+					new int[] {-I.ENTRYNUMBER});
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		llngResult = 1;
+		try
+		{
+			if ( lrsReceipts.next() )
+			{
+				if( lrsReceipts.getObject(2 + I.ENTRYNUMBER) != null )
+					llngResult = lrsReceipts.getInt(2 + I.ENTRYNUMBER) + 1;
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsReceipts.close(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsReceipts.close();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return llngResult;
+	}
 }

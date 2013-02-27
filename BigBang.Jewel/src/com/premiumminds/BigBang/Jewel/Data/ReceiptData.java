@@ -35,6 +35,8 @@ public class ReceiptData
 	public String mstrNotes;
 	public String mstrDescription;
 	public Boolean mbInternal;
+	public Integer mlngEntryNumber;
+	public Integer mlngEntryYear;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -63,6 +65,8 @@ public class ReceiptData
 		mdblBonusMalus =    (BigDecimal)pobjSource.getAt(Receipt.I.BONUSMALUS);
 		mbIsMalus =            (Boolean)pobjSource.getAt(Receipt.I.ISMALUS);
 		mbInternal =           (Boolean)pobjSource.getAt(Receipt.I.ISINTERNAL);
+		mlngEntryNumber =      (Integer)pobjSource.getAt(Receipt.I.ENTRYNUMBER);
+		mlngEntryYear =        (Integer)pobjSource.getAt(Receipt.I.ENTRYYEAR);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -88,6 +92,8 @@ public class ReceiptData
 			pobjDest.setAt(Receipt.I.BONUSMALUS,        mdblBonusMalus);
 			pobjDest.setAt(Receipt.I.ISMALUS,           mbIsMalus);
 			pobjDest.setAt(Receipt.I.ISINTERNAL,        mbInternal);
+			pobjDest.setAt(Receipt.I.ENTRYNUMBER,       mlngEntryNumber);
+			pobjDest.setAt(Receipt.I.ENTRYYEAR,         mlngEntryYear);
 		}
 		catch (Throwable e)
 		{

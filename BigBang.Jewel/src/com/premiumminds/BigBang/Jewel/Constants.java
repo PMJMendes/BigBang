@@ -116,6 +116,9 @@ public class Constants
 	// DAS Requset Objects
 	public static final UUID ObjID_DASRequest               = UUID.fromString("F7137CCF-744D-4BD8-918A-A03000F0F182");
 
+	// Accounting Objects
+	public static final UUID ObjID_AccountingEntry          = UUID.fromString("3561135E-9C50-48C0-B42B-A17000F57F4D");
+
 	// Report Objects
 	public static final UUID ObjID_ReportDef                = UUID.fromString("CA478376-2F58-4140-B5EE-A032010F48E5");
 	public static final UUID ObjID_ReportParam              = UUID.fromString("4D801865-DC6B-4A8F-8301-A032012782BF");
@@ -738,6 +741,12 @@ public class Constants
 
 	// Conversation Types
 	public static final UUID ConvTpID_PaymentNotice = UUID.fromString("C7226C4D-255A-4BFD-AE67-A14901080BFC");
+
+	// File Formats
+	public static final UUID FormatID_Accouting = UUID.fromString("FDA489E9-5853-44F8-8335-A172010783D1");
+
+	// Transport Channels
+	public static final UUID ChannelID_Accounting = UUID.fromString("6D99EBAF-0DB7-42CD-8856-A172010A38BF");
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;
