@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -44,6 +45,8 @@ public class AccountingExporter
 		int i;
 		FileXfer lobjResult;
 		UUID lidInstance;
+		Calendar ldtToday;
+		String lstrName;
 
 		try
 		{
@@ -115,9 +118,13 @@ public class AccountingExporter
 			}
 			lobjFile = new FileData(lrefSpec, larrSections);
 
+			ldtToday = Calendar.getInstance();
+			lstrName = "mov." + ldtToday.get(Calendar.YEAR) + ldtToday.get(Calendar.MONTH) + ldtToday.get(Calendar.DAY_OF_MONTH) +
+					"." + ldtToday.get(Calendar.HOUR_OF_DAY) + ldtToday.get(Calendar.MINUTE) + ldtToday.get(Calendar.SECOND) +
+					".txt";
 			try
 			{
-				lobjResult = lrefSpec.BuildFile(lobjFile, "movimentos.txt");
+				lobjResult = lrefSpec.BuildFile(lobjFile, lstrName);
 				lidInstance = lrefChannel.PutFile("", lobjResult);
 
 				ldb.BeginTrans();
