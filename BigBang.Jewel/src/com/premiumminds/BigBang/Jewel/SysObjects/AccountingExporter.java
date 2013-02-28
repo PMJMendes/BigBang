@@ -3,6 +3,7 @@ package com.premiumminds.BigBang.Jewel.SysObjects;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.UUID;
@@ -45,7 +46,7 @@ public class AccountingExporter
 		int i;
 		FileXfer lobjResult;
 		UUID lidInstance;
-		Calendar ldtToday;
+		SimpleDateFormat lformat;
 		String lstrName;
 
 		try
@@ -118,10 +119,8 @@ public class AccountingExporter
 			}
 			lobjFile = new FileData(lrefSpec, larrSections);
 
-			ldtToday = Calendar.getInstance();
-			lstrName = "mov." + ldtToday.get(Calendar.YEAR) + ldtToday.get(Calendar.MONTH) + ldtToday.get(Calendar.DAY_OF_MONTH) +
-					"." + ldtToday.get(Calendar.HOUR_OF_DAY) + ldtToday.get(Calendar.MINUTE) + ldtToday.get(Calendar.SECOND) +
-					".txt";
+			lformat = new SimpleDateFormat("yyyyMMdd.HHmmss");
+			lstrName = "mov." + lformat.format(Calendar.getInstance().getTime()) + ".txt";
 			try
 			{
 				lobjResult = lrefSpec.BuildFile(lobjFile, lstrName);
