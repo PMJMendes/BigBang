@@ -126,7 +126,7 @@ public class Payment
 			ldblTotal = ldblTotal.add(marrData[i].mdblValue);
 		}
 
-		if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
+		if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) >= 0 )
 		{
 			ldblTotal = BigDecimal.ZERO;
 			for ( i = 0; i < marrData.length; i++ )
@@ -134,7 +134,7 @@ public class Payment
 				marrData[i].mdblValue = marrData[i].mdblValue.negate();
 				ldblTotal = ldblTotal.add(marrData[i].mdblValue);
 			}
-			if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
+			if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) >= 0 )
 				throw new JewelPetriException("Erro: Valor total dos pagamentos não está correcto.");
 		}
 
@@ -224,7 +224,7 @@ public class Payment
 					marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
 					marrAccounting[i].mdblAccount = new BigDecimal("1024");
 					marrAccounting[i].mdblValue = ldblTotal.abs();
-					marrAccounting[i].mstrSign = (ldblTotal.compareTo(BigDecimal.ZERO) > 0 ? "D" : "C");
+					marrAccounting[i].mstrSign = (ldblTotal.signum() > 0 ? "D" : "C");
 					marrAccounting[i].mlngBook = 1;
 					marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
 					marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
@@ -241,7 +241,7 @@ public class Payment
 					marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
 					marrAccounting[i].mdblAccount = new BigDecimal("119");
 					marrAccounting[i].mdblValue = ldblTotal119.abs();
-					marrAccounting[i].mstrSign = (ldblTotal119.compareTo(BigDecimal.ZERO) > 0 ? "D" : "C");
+					marrAccounting[i].mstrSign = (ldblTotal119.signum() > 0 ? "D" : "C");
 					marrAccounting[i].mlngBook = 1;
 					marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
 					marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
@@ -258,7 +258,7 @@ public class Payment
 				marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
 				marrAccounting[i].mdblAccount = new BigDecimal(lstrAccount);
 				marrAccounting[i].mdblValue = ldblTotal.abs();
-				marrAccounting[i].mstrSign = (ldblTotal.compareTo(BigDecimal.ZERO) > 0 ? "C" : "D");
+				marrAccounting[i].mstrSign = (ldblTotal.signum() > 0 ? "C" : "D");
 				marrAccounting[i].mlngBook = 1;
 				marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
 				marrAccounting[i].mstrDesc = "Cobrança / Recebimento";

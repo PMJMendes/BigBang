@@ -36,6 +36,7 @@ public class MediatorAccountingReport
 	public BigDecimal mdblTotalRetros;
 	public BigDecimal mdblRetention;
 	public BigDecimal mdblNet;
+	public Timestamp mdtToday;
 
 	protected UUID GetTemplateID()
 	{
@@ -49,7 +50,6 @@ public class MediatorAccountingReport
 		TransactionDetailBase[] larrDetails;
 		Mediator lobjMediator;
 		ObjectBase lobjZipCode;
-		Timestamp ldtAux;
 		HashMap<String, String> larrParams;
 		String[][] larrTables;
 		Receipt lobjReceipt;
@@ -79,7 +79,7 @@ public class MediatorAccountingReport
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 		}
-		ldtAux = new Timestamp(new java.util.Date().getTime());
+		mdtToday = new Timestamp(new java.util.Date().getTime());
 
 		larrParams = new HashMap<String, String>();
 		larrParams.put("MediatorName", (String)lobjMediator.getAt(0));
@@ -87,7 +87,7 @@ public class MediatorAccountingReport
 		larrParams.put("MediatorAddress2", (lobjMediator.getAt(3) == null ? "" : (String)lobjMediator.getAt(3)));
 		larrParams.put("MediatorZipCode", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(0)));
 		larrParams.put("MediatorZipLocal", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(1)));
-		larrParams.put("Date", ldtAux.toString().substring(0, 10));
+		larrParams.put("Date", mdtToday.toString().substring(0, 10));
 
 		larrTables = new String[larrDetails.length][];
 		mlngCount = 0;

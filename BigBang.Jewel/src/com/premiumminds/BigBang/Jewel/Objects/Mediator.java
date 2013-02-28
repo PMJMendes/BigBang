@@ -619,4 +619,28 @@ public class Mediator
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
     }
+
+	public String getEffectiveAccount()
+	{
+		String lstrCode;
+
+		lstrCode = (String)getAt(I.ACCTCODE);
+
+		if ( lstrCode == null )
+			return null;
+
+		return "278" + lstrCode;
+	}
+
+	public String getSpendingsAccount()
+	{
+		String lstrCode;
+
+		lstrCode = (String)getAt(I.ACCTCODE);
+
+		if ( lstrCode == null )
+			return null;
+
+		return "6225" + lstrCode;
+	}
 }

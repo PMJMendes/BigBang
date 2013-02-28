@@ -13,11 +13,13 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.MediatorData;
 import com.premiumminds.BigBang.Jewel.Data.MediatorDealData;
 import com.premiumminds.BigBang.Jewel.Data.MediatorExceptionData;
+import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
@@ -52,6 +54,7 @@ public class ManageMediators
 	public MediatorOpData[] marrDelete;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
+	public AccountingData[] marrAccounting;
 
 	public ManageMediators(UUID pidProcess)
 	{
@@ -180,6 +183,16 @@ public class ManageMediators
 			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
 		}
 
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+		{
+			lstrResult.append(pstrLineBreak).append("Movimentos contabilísticos:").append(pstrLineBreak);
+			for ( i = 0; i < marrAccounting.length; i++ )
+			{
+				marrAccounting[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+		}
+
 		return lstrResult.toString();
 	}
 
@@ -191,6 +204,7 @@ public class ManageMediators
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		AccountingEntry lobjEntry;
 		int i;
 
 		try
@@ -212,6 +226,16 @@ public class ManageMediators
 
 			if ( mobjDocOps != null )
 				mobjDocOps.RunSubOp(pdb, null);
+
+			if ( marrAccounting != null )
+			{
+				for ( i = 0; i < marrAccounting.length; i++ )
+				{
+					lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					marrAccounting[i].ToObject(lobjEntry);
+					lobjEntry.SaveToDb(pdb);
+				}
+			}
 		}
 		catch (Throwable e)
 		{
@@ -268,6 +292,9 @@ public class ManageMediators
 
 		if ( mobjDocOps  != null )
 			mobjDocOps.UndoDesc(lstrResult, pstrLineBreak);
+
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+			lstrResult.append(pstrLineBreak).append("Serão gerados movimentos contabilísticos de compensação.").append(pstrLineBreak);
 
 		return lstrResult.toString();
 	}
@@ -384,11 +411,22 @@ public class ManageMediators
 			mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
 		}
 
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+		{
+			lstrResult.append(pstrLineBreak).append("Movimentos contabilísticos compensados:").append(pstrLineBreak);
+			for ( i = 0; i < marrAccounting.length; i++ )
+			{
+				marrAccounting[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+		}
+
 		return lstrResult.toString();
 	}
 
 	protected void Undo(SQLServer pdb) throws JewelPetriException
 	{
+		AccountingEntry lobjEntry;
 		int i;
 
 		try
@@ -410,6 +448,28 @@ public class ManageMediators
 
 			if ( mobjDocOps != null )
 				mobjDocOps.UndoSubOp(pdb, null);
+
+			if ( marrAccounting != null )
+			{
+				try
+				{
+					for ( i = 0; i < marrAccounting.length; i++ )
+					{
+						if ( marrAccounting[i].mstrSign.equals("D") )
+							marrAccounting[i].mstrSign = "C";
+						else
+							marrAccounting[i].mstrSign = "D";
+						marrAccounting[i].mstrDesc = "Reversão de " + marrAccounting[i].mstrDesc;
+						lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						marrAccounting[i].ToObject(lobjEntry);
+						lobjEntry.SaveToDb(pdb);
+					}
+				}
+				catch (Throwable e)
+				{
+					throw new JewelPetriException(e.getMessage(), e);
+				}
+			}
 		}
 		catch (Throwable e)
 		{

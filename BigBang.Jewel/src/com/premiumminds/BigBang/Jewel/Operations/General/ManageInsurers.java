@@ -13,8 +13,10 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
@@ -52,6 +54,7 @@ public class ManageInsurers
 	public CompanyData[] marrDelete;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
+	public AccountingData[] marrAccounting;
 
 	public ManageInsurers(UUID pidProcess)
 	{
@@ -180,6 +183,16 @@ public class ManageInsurers
 			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
 		}
 
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+		{
+			lstrResult.append(pstrLineBreak).append("Movimentos contabilísticos:").append(pstrLineBreak);
+			for ( i = 0; i < marrAccounting.length; i++ )
+			{
+				marrAccounting[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+		}
+
 		return lstrResult.toString();
 	}
 
@@ -197,6 +210,7 @@ public class ManageInsurers
 		Contact[] larrContacts;
 		Document[] larrDocs;
 		int j;
+		AccountingEntry lobjEntry;
 
 		try
 		{
@@ -314,6 +328,16 @@ public class ManageInsurers
 
 			if ( mobjDocOps != null )
 				mobjDocOps.RunSubOp(pdb, null);
+
+			if ( marrAccounting != null )
+			{
+				for ( i = 0; i < marrAccounting.length; i++ )
+				{
+					lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					marrAccounting[i].ToObject(lobjEntry);
+					lobjEntry.SaveToDb(pdb);
+				}
+			}
 		}
 		catch (Throwable e)
 		{
@@ -370,6 +394,9 @@ public class ManageInsurers
 
 		if ( mobjDocOps  != null )
 			mobjDocOps.UndoDesc(lstrResult, pstrLineBreak);
+
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+			lstrResult.append(pstrLineBreak).append("Serão gerados movimentos contabilísticos de compensação.").append(pstrLineBreak);
 
 		return lstrResult.toString();
 	}
@@ -486,6 +513,16 @@ public class ManageInsurers
 			mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
 		}
 
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+		{
+			lstrResult.append(pstrLineBreak).append("Movimentos contabilísticos compensados:").append(pstrLineBreak);
+			for ( i = 0; i < marrAccounting.length; i++ )
+			{
+				marrAccounting[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+		}
+
 		return lstrResult.toString();
 	}
 
@@ -494,6 +531,7 @@ public class ManageInsurers
 		int i;
 		Company lobjAux;
 		Entity lrefCompanies;
+		AccountingEntry lobjEntry;
 
 		try
 		{
@@ -560,6 +598,28 @@ public class ManageInsurers
 
 			if ( mobjDocOps != null )
 				mobjDocOps.UndoSubOp(pdb, null);
+
+			if ( marrAccounting != null )
+			{
+				try
+				{
+					for ( i = 0; i < marrAccounting.length; i++ )
+					{
+						if ( marrAccounting[i].mstrSign.equals("D") )
+							marrAccounting[i].mstrSign = "C";
+						else
+							marrAccounting[i].mstrSign = "D";
+						marrAccounting[i].mstrDesc = "Reversão de " + marrAccounting[i].mstrDesc;
+						lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						marrAccounting[i].ToObject(lobjEntry);
+						lobjEntry.SaveToDb(pdb);
+					}
+				}
+				catch (Throwable e)
+				{
+					throw new JewelPetriException(e.getMessage(), e);
+				}
+			}
 		}
 		catch (Throwable e)
 		{

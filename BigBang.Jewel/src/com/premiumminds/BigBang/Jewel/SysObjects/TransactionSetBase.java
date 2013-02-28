@@ -26,8 +26,9 @@ public abstract class TransactionSetBase
 {
 	public static class I
 	{
-		public static int DATE = 0;
-		public static int USER = 1;
+		public static final int DATE   = 0;
+		public static final int USER   = 1;
+		public static final int NUMBER = 2;
 	}
 
 	public abstract String getTitle();
@@ -35,6 +36,14 @@ public abstract class TransactionSetBase
 	public abstract UUID getTemplate();
 
 	protected TransactionMapBase[] marrMaps;
+
+    public String getLabel()
+    {
+    	if ( getAt(I.NUMBER) == null )
+    		return super.getLabel();
+
+    	return getAt(I.NUMBER).toString();
+    }
 
 	public TransactionMapBase[] getCurrentMaps()
 		throws BigBangJewelException

@@ -47,6 +47,7 @@ public class InsurerAccountingReport
 	public BigDecimal mdblTax;
 	public BigDecimal mdblTotal;
 	public BigDecimal mdblNetComms;
+	public Timestamp mdtToday;
 	public transient SQLServer mdb;
 
 	protected UUID GetTemplateID()
@@ -61,7 +62,6 @@ public class InsurerAccountingReport
 		TransactionDetailBase[] larrDetails;
 		Company lobjInsurer;
 		ObjectBase lobjZipCode;
-		Timestamp ldtAux;
 		HashMap<String, String> larrParams;
 		String[][] larrTables;
 		Receipt lobjReceipt;
@@ -136,7 +136,7 @@ public class InsurerAccountingReport
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 		}
-		ldtAux = new Timestamp(new java.util.Date().getTime());
+		mdtToday = new Timestamp(new java.util.Date().getTime());
 
 		larrParams = new HashMap<String, String>();
 		larrParams.put("InsurerName", (String)lobjInsurer.getAt(0));
@@ -144,7 +144,7 @@ public class InsurerAccountingReport
 		larrParams.put("InsurerAddress2", (lobjInsurer.getAt(7) == null ? "" : (String)lobjInsurer.getAt(7)));
 		larrParams.put("InsurerZipCode", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(0)));
 		larrParams.put("InsurerZipLocal", ((lobjZipCode == null) || (lobjZipCode.getAt(1) == null) ? "" : (String)lobjZipCode.getAt(1)));
-		larrParams.put("Date", ldtAux.toString().substring(0, 10));
+		larrParams.put("Date", mdtToday.toString().substring(0, 10));
 
 		larrTables = new String[larrDetails.length][];
 		for ( i = 0; i < larrDetails.length; i++ )
@@ -202,7 +202,7 @@ public class InsurerAccountingReport
 			lobjRec.setAt(InsurerReceipt.I.INSURER, lobjInsurer.getKey());
 			lobjRec.setAt(InsurerReceipt.I.VALUE, mdblTotalComms);
 			lobjRec.setAt(InsurerReceipt.I.TAX, mdblTax);
-			lobjRec.setAt(InsurerReceipt.I.DATE, ldtAux);
+			lobjRec.setAt(InsurerReceipt.I.DATE, mdtToday);
 			lobjRec.SaveToDb(mdb);
 		}
 		catch (Throwable e)

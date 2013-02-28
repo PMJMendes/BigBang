@@ -376,13 +376,13 @@ public class ReceiptHistoryPaymentAcct
 					if ( ldblAux2 == null )
 						ldblAux2 = (BigDecimal)parrReceipts[i].getAt(3);
 
-					ldblAux = (ldblAux2.compareTo(BigDecimal.ZERO) >= 0 ? larrPlusMap.get(lstrType) : larrMinusMap.get(lstrType));
+					ldblAux = (ldblAux2.signum() >= 0 ? larrPlusMap.get(lstrType) : larrMinusMap.get(lstrType));
 					if ( ldblAux == null )
 						ldblAux = BigDecimal.ZERO;
 
 					ldblAux = ldblAux.add(ldblAux2);
 
-					(ldblAux2.compareTo(BigDecimal.ZERO) >= 0 ? larrPlusMap : larrMinusMap).put(lstrType, ldblAux);
+					(ldblAux2.signum() >= 0 ? larrPlusMap : larrMinusMap).put(lstrType, ldblAux);
 				}
 			}
 		}

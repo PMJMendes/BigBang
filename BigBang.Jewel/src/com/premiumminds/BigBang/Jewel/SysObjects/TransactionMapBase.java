@@ -19,6 +19,7 @@ import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -27,14 +28,15 @@ public abstract class TransactionMapBase
 {
 	public static class I
 	{
-		public static int SET       = 0;
-		public static int OWNER     = 1;
-		public static int SETTLEDON = 2;
+		public static final int SET       = 0;
+		public static final int OWNER     = 1;
+		public static final int SETTLEDON = 2;
 	}
 
 	public abstract UUID getParentType();
 	public abstract UUID getSubObjectType();
 	public abstract DocOps generateDocOp(SQLServer pdb) throws BigBangJewelException;
+	public abstract AccountingData[] getAccountingData(SQLServer pdb) throws BigBangJewelException;
 
 	protected TransactionDetailBase[] marrDetails;
 	protected TransactionSetBase mrefSet;
@@ -52,6 +54,14 @@ public abstract class TransactionMapBase
 			throw new JewelEngineException(e.getMessage(), e);
 		}
 	}
+
+    public String getLabel()
+    {
+    	if ( (mrefSet == null) || (mrefSet.getLabel() == null) )
+    		return super.getLabel();
+
+    	return mrefSet.getLabel();
+    }
 
 	public TransactionDetailBase[] getCurrentDetails()
 		throws BigBangJewelException

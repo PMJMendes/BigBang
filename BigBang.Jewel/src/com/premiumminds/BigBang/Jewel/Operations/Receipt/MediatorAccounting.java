@@ -76,6 +76,7 @@ public class MediatorAccounting
 				lobjSet = MediatorAccountingSet.GetInstance(Engine.getCurrentNameSpace(), null);
 				lobjSet.setAt(0, new Timestamp(new java.util.Date().getTime()));
 				lobjSet.setAt(1, Engine.getCurrentUser());
+				lobjSet.setAt(2, lobjSet.GetNewSetNumber(pdb));
 				lobjSet.SaveToDb(pdb);
 				midSet = lobjSet.getKey();
 			}

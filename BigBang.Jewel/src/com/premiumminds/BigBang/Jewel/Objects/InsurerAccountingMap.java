@@ -3,6 +3,7 @@ package com.premiumminds.BigBang.Jewel.Objects;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.UUID;
@@ -13,11 +14,14 @@ import org.apache.ecs.html.TR;
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.TypeDefGUIDs;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.JewelEngineException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -33,10 +37,12 @@ public class InsurerAccountingMap
 	public static class I
 		extends TransactionMapBase.I
 	{
-		public static int EXTRATEXT    = 3;
-		public static int EXTRAVALUE   = 4;
-		public static int ISCOMMISSION = 5;
-		public static int HASTAX       = 6;
+		public static final int EXTRATEXT    = 3;
+		public static final int EXTRAVALUE   = 4;
+		public static final int ISCOMMISSION = 5;
+		public static final int HASTAX       = 6;
+		public static final int ENTRYNUMBER  = 7;
+		public static final int ENTRYYEAR    = 8;
 	}
 
     public static InsurerAccountingMap GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -66,6 +72,8 @@ public class InsurerAccountingMap
 	}
 
     private transient DocOps mobjDoc;
+    private transient BigDecimal mdblTotal;
+    private transient Timestamp mdtToday;
 
 	public void Initialize()
 		throws JewelEngineException
@@ -104,6 +112,7 @@ public class InsurerAccountingMap
 
 		lopMI = new ManageInsurers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 		lopMI.mobjDocOps = generateDocOp(pdb);
+		lopMI.marrAccounting = getAccountingData(pdb);
 
 		try
 		{
@@ -137,6 +146,9 @@ public class InsurerAccountingMap
 		{
 			lrepIA.mdb = null;
 		}
+
+		mdblTotal = lrepIA.mdblTotal;
+		mdtToday = lrepIA.mdtToday;
 
 		lobjDoc = new DocumentData();
 		lobjDoc.mstrName = new Timestamp(new java.util.Date().getTime()).toString();
@@ -177,6 +189,76 @@ public class InsurerAccountingMap
 		mobjDoc = lobjResult;
 
 		return lobjResult;
+	}
+
+	@SuppressWarnings("deprecation")
+	public AccountingData[] getAccountingData(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		String lstrAccount;
+		AccountingData[] larrResult;
+
+		if ( mdblTotal.signum() <= 0 )
+			return null;
+
+		lstrAccount = Company.GetInstance(Engine.getCurrentNameSpace(),
+				(UUID)getAt(TransactionMapBase.I.OWNER)).getEffectiveAccount();
+		if ( lstrAccount == null )
+			return null;
+
+		initAccounting(pdb, mdtToday.getYear());
+
+		larrResult = new AccountingData[2];
+
+		larrResult[0] = new AccountingData();
+		larrResult[0].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
+		larrResult[0].mdtDate = mdtToday;
+		larrResult[0].mdblAccount = new BigDecimal("1024");
+		larrResult[0].mdblValue = mdblTotal.abs();
+		larrResult[0].mstrSign = "D";
+		larrResult[0].mlngBook = 1;
+		larrResult[0].mstrSupportDoc = getLabel();
+		larrResult[0].mstrDesc = "Prestação de Conta Seguradora";
+		larrResult[0].midDocType = Constants.ObjID_InsurerAccountingMap;
+		larrResult[0].mlngYear = (Integer)getAt(I.ENTRYYEAR);
+		larrResult[0].midFile = null;
+
+		larrResult[1] = new AccountingData();
+		larrResult[1].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
+		larrResult[1].mdtDate = mdtToday;
+		larrResult[1].mdblAccount = new BigDecimal("1024");
+		larrResult[1].mdblValue = mdblTotal.abs();
+		larrResult[1].mstrSign = "C";
+		larrResult[1].mlngBook = 1;
+		larrResult[1].mstrSupportDoc = getLabel();
+		larrResult[1].mstrDesc = "Prestação de Conta Seguradora";
+		larrResult[1].midDocType = Constants.ObjID_InsurerAccountingMap;
+		larrResult[1].mlngYear = (Integer)getAt(I.ENTRYYEAR);
+		larrResult[1].midFile = null;
+
+		return larrResult;
+	}
+
+	public void initAccounting(SQLServer pdb, int plngYear)
+		throws BigBangJewelException
+	{
+		int llngNumber;
+
+		if ( getAt(I.ENTRYNUMBER) != null )
+			return;
+
+		llngNumber = GetNewAccountingNumber(pdb, plngYear);
+
+		try
+		{
+			setAt(I.ENTRYNUMBER, llngNumber);
+			setAt(I.ENTRYYEAR, plngYear);
+			SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	public TR[] buildTable(int plngNumber)
@@ -313,5 +395,51 @@ public class InsurerAccountingMap
 		larrRows[9] = ReportBuilder.constructDualRow("Saldo Total", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 
 		return larrRows;
+	}
+
+	private int GetNewAccountingNumber(SQLServer pdb, int plngYear)
+		throws BigBangJewelException
+	{
+		IEntity lrefMaps;
+        ResultSet lrsReceipts;
+        int llngResult;
+
+		try
+		{
+			lrefMaps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_InsurerAccountingMap)); 
+
+			lrsReceipts = lrefMaps.SelectByMembers(pdb, new int[] {I.ENTRYYEAR}, new java.lang.Object[] {plngYear},
+					new int[] {-I.ENTRYNUMBER});
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		llngResult = 1;
+		try
+		{
+			if ( lrsReceipts.next() )
+			{
+				if( lrsReceipts.getObject(2 + I.ENTRYNUMBER) != null )
+					llngResult = lrsReceipts.getInt(2 + I.ENTRYNUMBER) + 1;
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsReceipts.close(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsReceipts.close();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return llngResult;
 	}
 }
