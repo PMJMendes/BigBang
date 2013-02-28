@@ -89,6 +89,7 @@ public class Payment
 		UUID lidType;
 		boolean lbDAS;
 		AccountingEntry lobjEntry;
+		String lstrAccount;
 
 		if ( (marrData == null) || (marrData.length == 0) )
 			throw new JewelPetriException("Erro: Deve especificar o(s) meio(s) de pagamento.");
@@ -192,7 +193,8 @@ public class Payment
 
 		try
 		{
-			if ( !lbDAS && !lbDirect && (lobjReceipt.getAbsolutePolicy().GetCompany().getEffectiveAccount() != null) )
+			lstrAccount = lobjReceipt.getAbsolutePolicy().GetCompany().getEffectiveAccount();
+			if ( !lbDAS && !lbDirect && (lstrAccount != null) )
 			{
 				lobjReceipt.initAccounting(pdb, ldtToday.get(Calendar.YEAR));
 
@@ -254,7 +256,7 @@ public class Payment
 				marrAccounting[i] = new AccountingData();
 				marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
 				marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
-				marrAccounting[i].mdblAccount = new BigDecimal(lobjReceipt.getAbsolutePolicy().GetCompany().getEffectiveAccount());
+				marrAccounting[i].mdblAccount = new BigDecimal(lstrAccount);
 				marrAccounting[i].mdblValue = ldblTotal.abs();
 				marrAccounting[i].mstrSign = (ldblTotal.compareTo(BigDecimal.ZERO) > 0 ? "C" : "D");
 				marrAccounting[i].mlngBook = 1;

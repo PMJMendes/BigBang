@@ -1,7 +1,9 @@
 package com.premiumminds.BigBang.Jewel.Operations.DASRequest;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -10,20 +12,26 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.Interfaces.ILog;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.AccountingData;
+import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.DASRequest;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternReceiveDAS;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternUndoReceiveDAS;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 
 public class ReceiveReply
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
+	private AccountingData[] marrAccounting;
 //	public IncomingMessageData mobjMessage;
 //	private boolean mbFromEmail;
 //	private String mstrNewEmailID;
@@ -45,6 +53,22 @@ public class ReceiveReply
 
 	public String LongDesc(String pstrLineBreak)
 	{
+		StringBuilder lstrBuilder;
+		int i;
+
+		lstrBuilder = new StringBuilder("O cliente devolveu a declaração assinada.");
+
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+		{
+			lstrBuilder.append(pstrLineBreak).append("Movimentos contabilísticos:").append(pstrLineBreak);
+			for ( i = 0; i < marrAccounting.length; i++ )
+			{
+				marrAccounting[i].Describe(lstrBuilder, pstrLineBreak);
+				lstrBuilder.append(pstrLineBreak);
+			}
+		}
+
+		return lstrBuilder.toString();
 //		StringBuilder lstrResult;
 //
 //		lstrResult = new StringBuilder("A resposta ao pedido foi a seguinte:");
@@ -62,7 +86,6 @@ public class ReceiveReply
 //			mobjMessage.mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
 //
 //		return lstrResult.toString();
-		return "O cliente devolveu a declaração assinada.";
 	}
 
 	public UUID GetExternalProcess()
@@ -78,6 +101,15 @@ public class ReceiveReply
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
 		ExternReceiveDAS lopERD;
+		Receipt lobjReceipt;
+		Calendar ldtToday;
+		ILog lobjLog;
+		Payment lopP;
+		boolean lbDirect;
+		BigDecimal ldblTotal, ldblTotal119;
+		AccountingEntry lobjEntry;
+		String lstrAccount;
+		int i;
 
 		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
@@ -116,6 +148,119 @@ public class ReceiveReply
 		lopERD.midDASRequestProcess = GetProcess().getKey();
 		TriggerOp(lopERD, pdb);
 
+		ldtToday = Calendar.getInstance();
+		ldtToday.set(Calendar.HOUR_OF_DAY, 0);
+		ldtToday.set(Calendar.MINUTE, 0);
+		ldtToday.set(Calendar.SECOND, 0);
+		ldtToday.set(Calendar.MILLISECOND, 0);
+		lobjReceipt = (Receipt)GetProcess().GetParent().GetData();
+		try
+		{
+			lobjReceipt.initAccounting(pdb, ldtToday.get(Calendar.YEAR));
+			lobjLog = lobjReceipt.getPaymentLog();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+		lopP = (Payment)lobjLog.GetOperationData();
+
+		ldblTotal = BigDecimal.ZERO;
+		ldblTotal119 = BigDecimal.ZERO;
+		lbDirect = true;
+		for ( i = 0; i < lopP.marrData.length; i++ )
+		{
+			if ( Constants.PayID_DirectToInsurer.equals(lopP.marrData[i].midPaymentType) )
+				continue;
+			lbDirect = false;
+			if ( Constants.PayID_DirectCheque.equals(lopP.marrData[i].midPaymentType) )
+				ldblTotal119 = ldblTotal119.add(lopP.marrData[i].mdblValue);
+			else
+				ldblTotal = ldblTotal.add(lopP.marrData[i].mdblValue);
+		}
+
+		try
+		{
+			lstrAccount = lobjReceipt.getAbsolutePolicy().GetCompany().getEffectiveAccount();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		if ( !lbDirect && (lstrAccount != null) )
+		{
+			if ( !ldblTotal.equals(BigDecimal.ZERO) && !ldblTotal119.equals(BigDecimal.ZERO) )
+				marrAccounting = new AccountingData[3];
+			else
+				marrAccounting = new AccountingData[2];
+
+			i = 0;
+
+			if ( !ldblTotal.equals(BigDecimal.ZERO) )
+			{
+				marrAccounting[i] = new AccountingData();
+				marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
+				marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
+				marrAccounting[i].mdblAccount = new BigDecimal("1024");
+				marrAccounting[i].mdblValue = ldblTotal.abs();
+				marrAccounting[i].mstrSign = (ldblTotal.compareTo(BigDecimal.ZERO) > 0 ? "D" : "C");
+				marrAccounting[i].mlngBook = 1;
+				marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
+				marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
+				marrAccounting[i].midDocType = Constants.ObjID_Receipt;
+				marrAccounting[i].mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
+				marrAccounting[i].midFile = null;
+				i++;
+			}
+
+			if ( !ldblTotal119.equals(BigDecimal.ZERO) )
+			{
+				marrAccounting[i] = new AccountingData();
+				marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
+				marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
+				marrAccounting[i].mdblAccount = new BigDecimal("119");
+				marrAccounting[i].mdblValue = ldblTotal119.abs();
+				marrAccounting[i].mstrSign = (ldblTotal119.compareTo(BigDecimal.ZERO) > 0 ? "D" : "C");
+				marrAccounting[i].mlngBook = 1;
+				marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
+				marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
+				marrAccounting[i].midDocType = Constants.ObjID_Receipt;
+				marrAccounting[i].mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
+				marrAccounting[i].midFile = null;
+				i++;
+			}
+
+			ldblTotal = ldblTotal.add(ldblTotal119);
+
+			marrAccounting[i] = new AccountingData();
+			marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
+			marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
+			marrAccounting[i].mdblAccount = new BigDecimal(lstrAccount);
+			marrAccounting[i].mdblValue = ldblTotal.abs();
+			marrAccounting[i].mstrSign = (ldblTotal.compareTo(BigDecimal.ZERO) > 0 ? "C" : "D");
+			marrAccounting[i].mlngBook = 1;
+			marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
+			marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
+			marrAccounting[i].midDocType = Constants.ObjID_Receipt;
+			marrAccounting[i].mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
+			marrAccounting[i].midFile = null;
+
+			try
+			{
+				for ( i = 0; i < marrAccounting.length; i++ )
+				{
+					lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					marrAccounting[i].ToObject(lobjEntry);
+					lobjEntry.SaveToDb(pdb);
+				}
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
+
 		GetProcess().Stop(pdb);
 
 //		if ( mobjMessage.mstrEmailID != null )
@@ -141,6 +286,9 @@ public class ReceiveReply
 
 		lstrResult = new StringBuilder("A recepção da declaração será retirada e o processo será reaberto.");
 
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+			lstrResult.append(pstrLineBreak).append("Serão gerados movimentos contabilísticos de compensação.").append(pstrLineBreak);
+
 //		if ( mbFromEmail )
 //			lstrResult.append(" O email recebido será re-disponibilizado para outra utilização.");
 //
@@ -153,8 +301,19 @@ public class ReceiveReply
 	public String UndoLongDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrResult;
+		int i;
 
 		lstrResult = new StringBuilder("A recepção da declaração foi retirada e o processo foi reaberto.");
+
+		if ( (marrAccounting != null) && (marrAccounting.length > 0) )
+		{
+			lstrResult.append(pstrLineBreak).append("Movimentos contabilísticos compensados:").append(pstrLineBreak);
+			for ( i = 0; i < marrAccounting.length; i++ )
+			{
+				marrAccounting[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+		}
 
 //		if ( mbFromEmail )
 //			lstrResult.append(" O email recebido foi re-disponibilizado para outra utilização.");
@@ -172,9 +331,10 @@ public class ReceiveReply
 		DASRequest lobjRequest;
 		Timestamp ldtNow;
 //		RequestAddress[] larrAddresses;
-//		int i;
 //		UUID lidUser;
 		AgendaItem lobjNewItem;
+		AccountingEntry lobjEntry;
+		int i;
 
 		GetProcess().Restart(pdb);
 
@@ -224,6 +384,28 @@ public class ReceiveReply
 //				throw new JewelPetriException(e.getMessage(), e);
 //			}
 //		}
+
+		if ( marrAccounting != null )
+		{
+			try
+			{
+				for ( i = 0; i < marrAccounting.length; i++ )
+				{
+					if ( marrAccounting[i].mstrSign.equals("D") )
+						marrAccounting[i].mstrSign = "C";
+					else
+						marrAccounting[i].mstrSign = "D";
+					marrAccounting[i].mstrDesc = "Reversão de " + marrAccounting[i].mstrDesc;
+					lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					marrAccounting[i].ToObject(lobjEntry);
+					lobjEntry.SaveToDb(pdb);
+				}
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
 
 		lopEURD = new ExternUndoReceiveDAS(GetProcess().GetParent().getKey());
 		lopEURD.midDASRequestProcess = GetProcess().getKey();
