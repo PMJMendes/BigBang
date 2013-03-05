@@ -7,9 +7,12 @@ public class ReceiptStub
 
 	public static enum ReceiptStatus
 	{
-		NEW,
-		PAYABLE,
-		PAID,
+		WHITE,
+		GREEN,
+		YELLOW,
+		ORANGE,
+		RED,
+		GRAY,
 		ERROR
 	}
 

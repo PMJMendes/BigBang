@@ -188,20 +188,7 @@ public class ReceiptServiceImpl
 		lobjResult.description = (String)lobjReceipt.getAt(14);
 		lobjResult.statusId = lobjStatus.getKey().toString();
 		lobjResult.statusText= lobjStatus.getLabel();
-		switch ( (Integer)lobjStatus.getAt(1) )
-		{
-		case 0:
-			lobjResult.statusIcon = ReceiptStub.ReceiptStatus.NEW;
-			break;
-
-		case 1:
-			lobjResult.statusIcon = ReceiptStub.ReceiptStatus.PAYABLE;
-			break;
-
-		case 2:
-			lobjResult.statusIcon = ReceiptStub.ReceiptStatus.PAID;
-			break;
-		}
+		lobjResult.statusIcon = translateStatus((Integer)lobjStatus.getAt(1));
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.salesPremium = (lobjReceipt.getAt(4) == null ? null : ((BigDecimal)lobjReceipt.getAt(4)).doubleValue());
 		lobjResult.comissions = (lobjReceipt.getAt(5) == null ? null : ((BigDecimal)lobjReceipt.getAt(5)).doubleValue());
@@ -352,21 +339,7 @@ public class ReceiptServiceImpl
             	lobjStub.description = (String)lobjReceipt.getAt(14);
             	lobjStub.statusId = lobjStatus.getKey().toString();
             	lobjStub.statusText= lobjStatus.getLabel();
-    			switch ( (Integer)lobjStatus.getAt(1) )
-    			{
-    			case 0:
-    				lobjStub.statusIcon = ReceiptStub.ReceiptStatus.NEW;
-    				break;
-
-    			case 1:
-    				lobjStub.statusIcon = ReceiptStub.ReceiptStatus.PAYABLE;
-    				break;
-
-    			case 2:
-    				lobjStub.statusIcon = ReceiptStub.ReceiptStatus.PAID;
-    				break;
-    			}
-
+        		lobjStub.statusIcon = translateStatus((Integer)lobjStatus.getAt(1));
     			lobjStub.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 
             	larrResult.add(lobjStub);
@@ -3112,22 +3085,7 @@ public class ReceiptServiceImpl
 		if ( lobjStatus == null )
 			lobjResult.statusIcon = ReceiptStub.ReceiptStatus.ERROR;
 		else
-		{
-			switch ( (Integer)lobjStatus.getAt(1) )
-			{
-			case 0:
-				lobjResult.statusIcon = ReceiptStub.ReceiptStatus.NEW;
-				break;
-
-			case 1:
-				lobjResult.statusIcon = ReceiptStub.ReceiptStatus.PAYABLE;
-				break;
-
-			case 2:
-				lobjResult.statusIcon = ReceiptStub.ReceiptStatus.PAID;
-				break;
-			}
-		}
+			lobjResult.statusIcon = translateStatus((Integer)lobjStatus.getAt(1));
 
 		return lobjResult;
 	}
@@ -3311,6 +3269,33 @@ public class ReceiptServiceImpl
 			return Constants.StatusID_SignatureExpired;
 
 		return pidStatus;
+	}
+
+	private static ReceiptStub.ReceiptStatus translateStatus(int plngStatus)
+	{
+		switch ( plngStatus )
+		{
+		case 0:
+			return ReceiptStub.ReceiptStatus.WHITE;
+
+		case 1:
+			return ReceiptStub.ReceiptStatus.GREEN;
+
+		case 2:
+			return ReceiptStub.ReceiptStatus.YELLOW;
+
+		case 3:
+			return ReceiptStub.ReceiptStatus.ORANGE;
+
+		case 4:
+			return ReceiptStub.ReceiptStatus.RED;
+
+		case 5:
+			return ReceiptStub.ReceiptStatus.GRAY;
+
+		default:
+			return ReceiptStub.ReceiptStatus.ERROR;
+		}
 	}
 
 	private ReceiptData toServerData(Receipt receipt) {
