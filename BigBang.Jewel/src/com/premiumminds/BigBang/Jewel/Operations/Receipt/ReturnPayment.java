@@ -16,6 +16,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.PaymentReturnReport;
 
@@ -63,6 +64,7 @@ public class ReturnPayment
 		PrintSet lobjSet;
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
+		Receipt lobjReceipt;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midClient = GetProcess().GetParent().GetParent().GetDataKey();
@@ -110,6 +112,17 @@ public class ReturnPayment
 		}
 
 		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+
+		try
+		{
+			lobjReceipt = (Receipt)GetProcess().GetData();
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Payable);
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	private void generateDocOp()

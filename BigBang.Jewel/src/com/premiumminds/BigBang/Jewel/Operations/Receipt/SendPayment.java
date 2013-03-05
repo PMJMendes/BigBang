@@ -6,6 +6,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.SysObjects.FileXfer;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
@@ -16,6 +17,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.PaymentCoverLetterReport;
 
@@ -71,6 +73,8 @@ public class SendPayment
 		PrintSet lobjSet;
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
+		IProcess lobjProc;
+		Receipt lobjReceipt;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midClient = GetProcess().GetParent().GetParent().GetDataKey();
@@ -118,6 +122,25 @@ public class SendPayment
 		}
 
 		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+
+		try
+		{
+			lobjProc = GetProcess();
+
+			if ( Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_InsurerAccounting,
+							pdb).GetLevel()) &&
+					Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_MediatorAccounting,
+							pdb).GetLevel()) )
+			{
+				lobjReceipt = (Receipt)lobjProc.GetData();
+				lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Final);
+				lobjReceipt.SaveToDb(pdb);
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	private void generateDocOp()

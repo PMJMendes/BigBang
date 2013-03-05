@@ -20,6 +20,7 @@ public class VoidInternal
 	public UUID midMotive;
 	private UUID midReceipt;
 	private String mstrMotive;
+	private UUID midPrevStatus;
 
 	public VoidInternal(UUID pidProcess)
 	{
@@ -61,7 +62,10 @@ public class VoidInternal
 					midMotive);
 
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
-			lobjReceipt.setAt(15, lobjMotive.getLabel());
+			midPrevStatus = (UUID)lobjReceipt.getAt(Receipt.I.STATUS);
+
+			lobjReceipt.setAt(Receipt.I.RETURNTEXT, lobjMotive.getLabel());
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Final);
 			lobjReceipt.SaveToDb(pdb);
 		}
 		catch (Throwable e)
@@ -87,7 +91,11 @@ public class VoidInternal
 		try
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
-			lobjReceipt.setAt(15, null);
+
+			if ( midPrevStatus != null )
+				lobjReceipt.setAt(Receipt.I.STATUS, midPrevStatus);
+
+			lobjReceipt.setAt(Receipt.I.RETURNTEXT, null);
 			lobjReceipt.SaveToDb(pdb);
 		}
 		catch (Throwable e)

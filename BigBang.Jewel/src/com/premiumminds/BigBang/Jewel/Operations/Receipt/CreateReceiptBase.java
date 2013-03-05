@@ -91,6 +91,8 @@ public abstract class CreateReceiptBase
 		{
 			lobjMe = GetProcess();
 
+			mobjData.midStatus = Constants.StatusID_Initial;
+
 			if ( mobjData.midManager == null )
 				mobjData.midManager = lobjMe.GetManagerID();
 			if ( mobjData.midMediator == null )

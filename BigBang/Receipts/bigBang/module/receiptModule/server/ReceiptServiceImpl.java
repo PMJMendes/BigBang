@@ -151,7 +151,8 @@ public class ReceiptServiceImpl
 			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptType),
 					(UUID)lobjReceipt.getAt(1));
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptStatus),
-					getStatus(lobjReceipt.getKey()));
+					getStatus((UUID)lobjReceipt.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.STATUS),
+							(Timestamp)lobjReceipt.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.DUEDATE)));
 			
 		}
 		catch (Throwable e)
@@ -319,7 +320,8 @@ public class ReceiptServiceImpl
     			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptType),
     					(UUID)lobjReceipt.getAt(1));
     			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptStatus),
-    					getStatus(lobjReceipt.getKey()));
+    					getStatus((UUID)lobjReceipt.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.STATUS),
+    							(Timestamp)lobjReceipt.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.DUEDATE)));
 
             	lobjStub = new ReceiptStub();
 
@@ -2551,7 +2553,7 @@ public class ReceiptServiceImpl
 	protected String[] getColumns()
 	{
 		return new String[] {"[:Number]", "[:Process]", "[:Type]", "[:Type:Indicator]", "[:Total Premium]", "[:Maturity Date]",
-				"[:End Date]", "[:Description]"};
+				"[:End Date]", "[:Description]", "[:Status]", "[:Due Date]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -3070,7 +3072,7 @@ public class ReceiptServiceImpl
 		try
 		{
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptStatus),
-					getStatus(pid));
+					getStatus((UUID)parrValues[8], (Timestamp)parrValues[9]));
 		}
 		catch (Throwable e)
 		{
@@ -3290,40 +3292,27 @@ public class ReceiptServiceImpl
 		return lbFound;
 	}
 
-	private static UUID getStatus(UUID pidReceipt)
+	private static UUID getStatus(UUID pidStatus, Timestamp pdtLimit)
 		throws BigBangException
 	{
-		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		IProcess lobjProc;
+		if ( (pdtLimit == null) || pdtLimit.compareTo(new Timestamp(new java.util.Date().getTime())) >= 0 )
+			return pidStatus;
 
-		try
-		{
-			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), pidReceipt);
-			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+		if ( Constants.StatusID_Initial.equals(pidStatus) )
+			return Constants.StatusID_InitialExpired;
 
-			if ( !lobjProc.IsRunning() )
-				return Constants.StatusID_Closed;
+		if ( Constants.StatusID_Payable.equals(pidStatus) )
+			return Constants.StatusID_PayableExpired;
 
-			if ( (lobjProc.GetValidOperation(Constants.OPID_Receipt_CreateDASRequest) != null) ||
-					(lobjProc.GetValidOperation(Constants.OPID_Receipt_ExternReceiveDAS) != null) )
-				return Constants.StatusID_DASPending;
+		if ( Constants.StatusID_DASPending.equals(pidStatus) )
+			return Constants.StatusID_DASExpired;
 
-			if ( (lobjProc.GetLiveLog(Constants.OPID_Receipt_Payment) != null) ||
-					(lobjProc.GetLiveLog(Constants.OPID_Receipt_AssociateWithDebitNote) != null) )
-				return Constants.StatusID_Paid;
+		if ( Constants.StatusID_SignaturePending.equals(pidStatus) )
+			return Constants.StatusID_SignatureExpired;
 
-			if ( (lobjProc.GetValidOperation(Constants.OPID_Receipt_Payment) != null) ||
-					(lobjProc.GetValidOperation(Constants.OPID_Receipt_AssociateWithDebitNote) != null) )
-				return Constants.StatusID_Payable;
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return Constants.StatusID_New;
+		return pidStatus;
 	}
-	
+
 	private ReceiptData toServerData(Receipt receipt) {
 		ReceiptData result = new ReceiptData();
 

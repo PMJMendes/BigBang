@@ -82,6 +82,7 @@ public class Receipt
 		public static final int ISINTERNAL        = 19;
 		public static final int ENTRYNUMBER       = 20;
 		public static final int ENTRYYEAR         = 21;
+		public static final int STATUS            = 22;
 	}
 
     public static Receipt GetInstance(UUID pidNameSpace, UUID pidKey)

@@ -10,6 +10,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.DebitNote;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class AssociateWithDebitNote
 	extends UndoableOperation
@@ -19,6 +20,7 @@ public class AssociateWithDebitNote
 	public UUID midDebitNote;
 	private UUID midReceipt;
 	private String mstrDebitNote;
+	private UUID midPrevStatus;
 
 	public AssociateWithDebitNote(UUID pidProcess)
 	{
@@ -50,6 +52,7 @@ public class AssociateWithDebitNote
 		throws JewelPetriException
 	{
 		DebitNote lobjNote;
+		Receipt lobjReceipt;
 
 		midReceipt = GetProcess().GetDataKey();
 
@@ -59,6 +62,11 @@ public class AssociateWithDebitNote
 			lobjNote.setAt(5, new Timestamp(new java.util.Date().getTime()));
 			lobjNote.setAt(6, midReceipt);
 			lobjNote.SaveToDb(pdb);
+
+			lobjReceipt = (Receipt)GetProcess().GetData();
+			midPrevStatus = (UUID)lobjReceipt.getAt(Receipt.I.STATUS);
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Paid);
+			lobjReceipt.SaveToDb(pdb);
 		}
 		catch (Throwable e)
 		{
@@ -80,6 +88,7 @@ public class AssociateWithDebitNote
 		throws JewelPetriException
 	{
 		DebitNote lobjNote;
+		Receipt lobjReceipt;
 
 		try
 		{
@@ -88,6 +97,10 @@ public class AssociateWithDebitNote
 			lobjNote.setAt(5, null);
 			lobjNote.setAt(6, null);
 			lobjNote.SaveToDb(pdb);
+
+			lobjReceipt = (Receipt)GetProcess().GetData();
+			lobjReceipt.setAt(Receipt.I.STATUS, midPrevStatus);
+			lobjReceipt.SaveToDb(pdb);
 		}
 		catch (Throwable e)
 		{

@@ -37,6 +37,7 @@ public class ReceiptData
 	public Boolean mbInternal;
 	public Integer mlngEntryNumber;
 	public Integer mlngEntryYear;
+	public UUID midStatus;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -67,6 +68,7 @@ public class ReceiptData
 		mbInternal =           (Boolean)pobjSource.getAt(Receipt.I.ISINTERNAL);
 		mlngEntryNumber =      (Integer)pobjSource.getAt(Receipt.I.ENTRYNUMBER);
 		mlngEntryYear =        (Integer)pobjSource.getAt(Receipt.I.ENTRYYEAR);
+		midStatus =               (UUID)pobjSource.getAt(Receipt.I.STATUS);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -94,6 +96,7 @@ public class ReceiptData
 			pobjDest.setAt(Receipt.I.ISINTERNAL,        mbInternal);
 			pobjDest.setAt(Receipt.I.ENTRYNUMBER,       mlngEntryNumber);
 			pobjDest.setAt(Receipt.I.ENTRYYEAR,         mlngEntryYear);
+			pobjDest.setAt(Receipt.I.STATUS,            midStatus);
 		}
 		catch (Throwable e)
 		{
@@ -120,6 +123,21 @@ public class ReceiptData
 			pstrBuilder.append("(Erro a obter o tipo de recibo.)");
 		}
 		pstrBuilder.append(pstrLineBreak);
+
+		if ( midStatus != null )
+		{
+			pstrBuilder.append("Estado: ");
+			try
+			{
+				lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptStatus), midStatus);
+				pstrBuilder.append((String)lobjAux.getAt(0));
+			}
+			catch (Throwable e)
+			{
+				pstrBuilder.append("(Erro a obter o estado do recibo.)");
+			}
+			pstrBuilder.append(pstrLineBreak);
+		}
 
 		pstrBuilder.append("Prémio Total: ");
 		pstrBuilder.append(mdblTotal == null ? "(não indicado)" : mdblTotal.toPlainString());

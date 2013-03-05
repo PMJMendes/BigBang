@@ -7,6 +7,7 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class ExternAllowSendPayment
 	extends Operation
@@ -43,5 +44,18 @@ public class ExternAllowSendPayment
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Receipt lobjReceipt;
+
+		lobjReceipt = (Receipt)GetProcess().GetData();
+
+		try
+		{
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Payable);
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 }

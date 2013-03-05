@@ -9,7 +9,10 @@ public class Constants
     public static final UUID NSID_CredEGS  = UUID.fromString("A1CC31A3-E471-4568-B5FC-9E15008E98C9");
     public static final UUID NSID_AMartins = UUID.fromString("90CB8FFB-1555-49D8-9594-9E15008EDC72");
 
+
 	// Objects
+
+    // Global Objects
     public static final UUID ObjID_AppParams                = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
     public static final UUID ObjID_Template                 = UUID.fromString("F13322EE-E13E-4562-B723-9FF100F5E6BE");
 	public static final UUID ObjID_PrintSet                 = UUID.fromString("FEBF3C68-0891-4B4D-AD90-A021010A219F");
@@ -180,6 +183,7 @@ public class Constants
 	public static final UUID ProcID_Assessment       = UUID.fromString("4FF7BFFD-C0F9-4E45-8E72-A1330105A7C7");
 	public static final UUID ProcID_MedicalFile      = UUID.fromString("8176CB8C-14D3-41E1-8AD2-A1340118AEEF");
 	public static final UUID ProcID_TotalLoss        = UUID.fromString("73A33C71-BD77-4072-9EEB-A1500110C896");
+
 
 	// Operations
 
@@ -660,11 +664,16 @@ public class Constants
 	public static final UUID RecType_Suplemental = UUID.fromString("382ABABA-5A0A-4E88-B5D1-A09E00EE2006");
 
 	// Receipt Status Codes
-	public static final UUID StatusID_New        = UUID.fromString("37C3A6F7-A579-4CD2-842E-A02000C337AA");
-	public static final UUID StatusID_Payable    = UUID.fromString("C359D3FF-9032-4B4D-8C34-A02000C3403D");
-	public static final UUID StatusID_DASPending = UUID.fromString("767EB803-6669-47EF-8649-A02000C3491F");
-	public static final UUID StatusID_Paid       = UUID.fromString("8C43ED6B-A047-4549-9922-A02000C35098");
-	public static final UUID StatusID_Closed     = UUID.fromString("B86D383A-70E9-4B03-87C7-A02000C35B32");
+	public static final UUID StatusID_Initial          = UUID.fromString("37C3A6F7-A579-4CD2-842E-A02000C337AA");
+	public static final UUID StatusID_Paid             = UUID.fromString("C359D3FF-9032-4B4D-8C34-A02000C3403D");
+	public static final UUID StatusID_Payable          = UUID.fromString("767EB803-6669-47EF-8649-A02000C3491F");
+	public static final UUID StatusID_DASPending       = UUID.fromString("8C43ED6B-A047-4549-9922-A02000C35098");
+	public static final UUID StatusID_SignaturePending = UUID.fromString("B86D383A-70E9-4B03-87C7-A02000C35B32");
+	public static final UUID StatusID_PayableExpired   = UUID.fromString("8C6480C3-E227-49CF-8422-A17800FE390D");
+	public static final UUID StatusID_SignatureExpired = UUID.fromString("BB920D7A-33E9-4B9A-A55E-A17800FE48E0");
+	public static final UUID StatusID_DASExpired       = UUID.fromString("5F19AC9E-8CF3-4825-A4D7-A17800FE5788");
+	public static final UUID StatusID_InitialExpired   = UUID.fromString("51CB525D-DBC0-4500-879F-A17800FE6CBA");
+	public static final UUID StatusID_Final            = UUID.fromString("ABCA5C34-078C-4382-8FCB-A17800FE83EC");
 
 	// Receipt Payment Types
 	public static final UUID PayID_Cheque          = UUID.fromString("06EA2F87-BB0C-4B02-BCDB-A02200EB462D");

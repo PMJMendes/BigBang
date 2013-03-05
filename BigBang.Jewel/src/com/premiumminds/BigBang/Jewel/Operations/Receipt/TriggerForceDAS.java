@@ -11,6 +11,7 @@ import Jewel.Petri.SysObjects.SilentOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class TriggerForceDAS
 	extends SilentOperation
@@ -33,6 +34,7 @@ public class TriggerForceDAS
 		Timestamp ldtAux;
 		Calendar ldtAux2;
 		AgendaItem lobjItem;
+		Receipt lobjReceipt;
 
 		ldtAux = new Timestamp(new java.util.Date().getTime());
     	ldtAux2 = Calendar.getInstance();
@@ -51,6 +53,10 @@ public class TriggerForceDAS
 			lobjItem.SaveToDb(pdb);
 			lobjItem.InitNew(new UUID[] {GetProcess().getKey()},
 					new UUID[] {Constants.OPID_Receipt_CreateDASRequest, Constants.OPID_Receipt_DASNotNecessary}, pdb);
+
+			lobjReceipt = (Receipt)GetProcess().GetData();
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_DASPending);
+			lobjReceipt.SaveToDb(pdb);
     	}
     	catch (Throwable e)
     	{

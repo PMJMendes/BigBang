@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
@@ -14,6 +15,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingDetail;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingMap;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingSet;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class InsurerAccounting
 	extends UndoableOperation
@@ -28,6 +30,7 @@ public class InsurerAccounting
 	public Boolean mbIsCommissions;
 	public Boolean mbHasTax;
 	private UUID midInsurer;
+	private UUID midPrevStatus;
 //	private OutgoingMessageData mobjMessage;
 
 	public InsurerAccounting(UUID pidProcess)
@@ -65,6 +68,8 @@ public class InsurerAccounting
 		InsurerAccountingSet lobjSet;
 		InsurerAccountingMap lobjMap;
 		InsurerAccountingDetail lobjSetReceipt;
+		IProcess lobjProc;
+		Receipt lobjReceipt;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midInsurer = (UUID)GetProcess().GetParent().GetData().getAt(2);
@@ -103,6 +108,21 @@ public class InsurerAccounting
 			lobjSetReceipt.setAt(2, false);
 			lobjSetReceipt.SaveToDb(pdb);
 			midDetail = lobjSetReceipt.getKey();
+
+			lobjProc = GetProcess();
+
+			if ( Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_MediatorAccounting,
+							pdb).GetLevel()) &&
+					Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_SendReceipt,
+							pdb).GetLevel()) &&
+					Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_SendPayment,
+							pdb).GetLevel()) )
+			{
+				lobjReceipt = (Receipt)lobjProc.GetData();
+				midPrevStatus = (UUID)lobjReceipt.getAt(Receipt.I.STATUS);
+				lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Final);
+				lobjReceipt.SaveToDb(pdb);
+			}
 		}
 		catch (Throwable e)
 		{
@@ -125,6 +145,7 @@ public class InsurerAccounting
 	{
 		InsurerAccountingMap lobjSetMap;
 		InsurerAccountingDetail lobjSetReceipt;
+		Receipt lobjReceipt;
 
 		try
 		{
@@ -137,6 +158,13 @@ public class InsurerAccounting
 			lobjSetReceipt.SaveToDb(pdb);
 
 			lobjSetMap.clearDetails();
+
+			if ( midPrevStatus != null )
+			{
+				lobjReceipt = (Receipt)GetProcess().GetData();
+				lobjReceipt.setAt(Receipt.I.STATUS, midPrevStatus);
+				lobjReceipt.SaveToDb(pdb);
+			}
 		}
 		catch (Throwable e)
 		{

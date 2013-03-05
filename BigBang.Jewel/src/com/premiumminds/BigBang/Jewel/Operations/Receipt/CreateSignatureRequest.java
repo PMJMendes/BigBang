@@ -21,6 +21,7 @@ import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.SignatureRequest;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.SignatureRequest.ExternCancelRequest;
@@ -41,6 +42,7 @@ public class CreateSignatureRequest
 	public UUID midRequestObject;
 	private UUID midClient;
 	private UUID midExternProcess;
+	private UUID midPrevStatus;
 //	private OutgoingMessageData mobjMessage;
 
 	public CreateSignatureRequest(UUID pidProcess)
@@ -90,6 +92,7 @@ public class CreateSignatureRequest
 		IScript lobjScript;
 		IProcess lobjProc;
 		AgendaItem lobjItem;
+		Receipt lobjReceipt;
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
     	ldtAux = Calendar.getInstance();
@@ -172,6 +175,19 @@ public class CreateSignatureRequest
 
 		midRequestObject = lobjRequest.getKey();
 		midExternProcess = lobjProc.getKey();
+
+		lobjReceipt = (Receipt)GetProcess().GetData();
+		midPrevStatus = (UUID)lobjReceipt.getAt(Receipt.I.STATUS);
+
+		try
+		{
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_SignaturePending);
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -187,7 +203,24 @@ public class CreateSignatureRequest
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Receipt lobjReceipt;
+
 		TriggerOp(new ExternCancelRequest(midExternProcess), pdb);
+
+		if ( midPrevStatus != null )
+		{
+			lobjReceipt = (Receipt)GetProcess().GetData();
+
+			try
+			{
+				lobjReceipt.setAt(Receipt.I.STATUS, midPrevStatus);
+				lobjReceipt.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
 	}
 
 	public UndoSet[] GetSets()

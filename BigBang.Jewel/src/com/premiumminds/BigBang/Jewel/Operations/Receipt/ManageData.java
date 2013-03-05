@@ -84,6 +84,7 @@ public class ManageData
 				mobjData.mobjPrevValues.FromObject(lobjAux);
 
 				mobjData.midManager = GetProcess().GetManagerID();
+				mobjData.midStatus = mobjData.mobjPrevValues.midStatus;
 				mobjData.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
 			}

@@ -16,6 +16,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.ReceiptReturnLetterReport;
 
@@ -71,6 +72,7 @@ public class ReturnToInsurer
 		PrintSet lobjSet;
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
+		Receipt lobjReceipt;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midInsurer = (UUID)GetProcess().GetParent().GetData().getAt(2);
@@ -118,6 +120,17 @@ public class ReturnToInsurer
 		}
 
 		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+
+		try
+		{
+			lobjReceipt = (Receipt)GetProcess().GetData();
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Final);
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	private void generateDocOp()

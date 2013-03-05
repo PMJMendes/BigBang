@@ -7,6 +7,7 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class CancelPaymentNotice
 	extends UndoOperation
@@ -41,5 +42,17 @@ public class CancelPaymentNotice
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Receipt lobjReceipt;
+
+		lobjReceipt = (Receipt)GetProcess().GetData();
+		try
+		{
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Initial);
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 }

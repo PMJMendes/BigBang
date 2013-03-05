@@ -3,6 +3,7 @@ package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 import java.util.UUID;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
@@ -43,5 +44,18 @@ public class ExternUndoCancelDAS
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Receipt lobjReceipt;
+
+		lobjReceipt = (Receipt)GetProcess().GetData();
+
+		try
+		{
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_DASPending);
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 }

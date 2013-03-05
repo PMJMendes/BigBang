@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
@@ -25,6 +26,7 @@ public class MediatorAccounting
 	public UUID midMap;
 	public UUID midDetail;
 	private UUID midMediator;
+	private UUID midPrevStatus;
 //	private OutgoingMessageData mobjMessage;
 
 	public MediatorAccounting(UUID pidProcess)
@@ -64,6 +66,7 @@ public class MediatorAccounting
 		MediatorAccountingSet lobjSet;
 		MediatorAccountingMap lobjMap;
 		MediatorAccountingDetail lobjDetail;
+		IProcess lobjProc;
 
 		lobjReceipt = (Receipt)GetProcess().GetData();
 		try
@@ -100,6 +103,20 @@ public class MediatorAccounting
 
 			if ( lobjReceipt.doCalcRetrocession() )
 				lobjReceipt.SaveToDb(pdb);
+
+			lobjProc = GetProcess();
+
+			if ( Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_InsurerAccounting,
+							pdb).GetLevel()) &&
+					Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_SendReceipt,
+							pdb).GetLevel()) &&
+					Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_SendPayment,
+							pdb).GetLevel()) )
+			{
+				midPrevStatus = (UUID)lobjReceipt.getAt(Receipt.I.STATUS);
+				lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Final);
+				lobjReceipt.SaveToDb(pdb);
+			}
 		}
 		catch (Throwable e)
 		{
@@ -122,6 +139,7 @@ public class MediatorAccounting
 	{
 		MediatorAccountingMap lobjSetMap;
 		MediatorAccountingDetail lobjSetReceipt;
+		Receipt lobjReceipt;
 
 		try
 		{
@@ -134,6 +152,13 @@ public class MediatorAccounting
 			lobjSetReceipt.SaveToDb(pdb);
 
 			lobjSetMap.clearDetails();
+
+			if ( midPrevStatus != null )
+			{
+				lobjReceipt = (Receipt)GetProcess().GetData();
+				lobjReceipt.setAt(Receipt.I.STATUS, midPrevStatus);
+				lobjReceipt.SaveToDb(pdb);
+			}
 		}
 		catch (Throwable e)
 		{

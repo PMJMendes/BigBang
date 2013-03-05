@@ -24,6 +24,7 @@ public class Payment
 
 	public PaymentData[] marrData;
 	private UUID midReceipt;
+	private UUID midPrevStatus;
 	private AccountingData[] marrAccounting;
 
 	public Payment(UUID pidProcess)
@@ -273,6 +274,10 @@ public class Payment
 					lobjEntry.SaveToDb(pdb);
 				}
 			}
+
+			midPrevStatus = (UUID)lobjReceipt.getAt(Receipt.I.STATUS);
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Paid);
+			lobjReceipt.SaveToDb(pdb);
 		}
 		catch (Throwable e)
 		{
@@ -398,6 +403,19 @@ public class Payment
 					marrAccounting[i].ToObject(lobjEntry);
 					lobjEntry.SaveToDb(pdb);
 				}
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
+
+		if ( midPrevStatus != null )
+		{
+			try
+			{
+				lobjReceipt.setAt(Receipt.I.STATUS, midPrevStatus);
+				lobjReceipt.SaveToDb(pdb);
 			}
 			catch (Throwable e)
 			{

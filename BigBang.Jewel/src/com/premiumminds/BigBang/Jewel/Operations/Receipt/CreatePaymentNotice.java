@@ -91,6 +91,7 @@ public class CreatePaymentNotice
 		PrintSetDetail lobjSetReceipt;
 		Document lobjStamped;
 		FileXfer lobjFile;
+		Receipt lobjReceipt;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midClient = GetProcess().GetParent().GetParent().GetDataKey();
@@ -108,6 +109,17 @@ public class CreatePaymentNotice
 		}
 
 		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+
+		lobjReceipt = (Receipt)GetProcess().GetData();
+		try
+		{
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Payable);
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		if ( mbUseSets )
 		{

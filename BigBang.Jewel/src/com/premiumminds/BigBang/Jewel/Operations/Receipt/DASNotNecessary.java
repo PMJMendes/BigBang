@@ -16,6 +16,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class DASNotNecessary
 	extends UndoableOperation
@@ -58,6 +59,7 @@ public class DASNotNecessary
 		ObjectBase lobjAgendaProc;
 		Timestamp ldtAux;
 		Calendar ldtAux2;
+		Receipt lobjReceipt;
 
 		ldtAux = new Timestamp(new java.util.Date().getTime());
     	ldtAux2 = Calendar.getInstance();
@@ -92,6 +94,18 @@ public class DASNotNecessary
 		catch (Throwable e)
 		{
 			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		lobjReceipt = (Receipt)GetProcess().GetData();
+
+		try
+		{
+			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Paid);
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 	}
