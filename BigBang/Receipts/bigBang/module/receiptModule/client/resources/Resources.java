@@ -44,4 +44,23 @@ public interface Resources extends ClientBundle {
 	@Source("images/sendSecondReceipt.png/")
 	ImageResource sendSecondReceiptIcon();
 
+	@Source("images/grey.png")
+	ImageResource greyIcon();
+	
+	@Source("images/green.png")
+	ImageResource greenIcon();
+	
+	@Source("images/yellow.png")
+	ImageResource yelloIcon();
+	
+	@Source("images/white.png")
+	ImageResource whiteIcon();
+	
+	@Source("images/orange.png")
+	ImageResource orangeIcon();
+
+	@Source("images/red.png")
+	ImageResource redIcon();
+
 }
+

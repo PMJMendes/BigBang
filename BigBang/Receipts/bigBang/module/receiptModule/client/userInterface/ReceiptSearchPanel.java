@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,6 +15,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -29,6 +31,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
+import bigBang.module.receiptModule.client.resources.Resources;
 import bigBang.module.receiptModule.shared.ModuleConstants;
 import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
@@ -45,6 +48,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		protected Label premiumLabel;
 		protected Label maturityDateLabel;
 		protected Label descriptionLabel;
+		protected Image statusIcon;
 		protected boolean initialized;
 		private NumberFormat nf;
 
@@ -99,6 +103,13 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 
 				premiumLabel = getFormatedLabel();
 				this.premiumLabel.getElement().getStyle().setFontSize(12, Unit.PX);
+
+				statusIcon = new Image();
+				statusIcon.setTitle(value.statusText);
+				
+				rightContainer.add(statusIcon);
+				rightContainer.setCellVerticalAlignment(statusIcon, HasVerticalAlignment.ALIGN_MIDDLE);
+				
 				rightContainer.add(premiumLabel);
 				rightContainer.setCellVerticalAlignment(premiumLabel, HasVerticalAlignment.ALIGN_BOTTOM);
 
@@ -129,6 +140,31 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			this.maturityDateLabel.setTitle("Vigência");
 			initialized = true;
 			setSelected(this.isSelected(), false);
+			
+			Resources resources = GWT.create(Resources.class);
+			
+			switch(r.statusIcon){
+			case GRAY:
+				statusIcon.setResource(resources.greyIcon());
+				break;
+			case GREEN:
+				statusIcon.setResource(resources.greenIcon());
+				break;
+			case ORANGE:
+				statusIcon.setResource(resources.orangeIcon());
+				break;
+			case RED:
+				statusIcon.setResource(resources.redIcon());
+				break;
+			case WHITE:
+				statusIcon.setResource(resources.whiteIcon());
+				break;
+			case YELLOW:
+				statusIcon.setResource(resources.yelloIcon());
+				break;
+			case ERROR:
+				break;
+			}
 			
 			setMetaData(new String[]{
 					value.number,
