@@ -290,7 +290,7 @@ public class DocOps
 					for ( i = 0; i < marrDelete.length; i++ )
 					{
 						if ( pidOwner == null )
-							UndoDeleteDocument(pdb, marrDelete[i], marrCreate[i].midOwnerId);
+							UndoDeleteDocument(pdb, marrDelete[i], marrDelete[i].midOwnerId);
 						else
 							UndoDeleteDocument(pdb, marrDelete[i], pidOwner);
 					}
