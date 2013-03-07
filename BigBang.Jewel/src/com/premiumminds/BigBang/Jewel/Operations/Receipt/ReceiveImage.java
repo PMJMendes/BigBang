@@ -96,6 +96,12 @@ public class ReceiveImage
 			mobjData.mobjPrevValues = new ReceiptData();
 			mobjData.mobjPrevValues.FromObject(lobjReceipt);
 
+			mobjData.midManager = GetProcess().GetManagerID();
+			mobjData.mbInternal = mobjData.mobjPrevValues.mbInternal;
+			mobjData.mlngEntryNumber = mobjData.mobjPrevValues.mlngEntryNumber;
+			mobjData.mlngEntryYear = mobjData.mobjPrevValues.mlngEntryYear;
+			mobjData.midStatus = mobjData.mobjPrevValues.midStatus;
+
 			try
 			{
 				mobjData.ToObject(lobjReceipt);

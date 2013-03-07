@@ -3306,8 +3306,6 @@ public class ReceiptServiceImpl
 		result.mstrNumber = receipt.number;
 		result.midType = UUID.fromString(receipt.typeId);
 		result.mdblTotal = new BigDecimal(receipt.totalPremium+"");
-		result.midType = UUID.fromString(receipt.typeId);
-		result.mdblTotal = new BigDecimal(receipt.totalPremium+"");
 		result.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium + ""));
 		result.mdblCommissions = (receipt.comissions == null ? BigDecimal.ZERO : new BigDecimal(receipt.comissions + ""));
 		result.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions+""));
@@ -3323,7 +3321,6 @@ public class ReceiptServiceImpl
 		result.mstrNotes = receipt.notes;
 		result.mstrDescription = receipt.description;
 		result.midProcess = UUID.fromString(receipt.processId);
-
 		result.midManager = null;
 
 		result.mobjPrevValues = null;

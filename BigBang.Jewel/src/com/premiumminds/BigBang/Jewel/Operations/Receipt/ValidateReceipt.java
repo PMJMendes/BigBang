@@ -97,6 +97,10 @@ public class ValidateReceipt
 			mobjData.mobjPrevValues.FromObject(lobjAux);
 
 			mobjData.midManager = midPrevManager;
+			mobjData.mbInternal = mobjData.mobjPrevValues.mbInternal;
+			mobjData.mlngEntryNumber = mobjData.mobjPrevValues.mlngEntryNumber;
+			mobjData.mlngEntryYear = mobjData.mobjPrevValues.mlngEntryYear;
+			mobjData.midStatus = mobjData.mobjPrevValues.midStatus;
 
 			try
 			{

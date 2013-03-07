@@ -41,7 +41,7 @@ public class ReceiptData
 
 	public UUID midManager;
 	public UUID midProcess;
-	
+
 	public ReceiptData mobjPrevValues;
 
 	public void FromObject(ObjectBase pobjSource)
