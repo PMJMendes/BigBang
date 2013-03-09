@@ -26,7 +26,7 @@ public class MediatorFormValidator extends FormValidator<MediatorForm> {
 	}
 	
 	private boolean validateAcctCode() {
-		return validateString(form.acctCode, 3, 3, true);
+		return validateString(form.acctCode, 6, 6, true);
 	}
 	
 	private boolean validateName(){

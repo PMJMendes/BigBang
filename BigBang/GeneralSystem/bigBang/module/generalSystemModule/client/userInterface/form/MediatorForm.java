@@ -61,7 +61,7 @@ public class MediatorForm extends FormView<Mediator> {
 		comissionProfile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CommissionProfiles, "Perfil de comissão");
 		commissionPercentage = new NumericTextBoxFormField("Comissão", false);
 		commissionPercentage.setUnitsLabel("%");
-		acctCode = new TextBoxFormField("Terminação (278 XXX)");
+		acctCode = new TextBoxFormField("Terminação (6225 X X XXXX)");
 		acctCode.setFieldWidth("100px");
 		NIB = new TextBoxFormField("NIB/IBAN");
 		hasRetention = new CheckBoxFormField("Retenção na Fonte");
