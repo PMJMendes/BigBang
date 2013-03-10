@@ -191,7 +191,7 @@ public class MediatorAccountingMap
 			larrResult[2].mdblValue = mdblRetention.abs();
 			larrResult[2].mstrSign = (mdblRetention.signum() > 0 ? "D" : "C");
 			larrResult[2].mlngBook = 6;
-			larrResult[2].mstrSupportDoc = (String)mrefSet.getAt(TransactionSetBase.I.NUMBER);
+			larrResult[2].mstrSupportDoc = ((Integer)mrefSet.getAt(TransactionSetBase.I.NUMBER)).toString();
 			larrResult[2].mstrDesc = "Prestação de Conta Mediadora";
 			larrResult[2].midDocType = Constants.ObjID_MediatorAccountingMap;
 			larrResult[2].mlngYear = (Integer)getAt(I.ENTRYYEAR);
@@ -204,7 +204,7 @@ public class MediatorAccountingMap
 			larrResult[3].mdblValue = mdblTotal.abs();
 			larrResult[3].mstrSign = (mdblRetention.signum() > 0 ? "C" : "D");
 			larrResult[3].mlngBook = 6;
-			larrResult[3].mstrSupportDoc = (String)mrefSet.getAt(TransactionSetBase.I.NUMBER);
+			larrResult[3].mstrSupportDoc = ((Integer)mrefSet.getAt(TransactionSetBase.I.NUMBER)).toString();
 			larrResult[3].mstrDesc = "Prestação de Conta Mediadora";
 			larrResult[3].midDocType = Constants.ObjID_MediatorAccountingMap;
 			larrResult[3].mlngYear = (Integer)getAt(I.ENTRYYEAR);
@@ -220,7 +220,7 @@ public class MediatorAccountingMap
 		larrResult[0].mdblValue = mdblTotal.abs();
 		larrResult[0].mstrSign = (mdblTotal.signum() > 0 ? "D" : "C");
 		larrResult[0].mlngBook = 6;
-		larrResult[0].mstrSupportDoc = (String)mrefSet.getAt(TransactionSetBase.I.NUMBER);
+		larrResult[0].mstrSupportDoc = ((Integer)mrefSet.getAt(TransactionSetBase.I.NUMBER)).toString();
 		larrResult[0].mstrDesc = "Prestação de Conta Mediadora";
 		larrResult[0].midDocType = Constants.ObjID_MediatorAccountingMap;
 		larrResult[0].mlngYear = (Integer)getAt(I.ENTRYYEAR);
@@ -233,7 +233,7 @@ public class MediatorAccountingMap
 		larrResult[1].mdblValue = mdblTotal.abs();
 		larrResult[1].mstrSign = (mdblTotal.signum() > 0 ? "C" : "D");
 		larrResult[1].mlngBook = 6;
-		larrResult[1].mstrSupportDoc = (String)mrefSet.getAt(TransactionSetBase.I.NUMBER);
+		larrResult[1].mstrSupportDoc = ((Integer)mrefSet.getAt(TransactionSetBase.I.NUMBER)).toString();
 		larrResult[1].mstrDesc = "Prestação de Conta Mediadora";
 		larrResult[1].midDocType = Constants.ObjID_MediatorAccountingMap;
 		larrResult[1].mlngYear = (Integer)getAt(I.ENTRYYEAR);

@@ -218,7 +218,7 @@ public class InsurerAccountingMap
 		larrResult[0].mdblValue = mdblTotal.abs();
 		larrResult[0].mstrSign = (mdblTotal.signum() > 0 ? "C" : "D");
 		larrResult[0].mlngBook = 6;
-		larrResult[0].mstrSupportDoc = (String)mrefSet.getAt(TransactionSetBase.I.NUMBER);
+		larrResult[0].mstrSupportDoc = ((Integer)mrefSet.getAt(TransactionSetBase.I.NUMBER)).toString();
 		larrResult[0].mstrDesc = "Prestação de Conta Seguradora";
 		larrResult[0].midDocType = Constants.ObjID_InsurerAccountingMap;
 		larrResult[0].mlngYear = (Integer)getAt(I.ENTRYYEAR);
@@ -231,7 +231,7 @@ public class InsurerAccountingMap
 		larrResult[1].mdblValue = mdblTotal.abs();
 		larrResult[1].mstrSign = (mdblTotal.signum() > 0 ? "D" : "C");
 		larrResult[1].mlngBook = 6;
-		larrResult[1].mstrSupportDoc = (String)mrefSet.getAt(TransactionSetBase.I.NUMBER);
+		larrResult[1].mstrSupportDoc = ((Integer)mrefSet.getAt(TransactionSetBase.I.NUMBER)).toString();
 		larrResult[1].mstrDesc = "Prestação de Conta Seguradora";
 		larrResult[1].midDocType = Constants.ObjID_InsurerAccountingMap;
 		larrResult[1].mlngYear = (Integer)getAt(I.ENTRYYEAR);
