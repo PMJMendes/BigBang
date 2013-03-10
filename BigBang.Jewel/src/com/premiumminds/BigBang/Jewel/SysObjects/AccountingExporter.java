@@ -12,6 +12,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.FileSpec;
+import Jewel.Engine.Implementation.NameSpace;
 import Jewel.Engine.Implementation.TransportChannel;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.Interfaces.IFileField;
@@ -119,10 +120,12 @@ public class AccountingExporter
 			}
 			lobjFile = new FileData(lrefSpec, larrSections);
 
-			lformat = new SimpleDateFormat("yyyyMMdd.HHmmss");
-			lstrName = "mov." + lformat.format(Calendar.getInstance().getTime()) + ".txt";
 			try
 			{
+				lformat = new SimpleDateFormat("yyyyMMdd.HHmmss");
+				lstrName = "mov." + NameSpace.GetInstance(Engine.getCurrentNameSpace()).getLabel() +
+						lformat.format(Calendar.getInstance().getTime()) + ".txt";
+
 				lobjResult = lrefSpec.BuildFile(lobjFile, lstrName);
 				lidInstance = lrefChannel.PutFile("", lobjResult);
 
