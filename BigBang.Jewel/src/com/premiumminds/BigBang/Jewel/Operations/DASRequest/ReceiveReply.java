@@ -1,6 +1,5 @@
 package com.premiumminds.BigBang.Jewel.Operations.DASRequest;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -105,10 +104,7 @@ public class ReceiveReply
 		Calendar ldtToday;
 		ILog lobjLog;
 		Payment lopP;
-		boolean lbDirect;
-		BigDecimal ldblTotal, ldblTotal119;
 		AccountingEntry lobjEntry;
-		String lstrAccount;
 		int i;
 
 		larrItems = new HashMap<UUID, AgendaItem>();
@@ -158,95 +154,10 @@ public class ReceiveReply
 		{
 			lobjReceipt.initAccounting(pdb, ldtToday.get(Calendar.YEAR));
 			lobjLog = lobjReceipt.getPaymentLog();
-		}
-		catch (Throwable e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-		lopP = (Payment)lobjLog.GetOperationData();
+			lopP = (Payment)lobjLog.GetOperationData();
+			marrAccounting = lopP.getAcctData(ldtToday);
 
-		ldblTotal = BigDecimal.ZERO;
-		ldblTotal119 = BigDecimal.ZERO;
-		lbDirect = true;
-		for ( i = 0; i < lopP.marrData.length; i++ )
-		{
-			if ( Constants.PayID_DirectToInsurer.equals(lopP.marrData[i].midPaymentType) )
-				continue;
-			lbDirect = false;
-			if ( Constants.PayID_DirectCheque.equals(lopP.marrData[i].midPaymentType) )
-				ldblTotal119 = ldblTotal119.add(lopP.marrData[i].mdblValue);
-			else
-				ldblTotal = ldblTotal.add(lopP.marrData[i].mdblValue);
-		}
-
-		try
-		{
-			lstrAccount = lobjReceipt.getAbsolutePolicy().GetCompany().getEffectiveAccount();
-		}
-		catch (Throwable e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		if ( !lbDirect && (lstrAccount != null) )
-		{
-			if ( !ldblTotal.equals(BigDecimal.ZERO) && !ldblTotal119.equals(BigDecimal.ZERO) )
-				marrAccounting = new AccountingData[3];
-			else
-				marrAccounting = new AccountingData[2];
-
-			i = 0;
-
-			if ( !ldblTotal.equals(BigDecimal.ZERO) )
-			{
-				marrAccounting[i] = new AccountingData();
-				marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
-				marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
-				marrAccounting[i].mdblAccount = new BigDecimal("1024");
-				marrAccounting[i].mdblValue = ldblTotal.abs();
-				marrAccounting[i].mstrSign = (ldblTotal.signum() > 0 ? "D" : "C");
-				marrAccounting[i].mlngBook = 1;
-				marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
-				marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
-				marrAccounting[i].midDocType = Constants.ObjID_Receipt;
-				marrAccounting[i].mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
-				marrAccounting[i].midFile = null;
-				i++;
-			}
-
-			if ( !ldblTotal119.equals(BigDecimal.ZERO) )
-			{
-				marrAccounting[i] = new AccountingData();
-				marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
-				marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
-				marrAccounting[i].mdblAccount = new BigDecimal("119");
-				marrAccounting[i].mdblValue = ldblTotal119.abs();
-				marrAccounting[i].mstrSign = (ldblTotal119.signum() > 0 ? "D" : "C");
-				marrAccounting[i].mlngBook = 1;
-				marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
-				marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
-				marrAccounting[i].midDocType = Constants.ObjID_Receipt;
-				marrAccounting[i].mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
-				marrAccounting[i].midFile = null;
-				i++;
-			}
-
-			ldblTotal = ldblTotal.add(ldblTotal119);
-
-			marrAccounting[i] = new AccountingData();
-			marrAccounting[i].mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
-			marrAccounting[i].mdtDate = new Timestamp(ldtToday.getTimeInMillis());
-			marrAccounting[i].mdblAccount = new BigDecimal(lstrAccount);
-			marrAccounting[i].mdblValue = ldblTotal.abs();
-			marrAccounting[i].mstrSign = (ldblTotal.signum() > 0 ? "C" : "D");
-			marrAccounting[i].mlngBook = 1;
-			marrAccounting[i].mstrSupportDoc = lobjReceipt.getLabel();
-			marrAccounting[i].mstrDesc = "Cobrança / Recebimento";
-			marrAccounting[i].midDocType = Constants.ObjID_Receipt;
-			marrAccounting[i].mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
-			marrAccounting[i].midFile = null;
-
-			try
+			if ( marrAccounting != null )
 			{
 				for ( i = 0; i < marrAccounting.length; i++ )
 				{
@@ -255,10 +166,10 @@ public class ReceiveReply
 					lobjEntry.SaveToDb(pdb);
 				}
 			}
-			catch (Throwable e)
-			{
-				throw new JewelPetriException(e.getMessage(), e);
-			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
 		}
 
 		GetProcess().Stop(pdb);

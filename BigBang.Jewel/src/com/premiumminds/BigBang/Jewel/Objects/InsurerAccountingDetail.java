@@ -114,6 +114,9 @@ public class InsurerAccountingDetail
 	public BigDecimal getCommissions()
 		throws BigBangJewelException
 	{
+		if ( getReceipt().getAt(Receipt.I.COMMISSIONS) == null ) 
+			return BigDecimal.ZERO;
+
 		return (BigDecimal)getReceipt().getAt(Receipt.I.COMMISSIONS);
 	}
 

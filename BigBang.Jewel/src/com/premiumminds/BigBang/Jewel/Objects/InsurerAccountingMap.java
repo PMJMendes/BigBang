@@ -215,8 +215,8 @@ public class InsurerAccountingMap
 		larrResult[0].mdtDate = mdtToday;
 		larrResult[0].mdblAccount = new BigDecimal("1024");
 		larrResult[0].mdblValue = mdblTotal.abs();
-		larrResult[0].mstrSign = "D";
-		larrResult[0].mlngBook = 1;
+		larrResult[0].mstrSign = (mdblTotal.signum() > 0 ? "C" : "D");
+		larrResult[0].mlngBook = 6;
 		larrResult[0].mstrSupportDoc = getLabel();
 		larrResult[0].mstrDesc = "Prestação de Conta Seguradora";
 		larrResult[0].midDocType = Constants.ObjID_InsurerAccountingMap;
@@ -228,8 +228,8 @@ public class InsurerAccountingMap
 		larrResult[1].mdtDate = mdtToday;
 		larrResult[1].mdblAccount = new BigDecimal("1024");
 		larrResult[1].mdblValue = mdblTotal.abs();
-		larrResult[1].mstrSign = "C";
-		larrResult[1].mlngBook = 1;
+		larrResult[1].mstrSign = (mdblTotal.signum() > 0 ? "D" : "C");
+		larrResult[1].mlngBook = 6;
 		larrResult[1].mstrSupportDoc = getLabel();
 		larrResult[1].mstrDesc = "Prestação de Conta Seguradora";
 		larrResult[1].midDocType = Constants.ObjID_InsurerAccountingMap;
@@ -313,12 +313,13 @@ public class InsurerAccountingMap
 		BigDecimal ldblTotalPremiums, ldblDirectPremiums, ldblPayablePremiums;
 		BigDecimal ldblTotalComms, ldblLifeComms, ldblTaxableComms;
 		BigDecimal ldblPreTax, ldblTax, ldblTotal;
-		BigDecimal ldblAux;
 		boolean lbSubtract;
 		int i;
 
 		ldblTotalPremiums = BigDecimal.ZERO;
 		ldblDirectPremiums = BigDecimal.ZERO;
+		ldblTaxableComms = BigDecimal.ZERO;
+		ldblTax = BigDecimal.ZERO;
 		lbSubtract = false;
 
 		if ( (getAt(I.EXTRATEXT) == null) || (getAt(I.EXTRAVALUE) == null) )
@@ -354,20 +355,19 @@ public class InsurerAccountingMap
 			ldblTotalPremiums = ldblTotalPremiums.add(((InsurerAccountingDetail)marrDetails[i]).getPremium());
 			ldblDirectPremiums = ldblDirectPremiums.add(((InsurerAccountingDetail)marrDetails[i]).getDirectPremium());
 
-			ldblAux = ((InsurerAccountingDetail)marrDetails[i]).getCommissions();
-			if ( ldblAux != null )
-				ldblTotalComms = ldblTotalComms.add(ldblAux);
-			ldblAux = ((InsurerAccountingDetail)marrDetails[i]).getLifeComms();
-			if ( ldblAux != null )
-				ldblLifeComms = ldblLifeComms.add(ldblAux);
+			ldblTotalComms = ldblTotalComms.add(((InsurerAccountingDetail)marrDetails[i]).getCommissions());
+			ldblLifeComms = ldblLifeComms.add(((InsurerAccountingDetail)marrDetails[i]).getLifeComms());
+			ldblTaxableComms = ldblTaxableComms.add(((InsurerAccountingDetail)marrDetails[i]).getCommissions()
+					.subtract(((InsurerAccountingDetail)marrDetails[i]).getLifeComms()));
+			ldblTax = ldblTax.add((((InsurerAccountingDetail)marrDetails[i]).getCommissions()
+					.subtract(((InsurerAccountingDetail)marrDetails[i]).getLifeComms()))
+					.multiply(new BigDecimal(2.0/102.0)).setScale(2, RoundingMode.HALF_UP));
 		}
 
 		ldblPayablePremiums = ldblTotalPremiums.subtract(ldblDirectPremiums);
-		ldblTaxableComms = ldblTotalComms.subtract(ldblLifeComms);
 		ldblPreTax = ldblPayablePremiums.subtract(ldblTotalComms);
 		if ( lbSubtract )
 			ldblPreTax = ldblPreTax.subtract(ldblExtraValue);
-		ldblTax = ldblTaxableComms.multiply((new BigDecimal(2.0/102.0))).setScale(2, RoundingMode.HALF_UP);
 		ldblTotal = ldblPreTax.add(ldblTax);
 
 		TR[] larrRows;

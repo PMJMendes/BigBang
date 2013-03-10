@@ -11,10 +11,13 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.Interfaces.ILog;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.AccountingData;
+import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
@@ -23,7 +26,10 @@ public class DASNotNecessary
 {
 	private static final long serialVersionUID = 1L;
 
+	private UUID midReceipt;
+	private UUID midPrevStatus;
 	private Timestamp mdtLimit;
+	private AccountingData[] marrAccounting;
 
 	public DASNotNecessary(UUID pidProcess)
 	{
@@ -60,6 +66,11 @@ public class DASNotNecessary
 		Timestamp ldtAux;
 		Calendar ldtAux2;
 		Receipt lobjReceipt;
+		Calendar ldtToday;
+		ILog lobjLog;
+		Payment lopP;
+		AccountingEntry lobjEntry;
+		int i;
 
 		ldtAux = new Timestamp(new java.util.Date().getTime());
     	ldtAux2 = Calendar.getInstance();
@@ -97,10 +108,33 @@ public class DASNotNecessary
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
+		midReceipt = GetProcess().GetDataKey();
 		lobjReceipt = (Receipt)GetProcess().GetData();
 
+		ldtToday = Calendar.getInstance();
+		ldtToday.set(Calendar.HOUR_OF_DAY, 0);
+		ldtToday.set(Calendar.MINUTE, 0);
+		ldtToday.set(Calendar.SECOND, 0);
+		ldtToday.set(Calendar.MILLISECOND, 0);
+		lobjReceipt = (Receipt)GetProcess().GetParent().GetData();
 		try
 		{
+			lobjReceipt.initAccounting(pdb, ldtToday.get(Calendar.YEAR));
+			lobjLog = lobjReceipt.getPaymentLog();
+			lopP = (Payment)lobjLog.GetOperationData();
+			marrAccounting = lopP.getAcctData(ldtToday);
+
+			if ( marrAccounting != null )
+			{
+				for ( i = 0; i < marrAccounting.length; i++ )
+				{
+					lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					marrAccounting[i].ToObject(lobjEntry);
+					lobjEntry.SaveToDb(pdb);
+				}
+			}
+
+			midPrevStatus = (UUID)lobjReceipt.getAt(Receipt.I.STATUS);
 			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Paid);
 			lobjReceipt.SaveToDb(pdb);
 		}
@@ -124,6 +158,18 @@ public class DASNotNecessary
 		throws JewelPetriException
 	{
 		AgendaItem lobjItem;
+		Receipt lobjReceipt;
+		int i;
+		AccountingEntry lobjEntry;
+
+		try
+		{
+			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
     	try
     	{
@@ -142,6 +188,41 @@ public class DASNotNecessary
     	{
     		throw new JewelPetriException(e.getMessage(), e);
     	}
+
+		if ( marrAccounting != null )
+		{
+			try
+			{
+				for ( i = 0; i < marrAccounting.length; i++ )
+				{
+					if ( marrAccounting[i].mstrSign.equals("D") )
+						marrAccounting[i].mstrSign = "C";
+					else
+						marrAccounting[i].mstrSign = "D";
+					marrAccounting[i].mstrDesc = "Reversão de " + marrAccounting[i].mstrDesc;
+					lobjEntry = AccountingEntry.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					marrAccounting[i].ToObject(lobjEntry);
+					lobjEntry.SaveToDb(pdb);
+				}
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
+
+		if ( midPrevStatus != null )
+		{
+			try
+			{
+				lobjReceipt.setAt(Receipt.I.STATUS, midPrevStatus);
+				lobjReceipt.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
 	}
 
 	public UndoSet[] GetSets()

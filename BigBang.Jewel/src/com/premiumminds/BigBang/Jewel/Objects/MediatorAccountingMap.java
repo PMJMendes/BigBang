@@ -179,35 +179,35 @@ public class MediatorAccountingMap
 
 		initAccounting(pdb, mdtToday.getYear());
 
-		if ( mdblRetention.signum() > 0 )
+		if ( (mdblRetention != null) && (mdblRetention.signum() != 0) )
 		{
 			larrResult = new AccountingData[4];
 			
+			larrResult[2] = new AccountingData();
+			larrResult[2].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
+			larrResult[2].mdtDate = mdtToday;
+			larrResult[2].mdblAccount = new BigDecimal(lstrAccount);
+			larrResult[2].mdblValue = mdblRetention.abs();
+			larrResult[2].mstrSign = (mdblRetention.signum() > 0 ? "D" : "C");
+			larrResult[2].mlngBook = 6;
+			larrResult[2].mstrSupportDoc = getLabel();
+			larrResult[2].mstrDesc = "Prestação de Conta Mediadora";
+			larrResult[2].midDocType = Constants.ObjID_MediatorAccountingMap;
+			larrResult[2].mlngYear = (Integer)getAt(I.ENTRYYEAR);
+			larrResult[2].midFile = null;
+
 			larrResult[3] = new AccountingData();
 			larrResult[3].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
 			larrResult[3].mdtDate = mdtToday;
-			larrResult[3].mdblAccount = new BigDecimal(lstrAccount);
-			larrResult[3].mdblValue = mdblRetention.abs();
-			larrResult[3].mstrSign = "D";
-			larrResult[3].mlngBook = 1;
+			larrResult[3].mdblAccount = new BigDecimal("2422");
+			larrResult[3].mdblValue = mdblTotal.abs();
+			larrResult[3].mstrSign = (mdblRetention.signum() > 0 ? "C" : "D");
+			larrResult[3].mlngBook = 6;
 			larrResult[3].mstrSupportDoc = getLabel();
 			larrResult[3].mstrDesc = "Prestação de Conta Mediadora";
 			larrResult[3].midDocType = Constants.ObjID_MediatorAccountingMap;
 			larrResult[3].mlngYear = (Integer)getAt(I.ENTRYYEAR);
 			larrResult[3].midFile = null;
-
-			larrResult[4] = new AccountingData();
-			larrResult[4].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
-			larrResult[4].mdtDate = mdtToday;
-			larrResult[4].mdblAccount = new BigDecimal("2422");
-			larrResult[4].mdblValue = mdblTotal.abs();
-			larrResult[4].mstrSign = "C";
-			larrResult[4].mlngBook = 1;
-			larrResult[4].mstrSupportDoc = getLabel();
-			larrResult[4].mstrDesc = "Prestação de Conta Mediadora";
-			larrResult[4].midDocType = Constants.ObjID_MediatorAccountingMap;
-			larrResult[4].mlngYear = (Integer)getAt(I.ENTRYYEAR);
-			larrResult[4].midFile = null;
 		}
 		else
 			larrResult = new AccountingData[2];
@@ -217,8 +217,8 @@ public class MediatorAccountingMap
 		larrResult[0].mdtDate = mdtToday;
 		larrResult[0].mdblAccount = new BigDecimal(lstrAccount);
 		larrResult[0].mdblValue = mdblTotal.abs();
-		larrResult[0].mstrSign = "D";
-		larrResult[0].mlngBook = 1;
+		larrResult[0].mstrSign = (mdblTotal.signum() > 0 ? "D" : "C");
+		larrResult[0].mlngBook = 6;
 		larrResult[0].mstrSupportDoc = getLabel();
 		larrResult[0].mstrDesc = "Prestação de Conta Mediadora";
 		larrResult[0].midDocType = Constants.ObjID_MediatorAccountingMap;
@@ -230,8 +230,8 @@ public class MediatorAccountingMap
 		larrResult[1].mdtDate = mdtToday;
 		larrResult[1].mdblAccount = new BigDecimal("1203");
 		larrResult[1].mdblValue = mdblTotal.abs();
-		larrResult[1].mstrSign = "C";
-		larrResult[1].mlngBook = 1;
+		larrResult[1].mstrSign = (mdblTotal.signum() > 0 ? "C" : "D");
+		larrResult[1].mlngBook = 6;
 		larrResult[1].mstrSupportDoc = getLabel();
 		larrResult[1].mstrDesc = "Prestação de Conta Mediadora";
 		larrResult[1].midDocType = Constants.ObjID_MediatorAccountingMap;
