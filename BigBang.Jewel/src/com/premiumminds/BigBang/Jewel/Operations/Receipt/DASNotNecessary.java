@@ -116,7 +116,6 @@ public class DASNotNecessary
 		ldtToday.set(Calendar.MINUTE, 0);
 		ldtToday.set(Calendar.SECOND, 0);
 		ldtToday.set(Calendar.MILLISECOND, 0);
-		lobjReceipt = (Receipt)GetProcess().GetParent().GetData();
 		try
 		{
 			lobjReceipt.initAccounting(pdb, ldtToday.get(Calendar.YEAR));
