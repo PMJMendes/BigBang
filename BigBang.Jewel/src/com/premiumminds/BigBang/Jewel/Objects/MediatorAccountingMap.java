@@ -177,7 +177,7 @@ public class MediatorAccountingMap
 		if ( lstrAccount == null )
 			return null;
 
-		initAccounting(pdb, mdtToday.getYear());
+		initAccounting(pdb, mdtToday.getYear() + 1900);
 
 		if ( (mdblRetention != null) && (mdblRetention.signum() != 0) )
 		{

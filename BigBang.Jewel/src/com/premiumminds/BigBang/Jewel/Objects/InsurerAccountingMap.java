@@ -206,7 +206,7 @@ public class InsurerAccountingMap
 		if ( lstrAccount == null )
 			return null;
 
-		initAccounting(pdb, mdtToday.getYear());
+		initAccounting(pdb, mdtToday.getYear() + 1900);
 
 		larrResult = new AccountingData[2];
 
