@@ -123,7 +123,7 @@ public class AccountingExporter
 			try
 			{
 				lformat = new SimpleDateFormat("yyyyMMdd.HHmmss");
-				lstrName = "mov." + NameSpace.GetInstance(Engine.getCurrentNameSpace()).getLabel() +
+				lstrName = "mov." + NameSpace.GetInstance(Engine.getCurrentNameSpace()).getLabel() + "." +
 						lformat.format(Calendar.getInstance().getTime()) + ".txt";
 
 				lobjResult = lrefSpec.BuildFile(lobjFile, lstrName);
