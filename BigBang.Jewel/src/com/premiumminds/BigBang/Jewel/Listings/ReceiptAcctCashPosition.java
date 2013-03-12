@@ -369,5 +369,6 @@ public class ReceiptAcctCashPosition
 		parrCells[ 2].setWidth( 80);
 		parrCells[ 3].setWidth( 80);
 		parrCells[ 4].setWidth( 80);
+		parrCells[ 5].setWidth( 80);
 	}
 }
