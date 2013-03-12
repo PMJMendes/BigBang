@@ -62,11 +62,17 @@ public class QuoteRequestOperationsViewPresenter implements ViewPresenter {
 					present("QUOTE_REQUEST_CONVERSATION", parameters);
 				}else if(display.equalsIgnoreCase("negotiation")){
 					present("QUOTE_REQUEST_NEGOTIATION", parameters);
+				}else if(display.equalsIgnoreCase("negotiationreceivemessage")){
+					present("QUOTE_REQUEST_NEGOTIATION_RECEIVE_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("negotiationsendmessage")){
+					present("QUOTE_REQUEST_NEGOTIATION_SEND_MESSAGE", parameters);
+				}else if(display.equalsIgnoreCase("negotiationconversation")){
+					present("QUOTE_REQUEST_NEGOTIATION_CONVERSATION", parameters);
 				}else {
 					goToDefault();
 				}
 			}
-
+			
 			private void goToDefault(){
 				NavigationHistoryItem item = navigationManager.getCurrentState();
 				item.setStackParameter("display");

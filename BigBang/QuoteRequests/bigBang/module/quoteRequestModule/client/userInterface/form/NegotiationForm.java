@@ -37,6 +37,8 @@ public class NegotiationForm extends FormView<Negotiation>{
 		addFormField(endDate);
 		addFormField(notes); 
 		
+		setValidator(new NegotiationFormValidator(this));
+		
 		}
 	
 	public void setInsurancePolicyLocked(boolean b){

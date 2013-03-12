@@ -8,6 +8,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Negotiation;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.presenter.SendMessageViewPresenter;
 
@@ -66,5 +67,11 @@ public class NegotiationSendMessageViewPresenter extends SendMessageViewPresente
 				onSendRequestFailed();
 			}
 		});		
+	}
+	
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		parameterHolder.setParameter("ownertypeid", BigBangConstants.EntityIds.NEGOTIATION);
+		super.setParameters(parameterHolder);
 	}
 }

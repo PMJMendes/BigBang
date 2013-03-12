@@ -24,7 +24,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Creat
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyConversationViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyNegotiationConversationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySendMessageViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyReceiveMessageViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyCreateSubPolicyReceiptViewPresenter;
@@ -52,7 +51,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateExpe
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyConversationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyCreateSubPolicyReceiptView;
-import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyNegotiationConversationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyReceiveMessageView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyManagerTransferView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyMassManagerTransferView;
@@ -73,10 +71,12 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyD
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyTransferToPolicyView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyVoidView;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationConversationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationReceiveMessageViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationResponseViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationSendMessageViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationConversationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationReceiveMessageView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationResponseView;
@@ -386,8 +386,8 @@ public class InsurancePolicyModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				InsurancePolicyNegotiationConversationView view = (InsurancePolicyNegotiationConversationView) GWT.create(InsurancePolicyNegotiationConversationView.class);
-				InsurancePolicyNegotiationConversationViewPresenter presenter = new InsurancePolicyNegotiationConversationViewPresenter(view);
+				NegotiationConversationView view = (NegotiationConversationView) GWT.create(NegotiationConversationView.class);
+				NegotiationConversationViewPresenter presenter = new NegotiationConversationViewPresenter(view);
 				return presenter;
 			}
 		});

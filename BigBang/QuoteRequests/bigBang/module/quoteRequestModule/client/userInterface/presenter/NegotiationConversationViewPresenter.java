@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
+package bigBang.module.quoteRequestModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
@@ -11,12 +11,12 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.presenter.ConversationViewPresenter;
 
-public class InsurancePolicyNegotiationConversationViewPresenter extends ConversationViewPresenter<Negotiation>{
+public class NegotiationConversationViewPresenter extends ConversationViewPresenter<Negotiation>{
 
 	private NegotiationBroker broker;
 	protected Negotiation negotiation;
 	
-	public InsurancePolicyNegotiationConversationViewPresenter(Display<Negotiation> view) {
+	public NegotiationConversationViewPresenter(Display<Negotiation> view) {
 		super(view);
 		broker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
 	}

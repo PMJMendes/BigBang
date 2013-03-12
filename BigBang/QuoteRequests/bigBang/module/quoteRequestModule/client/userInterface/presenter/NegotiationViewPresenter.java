@@ -294,6 +294,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 	protected void onSendMessage() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "negotiationsendmessage");
+		item.setParameter("ownerid", view.getForm().getValue().id);
 		NavigationHistoryManager.getInstance().go(item);		
 	}
 
