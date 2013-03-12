@@ -185,14 +185,16 @@ public class ReceiptAcctCashPosition
 	{
 		R<BigDecimal> ldblPending;
 		R<BigDecimal> ldblPaid;
-		R<BigDecimal> ldblComissions;
+		R<BigDecimal> ldblPComs;
+		R<BigDecimal> ldblFComs;
 		int i;
 		Table ltbl;
 		TR[] larrRows;
 
 		ldblPending = new R<BigDecimal>(BigDecimal.ZERO);
 		ldblPaid = new R<BigDecimal>(BigDecimal.ZERO);
-		ldblComissions = new R<BigDecimal>(BigDecimal.ZERO);
+		ldblPComs = new R<BigDecimal>(BigDecimal.ZERO);
+		ldblFComs = new R<BigDecimal>(BigDecimal.ZERO);
 
 		larrRows = new TR[parrMap.size() + 2];
 
@@ -202,12 +204,12 @@ public class ReceiptAcctCashPosition
 		i = 1;
 		for ( UUID lid: parrMap.keySet() )
 		{
-			larrRows[i] = ReportBuilder.buildRow(buildInnerRow(lid, parrMap.get(lid), ldblPending, ldblPaid, ldblComissions));
+			larrRows[i] = ReportBuilder.buildRow(buildInnerRow(lid, parrMap.get(lid), ldblPending, ldblPaid, ldblPComs, ldblFComs));
 			ReportBuilder.styleRow(larrRows[i], false);
 			i++;
 		}
 
-		larrRows[i] = ReportBuilder.buildRow(buildInnerFooterRow(ldblPending.get(), ldblPaid.get(), ldblComissions.get()));
+		larrRows[i] = ReportBuilder.buildRow(buildInnerFooterRow(ldblPending.get(), ldblPaid.get(), ldblPComs.get(), ldblFComs.get()));
 		ReportBuilder.styleRow(larrRows[i], false);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
@@ -220,7 +222,7 @@ public class ReceiptAcctCashPosition
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[5];
+		larrCells = new TD[6];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Seguradora");
 		ReportBuilder.styleCell(larrCells[0], false, false);
@@ -231,26 +233,30 @@ public class ReceiptAcctCashPosition
 		larrCells[2] = ReportBuilder.buildHeaderCell("Prémios por Entregar");
 		ReportBuilder.styleCell(larrCells[2], false, true);
 
-		larrCells[3] = ReportBuilder.buildHeaderCell("Comissões");
+		larrCells[3] = ReportBuilder.buildHeaderCell("Comissões por Cobrar");
 		ReportBuilder.styleCell(larrCells[3], false, true);
 
-		larrCells[4] = ReportBuilder.buildHeaderCell("Líquido");
+		larrCells[4] = ReportBuilder.buildHeaderCell("Comissões por Entregar");
 		ReportBuilder.styleCell(larrCells[4], false, true);
+
+		larrCells[5] = ReportBuilder.buildHeaderCell("Líquido");
+		ReportBuilder.styleCell(larrCells[5], false, true);
 
 		setWidths(larrCells);
 
 		return larrCells;
 	}
 
-	protected TD[] buildInnerRow(UUID pidCompany, ArrayList<Receipt> parrReceipts, R<BigDecimal> pdblPending, R<BigDecimal> pdblPaid,
-			R<BigDecimal> pdblComissions)
+	protected TD[] buildInnerRow(UUID pidCompany, ArrayList<Receipt> parrReceipts, R<BigDecimal> pdblPending,
+			R<BigDecimal> pdblPaid, R<BigDecimal> pdblPComs, R<BigDecimal> pdblFComs)
 		throws BigBangJewelException
 	{
 		Company lobjComp;
 		BigDecimal ldblPending;
 		BigDecimal ldblPaid;
 		BigDecimal ldblDirect;
-		BigDecimal ldblCommissions;
+		BigDecimal ldblPComs;
+		BigDecimal ldblFComs;
 		ILog lobjLog;
 		Payment lobjPayment;
 		int i;
@@ -260,7 +266,8 @@ public class ReceiptAcctCashPosition
 
 		ldblPending = BigDecimal.ZERO;
 		ldblPaid = BigDecimal.ZERO;
-		ldblCommissions = BigDecimal.ZERO;
+		ldblPComs = BigDecimal.ZERO;
+		ldblFComs = BigDecimal.ZERO;
 
 		for ( Receipt lRec : parrReceipts )
 		{
@@ -268,6 +275,8 @@ public class ReceiptAcctCashPosition
 			if ( lobjLog == null )
 			{
 				ldblPending = ldblPending.add((BigDecimal)lRec.getAt(Receipt.I.TOTALPREMIUM));
+				ldblPComs = ldblPComs.add((lRec.getAt(Receipt.I.COMMISSIONS) == null ? BigDecimal.ZERO :
+					(BigDecimal)lRec.getAt(Receipt.I.COMMISSIONS)));
 			}
 			else
 			{
@@ -287,12 +296,12 @@ public class ReceiptAcctCashPosition
 				{
 				}
 				ldblPaid = ldblPaid.add(((BigDecimal)lRec.getAt(Receipt.I.TOTALPREMIUM)).subtract(ldblDirect));
-			}
-			ldblCommissions = ldblCommissions.add((lRec.getAt(Receipt.I.COMMISSIONS) == null ? BigDecimal.ZERO :
+				ldblFComs = ldblFComs.add((lRec.getAt(Receipt.I.COMMISSIONS) == null ? BigDecimal.ZERO :
 					(BigDecimal)lRec.getAt(Receipt.I.COMMISSIONS)));
+			}
 		}
 
-		larrCells = new TD[5];
+		larrCells = new TD[6];
 
 		larrCells[0] = ReportBuilder.buildCell(lobjComp.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -303,26 +312,31 @@ public class ReceiptAcctCashPosition
 		larrCells[2] = ReportBuilder.buildCell(ldblPaid, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[2], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell(ldblCommissions, TypeDefGUIDs.T_Decimal);
+		larrCells[3] = ReportBuilder.buildCell(ldblPComs, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(ldblPending.add(ldblPaid).subtract(ldblCommissions), TypeDefGUIDs.T_Decimal);
+		larrCells[4] = ReportBuilder.buildCell(ldblFComs, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[4], true, true);
+
+		larrCells[5] = ReportBuilder.buildCell(ldblPending.add(ldblPaid).subtract(ldblPComs).subtract(ldblFComs),
+				TypeDefGUIDs.T_Decimal);
+		ReportBuilder.styleCell(larrCells[5], true, true);
 
 		setWidths(larrCells);
 
 		pdblPending.set(pdblPending.get().add(ldblPending));
 		pdblPaid.set(pdblPaid.get().add(ldblPaid));
-		pdblComissions.set(pdblComissions.get().add(ldblCommissions));
+		pdblPComs.set(pdblPComs.get().add(ldblPComs));
+		pdblFComs.set(pdblFComs.get().add(ldblFComs));
 
 		return larrCells;
 	}
 
-	protected TD[] buildInnerFooterRow(BigDecimal pdblPending, BigDecimal pdblPaid, BigDecimal pdblComissions)
+	protected TD[] buildInnerFooterRow(BigDecimal pdblPending, BigDecimal pdblPaid, BigDecimal pdblPComs, BigDecimal pdblFComs)
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[5];
+		larrCells = new TD[6];
 
 		larrCells[0] = ReportBuilder.buildCell("Totais", TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -333,11 +347,15 @@ public class ReceiptAcctCashPosition
 		larrCells[2] = ReportBuilder.buildCell(pdblPaid, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[2], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell(pdblComissions, TypeDefGUIDs.T_Decimal);
+		larrCells[3] = ReportBuilder.buildCell(pdblPComs, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(pdblPending.add(pdblPaid).subtract(pdblComissions), TypeDefGUIDs.T_Decimal);
+		larrCells[4] = ReportBuilder.buildCell(pdblFComs, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[4], true, true);
+
+		larrCells[5] = ReportBuilder.buildCell(pdblPending.add(pdblPaid).subtract(pdblPComs).subtract(pdblFComs),
+				TypeDefGUIDs.T_Decimal);
+		ReportBuilder.styleCell(larrCells[5], true, true);
 
 		setWidths(larrCells);
 
