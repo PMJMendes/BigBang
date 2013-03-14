@@ -1,12 +1,8 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
-
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
@@ -14,6 +10,9 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Petri.SysObjects.ProcessData;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 
 public class Negotiation
 	extends ProcessData
@@ -38,7 +37,14 @@ public class Negotiation
 
     public String getLabel()
     {
-    	return ( getAt(2) == null ? null : ((Timestamp)getAt(2)).toString().substring(0, 10) );
+    	try
+    	{
+			return ( getAt(0) == null ? null : Company.GetInstance(getNameSpace(), (UUID)getAt(0)).getLabel() );
+		}
+    	catch (Throwable e)
+    	{
+    		return null;
+		}
     }
 
 	public UUID GetProcessID()
