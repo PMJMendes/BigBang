@@ -31,19 +31,19 @@ public class TestSpecialGetExchangeItems
 
 	private static void DoStep2()
 	{
-		AsyncCallback<ExchangeItemStub[]> callback = new AsyncCallback<ExchangeItemStub[]>()
-		{
-			public void onFailure(Throwable caught)
-			{
-				return;
-			}
-
-			public void onSuccess(ExchangeItemStub[] result)
-			{
-				return;
-			}
-		};
-
-		Services.exchangeService.getItemsAll(callback);
+//		AsyncCallback<ExchangeItemStub[]> callback = new AsyncCallback<ExchangeItemStub[]>()
+//		{
+//			public void onFailure(Throwable caught)
+//			{
+//				return;
+//			}
+//
+//			public void onSuccess(ExchangeItemStub[] result)
+//			{
+//				return;
+//			}
+//		};
+//
+//		Services.exchangeService.getItemsAll(callback);
 	}
 }
