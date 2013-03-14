@@ -34,11 +34,7 @@ import microsoft.exchange.webservices.data.ItemAttachment;
 import microsoft.exchange.webservices.data.ItemId;
 import microsoft.exchange.webservices.data.ItemSchema;
 import microsoft.exchange.webservices.data.ItemView;
-import microsoft.exchange.webservices.data.MessageDisposition;
 import microsoft.exchange.webservices.data.PropertySet;
-import microsoft.exchange.webservices.data.SendInvitationsMode;
-import microsoft.exchange.webservices.data.ServiceResponse;
-import microsoft.exchange.webservices.data.ServiceResponseCollection;
 import microsoft.exchange.webservices.data.SortDirection;
 import microsoft.exchange.webservices.data.WebCredentials;
 import microsoft.exchange.webservices.data.WellKnownFolderName;
@@ -554,9 +550,6 @@ public class MailConnector
 		Item lobjItem;
 		byte[] larrBytes;
 		FileXfer lobjFile;
-		Item lobjAux;
-		ArrayList<Item> larrAux;
-		ServiceResponseCollection<ServiceResponse> a;
 
 		lsvc = GetService();
 
