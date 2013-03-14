@@ -30,10 +30,15 @@ import microsoft.exchange.webservices.data.FileAttachment;
 import microsoft.exchange.webservices.data.Folder;
 import microsoft.exchange.webservices.data.FolderView;
 import microsoft.exchange.webservices.data.Item;
+import microsoft.exchange.webservices.data.ItemAttachment;
 import microsoft.exchange.webservices.data.ItemId;
 import microsoft.exchange.webservices.data.ItemSchema;
 import microsoft.exchange.webservices.data.ItemView;
+import microsoft.exchange.webservices.data.MessageDisposition;
 import microsoft.exchange.webservices.data.PropertySet;
+import microsoft.exchange.webservices.data.SendInvitationsMode;
+import microsoft.exchange.webservices.data.ServiceResponse;
+import microsoft.exchange.webservices.data.ServiceResponseCollection;
 import microsoft.exchange.webservices.data.SortDirection;
 import microsoft.exchange.webservices.data.WebCredentials;
 import microsoft.exchange.webservices.data.WellKnownFolderName;
@@ -546,10 +551,12 @@ public class MailConnector
 		throws BigBangJewelException
 	{
 		ExchangeService lsvc;
-
 		Item lobjItem;
 		byte[] larrBytes;
 		FileXfer lobjFile;
+		Item lobjAux;
+		ArrayList<Item> larrAux;
+		ServiceResponseCollection<ServiceResponse> a;
 
 		lsvc = GetService();
 
@@ -563,11 +570,22 @@ public class MailConnector
 				if ( !lobjAtt.getId().equals(pstrAttachmentId) )
 					continue;
 
-				((FileAttachment)lobjAtt).load();
-
-				larrBytes = ((FileAttachment)lobjAtt).getContent();
-				lobjFile = new FileXfer(larrBytes.length, ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() ),
-						((FileAttachment)lobjAtt).getName(), new ByteArrayInputStream(larrBytes));
+				if ( lobjAtt instanceof FileAttachment )
+				{
+					((FileAttachment)lobjAtt).load();
+					larrBytes = ((FileAttachment)lobjAtt).getContent();
+					lobjFile = new FileXfer(larrBytes.length, ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() ),
+							((FileAttachment)lobjAtt).getName(), new ByteArrayInputStream(larrBytes));
+				}
+				else if ( lobjAtt instanceof ItemAttachment )
+				{
+					((ItemAttachment)lobjAtt).load();
+					larrBytes = new byte[0]; //((ItemAttachment)lobjAtt).getItem().getMimeContent().getContent();
+					lobjFile = new FileXfer(larrBytes.length, ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() ),
+							((ItemAttachment)lobjAtt).getName() + ".eml", new ByteArrayInputStream(larrBytes));
+				}
+				else
+					continue;
 
 				return lobjFile;
 			}
