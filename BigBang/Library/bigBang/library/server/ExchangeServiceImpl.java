@@ -8,6 +8,7 @@ import microsoft.exchange.webservices.data.EmailAddress;
 import microsoft.exchange.webservices.data.EmailMessage;
 import microsoft.exchange.webservices.data.FileAttachment;
 import microsoft.exchange.webservices.data.Item;
+import microsoft.exchange.webservices.data.ItemAttachment;
 import microsoft.exchange.webservices.data.MessageBody;
 import Jewel.Engine.Engine;
 import bigBang.library.interfaces.ExchangeService;
@@ -209,16 +210,26 @@ public class ExchangeServiceImpl
 			larrStubs = new ArrayList<AttachmentStub>();
 			for ( Attachment lobjAtt: lobjItem.getAttachments() )
 			{
-				if ( !(lobjAtt instanceof FileAttachment) )
-					continue;
-
-				lobjAttStub = new AttachmentStub();
-				((FileAttachment)lobjAtt).load();
-				lobjAttStub.id = lobjAtt.getId();
-				lobjAttStub.fileName = ((FileAttachment)lobjAtt).getName();
-				lobjAttStub.mimeType = ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() );
-				lobjAttStub.size = ((FileAttachment)lobjAtt).getContent().length;
-				larrStubs.add(lobjAttStub);
+				if ( lobjAtt instanceof FileAttachment )
+				{
+					lobjAttStub = new AttachmentStub();
+					((FileAttachment)lobjAtt).load();
+					lobjAttStub.id = lobjAtt.getId();
+					lobjAttStub.fileName = ((FileAttachment)lobjAtt).getName();
+					lobjAttStub.mimeType = ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() );
+					lobjAttStub.size = ((FileAttachment)lobjAtt).getContent().length;
+					larrStubs.add(lobjAttStub);
+				}
+				else if ( lobjAtt instanceof ItemAttachment )
+				{
+					lobjAttStub = new AttachmentStub();
+					((ItemAttachment)lobjAtt).load();
+					lobjAttStub.id = lobjAtt.getId();
+					lobjAttStub.fileName = ((ItemAttachment)lobjAtt).getName();
+					lobjAttStub.mimeType = ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() );
+					lobjAttStub.size = 0;
+					larrStubs.add(lobjAttStub);
+				}
 			}
 			lobjResult.attachments = larrStubs.toArray(new AttachmentStub[larrStubs.size()]);
 		}
