@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Listings;
+package com.premiumminds.BigBang.Jewel.Listings.Receipt;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -25,6 +25,7 @@ import Jewel.Petri.Interfaces.ILog;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;

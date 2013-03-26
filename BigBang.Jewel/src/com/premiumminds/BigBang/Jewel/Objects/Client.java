@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.ecs.GenericElement;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -13,6 +15,8 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.Client.ClientHistoryCreation;
+import com.premiumminds.BigBang.Jewel.Listings.Client.ClientPortfolio;
 
 public class Client
 	extends ProcessData
@@ -57,6 +61,31 @@ public class Client
 	    {
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+    public static Client GetInstance(UUID pidNameSpace, ResultSet prsObject)
+		throws BigBangJewelException
+	{
+	    try
+	    {
+			return (Client)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Client), prsObject);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+	
+	public static GenericElement[] printReportPortfolio(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ClientPortfolio().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportHistoryCreation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ClientHistoryCreation().doReport(parrParams);
 	}
 
 	public void Initialize()

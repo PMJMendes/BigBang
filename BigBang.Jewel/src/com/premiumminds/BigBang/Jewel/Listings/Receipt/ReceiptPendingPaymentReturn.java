@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Listings;
+package com.premiumminds.BigBang.Jewel.Listings.Receipt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,9 +17,10 @@ import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
-public class ReceiptPendingValidation
+public class ReceiptPendingPaymentReturn
 	extends ReceiptListingsBase
 {
 	public GenericElement[] doReport(String[] parrParams)
@@ -52,7 +53,7 @@ public class ReceiptPendingValidation
 
 		larrResult = new GenericElement[larrMap.size() + 1];
 
-		larrResult[0] = buildHeaderSection("Recibos Pendentes de Validação", larrAux, larrMap.size());
+		larrResult[0] = buildHeaderSection("Recibos Pendentes de Devolução de Pagamento", larrAux, larrMap.size());
 
 		i = 1;
 		for ( UUID lid: larrMap.keySet() )
@@ -93,7 +94,7 @@ public class ReceiptPendingValidation
 			lstrSQL.append("SELECT * FROM (" +
 					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
 					lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
-					new java.lang.Object[] {Constants.OPID_Receipt_ValidateReceipt, Constants.UrgID_Pending}, null) + ") [AuxSteps])");
+					new java.lang.Object[] {Constants.OPID_Receipt_ReturnPayment, Constants.UrgID_Pending}, null) + ") [AuxSteps])");
 		}
 		catch (Throwable e)
 		{

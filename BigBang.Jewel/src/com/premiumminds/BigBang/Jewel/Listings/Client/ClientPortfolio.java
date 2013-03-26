@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Listings;
+package com.premiumminds.BigBang.Jewel.Listings.Client;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,28 +17,29 @@ import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Listings.ClientListingsBase;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 
-public class ReceiptHistoryPayment
-	extends ReceiptListingsBase
+public class ClientPortfolio
+	extends ClientListingsBase
 {
 	public GenericElement[] doReport(String[] parrParams)
 		throws BigBangJewelException
 	{
-		Receipt[] larrAux;
-		HashMap<UUID, ArrayList<Receipt>> larrMap;
+		Client[] larrAux;
+		HashMap<UUID, ArrayList<Client>> larrMap;
 		int i;
 		UUID lidManager;
 		GenericElement[] larrResult;
 
-		larrAux = getHistoryForOperation(parrParams);
+		larrAux = getPortfolio(parrParams);
 
-		larrMap = new HashMap<UUID, ArrayList<Receipt>>();
+		larrMap = new HashMap<UUID, ArrayList<Client>>();
 		for ( i = 0; i < larrAux.length; i++ )
 		{
 			try
 			{
-				lidManager = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrAux[i].getAbsolutePolicy().GetProcessID()).GetManagerID();
+				lidManager = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrAux[i].GetProcessID()).GetManagerID();
 			}
 			catch (Throwable e)
 			{
@@ -46,13 +47,13 @@ public class ReceiptHistoryPayment
 			}
 
 			if ( larrMap.get(lidManager) == null )
-				larrMap.put(lidManager, new ArrayList<Receipt>());
+				larrMap.put(lidManager, new ArrayList<Client>());
 			larrMap.get(lidManager).add(larrAux[i]);
 		}
 
 		larrResult = new GenericElement[larrMap.size() + 1];
 
-		larrResult[0] = buildHeaderSection("Histórico de Pagamentos", larrAux, larrMap.size());
+		larrResult[0] = buildHeaderSection("Carteira Global de Clientes", larrAux, larrMap.size());
 
 		i = 1;
 		for ( UUID lid: larrMap.keySet() )
@@ -75,55 +76,37 @@ public class ReceiptHistoryPayment
 		return larrResult;
 	}
 
-	protected Receipt[] getHistoryForOperation(String[] parrParams)
+	protected Client[] getPortfolio(String[] parrParams)
 		throws BigBangJewelException
 	{
 		StringBuilder lstrSQL;
-		ArrayList<Receipt> larrAux;
-		IEntity lrefReceipts, lrefLogs;
+		ArrayList<Client> larrAux;
+		IEntity lrefClients;
 		MasterDB ldb;
-		ResultSet lrsReceipts;
+		ResultSet lrsClients;
 
-		larrAux = new ArrayList<Receipt>();
+		larrAux = new ArrayList<Client>();
 
 		try
 		{
-			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
-			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
+			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
 
 			lstrSQL = new StringBuilder();
 			lstrSQL.append("SELECT * FROM (")
-					.append(lrefReceipts.SQLForSelectAll()).append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(")
-					.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
-							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_Payment, false}, null))
-					.append(") [AuxLogs] WHERE 1=1");
+					.append(lrefClients.SQLForSelectAll()).append(") [AuxCli] WHERE 1=1");
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		if ( parrParams[4] != null )
-			lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[4]).append("'");
-
-		if ( parrParams[5] != null )
-			lstrSQL.append(" AND [Timestamp] < DATEADD(d, 1, '").append(parrParams[5]).append("')");
-
-		lstrSQL.append(")");
-
 		if ( parrParams[0] != null )
-			filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
+			filterByClientGroup(lstrSQL, UUID.fromString(parrParams[0]));
 
 		if ( parrParams[1] != null )
-			filterByClientGroup(lstrSQL, UUID.fromString(parrParams[1]));
+			filterByAgent(lstrSQL, UUID.fromString(parrParams[1]));
 
-		if ( parrParams[2] != null )
-			filterByAgent(lstrSQL, UUID.fromString(parrParams[2]));
-
-		if ( parrParams[3] != null )
-			filterByCompany(lstrSQL, UUID.fromString(parrParams[3]));
-
-		larrAux = new ArrayList<Receipt>();
+		larrAux = new ArrayList<Client>();
 
 		try
 		{
@@ -136,7 +119,7 @@ public class ReceiptHistoryPayment
 
 		try
 		{
-			lrsReceipts = ldb.OpenRecordset(lstrSQL.toString());
+			lrsClients = ldb.OpenRecordset(lstrSQL.toString());
 		}
 		catch (Throwable e)
 		{
@@ -146,19 +129,19 @@ public class ReceiptHistoryPayment
 
 		try
 		{
-			while ( lrsReceipts.next() )
-				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts));
+			while ( lrsClients.next() )
+				larrAux.add(Client.GetInstance(Engine.getCurrentNameSpace(), lrsClients));
 		}
 		catch (Throwable e)
 		{
-			try { lrsReceipts.close(); } catch (SQLException e1) {}
+			try { lrsClients.close(); } catch (SQLException e1) {}
 			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
-			lrsReceipts.close();
+			lrsClients.close();
 		}
 		catch (Throwable e)
 		{
@@ -175,6 +158,6 @@ public class ReceiptHistoryPayment
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new Receipt[larrAux.size()]);
+		return larrAux.toArray(new Client[larrAux.size()]);
 	}
 }

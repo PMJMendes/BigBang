@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Listings;
+package com.premiumminds.BigBang.Jewel.Listings.Receipt;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -25,10 +25,10 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
-import Jewel.Petri.Interfaces.ILog;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
@@ -36,7 +36,7 @@ import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Objects.Template;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
-public class ReceiptExternPendingPayment
+public class ReceiptExternAuditPending
 	extends ReceiptListingsBase
 {
 	public GenericElement[] doReport(String[] parrParams)
@@ -45,14 +45,15 @@ public class ReceiptExternPendingPayment
 		Receipt[] larrAux;
 		GenericElement[] larrResult;
 
-		if ( ((parrParams[0] == null) || "".equals(parrParams[0])) && ((parrParams[1] == null) || "".equals(parrParams[1])) )
+		if ( ((parrParams[0] == null) || "".equals(parrParams[0])) || ((parrParams[1] == null) || "".equals(parrParams[1])) )
 			return doNotValid();
 
 		larrAux = getPendingForOperation(parrParams);
 
 		larrResult = new GenericElement[2];
 
-		larrResult[0] = buildHeaderSection();
+		larrResult[0] = buildHeaderSection(Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(parrParams[0])).getLabel(),
+				Integer.parseInt(parrParams[1]));
 
 		try
 		{
@@ -75,19 +76,43 @@ public class ReceiptExternPendingPayment
 	{
 		StringBuilder lstrSQL;
 		ArrayList<Receipt> larrAux;
-		IEntity lrefReceipts, lrefSteps;
+		IEntity lrefReceipts, lrefLogs, lrefSteps;
 		MasterDB ldb;
 		ResultSet lrsReceipts;
+
+		larrAux = new ArrayList<Receipt>();
 
 		try
 		{
 			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
+			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
 			lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNStep));
 
 			lstrSQL = new StringBuilder();
 			lstrSQL.append("SELECT * FROM (")
-					.append(lrefReceipts.SQLForSelectAll())
-					.append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM (")
+					.append(lrefReceipts.SQLForSelectAll()).append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(")
+					.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
+							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_CreatePaymentNotice, false}, null))
+					.append(") [AuxLogs] WHERE 1=1");
+
+			if ( parrParams[1] != null )
+			{
+				lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[1]).append("-01-01'");
+				lstrSQL.append(" AND [Timestamp] < '").append(Integer.parseInt(parrParams[1]) + 1).append("-01-01'");
+
+				lstrSQL.append(") AND ([Process] IN (SELECT [Process] FROM(")
+						.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
+								Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_Payment, false}, null))
+						.append(") [AuxLogs] WHERE 1=1");
+
+				lstrSQL.append(" AND [Timestamp] >= '").append(Integer.parseInt(parrParams[1]) + 1).append("-01-01'");
+
+				lstrSQL.append(") OR ");
+			}
+			else
+				lstrSQL.append(") AND (");
+
+			lstrSQL.append("[Process] IN (SELECT [Process] FROM (")
 					.append(lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step,
 							Jewel.Petri.Constants.FKLevel_In_Step}, new java.lang.Object[] {Constants.OPID_Receipt_Payment,
 							Constants.UrgID_Pending}, null))
@@ -95,7 +120,7 @@ public class ReceiptExternPendingPayment
 					.append(lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step,
 							Jewel.Petri.Constants.FKLevel_In_Step}, new java.lang.Object[] {Constants.OPID_Receipt_ExternAllowSendPayment,
 							Constants.UrgID_Valid}, null))
-					.append(") [AuxSteps])");
+					.append(") [AuxSteps]) )");
 		}
 		catch (Throwable e)
 		{
@@ -104,8 +129,6 @@ public class ReceiptExternPendingPayment
 
 		if ( parrParams[0] != null )
 			filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
-		if ( parrParams[1] != null )
-			filterByClientGroup(lstrSQL, UUID.fromString(parrParams[1]));
 
 		larrAux = new ArrayList<Receipt>();
 
@@ -162,7 +185,7 @@ public class ReceiptExternPendingPayment
 		return larrAux.toArray(new Receipt[larrAux.size()]);
 	}
 
-	protected Table buildHeaderSection()
+	protected Table buildHeaderSection(String pstrClient, int plngYear)
 		throws BigBangJewelException
 	{
 		Table ltbl;
@@ -205,7 +228,9 @@ public class ReceiptExternPendingPayment
 		lobjDiv.setStyle("font-size: small;");
 		larrCells[1].addElementToRegistry(lobjDiv);
 		larrCells[1].setAlign("right");
-		lobjDiv.addElementToRegistry(new Strong("Recibos Pendentes de Regularização"));
+		lobjDiv.addElementToRegistry(new Strong(pstrClient));
+		lobjDiv.addElementToRegistry(new BR());
+		lobjDiv.addElementToRegistry("Recibos pendentes à data de 31-12-" + plngYear);
 		lobjDiv.addElementToRegistry(new BR());
 		lobjDiv.addElementToRegistry(ReportBuilder.BuildValue(TypeDefGUIDs.T_Date, new Timestamp(new java.util.Date().getTime())));
 
@@ -292,34 +317,31 @@ public class ReceiptExternPendingPayment
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[9];
+		larrCells = new TD[8];
 
-		larrCells[0] = ReportBuilder.buildHeaderCell("Cliente");
+		larrCells[0] = ReportBuilder.buildHeaderCell("Recibo");
 		ReportBuilder.styleCell(larrCells[0], false, false);
 
-		larrCells[1] = ReportBuilder.buildHeaderCell("Apólice");
+		larrCells[1] = ReportBuilder.buildHeaderCell("Ramo");
 		ReportBuilder.styleCell(larrCells[1], false, true);
 
-		larrCells[2] = ReportBuilder.buildHeaderCell("Recibo");
+		larrCells[2] = ReportBuilder.buildHeaderCell("Comp");
 		ReportBuilder.styleCell(larrCells[2], false, true);
 
-		larrCells[3] = ReportBuilder.buildHeaderCell("Comp");
+		larrCells[3] = ReportBuilder.buildHeaderCell("Apólice");
 		ReportBuilder.styleCell(larrCells[3], false, true);
 
-		larrCells[4] = ReportBuilder.buildHeaderCell("Ramo");
+		larrCells[4] = ReportBuilder.buildHeaderCell("Prémio");
 		ReportBuilder.styleCell(larrCells[4], false, true);
 
-		larrCells[5] = ReportBuilder.buildHeaderCell("Prémio");
+		larrCells[5] = ReportBuilder.buildHeaderCell("Data Início");
 		ReportBuilder.styleCell(larrCells[5], false, true);
 
-		larrCells[6] = ReportBuilder.buildHeaderCell("Data Limite");
+		larrCells[6] = ReportBuilder.buildHeaderCell("Data Fim");
 		ReportBuilder.styleCell(larrCells[6], false, true);
 
-		larrCells[7] = ReportBuilder.buildHeaderCell("Data Aviso");
+		larrCells[7] = ReportBuilder.buildHeaderCell("Data Limite");
 		ReportBuilder.styleCell(larrCells[7], false, true);
-
-		larrCells[8] = ReportBuilder.buildHeaderCell("Descrição");
-		ReportBuilder.styleCell(larrCells[8], false, true);
 
 		setWidths(larrCells);
 
@@ -329,13 +351,10 @@ public class ReceiptExternPendingPayment
 	protected TD[] buildRow(Receipt pobjReceipt)
 		throws BigBangJewelException
 	{
-		Client lobjClient;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
-		ILog lobjLog;
 		TD[] larrCells;
 
-		lobjClient = pobjReceipt.getClient();
 		lobjPolicy = pobjReceipt.getDirectPolicy();
 
 		if ( lobjPolicy == null )
@@ -348,36 +367,31 @@ public class ReceiptExternPendingPayment
 			lobjSubPolicy = null;
 		}
 
-		lobjLog = pobjReceipt.getNoticeLog();
+		larrCells = new TD[8];
 
-		larrCells = new TD[9];
-
-		larrCells[0] = ReportBuilder.buildCell(lobjClient.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[0] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.NUMBER), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
 
-		larrCells[1] = ReportBuilder.buildCell(lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[1] = ReportBuilder.buildCell(lobjPolicy.GetSubLine().getDescription(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[1], true, true);
 
-		larrCells[2] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.NUMBER), TypeDefGUIDs.T_String);
+		larrCells[2] = ReportBuilder.buildCell(lobjPolicy.GetCompany().getAt(1), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[2], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell(lobjPolicy.GetCompany().getAt(1), TypeDefGUIDs.T_String);
+		larrCells[3] = ReportBuilder.buildCell(lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(lobjPolicy.GetSubLine().getDescription(), TypeDefGUIDs.T_String);
+		larrCells[4] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal, true);
 		ReportBuilder.styleCell(larrCells[4], true, true);
 
-		larrCells[5] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal, true);
+		larrCells[5] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.MATURITYDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
-		larrCells[6] = ReportBuilder.buildCell(pobjReceipt.getExternalDueDate(), TypeDefGUIDs.T_String);
+		larrCells[6] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.ENDDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[6], true, true);
 
-		larrCells[7] = ReportBuilder.buildCell((lobjLog == null ? null : lobjLog.GetTimestamp()), TypeDefGUIDs.T_Date);
+		larrCells[7] = ReportBuilder.buildCell(pobjReceipt.getExternalDueDate(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[7], true, true);
-
-		larrCells[8] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.DESCRIPTION) == null ? "" : pobjReceipt.getAt(Receipt.I.DESCRIPTION), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[8], true, true);
 
 		setWidths(larrCells);
 
@@ -386,15 +400,14 @@ public class ReceiptExternPendingPayment
 
 	protected void setWidths(TD[] parrCells)
 	{
-		parrCells[ 0].setWidth(140);
-		parrCells[ 1].setWidth(130);
-		parrCells[ 2].setWidth(100);
-		parrCells[ 3].setWidth( 60);
-		parrCells[ 4].setWidth(170);
-		parrCells[ 5].setWidth( 80);
-		parrCells[ 6].setWidth( 90);
+		parrCells[ 0].setWidth(100);
+		parrCells[ 1].setWidth(170);
+		parrCells[ 2].setWidth( 60);
+		parrCells[ 3].setWidth(130);
+		parrCells[ 4].setWidth( 80);
+		parrCells[ 5].setWidth(110);
+		parrCells[ 6].setWidth(110);
 		parrCells[ 7].setWidth(110);
-		parrCells[ 8].setWidth(140);
 	}
 
 	private GenericElement[] doNotValid()
@@ -403,7 +416,7 @@ public class ReceiptExternPendingPayment
 		Table ltbl;
 
 		larrRows = new TR[1];
-		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Tem que indicar o cliente ou grupo pretendido.");
+		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Tem que indicar o cliente e o ano pretendido.");
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);

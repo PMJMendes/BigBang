@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Listings;
+package com.premiumminds.BigBang.Jewel.Listings.Receipt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,9 +17,10 @@ import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
-public class ReceiptPendingInsurerAccounting
+public class ReceiptHistoryMediatorAccounting
 	extends ReceiptListingsBase
 {
 	public GenericElement[] doReport(String[] parrParams)
@@ -31,7 +32,7 @@ public class ReceiptPendingInsurerAccounting
 		UUID lidManager;
 		GenericElement[] larrResult;
 
-		larrAux = getPendingForOperation(parrParams);
+		larrAux = getHistoryForOperation(parrParams);
 
 		larrMap = new HashMap<UUID, ArrayList<Receipt>>();
 		for ( i = 0; i < larrAux.length; i++ )
@@ -52,7 +53,7 @@ public class ReceiptPendingInsurerAccounting
 
 		larrResult = new GenericElement[larrMap.size() + 1];
 
-		larrResult[0] = buildHeaderSection("Recibos Pendentes de Prestação de Contas", larrAux, larrMap.size());
+		larrResult[0] = buildHeaderSection("Histórico de Retrocessões", larrAux, larrMap.size());
 
 		i = 1;
 		for ( UUID lid: larrMap.keySet() )
@@ -75,30 +76,41 @@ public class ReceiptPendingInsurerAccounting
 		return larrResult;
 	}
 
-	protected Receipt[] getPendingForOperation(String[] parrParams)
+	protected Receipt[] getHistoryForOperation(String[] parrParams)
 		throws BigBangJewelException
 	{
 		StringBuilder lstrSQL;
 		ArrayList<Receipt> larrAux;
-		IEntity lrefReceipts, lrefSteps;
+		IEntity lrefReceipts, lrefLogs;
 		MasterDB ldb;
 		ResultSet lrsReceipts;
+
+		larrAux = new ArrayList<Receipt>();
 
 		try
 		{
 			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
-			lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNStep));
+			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
 
 			lstrSQL = new StringBuilder();
-			lstrSQL.append("SELECT * FROM (" +
-					lrefReceipts.SQLForSelectAll() + ") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(" + 
-					lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step, Jewel.Petri.Constants.FKLevel_In_Step},
-					new java.lang.Object[] {Constants.OPID_Receipt_InsurerAccounting, Constants.UrgID_Pending}, null) + ") [AuxSteps])");
+			lstrSQL.append("SELECT * FROM (")
+					.append(lrefReceipts.SQLForSelectAll()).append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(")
+					.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
+							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_MediatorAccounting, false}, null))
+					.append(") [AuxLogs] WHERE 1=1");
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+
+		if ( parrParams[4] != null )
+			lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[4]).append("'");
+
+		if ( parrParams[5] != null )
+			lstrSQL.append(" AND [Timestamp] < DATEADD(d, 1, '").append(parrParams[5]).append("')");
+
+		lstrSQL.append(")");
 
 		if ( parrParams[0] != null )
 			filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
@@ -111,18 +123,6 @@ public class ReceiptPendingInsurerAccounting
 
 		if ( parrParams[3] != null )
 			filterByCompany(lstrSQL, UUID.fromString(parrParams[3]));
-
-		if ( parrParams[4] != null )
-			lstrSQL.append(" AND [Maturity Date] >= '").append(parrParams[4]).append("'");
-
-		if ( parrParams[5] != null )
-			lstrSQL.append(" AND [Maturity Date] < DATEADD(d, 1, '").append(parrParams[5]).append("')");
-
-		if ( parrParams[6] != null )
-			lstrSQL.append(" AND [Due Date] >= '").append(parrParams[6]).append("'");
-
-		if ( parrParams[7] != null )
-			lstrSQL.append(" AND [Due Date] < DATEADD(d, 1, '").append(parrParams[7]).append("')");
 
 		larrAux = new ArrayList<Receipt>();
 

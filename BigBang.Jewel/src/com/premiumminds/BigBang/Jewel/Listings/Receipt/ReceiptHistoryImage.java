@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Listings;
+package com.premiumminds.BigBang.Jewel.Listings.Receipt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,9 +17,10 @@ import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ReceiptListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
-public class ReceiptHistorySendReceipt
+public class ReceiptHistoryImage
 	extends ReceiptListingsBase
 {
 	public GenericElement[] doReport(String[] parrParams)
@@ -52,7 +53,7 @@ public class ReceiptHistorySendReceipt
 
 		larrResult = new GenericElement[larrMap.size() + 1];
 
-		larrResult[0] = buildHeaderSection("Histórico de Envio de Recibos Pagos", larrAux, larrMap.size());
+		larrResult[0] = buildHeaderSection("Histórico de Recepção de Recibos", larrAux, larrMap.size());
 
 		i = 1;
 		for ( UUID lid: larrMap.keySet() )
@@ -95,7 +96,7 @@ public class ReceiptHistorySendReceipt
 			lstrSQL.append("SELECT * FROM (")
 					.append(lrefReceipts.SQLForSelectAll()).append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(")
 					.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
-							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_SendReceipt, false}, null))
+							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_ReceiveImage, false}, null))
 					.append(") [AuxLogs] WHERE 1=1");
 		}
 		catch (Throwable e)
