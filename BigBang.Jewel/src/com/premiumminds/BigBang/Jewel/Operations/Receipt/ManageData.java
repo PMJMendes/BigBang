@@ -88,6 +88,9 @@ public class ManageData
 				mobjData.mlngEntryNumber = mobjData.mobjPrevValues.mlngEntryNumber;
 				mobjData.mlngEntryYear = mobjData.mobjPrevValues.mlngEntryYear;
 				mobjData.midStatus = mobjData.mobjPrevValues.midStatus;
+				mobjData.midPolicy = mobjData.mobjPrevValues.midPolicy;
+				mobjData.midSubPolicy = mobjData.mobjPrevValues.midSubPolicy;
+				mobjData.midSubCasualty = mobjData.mobjPrevValues.midSubCasualty;
 				mobjData.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
 			}
@@ -161,6 +164,10 @@ public class ManageData
 				lidOwner = mobjData.mid;
 
 				lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+
+				mobjData.mobjPrevValues.midPolicy = (UUID)lobjAux.getAt(Receipt.I.POLICY);
+				mobjData.mobjPrevValues.midSubPolicy = (UUID)lobjAux.getAt(Receipt.I.SUBPOLICY);
+				mobjData.mobjPrevValues.midSubCasualty = (UUID)lobjAux.getAt(Receipt.I.SUBCASUALTY);
 
 				mobjData.mobjPrevValues.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);

@@ -38,6 +38,9 @@ public class ReceiptData
 	public Integer mlngEntryNumber;
 	public Integer mlngEntryYear;
 	public UUID midStatus;
+	public UUID midPolicy;
+	public UUID midSubPolicy;
+	public UUID midSubCasualty;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -69,6 +72,9 @@ public class ReceiptData
 		mlngEntryNumber =      (Integer)pobjSource.getAt(Receipt.I.ENTRYNUMBER);
 		mlngEntryYear =        (Integer)pobjSource.getAt(Receipt.I.ENTRYYEAR);
 		midStatus =               (UUID)pobjSource.getAt(Receipt.I.STATUS);
+		midPolicy =               (UUID)pobjSource.getAt(Receipt.I.POLICY);
+		midSubPolicy =            (UUID)pobjSource.getAt(Receipt.I.SUBPOLICY);
+		midSubCasualty =          (UUID)pobjSource.getAt(Receipt.I.SUBCASUALTY);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -97,6 +103,9 @@ public class ReceiptData
 			pobjDest.setAt(Receipt.I.ENTRYNUMBER,       mlngEntryNumber);
 			pobjDest.setAt(Receipt.I.ENTRYYEAR,         mlngEntryYear);
 			pobjDest.setAt(Receipt.I.STATUS,            midStatus);
+			pobjDest.setAt(Receipt.I.POLICY,            midPolicy);
+			pobjDest.setAt(Receipt.I.SUBPOLICY,         midSubPolicy);
+			pobjDest.setAt(Receipt.I.SUBCASUALTY,       midSubCasualty);
 		}
 		catch (Throwable e)
 		{

@@ -354,4 +354,33 @@ public class SubCasualty
     {
     	return Casualty.GetInstance(getNameSpace(), (UUID)getAt(I.CASUALTY));
     }
+
+    public Policy GetPolicy()
+    	throws BigBangJewelException
+    {
+    	return Policy.GetInstance(getNameSpace(), (UUID)getAt(I.POLICY));
+    }
+
+    public SubPolicy GetSubPolicy()
+    	throws BigBangJewelException
+    {
+    	return SubPolicy.GetInstance(getNameSpace(), (UUID)getAt(I.SUBPOLICY));
+    }
+
+    public Policy getAbsolutePolicy()
+    	throws BigBangJewelException
+    {
+    	Policy lobjAux;
+    	SubPolicy lobjSPAux;
+
+    	lobjAux = GetPolicy();
+    	if ( lobjAux != null )
+    		return lobjAux;
+
+    	lobjSPAux = GetSubPolicy();
+    	if ( lobjSPAux != null )
+    		return lobjSPAux.GetOwner();
+
+    	return null;
+    }
 }

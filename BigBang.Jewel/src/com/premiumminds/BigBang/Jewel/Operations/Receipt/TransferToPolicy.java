@@ -7,7 +7,7 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class TransferToPolicy
 	extends UndoableOperation
@@ -48,18 +48,46 @@ public class TransferToPolicy
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Policy lobjOld, lobjNew;
+		Receipt lobjReceipt;
+		UUID lidScript;
+
+		midReceipt = GetProcess().GetDataKey();
 
 		midOldProcess = GetProcess().GetParent().getKey();
-		lobjOld = (Policy)GetProcess().GetParent().GetData();
-		mstrOld = lobjOld.getLabel();
+		mstrOld = GetProcess().GetParent().GetData().getLabel();
 
 		GetProcess().SetParentProcId(midNewProcess, pdb);
 
-		lobjNew = (Policy)GetProcess().GetParent().GetData();
-		mstrNew = lobjNew.getLabel();
+		mstrNew = GetProcess().GetParent().GetData().getLabel();
 
-		midReceipt = GetProcess().GetDataKey();
+		lidScript = GetProcess().GetParent().GetScriptID();
+		lobjReceipt = (Receipt)GetProcess().GetData();
+		try
+		{
+			if ( Constants.ProcID_Policy.equals(lidScript) )
+			{
+				lobjReceipt.setAt(Receipt.I.POLICY, GetProcess().GetParent().GetDataKey());
+				lobjReceipt.setAt(Receipt.I.SUBPOLICY, null);
+				lobjReceipt.setAt(Receipt.I.SUBCASUALTY, null);
+			}
+			else if ( Constants.ProcID_SubPolicy.equals(lidScript) )
+			{
+				lobjReceipt.setAt(Receipt.I.SUBPOLICY, GetProcess().GetParent().GetDataKey());
+				lobjReceipt.setAt(Receipt.I.POLICY, null);
+				lobjReceipt.setAt(Receipt.I.SUBCASUALTY, null);
+			}
+			else if ( Constants.ProcID_SubCasualty.equals(lidScript) )
+			{
+				lobjReceipt.setAt(Receipt.I.SUBCASUALTY, GetProcess().GetParent().GetDataKey());
+				lobjReceipt.setAt(Receipt.I.POLICY, null);
+				lobjReceipt.setAt(Receipt.I.SUBPOLICY, null);
+			} 
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -75,7 +103,39 @@ public class TransferToPolicy
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Receipt lobjReceipt;
+		UUID lidScript;
+
 		GetProcess().SetParentProcId(midOldProcess, pdb);
+
+		lidScript = GetProcess().GetParent().GetScriptID();
+		lobjReceipt = (Receipt)GetProcess().GetData();
+		try
+		{
+			if ( Constants.ProcID_Policy.equals(lidScript) )
+			{
+				lobjReceipt.setAt(Receipt.I.POLICY, GetProcess().GetParent().GetDataKey());
+				lobjReceipt.setAt(Receipt.I.SUBPOLICY, null);
+				lobjReceipt.setAt(Receipt.I.SUBCASUALTY, null);
+			}
+			else if ( Constants.ProcID_SubPolicy.equals(lidScript) )
+			{
+				lobjReceipt.setAt(Receipt.I.SUBPOLICY, GetProcess().GetParent().GetDataKey());
+				lobjReceipt.setAt(Receipt.I.POLICY, null);
+				lobjReceipt.setAt(Receipt.I.SUBCASUALTY, null);
+			}
+			else if ( Constants.ProcID_SubCasualty.equals(lidScript) )
+			{
+				lobjReceipt.setAt(Receipt.I.SUBCASUALTY, GetProcess().GetParent().GetDataKey());
+				lobjReceipt.setAt(Receipt.I.POLICY, null);
+				lobjReceipt.setAt(Receipt.I.SUBPOLICY, null);
+			} 
+			lobjReceipt.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	public UndoSet[] GetSets()
@@ -88,5 +148,4 @@ public class TransferToPolicy
 
 		return new UndoSet[]{lobjSet};
 	}
-
 }

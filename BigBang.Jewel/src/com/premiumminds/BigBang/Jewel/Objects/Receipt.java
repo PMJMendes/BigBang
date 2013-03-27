@@ -83,6 +83,9 @@ public class Receipt
 		public static final int ENTRYNUMBER       = 20;
 		public static final int ENTRYYEAR         = 21;
 		public static final int STATUS            = 22;
+		public static final int POLICY            = 23;
+		public static final int SUBPOLICY         = 24;
+		public static final int SUBCASUALTY       = 25;
 	}
 
     public static Receipt GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -562,100 +565,75 @@ public class Receipt
 		}
     }
 
+    public SubCasualty getSubCasualty()
+    	throws BigBangJewelException
+    {
+    	if ( getAt(I.SUBCASUALTY) == null )
+    		return null;
+
+    	return SubCasualty.GetInstance(getNameSpace(), (UUID)getAt(I.SUBCASUALTY));
+    }
+
     public SubPolicy getSubPolicy()
     	throws BigBangJewelException
     {
-    	IProcess lobjProcess;
+    	if ( getAt(I.SUBPOLICY) == null )
+    		return null;
 
-    	try
-    	{
-			lobjProcess = getProcess().GetParent();
-
-	    	if ( Constants.ProcID_SubPolicy.equals(lobjProcess.GetScriptID()) )
-	    		return (SubPolicy)lobjProcess.GetData();
-		}
-    	catch (BigBangJewelException e)
-    	{
-    		throw e;
-		}
-    	catch (Throwable e)
-    	{
-    		throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-    	return null;
+    	return SubPolicy.GetInstance(getNameSpace(), (UUID)getAt(I.SUBPOLICY));
     }
 
     public Policy getDirectPolicy()
     	throws BigBangJewelException
     {
-    	IProcess lobjProcess;
+    	if ( getAt(I.POLICY) == null )
+    		return null;
 
-    	try
-    	{
-			lobjProcess = getProcess().GetParent();
-
-	    	if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
-	    		return (Policy)lobjProcess.GetData();
-		}
-    	catch (BigBangJewelException e)
-    	{
-    		throw e;
-		}
-    	catch (Throwable e)
-    	{
-    		throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-    	return null;
+    	return Policy.GetInstance(getNameSpace(), (UUID)getAt(I.POLICY));
     }
 
     public Policy getAbsolutePolicy()
     	throws BigBangJewelException
     {
-    	IProcess lobjProcess;
+    	Policy lobjAux;
+    	SubPolicy lobjSPAux;
+    	SubCasualty lobjSCAux;
 
-    	try
-    	{
-			lobjProcess = getProcess().GetParent();
+    	lobjAux = getDirectPolicy();
+    	if ( lobjAux != null )
+    		return lobjAux;
 
-	    	if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
-	    		return (Policy)lobjProcess.GetData();
+    	lobjSPAux = getSubPolicy();
+    	if ( lobjSPAux != null )
+    		return lobjSPAux.GetOwner();
 
-	    	return (Policy)lobjProcess.GetParent().GetData();
-		}
-    	catch (BigBangJewelException e)
-    	{
-    		throw e;
-		}
-    	catch (Throwable e)
-    	{
-    		throw new BigBangJewelException(e.getMessage(), e);
-		}
+    	lobjSCAux = getSubCasualty();
+    	if ( lobjSCAux != null )
+    		return lobjSCAux.getAbsolutePolicy();
+
+    	return null;
     }
 
     public Client getClient()
         throws BigBangJewelException
     {
-    	IProcess lobjProcess;
+    	Policy lobjAux;
+    	SubPolicy lobjSPAux;
+    	SubCasualty lobjSCAux;
 
-    	try
-    	{
-			lobjProcess = getProcess().GetParent();
+    	lobjAux = getDirectPolicy();
+    	if ( lobjAux != null )
+    		return lobjAux.GetClient();
 
-	    	if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
-	    		return (Client)lobjProcess.GetParent().GetData();
+    	lobjSPAux = getSubPolicy();
+    	if ( lobjSPAux != null )
+    		return lobjSPAux.GetClient();
 
-	    	return ((SubPolicy)lobjProcess.GetData()).GetClient();
-		}
-    	catch (BigBangJewelException e)
-    	{
-    		throw e;
-		}
-    	catch (Throwable e)
-    	{
-    		throw new BigBangJewelException(e.getMessage(), e);
-		}
+    	lobjSCAux = getSubCasualty();
+    	if ( lobjSCAux != null )
+    		return lobjSCAux.GetCasualty().GetClient();
+
+    	return null;
     }
 
     public Mediator getMediator()

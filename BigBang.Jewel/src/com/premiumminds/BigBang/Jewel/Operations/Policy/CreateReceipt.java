@@ -49,4 +49,20 @@ public class CreateReceipt
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
+
+	public void LinkData()
+		throws BigBangJewelException
+	{
+		mobjData.midSubPolicy = null;
+		mobjData.midSubCasualty = null;
+
+		try
+		{
+			mobjData.midPolicy = GetProcess().GetDataKey();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
 }

@@ -40,6 +40,8 @@ public abstract class CreateReceiptBase
 
 	public abstract UUID GetMediatorID() throws BigBangJewelException;
 
+	public abstract void LinkData() throws BigBangJewelException;
+
 	public CreateReceiptBase(UUID pidProcess)
 	{
 		super(pidProcess);
@@ -91,6 +93,7 @@ public abstract class CreateReceiptBase
 		{
 			lobjMe = GetProcess();
 
+			LinkData();
 			mobjData.midStatus = Constants.StatusID_Initial;
 
 			if ( mobjData.midManager == null )

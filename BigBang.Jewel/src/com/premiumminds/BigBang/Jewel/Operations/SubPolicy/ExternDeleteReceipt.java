@@ -160,6 +160,10 @@ public class ExternDeleteReceipt
 
 		try
 		{
+			mobjData.midSubPolicy = GetProcess().GetDataKey();
+			mobjData.midPolicy = null;
+			mobjData.midSubCasualty = null;
+
 			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
