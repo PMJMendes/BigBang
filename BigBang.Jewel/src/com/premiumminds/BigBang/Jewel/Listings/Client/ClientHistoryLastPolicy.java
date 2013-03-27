@@ -53,7 +53,7 @@ public class ClientHistoryLastPolicy
 
 		larrResult = new GenericElement[larrMap.size() + 1];
 
-		larrResult[0] = buildHeaderSection("Histórico de Criação de Clientes", larrAux, larrMap.size());
+		larrResult[0] = buildHeaderSection("Histórico de Criação de Última Apólice", larrAux, larrMap.size());
 
 		i = 1;
 		for ( UUID lid: larrMap.keySet() )

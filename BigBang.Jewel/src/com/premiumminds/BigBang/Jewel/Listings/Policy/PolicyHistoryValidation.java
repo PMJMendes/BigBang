@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Listings.Client;
+package com.premiumminds.BigBang.Jewel.Listings.Policy;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,24 +17,24 @@ import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Listings.ClientListingsBase;
-import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Listings.PolicyListingsBase;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 
-public class ClientHistoryFirstPolicy
-	extends ClientListingsBase
+public class PolicyHistoryValidation
+	extends PolicyListingsBase
 {
 	public GenericElement[] doReport(String[] parrParams)
 		throws BigBangJewelException
 	{
-		Client[] larrAux;
-		HashMap<UUID, ArrayList<Client>> larrMap;
+		Policy[] larrAux;
+		HashMap<UUID, ArrayList<Policy>> larrMap;
 		int i;
 		UUID lidManager;
 		GenericElement[] larrResult;
 
 		larrAux = getHistoryForOperation(parrParams);
 
-		larrMap = new HashMap<UUID, ArrayList<Client>>();
+		larrMap = new HashMap<UUID, ArrayList<Policy>>();
 		for ( i = 0; i < larrAux.length; i++ )
 		{
 			try
@@ -47,13 +47,13 @@ public class ClientHistoryFirstPolicy
 			}
 
 			if ( larrMap.get(lidManager) == null )
-				larrMap.put(lidManager, new ArrayList<Client>());
+				larrMap.put(lidManager, new ArrayList<Policy>());
 			larrMap.get(lidManager).add(larrAux[i]);
 		}
 
 		larrResult = new GenericElement[larrMap.size() + 1];
 
-		larrResult[0] = buildHeaderSection("Histórico de Criação de Primeira Apólice", larrAux, larrMap.size());
+		larrResult[0] = buildHeaderSection("Histórico de Validação de Apólices", larrAux, larrMap.size());
 
 		i = 1;
 		for ( UUID lid: larrMap.keySet() )
@@ -76,55 +76,55 @@ public class ClientHistoryFirstPolicy
 		return larrResult;
 	}
 
-	protected Client[] getHistoryForOperation(String[] parrParams)
+	protected Policy[] getHistoryForOperation(String[] parrParams)
 		throws BigBangJewelException
 	{
 		StringBuilder lstrSQL;
-		ArrayList<Client> larrAux;
-		IEntity lrefClients, lrefLogs;
+		ArrayList<Policy> larrAux;
+		IEntity lrefPolicies, lrefLogs;
 		MasterDB ldb;
-		ResultSet lrsClients;
-
-		larrAux = new ArrayList<Client>();
+		ResultSet lrsPolicies;
 
 		try
 		{
-			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
 			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
 
 			lstrSQL = new StringBuilder();
 			lstrSQL.append("SELECT * FROM (")
-					.append(lrefClients.SQLForSelectAll()).append(") [AuxCli] WHERE [Process] IN (SELECT [Process] FROM(")
+					.append(lrefPolicies.SQLForSelectAll()).append(") [AuxPol] WHERE [Process] IN (SELECT [Process] FROM(")
 					.append(lrefLogs.SQLForSelectByMembers(
 							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-							new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false},
+							new java.lang.Object[] {Constants.OPID_Policy_ValidatePolicy, false},
 							null))
-					.append(") [AuxLogs])");
-
-			if ( parrParams[2] != null )
-				lstrSQL.append(" AND (SELECT MIN([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
-						new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-						new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false}, null) + ") [AuxLogs2] " +
-						"WHERE [Process] = [AuxCli].[Process]) >= '").append(parrParams[2]).append("'");
-
-			if ( parrParams[3] != null )
-				lstrSQL.append(" AND (SELECT MIN([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
-						new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-						new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false}, null) + ") [AuxLogs2] " +
-						"WHERE [Process] = [AuxCli].[Process]) < DATEADD(d, 1, '").append(parrParams[3]).append("')");
+					.append(") [AuxLogs] WHERE 1=1");
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		if ( parrParams[4] != null )
+			lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[4]).append("'");
+
+		if ( parrParams[5] != null )
+			lstrSQL.append(" AND [Timestamp] < DATEADD(d, 1, '").append(parrParams[5]).append("')");
+
+		lstrSQL.append(")");
+
 		if ( parrParams[0] != null )
-			filterByClientGroup(lstrSQL, UUID.fromString(parrParams[0]));
+			filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
 
 		if ( parrParams[1] != null )
-			filterByAgent(lstrSQL, UUID.fromString(parrParams[1]));
+			filterByClientGroup(lstrSQL, UUID.fromString(parrParams[1]));
 
-		larrAux = new ArrayList<Client>();
+		if ( parrParams[2] != null )
+			filterByAgent(lstrSQL, UUID.fromString(parrParams[2]));
+
+		if ( parrParams[3] != null )
+			filterByCompany(lstrSQL, UUID.fromString(parrParams[3]));
+
+		larrAux = new ArrayList<Policy>();
 
 		try
 		{
@@ -137,7 +137,7 @@ public class ClientHistoryFirstPolicy
 
 		try
 		{
-			lrsClients = ldb.OpenRecordset(lstrSQL.toString());
+			lrsPolicies = ldb.OpenRecordset(lstrSQL.toString());
 		}
 		catch (Throwable e)
 		{
@@ -147,19 +147,19 @@ public class ClientHistoryFirstPolicy
 
 		try
 		{
-			while ( lrsClients.next() )
-				larrAux.add(Client.GetInstance(Engine.getCurrentNameSpace(), lrsClients));
+			while ( lrsPolicies.next() )
+				larrAux.add(Policy.GetInstance(Engine.getCurrentNameSpace(), lrsPolicies));
 		}
 		catch (Throwable e)
 		{
-			try { lrsClients.close(); } catch (SQLException e1) {}
+			try { lrsPolicies.close(); } catch (SQLException e1) {}
 			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
-			lrsClients.close();
+			lrsPolicies.close();
 		}
 		catch (Throwable e)
 		{
@@ -176,6 +176,6 @@ public class ClientHistoryFirstPolicy
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new Client[larrAux.size()]);
+		return larrAux.toArray(new Policy[larrAux.size()]);
 	}
 }

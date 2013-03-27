@@ -111,7 +111,7 @@ public class ReportBuilder
 
 	public static void styleCell(TD pcell, boolean pbAddTop, boolean pbAddLeft)
 	{
-		pcell.setStyle("white-space:nowrap;padding-left:5px;padding-right:5px;" +
+		pcell.setStyle("overflow:hidden;white-space:nowrap;padding-left:5px;padding-right:5px;" +
 				(pbAddTop ? "border-top:1px solid #3f6d9d;" : "") +
 				(pbAddLeft ? "border-left:1px solid #3f6d9d;" : ""));
 

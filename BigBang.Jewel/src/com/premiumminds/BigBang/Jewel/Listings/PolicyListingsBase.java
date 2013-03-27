@@ -32,6 +32,7 @@ public class PolicyListingsBase
 	protected static class PolicyMarkers
 	{
 		public Timestamp mdtLastRec;
+		public Timestamp mdtCreated;
 	}
 
 	protected HashMap<UUID, PolicyMarkers> mmapData;
@@ -127,7 +128,7 @@ public class PolicyListingsBase
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[14];
+		larrCells = new TD[15];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Número");
 		ReportBuilder.styleCell(larrCells[0], false, false);
@@ -144,32 +145,35 @@ public class PolicyListingsBase
 		larrCells[4] = ReportBuilder.buildHeaderCell("Perfil");
 		ReportBuilder.styleCell(larrCells[4], false, true);
 
-		larrCells[4] = ReportBuilder.buildHeaderCell("Prémio");
-		ReportBuilder.styleCell(larrCells[4], false, true);
-
-		larrCells[5] = ReportBuilder.buildHeaderCell("Início");
+		larrCells[5] = ReportBuilder.buildHeaderCell("Prémio");
 		ReportBuilder.styleCell(larrCells[5], false, true);
 
-		larrCells[6] = ReportBuilder.buildHeaderCell("Fim");
+		larrCells[6] = ReportBuilder.buildHeaderCell("Criação");
 		ReportBuilder.styleCell(larrCells[6], false, true);
 
-		larrCells[7] = ReportBuilder.buildHeaderCell("Vencimento");
+		larrCells[7] = ReportBuilder.buildHeaderCell("Início");
 		ReportBuilder.styleCell(larrCells[7], false, true);
 
-		larrCells[8] = ReportBuilder.buildHeaderCell("Mediador");
+		larrCells[8] = ReportBuilder.buildHeaderCell("Fim");
 		ReportBuilder.styleCell(larrCells[8], false, true);
 
-		larrCells[10] = ReportBuilder.buildHeaderCell("Estado");
+		larrCells[9] = ReportBuilder.buildHeaderCell("Venc. (M/D)");
+		ReportBuilder.styleCell(larrCells[9], false, true);
+
+		larrCells[10] = ReportBuilder.buildHeaderCell("Mediador");
 		ReportBuilder.styleCell(larrCells[10], false, true);
 
-		larrCells[11] = ReportBuilder.buildHeaderCell("Duração");
+		larrCells[11] = ReportBuilder.buildHeaderCell("Estado");
 		ReportBuilder.styleCell(larrCells[11], false, true);
 
-		larrCells[12] = ReportBuilder.buildHeaderCell("Fraccionamento");
+		larrCells[12] = ReportBuilder.buildHeaderCell("Duração");
 		ReportBuilder.styleCell(larrCells[12], false, true);
 
-		larrCells[13] = ReportBuilder.buildHeaderCell("Último Recibo");
+		larrCells[13] = ReportBuilder.buildHeaderCell("Fracc.");
 		ReportBuilder.styleCell(larrCells[13], false, true);
+
+		larrCells[14] = ReportBuilder.buildHeaderCell("Último recibo");
+		ReportBuilder.styleCell(larrCells[14], false, true);
 
 		setWidths(larrCells);
 
@@ -200,13 +204,13 @@ public class PolicyListingsBase
 					pobjPolicy.getProfile());
 			lstrMaturity = ((pobjPolicy.getAt(Policy.I.MATURITYMONTH) == null) || (pobjPolicy.getAt(Policy.I.MATURITYDAY) == null)) ?
 					null :
-					pobjPolicy.getAt(Policy.I.MATURITYMONTH).toString() + "-" + pobjPolicy.getAt(Policy.I.MATURITYDAY).toString();
+					pobjPolicy.getAt(Policy.I.MATURITYMONTH).toString() + " / " + pobjPolicy.getAt(Policy.I.MATURITYDAY).toString();
 			lobjMed = pobjPolicy.getMediator();
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
 					(UUID)pobjPolicy.getAt(Policy.I.STATUS));
-			lobjDur = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
+			lobjDur = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Durations),
 					(UUID)pobjPolicy.getAt(Policy.I.DURATION));
-			lobjFrac = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
+			lobjFrac = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Fractioning),
 					(UUID)pobjPolicy.getAt(Policy.I.FRACTIONING));
 		}
 		catch (Throwable e)
@@ -216,7 +220,7 @@ public class PolicyListingsBase
 
 		lobjMarkers = mmapData.get(pobjPolicy.getKey());
 
-		larrCells = new TD[14];
+		larrCells = new TD[15];
 
 		larrCells[0] = ReportBuilder.buildCell(pobjPolicy.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -236,29 +240,32 @@ public class PolicyListingsBase
 		larrCells[5] = ReportBuilder.buildCell(pobjPolicy.getAt(Policy.I.PREMIUM), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
-		larrCells[6] = ReportBuilder.buildCell(pobjPolicy.getAt(Policy.I.BEGINDATE), TypeDefGUIDs.T_Date);
+		larrCells[6] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtCreated, TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[6], true, true);
 
-		larrCells[7] = ReportBuilder.buildCell(pobjPolicy.getAt(Policy.I.ENDDATE), TypeDefGUIDs.T_Date);
+		larrCells[7] = ReportBuilder.buildCell(pobjPolicy.getAt(Policy.I.BEGINDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[7], true, true);
 
-		larrCells[8] = ReportBuilder.buildCell(lstrMaturity, TypeDefGUIDs.T_String);
+		larrCells[8] = ReportBuilder.buildCell(pobjPolicy.getAt(Policy.I.ENDDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[8], true, true);
 
-		larrCells[9] = ReportBuilder.buildCell(lobjMed.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[9] = ReportBuilder.buildCell(lstrMaturity, TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[9], true, true);
 
-		larrCells[10] = ReportBuilder.buildCell(lobjStatus.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[10] = ReportBuilder.buildCell(lobjMed.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[10], true, true);
 
-		larrCells[11] = ReportBuilder.buildCell(lobjDur.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[11] = ReportBuilder.buildCell(lobjStatus.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[11], true, true);
 
-		larrCells[12] = ReportBuilder.buildCell(lobjFrac.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[12] = ReportBuilder.buildCell(lobjDur.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[12], true, true);
 
-		larrCells[13] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtLastRec, TypeDefGUIDs.T_Date);
+		larrCells[13] = ReportBuilder.buildCell(lobjFrac.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[13], true, true);
+
+		larrCells[14] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtLastRec, TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[14], true, true);
 
 		setWidths(larrCells);
 
@@ -268,31 +275,71 @@ public class PolicyListingsBase
 	protected void setWidths(TD[] parrCells)
 	{
 		parrCells[ 0].setWidth(100);
-		parrCells[ 1].setWidth(350);
-		parrCells[ 2].setWidth(100);
-		parrCells[ 3].setWidth(200);
-		parrCells[ 4].setWidth( 80);
-		parrCells[ 5].setWidth(140);
-		parrCells[ 6].setWidth(100);
-		parrCells[ 7].setWidth(100);
+		parrCells[ 1].setWidth(300);
+		parrCells[ 2].setWidth( 50);
+		parrCells[ 3].setWidth(100);
+		parrCells[ 4].setWidth( 60);
+		parrCells[ 5].setWidth( 80);
+		parrCells[ 6].setWidth( 80);
+		parrCells[ 7].setWidth( 80);
 		parrCells[ 8].setWidth( 80);
-		parrCells[ 9].setWidth(170);
-		parrCells[10].setWidth(100);
+		parrCells[ 9].setWidth( 80);
+		parrCells[10].setWidth(170);
 		parrCells[11].setWidth(100);
 		parrCells[12].setWidth(100);
-		parrCells[13].setWidth(100);
+		parrCells[13].setWidth( 80);
+		parrCells[14].setWidth(100);
+	}
+
+	protected void filterByClient(StringBuilder pstrSQL, UUID pidGroup)
+		throws BigBangJewelException
+	{
+		pstrSQL.append(" AND [Client] = '" + pidGroup.toString() + "'");
 	}
 
 	protected void filterByClientGroup(StringBuilder pstrSQL, UUID pidGroup)
 		throws BigBangJewelException
 	{
-		pstrSQL.append(" AND [Group] = '" + pidGroup.toString() + "'");
+		IEntity lrefClients;
+
+		try
+		{
+			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+
+			pstrSQL.append(" AND [Client] IN (SELECT [PK] FROM (")
+					.append(lrefClients.SQLForSelectByMembers(new int[] {Client.I.GROUP}, new java.lang.Object[] {pidGroup}, null))
+					.append(") [AuxCli])");
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	protected void filterByAgent(StringBuilder pstrSQL, UUID pidAgent)
 		throws BigBangJewelException
 	{
-		pstrSQL.append(" AND [Mediator] = '" + pidAgent.toString() + "'");
+		IEntity lrefClients;
+
+		try
+		{
+			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+
+			pstrSQL.append(" AND ([Mediator] = '" + pidAgent.toString() + "' OR ([Mediator] IS NULL")
+					.append(" AND [Client] IN (SELECT [PK] FROM (")
+					.append(lrefClients.SQLForSelectByMembers(new int[] {Client.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
+					.append(") [AuxCli])))");
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	protected void filterByCompany(StringBuilder pstrSQL, UUID pidAgent)
+		throws BigBangJewelException
+	{
+		pstrSQL.append(" AND [Company] = '" + pidAgent.toString() + "'");
 	}
 
 	protected void getMarkersData()
@@ -320,12 +367,16 @@ public class PolicyListingsBase
 
 			lstrSQL = "SELECT [PK], " +
 					"(SELECT MAX([Maturity Date]) FROM (" + lrefReceipts.SQLForSelectAll() +
-							"WHERE [Type] IN ('" + Constants.RecType_New + "', '" + Constants.RecType_Continuing + "', '" +
-							Constants.RecType_Adjustment + "') " +
-							"AND [Process] NOT IN (SELECT [Process] FROM (" + lrefLogs.SQLForSelectByMembers(
+							") [AuxRecs] WHERE [Type] IN ('" + Constants.RecType_New + "', '" + Constants.RecType_Continuing + "'" +
+//							", '" + Constants.RecType_Adjustment + "'" +
+							") AND [Process] NOT IN (SELECT [Process] FROM (" + lrefLogs.SQLForSelectByMembers(
 							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-							new java.lang.Object[] {Constants.OPID_Receipt_ReturnToInsurer, false}, null) + ") [AuxLogs]) " +
-							"WHERE [Policy] = [Main].[PK])  [AuxRecs]) " +
+							new java.lang.Object[] {Constants.OPID_Receipt_ReturnToInsurer, false}, null) + ") [AuxLogs1]) " +
+							"AND [Policy] = [Main].[PK]), " +
+					"(SELECT [Timestamp] FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false}, null) + ") [AuxLogs2] " +
+							"WHERE [External Process] = [Main].[Process]) " +
 					"FROM (" + lrefPolicies.SQLForSelectAll() + ") [Main];";
 
 			ldb = new MasterDB();
@@ -352,6 +403,7 @@ public class PolicyListingsBase
 				lidAux = UUID.fromString(lrsClients.getString(1));
 				lobjAux = new PolicyMarkers();
 				lobjAux.mdtLastRec = lrsClients.getTimestamp(2);
+				lobjAux.mdtCreated = lrsClients.getTimestamp(3);
 				mmapData.put(lidAux, lobjAux);
 			}
 		}

@@ -20,6 +20,13 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryCreation;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryValidation;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryVoiding;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPendingReceipt;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPendingValidation;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPortfolioLive;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPortfolioNoReceipts;
 import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
 public class Policy
@@ -72,6 +79,48 @@ public class Policy
 	    {
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public static GenericElement[] printReportPortfolioLive(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyPortfolioLive().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportPortfolioNoReceipts(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyPortfolioNoReceipts().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportPendingValidation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyPendingValidation().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportPendingReceipt(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyPendingReceipt().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportHistoryCreation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyHistoryCreation().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportHistoryValidation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyHistoryValidation().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportHistoryVoiding(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyHistoryVoiding().doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)
