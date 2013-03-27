@@ -36,6 +36,8 @@ public class ClientListingsBase
 		public int mlngQRsRunning;
 		public int mlngQRsStopped;
 		public Timestamp mdtCreated;
+		public Timestamp mdtFirst;
+		public Timestamp mdtLast;
 	}
 
 	protected HashMap<UUID, ClientTotals> mmapData;
@@ -185,7 +187,7 @@ public class ClientListingsBase
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[11];
+		larrCells = new TD[13];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Número");
 		ReportBuilder.styleCell(larrCells[0], false, false);
@@ -208,17 +210,23 @@ public class ClientListingsBase
 		larrCells[6] = ReportBuilder.buildHeaderCell("Mediador");
 		ReportBuilder.styleCell(larrCells[6], false, true);
 
-		larrCells[7] = ReportBuilder.buildHeaderCell("Consultas Activas");
+		larrCells[7] = ReportBuilder.buildHeaderCell("Consultas em curso");
 		ReportBuilder.styleCell(larrCells[7], false, true);
 
-		larrCells[8] = ReportBuilder.buildHeaderCell("Apólices Activas");
+		larrCells[8] = ReportBuilder.buildHeaderCell("Apólices actuais");
 		ReportBuilder.styleCell(larrCells[8], false, true);
 
-		larrCells[9] = ReportBuilder.buildHeaderCell("Apólices Anuladas");
+		larrCells[9] = ReportBuilder.buildHeaderCell("Apólices antigas");
 		ReportBuilder.styleCell(larrCells[9], false, true);
 
-		larrCells[10] = ReportBuilder.buildHeaderCell("Data Criação");
+		larrCells[10] = ReportBuilder.buildHeaderCell("Data criação");
 		ReportBuilder.styleCell(larrCells[10], false, true);
+
+		larrCells[11] = ReportBuilder.buildHeaderCell("1ª criação ap.");
+		ReportBuilder.styleCell(larrCells[11], false, true);
+
+		larrCells[12] = ReportBuilder.buildHeaderCell("Últ. criação ap.");
+		ReportBuilder.styleCell(larrCells[12], false, true);
 
 		setWidths(larrCells);
 
@@ -257,7 +265,7 @@ public class ClientListingsBase
 
 		lobjTotals = mmapData.get(pobjClient.getKey());
 
-		larrCells = new TD[11];
+		larrCells = new TD[13];
 
 		larrCells[0] = ReportBuilder.buildCell(pobjClient.getAt(Client.I.NUMBER), TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -294,6 +302,12 @@ public class ClientListingsBase
 		larrCells[10] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdtCreated, TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[10], true, true);
 
+		larrCells[11] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdtFirst, TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[11], true, true);
+
+		larrCells[12] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdtLast, TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[12], true, true);
+
 		setWidths(larrCells);
 
 		return larrCells;
@@ -312,6 +326,8 @@ public class ClientListingsBase
 		parrCells[ 8].setWidth(100);
 		parrCells[ 9].setWidth(100);
 		parrCells[10].setWidth(100);
+		parrCells[11].setWidth(100);
+		parrCells[12].setWidth(100);
 	}
 
 	protected void filterByClientGroup(StringBuilder pstrSQL, UUID pidGroup)
@@ -372,8 +388,16 @@ public class ClientListingsBase
 							new java.lang.Object[] {Constants.ProcID_QuoteRequest, false}, null) + ") [AuxProcs2])), " +
 					"(SELECT [Timestamp] FROM (" + lrefLogs.SQLForSelectByMembers(
 							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-							new java.lang.Object[] {Constants.OPID_General_CreateClient, false}, null) + ") [AuxLogs] " +
-							"WHERE [External Process] = [Main].[Process]) " +
+							new java.lang.Object[] {Constants.OPID_General_CreateClient, false}, null) + ") [AuxLogs1] " +
+							"WHERE [External Process] = [Main].[Process]), " +
+					"(SELECT MIN([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false}, null) + ") [AuxLogs2] " +
+							"WHERE [Process] = [Main].[Process]), " +
+					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false}, null) + ") [AuxLogs3] " +
+							"WHERE [Process] = [Main].[Process]) " +
 					"FROM (" + lrefClients.SQLForSelectAll() + ") [Main];";
 
 			ldb = new MasterDB();
@@ -405,6 +429,8 @@ public class ClientListingsBase
 				lobjAux.mlngQRsRunning = lrsClients.getInt(5);
 				lobjAux.mlngQRsStopped = lrsClients.getInt(6);
 				lobjAux.mdtCreated = lrsClients.getTimestamp(7);
+				lobjAux.mdtFirst = lrsClients.getTimestamp(8);
+				lobjAux.mdtLast = lrsClients.getTimestamp(9);
 				mmapData.put(lidAux, lobjAux);
 			}
 		}

@@ -16,6 +16,8 @@ import Jewel.Petri.SysObjects.ProcessData;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.Client.ClientHistoryCreation;
+import com.premiumminds.BigBang.Jewel.Listings.Client.ClientHistoryFirstPolicy;
+import com.premiumminds.BigBang.Jewel.Listings.Client.ClientHistoryLastPolicy;
 import com.premiumminds.BigBang.Jewel.Listings.Client.ClientPortfolio;
 
 public class Client
@@ -86,6 +88,18 @@ public class Client
 		throws BigBangJewelException
 	{
 		return new ClientHistoryCreation().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportHistoryFirstPolicy(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ClientHistoryFirstPolicy().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportHistoryLastPolicy(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ClientHistoryLastPolicy().doReport(parrParams);
 	}
 
 	public void Initialize()
