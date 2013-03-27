@@ -27,6 +27,7 @@ import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPendingReceipt;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPendingValidation;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPortfolioLive;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPortfolioNoReceipts;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicySpecialShamir;
 import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
 public class Policy
@@ -133,6 +134,12 @@ public class Policy
 
 		lobjSession = FileImportSession.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(parrParams[1]));
 		return lobjSession.printReport(parrParams);
+	}
+
+	public static GenericElement[] printReportSpecialShamir(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicySpecialShamir().doReport(parrParams);
 	}
 
     private SubLine mrefSubLine;
