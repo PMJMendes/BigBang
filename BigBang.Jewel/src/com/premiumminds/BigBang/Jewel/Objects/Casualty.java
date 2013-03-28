@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.ecs.GenericElement;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -13,6 +15,12 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryClosing;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryCreation;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryMarkForReview;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryReport;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReport;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReview;
 
 public class Casualty
 	extends ProcessData
@@ -53,6 +61,42 @@ public class Casualty
 	    {
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public static GenericElement[] printReportSubPendingReport(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyPendingReport().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportSubPendingReview(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyPendingReview().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportSubHistoryCreation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyHistoryCreation().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportSubHistoryReport(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyHistoryReport().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportSubHistoryMarkForReview(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyHistoryMarkForReview().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportSubHistoryClosing(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyHistoryClosing().doReport(parrParams);
 	}
 
 	public void Initialize()

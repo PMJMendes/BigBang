@@ -20,6 +20,22 @@ import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 public class SubPolicy
 	extends ProcessData
 {
+	public static class I
+	{
+		public static int NUMBER        =  0;
+		public static int PROCESS       =  1;
+		public static int SUBSCRIBER    =  2;
+		public static int BEGINDATE     =  3;
+		public static int ENDDATE       =  4;
+		public static int FRACTIONING   =  5;
+		public static int NOTES         =  6;
+		public static int STATUS        =  7;
+		public static int PREMIUM       =  8;
+		public static int DOCUSHARE     =  9;
+		public static int MIGRATIONID   = 10;
+		public static int POLICY        = 11;
+	}
+
     public static SubPolicy GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{

@@ -97,6 +97,7 @@ public class CreateSubPolicy
 			if ( mobjData.midManager == null )
 				mobjData.midManager = Engine.getCurrentUser();
 			mobjData.midStatus = Constants.StatusID_InProgress;
+			mobjData.midPolicy = GetProcess().GetDataKey();
 
 			lobjPolicy = SubPolicy.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjPolicy);

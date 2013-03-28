@@ -10,6 +10,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 
 public class SubPolicyData
 	implements DataBridge
@@ -27,6 +28,8 @@ public class SubPolicyData
 	public UUID midStatus;
 	public BigDecimal mdblPremium;
 	public String mstrDocuShare;
+	public Integer mlngMigrationID;
+	public UUID midPolicy;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -59,16 +62,18 @@ public class SubPolicyData
 	{
 		mid = pobjSource.getKey();
 
-		mstrNumber = (String)pobjSource.getAt(0);
-		midProcess = (UUID)pobjSource.getAt(1);
-		midSubscriber = (UUID)pobjSource.getAt(2);
-		mdtBeginDate = (Timestamp)pobjSource.getAt(3);
-		mdtEndDate = (Timestamp)pobjSource.getAt(4);
-		midFractioning = (UUID)pobjSource.getAt(5);
-		mstrNotes = (String)pobjSource.getAt(6);
-		midStatus = (UUID)pobjSource.getAt(7);
-		mdblPremium = (BigDecimal)pobjSource.getAt(8);
-		mstrDocuShare = (String)pobjSource.getAt(9);
+		mstrNumber =       (String)pobjSource.getAt(SubPolicy.I.NUMBER);
+		midProcess =         (UUID)pobjSource.getAt(SubPolicy.I.PROCESS);
+		midSubscriber =      (UUID)pobjSource.getAt(SubPolicy.I.SUBSCRIBER);
+		mdtBeginDate =  (Timestamp)pobjSource.getAt(SubPolicy.I.BEGINDATE);
+		mdtEndDate =    (Timestamp)pobjSource.getAt(SubPolicy.I.ENDDATE);
+		midFractioning =     (UUID)pobjSource.getAt(SubPolicy.I.FRACTIONING);
+		mstrNotes =        (String)pobjSource.getAt(SubPolicy.I.NOTES);
+		midStatus =          (UUID)pobjSource.getAt(SubPolicy.I.STATUS);
+		mdblPremium =  (BigDecimal)pobjSource.getAt(SubPolicy.I.PREMIUM);
+		mstrDocuShare =    (String)pobjSource.getAt(SubPolicy.I.DOCUSHARE);
+		mlngMigrationID = (Integer)pobjSource.getAt(SubPolicy.I.MIGRATIONID);
+		midPolicy =          (UUID)pobjSource.getAt(SubPolicy.I.POLICY);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -76,16 +81,18 @@ public class SubPolicyData
 	{
 		try
 		{
-			pobjDest.setAt( 0, mstrNumber);
-			pobjDest.setAt( 1, midProcess);
-			pobjDest.setAt( 2, midSubscriber);
-			pobjDest.setAt( 3, mdtBeginDate);
-			pobjDest.setAt( 4, mdtEndDate);
-			pobjDest.setAt( 5, midFractioning);
-			pobjDest.setAt( 6, mstrNotes);
-			pobjDest.setAt( 7, midStatus);
-			pobjDest.setAt( 8, mdblPremium);
-//			pobjDest.setAt( 9, mstrDocuShare); JMMM: Nunca gravar por cima disto
+			pobjDest.setAt(SubPolicy.I.NUMBER, mstrNumber);
+			pobjDest.setAt(SubPolicy.I.PROCESS, midProcess);
+			pobjDest.setAt(SubPolicy.I.SUBSCRIBER, midSubscriber);
+			pobjDest.setAt(SubPolicy.I.BEGINDATE, mdtBeginDate);
+			pobjDest.setAt(SubPolicy.I.ENDDATE, mdtEndDate);
+			pobjDest.setAt(SubPolicy.I.FRACTIONING, midFractioning);
+			pobjDest.setAt(SubPolicy.I.NOTES, mstrNotes);
+			pobjDest.setAt(SubPolicy.I.STATUS, midStatus);
+			pobjDest.setAt(SubPolicy.I.PREMIUM, mdblPremium);
+			pobjDest.setAt(SubPolicy.I.DOCUSHARE, mstrDocuShare);
+			pobjDest.setAt(SubPolicy.I.MIGRATIONID, mlngMigrationID);
+			pobjDest.setAt(SubPolicy.I.POLICY, midPolicy);
 		}
 		catch (Throwable e)
 		{

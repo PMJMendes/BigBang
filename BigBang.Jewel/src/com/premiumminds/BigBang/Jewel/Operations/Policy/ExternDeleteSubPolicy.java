@@ -264,6 +264,7 @@ public class ExternDeleteSubPolicy
 		try
 		{
 			lobjAux = SubPolicy.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			mobjData.midPolicy = GetProcess().GetDataKey();
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 			mobjData.mid = lobjAux.getKey();

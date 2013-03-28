@@ -146,6 +146,7 @@ public class ManageData
 					mobjData.mobjPrevValues.mobjPrevValues = null;
 
 					mobjData.midManager = GetProcess().GetManagerID();
+					mobjData.midPolicy = mobjData.mobjPrevValues.midPolicy;
 					mobjData.ToObject(lobjAux);
 					lobjAux.SaveToDb(pdb);
 				}

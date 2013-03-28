@@ -9,7 +9,6 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
-import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -80,32 +79,6 @@ public class SubCasualty
 	public void SetProcessID(UUID pidProcess)
 	{
 		internalSetAt(I.PROCESS, pidProcess);
-	}
-
-	public SubLine GetSubLine()
-		throws BigBangJewelException
-	{
-		if ( getAt(2) != null )
-			return Policy.GetInstance(getNameSpace(), (UUID)getAt(2)).GetSubLine();
-		
-		if ( getAt(3) != null )
-		{
-			try
-			{
-				return ((Policy)PNProcess.GetInstance(getNameSpace(), SubPolicy.GetInstance(getNameSpace(), (UUID)getAt(3)).GetProcessID()).
-						GetParent().GetData()).GetSubLine();
-			}
-			catch (BigBangJewelException e)
-			{
-				throw e;
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-		}
-		
-		return null;
 	}
 
 	public String GetObjectName()
@@ -358,13 +331,19 @@ public class SubCasualty
     public Policy GetPolicy()
     	throws BigBangJewelException
     {
-    	return Policy.GetInstance(getNameSpace(), (UUID)getAt(I.POLICY));
+    	if ( getAt(I.POLICY) != null )
+    		return Policy.GetInstance(getNameSpace(), (UUID)getAt(I.POLICY));
+
+    	return null;
     }
 
     public SubPolicy GetSubPolicy()
     	throws BigBangJewelException
     {
-    	return SubPolicy.GetInstance(getNameSpace(), (UUID)getAt(I.SUBPOLICY));
+    	if ( getAt(I.SUBPOLICY) != null )
+    		return SubPolicy.GetInstance(getNameSpace(), (UUID)getAt(I.SUBPOLICY));
+
+    	return null;
     }
 
     public Policy getAbsolutePolicy()
@@ -381,6 +360,44 @@ public class SubCasualty
     	if ( lobjSPAux != null )
     		return lobjSPAux.GetOwner();
 
+    	return null;
+    }
+
+	public SubLine GetSubLine()
+		throws BigBangJewelException
+	{
+		return getAbsolutePolicy().GetSubLine();
+	}
+
+	public Company GetCompany()
+		throws BigBangJewelException
+	{
+		return getAbsolutePolicy().GetCompany();
+	}
+
+    public Client GetClient()
+    	throws BigBangJewelException
+    {
+    	Policy lobjAux;
+    	SubPolicy lobjSPAux;
+
+    	lobjAux = GetPolicy();
+    	if ( lobjAux != null )
+    		return lobjAux.GetClient();
+
+    	lobjSPAux = GetSubPolicy();
+    	if ( lobjSPAux != null )
+    		return lobjSPAux.GetClient();
+
+    	return null;
+    }
+
+    public OtherEntity GetServiceCenter()
+    	throws BigBangJewelException
+    {
+    	if ( getAt(I.SERVICECENTER) != null )
+    		return OtherEntity.GetInstance(getNameSpace(), (UUID)getAt(I.SERVICECENTER));
+    	
     	return null;
     }
 }
