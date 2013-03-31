@@ -385,7 +385,7 @@ public class SubPolicyServiceImpl
 		}
 
 		lopTTP = new TransferToPolicy(lobjSubPolicy.GetProcessID());
-		lopTTP.midNewProcess = lobjPolicy.GetProcessID();
+		lopTTP.midNewPolicy = lobjPolicy.getKey();
 
 		try
 		{

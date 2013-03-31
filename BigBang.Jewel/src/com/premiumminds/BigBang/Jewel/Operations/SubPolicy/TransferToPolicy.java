@@ -16,7 +16,9 @@ public class TransferToPolicy
 {
 	private static final long serialVersionUID = 1L;
 
-	public UUID midNewProcess;
+	public UUID midNewPolicy;
+	private UUID midOldPolicy;
+	private UUID midNewProcess;
 	private UUID midOldProcess;
 	private String mstrNew;
 	private String mstrOld;
@@ -51,6 +53,17 @@ public class TransferToPolicy
 		throws JewelPetriException
 	{
 		Policy lobjOld, lobjNew;
+
+		try
+		{
+			midOldPolicy = (UUID)GetProcess().GetData().getAt(SubPolicy.I.POLICY);
+			GetProcess().GetData().setAt(SubPolicy.I.POLICY, midNewPolicy);
+			GetProcess().GetData().SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		midOldProcess = GetProcess().GetParent().getKey();
 		lobjOld = (Policy)GetProcess().GetParent().GetData();
@@ -87,6 +100,16 @@ public class TransferToPolicy
 		throws JewelPetriException
 	{
 		GetProcess().SetParentProcId(midOldProcess, pdb);
+
+		try
+		{
+			GetProcess().GetData().setAt(SubPolicy.I.POLICY, midOldPolicy);
+			GetProcess().GetData().SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		try
 		{
