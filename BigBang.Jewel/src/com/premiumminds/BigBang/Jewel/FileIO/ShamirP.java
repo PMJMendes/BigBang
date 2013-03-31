@@ -232,7 +232,7 @@ public class ShamirP
 			lstrDesc = "Furto - ";
 			break;
 		case 'Q':
-			lstrDesc = "Roubo - ";
+			lstrDesc = "Quebra - ";
 			break;
 		default:
 			lstrDesc = "Desconhecido - ";

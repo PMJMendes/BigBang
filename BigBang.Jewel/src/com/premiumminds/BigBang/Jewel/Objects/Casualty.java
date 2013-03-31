@@ -19,8 +19,10 @@ import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryClo
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryCreation;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryMarkForReview;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryReport;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyOtherClosingTimes;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReport;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReview;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtySpecialShamir;
 
 public class Casualty
 	extends ProcessData
@@ -97,6 +99,18 @@ public class Casualty
 		throws BigBangJewelException
 	{
 		return new SubCasualtyHistoryClosing().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportSubOtherClosingTimes(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyOtherClosingTimes().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportSubSpecialShamir(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtySpecialShamir().doReport(parrParams);
 	}
 
 	public void Initialize()
