@@ -76,7 +76,9 @@ public class SubCasualtyOtherClosingTimes
 	{
 		StringBuilder lstrSQL;
 		ArrayList<SubCasualty> larrAux;
-		IEntity lrefubCs, lrefLogs;
+		IEntity lrefubCs;
+		IEntity lrefLogs;
+		IEntity lrefProcs;
 		MasterDB ldb;
 		ResultSet lrsPolicies;
 
@@ -84,13 +86,19 @@ public class SubCasualtyOtherClosingTimes
 		{
 			lrefubCs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
 			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
+			lrefProcs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNProcess));
 
 			lstrSQL = new StringBuilder();
 			lstrSQL.append("SELECT * FROM (")
 					.append(lrefubCs.SQLForSelectByMembers(
 							new int[] {SubCasualty.I.HASJUDICIAL},
 							new java.lang.Object[] {false},
-							null)).append(") [AuxSubC] WHERE [Process] IN (SELECT [Process] FROM(")
+							null)).append(") [AuxSubC] ")
+					.append("WHERE [Process] IN (SELECT [PK] FROM (")
+					.append(lrefProcs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKScript_In_Process, Jewel.Petri.Constants.IsRunning_In_Process},
+							new java.lang.Object[] {Constants.ProcID_SubCasualty, false}, null)).append(") [AuxProcs]) ")
+					.append("AND [Process] IN (SELECT [Process] FROM (")
 					.append(lrefLogs.SQLForSelectByMembers(
 							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
 							new java.lang.Object[] {Constants.OPID_SubCasualty_CloseProcess, false},
@@ -195,14 +203,16 @@ public class SubCasualtyOtherClosingTimes
 	{
 		R<Integer> llngCountT;
 		R<Integer> llngCountS;
-		R<Integer> llngDays;
+		R<Integer> llngDaysM;
+		R<Integer> llngDaysR;
 		int i;
 		Table ltbl;
 		TR[] larrRows;
 
 		llngCountT = new R<Integer>(0);
 		llngCountS = new R<Integer>(0);
-		llngDays = new R<Integer>(0);
+		llngDaysM = new R<Integer>(0);
+		llngDaysR = new R<Integer>(0);
 
 		larrRows = new TR[parrMap.size() + 2];
 
@@ -212,12 +222,12 @@ public class SubCasualtyOtherClosingTimes
 		i = 1;
 		for ( UUID lid: parrMap.keySet() )
 		{
-			larrRows[i] = ReportBuilder.buildRow(buildInnerRow(lid, parrMap.get(lid), llngCountT, llngCountS, llngDays));
+			larrRows[i] = ReportBuilder.buildRow(buildInnerRow(lid, parrMap.get(lid), llngCountT, llngCountS, llngDaysM, llngDaysR));
 			ReportBuilder.styleRow(larrRows[i], false);
 			i++;
 		}
 
-		larrRows[i] = ReportBuilder.buildRow(buildInnerFooterRow(llngCountT.get(), llngCountS.get(), llngDays.get()));
+		larrRows[i] = ReportBuilder.buildRow(buildInnerFooterRow(llngCountT.get(), llngCountS.get(), llngDaysM.get(), llngDaysR.get()));
 		ReportBuilder.styleRow(larrRows[i], false);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
@@ -230,7 +240,7 @@ public class SubCasualtyOtherClosingTimes
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[5];
+		larrCells = new TD[7];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Categoria");
 		ReportBuilder.styleCell(larrCells[0], false, false);
@@ -241,11 +251,17 @@ public class SubCasualtyOtherClosingTimes
 		larrCells[2] = ReportBuilder.buildHeaderCell("Encerrados do Ano");
 		ReportBuilder.styleCell(larrCells[2], false, true);
 
-		larrCells[3] = ReportBuilder.buildHeaderCell("Prazo Médio");
+		larrCells[3] = ReportBuilder.buildHeaderCell("Prazo Médio Enc.");
 		ReportBuilder.styleCell(larrCells[3], false, true);
 
 		larrCells[4] = ReportBuilder.buildHeaderCell("Dias de Gestão");
 		ReportBuilder.styleCell(larrCells[4], false, true);
+
+		larrCells[5] = ReportBuilder.buildHeaderCell("Prazo Médio Rev.");
+		ReportBuilder.styleCell(larrCells[5], false, true);
+
+		larrCells[6] = ReportBuilder.buildHeaderCell("Dias de Revisão");
+		ReportBuilder.styleCell(larrCells[6], false, true);
 
 		setWidths(larrCells);
 
@@ -254,13 +270,14 @@ public class SubCasualtyOtherClosingTimes
 
 	@SuppressWarnings("deprecation")
 	protected TD[] buildInnerRow(UUID pidCategory, ArrayList<SubCasualty> parrReceipts, R<Integer> plngCountT,
-			R<Integer> plngCountS, R<Integer> plngDays)
+			R<Integer> plngCountS, R<Integer> plngDaysM, R<Integer> plngDaysR)
 		throws BigBangJewelException
 	{
 		Category lobjCat;
 		int llngCountT;
 		int llngCountS;
-		int llngDays;
+		int llngDaysM;
+		int llngDaysR;
 		SubCasualtyMarkers lobjAux;
 		TD[] larrCells;
 
@@ -268,24 +285,26 @@ public class SubCasualtyOtherClosingTimes
 
 		llngCountT = 0;
 		llngCountS = 0;
-		llngDays = 0;
+		llngDaysM = 0;
+		llngDaysR = 0;
 
 		for ( SubCasualty lobjSubC : parrReceipts )
 		{
 			lobjAux = mmapData.get(lobjSubC.getKey());
-			if ( (lobjAux != null) && (lobjAux.mdtCreated != null) && (lobjAux.mdtClosed != null) )
+			if ( (lobjAux != null) && (lobjAux.mdtCreated != null) && (lobjAux.mdtMarked != null) && (lobjAux.mdtClosed != null) )
 			{
 				if ( lobjAux.mdtClosed.getYear() == lobjAux.mdtCreated.getYear() )
 					llngCountS++;
 				else
 					llngCountT++;
-				llngDays += (lobjAux.mdtClosed.getTime() - lobjAux.mdtCreated.getTime()) / (1000 * 60 * 60 *24);
+				llngDaysM += (lobjAux.mdtMarked.getTime() - lobjAux.mdtCreated.getTime()) / (1000 * 60 * 60 *24);
+				llngDaysR += (lobjAux.mdtClosed.getTime() - lobjAux.mdtMarked.getTime()) / (1000 * 60 * 60 *24);
 			}
 			else
 				llngCountT++;
 		}
 
-		larrCells = new TD[5];
+		larrCells = new TD[7];
 
 		larrCells[0] = ReportBuilder.buildCell(lobjCat.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -296,26 +315,33 @@ public class SubCasualtyOtherClosingTimes
 		larrCells[2] = ReportBuilder.buildCell(llngCountS, TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[2], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell((Integer)(int)(((double)llngDays)/((double)(llngCountT + llngCountS)) + 0.5), TypeDefGUIDs.T_Integer);
+		larrCells[3] = ReportBuilder.buildCell((Integer)(int)(((double)llngDaysM)/((double)(llngCountT + llngCountS)) + 0.5), TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(llngDays, TypeDefGUIDs.T_Integer);
+		larrCells[4] = ReportBuilder.buildCell(llngDaysM, TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[4], true, true);
+
+		larrCells[5] = ReportBuilder.buildCell((Integer)(int)(((double)llngDaysR)/((double)(llngCountT + llngCountS)) + 0.5), TypeDefGUIDs.T_Integer);
+		ReportBuilder.styleCell(larrCells[5], true, true);
+
+		larrCells[6] = ReportBuilder.buildCell(llngDaysR, TypeDefGUIDs.T_Integer);
+		ReportBuilder.styleCell(larrCells[6], true, true);
 
 		setWidths(larrCells);
 
 		plngCountT.set(plngCountT.get() + llngCountT);
 		plngCountS.set(plngCountS.get() + llngCountS);
-		plngDays.set(plngDays.get() + llngDays);
+		plngDaysM.set(plngDaysM.get() + llngDaysM);
+		plngDaysR.set(plngDaysR.get() + llngDaysR);
 
 		return larrCells;
 	}
 
-	protected TD[] buildInnerFooterRow(int plngCountT, int plngCountS, int plngDays)
+	protected TD[] buildInnerFooterRow(int plngCountT, int plngCountS, int plngDaysM, int plngDaysR)
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[5];
+		larrCells = new TD[7];
 
 		larrCells[0] = ReportBuilder.buildCell("Totais", TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -326,11 +352,17 @@ public class SubCasualtyOtherClosingTimes
 		larrCells[2] = ReportBuilder.buildCell(plngCountS, TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[2], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell((Integer)(int)(((double)plngDays)/((double)(plngCountT + plngCountS)) + 0.5), TypeDefGUIDs.T_Integer);
+		larrCells[3] = ReportBuilder.buildCell((Integer)(int)(((double)plngDaysM)/((double)(plngCountT + plngCountS)) + 0.5), TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(plngDays, TypeDefGUIDs.T_Integer);
+		larrCells[4] = ReportBuilder.buildCell(plngDaysM, TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[4], true, true);
+
+		larrCells[5] = ReportBuilder.buildCell((Integer)(int)(((double)plngDaysR)/((double)(plngCountT + plngCountS)) + 0.5), TypeDefGUIDs.T_Integer);
+		ReportBuilder.styleCell(larrCells[5], true, true);
+
+		larrCells[6] = ReportBuilder.buildCell(plngDaysR, TypeDefGUIDs.T_Integer);
+		ReportBuilder.styleCell(larrCells[6], true, true);
 
 		setWidths(larrCells);
 
@@ -343,6 +375,8 @@ public class SubCasualtyOtherClosingTimes
 		parrCells[ 1].setWidth(150);
 		parrCells[ 2].setWidth(150);
 		parrCells[ 3].setWidth(150);
-		parrCells[ 3].setWidth(150);
+		parrCells[ 4].setWidth(150);
+		parrCells[ 5].setWidth(150);
+		parrCells[ 6].setWidth(150);
 	}
 }

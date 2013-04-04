@@ -1,7 +1,11 @@
 package com.premiumminds.BigBang.Jewel.Listings;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.ecs.html.TD;
@@ -10,6 +14,7 @@ import org.apache.ecs.html.Table;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.TypeDefGUIDs;
+import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.ILog;
@@ -25,6 +30,19 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
 public class ReceiptListingsBase
 {
+	protected static class ReceiptMarkers
+	{
+		public Timestamp mdtReceived;
+		public Timestamp mdtAutoVal;
+		public Timestamp mdtValidated;
+		public Timestamp mdtSent;
+		public Timestamp mdtPayed;
+		public Timestamp mdtAccountedI;
+		public Timestamp mdtAccountedM;
+	}
+
+	protected HashMap<UUID, ReceiptMarkers> mmapData;
+
 	protected Table buildHeaderSection(String pstrHeader, Receipt[] parrReceipts, int plngMapSize)
 	{
 		BigDecimal ldblTotal;
@@ -298,11 +316,11 @@ public class ReceiptListingsBase
 	{
 		parrCells[ 0].setWidth(100);
 		parrCells[ 1].setWidth( 20);
-		parrCells[ 2].setWidth(350);
+		parrCells[ 2].setWidth(300);
 		parrCells[ 3].setWidth(130);
 		parrCells[ 4].setWidth( 60);
-		parrCells[ 5].setWidth(170);
-		parrCells[ 6].setWidth(140);
+		parrCells[ 5].setWidth(100);
+		parrCells[ 6].setWidth(100);
 		parrCells[ 7].setWidth( 80);
 		parrCells[ 8].setWidth( 80);
 		parrCells[ 9].setWidth( 80);
@@ -310,7 +328,7 @@ public class ReceiptListingsBase
 		parrCells[11].setWidth( 90);
 		parrCells[12].setWidth( 75);
 		parrCells[13].setWidth( 88);
-		parrCells[14].setWidth(110);
+		parrCells[14].setWidth(100);
 		parrCells[15].setWidth( 50);
 	}
 
@@ -462,6 +480,120 @@ public class ReceiptListingsBase
 					.append(lrefProcesses.SQLForSelectAll()).append(") [AuxsSProcs] WHERE [Parent] IN (SELECT [Process] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {2}, new java.lang.Object[] {pidCompany}, null))
 					.append(") [AuxPolsS1]))))");
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	protected void getMarkersData()
+		throws BigBangJewelException
+	{
+		IEntity lrefReceipts;
+		IEntity lrefLogs;
+		String lstrSQL;
+		MasterDB ldb;
+		ResultSet lrsSubCs;
+		UUID lidAux;
+		ReceiptMarkers lobjAux;
+
+		if ( mmapData != null )
+			return;
+
+		try
+		{
+			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
+			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
+
+			lstrSQL = "SELECT [PK], " +
+					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {false}, null) + ") [AuxLogs1] " +
+							"WHERE [Operation] IN ('" +
+							Constants.OPID_Receipt_TriggerImageOnCreate + "', '" + Constants.OPID_Receipt_ReceiveImage + "') " +
+							"AND [Process] = [Main].[Process]), " +
+					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_Receipt_TriggerAutoValidate, false}, null) + ") [AuxLogs2] " +
+							"WHERE [Process] = [Main].[Process]), " +
+					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_Receipt_ValidateReceipt, false}, null) + ") [AuxLogs3] " +
+							"WHERE [Process] = [Main].[Process]), " +
+					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {false}, null) + ") [AuxLogs4] " +
+							"WHERE [Operation] IN ('" +
+							Constants.OPID_Receipt_CreatePaymentNotice + "', '" + Constants.OPID_Receipt_CreateSignatureRequest + "') " +
+							"AND [Process] = [Main].[Process]), " +
+					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_Receipt_Payment, false}, null) + ") [AuxLogs5] " +
+							"WHERE [Process] = [Main].[Process]), " +
+					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_Receipt_InsurerAccounting, false}, null) + ") [AuxLogs6] " +
+							"WHERE [Process] = [Main].[Process]), " +
+					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_Receipt_MediatorAccounting, false}, null) + ") [AuxLogs7] " +
+							"WHERE [Process] = [Main].[Process]) " +
+					"FROM (" + lrefReceipts.SQLForSelectAll() + ") [Main];";
+
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsSubCs = ldb.OpenRecordset(lstrSQL.toString());
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		mmapData = new HashMap<UUID, ReceiptMarkers>();
+
+		try
+		{
+			while ( lrsSubCs.next() )
+			{
+				lidAux = UUID.fromString(lrsSubCs.getString(1));
+				lobjAux = new ReceiptMarkers();
+				lobjAux.mdtReceived = lrsSubCs.getTimestamp(2);
+				lobjAux.mdtAutoVal = lrsSubCs.getTimestamp(3);
+				lobjAux.mdtValidated = lrsSubCs.getTimestamp(4);
+				lobjAux.mdtSent = lrsSubCs.getTimestamp(5);
+				lobjAux.mdtPayed = lrsSubCs.getTimestamp(6);
+				lobjAux.mdtAccountedI = lrsSubCs.getTimestamp(7);
+				lobjAux.mdtAccountedM = lrsSubCs.getTimestamp(8);
+				mmapData.put(lidAux, lobjAux);
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsSubCs.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsSubCs.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{

@@ -20,6 +20,7 @@ import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryCre
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryMarkForReview;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryReport;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyOtherClosingTimes;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingAnything;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReport;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReview;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtySpecialShamir;
@@ -63,6 +64,12 @@ public class Casualty
 	    {
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public static GenericElement[] printReportSubPendingAnything(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyPendingAnything().doReport(parrParams);
 	}
 
 	public static GenericElement[] printReportSubPendingReport(String[] parrParams)

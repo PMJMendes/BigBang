@@ -40,6 +40,7 @@ import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistoryPaymentAcct
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistorySendPaymentNotice;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistorySendReceipt;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistoryValidation;
+import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptOtherAverages;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptPendingCreateDASRequest;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptPendingCreateSignatureRequest;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptPendingImage;
@@ -271,6 +272,12 @@ public class Receipt
 		throws BigBangJewelException
 	{
 		return new ReceiptAcctCashPosition().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportOtherAverages(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ReceiptOtherAverages().doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)

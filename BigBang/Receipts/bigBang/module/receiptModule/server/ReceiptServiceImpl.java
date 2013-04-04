@@ -1586,7 +1586,6 @@ public class ReceiptServiceImpl
 	{
 		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		IProcess lobjProcess;
 		UUID lidClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
@@ -1611,11 +1610,7 @@ public class ReceiptServiceImpl
 			{
 				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(receiptIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
-				else
-					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+				lidClient = lobjReceipt.getClient().getKey();
 			}
 			catch (Throwable e)
 			{

@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.ClientListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 
 public class ClientHistoryLastPolicy
 	extends ClientListingsBase
@@ -81,7 +82,10 @@ public class ClientHistoryLastPolicy
 	{
 		StringBuilder lstrSQL;
 		ArrayList<Client> larrAux;
-		IEntity lrefClients, lrefLogs;
+		IEntity lrefClients;
+		IEntity lrefLogs;
+		IEntity lrefPolicies;
+		IEntity lrefProcs;
 		MasterDB ldb;
 		ResultSet lrsClients;
 
@@ -91,6 +95,8 @@ public class ClientHistoryLastPolicy
 		{
 			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
 			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
+			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+			lrefProcs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNProcess));
 
 			lstrSQL = new StringBuilder();
 			lstrSQL.append("SELECT * FROM (")
@@ -103,15 +109,39 @@ public class ClientHistoryLastPolicy
 
 			if ( parrParams[2] != null )
 				lstrSQL.append(" AND (SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
-						new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-						new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false}, null) + ") [AuxLogs2] " +
-						"WHERE [Process] = [AuxCli].[Process]) >= '").append(parrParams[2]).append("'");
+							new int[] {Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {false}, null) + ") [AuxLogs3] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Policy}, null) +
+							") [AuxProcs3] ON [AuxProcs3].PK=[AuxLogs3].[Process] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Client}, null) +
+							") [AuxProcsP] ON [AuxProcsP].PK=[AuxProcs3].[Parent] " +
+							"WHERE [AuxLogs3].[Operation] IN ('" + Constants.OPID_Policy_VoidPolicy + "', '" + Constants.OPID_Policy_ExternAutoVoid +
+							"', '" + Constants.OPID_Policy_MediationTransfer + "', '" + Constants.OPID_Policy_PolicySubstitution + "') " +
+							"AND [AuxProcsP].[Data] NOT IN (SELECT [Client] FROM (" + lrefPolicies.SQLForSelectByMembers(
+									new int[] {Policy.I.STATUS},
+									new java.lang.Object[] {Constants.StatusID_Valid}, null) + ") [AuxPol5]) " +
+							"AND [AuxProcs3].[Parent] = [AuxCli].[Process]) >= '").append(parrParams[2]).append("'");
 
 			if ( parrParams[3] != null )
 				lstrSQL.append(" AND (SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
-						new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-						new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false}, null) + ") [AuxLogs2] " +
-						"WHERE [Process] = [AuxCli].[Process]) < DATEADD(d, 1, '").append(parrParams[3]).append("')");
+							new int[] {Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {false}, null) + ") [AuxLogs3] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Policy}, null) +
+							") [AuxProcs3] ON [AuxProcs3].PK=[AuxLogs3].[Process] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Client}, null) +
+							") [AuxProcsP] ON [AuxProcsP].PK=[AuxProcs3].[Parent] " +
+							"WHERE [AuxLogs3].[Operation] IN ('" + Constants.OPID_Policy_VoidPolicy + "', '" + Constants.OPID_Policy_ExternAutoVoid +
+							"', '" + Constants.OPID_Policy_MediationTransfer + "', '" + Constants.OPID_Policy_PolicySubstitution + "') " +
+							"AND [AuxProcsP].[Data] NOT IN (SELECT [Client] FROM (" + lrefPolicies.SQLForSelectByMembers(
+									new int[] {Policy.I.STATUS},
+									new java.lang.Object[] {Constants.StatusID_Valid}, null) + ") [AuxPol5]) " +
+							"AND [AuxProcs3].[Parent] = [AuxCli].[Process]) < DATEADD(d, 1, '").append(parrParams[3]).append("')");
 		}
 		catch (Throwable e)
 		{

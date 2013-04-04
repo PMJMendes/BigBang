@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Listings;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -40,16 +41,27 @@ public class PolicyListingsBase
 	protected Table buildHeaderSection(String pstrHeader, Policy[] parrPolicies, int plngMapSize)
 		throws BigBangJewelException
 	{
+		BigDecimal ldblTotal;
+		int i;
 		Table ltbl;
 		TR[] larrRows;
 
-		larrRows = new TR[3];
+		ldblTotal = BigDecimal.ZERO;
+		for ( i = 0; i < parrPolicies.length; i++ )
+		{
+			if ( parrPolicies[i].getAt(Policy.I.PREMIUM) != null )
+				ldblTotal = ldblTotal.add((BigDecimal)parrPolicies[i].getAt(Policy.I.PREMIUM));
+		}
+
+		larrRows = new TR[4];
 
 		larrRows[0] = ReportBuilder.constructDualHeaderRowCell(pstrHeader);
 
 		larrRows[1] = ReportBuilder.constructDualRow("Nº de Gestores", plngMapSize, TypeDefGUIDs.T_Integer, false);
 
 		larrRows[2] = ReportBuilder.constructDualRow("Nº de Apólices", parrPolicies.length, TypeDefGUIDs.T_Integer, false);
+
+		larrRows[3] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);
@@ -80,10 +92,19 @@ public class PolicyListingsBase
 	protected TR[] buildDataTable(String pstrHeader, Policy[] parrPolicies)
 		throws BigBangJewelException
 	{
+		BigDecimal ldblTotal;
+		int i;
 		TR[] larrRows;
 		TD lcell;
 
-		larrRows = new TR[3];
+		ldblTotal = BigDecimal.ZERO;
+		for ( i = 0; i < parrPolicies.length; i++ )
+		{
+			if ( parrPolicies[i].getAt(Policy.I.PREMIUM) != null )
+				ldblTotal = ldblTotal.add((BigDecimal)parrPolicies[i].getAt(Policy.I.PREMIUM));
+		}
+
+		larrRows = new TR[4];
 
 		larrRows[0] = ReportBuilder.constructDualHeaderRowCell(pstrHeader);
 
@@ -94,6 +115,8 @@ public class PolicyListingsBase
 		larrRows[1] = ReportBuilder.buildRow(new TD[] {lcell});
 
 		larrRows[2] = ReportBuilder.constructDualRow("Nº de Apólices", parrPolicies.length, TypeDefGUIDs.T_Integer, false);
+
+		larrRows[3] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 
 		return larrRows;
 	}

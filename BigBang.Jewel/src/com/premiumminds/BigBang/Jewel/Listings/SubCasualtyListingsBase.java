@@ -36,6 +36,7 @@ public class SubCasualtyListingsBase
 	{
 		public Timestamp mdtCreated;
 		public Timestamp mdtReported;
+		public Timestamp mdtMarked;
 		public Timestamp mdtClosed;
 	}
 
@@ -132,7 +133,7 @@ public class SubCasualtyListingsBase
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[14];
+		larrCells = new TD[15];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Número");
 		ReportBuilder.styleCell(larrCells[0], false, false);
@@ -176,6 +177,9 @@ public class SubCasualtyListingsBase
 		larrCells[13] = ReportBuilder.buildHeaderCell("Encerramento");
 		ReportBuilder.styleCell(larrCells[13], false, true);
 
+		larrCells[14] = ReportBuilder.buildHeaderCell("Revisão");
+		ReportBuilder.styleCell(larrCells[14], false, true);
+
 		setWidths(larrCells);
 
 		return larrCells;
@@ -214,7 +218,7 @@ public class SubCasualtyListingsBase
 
 		lobjMarkers = mmapData.get(pobjSubC.getKey());
 
-		larrCells = new TD[14];
+		larrCells = new TD[15];
 
 		larrCells[0] = ReportBuilder.buildCell(pobjSubC.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -256,8 +260,11 @@ public class SubCasualtyListingsBase
 		larrCells[12] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtReported, TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[12], true, true);
 
-		larrCells[13] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtClosed, TypeDefGUIDs.T_Date);
+		larrCells[13] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtMarked, TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[13], true, true);
+
+		larrCells[14] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtClosed, TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[14], true, true);
 
 		setWidths(larrCells);
 
@@ -280,6 +287,7 @@ public class SubCasualtyListingsBase
 		parrCells[11].setWidth(100);
 		parrCells[12].setWidth(100);
 		parrCells[13].setWidth(100);
+		parrCells[14].setWidth(100);
 	}
 
 	protected void filterByClient(StringBuilder pstrSQL, UUID pidClient)
@@ -392,8 +400,6 @@ public class SubCasualtyListingsBase
 		if ( mmapData != null )
 			return;
 
-		mmapData = new HashMap<UUID, SubCasualtyMarkers>();
-
 		try
 		{
 			lrefSubCs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
@@ -410,7 +416,11 @@ public class SubCasualtyListingsBase
 							"WHERE [Process] = [Main].[Process]), " +
 					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
 							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-							new java.lang.Object[] {Constants.OPID_SubCasualty_CloseProcess, false}, null) + ") [AuxLogs3] " +
+							new java.lang.Object[] {Constants.OPID_SubCasualty_MarkForClosing, false}, null) + ") [AuxLogs3] " +
+							"WHERE [Process] = [Main].[Process]), " +
+					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_SubCasualty_CloseProcess, false}, null) + ") [AuxLogs4] " +
 							"WHERE [Process] = [Main].[Process]) " +
 					"FROM (" + lrefSubCs.SQLForSelectAll() + ") [Main];";
 
@@ -431,6 +441,8 @@ public class SubCasualtyListingsBase
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		mmapData = new HashMap<UUID, SubCasualtyMarkers>();
+
 		try
 		{
 			while ( lrsSubCs.next() )
@@ -439,7 +451,8 @@ public class SubCasualtyListingsBase
 				lobjAux = new SubCasualtyMarkers();
 				lobjAux.mdtCreated = lrsSubCs.getTimestamp(2);
 				lobjAux.mdtReported = lrsSubCs.getTimestamp(3);
-				lobjAux.mdtClosed = lrsSubCs.getTimestamp(4);
+				lobjAux.mdtMarked = lrsSubCs.getTimestamp(4);
+				lobjAux.mdtClosed = lrsSubCs.getTimestamp(5);
 				mmapData.put(lidAux, lobjAux);
 			}
 		}

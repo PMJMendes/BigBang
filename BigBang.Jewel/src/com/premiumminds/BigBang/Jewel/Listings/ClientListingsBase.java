@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Listings;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -38,6 +39,7 @@ public class ClientListingsBase
 		public Timestamp mdtCreated;
 		public Timestamp mdtFirst;
 		public Timestamp mdtLast;
+		public BigDecimal mdblTotals;
 	}
 
 	protected HashMap<UUID, ClientTotals> mmapData;
@@ -48,6 +50,7 @@ public class ClientListingsBase
 		int llngTotalQRs;
 		int llngTotalValPs;
 		int llngTotalOldPs;
+		BigDecimal ldblTotal;
 		int i;
 		ClientTotals lobjAux;
 		Table ltbl;
@@ -58,6 +61,7 @@ public class ClientListingsBase
 		llngTotalQRs = 0;
 		llngTotalValPs = 0;
 		llngTotalOldPs = 0;
+		ldblTotal = BigDecimal.ZERO;
 		for ( i = 0; i < parrClients.length; i++ )
 		{
 			lobjAux = mmapData.get(parrClients[i].getKey());
@@ -68,9 +72,11 @@ public class ClientListingsBase
 			llngTotalValPs = llngTotalValPs + lobjAux.mlngPoliciesToValidate + lobjAux.mlngPoliciesValid;
 			llngTotalOldPs = llngTotalOldPs + lobjAux.mlngPoliciesTotal -
 					(lobjAux.mlngPoliciesToValidate + lobjAux.mlngPoliciesValid);
+			if ( lobjAux.mdblTotals != null )
+				ldblTotal = ldblTotal.add(lobjAux.mdblTotals);
 		}
 
-		larrRows = new TR[6];
+		larrRows = new TR[7];
 
 		larrRows[0] = ReportBuilder.constructDualHeaderRowCell(pstrHeader);
 
@@ -83,6 +89,8 @@ public class ClientListingsBase
 		larrRows[4] = ReportBuilder.constructDualRow("Total de Apólices Abertas", llngTotalValPs, TypeDefGUIDs.T_Integer, false);
 
 		larrRows[5] = ReportBuilder.constructDualRow("Total de Apólices Antigas", llngTotalOldPs, TypeDefGUIDs.T_Integer, false);
+
+		larrRows[6] = ReportBuilder.constructDualRow("Total de Valores", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);
@@ -116,6 +124,7 @@ public class ClientListingsBase
 		int llngTotalQRs;
 		int llngTotalValPs;
 		int llngTotalOldPs;
+		BigDecimal ldblTotal;
 		int i;
 		ClientTotals lobjAux;
 		TR[] larrRows;
@@ -126,6 +135,7 @@ public class ClientListingsBase
 		llngTotalQRs = 0;
 		llngTotalValPs = 0;
 		llngTotalOldPs = 0;
+		ldblTotal = BigDecimal.ZERO;
 		for ( i = 0; i < parrClients.length; i++ )
 		{
 			lobjAux = mmapData.get(parrClients[i].getKey());
@@ -136,9 +146,11 @@ public class ClientListingsBase
 			llngTotalValPs = llngTotalValPs + lobjAux.mlngPoliciesToValidate + lobjAux.mlngPoliciesValid;
 			llngTotalOldPs = llngTotalOldPs + lobjAux.mlngPoliciesTotal -
 					(lobjAux.mlngPoliciesToValidate + lobjAux.mlngPoliciesValid);
+			if ( lobjAux.mdblTotals != null )
+				ldblTotal = ldblTotal.add(lobjAux.mdblTotals);
 		}
 
-		larrRows = new TR[6];
+		larrRows = new TR[7];
 
 		larrRows[0] = ReportBuilder.constructDualHeaderRowCell(pstrHeader);
 
@@ -155,6 +167,8 @@ public class ClientListingsBase
 		larrRows[4] = ReportBuilder.constructDualRow("Total de Apólices Abertas", llngTotalValPs, TypeDefGUIDs.T_Integer, false);
 
 		larrRows[5] = ReportBuilder.constructDualRow("Total de Apólices Antigas", llngTotalOldPs, TypeDefGUIDs.T_Integer, false);
+
+		larrRows[6] = ReportBuilder.constructDualRow("Total de Valores", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 
 		return larrRows;
 	}
@@ -187,7 +201,7 @@ public class ClientListingsBase
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[13];
+		larrCells = new TD[14];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Número");
 		ReportBuilder.styleCell(larrCells[0], false, false);
@@ -210,23 +224,26 @@ public class ClientListingsBase
 		larrCells[6] = ReportBuilder.buildHeaderCell("Mediador");
 		ReportBuilder.styleCell(larrCells[6], false, true);
 
-		larrCells[7] = ReportBuilder.buildHeaderCell("Consultas em curso");
+		larrCells[7] = ReportBuilder.buildHeaderCell("Valor");
 		ReportBuilder.styleCell(larrCells[7], false, true);
 
-		larrCells[8] = ReportBuilder.buildHeaderCell("Apólices actuais");
+		larrCells[8] = ReportBuilder.buildHeaderCell("Consultas em curso");
 		ReportBuilder.styleCell(larrCells[8], false, true);
 
-		larrCells[9] = ReportBuilder.buildHeaderCell("Apólices antigas");
+		larrCells[9] = ReportBuilder.buildHeaderCell("Apólices actuais");
 		ReportBuilder.styleCell(larrCells[9], false, true);
 
-		larrCells[10] = ReportBuilder.buildHeaderCell("Data criação");
+		larrCells[10] = ReportBuilder.buildHeaderCell("Apólices antigas");
 		ReportBuilder.styleCell(larrCells[10], false, true);
 
-		larrCells[11] = ReportBuilder.buildHeaderCell("1ª criação ap.");
+		larrCells[11] = ReportBuilder.buildHeaderCell("Data criação");
 		ReportBuilder.styleCell(larrCells[11], false, true);
 
-		larrCells[12] = ReportBuilder.buildHeaderCell("Últ. criação ap.");
+		larrCells[12] = ReportBuilder.buildHeaderCell("Criação 1ª ap.");
 		ReportBuilder.styleCell(larrCells[12], false, true);
+
+		larrCells[13] = ReportBuilder.buildHeaderCell("Anul. últ. ap.");
+		ReportBuilder.styleCell(larrCells[13], false, true);
 
 		setWidths(larrCells);
 
@@ -265,7 +282,7 @@ public class ClientListingsBase
 
 		lobjTotals = mmapData.get(pobjClient.getKey());
 
-		larrCells = new TD[13];
+		larrCells = new TD[14];
 
 		larrCells[0] = ReportBuilder.buildCell(pobjClient.getAt(Client.I.NUMBER), TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -288,25 +305,28 @@ public class ClientListingsBase
 		larrCells[6] = ReportBuilder.buildCell(lobjMed.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[6], true, true);
 
-		larrCells[7] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mlngQRsRunning, TypeDefGUIDs.T_Integer);
+		larrCells[7] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdblTotals, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[7], true, true);
 
-		larrCells[8] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mlngPoliciesToValidate +
-				lobjTotals.mlngPoliciesValid, TypeDefGUIDs.T_Integer);
+		larrCells[8] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mlngQRsRunning, TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[8], true, true);
 
-		larrCells[9] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mlngPoliciesTotal -
-				(lobjTotals.mlngPoliciesToValidate + lobjTotals.mlngPoliciesValid), TypeDefGUIDs.T_Integer);
+		larrCells[9] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mlngPoliciesToValidate +
+				lobjTotals.mlngPoliciesValid, TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[9], true, true);
 
-		larrCells[10] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdtCreated, TypeDefGUIDs.T_Date);
+		larrCells[10] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mlngPoliciesTotal -
+				(lobjTotals.mlngPoliciesToValidate + lobjTotals.mlngPoliciesValid), TypeDefGUIDs.T_Integer);
 		ReportBuilder.styleCell(larrCells[10], true, true);
 
-		larrCells[11] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdtFirst, TypeDefGUIDs.T_Date);
+		larrCells[11] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdtCreated, TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[11], true, true);
 
-		larrCells[12] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdtLast, TypeDefGUIDs.T_Date);
+		larrCells[12] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdtFirst, TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[12], true, true);
+
+		larrCells[13] = ReportBuilder.buildCell(lobjTotals == null ? null : lobjTotals.mdtLast, TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[13], true, true);
 
 		setWidths(larrCells);
 
@@ -322,12 +342,13 @@ public class ClientListingsBase
 		parrCells[ 4].setWidth(130);
 		parrCells[ 5].setWidth(140);
 		parrCells[ 6].setWidth(170);
-		parrCells[ 7].setWidth(100);
+		parrCells[ 7].setWidth( 80);
 		parrCells[ 8].setWidth(100);
 		parrCells[ 9].setWidth(100);
 		parrCells[10].setWidth(100);
 		parrCells[11].setWidth(100);
 		parrCells[12].setWidth(100);
+		parrCells[13].setWidth(100);
 	}
 
 	protected void filterByClientGroup(StringBuilder pstrSQL, UUID pidGroup)
@@ -358,8 +379,6 @@ public class ClientListingsBase
 
 		if ( mmapData != null )
 			return;
-
-		mmapData = new HashMap<UUID, ClientTotals>();
 
 		try
 		{
@@ -395,9 +414,24 @@ public class ClientListingsBase
 							new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false}, null) + ") [AuxLogs2] " +
 							"WHERE [Process] = [Main].[Process]), " +
 					"(SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
-							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
-							new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false}, null) + ") [AuxLogs3] " +
-							"WHERE [Process] = [Main].[Process]) " +
+							new int[] {Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {false}, null) + ") [AuxLogs3] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Policy}, null) +
+							") [AuxProcs3] ON [AuxProcs3].PK=[AuxLogs3].[Process] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Client}, null) +
+							") [AuxProcsP] ON [AuxProcsP].PK=[AuxProcs3].[Parent] " +
+							"WHERE [AuxLogs3].[Operation] IN ('" + Constants.OPID_Policy_VoidPolicy + "', '" + Constants.OPID_Policy_ExternAutoVoid +
+							"', '" + Constants.OPID_Policy_MediationTransfer + "', '" + Constants.OPID_Policy_PolicySubstitution + "') " +
+							"AND [AuxProcsP].[Data] NOT IN (SELECT [Client] FROM (" + lrefPolicies.SQLForSelectByMembers(
+									new int[] {Policy.I.STATUS},
+									new java.lang.Object[] {Constants.StatusID_Valid}, null) + ") [AuxPol5]) " +
+							"AND [AuxProcs3].[Parent] = [Main].[Process]), " +
+					"(SELECT SUM([Premium]) FROM (" + lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.STATUS},
+							new java.lang.Object[] {Constants.StatusID_Valid}, null) + ") [AuxPol6] " +
+							"WHERE [Client] = [Main].PK) " +
 					"FROM (" + lrefClients.SQLForSelectAll() + ") [Main];";
 
 			ldb = new MasterDB();
@@ -417,6 +451,8 @@ public class ClientListingsBase
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		mmapData = new HashMap<UUID, ClientTotals>();
+
 		try
 		{
 			while ( lrsClients.next() )
@@ -431,6 +467,7 @@ public class ClientListingsBase
 				lobjAux.mdtCreated = lrsClients.getTimestamp(7);
 				lobjAux.mdtFirst = lrsClients.getTimestamp(8);
 				lobjAux.mdtLast = lrsClients.getTimestamp(9);
+				lobjAux.mdblTotals = lrsClients.getBigDecimal(10);
 				mmapData.put(lidAux, lobjAux);
 			}
 		}
