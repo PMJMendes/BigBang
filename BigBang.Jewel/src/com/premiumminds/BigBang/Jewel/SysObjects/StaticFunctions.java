@@ -79,7 +79,7 @@ public class StaticFunctions
 	{
 		try
 		{
-			PetriEngine.StartupAllProcesses(pidNameSpace);
+			PetriEngine.StartupByScript(pidNameSpace, Constants.ProcID_SubCasualty);
 		}
 		catch (Throwable e)
 		{
