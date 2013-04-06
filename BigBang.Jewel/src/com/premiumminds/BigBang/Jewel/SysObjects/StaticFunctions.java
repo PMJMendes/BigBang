@@ -9,7 +9,6 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
-import Jewel.Petri.SysObjects.PetriEngine;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -77,14 +76,17 @@ public class StaticFunctions
 	public static void DoStartup(UUID pidNameSpace)
 		throws BigBangJewelException
 	{
-		try
-		{
-			PetriEngine.StartupByScript(pidNameSpace, Constants.ProcID_SubCasualty);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
+		throw new BigBangJewelException("Esta funcionalidade está desactivada.");
+
+//		try
+//		{
+//			PetriEngine.StartupByScript(pidNameSpace, Constants.ProcID_SubPolicy);
+//			PetriEngine.StartupAllProcesses(pidNameSpace);
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
 	}
 
 	public static void AcctMovGen(UUID pidNameSpace)
