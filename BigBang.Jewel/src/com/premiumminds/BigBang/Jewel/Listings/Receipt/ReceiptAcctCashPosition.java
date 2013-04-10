@@ -240,7 +240,7 @@ public class ReceiptAcctCashPosition
 		larrCells[4] = ReportBuilder.buildHeaderCell("Comissões por Entregar");
 		ReportBuilder.styleCell(larrCells[4], false, true);
 
-		larrCells[5] = ReportBuilder.buildHeaderCell("Líquido");
+		larrCells[5] = ReportBuilder.buildHeaderCell("Líquido por Entregar");
 		ReportBuilder.styleCell(larrCells[5], false, true);
 
 		setWidths(larrCells);
@@ -319,8 +319,7 @@ public class ReceiptAcctCashPosition
 		larrCells[4] = ReportBuilder.buildCell(ldblFComs, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[4], true, true);
 
-		larrCells[5] = ReportBuilder.buildCell(ldblPending.add(ldblPaid).subtract(ldblPComs).subtract(ldblFComs),
-				TypeDefGUIDs.T_Decimal);
+		larrCells[5] = ReportBuilder.buildCell(ldblPaid.subtract(ldblFComs), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
 		setWidths(larrCells);
@@ -354,8 +353,7 @@ public class ReceiptAcctCashPosition
 		larrCells[4] = ReportBuilder.buildCell(pdblFComs, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[4], true, true);
 
-		larrCells[5] = ReportBuilder.buildCell(pdblPending.add(pdblPaid).subtract(pdblPComs).subtract(pdblFComs),
-				TypeDefGUIDs.T_Decimal);
+		larrCells[5] = ReportBuilder.buildCell(pdblPaid.subtract(pdblFComs), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
 		setWidths(larrCells);
@@ -365,11 +363,11 @@ public class ReceiptAcctCashPosition
 
 	protected void setWidths(TD[] parrCells)
 	{
-		parrCells[ 0].setWidth(150);
-		parrCells[ 1].setWidth( 80);
-		parrCells[ 2].setWidth( 80);
-		parrCells[ 3].setWidth( 80);
-		parrCells[ 4].setWidth( 80);
-		parrCells[ 5].setWidth( 80);
+		parrCells[ 0].setWidth(200);
+		parrCells[ 1].setWidth(100);
+		parrCells[ 2].setWidth(100);
+		parrCells[ 3].setWidth(100);
+		parrCells[ 4].setWidth(100);
+		parrCells[ 5].setWidth(100);
 	}
 }
