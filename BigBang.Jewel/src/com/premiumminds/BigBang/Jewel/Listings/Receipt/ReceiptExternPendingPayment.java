@@ -391,10 +391,10 @@ public class ReceiptExternPendingPayment
 		parrCells[ 1].setWidth(130);
 		parrCells[ 2].setWidth(100);
 		parrCells[ 3].setWidth( 60);
-		parrCells[ 4].setWidth(170);
+		parrCells[ 4].setWidth(100);
 		parrCells[ 5].setWidth( 80);
 		parrCells[ 6].setWidth( 90);
-		parrCells[ 7].setWidth(110);
+		parrCells[ 7].setWidth( 90);
 		parrCells[ 8].setWidth(140);
 	}
 
