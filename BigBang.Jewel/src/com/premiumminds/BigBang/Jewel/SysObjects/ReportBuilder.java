@@ -146,6 +146,20 @@ public class ReportBuilder
 		return lrow;
 	}
 
+	public static TR constructDualIntermediateRowCell(String pstrHeader)
+	{
+		TD lcell;
+		TR lrow;
+
+		lcell = buildHeaderCell(pstrHeader);
+		lcell.setColSpan(2);
+		styleCell(lcell, true, false);
+		lrow = ReportBuilder.buildRow(new TD[] {lcell});
+		styleRow(lrow, true);
+
+		return lrow;
+	}
+
 	public static TR constructDualRow(String pstrHeader, java.lang.Object pobjValue, UUID pidType, boolean pbRightAlign)
 	{
 		TD[] larrCells;

@@ -355,17 +355,13 @@ public class InsurerAccountingMap
 		{
 			ldblTotalPremiums = ldblTotalPremiums.add(((InsurerAccountingDetail)marrDetails[i]).getPremium());
 			ldblDirectPremiums = ldblDirectPremiums.add(((InsurerAccountingDetail)marrDetails[i]).getDirectPremium());
-
 			ldblTotalComms = ldblTotalComms.add(((InsurerAccountingDetail)marrDetails[i]).getCommissions());
 			ldblLifeComms = ldblLifeComms.add(((InsurerAccountingDetail)marrDetails[i]).getLifeComms());
-			ldblTaxableComms = ldblTaxableComms.add(((InsurerAccountingDetail)marrDetails[i]).getCommissions()
-					.subtract(((InsurerAccountingDetail)marrDetails[i]).getLifeComms()));
-			ldblTax = ldblTax.add((((InsurerAccountingDetail)marrDetails[i]).getCommissions()
-					.subtract(((InsurerAccountingDetail)marrDetails[i]).getLifeComms()))
-					.multiply(new BigDecimal(2.0/102.0)).setScale(2, RoundingMode.HALF_UP));
 		}
 
 		ldblPayablePremiums = ldblTotalPremiums.subtract(ldblDirectPremiums);
+		ldblTaxableComms = ldblTotalComms.subtract(ldblLifeComms);
+		ldblTax = ldblTaxableComms.multiply(new BigDecimal(2.0/102.0)).setScale(2, RoundingMode.HALF_UP);
 		ldblPreTax = ldblPayablePremiums.subtract(ldblTotalComms);
 		if ( lbSubtract )
 			ldblPreTax = ldblPreTax.subtract(ldblExtraValue);

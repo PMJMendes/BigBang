@@ -312,9 +312,9 @@ public class ReceiptHistoryPaymentAcct
 	{
 		parrCells[ 0].setWidth( 80);
 		parrCells[ 1].setWidth( 20);
-		parrCells[ 2].setWidth(300);
-		parrCells[ 3].setWidth(110);
-		parrCells[ 4].setWidth(140);
+		parrCells[ 2].setWidth(250);
+		parrCells[ 3].setWidth(120);
+		parrCells[ 4].setWidth(100);
 		parrCells[ 5].setWidth(100);
 		parrCells[ 6].setWidth( 90);
 		parrCells[ 7].setWidth( 90);
@@ -409,17 +409,17 @@ public class ReceiptHistoryPaymentAcct
 		larrRows[6] = ReportBuilder.constructDualRow("Total de Retrocessões", ldblTotalRetro, TypeDefGUIDs.T_Decimal, false);
 
 		if ( (larrPlusMap.size() == 0) && (larrMinusMap.size() == 0) )
-			larrRows[7] = ReportBuilder.constructDualHeaderRowCell("Informação sobre tipos de pagamento não disponível.");
+			larrRows[7] = ReportBuilder.constructDualIntermediateRowCell("Informação sobre tipos de pagamento não disponível.");
 		else
 		{
-			larrRows[7] = ReportBuilder.constructDualHeaderRowCell("Sumário de Tipos de Pagamento - Entradas");
+			larrRows[7] = ReportBuilder.constructDualIntermediateRowCell("Sumário de Tipos de Pagamento - Entradas");
 			i = 1;
 			for ( String lstr: larrPlusMap.keySet() )
 			{
 				larrRows[7 + i] = ReportBuilder.constructDualRow(lstr, larrPlusMap.get(lstr), TypeDefGUIDs.T_Decimal, true);
 				i++;
 			}
-			larrRows[7 + i] = ReportBuilder.constructDualHeaderRowCell("Sumário de Tipos de Pagamento - Saídas");
+			larrRows[7 + i] = ReportBuilder.constructDualIntermediateRowCell("Sumário de Tipos de Pagamento - Saídas");
 			for ( String lstr: larrMinusMap.keySet() )
 			{
 				larrRows[8 + i] = ReportBuilder.constructDualRow(lstr, larrMinusMap.get(lstr), TypeDefGUIDs.T_Decimal, true);
@@ -427,7 +427,7 @@ public class ReceiptHistoryPaymentAcct
 			}
 
 			if ( b )
-				larrRows[8 + i] = ReportBuilder.constructDualHeaderRowCell("(Informação incompleta.)");
+				larrRows[8 + i] = ReportBuilder.constructDualIntermediateRowCell("(Informação incompleta.)");
 		}
 
 		ltbl = ReportBuilder.buildTable(larrRows);
