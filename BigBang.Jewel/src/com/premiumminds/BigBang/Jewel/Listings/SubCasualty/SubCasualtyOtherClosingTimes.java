@@ -22,6 +22,7 @@ import Jewel.Engine.SysObjects.R;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
+import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
@@ -291,17 +292,21 @@ public class SubCasualtyOtherClosingTimes
 		for ( SubCasualty lobjSubC : parrReceipts )
 		{
 			lobjAux = mmapData.get(lobjSubC.getKey());
-			if ( (lobjAux != null) && (lobjAux.mdtCreated != null) && (lobjAux.mdtMarked != null) && (lobjAux.mdtClosed != null) )
-			{
-				if ( lobjAux.mdtClosed.getYear() == lobjAux.mdtCreated.getYear() )
+			if ( (lobjAux == null) || (lobjAux.mdtMarked != null) || (lobjAux.mdtClosed == null) )
+				continue;
+
+			if ( lobjAux.mdtCreated == null )
+				lobjAux.mdtCreated = lobjAux.mdtReported;
+			if ( lobjAux.mdtCreated == null )
+				lobjAux.mdtCreated = (Timestamp)lobjSubC.GetCasualty().getAt(Casualty.I.DATE);
+
+			if ( lobjAux.mdtClosed.getYear() == lobjAux.mdtCreated.getYear() )
 					llngCountS++;
 				else
 					llngCountT++;
-				llngDaysM += (lobjAux.mdtMarked.getTime() - lobjAux.mdtCreated.getTime()) / (1000 * 60 * 60 *24);
-				llngDaysR += (lobjAux.mdtClosed.getTime() - lobjAux.mdtMarked.getTime()) / (1000 * 60 * 60 *24);
-			}
-			else
-				llngCountT++;
+
+			llngDaysM += (lobjAux.mdtMarked.getTime() - lobjAux.mdtCreated.getTime()) / (1000 * 60 * 60 *24);
+			llngDaysR += (lobjAux.mdtClosed.getTime() - lobjAux.mdtMarked.getTime()) / (1000 * 60 * 60 *24);
 		}
 
 		larrCells = new TD[7];
