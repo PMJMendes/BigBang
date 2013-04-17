@@ -27,10 +27,11 @@ public class PaymentNoticeReport
 	public UUID[] marrReceiptIDs;
 	public BigDecimal mdblTotal;
 	public int mlngCount;
+	public boolean mbForEmail;
 
 	protected UUID GetTemplateID()
 	{
-		return Constants.TID_PaymentNotice;
+		return mbForEmail ? Constants.TID_PaymentNoticeLogo : Constants.TID_PaymentNotice;
 	}
 
 	public FileXfer Generate()

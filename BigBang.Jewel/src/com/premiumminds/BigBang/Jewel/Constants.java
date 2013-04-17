@@ -689,6 +689,7 @@ public class Constants
 	// Template IDs
 	public static final UUID TID_DebitNote           = UUID.fromString("BD024115-3572-41D4-B60C-9FF100F7E0C4");
 	public static final UUID TID_PaymentNotice       = UUID.fromString("1852C013-F43F-4BBD-9895-A0200107AF84");
+	public static final UUID TID_PaymentNoticeLogo   = UUID.fromString("1A77EABC-B9DD-4326-82BD-A1A300F3C9C3");
 	public static final UUID TID_ReceiptCoverLetter  = UUID.fromString("874B735A-E564-47A8-B902-A02300E5ED8F");
 	public static final UUID TID_ReceiptReturnLetter = UUID.fromString("13931DA8-6208-4074-ABD5-A0290116442A");
 	public static final UUID TID_PaymentCoverLetter  = UUID.fromString("08014404-6149-4EBB-88EA-A02A00E8069F");

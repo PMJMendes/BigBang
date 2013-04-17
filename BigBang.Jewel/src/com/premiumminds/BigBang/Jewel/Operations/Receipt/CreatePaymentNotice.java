@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,13 +23,16 @@ import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.PaymentNoticeReport;
@@ -46,7 +50,7 @@ public class CreatePaymentNotice
 	public UUID midSetDocument;
 	public UUID midSetDetail;
 	public DocOps mobjDocOps;
-	public Boolean mbTryEmail;
+	public boolean mbTryEmail;
 
 	private UUID midClient;
 //	private OutgoingMessageData mobjMessage;
@@ -86,29 +90,53 @@ public class CreatePaymentNotice
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		UUID lidProfile;
 		PrintSet lobjSet;
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
 		Document lobjStamped;
 		FileXfer lobjFile;
 		Receipt lobjReceipt;
+		Client lobjClient;
+		com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation lopCCC;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midClient = GetProcess().GetParent().GetParent().GetDataKey();
 		else
 			midClient = (UUID)GetProcess().GetParent().GetData().getAt(2);
 
-		try
+		if ( !mbUseSets )
 		{
-			if ( mobjDocOps == null )
-				generateDocOp();
-		}
-		catch (Throwable e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
+			try
+			{
+				lidProfile = ((Receipt)GetProcess().GetData()).getProfile();
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+			mbTryEmail = Constants.ProfID_Email.equals(lidProfile) || Constants.ProfID_EmailNoDAS.equals(lidProfile);
 		}
 
-		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+		if ( mbTryEmail )
+			mbTryEmail = checkEmail();
+
+		if ( mobjDocOps == null )
+		{
+			try
+			{
+				generateDocOp(mbTryEmail);
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+			mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+			if ( mbTryEmail )
+				addAttachment(mobjDocOps.marrCreate[0].mid);
+		}
+		else
+			mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
 
 		lobjReceipt = (Receipt)GetProcess().GetData();
 		try
@@ -121,11 +149,28 @@ public class CreatePaymentNotice
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mbUseSets )
-		{
-			if ( mbTryEmail == null )
-				mbTryEmail = checkEmail();
 
+		try
+		{
+			lobjFile = null;
+			lobjStamped = ((Receipt)GetProcess().GetData()).getStamped(pdb);
+			if ( lobjStamped != null )
+			{
+		    	if ( lobjStamped.getAt(Document.I.FILE) instanceof FileXfer )
+		    		lobjFile = (FileXfer)lobjStamped.getAt(Document.I.FILE);
+		    	else
+		    		lobjFile = new FileXfer((byte[])lobjStamped.getAt(Document.I.FILE));
+		    	if ( mbTryEmail )
+		    		addAttachment(lobjStamped.getKey());
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		if ( mbUseSets && !mbTryEmail )
+		{
 			try
 			{
 				if ( midSet == null )
@@ -144,21 +189,9 @@ public class CreatePaymentNotice
 					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjSetClient.setAt(0, midSet);
 					lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
-					lobjSetClient.setAt(2, mbTryEmail);
+					lobjSetClient.setAt(2, false);
 					lobjSetClient.SaveToDb(pdb);
 					midSetDocument = lobjSetClient.getKey();
-				}
-
-				lobjFile = null;
-				lobjStamped = ((Receipt)GetProcess().GetData()).getStamped(pdb);
-				if ( lobjStamped != null )
-				{
-			    	if ( lobjStamped.getAt(Document.I.FILE) instanceof FileXfer )
-			    		lobjFile = (FileXfer)lobjStamped.getAt(Document.I.FILE);
-			    	else
-			    		lobjFile = new FileXfer((byte[])lobjStamped.getAt(Document.I.FILE));
-			    	if ( mbTryEmail )
-			    		addAttachment(lobjStamped);
 				}
 
 				lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -171,6 +204,21 @@ public class CreatePaymentNotice
 			{
 				throw new JewelPetriException(e.getMessage(), e);
 			}
+		}
+
+		if ( !mbUseSets && mbTryEmail && (mobjConvData != null) )
+		{
+			try
+			{
+				lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+			lopCCC = new com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation(lobjClient.GetProcessID());
+			lopCCC.mobjData = mobjConvData;
+			lopCCC.Execute(pdb);
 		}
 	}
 
@@ -199,7 +247,7 @@ public class CreatePaymentNotice
 		return new UndoSet[0];
 	}
 
-	private void generateDocOp()
+	private void generateDocOp(boolean pbForEmail)
 		throws BigBangJewelException
 	{
 		PaymentNoticeReport lrepPN;
@@ -209,6 +257,7 @@ public class CreatePaymentNotice
 		lrepPN = new PaymentNoticeReport();
 		lrepPN.midClient = midClient;
 		lrepPN.marrReceiptIDs = marrReceiptIDs;
+		lrepPN.mbForEmail = pbForEmail;
 		lobjFile = lrepPN.Generate();
 
 		lobjDoc = new DocumentData();
@@ -239,8 +288,6 @@ public class CreatePaymentNotice
 		try
 		{
 			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
-			if ( !Constants.ProfID_Email.equals(lobjClient.getProfile()) && !Constants.ProfID_EmailNoDAS.equals(lobjClient.getProfile()) )
-				return false;
 		}
 		catch (Throwable e)
 		{
@@ -254,53 +301,54 @@ public class CreatePaymentNotice
 		if ( getSelf(Constants.UsageID_From) == null )
 			return false;
 
-		mobjConvData = new ConversationData();
-		mobjConvData.mstrSubject = "Envio de Aviso de Cobrança";
-		mobjConvData.midType = Constants.ConvTpID_PaymentNotice;
-		mobjConvData.midProcess = null;
-		mobjConvData.midStartDir = Constants.MsgDir_Outgoing;
-		mobjConvData.midPendingDir = null;
-		mobjConvData.mdtDueDate = null;
-
-		mobjConvData.marrMessages = new MessageData[] {new MessageData()};
-		mobjConvData.marrMessages[0].mstrSubject = "Envio de Aviso de Cobrança";
-		mobjConvData.marrMessages[0].midOwner = null;
-		mobjConvData.marrMessages[0].mlngNumber = 0;
-		mobjConvData.marrMessages[0].midDirection = Constants.MsgDir_Outgoing;
-		mobjConvData.marrMessages[0].mbIsEmail = true;
-		mobjConvData.marrMessages[0].mdtDate = new Timestamp(new Date().getTime());
-		mobjConvData.marrMessages[0].mstrBody = " ";
-
-		mobjConvData.marrMessages[0].marrAddresses = new MessageAddressData[larrInfo.length + 2];
-		mobjConvData.marrMessages[0].marrAddresses[0] = getSelf(Constants.UsageID_From);
-		mobjConvData.marrMessages[0].marrAddresses[1] = getSelf(Constants.UsageID_BCC);
-
-		for ( i = 0; i < larrInfo.length; i++ )
+		if ( mobjConvData == null )
 		{
-			mobjConvData.marrMessages[0].marrAddresses[i + 2] = new MessageAddressData();
-			mobjConvData.marrMessages[0].marrAddresses[i + 2].mstrAddress = (String)larrInfo[i].getAt(ContactInfo.I.VALUE);
-			mobjConvData.marrMessages[0].marrAddresses[i + 2].midOwner = null;
-			mobjConvData.marrMessages[0].marrAddresses[i + 2].midUsage = Constants.UsageID_To;
-			mobjConvData.marrMessages[0].marrAddresses[i + 2].midUser = null;
-			mobjConvData.marrMessages[0].marrAddresses[i + 2].midInfo = larrInfo[i].getKey();
-			try
-			{
-				mobjConvData.marrMessages[0].marrAddresses[i + 1].mstrDisplay = larrInfo[i].getOwner().getLabel();
-			}
-			catch (Throwable e)
-			{
-				mobjConvData.marrMessages[0].marrAddresses[i + 1].mstrDisplay = null;
-			}
-		}
+			mobjConvData = new ConversationData();
+			mobjConvData.mstrSubject = "Envio de Aviso(s) de Cobrança";
+			mobjConvData.midType = Constants.ConvTpID_PaymentNotice;
+			mobjConvData.midProcess = null;
+			mobjConvData.midStartDir = Constants.MsgDir_Outgoing;
+			mobjConvData.midPendingDir = null;
+			mobjConvData.mdtDueDate = null;
 
-		mobjConvData.marrMessages[0].marrAttachments = new MessageAttachmentData[] {new MessageAttachmentData()};
-		mobjConvData.marrMessages[0].marrAttachments[0].midOwner = null;
-		mobjConvData.marrMessages[0].marrAttachments[0].midDocument = mobjDocOps.marrCreate[0].mid;
+			mobjConvData.marrMessages = new MessageData[] {new MessageData()};
+			mobjConvData.marrMessages[0].mstrSubject = "Envio de Aviso(s) de Cobrança";
+			mobjConvData.marrMessages[0].midOwner = null;
+			mobjConvData.marrMessages[0].mlngNumber = 0;
+			mobjConvData.marrMessages[0].midDirection = Constants.MsgDir_Outgoing;
+			mobjConvData.marrMessages[0].mbIsEmail = true;
+			mobjConvData.marrMessages[0].mdtDate = new Timestamp(new Date().getTime());
+			mobjConvData.marrMessages[0].mstrBody = getBody();
+
+			mobjConvData.marrMessages[0].marrAddresses = new MessageAddressData[larrInfo.length + 2];
+			mobjConvData.marrMessages[0].marrAddresses[0] = getSelf(Constants.UsageID_From);
+			mobjConvData.marrMessages[0].marrAddresses[1] = getSelf(Constants.UsageID_BCC);
+
+			for ( i = 0; i < larrInfo.length; i++ )
+			{
+				mobjConvData.marrMessages[0].marrAddresses[i + 2] = new MessageAddressData();
+				mobjConvData.marrMessages[0].marrAddresses[i + 2].mstrAddress = (String)larrInfo[i].getAt(ContactInfo.I.VALUE);
+				mobjConvData.marrMessages[0].marrAddresses[i + 2].midOwner = null;
+				mobjConvData.marrMessages[0].marrAddresses[i + 2].midUsage = Constants.UsageID_To;
+				mobjConvData.marrMessages[0].marrAddresses[i + 2].midUser = null;
+				mobjConvData.marrMessages[0].marrAddresses[i + 2].midInfo = larrInfo[i].getKey();
+				try
+				{
+					mobjConvData.marrMessages[0].marrAddresses[i + 1].mstrDisplay = larrInfo[i].getOwner().getLabel();
+				}
+				catch (Throwable e)
+				{
+					mobjConvData.marrMessages[0].marrAddresses[i + 1].mstrDisplay = null;
+				}
+			}
+
+			mobjConvData.marrMessages[0].marrAttachments = new MessageAttachmentData[0];
+		}
 
 		return true;
 	}
 
-	private void addAttachment(Document pobjDoc)
+	private void addAttachment(UUID pidDoc)
 	{
 		MessageAttachmentData[] larrAtts;
 
@@ -309,7 +357,7 @@ public class CreatePaymentNotice
 		mobjConvData.marrMessages[0].marrAttachments = Arrays.copyOf(larrAtts, larrAtts.length + 1);
 		mobjConvData.marrMessages[0].marrAttachments[larrAtts.length] = new MessageAttachmentData();
 		mobjConvData.marrMessages[0].marrAttachments[larrAtts.length].midOwner = null;
-		mobjConvData.marrMessages[0].marrAttachments[larrAtts.length].midDocument = pobjDoc.getKey();
+		mobjConvData.marrMessages[0].marrAttachments[larrAtts.length].midDocument = pidDoc;
 	}
 
 	private ContactInfo[] getRelevantEmails(Client pobjClient)
@@ -386,5 +434,83 @@ public class CreatePaymentNotice
 		lobjResult.mstrDisplay = lobjUser.getDisplayName();
 
 		return lobjResult;
+	}
+
+	private String getBody()
+	{
+		StringBuilder lstrBuffer;
+		int i;
+		Receipt lobjRec;
+		SubPolicy lobjSubP;
+		Policy lobjP;
+		Company lobjComp;
+
+		lstrBuffer = new StringBuilder();
+
+		lstrBuffer.append("<table border=\"1\">");
+
+		lstrBuffer.append("<tr>");
+		lstrBuffer.append("<th>Apólice</th>");
+		lstrBuffer.append("<th>Recibo</th>");
+		lstrBuffer.append("<th>Ramo</th>");
+		lstrBuffer.append("<th>Comp</th>");
+		lstrBuffer.append("<th>Vigência</th>");
+		lstrBuffer.append("<th>Até</th>");
+		lstrBuffer.append("<th>Prémio</th>");
+		lstrBuffer.append("<th>Dt. Lim.</th>");
+		lstrBuffer.append("<th>Descrição</th>");
+		lstrBuffer.append("</tr>");
+
+		for ( i = 0; i < marrReceiptIDs.length; i++ )
+		{
+			try
+			{
+				lobjRec = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
+				lobjSubP = lobjRec.getSubPolicy();
+				lobjP = lobjRec.getAbsolutePolicy();
+				lobjComp = lobjP.GetCompany();
+			}
+			catch (Throwable e)
+			{
+				continue;
+			}
+
+			lstrBuffer.append("<tr>");
+			lstrBuffer.append("<td>")
+					.append(((lobjSubP == null ? lobjP.getLabel() : lobjSubP.getLabel()) + "                    ").substring(0, 20))
+					.append("</td>");
+			lstrBuffer.append("<td>")
+					.append((lobjRec.getLabel() + "                    ").substring(0, 20))
+					.append("</td>");
+			lstrBuffer.append("<td>")
+					.append((lobjP.GetSubLine().getDescription() + "                    ").substring(0, 20))
+					.append("</td>");
+			lstrBuffer.append("<td>")
+					.append((((String)(lobjComp.getAt(Company.I.ACRONYM))) + "      ").substring(0, 6))
+					.append("</td>");
+			lstrBuffer.append("<td>")
+					.append(((lobjRec.getAt(Receipt.I.MATURITYDATE) == null ? "" :
+						((Timestamp)lobjRec.getAt(Receipt.I.MATURITYDATE)).toString().substring(0, 10)) + "          ").substring(0, 10))
+					.append("</td>");
+			lstrBuffer.append("<td>")
+					.append(((lobjRec.getAt(Receipt.I.ENDDATE) == null ? "" :
+						((Timestamp)lobjRec.getAt(Receipt.I.ENDDATE)).toString().substring(0, 10)) + "          ").substring(0, 10))
+					.append("</td>");
+			lstrBuffer.append("<td>")
+					.append((String.format("%,.2f", (BigDecimal)lobjRec.getAt(Receipt.I.TOTALPREMIUM)) + "                    ").substring(0, 20))
+					.append("</td>");
+			lstrBuffer.append("<td>")
+					.append((lobjRec.getExternalDueDate() + "          ").substring(0, 10))
+					.append("</td>");
+			lstrBuffer.append("<td>")
+					.append((lobjRec.getAt(Receipt.I.DESCRIPTION) == null ? "" :
+						((String)lobjRec.getAt(Receipt.I.DESCRIPTION)) + "                         ").substring(0, 25))
+					.append("</td>");
+			lstrBuffer.append("</tr>");
+		}
+
+		lstrBuffer.append("</table>");
+
+		return lstrBuffer.toString();
 	}
 }
