@@ -1584,16 +1584,17 @@ public class ReceiptServiceImpl
 	public void massCreatePaymentNotice(String[] receiptIds)
 		throws SessionExpiredException, BigBangException
 	{
-		HashMap<UUID, ArrayList<UUID>> larrReceipts;
+		HashMap<String, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		UUID lidClient;
+		boolean lbEmail;
+		String lstrClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
 		MasterDB ldb;
+		UUID lidC;
 		UUID lidSet;
 		UUID lidSetClient;
 		DocOps lobjDocOps;
-		Boolean lbTryEmail;
 		ConversationData lobjConvData;
 		CreatePaymentNotice lopCPN;
 		Client lobjClient;
@@ -1603,24 +1604,25 @@ public class ReceiptServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrReceipts = new HashMap<UUID, ArrayList<UUID>>();
+		larrReceipts = new HashMap<String, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
 			try
 			{
 				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(receiptIds[i]));
-				lidClient = lobjReceipt.getClient().getKey();
+				lbEmail = (Constants.ProfID_Email.equals(lobjReceipt.getProfile()) || Constants.ProfID_EmailNoDAS.equals(lobjReceipt.getProfile()));
+				lstrClient = (lbEmail ? "E" : "S") + lobjReceipt.getClient().getKey().toString();
 			}
 			catch (Throwable e)
 			{
 				throw new BigBangException(e.getMessage(), e);
 			}
-			larrByClient = larrReceipts.get(lidClient);
+			larrByClient = larrReceipts.get(lstrClient);
 			if ( larrByClient == null )
 			{
 				larrByClient = new ArrayList<UUID>();
-				larrReceipts.put(lidClient, larrByClient);
+				larrReceipts.put(lstrClient, larrByClient);
 			}
 			larrByClient.add(lobjReceipt.getKey());
 		}
@@ -1635,13 +1637,15 @@ public class ReceiptServiceImpl
 		}
 
 		lidSet = null;
-		for(UUID lidC : larrReceipts.keySet())
+		for(String lstrC : larrReceipts.keySet())
 		{
+			lbEmail = lstrC.startsWith("E");
+			lidC = UUID.fromString(lstrC.substring(1));
+
 			lidSetClient = null;
 			lobjDocOps = null;
-			lbTryEmail = null;
 			lobjConvData = null;
-			larrByClient = larrReceipts.get(lidC);
+			larrByClient = larrReceipts.get(lstrC);
 			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
 
 			try
@@ -1666,13 +1670,13 @@ public class ReceiptServiceImpl
 					lopCPN.midSet = lidSet;
 					lopCPN.midSetDocument = lidSetClient;
 					lopCPN.mobjDocOps = lobjDocOps;
-					lopCPN.mbTryEmail = lbTryEmail;
+					lopCPN.mbTryEmail = lbEmail;
 					lopCPN.mobjConvData = lobjConvData;
 
 					lopCPN.Execute(ldb);
 
 					lobjConvData = lopCPN.mobjConvData;
-					lbTryEmail = lopCPN.mbTryEmail;
+					lbEmail = lopCPN.mbTryEmail;
 					lobjDocOps = lopCPN.mobjDocOps;
 					lidSetClient = lopCPN.midSetDocument;
 					lidSet = lopCPN.midSet;
