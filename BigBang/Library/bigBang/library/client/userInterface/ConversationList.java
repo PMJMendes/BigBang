@@ -6,6 +6,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -28,6 +29,7 @@ public class ConversationList extends FilterableList<ConversationStub> implement
 	public static class Entry extends ListEntry<ConversationStub>{
 
 		protected Label subjectLabel;
+		protected Label lastDate;
 		protected Label requestType;
 		protected Image statusIcon;
 		private boolean initialized;
@@ -47,7 +49,13 @@ public class ConversationList extends FilterableList<ConversationStub> implement
 					subjectLabel.getElement().getStyle().setFontSize(14, Unit.PX);
 					subjectLabel.setWordWrap(false);
 					subjectLabel.getElement().getStyle().setProperty("whiteSpace", "");
-					
+
+					lastDate = getFormatedLabel();
+					lastDate.getElement().getStyle().setFontSize(11, Unit.PX);
+					lastDate.setWordWrap(false);
+					lastDate.getElement().getStyle().setProperty("whiteSpace", "");
+					lastDate.setHeight("1.2em");
+
 					requestType = getFormatedLabel();
 					requestType.getElement().getStyle().setFontSize(11, Unit.PX);
 					requestType.getElement().getStyle().setProperty("whiteSpace", "");
@@ -55,21 +63,27 @@ public class ConversationList extends FilterableList<ConversationStub> implement
 					
 					statusIcon = new Image();
 					
-					VerticalPanel container = new VerticalPanel();
-					container.add(subjectLabel);
-					container.add(statusIcon);
-					container.add(requestType);
+					VerticalPanel vcont = new VerticalPanel();
+					vcont.add(subjectLabel);
+
+					HorizontalPanel hcont = new HorizontalPanel();
+					hcont.add(lastDate);
+					hcont.add(statusIcon);
+					hcont.setCellHorizontalAlignment(statusIcon, HasHorizontalAlignment.ALIGN_RIGHT);
+					hcont.setWidth("100%");
+					vcont.add(hcont);
+
+					vcont.add(requestType);
+
+					vcont.setSize("100%", "100%");
 					
-					container.setCellHorizontalAlignment(statusIcon, HasHorizontalAlignment.ALIGN_RIGHT);
-					
-					container.setSize("100%", "100%");
-					
-					setWidget(container);
+					setWidget(vcont);
 				}
 				
 				subjectLabel.setText(value.subject);
+				lastDate.setText(value.lastDate);
 				requestType.setText(value.requestTypeLabel);
-				
+
 				Resources r = GWT.create(Resources.class);
 				
 				statusIcon.setResource(value.pendingDir != null ? (value.pendingDir.equals(Direction.OUTGOING) ? r.yellowIcon() : r.greenIcon()) : r.greyIcon());

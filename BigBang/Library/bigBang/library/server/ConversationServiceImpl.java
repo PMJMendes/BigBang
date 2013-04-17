@@ -226,6 +226,7 @@ public class ConversationServiceImpl
 		IProcess lobjParent;
 		IScript lobjScript;
 		Conversation lobjResult;
+		Timestamp ldtLast;
 		int i;
 
 		try
@@ -256,12 +257,21 @@ public class ConversationServiceImpl
 				(new Timestamp(new java.util.Date().getTime())).getTime()) / 86400000L)) : null );
 
 		if ( larrMsgs == null )
+		{
 			lobjResult.messages = null;
+			lobjResult.lastDate = null;
+		}
 		else
 		{
+			ldtLast = new Timestamp(0);
 			lobjResult.messages = new Message[larrMsgs.length];
 			for ( i = 0; i < larrMsgs.length; i++ )
+			{
+				if ( ((Timestamp)larrMsgs[i].getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE)).after(ldtLast) )
+					ldtLast = (Timestamp)larrMsgs[i].getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE);
 				lobjResult.messages[i] = sGetMessage(larrMsgs[i].getKey());
+			}
+			lobjResult.lastDate = ldtLast.toString().substring(0, 10);
 		}
 
 		lobjResult.processId = lobjProcess.getKey().toString();
@@ -766,8 +776,20 @@ public class ConversationServiceImpl
 
 	protected String[] getColumns()
 	{
+		IEntity lrefMessages;
+
+		try
+		{
+			lrefMessages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Message));
+		}
+		catch (Throwable e)
+		{
+			lrefMessages = null;
+		}
+
 		return new String[] {"[:Process:Data]", "[:Process:Script:Data Class]", "[:Request Type]", "[:Request Type:Type]",
-				"[:Subject]", "[:Pending Direction]"};
+				"[:Subject]", "[:Pending Direction]", lrefMessages == null ? "NULL" :
+					"(SELECT MAX([Date]) FROM (" + lrefMessages.SQLForSelectAll() + ") [AuxMsgs] WHERE [Conversation] = [Aux].[PK])"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -852,6 +874,7 @@ public class ConversationServiceImpl
 		lobjResult.requestTypeId = ((UUID)parrValues[2]).toString();
 		lobjResult.requestTypeLabel = (String)parrValues[3];
 		lobjResult.subject = (String)parrValues[4];
+		lobjResult.lastDate = parrValues[6] == null ? null : ((Timestamp)parrValues[6]).toString().substring(0, 10);
 		lobjResult.pendingDir = sGetDirection((UUID)parrValues[5]);
 
 		return lobjResult;

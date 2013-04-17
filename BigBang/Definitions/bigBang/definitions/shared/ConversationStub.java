@@ -16,5 +16,6 @@ public class ConversationStub
 	public String requestTypeId;
 	public String requestTypeLabel;
 	public String subject;
+	public String lastDate;
 	public ConversationStub.Direction pendingDir;
 }
