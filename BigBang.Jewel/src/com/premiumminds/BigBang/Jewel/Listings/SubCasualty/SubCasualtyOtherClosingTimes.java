@@ -292,7 +292,7 @@ public class SubCasualtyOtherClosingTimes
 		for ( SubCasualty lobjSubC : parrReceipts )
 		{
 			lobjAux = mmapData.get(lobjSubC.getKey());
-			if ( (lobjAux == null) || (lobjAux.mdtMarked != null) || (lobjAux.mdtClosed == null) )
+			if ( (lobjAux == null) || (lobjAux.mdtMarked == null) || (lobjAux.mdtClosed == null) )
 				continue;
 
 			if ( lobjAux.mdtCreated == null )
