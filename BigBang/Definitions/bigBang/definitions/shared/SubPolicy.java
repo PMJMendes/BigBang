@@ -13,12 +13,13 @@ public class SubPolicy
 	public String notes;
 	public String inheritMediatorId;
 	public String inheritMediatorName;
-	public Double premium; // Numérico com duas casas decimais: prémio comercial.
+	public Double premium;
 	public String docushare;
 	public String inheritSubLineId;
 	public String inheritClientId;
 	public String inheritClientNumber;
 	public String inheritClientName;
+	public Double totalPremium;
 
 	public Contact[] contacts;
 	public Document[] documents;
@@ -56,6 +57,7 @@ public class SubPolicy
 		this.inheritClientId = orig.inheritClientId;
 		this.inheritClientNumber = orig.inheritClientNumber;
 		this.inheritClientName = orig.inheritClientName;
+		this.totalPremium = orig.totalPremium;
 
 		if ( orig.contacts == null )
 			this.contacts = null;

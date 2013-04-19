@@ -947,6 +947,7 @@ public class ClientToServer
 			pobjResult.mdblPremium = ( pobjPolicy.premium == null ? null : new BigDecimal(pobjPolicy.premium+"") );
 			pobjResult.mstrDocuShare = pobjPolicy.docushare;
 			pobjResult.midProfile = ( pobjPolicy.operationalProfileId == null ? null : UUID.fromString(pobjPolicy.operationalProfileId) );
+			pobjResult.mdblTotalPremium = ( pobjPolicy.totalPremium == null ? null : new BigDecimal(pobjPolicy.totalPremium+"") );
 
 			pobjResult.midManager = ( pobjPolicy.managerId == null ? null : UUID.fromString(pobjPolicy.managerId) );
 			pobjResult.midProcess = ( pobjPolicy.processId == null ? null : UUID.fromString(pobjPolicy.processId) );
@@ -1059,6 +1060,7 @@ public class ClientToServer
 			pobjResult.midStatus = ( pobjSubPolicy.statusId == null ? null : UUID.fromString(pobjSubPolicy.statusId) );
 			pobjResult.mdblPremium = ( pobjSubPolicy.premium == null ? null : new BigDecimal(pobjSubPolicy.premium+"") );
 			pobjResult.mstrDocuShare = pobjSubPolicy.docushare;
+			pobjResult.mdblTotalPremium = ( pobjSubPolicy.totalPremium == null ? null : new BigDecimal(pobjSubPolicy.totalPremium+"") );
 
 			pobjResult.midManager = ( pobjSubPolicy.managerId == null ? null : UUID.fromString(pobjSubPolicy.managerId) );
 			pobjResult.midProcess = ( pobjSubPolicy.processId == null ? null : UUID.fromString(pobjSubPolicy.processId) );

@@ -30,6 +30,7 @@ public class SubPolicyData
 	public String mstrDocuShare;
 	public Integer mlngMigrationID;
 	public UUID midPolicy;
+	public BigDecimal mdblTotalPremium;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -56,6 +57,7 @@ public class SubPolicyData
 		midStatus = pobjSource.midStatus;
 		mdblPremium = pobjSource.mdblPremium;
 		mstrDocuShare = pobjSource.mstrDocuShare;
+		mdblTotalPremium = pobjSource.mdblTotalPremium;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
@@ -74,6 +76,7 @@ public class SubPolicyData
 		mstrDocuShare =    (String)pobjSource.getAt(SubPolicy.I.DOCUSHARE);
 		mlngMigrationID = (Integer)pobjSource.getAt(SubPolicy.I.MIGRATIONID);
 		midPolicy =          (UUID)pobjSource.getAt(SubPolicy.I.POLICY);
+		mdblTotalPremium =  (BigDecimal)pobjSource.getAt(SubPolicy.I.TOTALPREMIUM);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -93,6 +96,7 @@ public class SubPolicyData
 			pobjDest.setAt(SubPolicy.I.DOCUSHARE, mstrDocuShare);
 			pobjDest.setAt(SubPolicy.I.MIGRATIONID, mlngMigrationID);
 			pobjDest.setAt(SubPolicy.I.POLICY, midPolicy);
+			pobjDest.setAt(SubPolicy.I.TOTALPREMIUM, mdblTotalPremium);
 		}
 		catch (Throwable e)
 		{
@@ -149,6 +153,13 @@ public class SubPolicyData
 		pstrBuilder.append("Prémio Comercial: ");
 		if ( mdblPremium != null )
 			pstrBuilder.append(mdblPremium);
+		else
+			pstrBuilder.append("(não definido)");
+		pstrBuilder.append(pstrLineBreak);
+
+		pstrBuilder.append("Prémio Total: ");
+		if ( mdblTotalPremium != null )
+			pstrBuilder.append(mdblTotalPremium);
 		else
 			pstrBuilder.append("(não definido)");
 		pstrBuilder.append(pstrLineBreak);

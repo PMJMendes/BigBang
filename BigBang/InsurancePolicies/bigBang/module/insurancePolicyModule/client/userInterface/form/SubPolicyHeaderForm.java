@@ -27,6 +27,7 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 	protected DatePickerFormField endDate;
 	protected ExpandableListBoxFormField fractioning;
 	protected NumericTextBoxFormField premium;
+	protected NumericTextBoxFormField totalPremium;
 	protected Image statusIcon;
 
 
@@ -56,6 +57,9 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 		premium = new NumericTextBoxFormField("Prémio Comercial Anual", true);
 		premium.setFieldWidth("175px");
 		premium.setUnitsLabel("€");
+		totalPremium = new NumericTextBoxFormField("Prémio Total Anual", true);
+		totalPremium.setFieldWidth("175px");
+		totalPremium.setUnitsLabel("€");
 
 		policyStatus = new TextBoxFormField("Estado");
 		policyStatus.setFieldWidth("100%");
@@ -67,14 +71,18 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 
 		addFormFieldGroup(new FormField<?>[]{
 				number,
-				policyStatus,
-				premium
+				premium,
+				totalPremium
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
 				fractioning,
 				startDate,
 				endDate,
+		}, true);
+
+		addFormFieldGroup(new FormField<?>[]{
+				policyStatus
 		}, true);
 
 
@@ -102,6 +110,7 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 			result.expirationDate = endDate.getValue() == null ? null :  DateTimeFormat.getFormat("yyyy-MM-dd").format(endDate.getValue());
 			result.fractioningId = fractioning.getValue();
 			result.premium = premium.getValue();
+			result.totalPremium = totalPremium.getValue();
 
 			result.headerFields = headerForm.getValue();
 
@@ -129,6 +138,7 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 		this.fractioning.setValue(info.fractioningId);
 		this.policyStatus.setValue(info.statusText);
 		this.premium.setValue(info.premium);
+		this.totalPremium.setValue(info.totalPremium);
 		Resources resources = GWT.create(Resources.class);
 		if(value.statusIcon == null) {
 			statusIcon.setResource(resources.provisionalPolicyIcon());

@@ -20,6 +20,7 @@ FormValidator<SubPolicyHeaderForm> {
 		valid &= validateClient();
 		valid &= validateSubPolicyNumber();
 		valid &= validatePremium();
+		valid &= validateTotalPremium();
 		valid &= validateFractioning();
 		valid &= validateStartDate();
 		valid &= validateEndDate();
@@ -43,6 +44,10 @@ FormValidator<SubPolicyHeaderForm> {
 
 	private boolean validatePremium() {
 		return validateNumber(form.premium, 0.0, null, true);
+	}
+
+	private boolean validateTotalPremium() {
+		return validateNumber(form.totalPremium, 0.0, null, true);
 	}
 	
 	private boolean validateFractioning() {

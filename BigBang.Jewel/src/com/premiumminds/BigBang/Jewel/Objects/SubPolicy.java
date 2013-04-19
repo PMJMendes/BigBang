@@ -34,6 +34,7 @@ public class SubPolicy
 		public static int DOCUSHARE     =  9;
 		public static int MIGRATIONID   = 10;
 		public static int POLICY        = 11;
+		public static int TOTALPREMIUM  = 12;
 	}
 
     public static SubPolicy GetInstance(UUID pidNameSpace, UUID pidKey)

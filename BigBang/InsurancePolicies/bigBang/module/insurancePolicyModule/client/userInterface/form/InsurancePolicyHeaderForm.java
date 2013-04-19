@@ -47,6 +47,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 	protected ExpandableListBoxFormField duration;
 	protected ExpandableListBoxFormField fractioning;
 	protected NumericTextBoxFormField premium;
+	protected NumericTextBoxFormField totalPremium;
 	protected ExpandableListBoxFormField operationalProfile;
 	protected Image statusIcon;
 	protected FormViewSection coInsurersSection;
@@ -83,6 +84,9 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		premium = new NumericTextBoxFormField("Prémio Comercial Anual", true);
 		premium.setFieldWidth("175px");
 		premium.setUnitsLabel("€");
+		totalPremium = new NumericTextBoxFormField("Prémio Total Anual", true);
+		totalPremium.setFieldWidth("175px");
+		totalPremium.setUnitsLabel("€");
 		operationalProfile = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OPERATIONAL_PROFILES, "Perfil Operational");
 		operationalProfile.setEmptyValueString("O mesmo do Cliente");
 		operationalProfile.allowEdition(false);
@@ -104,8 +108,8 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		addFormFieldGroup(new FormField<?>[]{
 				number,
 				insuranceAgency,
-				policyStatus,
-				premium
+				premium,
+				totalPremium
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
@@ -125,6 +129,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		//CO-INSURANCE
 
 		FormField<?>[] group4 = new FormField<?>[]{
+				policyStatus,
 				coInsurance,
 				caseStudy
 		};
@@ -243,6 +248,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 			result.durationId = duration.getValue();
 			result.fractioningId = fractioning.getValue();
 			result.premium = premium.getValue();
+			result.totalPremium = totalPremium.getValue();
 			result.caseStudy = caseStudy.getValue();
 			result.operationalProfileId = operationalProfile.getValue();
 
@@ -303,6 +309,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 
 		this.fractioning.setValue(info.fractioningId);
 		this.premium.setValue(info.premium);
+		this.totalPremium.setValue(info.totalPremium);
 
 		if(info.clientId != null) {
 			ClientProcessBroker clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));

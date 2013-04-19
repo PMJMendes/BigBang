@@ -54,6 +54,7 @@ public class Policy
 		public static int MIGRATIONID   = 16;
 		public static int CLIENT        = 17;
 		public static int PROFILE       = 18;
+		public static int TOTALPREMIUM  = 19;
 	}
 
     public static Policy GetInstance(UUID pidNameSpace, UUID pidKey)

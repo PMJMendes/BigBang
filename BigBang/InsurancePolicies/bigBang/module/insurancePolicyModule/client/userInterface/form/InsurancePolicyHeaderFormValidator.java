@@ -29,6 +29,7 @@ FormValidator<InsurancePolicyHeaderForm> {
 		valid &= validateStartAndEndDate();
 		valid &= validateFractioning();
 		valid &= validatePremium();
+		valid &= validateTotalPremium();
 		valid &= validateOperationalProfile();
 		valid &= validateCaseStudy();
 		valid &= validateCoInsurance();
@@ -110,6 +111,10 @@ FormValidator<InsurancePolicyHeaderForm> {
 
 	private boolean validatePremium() {
 		return validateNumber(form.premium, true);
+	}
+
+	private boolean validateTotalPremium() {
+		return validateNumber(form.totalPremium, true);
 	}
 
 	private boolean validateOperationalProfile() {

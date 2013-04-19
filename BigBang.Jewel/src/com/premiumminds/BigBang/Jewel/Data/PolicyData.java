@@ -34,6 +34,7 @@ public class PolicyData
 	public BigDecimal mdblPremium;
 	public String mstrDocuShare;
 	public UUID midProfile;
+	public BigDecimal mdblTotalPremium;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -70,6 +71,7 @@ public class PolicyData
 		mdblPremium = pobjSource.mdblPremium;
 		mstrDocuShare = pobjSource.mstrDocuShare;
 		midProfile = pobjSource.midProfile;
+		mdblTotalPremium = pobjSource.mdblTotalPremium;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
@@ -95,6 +97,7 @@ public class PolicyData
 //		unusedMigrationID = (Integer)pobjSource.getAt(16);
 		midClient = (UUID)pobjSource.getAt(17);
 		midProfile = (UUID)pobjSource.getAt(18);
+		mdblTotalPremium = (BigDecimal)pobjSource.getAt(19);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -121,6 +124,7 @@ public class PolicyData
 //			pobjDest.setAt(16, unusedMigrationID); JMMM: Isto não é usado pela aplicação
 			pobjDest.setAt(17, midClient);
 			pobjDest.setAt(18, midProfile);
+			pobjDest.setAt(19, mdblTotalPremium);
 		}
 		catch (Throwable e)
 		{
@@ -256,6 +260,13 @@ public class PolicyData
 		pstrBuilder.append("Prémio Comercial: ");
 		if ( mdblPremium != null )
 			pstrBuilder.append(mdblPremium);
+		else
+			pstrBuilder.append("(não definido)");
+		pstrBuilder.append(pstrLineBreak);
+
+		pstrBuilder.append("Prémio Total: ");
+		if ( mdblTotalPremium != null )
+			pstrBuilder.append(mdblTotalPremium);
 		else
 			pstrBuilder.append("(não definido)");
 		pstrBuilder.append(pstrLineBreak);

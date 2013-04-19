@@ -40,6 +40,7 @@ public class InsurancePolicy
 	public Double premium;
 	public String operationalProfileId;
 	public String docushare;
+	public Double totalPremium;
 
 	public CoInsurer[] coInsurers;
 
@@ -79,6 +80,7 @@ public class InsurancePolicy
 		this.premium = orig.premium;
 		this.operationalProfileId = orig.operationalProfileId;
 		this.docushare = orig.docushare;
+		this.totalPremium = orig.totalPremium;
 
 		if ( orig.coInsurers == null )
 			this.coInsurers = null;

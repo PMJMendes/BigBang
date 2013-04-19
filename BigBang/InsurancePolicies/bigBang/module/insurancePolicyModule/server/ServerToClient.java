@@ -1506,6 +1506,7 @@ public class ServerToClient
 			mobjOutPolicy.premium = (mobjPolicy.getAt(14) == null ? null : ((BigDecimal)mobjPolicy.getAt(14)).doubleValue());
 			mobjOutPolicy.operationalProfileId = (mobjPolicy.getAt(18) == null ? null : ((UUID)mobjPolicy.getAt(18)).toString());
 			mobjOutPolicy.docushare = (String)mobjPolicy.getAt(15);
+			mobjOutPolicy.totalPremium = (mobjPolicy.getAt(19) == null ? null : ((BigDecimal)mobjPolicy.getAt(19)).doubleValue());
 
 			if ( larrCoInsurers.length > 0 )
 			{
@@ -1647,6 +1648,7 @@ public class ServerToClient
 			mobjOutPolicy.inheritClientId = (lobjClient == null ? null : lobjClient.getKey().toString());
 			mobjOutPolicy.inheritClientNumber = (lobjClient == null ? null : ((Integer)lobjClient.getAt(1)).toString());
 			mobjOutPolicy.inheritClientName = (lobjClient == null ? null : lobjClient.getLabel());
+			mobjOutPolicy.totalPremium = (mobjSubPolicy.getAt(12) == null ? null : ((BigDecimal)mobjSubPolicy.getAt(12)).doubleValue());
 		}
 	}
 
