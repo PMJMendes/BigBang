@@ -165,7 +165,7 @@ public class ATFF
 				else
 					ldblTotal = ldblTotal.multiply(ldblBCalc).divide(new BigDecimal(llngNum)).setScale(2, RoundingMode.HALF_UP);
 
-				lstrAux = String.format("%,.2f", (ldblTotal)).replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",");
+				lstrAux = String.format("%,.2f", (ldblTotal))/*.replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",")*/;
 				marrValues[llngResult].SetValue(lstrAux, pdb);
 				lstrBuilder.append(lstrAux);
 				lstrBuilder.append("€. ");
@@ -179,14 +179,14 @@ public class ATFF
 				else
 				{
 					ldblTotal = ldblTotal.subtract(ldblProv);
-					lstrAux = String.format("%,.2f", (ldblTotal)).replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",");
+					lstrAux = String.format("%,.2f", (ldblTotal))/*.replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",")*/;
 					lstrBuilder.append("Desvio calculado: ");
 					lstrBuilder.append(lstrAux);
 					lstrBuilder.append("€. ");
 					marrValues[llngDelta].SetValue(lstrAux, pdb);
 
 					ldblTotal = ldblTotal.multiply(ldblTCom).setScale(2, RoundingMode.HALF_UP);
-					lstrAux = String.format("%,.2f", (ldblTotal)).replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",");
+					lstrAux = String.format("%,.2f", (ldblTotal))/*.replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",")*/;
 					lstrBuilder.append("Prémio de acerto calculado: ");
 					lstrBuilder.append(lstrAux);
 					lstrBuilder.append("€. ");
