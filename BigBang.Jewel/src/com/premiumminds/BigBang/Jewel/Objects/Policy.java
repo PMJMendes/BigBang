@@ -20,6 +20,7 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyExternWeekly;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryCreation;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryValidation;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryVoiding;
@@ -141,6 +142,12 @@ public class Policy
 		throws BigBangJewelException
 	{
 		return new PolicySpecialShamir().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportExternWeekly(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyExternWeekly().doReport(parrParams);
 	}
 
     private SubLine mrefSubLine;
