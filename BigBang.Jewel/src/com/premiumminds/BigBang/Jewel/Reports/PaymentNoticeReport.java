@@ -18,6 +18,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
+import com.premiumminds.BigBang.Jewel.SysObjects.OOConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBase;
 
 public class PaymentNoticeReport
@@ -48,6 +49,7 @@ public class PaymentNoticeReport
 		SubPolicy lobjSubPolicy;
 		boolean lbReversals;
 		int i;
+		FileXfer lobjResult;
 
 		lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
 		if ( lobjClient.getAt(4) == null )
@@ -135,6 +137,11 @@ public class PaymentNoticeReport
 		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
 		larrParams.put("Total", String.format("%,.2f", mdblTotal));
 
-		return Generate(larrParams, new String[][][] {larrTables});
+		lobjResult = Generate(larrParams, new String[][][] {larrTables});
+
+		if ( mbForEmail )
+			lobjResult = OOConnector.getPDFFromOODoc(OOConnector.getDocFromBytes(lobjResult.getData()), lobjResult.getFileName().replaceAll(".doc", ".pdf"));
+
+		return lobjResult;
 	}
 }
