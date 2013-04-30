@@ -5,6 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
 import java.util.UUID;
 
 import org.apache.ecs.GenericElement;
@@ -29,22 +32,36 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 public class PolicyExternWeekly
 	extends PolicyListingsBase
 {
+	private static class EntryData
+	{
+		public String mstrPolicy;
+		public BigDecimal mdblValue;
+		public Timestamp mdtDate;
+	}
+
+	@SuppressWarnings("deprecation")
 	public GenericElement[] doReport(String[] parrParams)
 		throws BigBangJewelException
 	{
+		Timestamp ldtStart;
 		Policy[] larrAux;
 		GenericElement[] larrResult;
 
 		if ( ((parrParams[0] == null) || "".equals(parrParams[0])) || ((parrParams[1] == null) || "".equals(parrParams[1])) )
 			return doNotValid();
 
+		ldtStart = Timestamp.valueOf(parrParams[1] + " 00:00:00.0");
+		ldtStart.setDate(1);
+
 		larrAux = getPortfolio(parrParams);
 
-		larrResult = new GenericElement[1];
+		larrResult = new GenericElement[2];
 
 		try
 		{
 			larrResult[0] = buildDataSection("ORIGEM DAS DESPESAS - Custos ocorridos no exercício de " + parrParams[1].substring(0, 4), larrAux);
+
+			larrResult[1] = buildDetailedTable(larrAux, ldtStart);
 		}
 		catch (BigBangJewelException e)
 		{
@@ -258,12 +275,250 @@ public class PolicyExternWeekly
 		return new GenericElement[] {ltbl};
 	}
 
-	protected void filterByDates(StringBuilder pstrSQL, Timestamp pdtStart)
+	private void filterByDates(StringBuilder pstrSQL, Timestamp pdtStart)
 		throws BigBangJewelException
 	{
 		pstrSQL.append(" AND ([End Date] IS NULL OR [End Date] >= '")
 				.append(pdtStart.toString().substring(0, 10)).append("')")
 				.append(" AND [Begin Date] <= DATEADD(year, 1, '")
 				.append(pdtStart.toString().substring(0, 10)).append("')");
+	}
+
+	private Table buildDetailedTable(Policy[] parrPolicies, Timestamp pdtStart)
+	{
+		Table ltbl;
+		TR[] larrRows;
+		TD[] larrCells;
+
+		larrRows = new TR[1];
+		larrCells = new TD[1];
+		larrCells[0] = new TD();
+		larrCells[0].addElement(buildSuperTable(splitDataArray(buildDataArray(parrPolicies, pdtStart), pdtStart)));
+		ReportBuilder.styleInnerContainer(larrCells[0]);
+		larrRows[0] = ReportBuilder.buildRow(larrCells);
+
+		ltbl = ReportBuilder.buildTable(larrRows);
+		ReportBuilder.styleTable(ltbl, false);
+
+		return ltbl;
+	}
+
+	private EntryData[] buildDataArray(Policy[] parrPolicies, Timestamp pdtStart)
+	{
+		ArrayList<EntryData> larrAux;
+		UUID lidFrac;
+		Calendar ldtAux;
+		EntryData lobjAux;
+		EntryData[] larrResult;
+		int i, j, n;
+
+		if ( parrPolicies == null )
+			return null;
+
+		larrAux = new ArrayList<EntryData>();
+
+		for ( i = 0; i < parrPolicies.length; i++ )
+		{
+			if ( (parrPolicies[i].getAt(Policy.I.MATURITYDAY) == null) &&(parrPolicies[i].getAt(Policy.I.MATURITYMONTH) == null) )
+				continue;
+
+			lidFrac = (UUID)parrPolicies[i].getAt(Policy.I.FRACTIONING);
+			n = ( Constants.FracID_Year.equals(lidFrac) ? 1 : 0 ) +
+					( Constants.FracID_Semester.equals(lidFrac) ? 2 : 0 ) +
+					( Constants.FracID_Quarter.equals(lidFrac) ? 4 : 0 ) +
+					( Constants.FracID_Month.equals(lidFrac) ? 12 : 0 );
+			if ( n == 0 )
+				continue;
+
+			ldtAux = Calendar.getInstance();
+			ldtAux.setTimeInMillis(pdtStart.getTime());
+			ldtAux.set(Calendar.MONTH, (Integer)parrPolicies[i].getAt(Policy.I.MATURITYMONTH) - 1);
+			ldtAux.set(Calendar.DAY_OF_MONTH, (Integer)parrPolicies[i].getAt(Policy.I.MATURITYDAY));
+			if ( ldtAux.get(Calendar.DAY_OF_MONTH) < 8 )
+			{
+				ldtAux.add(Calendar.MONTH, -1);
+				ldtAux.set(Calendar.DAY_OF_MONTH, 23);
+			}
+			else if ( ldtAux.get(Calendar.DAY_OF_MONTH) < 16 )
+				ldtAux.set(Calendar.DAY_OF_MONTH, 1);
+			else if ( ldtAux.get(Calendar.DAY_OF_MONTH) < 23 )
+				ldtAux.set(Calendar.DAY_OF_MONTH, 16);
+			else
+				ldtAux.set(Calendar.DAY_OF_MONTH, 23);
+			while ( ldtAux.getTime().getTime() < pdtStart.getTime() )
+				ldtAux.add(Calendar.MONTH, 12/n);
+
+			for ( j = 0; j < n; j ++ )
+			{
+				lobjAux = new EntryData();
+				lobjAux.mstrPolicy = parrPolicies[i].getLabel();
+				lobjAux.mdblValue = (BigDecimal)parrPolicies[i].getAt(Policy.I.TOTALPREMIUM);
+				lobjAux.mdtDate = new Timestamp(ldtAux.getTimeInMillis());
+				larrAux.add(lobjAux);
+				ldtAux.add(Calendar.MONTH, 12/n);
+			}
+		}
+
+		larrResult = larrAux.toArray(new EntryData[larrAux.size()]);
+
+		Arrays.sort(larrResult, new Comparator<EntryData>()
+		{
+			public int compare(EntryData o1, EntryData o2)
+			{
+				if ( o1.mdtDate.equals(o2.mdtDate) )
+					return o1.mstrPolicy.compareTo(o2.mstrPolicy);
+				return o1.mdtDate.compareTo(o2.mdtDate);
+			}
+		});
+
+		return larrResult;
+	}
+
+	private EntryData[][] splitDataArray(EntryData[] parrSource, Timestamp pdtStart)
+	{
+		EntryData[][] larrResult;
+		Calendar ldtNext;
+		int n, i, j;
+
+		if ( parrSource == null )
+			return null;
+
+		larrResult = new EntryData[48][];
+
+		ldtNext = Calendar.getInstance();
+		ldtNext.setTimeInMillis(pdtStart.getTime());
+
+		i = 0;
+		for ( n = 0; n < 48; n++ )
+		{
+			if ( i >= parrSource.length )
+			{
+				larrResult[n] = new EntryData[0];
+				continue;
+			}
+
+			if ( ldtNext.get(Calendar.DAY_OF_MONTH) == 1 )
+				ldtNext.set(Calendar.DAY_OF_MONTH, 8);
+			else if ( ldtNext.get(Calendar.DAY_OF_MONTH) == 8 )
+				ldtNext.set(Calendar.DAY_OF_MONTH, 16);
+			else if ( ldtNext.get(Calendar.DAY_OF_MONTH) == 16 )
+				ldtNext.set(Calendar.DAY_OF_MONTH, 23);
+			else
+			{
+				ldtNext.set(Calendar.DAY_OF_MONTH, 1);
+				ldtNext.add(Calendar.MONTH, 1);
+			}
+
+			j = i;
+			while ( (j < parrSource.length) && (parrSource[j].mdtDate.getTime() < ldtNext.getTime().getTime()) )
+				j++;
+			larrResult[n] = Arrays.copyOfRange(parrSource, i, j);
+			i = j;
+		}
+
+		return larrResult;
+	}
+
+	private Table buildSuperTable(EntryData[][] parrSource)
+	{
+		int i, j, s;
+		Table ltbl;
+		TR[] larrRows;
+		TD[] larrCells;
+
+		larrRows = new TR[4];
+
+		for ( i = 0; i < 4; i++ )
+		{
+			larrCells = new TD[12];
+			s = 0;
+			for ( j = 0; j < 12; j++ )
+			{
+				if ( s < parrSource[4 * j + i].length )
+					s = parrSource[4 * j + i].length;
+			}
+			for ( j = 0; j < 12; j++ )
+			{
+				larrCells[j] = new TD();
+				larrCells[j].addElement(buildWeeklyTable(parrSource[4 * j + i], s));
+				ReportBuilder.styleInnerContainer(larrCells[j]);
+			}
+			larrRows[i] = ReportBuilder.buildRow(larrCells);
+		}
+
+		ltbl = ReportBuilder.buildTable(larrRows);
+		ReportBuilder.styleTable(ltbl, false);
+
+		return ltbl;
+	}
+
+	private Table buildWeeklyTable(EntryData[] parrWeek, int plngSize)
+	{
+		Table ltbl;
+		TR[] larrRows;
+		BigDecimal ldblTotal;
+		int i;
+
+		larrRows = new TR[plngSize + 2];
+
+		larrRows[0] = ReportBuilder.buildRow(buildWeeklyHeaderRow());
+		ReportBuilder.styleRow(larrRows[0], true);
+
+		ldblTotal = BigDecimal.ZERO;
+		for ( i = 1; i <= plngSize; i++ )
+		{
+			larrRows[i] = ReportBuilder.buildRow(buildWeeklyRow(i <= parrWeek.length ? parrWeek[i - 1] : null));
+			ReportBuilder.styleRow(larrRows[i], false);
+			if ( (i <= parrWeek.length) && (parrWeek[i - 1].mdblValue != null) )
+				ldblTotal = ldblTotal.add(parrWeek[i - 1].mdblValue);
+		}
+
+		larrRows[plngSize + 1] = ReportBuilder.constructDualHeaderRowCell("€ " + ldblTotal.toPlainString());
+
+		ltbl = ReportBuilder.buildTable(larrRows);
+		ReportBuilder.styleTable(ltbl, true);
+
+		return ltbl;
+	}
+
+	protected TD[] buildWeeklyHeaderRow()
+	{
+		TD[] larrCells;
+
+		larrCells = new TD[2];
+
+		larrCells[0] = ReportBuilder.buildHeaderCell("Origem");
+		ReportBuilder.styleCell(larrCells[0], false, true);
+
+		larrCells[1] = ReportBuilder.buildHeaderCell("Despesa");
+		ReportBuilder.styleCell(larrCells[1], false, true);
+
+		setWeeklyWidths(larrCells);
+
+		return larrCells;
+	}
+
+	private TD[] buildWeeklyRow(EntryData pobjEntry)
+	{
+		TD[] larrCells;
+
+		larrCells = new TD[2];
+
+		larrCells[0] = ReportBuilder.buildCell(pobjEntry == null ? "" : pobjEntry.mstrPolicy, TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[0], true, true);
+
+		larrCells[1] = ReportBuilder.buildCell(pobjEntry == null || pobjEntry.mdblValue == null ? "" :
+				String.format("%,.2f", ((BigDecimal)pobjEntry.mdblValue)), TypeDefGUIDs.T_String, true);
+		ReportBuilder.styleCell(larrCells[1], true, true);
+
+		setWeeklyWidths(larrCells);
+
+		return larrCells;
+	}
+
+	protected void setWeeklyWidths(TD[] parrCells)
+	{
+		parrCells[ 0].setWidth(130);
+		parrCells[ 1].setWidth(130);
 	}
 }

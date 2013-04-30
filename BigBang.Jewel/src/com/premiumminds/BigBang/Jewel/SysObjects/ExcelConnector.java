@@ -84,10 +84,16 @@ public class ExcelConnector
 
 	private static void buildTable(Sheet pobjSheet, Table pobjSource, R<Integer> row, R<Integer> col, R<Integer> max)
 	{
+		int llngMax;
+		int llngStart;
 		Enumeration<?> i;
 		Row lobjRow;
 		TR ltr;
 
+		llngMax = max.get();
+		max.set(0);
+
+		llngStart = col.get();
 		i = pobjSource.keys();
 		while ( i.hasMoreElements() )
 		{
@@ -95,19 +101,25 @@ public class ExcelConnector
             if ( lobjRow == null )
                 lobjRow = pobjSheet.createRow(row.get());
 			ltr = (TR)pobjSource.getElement((String)i.nextElement());
+			col.set(llngStart);
 			buildRow(lobjRow, ltr, row, col, max);
 			row.set(row.get() + 1);
 		}
+
+		if ( llngMax > max.get() )
+			max.set(llngMax);
 	}
 
 	private static void buildRow(Row pobjRow, TR pobjSource, R<Integer> row, R<Integer> col, R<Integer> max)
 	{
+		int llngMax;
 		int llngStart;
 		Enumeration<?> i;
 		Cell lobjCell;
 		TD ltd;
 
-		llngStart = col.get();
+		llngMax = row.get();
+		llngStart = llngMax;
 
 		i = pobjSource.keys();
 		while ( i.hasMoreElements() )
@@ -116,14 +128,17 @@ public class ExcelConnector
             if ( lobjCell == null )
             	lobjCell = pobjRow.createCell(col.get());
 			ltd = (TD)pobjSource.getElement((String)i.nextElement());
+			row.set(llngStart);
 			buildCell(lobjCell, ltd, row, col, max);
 			col.set(col.get() + 1);
+
+			if ( row.get() > llngMax )
+				llngMax = row.get();
 		}
 
 		if ( col.get() > max.get() )
 			max.set(col.get());
-
-		col.set(llngStart);
+		row.set(llngMax);
 	}
 
 	private static void buildCell(Cell pobjCell, TD pobjSource, R<Integer> row, R<Integer> col, R<Integer> max)
@@ -142,6 +157,7 @@ public class ExcelConnector
 		if ( lobjAux instanceof Table )
 		{
 			buildTable(pobjCell.getSheet(), (Table)lobjAux, row, col, max);
+			row.set(row.get() - 1);
 			return;
 		}
 
