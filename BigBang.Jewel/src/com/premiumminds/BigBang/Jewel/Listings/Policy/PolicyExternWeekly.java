@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Listings.Policy;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -168,6 +169,7 @@ public class PolicyExternWeekly
 		larrRows = new TR[2];
 
 		lcell = ReportBuilder.buildHeaderCell(pstrHeader);
+		lcell.setColSpan(5);
 		ReportBuilder.styleCell(lcell, false, false);
 		larrRows[0] = ReportBuilder.buildRow(new TD[] {lcell});
 		ReportBuilder.styleRow(larrRows[0], true);
@@ -293,7 +295,7 @@ public class PolicyExternWeekly
 		larrRows = new TR[1];
 		larrCells = new TD[1];
 		larrCells[0] = new TD();
-		larrCells[0].addElement(buildSuperTable(splitDataArray(buildDataArray(parrPolicies, pdtStart), pdtStart)));
+		larrCells[0].addElement(buildSuperTable(splitDataArray(buildDataArray(parrPolicies, pdtStart), pdtStart), pdtStart));
 		ReportBuilder.styleInnerContainer(larrCells[0]);
 		larrRows[0] = ReportBuilder.buildRow(larrCells);
 
@@ -419,19 +421,72 @@ public class PolicyExternWeekly
 		return larrResult;
 	}
 
-	private Table buildSuperTable(EntryData[][] parrSource)
+	@SuppressWarnings("deprecation")
+	private Table buildSuperTable(EntryData[][] parrSource, Timestamp pdtStart)
 	{
 		int i, j, s;
 		Table ltbl;
 		TR[] larrRows;
 		TD[] larrCells;
+		BigDecimal[] larrTots;
+		BigDecimal ldblTot;
 
-		larrRows = new TR[4];
+		larrRows = new TR[9];
 
+		larrCells = new TD[pdtStart.getMonth() == 1 ? 2 : 3];
+		larrCells[0] = ReportBuilder.buildHeaderCell("Ano");
+		ReportBuilder.styleCell(larrCells[0], false, false);
+		for ( j = 1; j < larrCells.length; j++ )
+		{
+			larrCells[j] = ReportBuilder.buildHeaderCell(((Integer)(pdtStart.getYear() + j + 1899)).toString());
+			larrCells[j].setColSpan(2 * (j == 2 ? pdtStart.getMonth() : 12 - pdtStart.getMonth()));
+			ReportBuilder.styleCell(larrCells[j], false, true);
+		}
+		larrRows[0] = ReportBuilder.buildRow(larrCells);
+		ReportBuilder.styleRow(larrRows[0], true);
+
+		larrCells = new TD[13];
+		larrCells[0] = ReportBuilder.buildHeaderCell("Mês");
+		ReportBuilder.styleCell(larrCells[0], true, false);
+		for ( j = 0; j < 12; j++ )
+		{
+			larrCells[j + 1] = ReportBuilder.buildHeaderCell(new String[] {"Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"}
+					[(pdtStart.getMonth() + j) % 12]);
+			larrCells[j + 1].setColSpan(2);
+			ReportBuilder.styleCell(larrCells[j + 1], true, true);
+		}
+		larrRows[1] = ReportBuilder.buildRow(larrCells);
+		ReportBuilder.styleRow(larrRows[1], true);
+
+		larrCells = new TD[25];
+		larrCells[0] = ReportBuilder.buildHeaderCell("Semana");
+		ReportBuilder.styleCell(larrCells[0], true, false);
+		for ( j = 1; j < 25; j += 2 )
+		{
+			larrCells[j] = new TD();
+			larrCells[j] = ReportBuilder.buildHeaderCell("Origem");
+			larrCells[j].setWidth(130);
+			ReportBuilder.styleCell(larrCells[j], true, true);
+
+			larrCells[j + 1] = new TD();
+			larrCells[j + 1] = ReportBuilder.buildHeaderCell("Despesa");
+			larrCells[j + 1].setWidth(130);
+			ReportBuilder.styleCell(larrCells[j + 1], true, true);
+		}
+		larrRows[2] = ReportBuilder.buildRow(larrCells);
+		ReportBuilder.styleRow(larrRows[2], true);
+
+		larrTots = new BigDecimal[12];
+		for ( j = 0; j < 12; j++ )
+			larrTots[j] = BigDecimal.ZERO;
 		for ( i = 0; i < 4; i++ )
 		{
-			larrCells = new TD[12];
-			s = 0;
+			larrCells = new TD[13];
+
+			larrCells[0] = ReportBuilder.buildHeaderCell((i + 1) + "ª Semana");
+			ReportBuilder.styleCell(larrCells[0], true, false);
+
+			s = 1;
 			for ( j = 0; j < 12; j++ )
 			{
 				if ( s < parrSource[4 * j + i].length )
@@ -439,12 +494,51 @@ public class PolicyExternWeekly
 			}
 			for ( j = 0; j < 12; j++ )
 			{
-				larrCells[j] = new TD();
-				larrCells[j].addElement(buildWeeklyTable(parrSource[4 * j + i], s));
-				ReportBuilder.styleInnerContainer(larrCells[j]);
+				larrCells[j + 1] = new TD();
+				larrCells[j + 1].addElement(buildWeeklyTable(parrSource[4 * j + i], s, larrTots, j));
+				larrCells[j + 1].setColSpan(2);
 			}
-			larrRows[i] = ReportBuilder.buildRow(larrCells);
+			larrRows[i + 3] = ReportBuilder.buildRow(larrCells);
 		}
+
+		ldblTot = BigDecimal.ZERO;
+		larrCells = new TD[25];
+		larrCells[0] = ReportBuilder.buildHeaderCell("T. MÊS");
+		ReportBuilder.styleCell(larrCells[0], true, false);
+		for ( j = 1; j < 25; j += 2 )
+		{
+			larrCells[j] = new TD();
+			larrCells[j] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			larrCells[j].setWidth(130);
+			ReportBuilder.styleCell(larrCells[j], true, true);
+
+			larrCells[j + 1] = new TD();
+			larrCells[j + 1] = ReportBuilder.buildCell(larrTots[j / 2], TypeDefGUIDs.T_Decimal, true);
+			larrCells[j + 1].setWidth(130);
+			ReportBuilder.styleCell(larrCells[j + 1], true, true);
+
+			ldblTot = ldblTot.add(larrTots[j / 2]);
+		}
+		larrRows[7] = ReportBuilder.buildRow(larrCells);
+		ReportBuilder.styleRow(larrRows[7], true);
+
+		larrCells = new TD[25];
+		larrCells[0] = ReportBuilder.buildHeaderCell("% MÊS");
+		ReportBuilder.styleCell(larrCells[0], true, false);
+		for ( j = 1; j < 25; j += 2 )
+		{
+			larrCells[j] = new TD();
+			larrCells[j] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			larrCells[j].setWidth(130);
+			ReportBuilder.styleCell(larrCells[j], true, true);
+
+			larrCells[j + 1] = new TD();
+			larrCells[j + 1] = ReportBuilder.buildCell(larrTots[j / 2].divide(ldblTot, 5, RoundingMode.HALF_UP), TypeDefGUIDs.T_Decimal, true);
+			larrCells[j + 1].setWidth(130);
+			ReportBuilder.styleCell(larrCells[j + 1], true, true);
+		}
+		larrRows[8] = ReportBuilder.buildRow(larrCells);
+		ReportBuilder.styleRow(larrRows[8], true);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);
@@ -452,50 +546,33 @@ public class PolicyExternWeekly
 		return ltbl;
 	}
 
-	private Table buildWeeklyTable(EntryData[] parrWeek, int plngSize)
+	private Table buildWeeklyTable(EntryData[] parrWeek, int plngSize, BigDecimal[] parrTots, int plngIndex)
 	{
 		Table ltbl;
 		TR[] larrRows;
 		BigDecimal ldblTotal;
 		int i;
 
-		larrRows = new TR[plngSize + 2];
-
-		larrRows[0] = ReportBuilder.buildRow(buildWeeklyHeaderRow());
-		ReportBuilder.styleRow(larrRows[0], true);
+		larrRows = new TR[plngSize + 1];
 
 		ldblTotal = BigDecimal.ZERO;
-		for ( i = 1; i <= plngSize; i++ )
+		for ( i = 0; i < plngSize; i++ )
 		{
-			larrRows[i] = ReportBuilder.buildRow(buildWeeklyRow(i <= parrWeek.length ? parrWeek[i - 1] : null));
+			larrRows[i] = ReportBuilder.buildRow(buildWeeklyRow(i < parrWeek.length ? parrWeek[i] : null));
 			ReportBuilder.styleRow(larrRows[i], false);
-			if ( (i <= parrWeek.length) && (parrWeek[i - 1].mdblValue != null) )
-				ldblTotal = ldblTotal.add(parrWeek[i - 1].mdblValue);
+			if ( (i < parrWeek.length) && (parrWeek[i].mdblValue != null) )
+				ldblTotal = ldblTotal.add(parrWeek[i].mdblValue);
 		}
 
-		larrRows[plngSize + 1] = ReportBuilder.constructDualHeaderRowCell("€ " + ldblTotal.toPlainString());
+		larrRows[plngSize] = ReportBuilder.buildRow(buildWeeklyFooterRow(ldblTotal));
+		ReportBuilder.styleRow(larrRows[plngSize], false);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, true);
 
+		parrTots[plngIndex] = parrTots[plngIndex].add(ldblTotal);
+
 		return ltbl;
-	}
-
-	protected TD[] buildWeeklyHeaderRow()
-	{
-		TD[] larrCells;
-
-		larrCells = new TD[2];
-
-		larrCells[0] = ReportBuilder.buildHeaderCell("Origem");
-		ReportBuilder.styleCell(larrCells[0], false, true);
-
-		larrCells[1] = ReportBuilder.buildHeaderCell("Despesa");
-		ReportBuilder.styleCell(larrCells[1], false, true);
-
-		setWeeklyWidths(larrCells);
-
-		return larrCells;
 	}
 
 	private TD[] buildWeeklyRow(EntryData pobjEntry)
@@ -507,8 +584,8 @@ public class PolicyExternWeekly
 		larrCells[0] = ReportBuilder.buildCell(pobjEntry == null ? "" : pobjEntry.mstrPolicy, TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, true);
 
-		larrCells[1] = ReportBuilder.buildCell(pobjEntry == null || pobjEntry.mdblValue == null ? "" :
-				String.format("%,.2f", ((BigDecimal)pobjEntry.mdblValue)), TypeDefGUIDs.T_String, true);
+		larrCells[1] = ReportBuilder.buildCell(pobjEntry == null ? "" : pobjEntry.mdblValue,
+				pobjEntry == null ? TypeDefGUIDs.T_String : TypeDefGUIDs.T_Decimal, true);
 		ReportBuilder.styleCell(larrCells[1], true, true);
 
 		setWeeklyWidths(larrCells);
@@ -516,7 +593,24 @@ public class PolicyExternWeekly
 		return larrCells;
 	}
 
-	protected void setWeeklyWidths(TD[] parrCells)
+	private TD[] buildWeeklyFooterRow(BigDecimal pdblTotal)
+	{
+		TD[] larrCells;
+
+		larrCells = new TD[2];
+
+		larrCells[0] = ReportBuilder.buildCell("Total", TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[0], true, true);
+
+		larrCells[1] = ReportBuilder.buildCell(pdblTotal, TypeDefGUIDs.T_Decimal, true);
+		ReportBuilder.styleCell(larrCells[1], true, true);
+
+		setWeeklyWidths(larrCells);
+
+		return larrCells;
+	}
+
+	private void setWeeklyWidths(TD[] parrCells)
 	{
 		parrCells[ 0].setWidth(130);
 		parrCells[ 1].setWidth(130);

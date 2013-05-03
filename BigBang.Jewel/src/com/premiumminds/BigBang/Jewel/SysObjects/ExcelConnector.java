@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import Jewel.Engine.SysObjects.FileXfer;
@@ -148,6 +149,8 @@ public class ExcelConnector
 		Timestamp ldt;
 		Double ldbl;
 		CellStyle lst;
+		String lstrColspan;
+		int llngCSpan;
 
 		lobjAux = pobjSource.getElement((String)pobjSource.keys().nextElement());
 
@@ -158,7 +161,16 @@ public class ExcelConnector
 		{
 			buildTable(pobjCell.getSheet(), (Table)lobjAux, row, col, max);
 			row.set(row.get() - 1);
+			col.set(col.get() - 1);
 			return;
+		}
+
+		lstrColspan = pobjSource.getAttribute("colspan");
+		if ( lstrColspan != null )
+		{
+			llngCSpan = Integer.parseInt(lstrColspan) - 1;
+			pobjCell.getSheet().addMergedRegion(new CellRangeAddress(row.get(), row.get(), col.get(), col.get() + llngCSpan));
+			col.set(col.get() + llngCSpan);
 		}
 
 		lstr = lobjAux.toString();
