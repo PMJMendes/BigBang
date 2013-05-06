@@ -354,7 +354,7 @@ public class PolicyExternWeekly
 			{
 				lobjAux = new EntryData();
 				lobjAux.mstrPolicy = parrPolicies[i].getLabel();
-				lobjAux.mdblValue = (BigDecimal)parrPolicies[i].getAt(Policy.I.TOTALPREMIUM);
+				lobjAux.mdblValue = ((BigDecimal)parrPolicies[i].getAt(Policy.I.TOTALPREMIUM)).divide(new BigDecimal(n), 2, RoundingMode.HALF_UP);
 				lobjAux.mdtDate = new Timestamp(ldtAux.getTimeInMillis());
 				larrAux.add(lobjAux);
 				ldtAux.add(Calendar.MONTH, 12/n);
@@ -486,7 +486,7 @@ public class PolicyExternWeekly
 			larrCells[0] = ReportBuilder.buildHeaderCell((i + 1) + "ª Semana");
 			ReportBuilder.styleCell(larrCells[0], true, false);
 
-			s = 1;
+			s = 2;
 			for ( j = 0; j < 12; j++ )
 			{
 				if ( s < parrSource[4 * j + i].length )
