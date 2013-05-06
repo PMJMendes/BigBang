@@ -533,7 +533,8 @@ public class PolicyExternWeekly
 			ReportBuilder.styleCell(larrCells[j], true, true);
 
 			larrCells[j + 1] = new TD();
-			larrCells[j + 1] = ReportBuilder.buildCell(larrTots[j / 2].divide(ldblTot, 5, RoundingMode.HALF_UP), TypeDefGUIDs.T_Decimal, true);
+			larrCells[j + 1] = ReportBuilder.buildCell(larrTots[j / 2].multiply(new BigDecimal(100)).divide(ldblTot, 5, RoundingMode.HALF_UP),
+					TypeDefGUIDs.T_Decimal, true);
 			larrCells[j + 1].setWidth(130);
 			ReportBuilder.styleCell(larrCells[j + 1], true, true);
 		}
