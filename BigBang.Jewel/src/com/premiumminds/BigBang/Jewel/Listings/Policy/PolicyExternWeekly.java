@@ -354,7 +354,8 @@ public class PolicyExternWeekly
 			{
 				lobjAux = new EntryData();
 				lobjAux.mstrPolicy = parrPolicies[i].getLabel();
-				lobjAux.mdblValue = ((BigDecimal)parrPolicies[i].getAt(Policy.I.TOTALPREMIUM)).divide(new BigDecimal(n), 2, RoundingMode.HALF_UP);
+				lobjAux.mdblValue = ( parrPolicies[i].getAt(Policy.I.TOTALPREMIUM) == null ? null :
+						((BigDecimal)parrPolicies[i].getAt(Policy.I.TOTALPREMIUM)).divide(new BigDecimal(n), 2, RoundingMode.HALF_UP) );
 				lobjAux.mdtDate = new Timestamp(ldtAux.getTimeInMillis());
 				larrAux.add(lobjAux);
 				ldtAux.add(Calendar.MONTH, 12/n);
