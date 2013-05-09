@@ -36,6 +36,7 @@ public class PolicyExternWeekly
 	private static class EntryData
 	{
 		public String mstrPolicy;
+		public String mstrDesc;
 		public BigDecimal mdblValue;
 		public Timestamp mdtDate;
 	}
@@ -56,18 +57,18 @@ public class PolicyExternWeekly
 
 		larrAux = getPortfolio(parrParams);
 
-		larrResult = new GenericElement[2];
+		larrResult = new GenericElement[1];
 
 		try
 		{
-			larrResult[0] = buildDataSection("ORIGEM DAS DESPESAS - Custos ocorridos no exercício de " + parrParams[1].substring(0, 4), larrAux);
+			larrResult[0] = /*buildDataSection("ORIGEM DAS DESPESAS - Custos ocorridos no exercício de " + parrParams[1].substring(0, 4), larrAux);
 
-			larrResult[1] = buildDetailedTable(larrAux, ldtStart);
+			larrResult[1] = */buildDetailedTable(larrAux, ldtStart);
 		}
-		catch (BigBangJewelException e)
-		{
-			throw e;
-		}
+//		catch (BigBangJewelException e)
+//		{
+//			throw e;
+//		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
@@ -354,6 +355,7 @@ public class PolicyExternWeekly
 			{
 				lobjAux = new EntryData();
 				lobjAux.mstrPolicy = parrPolicies[i].getLabel();
+				lobjAux.mstrDesc = parrPolicies[i].GetSubLine().getDescription();
 				lobjAux.mdblValue = ( parrPolicies[i].getAt(Policy.I.TOTALPREMIUM) == null ? null :
 						((BigDecimal)parrPolicies[i].getAt(Policy.I.TOTALPREMIUM)).divide(new BigDecimal(n), 2, RoundingMode.HALF_UP) );
 				lobjAux.mdtDate = new Timestamp(ldtAux.getTimeInMillis());
@@ -466,7 +468,7 @@ public class PolicyExternWeekly
 		{
 			larrCells[j] = new TD();
 			larrCells[j] = ReportBuilder.buildHeaderCell("Origem");
-			larrCells[j].setWidth(130);
+			larrCells[j].setWidth(260);
 			ReportBuilder.styleCell(larrCells[j], true, true);
 
 			larrCells[j + 1] = new TD();
@@ -510,7 +512,7 @@ public class PolicyExternWeekly
 		{
 			larrCells[j] = new TD();
 			larrCells[j] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-			larrCells[j].setWidth(130);
+			larrCells[j].setWidth(260);
 			ReportBuilder.styleCell(larrCells[j], true, true);
 
 			larrCells[j + 1] = new TD();
@@ -530,7 +532,7 @@ public class PolicyExternWeekly
 		{
 			larrCells[j] = new TD();
 			larrCells[j] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-			larrCells[j].setWidth(130);
+			larrCells[j].setWidth(260);
 			ReportBuilder.styleCell(larrCells[j], true, true);
 
 			larrCells[j + 1] = new TD();
@@ -583,7 +585,7 @@ public class PolicyExternWeekly
 
 		larrCells = new TD[2];
 
-		larrCells[0] = ReportBuilder.buildCell(pobjEntry == null ? "" : pobjEntry.mstrPolicy, TypeDefGUIDs.T_String);
+		larrCells[0] = ReportBuilder.buildCell(pobjEntry == null ? "" : pobjEntry.mstrPolicy + " - " + pobjEntry.mstrDesc, TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, true);
 
 		larrCells[1] = ReportBuilder.buildCell(pobjEntry == null ? "" : pobjEntry.mdblValue,
@@ -614,7 +616,7 @@ public class PolicyExternWeekly
 
 	private void setWeeklyWidths(TD[] parrCells)
 	{
-		parrCells[ 0].setWidth(130);
+		parrCells[ 0].setWidth(260);
 		parrCells[ 1].setWidth(130);
 	}
 }

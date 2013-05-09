@@ -275,7 +275,8 @@ public class ReceiptAcctCashPosition
 			lobjLog = lRec.getPaymentLog();
 			if ( lobjLog == null )
 			{
-				ldblPending = ldblPending.add((BigDecimal)lRec.getAt(Receipt.I.TOTALPREMIUM));
+				if ( !lRec.isForCasualties() )
+					ldblPending = ldblPending.add((BigDecimal)lRec.getAt(Receipt.I.TOTALPREMIUM));
 				ldblPComs = ldblPComs.add((lRec.getAt(Receipt.I.COMMISSIONS) == null ? BigDecimal.ZERO :
 					(BigDecimal)lRec.getAt(Receipt.I.COMMISSIONS)));
 			}
