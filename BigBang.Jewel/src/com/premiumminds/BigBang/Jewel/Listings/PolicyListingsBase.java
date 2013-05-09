@@ -195,7 +195,7 @@ public class PolicyListingsBase
 		larrCells[13] = ReportBuilder.buildHeaderCell("Fracc.");
 		ReportBuilder.styleCell(larrCells[13], false, true);
 
-		larrCells[14] = ReportBuilder.buildHeaderCell("Último recibo");
+		larrCells[14] = ReportBuilder.buildHeaderCell("Último rec.");
 		ReportBuilder.styleCell(larrCells[14], false, true);
 
 		setWidths(larrCells);
@@ -298,20 +298,20 @@ public class PolicyListingsBase
 	protected void setWidths(TD[] parrCells)
 	{
 		parrCells[ 0].setWidth(100);
-		parrCells[ 1].setWidth(300);
+		parrCells[ 1].setWidth(280);
 		parrCells[ 2].setWidth( 50);
 		parrCells[ 3].setWidth(100);
 		parrCells[ 4].setWidth( 60);
 		parrCells[ 5].setWidth( 80);
-		parrCells[ 6].setWidth( 80);
-		parrCells[ 7].setWidth( 80);
-		parrCells[ 8].setWidth( 80);
-		parrCells[ 9].setWidth( 80);
+		parrCells[ 6].setWidth( 70);
+		parrCells[ 7].setWidth( 70);
+		parrCells[ 8].setWidth( 70);
+		parrCells[ 9].setWidth( 90);
 		parrCells[10].setWidth(170);
-		parrCells[11].setWidth(100);
-		parrCells[12].setWidth(100);
+		parrCells[11].setWidth( 80);
+		parrCells[12].setWidth( 90);
 		parrCells[13].setWidth( 80);
-		parrCells[14].setWidth(100);
+		parrCells[14].setWidth( 70);
 	}
 
 	protected void filterByClient(StringBuilder pstrSQL, UUID pidGroup)
