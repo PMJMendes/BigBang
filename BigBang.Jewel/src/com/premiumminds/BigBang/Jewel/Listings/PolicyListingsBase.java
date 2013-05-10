@@ -298,7 +298,7 @@ public class PolicyListingsBase
 	protected void setWidths(TD[] parrCells)
 	{
 		parrCells[ 0].setWidth(100);
-		parrCells[ 1].setWidth(280);
+		parrCells[ 1].setWidth(250);
 		parrCells[ 2].setWidth( 50);
 		parrCells[ 3].setWidth(100);
 		parrCells[ 4].setWidth( 60);
@@ -307,7 +307,7 @@ public class PolicyListingsBase
 		parrCells[ 7].setWidth( 70);
 		parrCells[ 8].setWidth( 70);
 		parrCells[ 9].setWidth( 90);
-		parrCells[10].setWidth(170);
+		parrCells[10].setWidth(150);
 		parrCells[11].setWidth( 80);
 		parrCells[12].setWidth( 90);
 		parrCells[13].setWidth( 80);
