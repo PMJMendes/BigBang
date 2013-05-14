@@ -19,6 +19,8 @@ public class ContactInfoData
 	public UUID midType;
 	public String mstrValue;
 
+	public ContactInfoData mobjPrevValues;
+
 	public void FromObject(ObjectBase pobjSource)
 	{
 		mid = pobjSource.getKey();

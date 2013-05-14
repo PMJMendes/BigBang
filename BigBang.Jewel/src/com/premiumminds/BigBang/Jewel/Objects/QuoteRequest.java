@@ -19,6 +19,17 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class QuoteRequest
 	extends ProcessData
 {
+	public static class I
+	{
+		public static int NUMBER    = 0;
+		public static int PROCESS   = 1;
+		public static int MEDIATOR  = 2;
+		public static int NOTES     = 3;
+		public static int CASESTUDY = 4;
+		public static int DOCUSHARE = 5;
+		public static int CLIENT    = 6;
+	}
+
     public static QuoteRequest GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{

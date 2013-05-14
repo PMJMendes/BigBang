@@ -18,12 +18,14 @@ import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.ContactInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.DocInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.QuoteRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -94,6 +96,8 @@ public class ExternMergeOtherHere
 		PNProcess lobjProcess;
 		IProcess[] larrSubProcs;
 		Policy lobjPol;
+		QuoteRequest lobjQR;
+		Casualty lobjCas;
 		ResultSet lrsSubPolicies;
 		ArrayList<SubPolicy> larrSubPs;
 		SubPolicy lobjSubPol;
@@ -127,8 +131,22 @@ public class ExternMergeOtherHere
 					if ( Constants.ProcID_Policy.equals(larrSubProcs[i].GetScriptID()) )
 					{
 						lobjPol = (Policy)larrSubProcs[i].GetData();
-						lobjPol.setAt(17, midNewClient);
+						lobjPol.setAt(Policy.I.CLIENT, midNewClient);
 						lobjPol.SaveToDb(pdb);
+					}
+
+					if ( Constants.ProcID_QuoteRequest.equals(larrSubProcs[i].GetScriptID()) )
+					{
+						lobjQR = (QuoteRequest)larrSubProcs[i].GetData();
+						lobjQR.setAt(QuoteRequest.I.CLIENT, midNewClient);
+						lobjQR.SaveToDb(pdb);
+					}
+
+					if ( Constants.ProcID_Casualty.equals(larrSubProcs[i].GetScriptID()) )
+					{
+						lobjCas = (Casualty)larrSubProcs[i].GetData();
+						lobjCas.setAt(Casualty.I.CLIENT, midNewClient);
+						lobjCas.SaveToDb(pdb);
 					}
 				}
 			}
@@ -255,6 +273,8 @@ public class ExternMergeOtherHere
 		PNProcess lobjProcess;
 		PNProcess lobjSubProcAux;
 		Policy lobjPol;
+		QuoteRequest lobjQR;
+		Casualty lobjCas;
 		SubPolicy lobjSubPolicyAux;
 		int i;
 		ExternResumeClient lopERC;
@@ -304,8 +324,22 @@ public class ExternMergeOtherHere
 					if ( Constants.ProcID_Policy.equals(lobjSubProcAux.GetScriptID()) )
 					{
 						lobjPol = (Policy)lobjSubProcAux.GetData();
-						lobjPol.setAt(17, lobjAux.getKey());
+						lobjPol.setAt(Policy.I.CLIENT, lobjAux.getKey());
 						lobjPol.SaveToDb(pdb);
+					}
+
+					if ( Constants.ProcID_QuoteRequest.equals(lobjSubProcAux.GetScriptID()) )
+					{
+						lobjQR = (QuoteRequest)lobjSubProcAux.GetData();
+						lobjQR.setAt(QuoteRequest.I.CLIENT, lobjAux.getKey());
+						lobjQR.SaveToDb(pdb);
+					}
+
+					if ( Constants.ProcID_Casualty.equals(lobjSubProcAux.GetScriptID()) )
+					{
+						lobjCas = (Casualty)lobjSubProcAux.GetData();
+						lobjCas.setAt(Casualty.I.CLIENT, lobjAux.getKey());
+						lobjCas.SaveToDb(pdb);
 					}
 				}
 			}

@@ -334,11 +334,11 @@ public class CreatePaymentNotice
 				mobjConvData.marrMessages[0].marrAddresses[i + 2].midInfo = larrInfo[i].getKey();
 				try
 				{
-					mobjConvData.marrMessages[0].marrAddresses[i + 1].mstrDisplay = larrInfo[i].getOwner().getLabel();
+					mobjConvData.marrMessages[0].marrAddresses[i + 2].mstrDisplay = larrInfo[i].getOwner().getLabel();
 				}
 				catch (Throwable e)
 				{
-					mobjConvData.marrMessages[0].marrAddresses[i + 1].mstrDisplay = null;
+					mobjConvData.marrMessages[0].marrAddresses[i + 2].mstrDisplay = null;
 				}
 			}
 

@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -329,7 +330,7 @@ public class ContactOps
 		if ( llngCreates + llngModifies + llngDeletes == 0 )
 			return new UndoableOperation.UndoSet[0];
 
-		larrResult = new UndoableOperation.UndoSet[1];
+		larrResult = new UndoableOperation.UndoSet[] {new UndoableOperation.UndoSet()};
 		larrResult[0].midType = Constants.ObjID_Contact;
 		larrResult[0].marrDeleted = new UUID[llngCreates];
 		larrResult[0].marrChanged = new UUID[llngModifies];
@@ -415,6 +416,7 @@ public class ContactOps
 		int i;
 		Entity lrefContactInfo;
 		ContactInfo[] larrCIAux;
+		HashSet<UUID> lsetDelete;
 
 		try
 		{
@@ -433,20 +435,15 @@ public class ContactOps
 		pobjData.mobjPrevValues.marrSubContacts = null;
 		pobjData.mobjPrevValues.mobjPrevValues = null;
 
+		lsetDelete = new HashSet<UUID>();
+
 		larrCIAux = lobjAux.getCurrentInfo(pdb);
 		pobjData.mobjPrevValues.marrInfo = new ContactInfoData[larrCIAux.length];
 		for ( i = 0; i < larrCIAux.length; i++ )
 		{
 			pobjData.mobjPrevValues.marrInfo[i] = new ContactInfoData();
 			pobjData.mobjPrevValues.marrInfo[i].FromObject(larrCIAux[i]);
-			try
-			{
-				lrefContactInfo.Delete(pdb, larrCIAux[i].getKey());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
+			lsetDelete.add(larrCIAux[i].getKey());
 		}
 
 		pobjData.ToObject(lobjAux);
@@ -463,7 +460,14 @@ public class ContactOps
 		{
 			for ( i = 0; i < pobjData.marrInfo.length; i++ )
 			{
-				lobjAuxInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjAuxInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(), pobjData.marrInfo[i].mid);
+				if ( pobjData.marrInfo[i].mid == null )
+					pobjData.marrInfo[i].mobjPrevValues = null;
+				else
+				{
+					pobjData.marrInfo[i].mobjPrevValues = new ContactInfoData();
+					pobjData.marrInfo[i].mobjPrevValues.FromObject(lobjAuxInfo);
+				}
 				pobjData.marrInfo[i].midOwner = pobjData.mid;
 				pobjData.marrInfo[i].ToObject(lobjAuxInfo);
 				try
@@ -474,7 +478,22 @@ public class ContactOps
 				{
 					throw new BigBangJewelException(e.getMessage(), e);
 				}
-				pobjData.marrInfo[i].mid = lobjAuxInfo.getKey();
+				if ( pobjData.marrInfo[i].mid == null )
+					pobjData.marrInfo[i].mid = lobjAuxInfo.getKey();
+				else
+					lsetDelete.remove(pobjData.marrInfo[i].mid);
+			}
+		}
+
+		for ( UUID lid : lsetDelete )
+		{
+			try
+			{
+				lrefContactInfo.Delete(pdb, lid);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
 			}
 		}
 	}
@@ -568,6 +587,7 @@ public class ContactOps
 		ContactInfo lobjAuxInfo;
 		int i;
 		Entity lrefContactInfo;
+		HashSet<UUID> lsetDone;
 
 		try
 		{
@@ -580,19 +600,6 @@ public class ContactOps
 		}
 
 		lobjAux = Contact.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
-
-		for ( i = 0; i < pobjData.marrInfo.length; i++ )
-		{
-			try
-			{
-				lrefContactInfo.Delete(pdb, pobjData.marrInfo[i].mid);
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-		}
-
 		pobjData.mobjPrevValues.ToObject(lobjAux);
 		try
 		{
@@ -603,10 +610,48 @@ public class ContactOps
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		lsetDone = new HashSet<UUID>();
+
+		if ( pobjData.marrInfo != null )
+		{
+			for ( i = 0; i < pobjData.marrInfo.length; i++ )
+			{
+				if ( pobjData.marrInfo[i].mobjPrevValues == null )
+				{
+					try
+					{
+						lrefContactInfo.Delete(pdb, pobjData.marrInfo[i].mid);
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangJewelException(e.getMessage(), e);
+					}
+				}
+				else
+				{
+					lobjAuxInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(), pobjData.marrInfo[i].mobjPrevValues.mid);
+					pobjData.marrInfo[i].mobjPrevValues.midOwner = pobjData.mid;
+					pobjData.marrInfo[i].mobjPrevValues.ToObject(lobjAuxInfo);
+					try
+					{
+						lobjAuxInfo.SaveToDb(pdb);
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangJewelException(e.getMessage(), e);
+					}
+					lsetDone.add(pobjData.marrInfo[i].mobjPrevValues.mid);
+				}
+			}
+		}
+
 		if ( pobjData.mobjPrevValues.marrInfo != null )
 		{
 			for ( i = 0; i < pobjData.mobjPrevValues.marrInfo.length; i++ )
 			{
+				if ( lsetDone.contains(pobjData.mobjPrevValues.marrInfo[i].mid) )
+					continue;
+
 				lobjAuxInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				pobjData.mobjPrevValues.marrInfo[i].midOwner = pobjData.mid; 
 				pobjData.mobjPrevValues.marrInfo[i].ToObject(lobjAuxInfo);
