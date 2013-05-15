@@ -23,7 +23,7 @@ public abstract class ExecMgrXFerBase
 
 	public UUID midNewManager;
 	public UUID midMassProcess;
-	private UUID midOldManager;
+	protected UUID midOldManager;
 	private UUID midObject;
 
 	public ExecMgrXFerBase(UUID pidProcess)

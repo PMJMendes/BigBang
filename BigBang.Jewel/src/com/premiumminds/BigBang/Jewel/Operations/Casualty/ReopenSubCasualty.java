@@ -65,7 +65,10 @@ public class ReopenSubCasualty
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjSubCasualty.GetProcessID()).Restart(pdb);
+		mstrSubCasualty = lobjSubCasualty.getLabel();
+		midProcess = lobjSubCasualty.GetProcessID();
+
+		PNProcess.GetInstance(Engine.getCurrentNameSpace(), midProcess).Restart(pdb);
 
 		lopERP = new ExternReopenProcess(lobjSubCasualty.GetProcessID());
 		lopERP.mstrMotive = mstrMotive;
