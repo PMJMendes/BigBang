@@ -208,6 +208,7 @@ public class ValidateReceipt
 				mobjData.mobjPrevValues.midPolicy = (UUID)lobjAux.getAt(Receipt.I.POLICY);
 				mobjData.mobjPrevValues.midSubPolicy = (UUID)lobjAux.getAt(Receipt.I.SUBPOLICY);
 				mobjData.mobjPrevValues.midSubCasualty = (UUID)lobjAux.getAt(Receipt.I.SUBCASUALTY);
+				mobjData.mobjPrevValues.midStatus = (UUID)lobjAux.getAt(Receipt.I.STATUS);
 
 				mobjData.mobjPrevValues.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
