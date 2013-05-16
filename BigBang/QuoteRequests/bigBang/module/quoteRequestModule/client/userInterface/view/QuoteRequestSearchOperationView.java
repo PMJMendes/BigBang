@@ -1,0 +1,720 @@
+package bigBang.module.quoteRequestModule.client.userInterface.view;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.CompositeFieldContainer;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ConversationStub;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.QuoteRequestObject;
+import bigBang.definitions.shared.QuoteRequestObjectStub;
+import bigBang.definitions.shared.QuoteRequestStub;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.SelectedStateChangedEvent;
+import bigBang.library.client.event.SelectedStateChangedEventHandler;
+import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.view.View;
+import bigBang.module.quoteRequestModule.client.userInterface.ChooseObjectTypePanel;
+import bigBang.module.quoteRequestModule.client.userInterface.ChooseSublinePanel;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestChildrenPanel;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestNotesFormSection;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestObjectSearchPanel;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestProcessToolBar;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearchPanel;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearchPanel.Entry;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSelectButton;
+import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSublineFormSection;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestHeaderForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestObjectForm;
+import bigBang.module.quoteRequestModule.client.userInterface.form.QuoteRequestSublineForm;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter.Action;
+
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.AttachEvent.Handler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+public class QuoteRequestSearchOperationView extends View implements QuoteRequestSearchOperationViewPresenter.Display {
+
+	protected static final int SEARCH_PANEL_WIDTH = 400; //PX
+	protected boolean toRunEvent = true;
+	private QuoteRequestSublineFormSection currentOpenedSection;
+	private QuoteRequestSearchPanel searchPanel;
+	protected ActionInvokedEventHandler<QuoteRequestSearchOperationViewPresenter.Action> actionHandler;
+	protected QuoteRequestChildrenPanel childrenPanel;
+	protected QuoteRequestProcessToolBar toolbar;
+	private QuoteRequestObjectSearchPanel objectsList;
+	private QuoteRequestHeaderForm quoteRequestForm;
+	private QuoteRequestObjectForm objectForm;
+	private QuoteRequestNotesFormSection quoteRequestNotesFormSection;
+	private QuoteRequestSelectButton quoteRequestSelectButton;
+	private ChooseSublinePanel chooseSublinePanel;
+	private ChooseObjectTypePanel chooseObjectTypePanel;
+	private List<QuoteRequestSublineFormSection> sublineFormSections;
+	private QuoteRequestSublineForm subLineForm;
+	protected String openedSectionId;
+	protected String newObjectId;
+	private String subLineId;
+
+	public QuoteRequestSearchOperationView(){
+
+		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
+		mainWrapper.setSize("100%", "100%");
+
+		VerticalPanel searchPanelWrapper = new VerticalPanel();
+		searchPanelWrapper.setSize("100%", "100%");
+
+		ListHeader searchPanelHeader = new ListHeader("Consultas de Mercado");
+		searchPanelWrapper.add(searchPanelHeader);
+
+		quoteRequestForm = new QuoteRequestHeaderForm();
+		objectForm = new QuoteRequestObjectForm();
+
+		searchPanel = new QuoteRequestSearchPanel();
+
+		doSearch(true);
+
+		searchPanelWrapper.add(searchPanel);
+
+		searchPanelWrapper.setCellHeight(searchPanel, "100%");
+
+		mainWrapper.addWest(searchPanelWrapper, SEARCH_PANEL_WIDTH);
+
+		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
+		contentWrapper.setSize("100%", "100%");
+
+		childrenPanel = new QuoteRequestChildrenPanel();
+		childrenPanel.setSize("100%", "100%");
+		contentWrapper.addEast(childrenPanel, 300);
+
+		toolbar = new QuoteRequestProcessToolBar() {
+
+			@Override
+			public void onSaveRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.SAVE));
+			}
+
+			@Override
+			public void onEditRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.EDIT));
+
+			}
+
+			@Override
+			public void onCancelRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.CANCEL));
+			}
+
+			@Override
+			public void onSendResponseToClient() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.SEND_RESPONSE_TO_CLIENT));
+			}
+
+			@Override
+			public void onSendMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.SEND_MESSAGE));
+			}
+
+			@Override
+			public void onDelete() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.DELETE));
+			}
+
+			@Override
+			public void onCreateNegotiation() {		
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.CREATE_NEGOTIATION));
+			}
+
+			@Override
+			public void onCreateManagerTransfer() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.MANAGER_TRANSFER));
+			}
+
+			@Override
+			public void onCloseProcess() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.CLOSE));
+
+			}
+
+			@Override
+			public void onReceiveMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.RECEIVE_MESSAGE));
+
+			}
+		};
+
+		VerticalPanel formContainer = new VerticalPanel();
+		formContainer.setSize("100%", "100%");
+
+		HorizontalPanel formPanel = new HorizontalPanel();
+		formPanel.getElement().getStyle().setProperty("borderBottom", "1px solid #688AA2");
+
+		VerticalPanel objectsQuotePanel = new VerticalPanel();
+		objectsQuotePanel.getElement().getStyle().setProperty("borderRight", "1px solid #688AA2");
+
+		quoteRequestSelectButton = new QuoteRequestSelectButton(new QuoteRequestStub());
+
+		objectsQuotePanel.setSize("100%", "100%");
+		objectsQuotePanel.add(quoteRequestSelectButton);
+
+		quoteRequestSelectButton.addSelectedStateChangedEventHandler(new SelectedStateChangedEventHandler() {
+
+			@Override
+			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
+				if (event.getSelected()){
+					actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.QUOTE_REQUEST_SELECTED));
+				}				
+			}
+		});
+
+		objectsList = new QuoteRequestObjectSearchPanel();
+		objectsList.showFilterField(false);
+		objectsList.getNewObjectButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.NEW_OBJECT));
+			}
+		});
+
+		objectsQuotePanel.add(objectsList);
+		objectsQuotePanel.setCellHeight(objectsList, "100%");
+		objectsList.setSize("100%", "100%");
+		formPanel.add(objectsQuotePanel);
+		objectsQuotePanel.setCellWidth(objectsList, "200px");
+		formPanel.setCellWidth(objectsQuotePanel, "200px");
+		formPanel.setCellHeight(objectsQuotePanel, "100%");
+		formPanel.add(quoteRequestForm.getNonScrollableContent());
+		formPanel.add(objectForm.getNonScrollableContent());
+
+		objectForm.getNonScrollableContent().setVisible(false);
+
+		formPanel.setCellWidth(quoteRequestForm, "100%");
+		quoteRequestForm.getNonScrollableContent().setSize("100%", "100%");
+		objectForm.getNonScrollableContent().setSize("100%", "100%");
+		formPanel.setSize("100%", "100%");
+		formContainer.add(formPanel);
+		formContainer.setCellHeight(formPanel, "100%");
+		formContainer.add(objectForm);
+
+		ScrollPanel scrollContainer = new ScrollPanel();
+		scrollContainer.setSize("100%", "100%");
+		scrollContainer.getElement().getStyle().setProperty("overflowx","hidden");
+		VerticalPanel centerWrapper = new VerticalPanel();
+
+		centerWrapper.setSize("100%", "100%");
+
+		VerticalPanel toolbarAndCenterWrapper = new VerticalPanel();
+		toolbarAndCenterWrapper.setSize("100%", "100%");
+		toolbarAndCenterWrapper.add(toolbar);
+
+		centerWrapper.add(formContainer);
+		centerWrapper.setCellHeight(formContainer, "100%");
+		VerticalPanel detailTableContainer = new VerticalPanel();
+		detailTableContainer.setSize("100%", "100%");
+
+		sublineFormSections = new ArrayList<QuoteRequestSublineFormSection>();
+		subLineForm = new QuoteRequestSublineForm();
+
+		subLineForm.getAddFieldButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.NEW_SUBLINE));
+			}
+		});
+
+		centerWrapper.add(subLineForm.getNonScrollableContent());
+
+		quoteRequestNotesFormSection = new QuoteRequestNotesFormSection();
+		centerWrapper.add(quoteRequestNotesFormSection);
+
+		scrollContainer.add(centerWrapper);
+		scrollContainer.getElement().getStyle().setBackgroundColor("whiteSmoke");
+		scrollContainer.getElement().getStyle().setOverflowX(Style.Overflow.HIDDEN);
+
+		toolbarAndCenterWrapper.add(scrollContainer);
+		toolbarAndCenterWrapper.setCellHeight(scrollContainer, "100%");
+		contentWrapper.add(toolbarAndCenterWrapper);
+		mainWrapper.add(contentWrapper);
+
+		chooseSublinePanel = new ChooseSublinePanel();
+
+		chooseSublinePanel.addAttachHandler(new Handler() {
+
+			@Override
+			public void onAttachOrDetach(AttachEvent event) {
+				if(!event.isAttached()){
+					if(chooseSublinePanel.getValue() != null){
+						actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.NEW_SUBLINE_CHOSEN));
+					}
+				}
+			}
+		});
+
+		chooseObjectTypePanel = new ChooseObjectTypePanel();
+
+		chooseObjectTypePanel.addAttachHandler(new Handler() {
+
+			@Override
+			public void onAttachOrDetach(AttachEvent event) {
+				if(!event.isAttached()){
+					if(chooseObjectTypePanel.getValue() != null){
+						newObjectId = chooseObjectTypePanel.getValue();
+						actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(QuoteRequestSearchOperationViewPresenter.Action.NEW_OBJECT_CHOSEN));
+					}
+				}
+			}
+		});
+
+		objectsList.lockSearchButton(false);
+	}
+
+
+
+	@Override
+	protected void initializeView() {
+		return;
+	}
+
+	@Override
+	public void doSearch(boolean b) {
+		searchPanel.doSearch(b);
+	}
+
+
+
+	@Override
+	public void registerActionHandler(
+			ActionInvokedEventHandler<Action> actionInvokedEventHandler) {
+		this.actionHandler = actionInvokedEventHandler;
+	}
+
+
+
+	@Override
+	public void clear() {
+		objectForm.clearInfo();
+		quoteRequestForm.clearInfo();
+	}
+
+
+
+	@Override
+	public void setToolbarEditMode(boolean b) {
+		toolbar.setSaveModeEnabled(b);
+	}
+
+
+
+	@Override
+	public void allowEdit(boolean b) {
+		toolbar.allowEdit(b);
+	}
+
+
+
+	@Override
+	public HasValue<QuoteRequestStub> getQuoteRequestSelector() {
+		return quoteRequestSelectButton;
+	}
+
+
+
+	@Override
+	public void setOwner(QuoteRequest object) {
+		setObjectListOwner(object == null ? null : object.id);
+		childrenPanel.setOwner(object);
+	}
+
+
+
+	private void setObjectListOwner(String string) {
+		objectsList.setOwner(string);		
+	}
+
+
+
+	@Override
+	public void clearObjectsList() {
+
+	}
+
+
+
+	@Override
+	public HasValue<String> getQuoteRequestNotesForm() {
+		return quoteRequestNotesFormSection;
+	}
+
+
+
+	@Override
+	public void setReadOnly(boolean b) {
+		objectForm.setReadOnly(b);
+		quoteRequestForm.setReadOnly(b);
+		quoteRequestNotesFormSection.setReadOnly(b);
+		subLineForm.setReadOnly(b);
+		objectsList.allowCreateNew(!b);
+	}
+
+
+
+	@Override
+	public HasValueSelectables<QuoteRequestStub> getList() {
+		return searchPanel;
+	}
+
+
+
+	@Override
+	public void addEntryToList(Entry entry) {
+		searchPanel.add(0, entry);
+		entry.setSelected(true,false);
+	}
+
+
+
+
+	@Override
+	public HasValueSelectables<QuoteRequestObjectStub> getObjectList() {
+		return objectsList;
+	}
+
+
+
+	@Override
+	public HasEditableValue<QuoteRequest> getQuoteRequestHeaderForm() {
+		return quoteRequestForm;
+	}
+
+
+
+	@Override
+	public void showObjectForm(boolean b) {
+		objectForm.getNonScrollableContent().setVisible(b);
+	}
+
+
+
+	@Override
+	public void showQuoteRequestForm(boolean b) {
+		this.quoteRequestForm.getNonScrollableContent().setVisible(b);
+	}
+
+
+
+	@Override
+	public void setNotesReadOnly(boolean b) {
+		quoteRequestNotesFormSection.setReadOnly(b);
+	}
+
+
+
+	@Override
+	public void setQuoteRequestEntrySelected(boolean b) {
+		quoteRequestSelectButton.setSelected(b, false);
+	}
+
+
+
+	@Override
+	public void allowSendMessage(boolean hasPermission) {
+		toolbar.allowSendMessage(hasPermission);
+
+	}
+
+
+
+	@Override
+	public void allowReceiveMessage(boolean hasPermission) {
+		toolbar.allowReceiveMessage(hasPermission);
+	}
+
+
+
+	@Override
+	public void allowDelete(boolean hasPermission) {
+		toolbar.allowDelete(hasPermission);
+	}
+
+
+
+	@Override
+	public HasEditableValue<QuoteRequestObject> getObjectForm() {
+		return objectForm;
+	}
+
+
+
+	@Override
+	public void clearQuoteRequestSelection() {
+		quoteRequestSelectButton.setSelected(false,false);
+	}
+
+
+
+	@Override
+	public void dealWithObject(QuoteRequestObjectStub info) {
+		objectsList.dealWithObject(info);
+	}
+
+
+
+	@Override
+	public void removeElementFromList(ValueSelectable<QuoteRequestStub> stub) {
+		searchPanel.remove(stub);		
+	}
+
+
+
+	@Override
+	public void focusObjectForm() {
+		objectForm.focus();
+	}
+
+	public String getChosenSubline(){
+		return chooseSublinePanel.getValue();
+	}
+
+
+
+	@Override
+	public void showSubLineChooser() {
+		chooseSublinePanel.setValue(null);
+		chooseSublinePanel.center();
+	}
+
+
+
+	@Override
+	public void showObjectTypeChooser() {
+		chooseObjectTypePanel.setValue(null);
+		chooseObjectTypePanel.center();
+	}
+
+
+
+	@Override
+	public void lockToolbar() {
+		toolbar.lockAll();
+	}
+
+
+
+	@Override
+	public void allowCreateNegotiation(boolean hasPermission) {
+		toolbar.allowCreateNegotiation(hasPermission);
+	}
+
+	@Override
+	public void allowManagerTransfer(boolean hasPermission) {
+		toolbar.allowManagerTransfer(hasPermission);
+	}
+
+
+
+	@Override
+	public String getNewSublineId() {
+		return chooseSublinePanel.getValue();
+	}
+
+
+
+	@Override
+	public QuoteRequestSublineFormSection createSublineFormSection(CompositeFieldContainer.SubLineFieldContainer container) {
+		final QuoteRequestSublineFormSection newSection = new QuoteRequestSublineFormSection(container.categoryName + " / " + container.lineName + " / " + container.subLineName);
+
+		newSection.getDeleteButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.DELETE_SUBLINE));
+			}
+		});
+
+		newSection.getCollapsiblePanelCloseHandler().addCloseHandler(new CloseHandler<DisclosurePanel>() {
+
+			@Override
+			public void onClose(CloseEvent<DisclosurePanel> event) {
+				if (toRunEvent){
+					actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CLOSE_SUBLINE_SECTION));
+				}else{
+					toRunEvent = true;
+				}
+				currentOpenedSection = null;
+			}
+		});
+
+		newSection.getCollapsiblePanelOpenHandler().addOpenHandler(new OpenHandler<DisclosurePanel>() {
+
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CLOSE_ON_OPEN_SUBLINE_SECTION));
+				currentOpenedSection = newSection;
+				subLineId = newSection.getValue().subLineId;
+				actionHandler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.OPEN_SUBLINE_SECTION));
+			}
+		});
+
+		newSection.setValue(container);
+		sublineFormSections.add(newSection);
+		subLineForm.addSection(newSection);
+
+		return newSection;
+	}
+
+
+	@Override
+	public void deleteSubLine(QuoteRequestSublineFormSection currentSubline) {
+
+		subLineForm.removeSection(currentSubline);
+		sublineFormSections.remove(currentSubline);
+		currentOpenedSection = null;
+	}
+
+
+	@Override
+	public void closeSublineSection(boolean toRunEvent) {
+		this.toRunEvent = toRunEvent;
+		currentOpenedSection.collapse();
+	}
+
+
+
+	@Override
+	public QuoteRequestSublineFormSection getOpenedSection() {
+		return currentOpenedSection;
+	}
+
+
+
+	@Override
+	public String getObjectType() {
+		return newObjectId;
+	}
+
+
+
+	@Override
+	public void setSelectedObject(String id) {
+		objectsList.setSelected(id);
+	}
+
+
+
+	@Override
+	public HasClickHandlers getObjectDeleteButton() {
+		return objectForm.getDeleteButton();
+	}
+
+
+
+	@Override
+	public String getSublineId() {
+		return subLineId;
+	}
+
+
+
+	@Override
+	public void clearSubLines() {
+		for(QuoteRequestSublineFormSection cont : sublineFormSections){
+			subLineForm.removeSection(cont);
+		}
+
+		sublineFormSections =  new ArrayList<QuoteRequestSublineFormSection>();
+		currentOpenedSection = null;
+	}
+
+
+
+	@Override
+	public boolean containsSubLine(String sublineId) {
+
+		for(QuoteRequestSublineFormSection cont : sublineFormSections){
+			if(cont.getValue().subLineId.equalsIgnoreCase(sublineId)){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+
+	@Override
+	public void setSelectedSubline(String sublineId) {
+		for(QuoteRequestSublineFormSection cont : sublineFormSections){
+			if(cont.getValue().subLineId.equalsIgnoreCase(sublineId)){
+				cont.expand();
+				return;
+			}
+		}
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<HistoryItemStub> getHistoryList() {
+		return childrenPanel.historyList;
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<Contact> getContactsList() {
+		return childrenPanel.contactsList;
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<Document> getDocumentsList() {
+		return childrenPanel.documentsList;
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<BigBangProcess> getSubProcessesList() {
+		return childrenPanel.subProcessesList;
+	}
+
+
+
+	@Override
+	public bigBang.library.client.userInterface.List<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
+	}
+
+
+
+	@Override
+	public void allowCloseProcess(boolean hasPermission) {
+		toolbar.allowClose(hasPermission);
+	}
+
+}

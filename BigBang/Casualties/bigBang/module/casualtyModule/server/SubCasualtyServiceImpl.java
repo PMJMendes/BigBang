@@ -1,0 +1,826 @@
+package bigBang.module.casualtyModule.server;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.UUID;
+
+import Jewel.Engine.Engine;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.SysObjects.JewelPetriException;
+import bigBang.definitions.shared.Assessment;
+import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.MedicalFile;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.SubCasualty;
+import bigBang.definitions.shared.SubCasualtyStub;
+import bigBang.definitions.shared.TotalLossFile;
+import bigBang.library.server.BigBangPermissionServiceImpl;
+import bigBang.library.server.ConversationServiceImpl;
+import bigBang.library.server.MessageBridge;
+import bigBang.library.server.SearchServiceBase;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.casualtyModule.interfaces.SubCasualtyService;
+import bigBang.module.casualtyModule.shared.SubCasualtySearchParameter;
+import bigBang.module.casualtyModule.shared.SubCasualtySortParameter;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CloseProcess;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateAssessment;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateConversation;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateMedicalFile;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateTotalLoss;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.DeleteSubCasualty;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.MarkForClosing;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.RejectClosing;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.SendNotification;
+
+public class SubCasualtyServiceImpl
+	extends SearchServiceBase
+	implements SubCasualtyService
+{
+	private static final long serialVersionUID = 1L;
+
+	public static SubCasualty sGetSubCasualty(UUID pidSubCasualty)
+		throws BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		IProcess lobjProcess;
+		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		ObjectBase lobjOwner;
+		Policy lobjPolicy;
+		Client lobjClient;
+		Mediator lobjMed;
+		Company lobjComp;
+		SubCasualtyItem[] larrItems;
+		SubCasualty lobjResult;
+		BigDecimal ldblTotal;
+		BigDecimal ldblLocal;
+		int i;
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(), pidSubCasualty);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjSubCasualty.GetProcessID());
+			lobjCasualty = lobjSubCasualty.GetCasualty();
+			lobjOwner = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICY) == null ?
+					SubPolicy.GetInstance(Engine.getCurrentNameSpace(),
+							(UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SUBPOLICY)) :
+					Policy.GetInstance(Engine.getCurrentNameSpace(),
+							(UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICY)) );
+			lobjPolicy = (Policy)( Constants.ObjID_Policy.equals(lobjOwner.getDefinition().getDefObject().getKey()) ? lobjOwner :
+					PNProcess.GetInstance(Engine.getCurrentNameSpace(), ((SubPolicy)lobjOwner).GetProcessID()).GetParent().GetData() );
+			lobjComp = lobjPolicy.GetCompany();
+			lobjClient = lobjPolicy.GetClient();
+			lobjMed = lobjClient.getMediator();
+			larrItems = lobjSubCasualty.GetCurrentItems();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new SubCasualty();
+		lobjResult.id = lobjSubCasualty.getKey().toString();
+		lobjResult.processId = lobjProcess.getKey().toString();
+		lobjResult.number = lobjSubCasualty.getLabel();
+		lobjResult.casualtyId = lobjCasualty.getKey().toString();
+		lobjResult.referenceId = lobjOwner.getKey().toString();
+		lobjResult.referenceTypeId = lobjOwner.getDefinition().getDefObject().getKey().toString();
+		lobjResult.referenceNumber = lobjOwner.getLabel();
+		lobjResult.categoryName = lobjPolicy.GetSubLine().getLine().getCategory().getLabel();
+		lobjResult.lineName = lobjPolicy.GetSubLine().getLine().getLabel();
+		lobjResult.subLineName = lobjPolicy.GetSubLine().getLabel();
+		lobjResult.insurerProcessNumber = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.INSURERPROCESS);
+		lobjResult.isOpen = lobjProcess.IsRunning();
+		lobjResult.hasJudicial = (Boolean)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.HASJUDICIAL);
+		lobjResult.text = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.DESCRIPTION);
+		lobjResult.internalNotes = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.NOTES);
+		lobjResult.inheritInsurerId = lobjComp.getKey().toString();
+		lobjResult.inheritInsurerName = lobjComp.getLabel();
+		lobjResult.inheritMasterClientId = lobjClient.getKey().toString();
+		lobjResult.inheritMasterClientName = lobjClient.getLabel();
+		lobjResult.inheritMasterMediatorId = lobjMed.getKey().toString();
+		lobjResult.inheritMasterMediatorName = lobjMed.getLabel();
+		if ( Constants.ObjID_Policy.equals(lobjOwner.getDefinition().getDefObject().getKey()) )
+			lobjResult.insuredObjectId = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICYOBJECT) == null ?
+					null : ((UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICYOBJECT)).toString() );
+		else
+			lobjResult.insuredObjectId = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SUBPOLICYOBJECT) == null ?
+					null : ((UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SUBPOLICYOBJECT)).toString() );
+		lobjResult.insuredObjectName = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.GENERICOBJECT);
+		lobjResult.serviceCenterId = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SERVICECENTER) == null ?
+				null : ((UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SERVICECENTER)).toString() );
+
+		ldblTotal = null;
+		lobjResult.items = new SubCasualty.SubCasualtyItem[larrItems.length];
+		for ( i = 0; i < lobjResult.items.length; i++ )
+		{
+			ldblLocal = (BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.DAMAGES);
+
+			lobjResult.items[i] = new SubCasualty.SubCasualtyItem();
+			lobjResult.items[i].id = larrItems[i].getKey().toString();
+			if ( Constants.ObjID_Policy.equals(lobjOwner.getDefinition().getDefObject().getKey()) )
+				lobjResult.items[i].coverageId = ( larrItems[i].getAt(SubCasualtyItem.I.POLICYCOVERAGE) == null ? null :
+						((UUID)larrItems[i].getAt(SubCasualtyItem.I.POLICYCOVERAGE)).toString() );
+			else
+				lobjResult.items[i].coverageId = ( larrItems[i].getAt(SubCasualtyItem.I.SUBOPOLICYCOVERAGE) == null ? null :
+						((UUID)larrItems[i].getAt(SubCasualtyItem.I.SUBOPOLICYCOVERAGE)).toString() );
+			lobjResult.items[i].damageTypeId = ( larrItems[i].getAt(SubCasualtyItem.I.TYPE) == null ? null :
+					((UUID)larrItems[i].getAt(SubCasualtyItem.I.TYPE)).toString() );
+			lobjResult.items[i].damages = ( ldblLocal == null ? null : ldblLocal.doubleValue());
+			lobjResult.items[i].settlement = ( larrItems[i].getAt(SubCasualtyItem.I.SETTLEMENT) == null ? null :
+					((BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.SETTLEMENT)).doubleValue() );
+			lobjResult.items[i].isManual = (Boolean)larrItems[i].getAt(SubCasualtyItem.I.MANUAL);
+			lobjResult.items[i].value = ( larrItems[i].getAt(SubCasualtyItem.I.CAPITAL) == null ? null :
+					((BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.CAPITAL)).doubleValue() );
+			lobjResult.items[i].deductible = ( larrItems[i].getAt(SubCasualtyItem.I.DEDUCTIBLE) == null ? null :
+					((BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.DEDUCTIBLE)).doubleValue() );
+			lobjResult.items[i].notes = (String)larrItems[i].getAt(SubCasualtyItem.I.NOTES);
+
+			ldblTotal = ( ldblTotal == null ? ldblLocal : (ldblLocal == null ? ldblTotal : ldblTotal.add(ldblLocal)) );
+		}
+		lobjResult.totalDamages = (ldblTotal == null ? null : ldblTotal.toPlainString());
+
+		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
+
+		return lobjResult;
+	}
+
+	public SubCasualty getSubCasualty(String subCasualtyId)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return sGetSubCasualty(UUID.fromString(subCasualtyId));
+	}
+
+	public SubCasualty editSubCasualty(SubCasualty subCasualty)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		boolean lbPolicy;
+		ManageData lopMD;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualty.id));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lbPolicy = (Constants.ObjID_Policy.equals(UUID.fromString(subCasualty.referenceTypeId)));
+
+		lopMD = new ManageData(lobjSubCasualty.GetProcessID());
+		lopMD.mobjData = new SubCasualtyData();
+		lopMD.mobjData.mid = lobjSubCasualty.getKey();
+		lopMD.mobjData.mstrNumber = subCasualty.number;
+		lopMD.mobjData.midProcess = UUID.fromString(subCasualty.processId);
+		lopMD.mobjData.midPolicy = ( lbPolicy ? UUID.fromString(subCasualty.referenceId) : null );
+		lopMD.mobjData.midSubPolicy = ( lbPolicy ? null : UUID.fromString(subCasualty.referenceId) );
+		lopMD.mobjData.mstrInsurerProc = subCasualty.insurerProcessNumber;
+		lopMD.mobjData.mstrDescription = subCasualty.text;
+		lopMD.mobjData.mstrNotes = subCasualty.internalNotes;
+		lopMD.mobjData.mbHasJudicial = subCasualty.hasJudicial;
+		lopMD.mobjData.midPolicyObject = ( subCasualty.insuredObjectId == null ? null :
+				(lbPolicy ? UUID.fromString(subCasualty.insuredObjectId) : null) );
+		lopMD.mobjData.midSubPolicyObject = ( subCasualty.insuredObjectId == null ? null :
+				(lbPolicy ? null : UUID.fromString(subCasualty.insuredObjectId)) );
+		lopMD.mobjData.mstrGenericObject = subCasualty.insuredObjectName;
+		lopMD.mobjData.midCasualty = (UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.CASUALTY);
+		lopMD.mobjData.midServiceCenter = ( subCasualty.serviceCenterId == null ? null :
+				UUID.fromString(subCasualty.serviceCenterId) );
+
+		if ( subCasualty.items != null )
+		{
+			lopMD.mobjData.marrItems = new SubCasualtyItemData[subCasualty.items.length];
+			for ( i = 0; i < lopMD.mobjData.marrItems.length; i++ )
+			{
+				lopMD.mobjData.marrItems[i] = new SubCasualtyItemData();
+				lopMD.mobjData.marrItems[i].mid = ( subCasualty.items[i].id == null ? null : UUID.fromString(subCasualty.items[i].id) );
+				lopMD.mobjData.marrItems[i].midSubCasualty = lopMD.mobjData.mid;
+				lopMD.mobjData.marrItems[i].midPolicyCoverage = ( subCasualty.items[i].coverageId == null ? null :
+						(lbPolicy ? UUID.fromString(subCasualty.items[i].coverageId) : null) );
+				lopMD.mobjData.marrItems[i].midSubPolicyCoverage = ( subCasualty.items[i].coverageId == null ? null :
+						(lbPolicy ? null : UUID.fromString(subCasualty.items[i].coverageId)) );
+				lopMD.mobjData.marrItems[i].midType = ( subCasualty.items[i].damageTypeId == null ? null :
+						UUID.fromString(subCasualty.items[i].damageTypeId) );
+				lopMD.mobjData.marrItems[i].mdblDamages = ( subCasualty.items[i].damages == null ? null :
+						new BigDecimal(subCasualty.items[i].damages+"") );
+				lopMD.mobjData.marrItems[i].mdblSettlement = ( subCasualty.items[i].settlement == null ? null :
+						new BigDecimal(subCasualty.items[i].settlement+"") );
+				lopMD.mobjData.marrItems[i].mbIsManual = subCasualty.items[i].isManual;
+				lopMD.mobjData.marrItems[i].mdblCapital = ( subCasualty.items[i].value == null ? null :
+						new BigDecimal(subCasualty.items[i].value + "") );
+				lopMD.mobjData.marrItems[i].mdblDeductible = ( subCasualty.items[i].deductible == null ? null :
+						new BigDecimal(subCasualty.items[i].deductible + "") );
+				lopMD.mobjData.marrItems[i].mstrNotes = subCasualty.items[i].notes;
+
+				lopMD.mobjData.marrItems[i].mbNew = ( !subCasualty.items[i].deleted && (subCasualty.items[i].id == null) );
+				lopMD.mobjData.marrItems[i].mbDeleted = subCasualty.items[i].deleted;
+			}
+		}
+		else
+			lopMD.mobjData.marrItems = null;
+
+		lopMD.mobjContactOps = null;
+		lopMD.mobjDocOps = null;
+
+		try
+		{
+			lopMD.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetSubCasualty(lopMD.mobjData.mid);
+	}
+
+	public SubCasualty sendNotification(String subCasualtyId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		SendNotification lopSN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		lopSN = new SendNotification(lobjSubCasualty.GetProcessID());
+
+		try
+		{
+			lopSN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		return sGetSubCasualty(lobjSubCasualty.getKey());
+	}
+
+	public Assessment createAssessment(Assessment assessment)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CreateAssessment lopCA;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(assessment.subCasualtyId));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCA = new CreateAssessment(lobjSubCasualty.GetProcessID());
+		lopCA.mobjData = AssessmentServiceImpl.sParseClient(assessment);
+
+		try
+		{
+			lopCA.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return AssessmentServiceImpl.sGetAssessment(lopCA.mobjData.mid);
+	}
+
+	public MedicalFile createMedicalFile(MedicalFile file)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CreateMedicalFile lopCMF;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(file.subCasualtyId));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCMF = new CreateMedicalFile(lobjSubCasualty.GetProcessID());
+		lopCMF.mobjData = MedicalFileServiceImpl.sParseClient(file);
+
+		try
+		{
+			lopCMF.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return MedicalFileServiceImpl.sGetMedicalFile(lopCMF.mobjData.mid);
+	}
+
+	public TotalLossFile createTotalLoss(TotalLossFile file)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CreateTotalLoss lopCTL;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(file.subCasualtyId));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCTL = new CreateTotalLoss(lobjSubCasualty.GetProcessID());
+		lopCTL.mobjData = TotalLossServiceImpl.sParseClient(file);
+
+		try
+		{
+			lopCTL.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return TotalLossServiceImpl.sGetTotalLoss(lopCTL.mobjData.mid);
+	}
+
+	public Conversation sendMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjSubCasualty.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Outgoing;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Incoming );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
+				lobjSubCasualty.getKey(), Constants.MsgDir_Outgoing);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
+	}
+
+	public Conversation receiveMessage(Conversation conversation)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		Timestamp ldtAux, ldtLimit;
+		Calendar ldtAux2;
+		CreateConversation lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( conversation.replylimit == null )
+			ldtLimit = null;
+		else
+		{
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, conversation.replylimit);
+	    	ldtLimit = new Timestamp(ldtAux2.getTimeInMillis());
+		}
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(conversation.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateConversation(lobjSubCasualty.GetProcessID());
+		lopCC.mobjData = new ConversationData();
+		lopCC.mobjData.mid = null;
+		lopCC.mobjData.mstrSubject = conversation.subject;
+		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
+		lopCC.mobjData.midProcess = null;
+		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCC.mobjData.mdtDueDate = ldtLimit;
+
+		lopCC.mobjData.marrMessages = new MessageData[1];
+		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
+				lobjSubCasualty.getKey(), Constants.MsgDir_Incoming);
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
+	}
+
+	public SubCasualty markForClosing(String subCasualtyId, String revisorId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		MarkForClosing lopMFC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopMFC = new MarkForClosing(lobjSubCasualty.GetProcessID());
+		lopMFC.midReviewer = UUID.fromString(revisorId);
+
+		try
+		{
+			lopMFC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetSubCasualty(lobjSubCasualty.getKey());
+	}
+
+	public SubCasualty closeProcess(String subCasualtyId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CloseProcess lopCP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCP = new CloseProcess(lobjSubCasualty.GetProcessID());
+
+		try
+		{
+			lopCP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetSubCasualty(lobjSubCasualty.getKey());
+	}
+
+	public SubCasualty rejectClosing(String subCasualtyId, String reason)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		RejectClosing lopRC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRC = new RejectClosing(lobjSubCasualty.GetProcessID());
+		lopRC.mstrReason = reason;
+
+		try
+		{
+			lopRC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetSubCasualty(lobjSubCasualty.getKey());
+	}
+
+	public void deleteSubCasualty(String subCasualtyId, String reason)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		DeleteSubCasualty lobjDSC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjDSC = new DeleteSubCasualty(lobjSubCasualty.GetProcessID());
+		lobjDSC.midSubCasualty = UUID.fromString(subCasualtyId);
+		lobjDSC.mstrReason = reason;
+
+		try
+		{
+			lobjDSC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
+	protected UUID getObjectID()
+	{
+		return Constants.ObjID_SubCasualty;
+	}
+
+	protected String[] getColumns()
+	{
+		return new String[] {"[:Number]", "[:Process]", "[:Insurer Process]"};
+	}
+
+	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
+		throws BigBangException
+	{
+		SubCasualtySearchParameter lParam;
+		String lstrAux;
+		IEntity lrefCasualties;
+
+		if ( !(pParam instanceof SubCasualtySearchParameter) )
+			return false;
+		lParam = (SubCasualtySearchParameter)pParam;
+
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND [:Number] LIKE N'%").append(lstrAux).append("%'");
+		}
+
+		if ( lParam.ownerId != null )
+		{
+			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Casualty));
+				pstrBuffer.append(lrefCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+		}
+
+		return true;
+	}
+
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		SubCasualtySortParameter lParam;
+
+		if ( !(pParam instanceof SubCasualtySortParameter) )
+			return false;
+		lParam = (SubCasualtySortParameter)pParam;
+
+		if ( lParam.field == SubCasualtySortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return false;
+		}
+
+		if ( lParam.field == SubCasualtySortParameter.SortableField.NUMBER )
+			pstrBuffer.append("[:Number]");
+
+		return true;
+	}
+
+	protected SearchResult buildResult(UUID pid, Object[] parrValues)
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		IProcess lobjProcess;
+		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		ObjectBase lobjOwner;
+		Policy lobjPolicy;
+		SubCasualtyItem[] larrItems;
+		SubCasualtyStub lobjResult;
+		BigDecimal ldblTotal;
+		BigDecimal ldblLocal;
+		int i;
+
+		lobjSubCasualty = null;
+		lobjOwner = null;
+		lobjPolicy = null;
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(), pid);
+			lobjOwner = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICY) == null ?
+					SubPolicy.GetInstance(Engine.getCurrentNameSpace(),
+							(UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SUBPOLICY)) :
+					Policy.GetInstance(Engine.getCurrentNameSpace(),
+							(UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICY)) );
+			lobjPolicy = (Policy)( Constants.ObjID_Policy.equals(lobjOwner.getDefinition().getDefObject().getKey()) ? lobjOwner :
+					PNProcess.GetInstance(Engine.getCurrentNameSpace(), ((SubPolicy)lobjOwner).GetProcessID()).GetParent().GetData() );
+		}
+		catch (Throwable e)
+		{
+		}
+		lobjProcess = null;
+		lobjCasualty = null;
+		try
+		{
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
+			lobjCasualty = lobjSubCasualty.GetCasualty();
+		}
+		catch (Throwable e)
+		{
+		}
+		larrItems = null;
+		try
+		{
+			larrItems = lobjSubCasualty.GetCurrentItems();
+		}
+		catch (Throwable e)
+		{
+		}
+
+		lobjResult = new SubCasualtyStub();
+		lobjResult.id = pid.toString();
+		lobjResult.number = (String)parrValues[0];
+		lobjResult.processId = ((UUID)parrValues[1]).toString();
+		lobjResult.casualtyId = (lobjCasualty == null ? null : lobjCasualty.getKey().toString());
+		lobjResult.referenceId = (lobjOwner == null ? null : lobjOwner.getKey().toString());
+		lobjResult.referenceTypeId = (lobjOwner == null ? null : lobjOwner.getDefinition().getDefObject().getKey().toString());
+		lobjResult.referenceNumber = (lobjOwner == null ? null : lobjOwner.getLabel());
+		lobjResult.categoryName = (lobjPolicy == null ? null : lobjPolicy.GetSubLine().getLine().getCategory().getLabel());
+		lobjResult.lineName = (lobjPolicy == null ? null : lobjPolicy.GetSubLine().getLine().getLabel());
+		lobjResult.subLineName = (lobjPolicy == null ? null : lobjPolicy.GetSubLine().getLabel());
+		lobjResult.insurerProcessNumber = (String)parrValues[2];
+		lobjResult.isOpen = lobjProcess.IsRunning();
+
+		ldblTotal = null;
+		if ( larrItems != null )
+		{
+			for ( i = 0; i < larrItems.length; i++ )
+			{
+				ldblLocal = (BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.DAMAGES);
+				ldblTotal = ( ldblTotal == null ? ldblLocal : (ldblLocal == null ? ldblTotal : ldblTotal.add(ldblLocal)) );
+			}
+		}
+		lobjResult.totalDamages = (ldblTotal == null ? null : ldblTotal.toPlainString());
+
+		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		SubCasualtySearchParameter lParam;
+		String lstrAux;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof SubCasualtySearchParameter) )
+				continue;
+			lParam = (SubCasualtySearchParameter) parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("CASE WHEN [:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ELSE ")
+					.append("0 END");
+		}
+
+		return lbFound;
+	}
+}

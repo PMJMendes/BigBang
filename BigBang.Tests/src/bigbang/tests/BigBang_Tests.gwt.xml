@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='bigbang_tests'>
+	<!-- Inherit the core Web Toolkit stuff.                        -->
+	<inherits name='com.google.gwt.user.User'/>
+
+	<inherits name="bigBang.library.BigBangLibrary" />
+	<inherits name="bigBang.definitions.BigBangDefinitions" />
+	<inherits name="bigBang.module.loginModule.LoginModule" />
+	<inherits name="bigBang.module.tasksModule.TasksModule" />
+	<inherits name="bigBang.module.generalSystemModule.GeneralSystemModule" />
+	<inherits name="bigBang.module.clientModule.ClientModule" />
+	<inherits name="bigBang.module.quoteRequestModule.QuoteRequestModule" />
+	<inherits name="bigBang.module.insurancePolicyModule.InsurancePolicyModule"/>
+	<inherits name="bigBang.module.receiptModule.ReceiptModule"/>
+	<inherits name="bigBang.module.casualtyModule.CasualtyModule"/>
+	<inherits name="bigBang.module.expenseModule.ExpenseModule"/>
+
+	<!-- Specify the app entry point class.                         -->
+	<entry-point class='bigbang.tests.client.BigBang_Tests'/>
+
+	<!-- Specify the paths for translatable code                    -->
+	<source path='client'/>
+	<source path='shared' />
+
+
+</module>

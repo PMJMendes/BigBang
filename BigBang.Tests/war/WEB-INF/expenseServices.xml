@@ -1,0 +1,9 @@
+<servlet>
+	<servlet-name>ExpenseService</servlet-name>
+	<servlet-class>bigBang.module.expenseModule.server.ExpenseServiceImpl</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>ExpenseService</servlet-name>
+	<url-pattern>/bigbang_tests/ExpenseService</url-pattern>
+</servlet-mapping>

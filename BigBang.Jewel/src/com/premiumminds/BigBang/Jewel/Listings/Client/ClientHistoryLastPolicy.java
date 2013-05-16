@@ -1,0 +1,211 @@
+package com.premiumminds.BigBang.Jewel.Listings.Client;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
+
+import org.apache.ecs.GenericElement;
+
+import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Petri.Objects.PNProcess;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.ClientListingsBase;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
+
+public class ClientHistoryLastPolicy
+	extends ClientListingsBase
+{
+	public GenericElement[] doReport(String[] parrParams)
+		throws BigBangJewelException
+	{
+		Client[] larrAux;
+		HashMap<UUID, ArrayList<Client>> larrMap;
+		int i;
+		UUID lidManager;
+		GenericElement[] larrResult;
+
+		larrAux = getHistoryForOperation(parrParams);
+
+		larrMap = new HashMap<UUID, ArrayList<Client>>();
+		for ( i = 0; i < larrAux.length; i++ )
+		{
+			try
+			{
+				lidManager = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrAux[i].GetProcessID()).GetManagerID();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			if ( larrMap.get(lidManager) == null )
+				larrMap.put(lidManager, new ArrayList<Client>());
+			larrMap.get(lidManager).add(larrAux[i]);
+		}
+
+		larrResult = new GenericElement[larrMap.size() + 1];
+
+		larrResult[0] = buildHeaderSection("Histórico de Criação de Última Apólice", larrAux, larrMap.size());
+
+		i = 1;
+		for ( UUID lid: larrMap.keySet() )
+		{
+			try
+			{
+				larrResult[i] = buildDataSection(User.GetInstance(Engine.getCurrentNameSpace(), lid).getDisplayName(), larrMap.get(lid));
+			}
+			catch (BigBangJewelException e)
+			{
+				throw e;
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			i++;
+		}
+
+		return larrResult;
+	}
+
+	protected Client[] getHistoryForOperation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		StringBuilder lstrSQL;
+		ArrayList<Client> larrAux;
+		IEntity lrefClients;
+		IEntity lrefLogs;
+		IEntity lrefPolicies;
+		IEntity lrefProcs;
+		MasterDB ldb;
+		ResultSet lrsClients;
+
+		larrAux = new ArrayList<Client>();
+
+		try
+		{
+			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
+			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+			lrefProcs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNProcess));
+
+			lstrSQL = new StringBuilder();
+			lstrSQL.append("SELECT * FROM (")
+					.append(lrefClients.SQLForSelectAll()).append(") [AuxCli] WHERE [Process] IN (SELECT [Process] FROM(")
+					.append(lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_Client_CreatePolicy, false},
+							null))
+					.append(") [AuxLogs])");
+
+			if ( parrParams[2] != null )
+				lstrSQL.append(" AND (SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {false}, null) + ") [AuxLogs3] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Policy}, null) +
+							") [AuxProcs3] ON [AuxProcs3].PK=[AuxLogs3].[Process] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Client}, null) +
+							") [AuxProcsP] ON [AuxProcsP].PK=[AuxProcs3].[Parent] " +
+							"WHERE [AuxLogs3].[Operation] IN ('" + Constants.OPID_Policy_VoidPolicy + "', '" + Constants.OPID_Policy_ExternAutoVoid +
+							"', '" + Constants.OPID_Policy_MediationTransfer + "', '" + Constants.OPID_Policy_PolicySubstitution + "') " +
+							"AND [AuxProcsP].[Data] NOT IN (SELECT [Client] FROM (" + lrefPolicies.SQLForSelectByMembers(
+									new int[] {Policy.I.STATUS},
+									new java.lang.Object[] {Constants.StatusID_Valid}, null) + ") [AuxPol5]) " +
+							"AND [AuxProcs3].[Parent] = [AuxCli].[Process]) >= '").append(parrParams[2]).append("'");
+
+			if ( parrParams[3] != null )
+				lstrSQL.append(" AND (SELECT MAX([Timestamp]) FROM (" + lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {false}, null) + ") [AuxLogs3] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Policy}, null) +
+							") [AuxProcs3] ON [AuxProcs3].PK=[AuxLogs3].[Process] " +
+							"INNER JOIN (" + lrefProcs.SQLForSelectByMembers(
+									new int[] {Jewel.Petri.Constants.FKScript_In_Process},
+									new java.lang.Object[] {Constants.ProcID_Client}, null) +
+							") [AuxProcsP] ON [AuxProcsP].PK=[AuxProcs3].[Parent] " +
+							"WHERE [AuxLogs3].[Operation] IN ('" + Constants.OPID_Policy_VoidPolicy + "', '" + Constants.OPID_Policy_ExternAutoVoid +
+							"', '" + Constants.OPID_Policy_MediationTransfer + "', '" + Constants.OPID_Policy_PolicySubstitution + "') " +
+							"AND [AuxProcsP].[Data] NOT IN (SELECT [Client] FROM (" + lrefPolicies.SQLForSelectByMembers(
+									new int[] {Policy.I.STATUS},
+									new java.lang.Object[] {Constants.StatusID_Valid}, null) + ") [AuxPol5]) " +
+							"AND [AuxProcs3].[Parent] = [AuxCli].[Process]) < DATEADD(d, 1, '").append(parrParams[3]).append("')");
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( parrParams[0] != null )
+			filterByClientGroup(lstrSQL, UUID.fromString(parrParams[0]));
+
+		if ( parrParams[1] != null )
+			filterByAgent(lstrSQL, UUID.fromString(parrParams[1]));
+
+		larrAux = new ArrayList<Client>();
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsClients = ldb.OpenRecordset(lstrSQL.toString());
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsClients.next() )
+				larrAux.add(Client.GetInstance(Engine.getCurrentNameSpace(), lrsClients));
+		}
+		catch (Throwable e)
+		{
+			try { lrsClients.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsClients.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new Client[larrAux.size()]);
+	}
+}

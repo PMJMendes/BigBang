@@ -1,0 +1,46 @@
+package bigBang.module.insurancePolicyModule.interfaces;
+
+import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.DebitNoteBatch;
+import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
+import bigBang.definitions.shared.PolicyVoiding;
+import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.SubPolicy;
+import bigBang.library.interfaces.DependentItemSubServiceAsync;
+import bigBang.library.interfaces.ExactItemSubServiceAsync;
+import bigBang.library.interfaces.SearchServiceAsync;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public interface InsurancePolicyServiceAsync
+	extends SearchServiceAsync, ExactItemSubServiceAsync, DependentItemSubServiceAsync
+{
+	void getEmptyPolicy(String subLineId, String clientId, AsyncCallback<InsurancePolicy> callback);
+	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
+	void editPolicy(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
+	void performCalculations(String policyId, AsyncCallback<InsurancePolicy> callback);
+	void validatePolicy(String policyId, AsyncCallback<Void> callback);
+	void includeObject(String policyId, InsuredObject object, AsyncCallback<InsuredObject> callback);
+	void includeObjectFromClient(String policyId, AsyncCallback<InsuredObject> callback);
+	void excludeObject(String policyId, String objectId, AsyncCallback<Void> callback);
+	void openNewExercise(String policyId, Exercise exercise, AsyncCallback<InsurancePolicy> callback);
+	void transferToClient(String policyId, String newClientId, AsyncCallback<InsurancePolicy> callback);
+	void createDebitNote(String policyId, DebitNote note, AsyncCallback<Void> callback);
+	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
+	void sendMessage(Conversation conversation, AsyncCallback<Conversation> callback);
+	void receiveMessage(Conversation conversation, AsyncCallback<Conversation> callback);
+	void createSubPolicy(SubPolicy subPolicy, AsyncCallback<SubPolicy> callback);
+	void createReceipt(String policyId, Receipt receipt, AsyncCallback<Receipt> callback);
+	void createExpense(Expense expense, AsyncCallback<Expense> callback);
+	void createNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);
+	void createSubPolicyReceipts(DebitNoteBatch batch, AsyncCallback<Void> callback);
+	void voidPolicy(PolicyVoiding voiding, AsyncCallback<InsurancePolicy> callback);
+	void deletePolicy(String policyId, AsyncCallback<Void> callback);
+	void massCreateManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
+}

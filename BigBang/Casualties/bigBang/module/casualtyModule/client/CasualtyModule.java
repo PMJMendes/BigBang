@@ -1,0 +1,439 @@
+package bigBang.module.casualtyModule.client;
+
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.library.client.Module;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.GeneralTasksViewPresenter;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.GeneralTasksView;
+import bigBang.module.casualtyModule.client.dataAccess.AssessmentBrokerImpl;
+import bigBang.module.casualtyModule.client.dataAccess.CasualtyDataBrokerImpl;
+import bigBang.module.casualtyModule.client.dataAccess.MedicalFileBrokerImpl;
+import bigBang.module.casualtyModule.client.dataAccess.SubCasualtyDataBrokerImpl;
+import bigBang.module.casualtyModule.client.dataAccess.TotalLossFileBrokerImpl;
+import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentConversationViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentReceiveMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentSendMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.AssessmentViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyCloseViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyConversationViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyDeleteViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyManagerTransferViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyMassManagerTransferViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyReceiveMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySendMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyTasksViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileConversationViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileReceiveMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileSendMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileTasksViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.ReopenCasualtyViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyConversationViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyDeleteViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyMarkForClosingViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyReceiveMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyRejectCloseViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyReopenViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtySendMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyTasksViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.TotalLossFileConversationViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.TotalLossFileReceiveMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.TotalLossFileSendMessageViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.TotalLossFileViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.view.AssessmentConversationView;
+import bigBang.module.casualtyModule.client.userInterface.view.AssessmentReceiveMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.AssessmentSendMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.AssessmentView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyConversationView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyManagerTransferView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyMassManagerTransferView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyReceiveMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtySendMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyTasksView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileConversationView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileReceiveMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileSendMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileTasksView;
+import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileView;
+import bigBang.module.casualtyModule.client.userInterface.view.ReopenCasualtyView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyConversationView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyDeleteView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyMarkForClosingView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReceiveMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyRejectCloseView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReopenView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtySendMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyTasksView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyView;
+import bigBang.module.casualtyModule.client.userInterface.view.TotalLossFileConversationView;
+import bigBang.module.casualtyModule.client.userInterface.view.TotalLossFileReceiveMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.TotalLossFileSendMessageView;
+import bigBang.module.casualtyModule.client.userInterface.view.TotalLossFileView;
+
+import com.google.gwt.core.client.GWT;
+
+public class CasualtyModule implements Module {
+
+	private boolean initialized = false;
+
+	public void initialize() {
+		registerViewPresenters();
+		initialized = true;
+	}
+
+	public boolean isInitialized() {
+		return initialized;
+	}
+
+	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_SECTION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtySectionView casualtySectionView = (CasualtySectionView) GWT.create(CasualtySectionView.class);
+				CasualtySectionViewPresenter casualtySectionViewPresenter = new CasualtySectionViewPresenter(casualtySectionView);
+				return casualtySectionViewPresenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_OPERATIONS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyOperationsView view = (CasualtyOperationsView) GWT.create(CasualtyOperationsView.class);
+				ViewPresenter presenter = new CasualtyOperationsViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_SEARCH", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtySearchOperationView casualtySearchOperationView = (CasualtySearchOperationView) GWT.create(CasualtySearchOperationView.class);
+				CasualtySearchOperationViewPresenter casualtySearchOperationViewPresenter = new CasualtySearchOperationViewPresenter(casualtySearchOperationView);
+				return casualtySearchOperationViewPresenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_DELETE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyDeleteView view = (CasualtyDeleteView) GWT.create(CasualtyDeleteView.class);
+				CasualtyDeleteViewPresenter presenter = new CasualtyDeleteViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_CLOSE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyCloseView view = (CasualtyCloseView) GWT.create(CasualtyCloseView.class);
+				CasualtyCloseViewPresenter presenter = new CasualtyCloseViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_VIEW", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyView view = (SubCasualtyView) GWT.create(SubCasualtyView.class);
+				SubCasualtyViewPresenter presenter = new SubCasualtyViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_DELETE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyDeleteView view = (SubCasualtyDeleteView) GWT.create(SubCasualtyDeleteView.class);
+				ViewPresenter presenter = new SubCasualtyDeleteViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_MASS_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyMassManagerTransferView view = (CasualtyMassManagerTransferView) GWT.create(CasualtyMassManagerTransferView.class);
+				ViewPresenter presenter = new CasualtyMassManagerTransferViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyManagerTransferView view = (CasualtyManagerTransferView) GWT.create(CasualtyManagerTransferView.class);
+				ViewPresenter presenter = new CasualtyManagerTransferViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_SEND_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtySendMessageView view = (CasualtySendMessageView) GWT.create(CasualtySendMessageView.class);
+				ViewPresenter presenter = new CasualtySendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyReceiveMessageView view = (CasualtyReceiveMessageView) GWT.create(CasualtyReceiveMessageView.class);
+				ViewPresenter presenter = new CasualtyReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_TASKS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyTasksView view = (CasualtyTasksView) GWT.create(CasualtyTasksView.class);
+				CasualtyTasksViewPresenter presenter =  new CasualtyTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_TASKS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyTasksView view = (SubCasualtyTasksView) GWT.create(SubCasualtyTasksView.class);
+				SubCasualtyTasksViewPresenter presenter =  new SubCasualtyTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_MARK_FOR_CLOSING", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyMarkForClosingView view = (SubCasualtyMarkForClosingView) GWT.create(SubCasualtyMarkForClosingView.class);
+				ViewPresenter presenter = new SubCasualtyMarkForClosingViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_REJECT_CLOSING", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyRejectCloseView view = (SubCasualtyRejectCloseView) GWT.create(SubCasualtyRejectCloseView.class);
+				ViewPresenter presenter = new SubCasualtyRejectCloseViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_SEND_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtySendMessageView view = (SubCasualtySendMessageView) GWT.create(SubCasualtySendMessageView.class);
+				ViewPresenter presenter = new SubCasualtySendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyReceiveMessageView view = (SubCasualtyReceiveMessageView) GWT.create(SubCasualtyReceiveMessageView.class);
+				ViewPresenter presenter = new SubCasualtyReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyConversationView view = (CasualtyConversationView) GWT.create(CasualtyConversationView.class);
+				CasualtyConversationViewPresenter presenter = new CasualtyConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyConversationView view = (SubCasualtyConversationView) GWT.create(SubCasualtyConversationView.class);
+				SubCasualtyConversationViewPresenter presenter = new SubCasualtyConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_GENERAL_TASKS", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				GeneralTasksView view = new GeneralTasksView() {
+					
+					@Override
+					public String getItemType() {
+						return "sinistro";
+					}
+				};
+				GeneralTasksViewPresenter presenter = new GeneralTasksViewPresenter();
+				presenter.setView(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("REOPEN", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ReopenCasualtyView view = (ReopenCasualtyView) GWT.create(ReopenCasualtyView.class);
+				ReopenCasualtyViewPresenter presenter = new ReopenCasualtyViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_REOPEN", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyReopenView view = (SubCasualtyReopenView) GWT.create(SubCasualtyReopenView.class);
+				SubCasualtyReopenViewPresenter presenter = new SubCasualtyReopenViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("ASSESSMENT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				AssessmentView view = (AssessmentView) GWT.create(AssessmentView.class);
+				AssessmentViewPresenter presenter = new AssessmentViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("ASSESSMENT_SEND_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				AssessmentSendMessageView view = (AssessmentSendMessageView) GWT.create(AssessmentSendMessageView.class);
+				ViewPresenter presenter = new AssessmentSendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("ASSESSMENT_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				AssessmentReceiveMessageView view = (AssessmentReceiveMessageView) GWT.create(AssessmentReceiveMessageView.class);
+				ViewPresenter presenter = new AssessmentReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("ASSESSMENT_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				AssessmentConversationView view = (AssessmentConversationView) GWT.create(AssessmentConversationView.class);
+				ViewPresenter presenter = new AssessmentConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MEDICAL_FILE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				MedicalFileView view = (MedicalFileView) GWT.create(MedicalFileView.class);
+				MedicalFileViewPresenter presenter = new MedicalFileViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MEDICAL_FILE_SEND_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				MedicalFileSendMessageView view = (MedicalFileSendMessageView) GWT.create(MedicalFileSendMessageView.class);
+				ViewPresenter presenter = new MedicalFileSendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MEDICAL_FILE_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				MedicalFileReceiveMessageView view = (MedicalFileReceiveMessageView) GWT.create(MedicalFileReceiveMessageView.class);
+				ViewPresenter presenter = new MedicalFileReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MEDICAL_FILE_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				MedicalFileConversationView view = (MedicalFileConversationView) GWT.create(MedicalFileConversationView.class);
+				ViewPresenter presenter = new MedicalFileConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MEDICAL_FILE_TASKS", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MedicalFileTasksView view = (MedicalFileTasksView) GWT.create(MedicalFileTasksView.class);
+				ViewPresenter presenter = new MedicalFileTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TOTAL_LOSS_FILE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				TotalLossFileView view = (TotalLossFileView) GWT.create(TotalLossFileView.class);
+				TotalLossFileViewPresenter presenter = new TotalLossFileViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TOTAL_LOSS_FILE_SEND_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				TotalLossFileSendMessageView view = (TotalLossFileSendMessageView) GWT.create(TotalLossFileSendMessageView.class);
+				ViewPresenter presenter = new TotalLossFileSendMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TOTAL_LOSS_FILE_RECEIVE_MESSAGE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				TotalLossFileReceiveMessageView view = (TotalLossFileReceiveMessageView) GWT.create(TotalLossFileReceiveMessageView.class);
+				ViewPresenter presenter = new TotalLossFileReceiveMessageViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TOTAL_LOSS_FILE_CONVERSATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				TotalLossFileConversationView view = (TotalLossFileConversationView) GWT.create(TotalLossFileConversationView.class);
+				ViewPresenter presenter = new TotalLossFileConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+	}
+
+	@Override
+	public DataBroker<?>[] getBrokerImplementations() {
+		return new DataBroker<?>[]{
+				new CasualtyDataBrokerImpl(),
+				new SubCasualtyDataBrokerImpl(),
+				new AssessmentBrokerImpl(),
+				new MedicalFileBrokerImpl(),
+				new TotalLossFileBrokerImpl()
+		};
+	}
+
+	@Override
+	public String[] getBrokerDependencies() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

@@ -1,0 +1,122 @@
+<servlet>
+	<servlet-name>BigBangPermissionService</servlet-name>
+	<servlet-class>bigBang.library.server.BigBangPermissionServiceImpl
+	</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>TipifiedListService</servlet-name>
+	<servlet-class>bigBang.library.server.TipifiedListServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>TypifiedTextService</servlet-name>
+	<servlet-class>bigBang.library.server.TypifiedTextServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>ContactsService</servlet-name>
+	<servlet-class>bigBang.library.server.ContactsServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>DocumentService</servlet-name>
+	<servlet-class>bigBang.library.server.DocumentServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>DocuShareService</servlet-name>
+	<servlet-class>bigBang.library.server.DocuShareServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>ExchangeService</servlet-name>
+	<servlet-class>bigBang.library.server.ExchangeServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>ZipCodeService</servlet-name>
+	<servlet-class>bigBang.library.server.ZipCodeServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>BBFileService</servlet-name>
+	<servlet-class>bigBang.library.server.FileServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>BigBangProcessService</servlet-name>
+	<servlet-class>bigBang.library.server.BigBangProcessServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>HistoryService</servlet-name>
+	<servlet-class>bigBang.library.server.HistoryServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>TransferManagerService</servlet-name>
+	<servlet-class>bigBang.library.server.TransferManagerServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>ConversationService</servlet-name>
+	<servlet-class>bigBang.library.server.ConversationServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>ReportService</servlet-name>
+	<servlet-class>bigBang.library.server.ReportServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>PrintService</servlet-name>
+	<servlet-class>bigBang.library.server.PrintServiceImpl</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>BigBangPermissionService</servlet-name>
+	<url-pattern>/bigbang/BigBangPermissionService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>TipifiedListService</servlet-name>
+	<url-pattern>/bigbang/TipifiedListService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>TypifiedTextService</servlet-name>
+	<url-pattern>/bigbang/TypifiedTextService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ContactsService</servlet-name>
+	<url-pattern>/bigbang/ContactsService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>DocumentService</servlet-name>
+	<url-pattern>/bigbang/DocumentService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>DocuShareService</servlet-name>
+	<url-pattern>/bigbang/DocuShareService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ExchangeService</servlet-name>
+	<url-pattern>/bigbang/ExchangeService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ZipCodeService</servlet-name>
+	<url-pattern>/bigbang/ZipCodeService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>BBFileService</servlet-name>
+	<url-pattern>/bigbang/bbfile</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>BigBangProcessService</servlet-name>
+	<url-pattern>/bigbang/BigBangProcessService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>HistoryService</servlet-name>
+	<url-pattern>/bigbang/HistoryService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>TransferManagerService</servlet-name>
+	<url-pattern>/bigbang/TransferManagerService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ConversationService</servlet-name>
+	<url-pattern>/bigbang/ConversationService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ReportService</servlet-name>
+	<url-pattern>/bigbang/ReportService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>PrintService</servlet-name>
+	<url-pattern>/bigbang/PrintService</url-pattern>
+</servlet-mapping>
