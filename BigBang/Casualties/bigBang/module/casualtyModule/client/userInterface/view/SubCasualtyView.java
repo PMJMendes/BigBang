@@ -21,6 +21,7 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -279,5 +280,10 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	@Override
 	public HasValueSelectables<ConversationStub> getConversationList() {
 		return childrenPanel.conversationList;
+	}
+
+	@Override
+	public HasValueSelectables<ReceiptStub> getReceiptsList() {
+		return childrenPanel.receiptsList;
 	}
 }

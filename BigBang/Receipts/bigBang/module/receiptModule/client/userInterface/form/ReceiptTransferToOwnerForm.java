@@ -107,7 +107,7 @@ public class ReceiptTransferToOwnerForm extends FormView<OwnerRef> {
 	
 	@Override
 	public OwnerRef getInfo() {
-		OwnerRef owner = value;
+		OwnerRef owner = new OwnerRef();
 		owner.ownerTypeId = referenceType.getValue();
 
 		if ( BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(owner.ownerTypeId) )

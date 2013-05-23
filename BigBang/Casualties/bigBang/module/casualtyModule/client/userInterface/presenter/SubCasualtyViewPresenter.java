@@ -13,6 +13,7 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -74,6 +75,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
 		HasValueSelectables<ConversationStub> getConversationList();
+		HasValueSelectables<ReceiptStub> getReceiptsList();
 		void setReferenceParameters(HasParameters parameterHolder);
 		void openNewDetail();
 		void allowCreateAssessment(boolean allow);
@@ -201,6 +203,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 					}else if(event.getSource() == view.getConversationList()){
 						ConversationStub stub = (ConversationStub) selected.getValue();
 						showConversation(stub.id);
+					}else if(event.getSource() == view.getReceiptsList()){
+						ReceiptStub stub = (ReceiptStub) selected.getValue();
+						showReceipt(stub.id);
 					}
 				}
 			}
@@ -211,6 +216,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getConversationList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getReceiptsList().addSelectionChangedEventHandler(selectionChangedHandler);
 	}
 
 	protected void onCreateTotalLosses() {
@@ -497,6 +503,15 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		item.pushIntoStackParameter("display", "subcasualtyconversation");
 		item.setParameter("conversationid", dataId);
 		NavigationHistoryManager.getInstance().go(item);		
+	}
+
+	private void showReceipt(String id) {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("section", "receipt");
+		navItem.setStackParameter("display");
+		navItem.pushIntoStackParameter("display", "search"); 
+		navItem.setParameter("receiptid", id);
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 	protected void showHistory(String historyItemId){

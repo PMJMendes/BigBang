@@ -6,7 +6,7 @@ import bigBang.definitions.shared.OwnerRef;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.TransferToPolicyOperationsToolbar;
+import bigBang.library.client.userInterface.TransferToOwnerOperationsToolbar;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.form.ReceiptTransferToOwnerForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToOwnerViewPresenter;
@@ -22,7 +22,7 @@ public class ReceiptTransferToOwnerView extends View implements ReceiptTransferT
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
-		TransferToPolicyOperationsToolbar toolbar = new TransferToPolicyOperationsToolbar() {
+		TransferToOwnerOperationsToolbar toolbar = new TransferToOwnerOperationsToolbar() {
 			
 			@Override
 			public void onCancelRequest() {

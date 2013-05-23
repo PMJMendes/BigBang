@@ -60,6 +60,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
+import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingMap;
@@ -114,6 +115,7 @@ public class ReceiptServiceImpl
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
+//		SubCasualty lobjSubCasualty;
 		Company lobjCompany;
 		Client lobjClient;
 		Timestamp ldtEndDate;
@@ -131,20 +133,17 @@ public class ReceiptServiceImpl
 				throw new BigBangException("Erro: Recibo sem processo de suporte. (Recibo n. "
 						+ lobjReceipt.getAt(0).toString() + ")");
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-			if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-			{
-				lobjPolicy = (Policy)lobjProc.GetParent().GetData();
-				lobjSubPolicy = null;
-				lobjClient = (Client)lobjProc.GetParent().GetParent().GetData();
+//			lobjSubCasualty = lobjReceipt.getSubCasualty();
+			lobjSubPolicy = lobjReceipt.getSubPolicy();
+			lobjPolicy = lobjReceipt.getAbsolutePolicy();
+			lobjClient = lobjReceipt.getClient();
+			if ( lobjReceipt.getDirectPolicy() != null )
 				ldtEndDate = (Timestamp)lobjPolicy.getAt(9);
-			}
-			else
-			{
-				lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
-				lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();;
-				lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
+			else if ( lobjSubPolicy != null )
 				ldtEndDate = (Timestamp)lobjSubPolicy.getAt(4);
-			}
+			else
+				ldtEndDate = null;
+
 			lobjCompany = lobjPolicy.GetCompany();
 			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(),
 					(lobjPolicy.getAt(11) == null ?  (UUID)lobjClient.getAt(8) : (UUID)lobjPolicy.getAt(11)) );
@@ -2985,93 +2984,46 @@ public class ReceiptServiceImpl
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
 		IProcess lobjProcess;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
+//		SubCasualty lobjSubCasualty;
 		Company lobjCompany;
 		Client lobjClient;
-		ObjectBase lobjSubLine, lobjLine, lobjCategory, lobjStatus;
+		SubLine lobjSubLine;
+		Line lobjLine;
+		Category lobjCategory;
+		ObjectBase lobjStatus;
 		ReceiptStub lobjResult;
 
+		lobjProcess = null;
+		lobjReceipt = null;
+		lobjPolicy = null;
+		lobjSubPolicy = null;
+//		lobjSubCasualty = null;
+		lobjCompany = null;
+		lobjSubLine = null;
+		lobjLine = null;
+		lobjCategory = null;
+		lobjClient = null;
+		lobjStatus = null;
 		try
 		{
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
-			try
-			{
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-				{
-					lobjPolicy = (Policy)lobjProcess.GetParent().GetData();
-					lobjSubPolicy = null;
-					lobjClient = (Client)lobjProcess.GetParent().GetParent().GetData();
-				}
-				else
-				{
-					lobjSubPolicy = (SubPolicy)lobjProcess.GetParent().GetData();
-					lobjPolicy = (Policy)lobjProcess.GetParent().GetParent().GetData();
-					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
-				}
-				try
-				{
-					lobjSubLine = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubLine),
-							(UUID)lobjPolicy.getAt(3));
-					try
-					{
-						lobjLine = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Line),
-								(UUID)lobjSubLine.getAt(1));
-						try
-						{
-							lobjCategory = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-									Constants.ObjID_LineCategory), (UUID)lobjLine.getAt(1));
-						}
-						catch (Throwable e)
-						{
-							lobjCategory = null;
-						}
-					}
-					catch (Throwable e)
-					{
-						lobjLine = null;
-						lobjCategory = null;
-					}
-				}
-				catch (Throwable e)
-				{
-					lobjSubLine = null;
-					lobjLine = null;
-					lobjCategory = null;
-				}
-				lobjCompany = lobjPolicy.GetCompany();
-			}
-			catch (Throwable e)
-			{
-				lobjPolicy = null;
-				lobjSubPolicy = null;
-				lobjCompany = null;
-				lobjClient = null;
-				lobjSubLine = null;
-				lobjLine = null;
-				lobjCategory = null;
-			}
-		}
-		catch (Throwable e)
-		{
-			lobjProcess = null;
-			lobjPolicy = null;
-			lobjSubPolicy = null;
-			lobjCompany = null;
-			lobjSubLine = null;
-			lobjLine = null;
-			lobjCategory = null;
-			lobjClient = null;
-		}
-
-		try
-		{
+			lobjReceipt = (com.premiumminds.BigBang.Jewel.Objects.Receipt)lobjProcess.GetData();
+			lobjClient = lobjReceipt.getClient();
+			lobjPolicy = lobjReceipt.getAbsolutePolicy();
+			lobjSubPolicy = lobjReceipt.getSubPolicy();
+//			lobjSubCasualty = lobjReceipt.getSubCasualty();
+			lobjSubLine = lobjPolicy.GetSubLine();
+			lobjLine = lobjSubLine.getLine();
+			lobjCategory = lobjLine.getCategory();
+			lobjCompany = lobjPolicy.GetCompany();
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptStatus),
 					getStatus((UUID)parrValues[8], (Timestamp)parrValues[9]));
 		}
 		catch (Throwable e)
 		{
-			lobjStatus = null;
 		}
 
 		lobjResult = new ReceiptStub();
