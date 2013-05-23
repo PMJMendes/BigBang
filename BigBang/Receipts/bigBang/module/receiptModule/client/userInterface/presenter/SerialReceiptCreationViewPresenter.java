@@ -378,7 +378,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 				view.setReceiptReadOnly(hasImage);
 				view.showImageAlreadyDefinedWarning(hasImage);
 
-				getPolicy(response.policyId);
+				getPolicy(response.ownerId);
 			}
 
 			@Override

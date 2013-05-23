@@ -104,7 +104,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 			public void onResponse(InsurancePolicy response) {
 				view.getParentForm().setValue(response);
 				Receipt receipt = new Receipt();
-				receipt.policyId = response.id;
+				receipt.ownerId = response.id;
 				receipt.policyNumber = response.number;
 				receipt.categoryName = response.categoryName;
 				receipt.categoryId = response.categoryId;
@@ -134,7 +134,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 	protected void onSave(){
 		if(view.getForm().validate()) {
 			Receipt receipt = view.getForm().getInfo();
-			broker.createReceipt(receipt.policyId, receipt, new ResponseHandler<Receipt>() {
+			broker.createReceipt(receipt.ownerId, receipt, new ResponseHandler<Receipt>() {
 
 				@Override
 				public void onResponse(Receipt response) {

@@ -539,7 +539,7 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 
 	@Override
 	public void createReceipt(Receipt receipt, final ResponseHandler<Receipt> handler) {
-		service.createReceipt(receipt.policyId, receipt, new BigBangAsyncCallback<Receipt>() {
+		service.createReceipt(receipt.ownerId, receipt, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
 			public void onResponseSuccess(Receipt result) {

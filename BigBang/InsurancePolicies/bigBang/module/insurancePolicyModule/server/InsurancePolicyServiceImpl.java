@@ -643,32 +643,7 @@ public class InsurancePolicyServiceImpl
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
 
 			lopCR = new CreateReceipt(lobjPolicy.GetProcessID());
-			lopCR.mobjData = new ReceiptData();
-
-			lopCR.mobjData.mid = null;
-
-			lopCR.mobjData.mstrNumber = receipt.number;
-			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
-			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium + "");
-			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium + ""));
-			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? null : new BigDecimal(receipt.comissions + ""));
-			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions + ""));
-			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue + ""));
-			lopCR.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
-			lopCR.mobjData.mbIsMalus = receipt.isMalus;
-			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
-			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
-					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
-			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
-			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + " 00:00:00.0"));
-			lopCR.mobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
-			lopCR.mobjData.mstrNotes = receipt.notes;
-			lopCR.mobjData.mstrDescription = receipt.description;
-
-			lopCR.mobjData.midManager = ( receipt.managerId == null ? null : UUID.fromString(receipt.managerId) );
-			lopCR.mobjData.midProcess = null;
-
-			lopCR.mobjData.mobjPrevValues = null;
+			lopCR.mobjData = ReceiptServiceImpl.sClientToServer(receipt);
 
 			lopCR.mobjImage = null;
 

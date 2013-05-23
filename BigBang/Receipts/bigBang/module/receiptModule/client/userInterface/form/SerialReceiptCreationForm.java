@@ -356,7 +356,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		newWrapper.receipt.maturityDate = coverageStart.getStringValue();
 		newWrapper.receipt.description = description.getValue();
 		newWrapper.receipt.notes = notes.getValue();
-		newWrapper.receipt.policyId = newWrapper.policy.id;
+		newWrapper.receipt.ownerId = newWrapper.policy.id;
 		newWrapper.receipt.isMalus = bonusMalusOption.getValue() == null ? null : bonusMalusOption.getValue().equalsIgnoreCase("Malus");
 		newWrapper.receipt.bonusMalus = bonusMalusValue.getValue();
 

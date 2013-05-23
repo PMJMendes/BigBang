@@ -216,20 +216,20 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		}else{
 			client.clear();
 		}
-		if(info.policyId != null) {
+		if(info.ownerId != null) {
 			NavigationHistoryItem item = new NavigationHistoryItem();
 			if(BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(info.ownerTypeId)){
 				item.setParameter("section", "insurancepolicy");
 				item.setStackParameter("display");
 				item.pushIntoStackParameter("display", "search");
-				item.setParameter("policyid", info.policyId);
+				item.setParameter("policyid", info.ownerId);
 			}
 			else{
 				item.setParameter("section", "insurancepolicy");
 				item.setStackParameter("display");
 				item.pushIntoStackParameter("display", "search");
 				item.pushIntoStackParameter("display", "subpolicy");
-				item.setParameter("subpolicyid", info.policyId);
+				item.setParameter("subpolicyid", info.ownerId);
 			}
 			policy.setValue(item);
 

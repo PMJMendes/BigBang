@@ -7,9 +7,13 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.GeneralTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.SubCasualtySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.GeneralTasksView;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
+import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
+import bigBang.library.client.userInterface.view.SubCasualtySelectionView;
 import bigBang.module.receiptModule.client.dataAccess.DASRequestBrokerImpl;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
 import bigBang.module.receiptModule.client.dataAccess.SignatureRequestBrokerImpl;
@@ -38,7 +42,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearch
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSendMessageViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToOwnerViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.RepeatDASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialMarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
@@ -70,7 +74,7 @@ import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOpera
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSendMessageView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTasksView;
-import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToOwnerView;
 import bigBang.module.receiptModule.client.userInterface.view.RepeatDASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialMarkForPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialReceiptCreationView;
@@ -127,9 +131,9 @@ public class ReceiptModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ReceiptTransferToPolicyView receiptTransferToPolicyView = (ReceiptTransferToPolicyView) GWT.create(ReceiptTransferToPolicyView.class);
-				ReceiptTransferToPolicyViewPresenter receiptTransferToPolicyViewPresenter = new ReceiptTransferToPolicyViewPresenter(receiptTransferToPolicyView);
-				return receiptTransferToPolicyViewPresenter;
+				ReceiptTransferToOwnerView receiptTransferToOwnerView = (ReceiptTransferToOwnerView) GWT.create(ReceiptTransferToOwnerView.class);
+				ReceiptTransferToOwnerViewPresenter receiptTransferToOwnerViewPresenter = new ReceiptTransferToOwnerViewPresenter(receiptTransferToOwnerView);
+				return receiptTransferToOwnerViewPresenter;
 			}
 		});
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("" +
@@ -139,6 +143,26 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				InsurancePolicySelectionView view = (InsurancePolicySelectionView) GWT.create(InsurancePolicySelectionView.class);
 				InsurancePolicySelectionViewPresenter presenter = new InsurancePolicySelectionViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("" +
+				"RECEIPT_SUBPOLICY_SELECTION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsuranceSubPolicySelectionView view = (InsuranceSubPolicySelectionView) GWT.create(InsuranceSubPolicySelectionView.class);
+				InsuranceSubPolicySelectionViewPresenter presenter = new InsuranceSubPolicySelectionViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("" +
+				"RECEIPT_SUBCASUALTY_SELECTION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtySelectionView view = (SubCasualtySelectionView) GWT.create(SubCasualtySelectionView.class);
+				SubCasualtySelectionViewPresenter presenter = new SubCasualtySelectionViewPresenter(view);
 				return presenter;
 			}
 		});

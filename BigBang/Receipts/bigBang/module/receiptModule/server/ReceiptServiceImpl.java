@@ -24,12 +24,14 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
+import bigBang.definitions.shared.OwnerRef;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.Rectangle;
@@ -65,17 +67,18 @@ import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingSet;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CancelPaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateDASRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateInternalReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateReceiptBase;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateSecondPaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateSignatureRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DASNotNecessary;
@@ -169,7 +172,7 @@ public class ReceiptServiceImpl
 		lobjResult.clientName = lobjClient.getLabel();
 		lobjResult.insurerId = lobjCompany.getKey().toString();
 		lobjResult.insurerName = (String)lobjCompany.getAt(1);
-		lobjResult.policyId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
+		lobjResult.ownerId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
 		lobjResult.ownerTypeId = (lobjSubPolicy == null ? Constants.ObjID_Policy : Constants.ObjID_SubPolicy).toString();
 		lobjResult.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
 		lobjResult.categoryId = lobjCategory.getKey().toString();
@@ -211,6 +214,40 @@ public class ReceiptServiceImpl
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 
 		return lobjResult;
+	}
+
+	public static ReceiptData sClientToServer(Receipt receipt)
+	{
+		ReceiptData lobjData;
+
+		lobjData = new ReceiptData();
+
+		lobjData.mid = null;
+
+		lobjData.mstrNumber = receipt.number;
+		lobjData.midType = UUID.fromString(receipt.typeId);
+		lobjData.mdblTotal = new BigDecimal(receipt.totalPremium+"");
+		lobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium+""));
+		lobjData.mdblCommissions = (receipt.comissions == null ? BigDecimal.ZERO : new BigDecimal(receipt.comissions+""));
+		lobjData.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions+""));
+		lobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue+""));
+		lobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
+		lobjData.mbIsMalus = receipt.isMalus;
+		lobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
+		lobjData.mdtMaturity = (receipt.maturityDate == null ? null :
+				Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
+		lobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
+		lobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + " 00:00:00.0"));
+		lobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
+		lobjData.mstrNotes = receipt.notes;
+		lobjData.mstrDescription = receipt.description;
+
+		lobjData.midManager = ( receipt.managerId == null ? null : UUID.fromString(receipt.managerId) );
+		lobjData.midProcess = null;
+
+		lobjData.mobjPrevValues = null;
+
+		return lobjData;
 	}
 
 	public Receipt getReceipt(String receiptId)
@@ -320,7 +357,7 @@ public class ReceiptServiceImpl
             	lobjStub.clientName = lobjClient.getLabel();
             	lobjStub.insurerId = lobjCompany.getKey().toString();
             	lobjStub.insurerName = (String)lobjCompany.getAt(1);
-            	lobjStub.policyId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
+            	lobjStub.ownerId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
         		lobjStub.ownerTypeId = (lobjSubPolicy == null ? Constants.ObjID_Policy : Constants.ObjID_SubPolicy).toString();
             	lobjStub.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
             	lobjStub.categoryId = lobjCategory.getKey().toString();
@@ -562,29 +599,39 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 
-	public Receipt transferToPolicy(String receiptId, String newPolicyId)
+	public Receipt transferToOwner(String receiptId, OwnerRef newOwner)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		TransferToPolicy lopTTP;
-		Policy lobjPolicy;
+		ProcessData lobjOwner;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		lobjOwner = null;
 		try
 		{
 			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(receiptId));
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(newPolicyId));
+
+			if ( Constants.ObjID_Policy.equals(UUID.fromString(newOwner.ownerTypeId)) )
+				lobjOwner = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(newOwner.ownerId));
+			if ( Constants.ObjID_SubPolicy.equals(UUID.fromString(newOwner.ownerTypeId)) )
+				lobjOwner = SubPolicy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(newOwner.ownerId));
+			if ( Constants.ObjID_SubCasualty.equals(UUID.fromString(newOwner.ownerTypeId)) )
+				lobjOwner = SubCasualty.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(newOwner.ownerId));
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		if ( lobjOwner == null )
+			throw new BigBangException("Entidade incompatível com a transferência de recibos.");
+
 		lopTTP = new TransferToPolicy(lobjReceipt.GetProcessID());
-		lopTTP.midNewProcess = lobjPolicy.GetProcessID();
+		lopTTP.midNewProcess = lobjOwner.GetProcessID();
 
 		try
 		{
@@ -1505,43 +1552,35 @@ public class ReceiptServiceImpl
 	public Receipt serialCreateReceipt(Receipt receipt, DocuShareHandle source)
 		throws SessionExpiredException, BigBangException
 	{
-		Policy lobjPolicy;
-		CreateReceipt lopCR;
+		ProcessData lobjPolicy;
+		CreateReceiptBase lopCR;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		lopCR = null;
 		try
 		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receipt.policyId));
+			if ( Constants.ObjID_Policy.equals(UUID.fromString(receipt.ownerTypeId)) )
+			{
+				lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receipt.ownerId));
+				lopCR = new com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt(lobjPolicy.GetProcessID());
+			}
+			if ( Constants.ObjID_SubPolicy.equals(UUID.fromString(receipt.ownerTypeId)) )
+			{
+				lobjPolicy = SubPolicy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receipt.ownerId));
+				lopCR = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateReceipt(lobjPolicy.GetProcessID());
+			}
+			if ( Constants.ObjID_SubCasualty.equals(UUID.fromString(receipt.ownerTypeId)) )
+			{
+				lobjPolicy = SubCasualty.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receipt.ownerId));
+				lopCR = new com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateReceipt(lobjPolicy.GetProcessID());
+			}
 
-			lopCR = new CreateReceipt(lobjPolicy.GetProcessID());
-			lopCR.mobjData = new ReceiptData();
+			if ( null == lopCR )
+				throw new BigBangException("Tipo de objecto incompatível com criação de recibos.");
 
-			lopCR.mobjData.mid = null;
-
-			lopCR.mobjData.mstrNumber = receipt.number;
-			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
-			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium+"");
-			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium+""));
-			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? BigDecimal.ZERO : new BigDecimal(receipt.comissions+""));
-			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions+""));
-			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue+""));
-			lopCR.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
-			lopCR.mobjData.mbIsMalus = receipt.isMalus;
-			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
-			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
-					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
-			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
-			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + " 00:00:00.0"));
-			lopCR.mobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
-			lopCR.mobjData.mstrNotes = receipt.notes;
-			lopCR.mobjData.mstrDescription = receipt.description;
-
-			lopCR.mobjData.midManager = ( receipt.managerId == null ? null : UUID.fromString(receipt.managerId) );
-			lopCR.mobjData.midProcess = null;
-
-			lopCR.mobjData.mobjPrevValues = null;
+			lopCR.mobjData = sClientToServer(receipt);
 
 			if ( source != null )
 			{
@@ -2733,28 +2772,12 @@ public class ReceiptServiceImpl
 
 		if ( lParam.ownerId != null )
 		{
-			pstrBuffer.append(" AND (([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("'))");
-			pstrBuffer.append(" OR ([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')))");
+			if ( (lParam.ownerTypeId == null) || Constants.ObjID_Policy.equals(UUID.fromString(lParam.ownerTypeId)) )
+				pstrBuffer.append(" AND [:Policy] = '").append(lParam.ownerId).append("'");
+			else if ( Constants.ObjID_SubPolicy.equals(UUID.fromString(lParam.ownerTypeId)) )
+				pstrBuffer.append(" AND [:Sub Policy] = '").append(lParam.ownerId).append("'");
+			else if ( Constants.ObjID_SubCasualty.equals(UUID.fromString(lParam.ownerTypeId)) )
+				pstrBuffer.append(" AND [:Sub Casualty] = '").append(lParam.ownerId).append("'");
 		}
 
 		if ( (lParam.typeIds != null ) && (lParam.typeIds.length > 0) )
@@ -3060,7 +3083,7 @@ public class ReceiptServiceImpl
 		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
 		lobjResult.insurerId = (lobjCompany == null ? null : lobjCompany.getKey().toString());
 		lobjResult.insurerName = (lobjCompany == null ? "(Erro)" : (String)lobjCompany.getAt(1));
-		lobjResult.policyId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : lobjPolicy.getKey().toString()) :
+		lobjResult.ownerId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : lobjPolicy.getKey().toString()) :
 				lobjSubPolicy.getKey().toString());
 		lobjResult.ownerTypeId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : Constants.ObjID_Policy.toString()) :
 				Constants.ObjID_SubPolicy.toString());
@@ -3297,32 +3320,11 @@ public class ReceiptServiceImpl
 		}
 	}
 
-	private ReceiptData toServerData(Receipt receipt) {
-		ReceiptData result = new ReceiptData();
+	private static ReceiptData toServerData(Receipt receipt)
+	{
+		ReceiptData result = sClientToServer(receipt);
 
 		result.mid = UUID.fromString(receipt.id);
-
-		result.mstrNumber = receipt.number;
-		result.midType = UUID.fromString(receipt.typeId);
-		result.mdblTotal = new BigDecimal(receipt.totalPremium+"");
-		result.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium + ""));
-		result.mdblCommissions = (receipt.comissions == null ? BigDecimal.ZERO : new BigDecimal(receipt.comissions + ""));
-		result.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions+""));
-		result.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue + ""));
-		result.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
-		result.mbIsMalus = receipt.isMalus;
-		result.mdtIssue = (receipt.issueDate == null ? null : Timestamp.valueOf(receipt.issueDate + " 00:00:00.0"));
-		result.mdtMaturity = (receipt.maturityDate == null ? null :
-				Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
-		result.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
-		result.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + " 00:00:00.0"));
-		result.midMediator = ( receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId) );
-		result.mstrNotes = receipt.notes;
-		result.mstrDescription = receipt.description;
-		result.midProcess = UUID.fromString(receipt.processId);
-		result.midManager = null;
-
-		result.mobjPrevValues = null;
 		
 		return result;
 	}

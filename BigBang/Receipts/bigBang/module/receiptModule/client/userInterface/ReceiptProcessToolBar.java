@@ -16,7 +16,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	protected MenuItem enterPayment;
 	protected MenuItem returnPayment;
 
-	protected MenuItem transferToPolicy;
+	protected MenuItem transferToOwner;
 	//
 	protected MenuItem validate;
 	protected MenuItem setForReturn;
@@ -152,14 +152,14 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, returnToAgency);
-		transferToPolicy = new MenuItem("Transferir para Apólice", new Command() {
+		transferToOwner = new MenuItem("Transferir para Pasta", new Command() {
 
 			@Override
 			public void execute() {
-				onTransferToPolicy();
+				onTransferToOwner();
 			}
 		});
-		addItem(SUB_MENU.EXECUTE, transferToPolicy);
+		addItem(SUB_MENU.EXECUTE, transferToOwner);
 		this.executeSubMenu.addSeparator();
 		validate = new MenuItem("Validar", new Command() {
 
@@ -374,7 +374,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 
 	public abstract void onValidate();
 
-	public abstract void onTransferToPolicy();
+	public abstract void onTransferToOwner();
 
 	public abstract void onCreateCreditNote();
 
@@ -383,7 +383,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	}
 
 	public void allowTransfer(boolean allow) {
-		this.transferToPolicy.setEnabled(allow);
+		this.transferToOwner.setEnabled(allow);
 	}
 
 	public void allowAssociateDebitNote(boolean hasPermission) {

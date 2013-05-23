@@ -43,7 +43,7 @@ public class ReceiptSendMessageViewPresenter extends SendMessageViewPresenter<Re
 
 	protected void setContacts() {
 		view.addContact("Recibo (" + receipt.number + ")",receipt.id ,BigBangConstants.EntityIds.RECEIPT);
-		view.addContact("Apólice " + (BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(receipt.ownerTypeId) ? "Adesão " : "") + "(" + receipt.policyNumber + ")", receipt.policyId, receipt.ownerTypeId);
+		view.addContact("Apólice " + (BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(receipt.ownerTypeId) ? "Adesão " : "") + "(" + receipt.policyNumber + ")", receipt.ownerId, receipt.ownerTypeId);
 		view.addContact("Cliente (" + receipt.clientName + ")", receipt.clientId, BigBangConstants.EntityIds.CLIENT);
 		view.addContact("Seguradora (" + receipt.insurerName + ")", receipt.insurerId, BigBangConstants.EntityIds.INSURANCE_AGENCY);
 		view.addContact("Mediador (" + receipt.inheritMediatorName + ")", receipt.inheritMediatorId, BigBangConstants.EntityIds.MEDIATOR);

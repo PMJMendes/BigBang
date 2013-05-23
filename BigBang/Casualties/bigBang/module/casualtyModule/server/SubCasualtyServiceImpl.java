@@ -15,6 +15,7 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.MedicalFile;
+import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
@@ -22,7 +23,9 @@ import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualtyStub;
 import bigBang.definitions.shared.TotalLossFile;
 import bigBang.library.server.BigBangPermissionServiceImpl;
+import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.ConversationServiceImpl;
+import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
@@ -30,6 +33,7 @@ import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.casualtyModule.interfaces.SubCasualtyService;
 import bigBang.module.casualtyModule.shared.SubCasualtySearchParameter;
 import bigBang.module.casualtyModule.shared.SubCasualtySortParameter;
+import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -43,10 +47,13 @@ import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateAssessment;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateMedicalFile;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateTotalLoss;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.DeleteSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData;
@@ -398,6 +405,51 @@ public class SubCasualtyServiceImpl
 		}
 
 		return TotalLossServiceImpl.sGetTotalLoss(lopCTL.mobjData.mid);
+	}
+
+	public Receipt createReceipt(String subCasualtyId, Receipt receipt)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CreateReceipt lopCR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+
+			lopCR = new CreateReceipt(lobjSubCasualty.GetProcessID());
+			lopCR.mobjData = ReceiptServiceImpl.sClientToServer(receipt);
+
+			lopCR.mobjImage = null;
+
+			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
+			{
+				lopCR.mobjContactOps = new ContactOps();
+				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(receipt.contacts);
+			}
+			else
+				lopCR.mobjContactOps = null;
+			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
+			{
+				lopCR.mobjDocOps = new DocOps();
+				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
+			}
+			else
+				lopCR.mobjDocOps = null;
+
+			lopCR.Execute();
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid);
 	}
 
 	public Conversation sendMessage(Conversation conversation)

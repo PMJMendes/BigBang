@@ -220,7 +220,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		referenceType.setValue(BigBangConstants.EntityIds.INSURANCE_POLICY, true);
 
 		setValue(new SubCasualty());
-		
+
 		setValidator(new SubCasualtyFormValidator(this));
 	}
 

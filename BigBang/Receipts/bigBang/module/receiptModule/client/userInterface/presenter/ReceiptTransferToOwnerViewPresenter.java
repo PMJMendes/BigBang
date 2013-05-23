@@ -10,6 +10,7 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.OwnerRef;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -24,7 +25,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class ReceiptTransferToPolicyViewPresenter implements ViewPresenter{
+public class ReceiptTransferToOwnerViewPresenter implements ViewPresenter{
 
 	public static enum Action{
 		CONFIRM,
@@ -33,7 +34,7 @@ public class ReceiptTransferToPolicyViewPresenter implements ViewPresenter{
 
 	public interface Display{
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
-		HasEditableValue<String> getForm();
+		HasEditableValue<OwnerRef> getForm();
 		Widget asWidget();
 	}
 
@@ -42,7 +43,7 @@ public class ReceiptTransferToPolicyViewPresenter implements ViewPresenter{
 	private String receiptId;
 	private Display view;
 
-	public ReceiptTransferToPolicyViewPresenter(
+	public ReceiptTransferToOwnerViewPresenter(
 			Display view) {
 		broker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 		setView((UIObject) view);
@@ -63,7 +64,7 @@ public class ReceiptTransferToPolicyViewPresenter implements ViewPresenter{
 	private void bind() {
 		if(bound){return;}
 
-		view.registerActionHandler(new ActionInvokedEventHandler<ReceiptTransferToPolicyViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<ReceiptTransferToOwnerViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
@@ -96,18 +97,18 @@ public class ReceiptTransferToPolicyViewPresenter implements ViewPresenter{
 
 	protected void onConfirmTransfer() {
 		if(view.getForm().validate()) {
-			String policyId = view.getForm().getInfo();
-			broker.transferToInsurancePolicy(receiptId, policyId, new ResponseHandler<Receipt>() {
+			OwnerRef owner = view.getForm().getInfo();
+			broker.transferToOwner(receiptId, owner, new ResponseHandler<Receipt>() {
 
 				@Override
 				public void onResponse(Receipt response) {
-					onTransferToPolicySuccess();
+					onTransferToOwnerSuccess();
 
 				}
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					onTransferToPolicyFailed();				
+					onTransferToOwnerFailed();				
 				}
 			});
 		}else{
@@ -122,16 +123,16 @@ public class ReceiptTransferToPolicyViewPresenter implements ViewPresenter{
 			clearView();
 		}
 		else{
-			onTransferToPolicyFailed();
+			onTransferToOwnerFailed();
 			onCancelTransfer();
 		}
 	}
 
-	protected void onTransferToPolicyFailed() {
+	protected void onTransferToOwnerFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível transferir o recibo"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	protected void onTransferToPolicySuccess(){
+	protected void onTransferToOwnerSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O recibo foi transferido com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
