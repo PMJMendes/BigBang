@@ -235,7 +235,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 				item.pushIntoStackParameter("display", "search");
 				item.setParameter("policyid", info.ownerId);
 				policy.setValue(item);
-				policy.setValueName("#" + info.policyNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
+				policy.setValueName("#" + info.ownerNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
 				policy.setVisible(true);
 				subPolicy.clear();
 				subPolicy.setVisible(false);
@@ -249,7 +249,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 				item.pushIntoStackParameter("display", "subpolicy");
 				item.setParameter("subpolicyid", info.ownerId);
 				subPolicy.setValue(item);
-				subPolicy.setValueName("#" + info.policyNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
+				subPolicy.setValueName("#" + info.ownerNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
 				subPolicy.setVisible(true);
 				policy.clear();
 				policy.setVisible(false);
@@ -263,7 +263,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 				item.pushIntoStackParameter("display", "subcasualty");
 				item.setParameter("subcasualtyid", info.ownerId);
 				subCasualty.setValue(item);
-				subCasualty.setValueName("#" + info.policyNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
+				subCasualty.setValueName("#" + info.ownerNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
 				subCasualty.setVisible(true);
 				policy.clear();
 				policy.setVisible(false);

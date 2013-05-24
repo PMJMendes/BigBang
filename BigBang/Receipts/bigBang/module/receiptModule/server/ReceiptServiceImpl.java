@@ -175,19 +175,19 @@ public class ReceiptServiceImpl
 		{
 			lobjResult.ownerId = lobjSubCasualty.getKey().toString();
 			lobjResult.ownerTypeId = Constants.ObjID_SubCasualty.toString();
-			lobjResult.policyNumber = lobjSubCasualty.getLabel();
+			lobjResult.ownerNumber = lobjSubCasualty.getLabel();
 		}
 		else if ( lobjSubPolicy != null )
 		{
 			lobjResult.ownerId = lobjSubPolicy.getKey().toString();
 			lobjResult.ownerTypeId = Constants.ObjID_SubPolicy.toString();
-			lobjResult.policyNumber = lobjSubPolicy.getLabel();
+			lobjResult.ownerNumber = lobjSubPolicy.getLabel();
 		}
 		else
 		{
 			lobjResult.ownerId = lobjPolicy.getKey().toString();
 			lobjResult.ownerTypeId = Constants.ObjID_Policy.toString();
-			lobjResult.policyNumber = lobjPolicy.getLabel();
+			lobjResult.ownerNumber = lobjPolicy.getLabel();
 		}
 		lobjResult.categoryId = lobjCategory.getKey().toString();
 		lobjResult.categoryName = lobjCategory.getLabel();
@@ -373,7 +373,7 @@ public class ReceiptServiceImpl
             	lobjStub.insurerName = (String)lobjCompany.getAt(1);
             	lobjStub.ownerId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
         		lobjStub.ownerTypeId = (lobjSubPolicy == null ? Constants.ObjID_Policy : Constants.ObjID_SubPolicy).toString();
-            	lobjStub.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
+            	lobjStub.ownerNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
             	lobjStub.categoryId = lobjCategory.getKey().toString();
             	lobjStub.categoryName = lobjCategory.getLabel();
             	lobjStub.lineId = lobjLine.getKey().toString();
@@ -3002,7 +3002,7 @@ public class ReceiptServiceImpl
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
-//		SubCasualty lobjSubCasualty;
+		SubCasualty lobjSubCasualty;
 		Company lobjCompany;
 		Client lobjClient;
 		SubLine lobjSubLine;
@@ -3015,7 +3015,7 @@ public class ReceiptServiceImpl
 		lobjReceipt = null;
 		lobjPolicy = null;
 		lobjSubPolicy = null;
-//		lobjSubCasualty = null;
+		lobjSubCasualty = null;
 		lobjCompany = null;
 		lobjSubLine = null;
 		lobjLine = null;
@@ -3027,9 +3027,9 @@ public class ReceiptServiceImpl
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
 			lobjReceipt = (com.premiumminds.BigBang.Jewel.Objects.Receipt)lobjProcess.GetData();
 			lobjClient = lobjReceipt.getClient();
-			lobjPolicy = lobjReceipt.getAbsolutePolicy();
+			lobjSubCasualty = lobjReceipt.getSubCasualty();
 			lobjSubPolicy = lobjReceipt.getSubPolicy();
-//			lobjSubCasualty = lobjReceipt.getSubCasualty();
+			lobjPolicy = lobjReceipt.getAbsolutePolicy();
 			lobjSubLine = lobjPolicy.GetSubLine();
 			lobjLine = lobjSubLine.getLine();
 			lobjCategory = lobjLine.getCategory();
@@ -3050,12 +3050,24 @@ public class ReceiptServiceImpl
 		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
 		lobjResult.insurerId = (lobjCompany == null ? null : lobjCompany.getKey().toString());
 		lobjResult.insurerName = (lobjCompany == null ? "(Erro)" : (String)lobjCompany.getAt(1));
-		lobjResult.ownerId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : lobjPolicy.getKey().toString()) :
-				lobjSubPolicy.getKey().toString());
-		lobjResult.ownerTypeId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : Constants.ObjID_Policy.toString()) :
-				Constants.ObjID_SubPolicy.toString());
-		lobjResult.policyNumber = (lobjSubPolicy == null ? (lobjPolicy == null ? "(Erro)" : lobjPolicy.getLabel()) :
-				lobjSubPolicy.getLabel());
+		if ( lobjSubCasualty != null )
+		{
+			lobjResult.ownerId = lobjSubCasualty.getKey().toString();
+			lobjResult.ownerTypeId = Constants.ObjID_SubCasualty.toString();
+			lobjResult.ownerNumber = lobjSubCasualty.getLabel();
+		}
+		else if ( lobjSubPolicy != null )
+		{
+			lobjResult.ownerId = lobjSubPolicy.getKey().toString();
+			lobjResult.ownerTypeId = Constants.ObjID_SubPolicy.toString();
+			lobjResult.ownerNumber = lobjSubPolicy.getLabel();
+		}
+		else
+		{
+			lobjResult.ownerId = lobjPolicy.getKey().toString();
+			lobjResult.ownerTypeId = Constants.ObjID_Policy.toString();
+			lobjResult.ownerNumber = lobjPolicy.getLabel();
+		}
 		lobjResult.categoryId = (lobjCategory == null ? null : lobjCategory.getKey().toString());
 		lobjResult.categoryName = (lobjCategory == null ? null : lobjCategory.getLabel());
 		lobjResult.lineId = (lobjLine == null ? null : lobjLine.getKey().toString());

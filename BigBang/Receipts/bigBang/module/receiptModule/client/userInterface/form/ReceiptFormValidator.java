@@ -42,7 +42,16 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 	}
 
 	private boolean validateType() {
-		return validateGuid(form.type, false);
+		boolean valid;
+
+		if ( !validateGuid(form.type, false) )
+			return false;
+
+		valid = (BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.BACKCHARGE.equalsIgnoreCase(form.type.getValue()) ||
+				BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CASUALTY.equalsIgnoreCase(form.type.getValue())) ==
+						form.subCasualty.isVisible();
+		form.type.setInvalid(!valid);
+		return valid;
 	}
 
 	private boolean validateTotalPremium() {

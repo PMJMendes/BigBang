@@ -105,7 +105,7 @@ public class SubPolicyCreateReceiptViewPresenter implements ViewPresenter {
 				view.getParentForm().setValue(response);
 				Receipt receipt = new Receipt();
 				receipt.ownerId = response.id;
-				receipt.policyNumber = response.number;
+				receipt.ownerNumber = response.number;
 				receipt.categoryName = response.inheritCategoryName;
 				receipt.managerId = response.managerId;
 				receipt.mediatorId = response.inheritMediatorId;

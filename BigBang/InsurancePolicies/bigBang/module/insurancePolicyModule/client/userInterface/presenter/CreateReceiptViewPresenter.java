@@ -105,7 +105,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 				view.getParentForm().setValue(response);
 				Receipt receipt = new Receipt();
 				receipt.ownerId = response.id;
-				receipt.policyNumber = response.number;
+				receipt.ownerNumber = response.number;
 				receipt.categoryName = response.categoryName;
 				receipt.categoryId = response.categoryId;
 				receipt.lineName = response.lineName;
