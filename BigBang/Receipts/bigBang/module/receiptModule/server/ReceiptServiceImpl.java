@@ -115,7 +115,7 @@ public class ReceiptServiceImpl
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
-//		SubCasualty lobjSubCasualty;
+		SubCasualty lobjSubCasualty;
 		Company lobjCompany;
 		Client lobjClient;
 		Timestamp ldtEndDate;
@@ -133,7 +133,7 @@ public class ReceiptServiceImpl
 				throw new BigBangException("Erro: Recibo sem processo de suporte. (Recibo n. "
 						+ lobjReceipt.getAt(0).toString() + ")");
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-//			lobjSubCasualty = lobjReceipt.getSubCasualty();
+			lobjSubCasualty = lobjReceipt.getSubCasualty();
 			lobjSubPolicy = lobjReceipt.getSubPolicy();
 			lobjPolicy = lobjReceipt.getAbsolutePolicy();
 			lobjClient = lobjReceipt.getClient();
@@ -171,9 +171,24 @@ public class ReceiptServiceImpl
 		lobjResult.clientName = lobjClient.getLabel();
 		lobjResult.insurerId = lobjCompany.getKey().toString();
 		lobjResult.insurerName = (String)lobjCompany.getAt(1);
-		lobjResult.ownerId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
-		lobjResult.ownerTypeId = (lobjSubPolicy == null ? Constants.ObjID_Policy : Constants.ObjID_SubPolicy).toString();
-		lobjResult.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
+		if ( lobjSubCasualty != null )
+		{
+			lobjResult.ownerId = lobjSubCasualty.getKey().toString();
+			lobjResult.ownerTypeId = Constants.ObjID_SubCasualty.toString();
+			lobjResult.policyNumber = lobjSubCasualty.getLabel();
+		}
+		else if ( lobjSubPolicy != null )
+		{
+			lobjResult.ownerId = lobjSubPolicy.getKey().toString();
+			lobjResult.ownerTypeId = Constants.ObjID_SubPolicy.toString();
+			lobjResult.policyNumber = lobjSubPolicy.getLabel();
+		}
+		else
+		{
+			lobjResult.ownerId = lobjPolicy.getKey().toString();
+			lobjResult.ownerTypeId = Constants.ObjID_Policy.toString();
+			lobjResult.policyNumber = lobjPolicy.getLabel();
+		}
 		lobjResult.categoryId = lobjCategory.getKey().toString();
 		lobjResult.categoryName = lobjCategory.getLabel();
 		lobjResult.lineId = lobjLine.getKey().toString();

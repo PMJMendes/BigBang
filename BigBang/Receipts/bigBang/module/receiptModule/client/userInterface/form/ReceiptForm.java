@@ -28,6 +28,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 	protected TextBoxFormField number;
 	protected NavigationFormField client;
 	protected NavigationFormField policy;
+	protected NavigationFormField subPolicy;
+	protected NavigationFormField subCasualty;
 	protected ExpandableListBoxFormField type;
 	protected NumericTextBoxFormField totalPremium;
 	protected NumericTextBoxFormField salesPremium;
@@ -55,6 +57,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		type.allowEdition(false);
 		client = new NavigationFormField("Cliente");
 		policy = new NavigationFormField("Apólice");
+		subPolicy = new NavigationFormField("Apólice Adesão");
+		subCasualty = new NavigationFormField("Sub-Sinistro");
 		totalPremium = new NumericTextBoxFormField("Prémio Total", true);
 		totalPremium.setUnitsLabel("€");
 		totalPremium.setFieldWidth("100px");
@@ -100,12 +104,19 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		addFormField(client, false);
 		client.setEditable(false);
 		addFormField(policy, false);
+		policy.setEditable(false);
+		policy.setVisible(false);
+		addFormField(subPolicy, false);
+		subPolicy.setEditable(false);
+		subPolicy.setVisible(false);
+		addFormField(subCasualty, false);
+		subCasualty.setEditable(false);
+		subCasualty.setVisible(false);
 		addFormFieldGroup(new FormField<?>[]{
 				number,
 				mediator
 		}, true);
 
-		policy.setEditable(false);
 		addFormFieldGroup(new FormField<?>[]{
 				type,
 				manager
@@ -218,24 +229,54 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		}
 		if(info.ownerId != null) {
 			NavigationHistoryItem item = new NavigationHistoryItem();
-			if(BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(info.ownerTypeId)){
+			if( (info.ownerTypeId == null) || BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(info.ownerTypeId) ) {
 				item.setParameter("section", "insurancepolicy");
 				item.setStackParameter("display");
 				item.pushIntoStackParameter("display", "search");
 				item.setParameter("policyid", info.ownerId);
+				policy.setValue(item);
+				policy.setValueName("#" + info.policyNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
+				policy.setVisible(true);
+				subPolicy.clear();
+				subPolicy.setVisible(false);
+				subCasualty.clear();
+				subCasualty.setVisible(false);
 			}
-			else{
+			else if( BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(info.ownerTypeId) ) {
 				item.setParameter("section", "insurancepolicy");
 				item.setStackParameter("display");
 				item.pushIntoStackParameter("display", "search");
 				item.pushIntoStackParameter("display", "subpolicy");
 				item.setParameter("subpolicyid", info.ownerId);
+				subPolicy.setValue(item);
+				subPolicy.setValueName("#" + info.policyNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
+				subPolicy.setVisible(true);
+				policy.clear();
+				policy.setVisible(false);
+				subCasualty.clear();
+				subCasualty.setVisible(false);
 			}
-			policy.setValue(item);
-
-			policy.setValueName("#" + info.policyNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
+			else if( BigBangConstants.EntityIds.SUB_CASUALTY.equalsIgnoreCase(info.ownerTypeId) ) {
+				item.setParameter("section", "casualty");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
+				item.pushIntoStackParameter("display", "subcasualty");
+				item.setParameter("subcasualtyid", info.ownerId);
+				subCasualty.setValue(item);
+				subCasualty.setValueName("#" + info.policyNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
+				subCasualty.setVisible(true);
+				policy.clear();
+				policy.setVisible(false);
+				subPolicy.clear();
+				subPolicy.setVisible(false);
+			}
 		}else{
 			policy.clear();
+			policy.setVisible(false);
+			subPolicy.clear();
+			subPolicy.setVisible(false);
+			subCasualty.clear();
+			subCasualty.setVisible(false);
 		}
 
 		number.setValue(info.number);
