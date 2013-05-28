@@ -304,7 +304,7 @@ public class SubCasualtyListingsBase
 			pstrSQL.append(" AND ([Policy] IN (SELECT [PK] FROM (" +
 					lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.CLIENT},
 							new java.lang.Object[] {pidClient}, null) +
-					") [AuxPol]) OR [SubPolicy] IN (SELECT [PK] FROM (" +
+					") [AuxPol]) OR [Sub Policy] IN (SELECT [PK] FROM (" +
 					lrefSubPolicies.SQLForSelectByMembers(new int[] {SubPolicy.I.SUBSCRIBER},
 							new java.lang.Object[] {pidClient}, null) +
 					") [AuxSPol]))");
