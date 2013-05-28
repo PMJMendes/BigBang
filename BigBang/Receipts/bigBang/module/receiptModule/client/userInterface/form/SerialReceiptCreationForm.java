@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWrapper>{
 
 	protected TextBoxFormField receiptNumber;
+	protected ListBoxFormField referenceType;
 	protected TextBoxFormField policyNumber;
 	protected TextBoxFormField client;
 	protected TextBoxFormField insurer;
@@ -118,7 +119,16 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		addWidget(newPanel, true);
 
 		addSection("Apólice");
-		policyNumber = new TextBoxFormField("Número da apólice");
+
+		referenceType = new ListBoxFormField("");
+		referenceType.addItem("Apólice nº", BigBangConstants.EntityIds.INSURANCE_POLICY);
+		referenceType.addItem("Apólice Adesão nº", BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		referenceType.addItem("Sub-Sinistro nº", BigBangConstants.EntityIds.SUB_CASUALTY);
+		referenceType.setMandatory(true);
+		referenceType.removeItem(0); //Removes the empty value
+		addFormField(referenceType, true);
+
+		policyNumber = new TextBoxFormField("");
 		policyNumber.setFieldWidth("175px");
 
 		policyNumber.getNativeField().addKeyUpHandler(new KeyUpHandler() {
@@ -430,6 +440,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	}
 
 	public void enablePolicy(boolean b) {
+		referenceType.setReadOnly(!b);
 		policyNumber.setReadOnly(!b);
 		verifyPolicyNumber.setEnabled(b);
 
