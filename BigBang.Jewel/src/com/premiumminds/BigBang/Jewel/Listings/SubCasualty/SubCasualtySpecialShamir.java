@@ -347,7 +347,8 @@ public class SubCasualtySpecialShamir
 		larrCells[0] = ReportBuilder.buildCell(lobjCas.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
 
-		larrCells[1] = ReportBuilder.buildCell(((String)pobjSubC.getAt(SubCasualty.I.DESCRIPTION)).substring(19), TypeDefGUIDs.T_String);
+		larrCells[1] = ReportBuilder.buildCell(pobjSubC.getAt(SubCasualty.I.DESCRIPTION) == null ? "?" :
+				((String)pobjSubC.getAt(SubCasualty.I.DESCRIPTION)).substring(19), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[1], true, true);
 
 		larrCells[2] = ReportBuilder.buildCell(lobjObject.getLabel(), TypeDefGUIDs.T_String);
