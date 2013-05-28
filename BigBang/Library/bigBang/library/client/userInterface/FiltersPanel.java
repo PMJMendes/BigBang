@@ -129,6 +129,13 @@ public class FiltersPanel extends View {
 		filtersWrapper.add(field);
 	}
 
+	public void addMutableListField(Enum<?> id, String listId, String description){
+		final FormField<String> field = MutableSelectionFormFieldFactory.getFormField(listId, null);
+		field.setLabelText(description);
+		filters.put(id, field);
+		filtersWrapper.add(field);
+	}
+
 	public void addTypifiedListField(Enum<?> id, String listId, String description){
 		addTypifiedListField(id, listId, description, null);
 	}

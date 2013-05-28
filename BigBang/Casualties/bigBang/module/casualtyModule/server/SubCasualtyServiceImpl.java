@@ -726,7 +726,10 @@ public class SubCasualtyServiceImpl
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
 		{
 			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
-			pstrBuffer.append(" AND [:Number] LIKE N'%").append(lstrAux).append("%'");
+			pstrBuffer.append(" AND ([:Number] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:Policy:Number] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:Sub Policy:Number] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:Insurer Process] LIKE N'%").append(lstrAux).append("%')");
 		}
 
 		if ( lParam.ownerId != null )
@@ -742,6 +745,16 @@ public class SubCasualtyServiceImpl
         		throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+		}
+
+		if ( lParam.clientId != null )
+		{
+			pstrBuffer.append(" AND [:Casualty:Client] = '").append(lParam.clientId).append("'");
+		}
+
+		if ( lParam.casualtyDate != null )
+		{
+			pstrBuffer.append(" AND [:Casualty:Date] = '").append(lParam.casualtyDate).append("'");
 		}
 
 		return true;
@@ -870,7 +883,13 @@ public class SubCasualtyServiceImpl
 			lbFound = true;
 			pstrBuffer.append("CASE WHEN [:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
 					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ELSE ")
-					.append("0 END");
+					.append("CASE WHEN [:Insurer Process] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000*PATINDEX(N'%").append(lstrAux).append("%', [:Insurer Process]) ELSE ")
+					.append("CASE WHEN [:Policy:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000000*PATINDEX(N'%").append(lstrAux).append("%', [:Policy:Number]) ELSE ")
+					.append("CASE WHEN [:Sub Policy:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000000*PATINDEX(N'%").append(lstrAux).append("%', [:Sub Policy:Number]) ELSE ")
+					.append("0 END END END END");
 		}
 
 		return lbFound;

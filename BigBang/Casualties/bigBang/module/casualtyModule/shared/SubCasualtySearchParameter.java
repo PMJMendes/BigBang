@@ -8,4 +8,6 @@ public class SubCasualtySearchParameter
 	private static final long serialVersionUID = 1L;
 
 	public String ownerId;
+	public String casualtyDate;
+	public String clientId;
 }
