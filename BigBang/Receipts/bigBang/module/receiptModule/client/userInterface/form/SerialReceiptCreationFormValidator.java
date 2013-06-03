@@ -17,7 +17,7 @@ public class SerialReceiptCreationFormValidator extends FormValidator<SerialRece
 	public bigBang.library.client.FormValidator.Result validateImpl() {
 		boolean valid = true;
 		valid &= validateReceiptNumber();
-		valid &= validatePolicyNumber();
+		valid &= validateOwnerNumber();
 		valid &= validateType();
 		valid &= validateTotalPremium();
 		valid &= validateSalesPremium();
@@ -42,12 +42,40 @@ public class SerialReceiptCreationFormValidator extends FormValidator<SerialRece
 		return validateString(form.receiptNumber, 1, 250, false);
 	}
 
+	private boolean validateOwnerNumber() {
+		if ( BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(form.referenceType.getValue()))
+			return validatePolicyNumber();
+		else if ( BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(form.referenceType.getValue()))
+			return validateSubPolicyNumber();
+		else if ( BigBangConstants.EntityIds.SUB_CASUALTY.equalsIgnoreCase(form.referenceType.getValue()))
+			return validateSubCasualtyNumber();
+
+		return false;
+	}
+
 	private boolean validatePolicyNumber() {
 		return validateString(form.policyNumber, 1, 250, false);
 	}
 
+	private boolean validateSubPolicyNumber() {
+		return validateGuid(form.subPolicyReference, false);
+	}
+
+	private boolean validateSubCasualtyNumber() {
+		return validateGuid(form.subCasualtyReference, false);
+	}
+
 	private boolean validateType() {
-		return validateGuid(form.type, false);
+		boolean valid;
+
+		if ( !validateGuid(form.type, false) )
+			return false;
+
+		valid = (BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.BACKCHARGE.equalsIgnoreCase(form.type.getValue()) ||
+				BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CASUALTY.equalsIgnoreCase(form.type.getValue())) ==
+						BigBangConstants.EntityIds.SUB_CASUALTY.equals(form.referenceType.getValue());
+		form.type.setInvalid(!valid);
+		return valid;
 	}
 
 	private boolean validateTotalPremium() {

@@ -76,8 +76,10 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	private PopupPanel popupSubPolicy;
 	private SubPolicyChoiceFromListView subPolicyView;
 	private SubPolicyChoiceFromListViewPresenter subPolicyPresenter;
-	private boolean editingPolicy = false;
+	private boolean editingOwner = false;
 	private boolean hasReceiptFile = true;
+	private String subPolicyId;
+	private String subCasualtyId;
 
 	public interface Display{
 
@@ -333,19 +335,25 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	}
 
 	protected void changedSubPolicy() {
-		editingPolicy = true;
-		final String subPolicyId = view.getSubPolicyId();
+		if ( editingOwner && (subPolicyId != null) && subPolicyId.equals(view.getSubPolicyId()) )
+			return;
+
+		editingOwner = true;
+		subPolicyId = view.getSubPolicyId();
 		view.clearOwner();
 		view.enableMarkReceipt(false);
 		view.enableOwnerProblem(false);
 		view.setOwnerNotAvailable(false);
 		if ( subPolicyId != null )
-			getSubPolicy(subPolicyId);
+			getSubCasualty(subPolicyId);
 	}
 
 	protected void changedSubCasualty() {
-		editingPolicy = true;
-		final String subCasualtyId = view.getSubCasualtyId();
+		if ( editingOwner && (subCasualtyId != null) && subCasualtyId.equals(view.getSubCasualtyId()) )
+			return;
+
+		editingOwner = true;
+		subCasualtyId = view.getSubCasualtyId();
 		view.clearOwner();
 		view.enableMarkReceipt(false);
 		view.enableOwnerProblem(false);
@@ -355,23 +363,23 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	}
 
 	protected void changedOwnerType() {
-		if(editingPolicy){
+		if(editingOwner){
 			receiptOwnerWrapper = new ReceiptOwnerWrapper();
 			view.clearOwner();
 			view.enableMarkReceipt(false);
 			view.enableOwnerProblem(false);
 			view.setOwnerNotAvailable(false);
-			editingPolicy = false;
+			editingOwner = false;
 		}
 	}
 
 	protected void changedPolicyNumber() {
-		if(editingPolicy){
+		if(editingOwner){
 			receiptOwnerWrapper = new ReceiptOwnerWrapper();
 			String tempOwner = view.getPolicyNumber();
 			view.clearOwner();
 			view.setPolicyNumber(tempOwner, true);
-			editingPolicy = false;
+			editingOwner = false;
 		}
 	}
 
@@ -491,10 +499,12 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT)){
 
-					if(receiptOwnerWrapper.receipt == null){
+					if(receiptOwnerWrapper.receipt == null)
 						receiptOwnerWrapper.receipt = new Receipt();
-						receiptOwnerWrapper.receipt.number = view.getReceiptNumber();
-					}
+
+					receiptOwnerWrapper.receipt.number = view.getReceiptNumber();
+					receiptOwnerWrapper.receipt.ownerTypeId = BigBangConstants.EntityIds.INSURANCE_POLICY;
+
 					receiptOwnerWrapper.policy = response;
 					receiptOwnerWrapper.insuranceAgencyName = response.insuranceAgencyName;
 					view.getForm().setValue(receiptOwnerWrapper);
@@ -537,10 +547,12 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT)){
 
-					if(receiptOwnerWrapper.receipt == null){
+					if(receiptOwnerWrapper.receipt == null)
 						receiptOwnerWrapper.receipt = new Receipt();
-						receiptOwnerWrapper.receipt.number = view.getReceiptNumber();
-					}
+
+					receiptOwnerWrapper.receipt.number = view.getReceiptNumber();
+					receiptOwnerWrapper.receipt.ownerTypeId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY;
+
 					receiptOwnerWrapper.subPolicy = response;
 					receiptOwnerWrapper.insuranceAgencyName = response.inheritCompanyName;
 					view.getForm().setValue(receiptOwnerWrapper);
@@ -582,10 +594,12 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_RECEIPT)){
 
-					if(receiptOwnerWrapper.receipt == null){
+					if(receiptOwnerWrapper.receipt == null)
 						receiptOwnerWrapper.receipt = new Receipt();
-						receiptOwnerWrapper.receipt.number = view.getReceiptNumber();
-					}
+
+					receiptOwnerWrapper.receipt.number = view.getReceiptNumber();
+					receiptOwnerWrapper.receipt.ownerTypeId = BigBangConstants.EntityIds.SUB_CASUALTY;
+
 					receiptOwnerWrapper.subCasualty = response;
 					receiptOwnerWrapper.insuranceAgencyName = response.inheritInsurerName;
 					view.getForm().setValue(receiptOwnerWrapper);
@@ -619,7 +633,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	}
 
 	protected void onVerifyPolicy() {
-		editingPolicy = true;
+		editingOwner = true;
 		final String policyNumber = view.getPolicyNumber();
 		view.clearOwner();
 		view.enableMarkReceipt(false);
@@ -666,7 +680,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 					@Override
 					public void onResponse(Receipt response) {
 						editing = false;
-						editingPolicy = false;
+						editingOwner = false;
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 						if(hasReceiptFile){
 							view.removeDocuShareItem(handle);
@@ -687,7 +701,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 					@Override
 					public void onResponse(Receipt response) {
 						editing = false;
-						editingPolicy = false;
+						editingOwner = false;
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
 						view.clear();
 						if(hasReceiptFile){
