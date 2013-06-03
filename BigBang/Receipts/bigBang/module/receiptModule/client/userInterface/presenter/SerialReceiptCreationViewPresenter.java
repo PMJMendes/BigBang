@@ -3,17 +3,20 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 import java.util.Collection;
 
 import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.dataAccess.InsuranceAgencyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
+import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.DocuShareHandle;
-import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.SubCasualty;
+import bigBang.definitions.shared.SubPolicy;
+import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -33,7 +36,8 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.shared.DocuShareItem;
 import bigBang.module.receiptModule.client.userInterface.view.PolicyChoiceFromListView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptChoiceFromListView;
-import bigBang.module.receiptModule.shared.ReceiptPolicyWrapper;
+import bigBang.module.receiptModule.client.userInterface.view.SubPolicyChoiceFromListView;
+import bigBang.module.receiptModule.shared.ReceiptOwnerWrapper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -47,23 +51,31 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		VERIFY_POLICY,
 		MARK_RECEIPT,
 		SAVE,
-		CANCEL, NO_IMAGE, IMAGE, NEW_RECEIPT, CHANGED_RECEIPT_NUMBER, CHANGED_POLICY_NUMBER
+		CANCEL, NO_IMAGE, IMAGE, NEW_RECEIPT, CHANGED_RECEIPT_NUMBER,
+		CHANGED_POLICY_NUMBER,
+		CHANGED_OWNER_TYPE,
+		CHANGED_SUB_POLICY,
+		CHANGED_SUB_CASUALTY
 	}
 
 	private Display view;
 	private boolean bound = false;
 	private InsurancePolicyBroker policyBroker;
+	private InsuranceSubPolicyBroker subPolicyBroker;
+	private SubCasualtyDataBroker subCasualtyBroker;
 	private ReceiptDataBroker receiptBroker;
 	private ReceiptChoiceFromListViewPresenter receiptPresenter;
-	private InsuranceAgencyBroker agencyBroker;
 	private ReceiptChoiceFromListView receiptView;
 	private boolean editing = false;
 
 	private PopupPanel popup;
-	private ReceiptPolicyWrapper receiptPolicyWrapper;
+	private ReceiptOwnerWrapper receiptOwnerWrapper;
 	private PopupPanel popupPolicy;
 	private PolicyChoiceFromListView policyView;
 	private PolicyChoiceFromListViewPresenter policyPresenter;
+	private PopupPanel popupSubPolicy;
+	private SubPolicyChoiceFromListView subPolicyView;
+	private SubPolicyChoiceFromListViewPresenter subPolicyPresenter;
 	private boolean editingPolicy = false;
 	private boolean hasReceiptFile = true;
 
@@ -76,7 +88,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 		HasNavigationStateChangedHandlers getNavigationPanel();
 
-		HasEditableValue<ReceiptPolicyWrapper> getForm();
+		HasEditableValue<ReceiptOwnerWrapper> getForm();
 
 		void enableReceiptNumber(boolean enable);
 
@@ -96,7 +108,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 		void setReceiptReadOnly(boolean b);
 
-		void enablePolicy(boolean b);
+		void enableOwner(boolean b);
 
 		void setFocusOnPolicy();
 
@@ -110,9 +122,13 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 		void markReceipt(DocuShareItem currentItem);
 
+		void clearOwner();
+
 		String getPolicyNumber();
 
-		void clearPolicy();
+		String getSubPolicyId();
+
+		String getSubCasualtyId();
 
 		void setPolicyNumber(String policyNumber, boolean keepCursorPos);
 
@@ -120,16 +136,16 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 		void showImageAlreadyDefinedWarning(boolean hasImage);
 
-		void enablePolicyProblem(boolean b);
+		void enableOwnerProblem(boolean b);
 
-		void setPolicyNotAvailable(boolean b);
-
+		void setOwnerNotAvailable(boolean b);
 	}
 
 	public SerialReceiptCreationViewPresenter(Display view){
-		agencyBroker = (InsuranceAgencyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY);
 		receiptBroker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 		policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		subCasualtyBroker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
 		setView((UIObject) view);
 
 		popup = new PopupPanel();
@@ -192,6 +208,36 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		};
 
 		policyPresenter.go(popupPolicy);
+
+		popupSubPolicy = new PopupPanel();
+
+		subPolicyView = (SubPolicyChoiceFromListView) GWT.create(SubPolicyChoiceFromListView.class);
+		subPolicyPresenter = new SubPolicyChoiceFromListViewPresenter(subPolicyView){
+
+			@Override
+			protected void onCancel() {
+				SerialReceiptCreationViewPresenter.this.view.enableMarkReceipt(true);
+				popupSubPolicy.hidePopup();
+			}
+
+			@Override
+			public void setSubPolicies(Collection<SubPolicyStub> stubs) {
+				subPolicyView.fillList(stubs);
+
+			}
+
+			@Override
+			public void getSelectedSubPolicy() {
+				SerialReceiptCreationViewPresenter.this.getSubPolicy(subPolicyView.getForm().getValue().id);
+			}
+
+			@Override
+			protected void onMark() {
+				SerialReceiptCreationViewPresenter.this.onMarkReceipt();
+			}
+		};
+
+		subPolicyPresenter.go(popupSubPolicy);
 	}
 
 
@@ -251,6 +297,17 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 				case CHANGED_POLICY_NUMBER:
 					changedPolicyNumber();
 					break;
+				case CHANGED_OWNER_TYPE:
+					changedOwnerType();
+					break;
+				case CHANGED_SUB_CASUALTY:
+					changedSubCasualty();
+					break;
+				case CHANGED_SUB_POLICY:
+					changedSubPolicy();
+					break;
+				default:
+					break;
 				}
 			}
 
@@ -260,11 +317,11 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onNavigationStateChanged(NavigationStateChangedEvent event) {
-				if(event.getObject() instanceof ImageHandlerPanel){
+				if(event.getObject() instanceof ImageHandlerPanel) {
 					view.enableReceiptNumber(true);
 					view.setFocusOnReceipt();
 				}
-				else{
+				else {
 					view.clear();
 					view.setReceiptReadOnly(true);
 					view.enableReceiptNumber(false);
@@ -275,19 +332,52 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		bound = true;
 	}
 
+	protected void changedSubPolicy() {
+		editingPolicy = true;
+		final String subPolicyId = view.getSubPolicyId();
+		view.clearOwner();
+		view.enableMarkReceipt(false);
+		view.enableOwnerProblem(false);
+		view.setOwnerNotAvailable(false);
+		if ( subPolicyId != null )
+			getSubPolicy(subPolicyId);
+	}
+
+	protected void changedSubCasualty() {
+		editingPolicy = true;
+		final String subCasualtyId = view.getSubCasualtyId();
+		view.clearOwner();
+		view.enableMarkReceipt(false);
+		view.enableOwnerProblem(false);
+		view.setOwnerNotAvailable(false);
+		if ( subCasualtyId != null )
+			getSubCasualty(subCasualtyId);
+	}
+
+	protected void changedOwnerType() {
+		if(editingPolicy){
+			receiptOwnerWrapper = new ReceiptOwnerWrapper();
+			view.clearOwner();
+			view.enableMarkReceipt(false);
+			view.enableOwnerProblem(false);
+			view.setOwnerNotAvailable(false);
+			editingPolicy = false;
+		}
+	}
+
 	protected void changedPolicyNumber() {
 		if(editingPolicy){
-			receiptPolicyWrapper = new ReceiptPolicyWrapper();
-			String tempPolicy = view.getPolicyNumber();
-			view.clearPolicy();
-			view.setPolicyNumber(tempPolicy, true);
+			receiptOwnerWrapper = new ReceiptOwnerWrapper();
+			String tempOwner = view.getPolicyNumber();
+			view.clearOwner();
+			view.setPolicyNumber(tempOwner, true);
 			editingPolicy = false;
 		}
 	}
 
 	protected void changedReceiptNumber() {
 		if(editing){
-			receiptPolicyWrapper = new ReceiptPolicyWrapper();
+			receiptOwnerWrapper = new ReceiptOwnerWrapper();
 			String tempReceipt = view.getReceiptNumber();
 			view.clear();
 			view.setReceiptNumber(tempReceipt, true);
@@ -297,12 +387,12 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 	protected void newReceipt() {
 
-		receiptPolicyWrapper.receipt = null;
+		receiptOwnerWrapper.receipt = null;
 		String tempReceiptNumber = view.getReceiptNumber();
 		view.clear();
 		view.setReceiptNumber(tempReceiptNumber, false);
 		view.enableNewReceipt(true);
-		view.enablePolicy(true);
+		view.enableOwner(true);
 		view.setFocusOnPolicy();
 		if(popup.isAttached()){
 			popup.hidePopup();
@@ -317,8 +407,8 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		view.hideMarkAsEnable(true);
 		view.setFocusOnReceipt();
 		policyPresenter.enableMarkReceipt(false);
-		view.enablePolicyProblem(false);
-		view.setPolicyNotAvailable(false);
+		view.enableOwnerProblem(false);
+		view.setOwnerNotAvailable(false);
 	}
 
 	protected void onHasImage() {
@@ -355,7 +445,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 					view.enableNewReceipt(true);
 				}
 				else{
-					view.enablePolicy(true);
+					view.enableOwner(true);
 				}
 			}
 
@@ -367,18 +457,22 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	}
 
 	protected void getReceipt(String id) {
-		receiptPolicyWrapper = new ReceiptPolicyWrapper();
+		receiptOwnerWrapper = new ReceiptOwnerWrapper();
 		receiptBroker.getReceipt(id, new ResponseHandler<Receipt>() {
-
 			@Override
 			public void onResponse(Receipt response) {
-				receiptPolicyWrapper.receipt = response;
+				receiptOwnerWrapper.receipt = response;
 
 				boolean hasImage = !PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ReceiptProcess.SET_ORIGINAL_IMAGE);
 				view.setReceiptReadOnly(hasImage);
 				view.showImageAlreadyDefinedWarning(hasImage);
 
-				getPolicy(response.ownerId);
+				if ( (null == response.ownerTypeId) || BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(response.ownerTypeId) )
+					getPolicy(response.ownerId);
+				else if ( BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(response.ownerTypeId) )
+					getSubPolicy(response.ownerId);
+				else if ( BigBangConstants.EntityIds.SUB_CASUALTY.equalsIgnoreCase(response.ownerTypeId) )
+					getSubCasualty(response.ownerId);
 			}
 
 			@Override
@@ -397,66 +491,27 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT)){
 
-					if(receiptPolicyWrapper.receipt == null){
-						receiptPolicyWrapper.receipt = new Receipt();
-						receiptPolicyWrapper.receipt.number = view.getReceiptNumber();
+					if(receiptOwnerWrapper.receipt == null){
+						receiptOwnerWrapper.receipt = new Receipt();
+						receiptOwnerWrapper.receipt.number = view.getReceiptNumber();
 					}
-					receiptPolicyWrapper.policy = response;
+					receiptOwnerWrapper.policy = response;
+					receiptOwnerWrapper.insuranceAgencyName = response.insuranceAgencyName;
+					view.getForm().setValue(receiptOwnerWrapper);
+					view.enableToolbar(true);
+					view.setReceiptReadOnly(false);
+					if(popup.isAttached())
+						popup.hidePopup();
 
-					agencyBroker.getInsuranceAgencies(new ResponseHandler<InsuranceAgency[]>() {
-
-						@Override
-						public void onResponse(InsuranceAgency[] response) {
-							agencyBroker.getInsuranceAgency(receiptPolicyWrapper.policy.insuranceAgencyId, new ResponseHandler<InsuranceAgency>() {
-
-								@Override
-								public void onResponse(InsuranceAgency response) {
-									receiptPolicyWrapper.insuranceAgencyName = response.name;
-									view.getForm().setValue(receiptPolicyWrapper);
-									view.enableToolbar(true);
-									view.setReceiptReadOnly(false);
-									if(popup.isAttached())
-										popup.hidePopup();
-
-									if(popupPolicy.isAttached())
-										popupPolicy.hidePopup();
-								}
-
-								@Override
-								public void onError(Collection<ResponseError> errors) {
-									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o nome da seguradora."), TYPE.ALERT_NOTIFICATION));
-									view.getForm().setValue(receiptPolicyWrapper);
-									view.enableToolbar(true);
-									view.setReceiptReadOnly(false);
-									if(popup.isAttached())
-										popup.hidePopup();
-
-									if(popupPolicy.isAttached())
-										popupPolicy.hidePopup();
-								}
-							});
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o nome da seguradora."), TYPE.ALERT_NOTIFICATION));
-							view.getForm().setValue(receiptPolicyWrapper);
-							view.enableToolbar(true);
-							view.setReceiptReadOnly(false);
-							if(popupPolicy.isAttached())
-								popupPolicy.hidePopup();
-
-							if(popupPolicy.isAttached())
-								popupPolicy.hidePopup();
-						}
-					});
+					if(popupPolicy.isAttached())
+						popupPolicy.hidePopup();
 
 				} else {
 					if(popupPolicy.isAttached()){
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar Recibos para a Apólice Especificada"), TYPE.ALERT_NOTIFICATION));
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar Recibos para a Apólice especificada"), TYPE.ALERT_NOTIFICATION));
 					}
 					else{
-						view.setPolicyNotAvailable(true);
+						view.setOwnerNotAvailable(true);
 					}
 					view.enableMarkReceipt(true);
 				}
@@ -465,26 +520,114 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice."), TYPE.ALERT_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Apólice."), TYPE.ALERT_NOTIFICATION));
 				view.enableMarkReceipt(true);
-				view.enablePolicyProblem(true);
+				view.enableOwnerProblem(true);
 			}
 		});
 
 	}
 
+	protected void getSubPolicy(String id) {
+
+		subPolicyBroker.getSubPolicy(id, new ResponseHandler<SubPolicy>() {
+
+			@Override
+			public void onResponse(SubPolicy response) {
+
+				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT)){
+
+					if(receiptOwnerWrapper.receipt == null){
+						receiptOwnerWrapper.receipt = new Receipt();
+						receiptOwnerWrapper.receipt.number = view.getReceiptNumber();
+					}
+					receiptOwnerWrapper.subPolicy = response;
+					receiptOwnerWrapper.insuranceAgencyName = response.inheritCompanyName;
+					view.getForm().setValue(receiptOwnerWrapper);
+					view.enableToolbar(true);
+					view.setReceiptReadOnly(false);
+					if(popup.isAttached())
+						popup.hidePopup();
+
+					if(popupPolicy.isAttached())
+						popupPolicy.hidePopup();
+
+				} else {
+					if(popupPolicy.isAttached()){
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar Recibos para a Apólice Adesão especificada"), TYPE.ALERT_NOTIFICATION));
+					}
+					else{
+						view.setOwnerNotAvailable(true);
+					}
+					view.enableMarkReceipt(true);
+				}
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Apólice Adesão."), TYPE.ALERT_NOTIFICATION));
+				view.enableMarkReceipt(true);
+				view.enableOwnerProblem(true);
+			}
+		});
+	}
+
+	protected void getSubCasualty(String id) {
+
+		subCasualtyBroker.getSubCasualty(id, new ResponseHandler<SubCasualty>() {
+
+			@Override
+			public void onResponse(SubCasualty response) {
+
+				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_RECEIPT)){
+
+					if(receiptOwnerWrapper.receipt == null){
+						receiptOwnerWrapper.receipt = new Receipt();
+						receiptOwnerWrapper.receipt.number = view.getReceiptNumber();
+					}
+					receiptOwnerWrapper.subCasualty = response;
+					receiptOwnerWrapper.insuranceAgencyName = response.inheritInsurerName;
+					view.getForm().setValue(receiptOwnerWrapper);
+					view.enableToolbar(true);
+					view.setReceiptReadOnly(false);
+					if(popup.isAttached())
+						popup.hidePopup();
+
+					if(popupPolicy.isAttached())
+						popupPolicy.hidePopup();
+
+				} else {
+					if(popupPolicy.isAttached()){
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar Recibos para o Sub-Sinistro especificada"), TYPE.ALERT_NOTIFICATION));
+					}
+					else{
+						view.setOwnerNotAvailable(true);
+					}
+					view.enableMarkReceipt(true);
+				}
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o Sub-Sinistro."), TYPE.ALERT_NOTIFICATION));
+				view.enableMarkReceipt(true);
+				view.enableOwnerProblem(true);
+			}
+		});
+	}
 
 	protected void onVerifyPolicy() {
 		editingPolicy = true;
 		final String policyNumber = view.getPolicyNumber();
-		view.clearPolicy();
+		view.clearOwner();
 		view.enableMarkReceipt(false);
-		view.enablePolicyProblem(false);
-		view.setPolicyNotAvailable(false);
+		view.enableOwnerProblem(false);
+		view.setOwnerNotAvailable(false);
 		view.setPolicyNumber(policyNumber, true);
 
 		policyBroker.getInsurancePoliciesWithNumber(policyNumber, new ResponseHandler<Collection<InsurancePolicyStub>>() {
-
 			@Override
 			public void onResponse(Collection<InsurancePolicyStub> response) {
 				if(response.size() > 1){
@@ -497,9 +640,8 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 				}
 				else{
 					view.enableMarkReceipt(true);
-					view.enablePolicyProblem(true);
+					view.enableOwnerProblem(true);
 				}
-
 			}
 
 			@Override
@@ -507,12 +649,11 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter as apólices."), TYPE.ALERT_NOTIFICATION));				
 			}
 		});
-
 	}
 
 	protected void onSave() {
 		if(view.getForm().validate()) {
-			ReceiptPolicyWrapper toSend = view.getForm().getInfo();
+			ReceiptOwnerWrapper toSend = view.getForm().getInfo();
 			final DocuShareHandle handle = new DocuShareHandle();
 
 			if(hasReceiptFile){
@@ -530,7 +671,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 						if(hasReceiptFile){
 							view.removeDocuShareItem(handle);
 							view.panelNavigateBack();
-							receiptPolicyWrapper = new ReceiptPolicyWrapper();
+							receiptOwnerWrapper = new ReceiptOwnerWrapper();
 						}
 						view.clear();
 					}
@@ -572,7 +713,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		view.enableReceiptNumber(false);
 		view.markReceipt(currentItem);
 		view.enableMarkReceipt(false);
-		view.enablePolicyProblem(false);
+		view.enableOwnerProblem(false);
 		view.clear();
 		if(popupPolicy.isAttached()){
 			popupPolicy.hidePopup();
@@ -588,7 +729,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		receiptPolicyWrapper = new ReceiptPolicyWrapper();
+		receiptOwnerWrapper = new ReceiptOwnerWrapper();
 		view.clear();
 	}
 }

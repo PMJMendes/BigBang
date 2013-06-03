@@ -7,7 +7,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
 
-public class InsurancePolicyList extends FilterableList<InsurancePolicyStub>{
+public class InsurancePolicyList extends FilterableList<InsurancePolicyStub> {
 	
 	public class Entry extends InsurancePolicySearchPanel.Entry{
 		

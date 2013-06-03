@@ -121,10 +121,12 @@ public class SubCasualtyServiceImpl
 		lobjResult.isOpen = lobjProcess.IsRunning();
 		lobjResult.hasJudicial = (Boolean)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.HASJUDICIAL);
 		lobjResult.text = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.DESCRIPTION);
+		lobjResult.managerId = lobjProcess.GetManagerID().toString();
 		lobjResult.internalNotes = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.NOTES);
 		lobjResult.inheritInsurerId = lobjComp.getKey().toString();
 		lobjResult.inheritInsurerName = lobjComp.getLabel();
 		lobjResult.inheritMasterClientId = lobjClient.getKey().toString();
+		lobjResult.inheritMasterClientNumber = ((Integer)lobjClient.getAt(Client.I.NUMBER)).toString();
 		lobjResult.inheritMasterClientName = lobjClient.getLabel();
 		lobjResult.inheritMasterMediatorId = lobjMed.getKey().toString();
 		lobjResult.inheritMasterMediatorName = lobjMed.getLabel();

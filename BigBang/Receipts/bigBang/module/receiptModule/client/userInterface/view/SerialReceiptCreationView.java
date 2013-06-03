@@ -13,7 +13,7 @@ import bigBang.module.receiptModule.client.userInterface.SerialReceiptCreationTo
 import bigBang.module.receiptModule.client.userInterface.form.SerialReceiptCreationForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter.Action;
-import bigBang.module.receiptModule.shared.ReceiptPolicyWrapper;
+import bigBang.module.receiptModule.shared.ReceiptOwnerWrapper;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -124,9 +124,22 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 			@Override
 			protected void onChangedPolicyNumber() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.CHANGED_POLICY_NUMBER));
-				
 			}
-			
+
+			@Override
+			protected void onOwnerTypeChanged() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.CHANGED_OWNER_TYPE));
+			}
+
+			@Override
+			protected void onSubPolicyChanged() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.CHANGED_SUB_POLICY));
+			}
+
+			@Override
+			protected void onSubCasualtyChanged() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.CHANGED_SUB_CASUALTY));
+			}
 		};
 		
 		right.add(rightHeader);
@@ -153,7 +166,7 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public HasEditableValue<ReceiptPolicyWrapper> getForm() {
+	public HasEditableValue<ReceiptOwnerWrapper> getForm() {
 		return form;
 	}
 
@@ -177,7 +190,7 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 		toolbar.setEnabled(false);
 		form.setPolicyReadOnly(true);
 		form.newReceiptEnabled(false);
-		form.enablePolicy(false);
+		form.enableOwner(false);
 	}
 
 	@Override
@@ -221,8 +234,8 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public void enablePolicy(boolean b) {
-		form.enablePolicy(b);
+	public void enableOwner(boolean b) {
+		form.enableOwner(b);
 	}
 
 	@Override
@@ -266,8 +279,18 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public void clearPolicy() {
-		form.clearPolicy();
+	public String getSubPolicyId() {
+		return form.getSubPolicyId();
+	}
+
+	@Override
+	public String getSubCasualtyId() {
+		return form.getSubCasualtyId();
+	}
+
+	@Override
+	public void clearOwner() {
+		form.clearOwner();
 	}
 
 	@Override
@@ -276,7 +299,7 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public void enablePolicyProblem(boolean b){
+	public void enableOwnerProblem(boolean b){
 		form.isPolicyNumberProblem(b);
 		form.showLabel(b);
 	}
@@ -292,7 +315,7 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public void setPolicyNotAvailable(boolean b) {
+	public void setOwnerNotAvailable(boolean b) {
 		form.isPolicyNumberProblem(b);
 		form.showNotAvailableLabel(b);
 	}

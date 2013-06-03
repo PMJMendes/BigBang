@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.dataAccess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import bigBang.definitions.client.BigBangConstants;
@@ -21,6 +22,7 @@ import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
 import bigBang.definitions.shared.SubPolicy;
@@ -654,4 +656,27 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 		});				
 	}
 
+	@Override
+	public void getSubPoliciesWithNumber(String label,
+			final ResponseHandler<Collection<SubPolicyStub>> handler) {
+		service.getExactResults(label, new BigBangAsyncCallback<SearchResult[]>() {
+			@Override
+			public void onResponseSuccess(SearchResult[] result) {
+				ArrayList<SubPolicyStub> stubs = new ArrayList<SubPolicyStub>();
+
+				for(int i = 0; i<result.length; i++){
+					stubs.add((SubPolicyStub)result[i]);
+				}
+				handler.onResponse(stubs);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not find exact results")
+				});
+				super.onResponseFailure(caught);
+			}
+		});	
+	}
 }

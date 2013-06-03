@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class PolicyChoiceFromListView extends View implements PolicyChoiceFromListViewPresenter.Display{
+public class PolicyChoiceFromListView extends View implements PolicyChoiceFromListViewPresenter.Display {
 
 	private InsurancePolicyForm form;
 	private InsurancePolicyList list;
