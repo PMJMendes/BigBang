@@ -419,7 +419,7 @@ public class CasualtyModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_CREATE RECEIPT", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_CREATE_RECEIPT", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
