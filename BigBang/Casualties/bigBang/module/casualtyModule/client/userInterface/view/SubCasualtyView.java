@@ -268,6 +268,11 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	}
 
 	@Override
+	public void allowCreateReceipt(boolean allow) {
+		toolbar.allowCreateReceipt(allow);
+	}
+
+	@Override
 	public void allowCreateAssessment(boolean allow) {
 		toolbar.allowCreateAssessment(allow);
 	}

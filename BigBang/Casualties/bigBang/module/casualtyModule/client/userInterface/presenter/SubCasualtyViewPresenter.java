@@ -79,6 +79,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		HasValueSelectables<ReceiptStub> getReceiptsList();
 		void setReferenceParameters(HasParameters parameterHolder);
 		void openNewDetail();
+		void allowCreateReceipt(boolean allow);
 		void allowCreateAssessment(boolean allow);
 		void allowCreateTotalLosses(boolean hasPermission);
 	}
@@ -339,6 +340,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 						view.allowClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CLOSE_SUB_CASUALTY));
 						view.allowRejectClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY));
 						view.allowMarkNotificationSent(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.MARK_NOTIFICATION_SENT));
+						view.allowCreateReceipt(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_RECEIPT));
 						view.allowCreateAssessment(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_ASSESSMENT));
 						view.allowCreateMedicalFile(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_MEDICAL_FILE));
 						view.allowCreateTotalLosses(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_TOTAL_LOSSES));

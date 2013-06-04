@@ -187,6 +187,10 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		markNotificationSent.setEnabled(hasPermission);
 	}
 	
+	public void allowCreateReceipt(boolean hasPermission){
+		createReceipt.setEnabled(hasPermission);
+	}
+
 	public void allowCreateAssessment(boolean hasPermission){
 		createAssessment.setEnabled(hasPermission);
 	}
