@@ -355,28 +355,6 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 	//Other operations
 
 	@Override
-	public void createReceipt(final String subPolicyId, Receipt receipt,
-			final ResponseHandler<Receipt> handler) {
-		this.service.createReceipt(subPolicyId, receipt, new BigBangAsyncCallback<Receipt>() {
-
-			@Override
-			public void onResponseSuccess(Receipt result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT, subPolicyId));
-				handler.onResponse(result);
-				DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT).notifyItemCreation(result.id);
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not create receipt")	
-				});
-				super.onResponseFailure(caught);
-			}
-		});
-	}
-
-	@Override
 	public SearchDataBroker<SubPolicyStub> getSearchBroker() {
 		return this.searchBroker;
 	}
@@ -537,7 +515,6 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 			}
 		});
 	}
-
 
 	@Override
 	public void createReceipt(Receipt receipt, final ResponseHandler<Receipt> handler) {

@@ -47,7 +47,8 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		MARK_FOR_CLOSING,
 		CLOSE,
 		REJECT_CLOSE,
-		DELETE, SEND_MESSAGE, RECEIVE_MESSAGE, MARK_NOTIFICATION_SENT, BACK, CREATE_ASSESSMENT, CREATE_MEDICAL_FILE, CREATE_TOTAL_LOSSES
+		DELETE, SEND_MESSAGE, RECEIVE_MESSAGE, MARK_NOTIFICATION_SENT, BACK,
+		CREATE_RECEIPT, CREATE_ASSESSMENT, CREATE_MEDICAL_FILE, CREATE_TOTAL_LOSSES
 	}
 
 	public static interface Display {
@@ -169,6 +170,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 				case BACK:
 					onBack(view.getParentForm().getValue().id);
 					break;
+				case CREATE_RECEIPT:
+					onCreateReceipt();
+					break;
 				case CREATE_ASSESSMENT:
 					onCreateAssessment();
 					break;
@@ -217,6 +221,12 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getConversationList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getReceiptsList().addSelectionChangedEventHandler(selectionChangedHandler);
+	}
+
+	protected void onCreateReceipt() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "subcasualtycreatereceipt");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onCreateTotalLosses() {

@@ -16,10 +16,10 @@ public interface SubCasualtyServiceAsync
 	void getSubCasualty(String subCasualtyId, AsyncCallback<SubCasualty> callback);
 	void editSubCasualty(SubCasualty subCasualty, AsyncCallback<SubCasualty> callback);
 	void sendNotification(String subCasualtyId, AsyncCallback<SubCasualty> callback);
+	void createReceipt(String subCasualtyId, Receipt receipt, AsyncCallback<Receipt> callback);
 	void createAssessment(Assessment assessment, AsyncCallback<Assessment> callback);
 	void createMedicalFile(MedicalFile file, AsyncCallback<MedicalFile> callback);
 	void createTotalLoss(TotalLossFile file, AsyncCallback<TotalLossFile> callback);
-	void createReceipt(String subCasualtyId, Receipt receipt, AsyncCallback<Receipt> callback);
 	void sendMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void receiveMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void markForClosing(String subCasualtyId, String revisorId, AsyncCallback<SubCasualty> callback);

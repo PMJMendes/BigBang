@@ -34,6 +34,7 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileT
 import bigBang.module.casualtyModule.client.userInterface.presenter.MedicalFileViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.ReopenCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyConversationViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyCreateReceiptViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyDeleteViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyMarkForClosingViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyReceiveMessageViewPresenter;
@@ -68,6 +69,7 @@ import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileTasksV
 import bigBang.module.casualtyModule.client.userInterface.view.MedicalFileView;
 import bigBang.module.casualtyModule.client.userInterface.view.ReopenCasualtyView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyConversationView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyCreateReceiptView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyDeleteView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyMarkForClosingView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyReceiveMessageView;
@@ -414,6 +416,15 @@ public class CasualtyModule implements Module {
 			public ViewPresenter getInstance() {
 				TotalLossFileConversationView view = (TotalLossFileConversationView) GWT.create(TotalLossFileConversationView.class);
 				ViewPresenter presenter = new TotalLossFileConversationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_CREATE RECEIPT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyCreateReceiptView view = (SubCasualtyCreateReceiptView) GWT.create(SubCasualtyCreateReceiptView.class);
+				SubCasualtyCreateReceiptViewPresenter presenter = new SubCasualtyCreateReceiptViewPresenter(view);
 				return presenter;
 			}
 		});

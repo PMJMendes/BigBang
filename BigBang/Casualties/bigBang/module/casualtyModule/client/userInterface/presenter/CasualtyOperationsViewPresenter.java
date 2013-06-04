@@ -97,6 +97,8 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 					present("TOTAL_LOSS_FILE_RECEIVE_MESSAGE", parameters);
 				}else if(display.equalsIgnoreCase("totallossfileconversation")){
 					present("TOTAL_LOSS_FILE_CONVERSATION", parameters);
+				}else if(display.equalsIgnoreCase("subcasualtycreatereceipt")){
+					present("SUB_CASUALTY_CREATE_RECEIPT", parameters);
 				}else{
 						goToDefault();
 				}

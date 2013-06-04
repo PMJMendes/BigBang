@@ -14,6 +14,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.MedicalFile;
+import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
@@ -340,6 +341,26 @@ implements SubCasualtyDataBroker{
 				super.onResponseFailure(caught);
 			}
 
+		});
+	}
+
+	@Override
+	public void createReceipt(Receipt receipt, final ResponseHandler<Receipt> handler) {
+		service.createReceipt(receipt.ownerId, receipt, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_RECEIPT, result.id));
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not create the new Receipt")	
+				});
+				super.onResponseFailure(caught);
+			}
 		});
 	}
 

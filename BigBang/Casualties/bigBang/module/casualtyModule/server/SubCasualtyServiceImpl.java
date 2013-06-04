@@ -307,6 +307,51 @@ public class SubCasualtyServiceImpl
 		return sGetSubCasualty(lobjSubCasualty.getKey());
 	}
 
+	public Receipt createReceipt(String subCasualtyId, Receipt receipt)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CreateReceipt lopCR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+
+			lopCR = new CreateReceipt(lobjSubCasualty.GetProcessID());
+			lopCR.mobjData = ReceiptServiceImpl.sClientToServer(receipt);
+
+			lopCR.mobjImage = null;
+
+			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
+			{
+				lopCR.mobjContactOps = new ContactOps();
+				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(receipt.contacts);
+			}
+			else
+				lopCR.mobjContactOps = null;
+			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
+			{
+				lopCR.mobjDocOps = new DocOps();
+				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
+			}
+			else
+				lopCR.mobjDocOps = null;
+
+			lopCR.Execute();
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid);
+	}
+
 	public Assessment createAssessment(Assessment assessment)
 		throws SessionExpiredException, BigBangException
 	{
@@ -407,51 +452,6 @@ public class SubCasualtyServiceImpl
 		}
 
 		return TotalLossServiceImpl.sGetTotalLoss(lopCTL.mobjData.mid);
-	}
-
-	public Receipt createReceipt(String subCasualtyId, Receipt receipt)
-		throws SessionExpiredException, BigBangException
-	{
-		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
-		CreateReceipt lopCR;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(subCasualtyId));
-
-			lopCR = new CreateReceipt(lobjSubCasualty.GetProcessID());
-			lopCR.mobjData = ReceiptServiceImpl.sClientToServer(receipt);
-
-			lopCR.mobjImage = null;
-
-			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
-			{
-				lopCR.mobjContactOps = new ContactOps();
-				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(receipt.contacts);
-			}
-			else
-				lopCR.mobjContactOps = null;
-			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
-			{
-				lopCR.mobjDocOps = new DocOps();
-				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
-			}
-			else
-				lopCR.mobjDocOps = null;
-
-			lopCR.Execute();
-
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid);
 	}
 
 	public Conversation sendMessage(Conversation conversation)

@@ -10,6 +10,7 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 
 	protected MenuItem delete, markForClosing, close, rejectClose;
 	protected MenuItem sendMessage;
+	protected MenuItem createReceipt;
 	protected MenuItem createAssessment;
 	protected MenuItem createMedicalFile;
 	protected MenuItem createTotalLosses;
@@ -90,6 +91,16 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 		
 		addItem(SUB_MENU.EXECUTE, markNotificationSent);
 		
+		createReceipt = new MenuItem("Recibo", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateReceipt();
+			}
+		});
+		
+		addItem(SUB_MENU.CREATE, createReceipt);
+		
 		createAssessment = new MenuItem("Peritagem ou Averiguação", new Command() {
 			
 			@Override
@@ -125,6 +136,8 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 	protected abstract void onCreateTotalLosses();
 	
 	protected abstract void onCreateMedicalFile();
+
+	protected abstract void onCreateReceipt();
 	
 	protected abstract void onCreateAssessment();
 

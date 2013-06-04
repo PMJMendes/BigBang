@@ -131,6 +131,11 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 			}
 
 			@Override
+			protected void onCreateReceipt() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.CREATE_RECEIPT));
+			}
+
+			@Override
 			protected void onCreateAssessment() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.CREATE_ASSESSMENT));
 			}
