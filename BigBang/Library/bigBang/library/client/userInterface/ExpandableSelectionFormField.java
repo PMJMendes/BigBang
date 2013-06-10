@@ -2,6 +2,16 @@ package bigBang.library.client.userInterface;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.client.FormField;
+import bigBang.library.client.HasParameters;
+import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
+import bigBang.library.client.dataAccess.TypifiedListBroker;
+import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.view.PopupPanel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,16 +22,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.TipifiedListItem;
-import bigBang.library.client.FormField;
-import bigBang.library.client.HasParameters;
-import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
-import bigBang.library.client.dataAccess.TypifiedListBroker;
-import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.view.PopupPanel;
 
 public class ExpandableSelectionFormField extends FormField<String> {
 
@@ -179,6 +179,10 @@ public class ExpandableSelectionFormField extends FormField<String> {
 	
 	public void setParameters(HasParameters parameters){
 		this.selectionPanel.setParameters(parameters);
+	}
+
+	public Label getNativeField(){
+		return (Label) valueDisplayName;
 	}
 
 }

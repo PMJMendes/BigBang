@@ -13,6 +13,7 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -46,7 +47,8 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		MARK_FOR_CLOSING,
 		CLOSE,
 		REJECT_CLOSE,
-		DELETE, SEND_MESSAGE, RECEIVE_MESSAGE, MARK_NOTIFICATION_SENT, BACK, CREATE_ASSESSMENT, CREATE_MEDICAL_FILE, CREATE_TOTAL_LOSSES
+		DELETE, SEND_MESSAGE, RECEIVE_MESSAGE, MARK_NOTIFICATION_SENT, BACK,
+		CREATE_RECEIPT, CREATE_ASSESSMENT, CREATE_MEDICAL_FILE, CREATE_TOTAL_LOSSES
 	}
 
 	public static interface Display {
@@ -74,8 +76,10 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
 		HasValueSelectables<ConversationStub> getConversationList();
+		HasValueSelectables<ReceiptStub> getReceiptsList();
 		void setReferenceParameters(HasParameters parameterHolder);
 		void openNewDetail();
+		void allowCreateReceipt(boolean allow);
 		void allowCreateAssessment(boolean allow);
 		void allowCreateTotalLosses(boolean hasPermission);
 	}
@@ -167,6 +171,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 				case BACK:
 					onBack(view.getParentForm().getValue().id);
 					break;
+				case CREATE_RECEIPT:
+					onCreateReceipt();
+					break;
 				case CREATE_ASSESSMENT:
 					onCreateAssessment();
 					break;
@@ -201,6 +208,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 					}else if(event.getSource() == view.getConversationList()){
 						ConversationStub stub = (ConversationStub) selected.getValue();
 						showConversation(stub.id);
+					}else if(event.getSource() == view.getReceiptsList()){
+						ReceiptStub stub = (ReceiptStub) selected.getValue();
+						showReceipt(stub.id);
 					}
 				}
 			}
@@ -211,6 +221,13 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getConversationList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getReceiptsList().addSelectionChangedEventHandler(selectionChangedHandler);
+	}
+
+	protected void onCreateReceipt() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "subcasualtycreatereceipt");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onCreateTotalLosses() {
@@ -323,6 +340,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 						view.allowClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CLOSE_SUB_CASUALTY));
 						view.allowRejectClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY));
 						view.allowMarkNotificationSent(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.MARK_NOTIFICATION_SENT));
+						view.allowCreateReceipt(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_RECEIPT));
 						view.allowCreateAssessment(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_ASSESSMENT));
 						view.allowCreateMedicalFile(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_MEDICAL_FILE));
 						view.allowCreateTotalLosses(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_TOTAL_LOSSES));
@@ -497,6 +515,15 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		item.pushIntoStackParameter("display", "subcasualtyconversation");
 		item.setParameter("conversationid", dataId);
 		NavigationHistoryManager.getInstance().go(item);		
+	}
+
+	private void showReceipt(String id) {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("section", "receipt");
+		navItem.setStackParameter("display");
+		navItem.pushIntoStackParameter("display", "search"); 
+		navItem.setParameter("receiptid", id);
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 	protected void showHistory(String historyItemId){

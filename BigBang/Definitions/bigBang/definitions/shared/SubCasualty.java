@@ -26,9 +26,12 @@ public class SubCasualty
 
 	}
 
+	public String managerId;
+
 	public String inheritInsurerId;
 	public String inheritInsurerName;
 	public String inheritMasterClientId;
+	public String inheritMasterClientNumber;
 	public String inheritMasterClientName;
 	public String inheritMasterMediatorId;
 	public String inheritMasterMediatorName;

@@ -21,6 +21,7 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -127,6 +128,11 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 			@Override
 			protected void onReceiveMessage() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.RECEIVE_MESSAGE));
+			}
+
+			@Override
+			protected void onCreateReceipt() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.CREATE_RECEIPT));
 			}
 
 			@Override
@@ -262,6 +268,11 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	}
 
 	@Override
+	public void allowCreateReceipt(boolean allow) {
+		toolbar.allowCreateReceipt(allow);
+	}
+
+	@Override
 	public void allowCreateAssessment(boolean allow) {
 		toolbar.allowCreateAssessment(allow);
 	}
@@ -279,5 +290,10 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	@Override
 	public HasValueSelectables<ConversationStub> getConversationList() {
 		return childrenPanel.conversationList;
+	}
+
+	@Override
+	public HasValueSelectables<ReceiptStub> getReceiptsList() {
+		return childrenPanel.receiptsList;
 	}
 }

@@ -11,6 +11,7 @@ public class ReceiptSearchParameter
 	public String mediatorId;
 	public String managerId;
 	public String ownerId;
+	public String ownerTypeId;
 	public String[] typeIds;
 	
 	//Dates

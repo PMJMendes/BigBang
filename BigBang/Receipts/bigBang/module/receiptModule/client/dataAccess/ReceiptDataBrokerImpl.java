@@ -18,6 +18,7 @@ import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
+import bigBang.definitions.shared.OwnerRef;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
@@ -223,10 +224,11 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	}
 
 	@Override
-	public void getReceiptsForOwner(String ownerId,
+	public void getReceiptsForOwner(String ownerId, String ownerTypeId,
 			final ResponseHandler<Collection<ReceiptStub>> handler) {
 		ReceiptSearchParameter parameter = new ReceiptSearchParameter();
 		parameter.ownerId = ownerId;
+		parameter.ownerTypeId = ownerTypeId;
 
 		ReceiptSearchParameter[] parameters = new ReceiptSearchParameter[]{
 				parameter
@@ -255,8 +257,8 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	}
 
 	@Override
-	public void transferToInsurancePolicy(String receiptId, String newPolicyId, final ResponseHandler<Receipt> handler){
-		service.transferToPolicy(receiptId, newPolicyId, new BigBangAsyncCallback<Receipt>() {
+	public void transferToOwner(String receiptId, OwnerRef newOwner, final ResponseHandler<Receipt> handler){
+		service.transferToOwner(receiptId, newOwner, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
 			public void onResponseSuccess(Receipt result) {

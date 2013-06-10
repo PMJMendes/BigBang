@@ -9,6 +9,7 @@ import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
+import bigBang.definitions.shared.OwnerRef;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
@@ -26,11 +27,11 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 
 	public void removeReceipt(String id, ResponseHandler<String> handler);
 
-	public void getReceiptsForOwner(String ownerId, ResponseHandler<Collection<ReceiptStub>> handler);
+	public void getReceiptsForOwner(String ownerId, String ownerTypeId, ResponseHandler<Collection<ReceiptStub>> handler);
 
 	public SearchDataBroker<ReceiptStub> getSearchBroker();
 
-	void transferToInsurancePolicy(String receiptId, String newPolicyId,
+	void transferToOwner(String receiptId, OwnerRef newOwner,
 			ResponseHandler<Receipt> handler);
 
 	void associateWithDebitNote(String receiptId, String debitNoteId,

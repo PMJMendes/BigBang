@@ -104,8 +104,9 @@ public class SubPolicyCreateReceiptViewPresenter implements ViewPresenter {
 			public void onResponse(SubPolicy response) {
 				view.getParentForm().setValue(response);
 				Receipt receipt = new Receipt();
-				receipt.policyId = response.id;
-				receipt.policyNumber = response.number;
+				receipt.ownerId = response.id;
+				receipt.ownerTypeId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY;
+				receipt.ownerNumber = response.number;
 				receipt.categoryName = response.inheritCategoryName;
 				receipt.managerId = response.managerId;
 				receipt.mediatorId = response.inheritMediatorId;

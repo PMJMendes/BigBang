@@ -169,7 +169,7 @@ public class Payment
 
 		try
 		{
-			lidProfile = lobjReceipt.getAbsolutePolicy().getProfile();
+			lidProfile = lobjReceipt.getProfile();
 			lidType = (UUID)lobjReceipt.getAt(Receipt.I.TYPE);
 		}
 		catch (Throwable e)

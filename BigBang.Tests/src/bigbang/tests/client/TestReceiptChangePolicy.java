@@ -1,5 +1,6 @@
 package bigbang.tests.client;
 
+import bigBang.definitions.shared.OwnerRef;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
@@ -54,6 +55,8 @@ public class TestReceiptChangePolicy
 
 	private static void DoStep2(SearchResult stub)
 	{
+		OwnerRef owner;
+
 		AsyncCallback<Receipt> callback = new AsyncCallback<Receipt>()
 		{
 			public void onFailure(Throwable caught)
@@ -67,7 +70,11 @@ public class TestReceiptChangePolicy
 			}
 		};
 
-		Services.receiptService.transferToPolicy(stub.id, "988F0431-476B-4CE0-93A9-9FEC00D6006B", callback);
+		owner = new OwnerRef();
+		owner.ownerId = "988F0431-476B-4CE0-93A9-9FEC00D6006B";
+		owner.ownerTypeId = "D0C5AE6B-D340-4171-B7A3-9F81011F5D42";
+
+		Services.receiptService.transferToOwner(stub.id, owner, callback);
 	}
 
 	private static void DoStep3(String workspaceId)

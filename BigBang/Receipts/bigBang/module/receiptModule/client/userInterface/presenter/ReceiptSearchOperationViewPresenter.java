@@ -43,7 +43,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		EDIT,
 		SAVE,
 		CANCEL,
-		DELETE, TRANSFER_TO_POLICY, ASSOCIATE_WITH_DEBIT_NOTE,
+		DELETE, TRANSFER_TO_OWNER, ASSOCIATE_WITH_DEBIT_NOTE,
 		VALIDATE, SET_FOR_RETURN, SEND_PAYMENT_NOTICE,
 		MARK_FOR_PAYMENT,
 		SEND_RECEIPT,
@@ -188,8 +188,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case SAVE:
 					onSave();
 					break;
-				case TRANSFER_TO_POLICY:
-					transferToPolicy();
+				case TRANSFER_TO_OWNER:
+					transferToOwner();
 					break;
 				case ASSOCIATE_WITH_DEBIT_NOTE:
 					associateWithDebitNote();
@@ -532,7 +532,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	protected void transferToPolicy() {
+	protected void transferToOwner() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "receipttransfertopolicy");
 		NavigationHistoryManager.getInstance().go(item);

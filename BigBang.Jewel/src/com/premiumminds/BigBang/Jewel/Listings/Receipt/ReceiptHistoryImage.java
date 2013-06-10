@@ -95,9 +95,9 @@ public class ReceiptHistoryImage
 			lstrSQL = new StringBuilder();
 			lstrSQL.append("SELECT * FROM (")
 					.append(lrefReceipts.SQLForSelectAll()).append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(")
-					.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
-							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_ReceiveImage, false}, null))
-					.append(") [AuxLogs] WHERE 1=1");
+					.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {false}, null))
+					.append(") [AuxLogs] WHERE [Operation] IN ('")
+					.append(Constants.OPID_Receipt_ReceiveImage).append("', '").append(Constants.OPID_Receipt_TriggerImageOnCreate).append("')");
 		}
 		catch (Throwable e)
 		{

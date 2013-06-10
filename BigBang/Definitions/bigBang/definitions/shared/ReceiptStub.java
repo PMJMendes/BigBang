@@ -22,9 +22,9 @@ public class ReceiptStub
 	public String clientName;
 	public String insurerId;
 	public String insurerName;
-	public String policyId;
+	public String ownerId;
 	public String ownerTypeId;
-	public String policyNumber;
+	public String ownerNumber;
 	public String categoryId;
 	public String categoryName;
 	public String lineId;

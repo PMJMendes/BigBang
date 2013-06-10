@@ -32,12 +32,12 @@ public class TransferToPolicy
 
 	public String ShortDesc()
 	{
-		return "Transferência de Apólice";
+		return "Transferência de Pasta";
 	}
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "O recibo foi transferido da apólice " + mstrOld + " para a apólice " + mstrNew;
+		return "O recibo foi transferido de " + mstrOld + " para " + mstrNew;
 	}
 
 	public UUID GetExternalProcess()
@@ -54,11 +54,11 @@ public class TransferToPolicy
 		midReceipt = GetProcess().GetDataKey();
 
 		midOldProcess = GetProcess().GetParent().getKey();
-		mstrOld = GetProcess().GetParent().GetData().getLabel();
+		mstrOld = GetProcess().GetParent().GetScript().getLabel() + ": " + GetProcess().GetParent().GetData().getLabel();
 
 		GetProcess().SetParentProcId(midNewProcess, pdb);
 
-		mstrNew = GetProcess().GetParent().GetData().getLabel();
+		mstrNew = GetProcess().GetParent().GetScript().getLabel() + ": " + GetProcess().GetParent().GetData().getLabel();
 
 		lidScript = GetProcess().GetParent().GetScriptID();
 		lobjReceipt = (Receipt)GetProcess().GetData();
@@ -92,12 +92,12 @@ public class TransferToPolicy
 
 	public String UndoDesc(String pstrLineBreak)
 	{
-		return "O recibo será novamente reposto na apólice " + mstrOld;
+		return "O recibo será novamente reposto em " + mstrOld;
 	}
 
 	public String UndoLongDesc(String pstrLineBreak)
 	{
-		return "O recibo foi reposto na apólice " + mstrOld;
+		return "O recibo foi reposto em " + mstrOld;
 	}
 
 	protected void Undo(SQLServer pdb)

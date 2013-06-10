@@ -5,6 +5,7 @@ import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.InsurerAccountingExtra;
+import bigBang.definitions.shared.OwnerRef;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Rectangle;
 import bigBang.definitions.shared.SignatureRequest;
@@ -38,7 +39,7 @@ public interface ReceiptService
 
 	public Receipt editReceipt(Receipt receipt) throws SessionExpiredException, BigBangException;
 	public Receipt receiveImage(Receipt receipt, DocuShareHandle source) throws SessionExpiredException, BigBangException;
-	public Receipt transferToPolicy(String receiptId, String newPolicyId) throws SessionExpiredException, BigBangException;
+	public Receipt transferToOwner(String receiptId, OwnerRef newOwner) throws SessionExpiredException, BigBangException;
 
 	public Receipt editAndValidateReceipt(Receipt receipt, Rectangle rect) throws SessionExpiredException, BigBangException;
 	public Receipt validateReceipt(String receiptId) throws SessionExpiredException, BigBangException;

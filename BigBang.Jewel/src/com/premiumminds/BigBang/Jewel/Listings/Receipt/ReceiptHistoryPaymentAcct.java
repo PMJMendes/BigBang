@@ -30,7 +30,6 @@ import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
-import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
@@ -238,24 +237,12 @@ public class ReceiptHistoryPaymentAcct
 		throws BigBangJewelException
 	{
 		Policy lobjPolicy;
-		SubPolicy lobjSubPolicy;
 		Client lobjClient;
 		ILog lobjLog;
 		TD[] larrCells;
 
-		lobjPolicy = pobjReceipt.getDirectPolicy();
-
-		if ( lobjPolicy == null )
-		{
-			lobjPolicy = pobjReceipt.getAbsolutePolicy();
-			lobjSubPolicy = pobjReceipt.getSubPolicy();
-			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
-		}
-		else
-		{
-			lobjClient = lobjPolicy.GetClient();
-			lobjSubPolicy = null;
-		}
+		lobjPolicy = pobjReceipt.getAbsolutePolicy();
+		lobjClient = pobjReceipt.getClient();
 
 		lobjLog = pobjReceipt.getPaymentLog();
 
@@ -270,7 +257,7 @@ public class ReceiptHistoryPaymentAcct
 		larrCells[2] = ReportBuilder.buildCell(lobjClient.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[2], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell(lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[3] = ReportBuilder.buildCell(lobjPolicy.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
 		larrCells[4] = ReportBuilder.buildCell(lobjPolicy.GetSubLine().getDescription(), TypeDefGUIDs.T_String);

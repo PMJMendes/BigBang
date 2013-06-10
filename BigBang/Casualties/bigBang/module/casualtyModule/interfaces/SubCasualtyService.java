@@ -3,6 +3,7 @@ package bigBang.module.casualtyModule.interfaces;
 import bigBang.definitions.shared.Assessment;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.MedicalFile;
+import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.TotalLossFile;
 import bigBang.library.interfaces.SearchService;
@@ -33,6 +34,7 @@ public interface SubCasualtyService extends SearchService {
 
 	public SubCasualty sendNotification(String subCasualtyId) throws SessionExpiredException, BigBangException;
 
+	public Receipt createReceipt(String subCasualtyId, Receipt receipt) throws SessionExpiredException, BigBangException;
 	public Assessment createAssessment(Assessment assessment) throws SessionExpiredException, BigBangException;
 	public MedicalFile createMedicalFile(MedicalFile file) throws SessionExpiredException, BigBangException;
 	public TotalLossFile createTotalLoss(TotalLossFile file) throws SessionExpiredException, BigBangException;

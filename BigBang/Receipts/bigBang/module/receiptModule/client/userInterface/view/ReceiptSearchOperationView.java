@@ -190,8 +190,8 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 			}
 
 			@Override
-			public void onTransferToPolicy() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.TRANSFER_TO_POLICY));
+			public void onTransferToOwner() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.TRANSFER_TO_OWNER));
 
 			}
 

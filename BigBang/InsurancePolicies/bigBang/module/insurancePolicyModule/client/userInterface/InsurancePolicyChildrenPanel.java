@@ -71,7 +71,7 @@ public class InsurancePolicyChildrenPanel extends View {
 		this.documentsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		this.documentsList.allowCreation(allow);
 		this.subPoliciesList.setOwner(policyId);
-		this.receiptsList.setOwner(policyId);
+		this.receiptsList.setOwner(policyId, BigBangConstants.EntityIds.INSURANCE_POLICY);
 		this.expensesList.setOwner(policyId);
 		this.conversationList.setOwner(policyId);
 		this.subProcessesList.setOwner(policyId);

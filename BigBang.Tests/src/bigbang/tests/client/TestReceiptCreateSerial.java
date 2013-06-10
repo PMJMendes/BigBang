@@ -32,7 +32,7 @@ public class TestReceiptCreateSerial
 
 		receipt = new Receipt();
 		receipt.number = "QQ003";
-		receipt.policyId = "01B7B31C-0EFF-4A93-84EE-A02000F26B1F";
+		receipt.ownerId = "01B7B31C-0EFF-4A93-84EE-A02000F26B1F";
 		receipt.typeId = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";
 		receipt.totalPremium = 153.42;
 		receipt.comissions = 13.2;

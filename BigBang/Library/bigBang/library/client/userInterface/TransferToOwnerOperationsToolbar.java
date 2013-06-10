@@ -4,12 +4,12 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
 
-public abstract class TransferToPolicyOperationsToolbar extends
+public abstract class TransferToOwnerOperationsToolbar extends
 		BigBangOperationsToolBar {
 
 	protected MenuItem confirmTransfer, cancelTransfer;
 	
-	public TransferToPolicyOperationsToolbar(){
+	public TransferToOwnerOperationsToolbar(){
 		hideAll();
 		
 		confirmTransfer = new MenuItem("Confirmar Transferência", new Command() {

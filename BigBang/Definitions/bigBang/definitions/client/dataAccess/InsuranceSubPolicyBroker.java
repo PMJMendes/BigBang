@@ -61,7 +61,9 @@ public interface InsuranceSubPolicyBroker extends
 	public void getSubPoliciesForPolicy(String ownerId,
 			ResponseHandler<Collection<SubPolicyStub>> responseHandler);
 
-	void createReceipt(String subPolicyId, Receipt receipt, ResponseHandler<Receipt> handler);
+	void getSubPoliciesWithNumber(String label,
+			ResponseHandler<Collection<SubPolicyStub>> handler);
+
 	void createReceipt(Receipt receipt, ResponseHandler<Receipt> handler);
 	
 	void validateSubPolicy(String subPolicyId, ResponseHandler<Void> handler);

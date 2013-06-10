@@ -34,12 +34,13 @@ public class SubCasualtyList extends FilterableList<SubCasualtyStub> implements 
 		protected Label numberLabel;
 		protected Label policyLabel;
 		protected Label valueLabel;
+		protected Label insurerProcLabel;
 		protected Image openImage;
 		protected boolean initialized;
 
 		public Entry(SubCasualtyStub value) {
 			super(value);
-			setHeight("40px");
+			setHeight("50px");
 		}
 
 		@Override
@@ -49,9 +50,13 @@ public class SubCasualtyList extends FilterableList<SubCasualtyStub> implements 
 				numberLabel.setWordWrap(false);
 				numberLabel.getElement().getStyle().setFontSize(14, Unit.PX);
 				policyLabel = getFormatedLabel();
-				this.policyLabel.getElement().getStyle().setFontSize(10, Unit.PX);
-				this.policyLabel.setHeight("1.2em");
-				this.policyLabel.setWordWrap(true);
+				policyLabel.getElement().getStyle().setFontSize(10, Unit.PX);
+				policyLabel.setHeight("1.2em");
+				policyLabel.setWordWrap(true);
+				insurerProcLabel = getFormatedLabel();
+				insurerProcLabel.getElement().getStyle().setFontSize(10, Unit.PX);
+				insurerProcLabel.setHeight("1.2em");
+				insurerProcLabel.setWordWrap(true);
 
 				HorizontalPanel leftContainer = new HorizontalPanel();
 				leftContainer.setSize("100%", "100%");
@@ -62,6 +67,7 @@ public class SubCasualtyList extends FilterableList<SubCasualtyStub> implements 
 				container.setCellHeight(numberLabel, "100%");
 				container.setCellVerticalAlignment(numberLabel, HasVerticalAlignment.ALIGN_TOP);
 				container.add(policyLabel);
+				container.add(insurerProcLabel);
 				setWidget(container);
 
 				HorizontalPanel leftWidgetContainer = new HorizontalPanel();
@@ -101,6 +107,8 @@ public class SubCasualtyList extends FilterableList<SubCasualtyStub> implements 
 			
 			this.policyLabel.setText(referenceType + c.referenceNumber + " " + c.categoryName + "/" + c.lineName + "/" + c.subLineName);
 
+			this.insurerProcLabel.setText("Proc. Seg. # " + c.insurerProcessNumber);
+
 			Resources r = GWT.create(Resources.class);
 			openImage.setResource(c.isOpen ? r.activeCasualtyIcon() : r.inactiveCasualtyIcon());
 			
@@ -119,9 +127,11 @@ public class SubCasualtyList extends FilterableList<SubCasualtyStub> implements 
 			if(selected){
 				this.policyLabel.getElement().getStyle().setColor("white");
 				this.valueLabel.getElement().getStyle().setColor("white");
+				this.insurerProcLabel.getElement().getStyle().setColor("white");
 			}else{
 				this.policyLabel.getElement().getStyle().setColor("gray");
 				this.valueLabel.getElement().getStyle().setColor("black");
+				this.insurerProcLabel.getElement().getStyle().setColor("gray");
 			}
 		}
 	}

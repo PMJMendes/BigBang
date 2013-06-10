@@ -8,7 +8,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPo
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.TransferToPolicyOperationsToolbar;
+import bigBang.library.client.userInterface.TransferToOwnerOperationsToolbar;
 import bigBang.library.client.userInterface.view.View;
 
 public class SubPolicyTransferToPolicyView extends View implements SubPolicyTransferToPolicyViewPresenter.Display{
@@ -21,7 +21,7 @@ public class SubPolicyTransferToPolicyView extends View implements SubPolicyTran
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
-		TransferToPolicyOperationsToolbar toolbar = new TransferToPolicyOperationsToolbar() {
+		TransferToOwnerOperationsToolbar toolbar = new TransferToOwnerOperationsToolbar() {
 			
 			@Override
 			public void onCancelRequest() {

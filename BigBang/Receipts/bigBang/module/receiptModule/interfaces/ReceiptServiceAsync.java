@@ -5,6 +5,7 @@ import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.InsurerAccountingExtra;
+import bigBang.definitions.shared.OwnerRef;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Rectangle;
 import bigBang.definitions.shared.SignatureRequest;
@@ -21,7 +22,7 @@ public interface ReceiptServiceAsync
 	void editReceipt(Receipt receipt, AsyncCallback<Receipt> callback);
 	void editAndValidateReceipt(Receipt receipt, Rectangle rect, AsyncCallback<Receipt> callback);
 	void receiveImage(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
-	void transferToPolicy(String receiptId, String newPolicyId, AsyncCallback<Receipt> callback);
+	void transferToOwner(String receiptId, OwnerRef newOwner, AsyncCallback<Receipt> callback);
 	void validateReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void setForReturn(Receipt.ReturnMessage message, AsyncCallback<Receipt> callback);
 	void createPaymentNotice(String receiptId, AsyncCallback<Receipt> callback);

@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter{
+public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter {
 
 	private Display view;
 	private InsurancePolicyBroker broker;

@@ -480,6 +480,9 @@ public class Constants
 	public static final UUID OPID_SubCasualty_CreateThirdPartySettlement = UUID.fromString("92D495E7-F32C-4F44-A912-A03600FD5081");
 	public static final UUID OPID_SubCasualty_CreateSettlementFollowup   = UUID.fromString("0ACEA6D6-F14A-4885-AE83-A03600FD7301");
 	public static final UUID OPID_SubCasualty_CreateCapitalReinstatement = UUID.fromString("B20E61F4-4CDF-4785-A228-A03600FDDF6C");
+	public static final UUID OPID_SubCasualty_CreateReceipt              = UUID.fromString("204BDF28-EB94-4A6C-92A2-A1C50101E80C");
+	public static final UUID OPID_SubCasualty_ExternDeleteReceipt        = UUID.fromString("0B9E41A6-5466-4D59-AD3C-A1C501067A1E");
+	public static final UUID OPID_SubCasualty_UndoDeleteReceipt          = UUID.fromString("2881008F-E08B-400F-A384-A1C501047FB5");
 	public static final UUID OPID_SubCasualty_MarkForClosing             = UUID.fromString("CDDBD0AC-B19E-4576-890B-A03600FE0E49");
 	public static final UUID OPID_SubCasualty_UndoMarkForClosing         = UUID.fromString("DADA8570-814F-442E-AD1E-A03600FE289C");
 	public static final UUID OPID_SubCasualty_RejectClosing              = UUID.fromString("B7D949CE-7E2A-418B-AC4F-A03600FE57C9");

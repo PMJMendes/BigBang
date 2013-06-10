@@ -122,7 +122,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			this.numberLabel.setText("#" + (r.number == null ? "" : r.number) + " (" + r.typeName + ")");
 			this.numberLabel.setTitle("Número e tipo de Recibo");
 
-			this.policyNumberLabel.setText("Apólice " + r.insurerName + " #"+ r.policyNumber);;
+			this.policyNumberLabel.setText("Apólice " + r.insurerName + " #"+ r.ownerNumber);;
 			
 			this.lineLabel.setText(r.categoryName + " / " + r.lineName + " / " + r.subLineName);
 			this.lineLabel.setTitle("Categoria / Ramo / Modalidade");
@@ -168,7 +168,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			
 			setMetaData(new String[]{
 					value.number,
-					value.policyNumber,
+					value.ownerNumber,
 					value.categoryName,
 					value.lineName,
 					value.subLineName,

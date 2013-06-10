@@ -29,12 +29,12 @@ public class ReceiptsList extends FilterableList<ReceiptStub> {
 		showFilterField(false);
 	}
 	
-	public void setOwner(String ownerId){
+	public void setOwner(String ownerId, String ownerTypeId){
 		this.ownerId = ownerId;
 		if(ownerId == null) {
 			clear();
 		}else{
-			broker.getReceiptsForOwner(ownerId, new ResponseHandler<Collection<ReceiptStub>>(){
+			broker.getReceiptsForOwner(ownerId, ownerTypeId, new ResponseHandler<Collection<ReceiptStub>>(){
 
 				@Override
 				public void onResponse(Collection<ReceiptStub> response) {

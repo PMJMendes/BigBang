@@ -270,6 +270,7 @@ public class BigBangConstants {
 			public static final String CREATE_ASSESSMENT = "634A8C33-50A7-41D6-AF28-A03600FC9F95";
 			public static final String CREATE_MEDICAL_FILE = "F2AE7668-271F-4BE4-AB20-A03600FD320B";
 			public static final String CREATE_TOTAL_LOSSES = "8C3D3E86-C1AB-4D40-873D-A15600DA7F73";
+			public static final String CREATE_RECEIPT = "204BDF28-EB94-4A6C-92A2-A1C50101E80C";
 		}
 
 		public static class DASRequestProcess{

@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.client.userInterface.form;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.FormField;
+import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
@@ -10,9 +11,11 @@ import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.SubCasualtySelectionViewPresenter;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.receiptModule.shared.ModuleConstants;
-import bigBang.module.receiptModule.shared.ReceiptPolicyWrapper;
+import bigBang.module.receiptModule.shared.ReceiptOwnerWrapper;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -27,16 +30,19 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
-public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWrapper>{
+public abstract class SerialReceiptCreationForm extends FormView<ReceiptOwnerWrapper>{
 
 	protected TextBoxFormField receiptNumber;
+	protected ListBoxFormField referenceType;
 	protected TextBoxFormField policyNumber;
+	protected ExpandableSelectionFormField subPolicyReference;
+	protected ExpandableSelectionFormField subCasualtyReference;
 	protected TextBoxFormField client;
 	protected TextBoxFormField insurer;
 	protected TextBoxFormField categoryLineSubline;
 	protected TextBoxFormField status;
-	protected final static Label policyNumberProblem = new Label("A apólice pretendida não existe");
-	protected final static Label imageExistantLabel = new Label("O recibo já tem imagem definida");
+	protected final static Label policyNumberProblem = new Label("A apólice pretendida não existe.");
+	protected final static Label imageExistantLabel = new Label("O recibo já tem imagem definida.");
 	protected final static Label policyNotAvailable = new Label("Não é possível criar recibos para esta apólice.");
 	protected ExpandableListBoxFormField type;
 	protected NumericTextBoxFormField totalPremium;
@@ -118,9 +124,41 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		addWidget(newPanel, true);
 
 		addSection("Apólice");
-		policyNumber = new TextBoxFormField("Número da apólice");
-		policyNumber.setFieldWidth("175px");
 
+		referenceType = new ListBoxFormField("");
+		referenceType.addItem("Apólice nº", BigBangConstants.EntityIds.INSURANCE_POLICY);
+		referenceType.addItem("Apólice Adesão nº", BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		referenceType.addItem("Sub-Sinistro nº", BigBangConstants.EntityIds.SUB_CASUALTY);
+		referenceType.setMandatory(true);
+		referenceType.removeItem(0); //Removes the empty value
+		addFormField(referenceType, true);
+
+		referenceType.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				String type = event.getValue();
+				if(type == null || type.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)) {
+					policyNumber.setVisible(true);
+					verifyPolicyNumber.setVisible(true);
+					subPolicyReference.setVisible(false);
+					subCasualtyReference.setVisible(false);
+				}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
+					policyNumber.setVisible(false);
+					verifyPolicyNumber.setVisible(false);
+					subPolicyReference.setVisible(true);
+					subCasualtyReference.setVisible(false);
+				}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
+					policyNumber.setVisible(false);
+					verifyPolicyNumber.setVisible(false);
+					subPolicyReference.setVisible(false);
+					subCasualtyReference.setVisible(true);
+				}
+				onOwnerTypeChanged();
+			}
+		});
+
+		policyNumber = new TextBoxFormField("");
+		policyNumber.setFieldWidth("175px");
 		policyNumber.getNativeField().addKeyUpHandler(new KeyUpHandler() {
 
 			@Override
@@ -134,8 +172,34 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 				}
 			}
 		});
-
 		addFormField(policyNumber, true);
+
+		InsuranceSubPolicySelectionViewPresenter subPolicySelectionPanel = (InsuranceSubPolicySelectionViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("RECEIPT_SUBPOLICY_SELECTION");
+		subPolicySelectionPanel.setOperationId(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT);
+		subPolicySelectionPanel.go();
+		subPolicyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, "", subPolicySelectionPanel);
+		subPolicyReference.setMandatory(true);
+		addFormField(subPolicyReference, true);
+		subPolicyReference.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				onSubPolicyChanged();
+			}
+		});
+
+		SubCasualtySelectionViewPresenter subCasualtySelectionPanel = (SubCasualtySelectionViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("RECEIPT_SUBCASUALTY_SELECTION");
+		subCasualtySelectionPanel.setOperationId(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_RECEIPT);
+		subCasualtySelectionPanel.go();
+		subCasualtyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.SUB_CASUALTY, "", subCasualtySelectionPanel);
+		subCasualtyReference.setMandatory(true);
+		addFormField(subCasualtyReference, true);
+		subCasualtyReference.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				onSubCasualtyChanged();
+			}
+		});
+
 		HorizontalPanel buttonPanel = new HorizontalPanel();
 		buttonPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		verifyPolicyNumber = new Button("Verificar");
@@ -295,34 +359,86 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		}
 	}
 
-	protected abstract void onChangedPolicyNumber();
-
 	protected abstract void onChangedReceiptNumber();
-
-	protected abstract void onClickNewReceipt();
-
-	protected abstract void onClickMarkAsInvalid();
-
-	protected abstract void onClickVerifyPolicyNumber() ;
-
-	protected abstract void onClickVerifyReceiptNumber();
 
 	protected abstract void onEnterKeyReceiptNumber();
 
+	protected abstract void onClickVerifyReceiptNumber();
+
+	protected abstract void onClickNewReceipt();
+
+	protected abstract void onOwnerTypeChanged();
+
+	protected abstract void onChangedPolicyNumber();
+
 	protected abstract void onEnterKeyPolicyNumber();
 
+	protected abstract void onClickVerifyPolicyNumber() ;
+
+	protected abstract void onClickMarkAsInvalid();
+
+	protected abstract void onSubPolicyChanged();
+
+	protected abstract void onSubCasualtyChanged();
+
 	@Override
-	public void setInfo(ReceiptPolicyWrapper info) {
+	public void setInfo(ReceiptOwnerWrapper info) {
 
 		receiptNumber.setValue(info.receipt.number);
-		policyNumber.setValue(info.policy.number);
-		client.setValue("#"+info.policy.clientNumber+"-"+info.policy.clientName);
-		categoryLineSubline.setValue(info.policy.categoryName+"/"+info.policy.lineName+"/"+info.policy.subLineName);
+
+		referenceType.setValue(info.receipt.ownerTypeId);
+		if ( BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(info.receipt.ownerTypeId) )
+		{
+			subPolicyReference.setValue(null);
+			subCasualtyReference.setValue(null);
+
+			policyNumber.setValue(info.policy.number);
+			client.setValue("#"+info.policy.clientNumber+"-"+info.policy.clientName);
+			categoryLineSubline.setValue(info.policy.categoryName+"/"+info.policy.lineName+"/"+info.policy.subLineName);
+			status.setValue(info.policy.statusText);
+			manager.setValue(info.policy.managerId);
+			mediator.setValue(info.policy.mediatorId);
+		}
+		else if ( BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(info.receipt.ownerTypeId) )
+		{
+			policyNumber.setValue(null);
+			subCasualtyReference.setValue(null);
+
+			subPolicyReference.setValue(info.subPolicy.id);
+			client.setValue("#"+info.subPolicy.clientNumber+"-"+info.subPolicy.clientName);
+			categoryLineSubline.setValue(info.subPolicy.inheritCategoryName+"/"+info.subPolicy.inheritLineName+"/"+info.subPolicy.inheritSubLineName);
+			status.setValue(info.subPolicy.statusText);
+			manager.setValue(info.subPolicy.managerId);
+			mediator.setValue(info.subPolicy.inheritMediatorId);
+		}
+		else if ( BigBangConstants.EntityIds.SUB_CASUALTY.equalsIgnoreCase(info.receipt.ownerTypeId) )
+		{
+			policyNumber.setValue(null);
+			subPolicyReference.setValue(null);
+
+			subCasualtyReference.setValue(info.subCasualty.id);
+			client.setValue("#"+info.subCasualty.inheritMasterClientNumber+"-"+info.subCasualty.inheritMasterClientName);
+			categoryLineSubline.setValue(info.subCasualty.categoryName+"/"+info.subCasualty.lineName+"/"+info.subCasualty.subLineName);
+			status.setValue(null);
+			manager.setValue(info.subCasualty.managerId);
+			mediator.setValue(info.subCasualty.inheritMasterMediatorId);
+		}
+		else
+		{
+			policyNumber.setValue(null);
+			subPolicyReference.setValue(null);
+			subCasualtyReference.setValue(null);
+
+			client.setValue(null);
+			categoryLineSubline.setValue(null);
+			status.setValue(null);
+			manager.setValue(null);
+			mediator.setValue(null);
+		}
+
 		insurer.setValue(info.insuranceAgencyName);
-		status.setValue(info.policy.statusText);
+
 		type.setValue(info.receipt.typeId);
-		manager.setValue(info.policy.managerId);
-		mediator.setValue(info.policy.mediatorId);
 		totalPremium.setValue(info.receipt.totalPremium);
 		salesPremium.setValue(info.receipt.salesPremium);
 		commission.setValue(info.receipt.comissions);
@@ -339,9 +455,17 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	}
 
 	@Override
-	public ReceiptPolicyWrapper getInfo() {
+	public ReceiptOwnerWrapper getInfo() {
+		ReceiptOwnerWrapper newWrapper = value;
 
-		ReceiptPolicyWrapper newWrapper = value;
+		newWrapper.receipt.ownerTypeId = referenceType.getValue();
+		if ( (null == newWrapper.receipt.ownerTypeId) || BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(newWrapper.receipt.ownerTypeId) )
+			newWrapper.receipt.ownerId = newWrapper.policy.id;
+		else if ( BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(newWrapper.receipt.ownerTypeId) )
+			newWrapper.receipt.ownerId = subPolicyReference.getValue();
+		else if ( BigBangConstants.EntityIds.SUB_CASUALTY.equalsIgnoreCase(newWrapper.receipt.ownerTypeId) )
+			newWrapper.receipt.ownerId = subCasualtyReference.getValue();
+
 		newWrapper.receipt.typeId = type.getValue();
 		newWrapper.receipt.managerId = manager.getValue();
 		newWrapper.receipt.mediatorId = mediator.getValue();
@@ -356,7 +480,6 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		newWrapper.receipt.maturityDate = coverageStart.getStringValue();
 		newWrapper.receipt.description = description.getValue();
 		newWrapper.receipt.notes = notes.getValue();
-		newWrapper.receipt.policyId = newWrapper.policy.id;
 		newWrapper.receipt.isMalus = bonusMalusOption.getValue() == null ? null : bonusMalusOption.getValue().equalsIgnoreCase("Malus");
 		newWrapper.receipt.bonusMalus = bonusMalusValue.getValue();
 
@@ -429,8 +552,11 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	}
 
-	public void enablePolicy(boolean b) {
+	public void enableOwner(boolean b) {
+		referenceType.setReadOnly(!b);
 		policyNumber.setReadOnly(!b);
+		subPolicyReference.setReadOnly(!b);
+		subCasualtyReference.setReadOnly(!b);
 		verifyPolicyNumber.setEnabled(b);
 
 		if(b){
@@ -439,6 +565,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	}
 
 	public void setFocusOnPolicy() {
+		referenceType.setValue(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		policyNumber.getNativeField().setFocus(true);
 
 	}
@@ -447,7 +574,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		receiptNumber.getNativeField().setFocus(true);
 	}
 
-	public void clearPolicy() {
+	public void clearOwner() {
 		categoryLineSubline.clear();
 		insurer.clear();
 		client.clear();
@@ -465,15 +592,33 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	}
 
 	public String getPolicyNumber() {
-		return policyNumber.getValue();
+		if ( BigBangConstants.EntityIds.INSURANCE_POLICY.equalsIgnoreCase(referenceType.getValue()) )
+			return policyNumber.getValue();
+		return null;
+	}
+
+	public String getSubPolicyId() {
+		if ( BigBangConstants.EntityIds.INSURANCE_SUB_POLICY.equalsIgnoreCase(referenceType.getValue()) )
+			return subPolicyReference.getValue();
+		return null;
+	}
+
+	public String getSubCasualtyId() {
+		if ( BigBangConstants.EntityIds.SUB_CASUALTY.equalsIgnoreCase(referenceType.getValue()) )
+			return subCasualtyReference.getValue();
+		return null;
 	}
 
 	public void isPolicyNumberProblem(boolean b) {
 		if(b){
 			policyNumber.getNativeField().getElement().getStyle().setColor("RED");
+			subPolicyReference.getNativeField().getElement().getStyle().setColor("RED");
+			subCasualtyReference.getNativeField().getElement().getStyle().setColor("RED");
 		}
 		else{
 			policyNumber.getNativeField().getElement().getStyle().setColor("BLACK");
+			subPolicyReference.getNativeField().getElement().getStyle().setColor("BLACK");
+			subCasualtyReference.getNativeField().getElement().getStyle().setColor("BLACK");
 		}
 	}
 

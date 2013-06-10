@@ -2,26 +2,27 @@ package bigBang.module.receiptModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import bigBang.definitions.shared.OwnerRef;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.TransferToPolicyOperationsToolbar;
+import bigBang.library.client.userInterface.TransferToOwnerOperationsToolbar;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.receiptModule.client.userInterface.form.ReceiptTransferToPolicyForm;
-import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter.Action;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptTransferToOwnerForm;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToOwnerViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToOwnerViewPresenter.Action;
 
-public class ReceiptTransferToPolicyView extends View implements ReceiptTransferToPolicyViewPresenter.Display{
+public class ReceiptTransferToOwnerView extends View implements ReceiptTransferToOwnerViewPresenter.Display{
 
-	private ReceiptTransferToPolicyForm form;
+	private ReceiptTransferToOwnerForm form;
 	private ActionInvokedEventHandler<Action> actionHandler;
 	
-	public ReceiptTransferToPolicyView(){
+	public ReceiptTransferToOwnerView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
-		TransferToPolicyOperationsToolbar toolbar = new TransferToPolicyOperationsToolbar() {
+		TransferToOwnerOperationsToolbar toolbar = new TransferToOwnerOperationsToolbar() {
 			
 			@Override
 			public void onCancelRequest() {
@@ -35,7 +36,7 @@ public class ReceiptTransferToPolicyView extends View implements ReceiptTransfer
 		};
 		wrapper.add(toolbar);
 		
-		form = new ReceiptTransferToPolicyForm();
+		form = new ReceiptTransferToOwnerForm();
 		wrapper.add(form.getNonScrollableContent());
 	}
 	
@@ -46,7 +47,7 @@ public class ReceiptTransferToPolicyView extends View implements ReceiptTransfer
 	}
 
 	@Override
-	public HasEditableValue<String> getForm() {
+	public HasEditableValue<OwnerRef> getForm() {
 		return form;
 	}
 
