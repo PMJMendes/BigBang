@@ -32,7 +32,6 @@ import com.premiumminds.BigBang.Jewel.Listings.ReceiptListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
-import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Objects.Template;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
@@ -352,20 +351,9 @@ public class ReceiptExternAuditPending
 		throws BigBangJewelException
 	{
 		Policy lobjPolicy;
-		SubPolicy lobjSubPolicy;
 		TD[] larrCells;
 
-		lobjPolicy = pobjReceipt.getDirectPolicy();
-
-		if ( lobjPolicy == null )
-		{
-			lobjPolicy = pobjReceipt.getAbsolutePolicy();
-			lobjSubPolicy = pobjReceipt.getSubPolicy();
-		}
-		else
-		{
-			lobjSubPolicy = null;
-		}
+		lobjPolicy = pobjReceipt.getAbsolutePolicy();
 
 		larrCells = new TD[8];
 
@@ -378,7 +366,7 @@ public class ReceiptExternAuditPending
 		larrCells[2] = ReportBuilder.buildCell(lobjPolicy.GetCompany().getAt(1), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[2], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell(lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[3] = ReportBuilder.buildCell(lobjPolicy.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
 		larrCells[4] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal, true);

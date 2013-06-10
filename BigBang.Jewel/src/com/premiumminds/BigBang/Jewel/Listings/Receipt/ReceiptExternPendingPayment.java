@@ -33,7 +33,6 @@ import com.premiumminds.BigBang.Jewel.Listings.ReceiptListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
-import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Objects.Template;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
@@ -332,22 +331,11 @@ public class ReceiptExternPendingPayment
 	{
 		Client lobjClient;
 		Policy lobjPolicy;
-		SubPolicy lobjSubPolicy;
 		ILog lobjLog;
 		TD[] larrCells;
 
 		lobjClient = pobjReceipt.getClient();
-		lobjPolicy = pobjReceipt.getDirectPolicy();
-
-		if ( lobjPolicy == null )
-		{
-			lobjPolicy = pobjReceipt.getAbsolutePolicy();
-			lobjSubPolicy = pobjReceipt.getSubPolicy();
-		}
-		else
-		{
-			lobjSubPolicy = null;
-		}
+		lobjPolicy = pobjReceipt.getAbsolutePolicy();
 
 		lobjLog = pobjReceipt.getNoticeLog();
 
@@ -356,7 +344,7 @@ public class ReceiptExternPendingPayment
 		larrCells[0] = ReportBuilder.buildCell(lobjClient.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
 
-		larrCells[1] = ReportBuilder.buildCell(lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[1] = ReportBuilder.buildCell(lobjPolicy.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[1], true, true);
 
 		larrCells[2] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.NUMBER), TypeDefGUIDs.T_String);
