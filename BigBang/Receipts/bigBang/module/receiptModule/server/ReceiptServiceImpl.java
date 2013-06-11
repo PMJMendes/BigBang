@@ -256,7 +256,7 @@ public class ReceiptServiceImpl
 		lobjData.mstrDescription = receipt.description;
 
 		lobjData.midManager = ( receipt.managerId == null ? null : UUID.fromString(receipt.managerId) );
-		lobjData.midProcess = null;
+		lobjData.midProcess = ( receipt.processId == null ? null : UUID.fromString(receipt.processId) );
 
 		lobjData.mobjPrevValues = null;
 
@@ -503,6 +503,7 @@ public class ReceiptServiceImpl
 	public Receipt editReceipt(Receipt receipt)
 		throws SessionExpiredException, BigBangException
 	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		ManageData lopMRD;
 
 		if ( Engine.getCurrentUser() == null )
@@ -510,8 +511,9 @@ public class ReceiptServiceImpl
 
 		try
 		{
-			lopMRD = new ManageData(UUID.fromString(receipt.processId));
-			lopMRD.mobjData = toServerData(receipt);
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receipt.id));
+			lopMRD = new ManageData(lobjReceipt.GetProcessID());
+			lopMRD.mobjData = toServerData(receipt, lobjReceipt);
 
 			lopMRD.mobjContactOps = null;
 			lopMRD.mobjDocOps = null;
@@ -545,7 +547,7 @@ public class ReceiptServiceImpl
 			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receipt.id));
 
 			lopVR = new ValidateReceipt(lobjReceipt.GetProcessID());
-			lopVR.mobjData = toServerData(receipt);
+			lopVR.mobjData = toServerData(receipt, lobjReceipt);
 
 			if ( rect == null )
 				lopVR.mobjDocOps = null;
@@ -602,7 +604,7 @@ public class ReceiptServiceImpl
 		}
 
 		lopRI = new ReceiveImage(lobjReceipt.GetProcessID());
-		lopRI.mobjData = toServerData(receipt);
+		lopRI.mobjData = toServerData(receipt, lobjReceipt);
 		lopRI.mobjImage = new DSBridgeData();
 		lopRI.mobjImage.mstrDSHandle = source.handle;
 		lopRI.mobjImage.mstrDSLoc = source.locationHandle;
@@ -3307,12 +3309,22 @@ public class ReceiptServiceImpl
 		}
 	}
 
-	private static ReceiptData toServerData(Receipt receipt)
+	private static ReceiptData toServerData(Receipt lobjSource, com.premiumminds.BigBang.Jewel.Objects.Receipt lobjOrig)
 	{
-		ReceiptData result = sClientToServer(receipt);
+		ReceiptData lobjResult = sClientToServer(lobjSource);
 
-		result.mid = UUID.fromString(receipt.id);
-		
-		return result;
+		if ( lobjOrig != null )
+		{
+			lobjResult.mid = lobjOrig.getKey();
+			lobjResult.mbInternal = (Boolean)lobjOrig.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.ISINTERNAL);
+			lobjResult.mlngEntryNumber = (Integer)lobjOrig.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.ENTRYNUMBER);
+			lobjResult.mlngEntryYear = (Integer)lobjOrig.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.ENTRYYEAR);
+			lobjResult.midStatus = (UUID)lobjOrig.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.STATUS);
+			lobjResult.midPolicy = (UUID)lobjOrig.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.POLICY);
+			lobjResult.midSubPolicy = (UUID)lobjOrig.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.SUBPOLICY);
+			lobjResult.midSubCasualty = (UUID)lobjOrig.getAt(com.premiumminds.BigBang.Jewel.Objects.Receipt.I.SUBCASUALTY);
+		}
+
+		return lobjResult;
 	}
 }
