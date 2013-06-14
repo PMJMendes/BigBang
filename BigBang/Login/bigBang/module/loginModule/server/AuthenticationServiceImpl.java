@@ -87,6 +87,7 @@ public class AuthenticationServiceImpl
 			lobjResult.userName = lobjUser.getDisplayName();
 			lobjResult.domain = lobjNSpace.getLabel();
 			lobjResult.isSU = Constants.ProfileID_Root.equals(lobjUser.getProfile().getKey());
+			lobjResult.isAgent = Constants.ProfileID_Agent.equals(lobjUser.getProfile().getKey());
 			return lobjResult;
 		}
 		catch (BigBangException e)
@@ -190,6 +191,7 @@ public class AuthenticationServiceImpl
 			lobjResult.userName = lobjUser.getDisplayName();
 			lobjResult.domain = lobjNSpace.getLabel();
 			lobjResult.isSU = Constants.ProfileID_Root.equals(lobjUser.getProfile().getKey());
+			lobjResult.isAgent = Constants.ProfileID_Agent.equals(lobjUser.getProfile().getKey());
 			return lobjResult;
 		}
 		catch (BigBangException e)
@@ -272,6 +274,7 @@ public class AuthenticationServiceImpl
 			lobjResult.userName = lobjUser.getDisplayName();
 			lobjResult.domain = NameSpace.GetInstance(lidNSpace).getLabel();
 			lobjResult.isSU = Constants.ProfileID_Root.equals(lobjUser.getProfile().getKey());
+			lobjResult.isAgent = Constants.ProfileID_Agent.equals(lobjUser.getProfile().getKey());
 		}
 		catch(Throwable e)
 		{

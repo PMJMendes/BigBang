@@ -44,7 +44,8 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		QUOTE_REQUEST,
 		CASUALTY,
 		EXPENSE,
-		COMPLAINT, PERSONAL
+		COMPLAINT,
+		PERSONAL
 	}
 
 	public interface Display {
@@ -53,6 +54,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		void setUsername(String username);
 		void setDomain(String domain);
 		void showBackOffice(boolean show);
+		void showGenSystem(boolean show);
 		HasWidgets getContainer();
 		HasWidgets getPreferencesContainer();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -176,6 +178,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 			@Override
 			public void onParameters(HasParameters parameters) {
 				view.showBackOffice(Session.isRoot());
+				view.showGenSystem(!Session.isAgent());
 
 				String section = parameters.getParameter("section");
 				section = section == null ? new String() : section;

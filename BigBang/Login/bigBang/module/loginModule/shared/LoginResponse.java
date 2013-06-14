@@ -11,4 +11,5 @@ public class LoginResponse
 	public String userName;
 	public String domain;
 	public boolean isSU;
+	public boolean isAgent;
 }
