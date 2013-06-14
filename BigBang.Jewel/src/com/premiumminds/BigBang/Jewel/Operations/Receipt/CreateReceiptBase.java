@@ -133,7 +133,7 @@ public abstract class CreateReceiptBase
 			mobjData.midProcess = lobjProc.getKey();
 			mobjData.mobjPrevValues = null;
 
-			if ( Constants.MCPID_None.equals(lobjAux.getMediator().getProfile()) )
+			if ( Constants.MCPID_None.equals(lobjAux.getMediator().getProfile()) || lobjAux.isForCasualties() )
 				TriggerOp(new ExternBlockDirectRetrocession(lobjProc.getKey()), pdb);
 			else if ( lobjAux.doCalcRetrocession() )
 				lobjAux.SaveToDb(pdb);
