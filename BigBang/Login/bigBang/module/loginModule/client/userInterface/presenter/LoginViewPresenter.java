@@ -191,6 +191,7 @@ public class LoginViewPresenter implements ViewPresenter {
 		Session.setDisplayName("TODO");
 		Session.setDomain(loginResponse.domain);
 		Session.setIsRoot(loginResponse.isSU);
+		Session.setIsAgent(loginResponse.isAgent);
 
 		this.view.showLoading(false);
 		GWT.log("Authentication success for " + Session.getUsername());

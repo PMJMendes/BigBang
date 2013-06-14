@@ -19,6 +19,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -258,7 +259,12 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	public void showBackOffice(boolean show) {
 		this.backofficeMenuitem.setVisible(show);
 	}
-	
+
+	@Override
+	public void showGenSystem(boolean show) {
+		((Composite)this.tabBar.getTab(1)).setVisible(show);
+	}
+
 	@Override
 	public HasWidgets getContainer() {
 		return this.container;

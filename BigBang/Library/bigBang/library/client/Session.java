@@ -7,7 +7,8 @@ public class Session {
 	private static String displayName;
 	private static String domain;
 	private static boolean isRoot;
-	
+	private static boolean isAgent;
+
 	public static void setUserId(String userId){
 		Session.userId = userId;
 	}
@@ -26,6 +27,10 @@ public class Session {
 	
 	public static void setIsRoot(boolean isRoot){
 		Session.isRoot = isRoot;
+	}
+	
+	public static void setIsAgent(boolean isAgent){
+		Session.isAgent = isAgent;
 	}
 	
 	public static String getUserId(){
@@ -47,15 +52,20 @@ public class Session {
 	public static boolean isRoot(){
 		return Session.isRoot;
 	}
-	
+
+	public static boolean isAgent(){
+		return Session.isAgent;
+	}
+
 	public static void invalidate(){
 		setUserId(null);
 		setUsername(null);
 		setDisplayName(null);
 		setDomain(null);
 		setIsRoot(false);
+		setIsAgent(true);
 	}
-	
+
 	public static boolean isValid(){
 		return Session.userId != null;
 	}

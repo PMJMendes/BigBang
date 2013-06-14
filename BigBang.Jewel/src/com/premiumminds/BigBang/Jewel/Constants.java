@@ -585,7 +585,8 @@ public class Constants
 	public static final UUID UrgID_Completed = UUID.fromString("86C2D8A9-B754-4C8A-A81C-9EB1007EE286");
 
 	// User Profiles
-	public static final UUID ProfileID_Root = UUID.fromString("061388D9-16A6-443F-A69E-9EB000685026");
+	public static final UUID ProfileID_Root  = UUID.fromString("061388D9-16A6-443F-A69E-9EB000685026");
+	public static final UUID ProfileID_Agent = UUID.fromString("60C11DE8-8F9C-4A0B-9081-A1DD00F5F6DB");
 
 	// Email Usage Types
 	public static final UUID UsageID_From    = UUID.fromString("E642CCDF-A98E-4C72-8719-A11700ED1E51");
