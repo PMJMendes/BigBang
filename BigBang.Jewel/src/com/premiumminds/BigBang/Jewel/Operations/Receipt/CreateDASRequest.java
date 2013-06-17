@@ -27,6 +27,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
 import com.premiumminds.BigBang.Jewel.Objects.DASRequest;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.DASFormReport;
 import com.premiumminds.BigBang.Jewel.Reports.DASRequestReport;
@@ -129,13 +130,10 @@ public class CreateDASRequest
     	ldtAux.add(Calendar.DAY_OF_MONTH, mlngDays);
     	ldtLimit = new Timestamp(ldtAux.getTimeInMillis());
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			midClient = GetProcess().GetParent().GetParent().GetDataKey();
-		else
-			midClient = (UUID)GetProcess().GetParent().GetData().getAt(2);
-
 		try
 		{
+			midClient = ((Receipt)GetProcess().GetData()).getClient().getKey();
+
 			lobjDASForm = generateDocOp(GetProcess().GetDataKey());
 
 			lobjSet = PrintSet.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);

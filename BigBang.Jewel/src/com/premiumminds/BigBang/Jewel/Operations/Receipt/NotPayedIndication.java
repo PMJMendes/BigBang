@@ -5,9 +5,9 @@ import java.util.UUID;
 
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
@@ -23,6 +23,7 @@ public class NotPayedIndication
 	private UUID midSubPolicy;
 	private UUID midPrevStatus;
 	private Timestamp mdtPrevEndDate;
+	private UUID midRefProc;
 
 	public NotPayedIndication(UUID pidProcess)
 	{
@@ -53,7 +54,6 @@ public class NotPayedIndication
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Operation lop;
 		Receipt lobjReceipt;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
@@ -63,36 +63,44 @@ public class NotPayedIndication
 		lobjReceipt = (Receipt)GetProcess().GetData();
 		midReceipt = lobjReceipt.getKey();
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
+		try
 		{
-			lobjPolicy = (Policy)GetProcess().GetParent().GetData();
+			lobjPolicy = lobjReceipt.getDirectPolicy();
+			lobjSubPolicy = lobjReceipt.getSubPolicy();
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		if ( lobjPolicy != null )
+		{
 			midPolicy = lobjPolicy.getKey();
+			midRefProc = lobjPolicy.GetProcessID();
 			midPrevStatus = (UUID)lobjPolicy.getAt(13);
 			mdtPrevEndDate = (Timestamp)lobjPolicy.getAt(9);
 
-			lopEAV = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternAutoVoid(GetProcess().GetParent().getKey());
+			lopEAV = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternAutoVoid(midRefProc);
 			lopEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(9);
 			lopEAV.midReceiptProc = GetProcess().getKey();
-			lop = lopEAV;
+			TriggerOp(lopEAV, pdb);
 
 			midSubPolicy = null;
 		}
-		else
+		else if ( lobjSubPolicy != null )
 		{
-			lobjSubPolicy = (SubPolicy)GetProcess().GetParent().GetData();
 			midSubPolicy = lobjSubPolicy.getKey();
+			midRefProc = lobjSubPolicy.GetProcessID();
 			midPrevStatus = (UUID)lobjSubPolicy.getAt(7);
 			mdtPrevEndDate = (Timestamp)lobjSubPolicy.getAt(4);
 
-			lopsEAV = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternAutoVoid(GetProcess().GetParent().getKey());
+			lopsEAV = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternAutoVoid(midRefProc);
 			lopsEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(9);
 			lopsEAV.midReceiptProc = GetProcess().getKey();
-			lop = lopsEAV;
+			TriggerOp(lopsEAV, pdb);
 
 			midPolicy = null;
 		}
-
-		TriggerOp(lop, pdb);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -108,28 +116,25 @@ public class NotPayedIndication
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Operation lop;
 		com.premiumminds.BigBang.Jewel.Operations.Policy.ExternUndoAutoVoid lopEUAV;
 		com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternUndoAutoVoid lopsEUAV;
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
+		if ( midPolicy != null )
 		{
-			lopEUAV = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternUndoAutoVoid(GetProcess().GetParent().getKey());
+			lopEUAV = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternUndoAutoVoid(midRefProc);
 			lopEUAV.mdtPrevEndDate = mdtPrevEndDate;
 			lopEUAV.midPrevStatus = midPrevStatus;
 			lopEUAV.midReceiptProc = GetProcess().getKey();
-			lop = lopEUAV;
+			TriggerOp(lopEUAV, pdb);
 		}
-		else
+		else if ( midSubPolicy != null)
 		{
-			lopsEUAV = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternUndoAutoVoid(GetProcess().GetParent().getKey());
+			lopsEUAV = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternUndoAutoVoid(midRefProc);
 			lopsEUAV.mdtPrevEndDate = mdtPrevEndDate;
 			lopsEUAV.midPrevStatus = midPrevStatus;
 			lopsEUAV.midReceiptProc = GetProcess().getKey();
-			lop = lopsEUAV;
+			TriggerOp(lopsEUAV, pdb);
 		}
-
-		TriggerOp(lop, pdb);
 	}
 
 	public UndoSet[] GetSets()

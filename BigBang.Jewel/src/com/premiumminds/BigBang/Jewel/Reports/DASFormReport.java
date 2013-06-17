@@ -7,8 +7,6 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.Interfaces.ILog;
-import Jewel.Petri.Interfaces.IProcess;
-import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -35,7 +33,6 @@ public class DASFormReport
 		Client lobjClient;
 		HashMap<String, String> larrParams;
 		Receipt lobjReceipt;
-		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		ILog lobjLog;
@@ -43,25 +40,9 @@ public class DASFormReport
 		lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
 
 		lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
-		try
-		{
-			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-			if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-			{
-				lobjPolicy = (Policy)lobjProc.GetParent().GetData();
-				lobjSubPolicy = null;
-			}
-			else
-			{
-				lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
-				lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
-			}
-			lobjLog = lobjProc.GetLiveLog(Constants.OPID_Receipt_Payment);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
+		lobjPolicy = lobjReceipt.getAbsolutePolicy();
+		lobjSubPolicy = lobjReceipt.getSubPolicy();
+		lobjLog = lobjReceipt.getPaymentLog();
 
 		larrParams = new HashMap<String, String>();
 		larrParams.put("ClientName", (String)lobjClient.getAt(0));

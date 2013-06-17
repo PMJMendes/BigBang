@@ -47,6 +47,7 @@ public class DeleteReceipt
 		UUID lidScript;
 		com.premiumminds.BigBang.Jewel.Operations.Policy.ExternDeleteReceipt lobjPOp;
 		com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternDeleteReceipt lobjSPOp;
+		com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ExternDeleteReceipt lobjSCOp;
 		Operation lobjOp;
 
 		lidScript = GetProcess().GetParent().GetScriptID();
@@ -65,6 +66,13 @@ public class DeleteReceipt
 			lobjSPOp.mobjData = new ReceiptData();
 			lobjSPOp.mobjData.mid = midReceipt;
 			lobjOp = lobjSPOp;
+		}
+		if ( Constants.ProcID_SubCasualty.equals(lidScript) )
+		{
+			lobjSCOp = new com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ExternDeleteReceipt(GetProcess().GetParent().getKey());
+			lobjSCOp.mobjData = new ReceiptData();
+			lobjSCOp.mobjData.mid = midReceipt;
+			lobjOp = lobjSCOp;
 		}
 		if ( lobjOp == null )
 			throw new JewelPetriException("Unexpected: Invalid parent process for recipt.");

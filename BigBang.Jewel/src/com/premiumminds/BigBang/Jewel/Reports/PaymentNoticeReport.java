@@ -9,8 +9,6 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
-import Jewel.Petri.Interfaces.IProcess;
-import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -44,7 +42,6 @@ public class PaymentNoticeReport
 		HashMap<String, String> larrParams;
 		String[][] larrTables;
 		Receipt lobjReceipt;
-		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		boolean lbReversals;
@@ -83,24 +80,8 @@ public class PaymentNoticeReport
 		for ( i = 0; i < larrTables.length; i++ )
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
-			try
-			{
-				lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetData();
-					lobjSubPolicy = null;
-				}
-				else
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
-					lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
-				}
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
+			lobjPolicy = lobjReceipt.getAbsolutePolicy();
+			lobjSubPolicy = lobjReceipt.getSubPolicy();
 
 			if ( lbReversals && !Constants.RecType_Reversal.equals((UUID)lobjReceipt.getAt(Receipt.I.TYPE)) )
 				lbReversals = false;

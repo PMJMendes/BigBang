@@ -26,6 +26,7 @@ import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.SecondPaymentNoticeReport;
@@ -87,13 +88,10 @@ public class CreateSecondPaymentNotice
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			midClient = GetProcess().GetParent().GetParent().GetDataKey();
-		else
-			midClient = (UUID)GetProcess().GetParent().GetData().getAt(2);
-
 		try
 		{
+			midClient = ((Receipt)GetProcess().GetData()).getClient().getKey();
+
 			if ( mobjDocOps == null )
 				generateDocOp();
 		}

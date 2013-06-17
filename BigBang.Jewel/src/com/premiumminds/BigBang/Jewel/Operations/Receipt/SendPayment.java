@@ -70,19 +70,19 @@ public class SendPayment
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		IProcess lobjProc;
+		Receipt lobjReceipt;
 		PrintSet lobjSet;
 		PrintSetDocument lobjSetClient;
 		PrintSetDetail lobjSetReceipt;
-		IProcess lobjProc;
-		Receipt lobjReceipt;
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			midClient = GetProcess().GetParent().GetParent().GetDataKey();
-		else
-			midClient = (UUID)GetProcess().GetParent().GetData().getAt(2);
+		lobjProc = GetProcess();
+		lobjReceipt = (Receipt)lobjProc.GetData();
 
 		try
 		{
+			midClient = lobjReceipt.getClient().getKey();
+
 			if ( mobjDocOps == null )
 				generateDocOp();
 
@@ -125,14 +125,11 @@ public class SendPayment
 
 		try
 		{
-			lobjProc = GetProcess();
-
 			if ( Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_InsurerAccounting,
 							pdb).GetLevel()) &&
 					Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_MediatorAccounting,
 							pdb).GetLevel()) )
 			{
-				lobjReceipt = (Receipt)lobjProc.GetData();
 				lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Final);
 				lobjReceipt.SaveToDb(pdb);
 			}

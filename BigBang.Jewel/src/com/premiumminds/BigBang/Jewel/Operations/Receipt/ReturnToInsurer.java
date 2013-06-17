@@ -74,13 +74,12 @@ public class ReturnToInsurer
 		PrintSetDetail lobjSetReceipt;
 		Receipt lobjReceipt;
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			midInsurer = (UUID)GetProcess().GetParent().GetData().getAt(2);
-		else
-			midInsurer = (UUID)GetProcess().GetParent().GetParent().GetData().getAt(2);
+		lobjReceipt = (Receipt)GetProcess().GetData();
 
 		try
 		{
+			midInsurer = lobjReceipt.getAbsolutePolicy().GetCompany().getKey();
+
 			if ( mobjDocOps == null )
 				generateDocOp();
 
@@ -123,7 +122,6 @@ public class ReturnToInsurer
 
 		try
 		{
-			lobjReceipt = (Receipt)GetProcess().GetData();
 			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Final);
 			lobjReceipt.SaveToDb(pdb);
 		}
