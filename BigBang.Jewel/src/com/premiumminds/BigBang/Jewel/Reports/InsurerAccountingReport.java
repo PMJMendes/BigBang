@@ -16,8 +16,6 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
-import Jewel.Petri.Interfaces.IProcess;
-import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -66,7 +64,6 @@ public class InsurerAccountingReport
 		String[][] larrTables;
 		Receipt lobjReceipt;
 		InsurerAccountingDetail lobjDetail;
-		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		InsurerReceipt lobjRec;
@@ -151,24 +148,8 @@ public class InsurerAccountingReport
 		{
 			lobjDetail = (InsurerAccountingDetail)larrDetails[i];
 			lobjReceipt = larrDetails[i].getReceipt();
-			try
-			{
-				lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetData();
-					lobjSubPolicy = null;
-				}
-				else
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
-					lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
-				}
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
+			lobjPolicy = lobjReceipt.getAbsolutePolicy();
+			lobjSubPolicy = lobjReceipt.getSubPolicy();
 
 			larrTables[i] = new String[6];
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());

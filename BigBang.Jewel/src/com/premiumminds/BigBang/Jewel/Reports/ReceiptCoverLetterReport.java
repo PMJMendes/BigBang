@@ -12,8 +12,6 @@ import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.ILog;
-import Jewel.Petri.Interfaces.IProcess;
-import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -47,7 +45,6 @@ public class ReceiptCoverLetterReport
 		HashMap<String, String> larrParams;
 		String[][] larrTables;
 		Receipt lobjReceipt;
-		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		ILog lobjLog;
@@ -87,23 +84,14 @@ public class ReceiptCoverLetterReport
 		for ( i = 0; i < larrTables.length; i++ )
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
+			lobjPolicy = lobjReceipt.getAbsolutePolicy();
+			lobjSubPolicy = lobjReceipt.getSubPolicy();
+			lobjLog = lobjReceipt.getPaymentLog();
+			lobjData = null;
+			lobjMode = null;
+			lobjBank = null;
 			try
 			{
-				lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetData();
-					lobjSubPolicy = null;
-				}
-				else
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
-					lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
-				}
-				lobjData = null;
-				lobjMode = null;
-				lobjBank = null;
-				lobjLog = lobjProc.GetLiveLog(Constants.OPID_Receipt_Payment);
 				lopP = (lobjLog == null ? null : (Payment)lobjLog.GetOperationData());
 				larrData = (((lopP == null) || (lopP.marrData == null) || (lopP.marrData.length == 0)) ? null : lopP.marrData.clone());
 				if ( larrData != null )

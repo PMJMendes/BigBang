@@ -10,8 +10,6 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
-import Jewel.Petri.Interfaces.IProcess;
-import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -54,7 +52,6 @@ public class MediatorAccountingReport
 		String[][] larrTables;
 		Receipt lobjReceipt;
 		MediatorAccountingDetail lobjDetail;
-		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		Client lobjClient;
@@ -98,25 +95,9 @@ public class MediatorAccountingReport
 		{
 			lobjDetail = (MediatorAccountingDetail)larrDetails[i];
 			lobjReceipt = larrDetails[i].getReceipt();
-			try
-			{
-				lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetData();
-					lobjSubPolicy = null;
-				}
-				else
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
-					lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
-				}
-				lobjClient = lobjPolicy.GetClient();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
+			lobjPolicy = lobjReceipt.getAbsolutePolicy();
+			lobjSubPolicy = lobjReceipt.getSubPolicy();
+			lobjClient = lobjReceipt.getClient();
 
 			ldblAux = lobjDetail.getRetrocession();
 

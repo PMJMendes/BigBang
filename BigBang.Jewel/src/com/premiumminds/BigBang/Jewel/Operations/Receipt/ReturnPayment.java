@@ -66,13 +66,12 @@ public class ReturnPayment
 		PrintSetDetail lobjSetReceipt;
 		Receipt lobjReceipt;
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			midClient = GetProcess().GetParent().GetParent().GetDataKey();
-		else
-			midClient = (UUID)GetProcess().GetParent().GetData().getAt(2);
+		lobjReceipt = (Receipt)GetProcess().GetData();
 
 		try
 		{
+			midClient = lobjReceipt.getClient().getKey();
+
 			if ( mobjDocOps == null )
 				generateDocOp();
 
@@ -115,7 +114,6 @@ public class ReturnPayment
 
 		try
 		{
-			lobjReceipt = (Receipt)GetProcess().GetData();
 			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Payable);
 			lobjReceipt.SaveToDb(pdb);
 		}

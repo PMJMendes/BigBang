@@ -9,8 +9,6 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
-import Jewel.Petri.Interfaces.IProcess;
-import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -44,7 +42,6 @@ public class ReceiptReturnLetterReport
 		HashMap<String, String> larrParams;
 		String[][] larrTables;
 		Receipt lobjReceipt;
-		IProcess lobjProc;
 		Policy lobjPolicy;
 		Category lobjCat;
 		boolean lbUseContact;
@@ -88,14 +85,10 @@ public class ReceiptReturnLetterReport
 		for ( i = 0; i < larrTables.length; i++ )
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
+			lobjPolicy = lobjReceipt.getAbsolutePolicy();
+			lobjCat = lobjPolicy.GetSubLine().getLine().getCategory();
 			try
 			{
-				lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-					lobjPolicy = (Policy)lobjProc.GetParent().GetData();
-				else
-					lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
-				lobjCat = lobjPolicy.GetSubLine().getLine().getCategory();
 				lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptType),
 						(UUID)lobjReceipt.getAt(1));
 			}

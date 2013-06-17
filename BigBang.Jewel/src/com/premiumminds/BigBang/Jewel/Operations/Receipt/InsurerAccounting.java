@@ -71,13 +71,13 @@ public class InsurerAccounting
 		IProcess lobjProc;
 		Receipt lobjReceipt;
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			midInsurer = (UUID)GetProcess().GetParent().GetData().getAt(2);
-		else
-			midInsurer = (UUID)GetProcess().GetParent().GetParent().GetData().getAt(2);
+		lobjProc = GetProcess();
+		lobjReceipt = (Receipt)lobjProc.GetData();
 
 		try
 		{
+			midInsurer = lobjReceipt.getAbsolutePolicy().GetCompany().getKey();
+
 			if ( midSet == null )
 			{
 				lobjSet = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), null);
@@ -109,8 +109,6 @@ public class InsurerAccounting
 			lobjSetReceipt.SaveToDb(pdb);
 			midDetail = lobjSetReceipt.getKey();
 
-			lobjProc = GetProcess();
-
 			if ( Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_MediatorAccounting,
 							pdb).GetLevel()) &&
 					Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_SendReceipt,
@@ -118,7 +116,6 @@ public class InsurerAccounting
 					Jewel.Petri.Constants.LevelID_Invalid.equals(lobjProc.GetOperation(Constants.OPID_Receipt_SendPayment,
 							pdb).GetLevel()) )
 			{
-				lobjReceipt = (Receipt)lobjProc.GetData();
 				midPrevStatus = (UUID)lobjReceipt.getAt(Receipt.I.STATUS);
 				lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Final);
 				lobjReceipt.SaveToDb(pdb);

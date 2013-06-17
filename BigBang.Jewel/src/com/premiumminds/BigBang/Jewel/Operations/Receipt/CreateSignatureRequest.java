@@ -100,13 +100,12 @@ public class CreateSignatureRequest
     	ldtAux.add(Calendar.DAY_OF_MONTH, mlngDays);
     	ldtLimit = new Timestamp(ldtAux.getTimeInMillis());
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			midClient = GetProcess().GetParent().GetParent().GetDataKey();
-		else
-			midClient = (UUID)GetProcess().GetParent().GetData().getAt(2);
+		lobjReceipt = (Receipt)GetProcess().GetData();
 
 		try
 		{
+			midClient = lobjReceipt.getClient().getKey();
+
 			if ( mobjDocOps == null )
 				generateDocOp();
 
@@ -176,7 +175,6 @@ public class CreateSignatureRequest
 		midRequestObject = lobjRequest.getKey();
 		midExternProcess = lobjProc.getKey();
 
-		lobjReceipt = (Receipt)GetProcess().GetData();
 		midPrevStatus = (UUID)lobjReceipt.getAt(Receipt.I.STATUS);
 
 		try

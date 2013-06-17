@@ -100,10 +100,16 @@ public class CreatePaymentNotice
 		Client lobjClient;
 		com.premiumminds.BigBang.Jewel.Operations.Client.CreateConversation lopCCC;
 
-		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			midClient = GetProcess().GetParent().GetParent().GetDataKey();
-		else
-			midClient = (UUID)GetProcess().GetParent().GetData().getAt(2);
+		lobjReceipt = (Receipt)GetProcess().GetData();
+
+		try
+		{
+			midClient = lobjReceipt.getClient().getKey();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		if ( !mbUseSets )
 		{
@@ -138,7 +144,6 @@ public class CreatePaymentNotice
 		else
 			mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
 
-		lobjReceipt = (Receipt)GetProcess().GetData();
 		try
 		{
 			lobjReceipt.setAt(Receipt.I.STATUS, Constants.StatusID_Payable);
