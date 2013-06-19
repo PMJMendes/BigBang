@@ -524,7 +524,7 @@ public class ReceiptListingsBase
 					.append(lrefSubCasualties.SQLForSelectAll())
 					.append(") [AuxSCas] WHERE ([Policy] IN (SELECT [PK] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.COMPANY}, new java.lang.Object[] {pidCompany}, null))
-					.append(") [AuxPols3) OR [Sub Policy] IN (SELECT [PK] FROM (")
+					.append(") [AuxPols3]) OR [Sub Policy] IN (SELECT [PK] FROM (")
 					.append(lrefSubPolicies.SQLForSelectAll())
 					.append(") [AuxSPols2] WHERE [Policy] IN (SELECT [PK] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.COMPANY}, new java.lang.Object[] {pidCompany}, null))
