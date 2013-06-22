@@ -137,8 +137,8 @@ public class StaticFunctions
 
 		return;
 	}
-
-//	public static void ImportExcel(UUID pidNameSpace)
+//
+//	public static void DoSpecial(UUID pidNameSpace)
 //		throws BigBangJewelException
 //	{
 //		try
@@ -152,7 +152,7 @@ public class StaticFunctions
 //
 //		try
 //		{
-//			InnerImportExcel();
+//			InnerDoSpecial();
 //		}
 //		catch (Throwable e)
 //		{
@@ -170,12 +170,12 @@ public class StaticFunctions
 //		}
 //	}
 //
-//	private static void InnerImportExcel()
+//	private static void InnerDoSpecial()
 //		throws BigBangJewelException
 //	{
 //		MasterDB ldb;
 //		ResultSet lrs;
-//		CreateReceipt lopCR;
+//		Payment lopP;
 //
 //		try
 //		{
@@ -188,7 +188,7 @@ public class StaticFunctions
 //
 //		try
 //		{
-//			lrs = ldb.OpenRecordset("select * from dbo.ImpB_recibos z inner join credite_egs.tblBBPolicies p on p.PolicyNumber=z.[Nº Apólice]");
+//			lrs = ldb.OpenRecordset("select * from credite_egs.tblBBReceipts where _TSCreate>'2013-06-15' and _TSCreate<'2013-06-17'");
 //		}
 //		catch (Throwable e)
 //		{
@@ -200,9 +200,10 @@ public class StaticFunctions
 //		{
 //			while (lrs.next())
 //			{
-//				lopCR = new CreateReceipt(UUID.fromString(lrs.getString("FKProcess")));
-//				lopCR.mobjData = parse(lrs);
-//				lopCR.Execute();
+//				lopP = new Payment(UUID.fromString(lrs.getString("FKProcess")));
+//				lopP.marrData = new PaymentData[] {new PaymentData()};
+//				lopP.marrData[0].midPaymentType = Constants.PayID_DirectToInsurer;
+//				lopP.Execute();
 //			}
 //		}
 //		catch (Throwable e)
@@ -230,40 +231,5 @@ public class StaticFunctions
 //		{
 //			throw new BigBangJewelException(e.getMessage(), e);
 //		}
-//	}
-//
-//	private static ReceiptData parse(ResultSet prs)
-//		throws SQLException
-//	{
-//		ReceiptData lobjResult;
-//
-//		lobjResult = new ReceiptData();
-//
-//		lobjResult.mstrNumber = prs.getString("Nº Recibo");
-//		lobjResult.midType = Constants.RecType_Continuing;
-//		lobjResult.mdblTotal = prs.getBigDecimal("Prémio-total");
-//		lobjResult.mdblCommercial = prs.getBigDecimal("Prémio-Comercial");
-//		lobjResult.mdblCommissions = prs.getBigDecimal("Comissão-Angariação");
-//		lobjResult.mdblRetrocessions = null;
-//		lobjResult.mdblFAT = null;
-//		lobjResult.mdblBonusMalus = null;
-//		lobjResult.mbIsMalus = null;
-//		lobjResult.mdtIssue = parseDT(prs.getBigDecimal("Data-Processamento"));
-//		lobjResult.mdtMaturity = parseDT(prs.getBigDecimal("Data-Inicio"));
-//		lobjResult.mdtEnd = parseDT(prs.getBigDecimal("Data-Termo"));
-//		lobjResult.mdtDue = parseDT(prs.getBigDecimal("Data-Limite"));
-//		lobjResult.mstrNotes = null;
-//		lobjResult.mstrDescription = null;
-//		lobjResult.midPolicy = UUID.fromString(prs.getString("PK"));
-//
-//		return lobjResult;
-//	}
-//
-//	private static Timestamp parseDT(BigDecimal pdbl)
-//	{
-//		String lstr;
-//
-//		lstr = Integer.toString(pdbl.intValue());
-//		return Timestamp.valueOf(lstr.substring(0, 4) + "-" + lstr.substring(4, 6) + "-" + lstr.substring(6, 8) + " 00:00:00.0");
 //	}
 }
