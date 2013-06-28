@@ -260,7 +260,7 @@ public class PolicyListingsBase
 		larrCells[4] = ReportBuilder.buildCell(lobjProfile.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[4], true, true);
 
-		larrCells[5] = ReportBuilder.buildCell(pobjPolicy.getAt(Policy.I.PREMIUM), TypeDefGUIDs.T_Decimal);
+		larrCells[5] = ReportBuilder.buildCell(pobjPolicy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
 		larrCells[6] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtCreated, TypeDefGUIDs.T_Date);
