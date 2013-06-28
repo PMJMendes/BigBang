@@ -96,9 +96,15 @@ public class SignatureRequestReport
 		}
 
 		if ( lbCasualties )
+		{
 			larrParams.put("RecType", "indemnização");
+			larrParams.put("ExtraText", "");
+		}
 		else
+		{
 			larrParams.put("RecType", "estorno");
+			larrParams.put("ExtraText", "Esta regularização terá em conta o valor de eventuais recibos de prémio em débito.");
+		}
 
 		if ( Constants.TypeID_Company.equals((UUID)lobjClient.getAt(6)) )
 			larrParams.put("Signature", "carimbo e assinatura");
