@@ -27,6 +27,7 @@ import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ReceiptOtherAverages
 	extends ReceiptListingsBase
@@ -84,6 +85,7 @@ public class ReceiptOtherAverages
 		IEntity lrefLogs;
 		MasterDB ldb;
 		ResultSet lrsPolicies;
+		UUID lidAgent;
 
 		try
 		{
@@ -112,6 +114,10 @@ public class ReceiptOtherAverages
 			lstrSQL.append(" AND [Timestamp] < DATEADD(d, 1, '").append(parrParams[1]).append("')");
 
 		lstrSQL.append(")");
+
+		lidAgent = Utils.getCurrentAgent();
+		if ( lidAgent != null )
+			filterByAgent(lstrSQL, lidAgent);
 
 		larrAux = new ArrayList<Receipt>();
 

@@ -16,6 +16,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
 public class ManageUsers
@@ -38,6 +39,8 @@ public class ManageUsers
 		public UUID midCostCenter;
 		public String mstrDefaultPrinter;
 		public UUID midDelegate;
+		public UUID midMediator;
+
 		public UserData mobjPrevValues;
 	}
 
@@ -179,6 +182,7 @@ public class ManageUsers
 					lobjAuxBase.setAt(1, marrCreate[i].mstrUsername);
 					lobjAuxBase.setAt(2, marrCreate[i].mobjPassword);
 					lobjAuxBase.setAt(3, marrCreate[i].midProfile);
+					lobjAuxBase.setAt(4, marrCreate[i].midMediator);
 					lobjAuxBase.SaveToDb(pdb);
 
 					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -226,12 +230,14 @@ public class ManageUsers
 					marrModify[i].mobjPrevValues.midCostCenter = (UUID)lobjAuxOuter.getAt(2);
 					marrModify[i].mobjPrevValues.mstrDefaultPrinter = (String)lobjAuxOuter.getAt(4);
 					marrModify[i].mobjPrevValues.midDelegate = (UUID)lobjAuxOuter.getAt(5);
+					marrModify[i].mobjPrevValues.midMediator = (UUID)lobjAuxBase.getAt(4);
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 
 					lobjAuxBase.setAt(0, marrModify[i].mstrFullName);
 					lobjAuxBase.setAt(1, marrModify[i].mstrUsername);
 //					lobjAuxBase.setAt(2, marrModify[i].mobjPassword); //JMMM: Alterar o user não deve alterar a password
 					lobjAuxBase.setAt(3, marrModify[i].midProfile);
+					lobjAuxBase.setAt(4, marrModify[i].midMediator);
 					lobjAuxBase.SaveToDb(pdb);
 
 					lobjAuxOuter.setAt(1, marrModify[i].mstrEmail);
@@ -269,6 +275,7 @@ public class ManageUsers
 					marrDelete[i].midCostCenter = (UUID)lobjAuxOuter.getAt(2);
 					marrDelete[i].mstrDefaultPrinter = (String)lobjAuxOuter.getAt(4);
 					marrDelete[i].midDelegate = (UUID)lobjAuxOuter.getAt(5);
+					marrDelete[i].midMediator = (UUID)lobjAuxBase.getAt(4);
 					marrDelete[i].mobjPrevValues = null;
 
 					lrefDecorations.Delete(pdb, lobjAuxOuter.getKey());
@@ -474,6 +481,7 @@ public class ManageUsers
 					lobjAuxBase.setAt(1, marrModify[i].mobjPrevValues.mstrUsername);
 //					lobjAuxBase.setAt(2, marrModify[i].mobjPrevValues.mobjPassword); //JMMM: Alterar o user não deve alterar a password
 					lobjAuxBase.setAt(3, marrModify[i].mobjPrevValues.midProfile);
+					lobjAuxBase.setAt(4, marrModify[i].mobjPrevValues.midMediator);
 					lobjAuxBase.SaveToDb(pdb);
 
 					lobjAuxOuter.setAt(1, marrModify[i].mobjPrevValues.mstrEmail);
@@ -497,6 +505,7 @@ public class ManageUsers
 					lobjAuxBase.setAt(1, marrDelete[i].mstrUsername);
 					lobjAuxBase.setAt(2, marrDelete[i].mobjPassword);
 					lobjAuxBase.setAt(3, marrDelete[i].midProfile);
+					lobjAuxBase.setAt(4, marrDelete[i].midMediator);
 					lobjAuxBase.SaveToDb(pdb);
 
 					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -552,6 +561,7 @@ public class ManageUsers
 		ObjectBase lobjProfile;
 		CostCenter lobjCostCenter;
 		User lobjUser;
+		Mediator lobjMed;
 
 		pstrString.append("Nome: ");
 		pstrString.append(pobjData.mstrFullName);
@@ -608,7 +618,41 @@ public class ManageUsers
 				pstrString.append("(Erro a obter o utilizador delegado.)");
 			}
 		}
-		
+
+		if ( pobjData.midMediator != null )
+		{
+			pstrString.append(pstrLineBreak);
+			pstrString.append("Agente: ");
+
+			lobjMed = null;
+			try
+			{
+				lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), pobjData.midMediator);
+			}
+			catch (Throwable e)
+			{
+			}
+
+			try
+			{
+				if ( lobjMed == null )
+				{
+					if ( Constants.NSID_CredEGS.equals(Engine.getCurrentNameSpace()) )
+						lobjMed = Mediator.GetInstance(Constants.NSID_AMartins, pobjData.midMediator);
+					else
+						lobjMed = Mediator.GetInstance(Constants.NSID_CredEGS, pobjData.midMediator);
+				}
+			}
+			catch (Throwable e)
+			{
+			}
+
+			if ( lobjMed == null )
+				pstrString.append("(Erro a obter o agente associado.)");
+			else
+				pstrString.append((String)lobjMed.getLabel());
+		}
+
 		pstrString.append(pstrLineBreak);
 	}
 }

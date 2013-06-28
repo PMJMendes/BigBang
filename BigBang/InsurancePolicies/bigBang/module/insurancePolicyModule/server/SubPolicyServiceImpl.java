@@ -688,6 +688,11 @@ public class SubPolicyServiceImpl
 				"[:Status]", "[:Status:Status]", "[:Status:Level]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

@@ -19,6 +19,9 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SessionExpiredException;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
+
 public abstract class SearchServiceBase
 	extends EngineImplementor
 	implements SearchService
@@ -275,6 +278,7 @@ public abstract class SearchServiceBase
 		IEntity lrefSteps;
 		NewSearchResult lobjResult;
 		SearchWSpace.Row lobjAux;
+		UUID lidAgent;
 		int llngCount;
 		int i;
 
@@ -320,6 +324,17 @@ public abstract class SearchServiceBase
 					lstrBuffer.append(") [AuxSteps1])");
 				}
 
+				try
+				{
+					lidAgent = Utils.getCurrentAgent();
+				}
+				catch (BigBangJewelException e)
+				{
+		    		throw new BigBangException(e.getMessage(), e);
+				}
+				if ( lidAgent != null )
+					filterAgentUser(lstrBuffer, lidAgent);
+
 				buildFilter(lstrBuffer, parameters[i]);
 			}
 		}
@@ -358,6 +373,7 @@ public abstract class SearchServiceBase
 
 	protected abstract UUID getObjectID();
 	protected abstract String[] getColumns();
+	protected abstract void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator) throws BigBangException;
 	protected abstract boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam) throws BigBangException;
 	protected abstract boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
 			throws BigBangException;

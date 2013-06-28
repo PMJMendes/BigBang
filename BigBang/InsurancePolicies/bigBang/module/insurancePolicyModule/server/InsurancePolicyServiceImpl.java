@@ -996,6 +996,13 @@ public class InsurancePolicyServiceImpl
 				"[:Company:Name]", "[:Company:Acronym]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+		pstrBuffer.append(" AND ([:Mediator] = '").append(pidMediator.toString()).append("' OR ([:Mediator] IS NULL AND [:Client:Mediator] = '")
+				.append(pidMediator.toString()).append("'))");
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
@@ -1043,7 +1050,8 @@ public class InsurancePolicyServiceImpl
 
 		if ( lParam.mediatorId != null )
 		{
-			pstrBuffer.append(" AND [:Mediator] = '").append(lParam.mediatorId).append("'");
+			pstrBuffer.append(" AND ([:Mediator] = '").append(lParam.mediatorId).append("' OR ([:Mediator] IS NULL AND [:Client:Mediator] = '")
+					.append(lParam.mediatorId).append("'))");
 		}
 
 		if ( lParam.managerId != null )

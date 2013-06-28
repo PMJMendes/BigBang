@@ -22,6 +22,7 @@ public class UserForm extends FormView<User> {
 	protected ExpandableListBoxFormField costCenter;
 	protected ExpandableListBoxFormField delegate;
 	protected ListBoxFormField printers;
+	protected ExpandableListBoxFormField mediator;
 
 	private boolean printersInitialized = false;
 
@@ -36,6 +37,7 @@ public class UserForm extends FormView<User> {
 		costCenter = new ExpandableListBoxFormField(BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo");
 		delegate = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Delegado");
 		printers = new ListBoxFormField("Impressora pré-definida");
+		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Agente Associado");
 
 		role.allowEdition(false);
 		costCenter.allowEdition(false);		
@@ -48,6 +50,7 @@ public class UserForm extends FormView<User> {
 		addFormField(costCenter);
 		addFormField(delegate);
 		addFormField(printers);
+		addFormField(mediator);
 
 		showPasswordField(false);
 
@@ -105,6 +108,7 @@ public class UserForm extends FormView<User> {
 		info.costCenterId = this.costCenter.getValue();
 		info.delegateId = this.delegate.getValue();
 		info.defaultPrinter = this.printers.getValue();
+		info.mediatorId = this.mediator.getValue();
 		return info;
 	}
 
@@ -167,6 +171,11 @@ public class UserForm extends FormView<User> {
 				}
 			});
 		}
+
+		if(user.mediatorId == null)
+			mediator.clear();
+		else
+			this.mediator.setValue(user.mediatorId);
 	}
 
 }

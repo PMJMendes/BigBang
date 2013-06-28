@@ -137,4 +137,99 @@ public class StaticFunctions
 
 		return;
 	}
+//
+//	public static void DoSpecial(UUID pidNameSpace)
+//		throws BigBangJewelException
+//	{
+//		try
+//		{
+//			Engine.pushNameSpace(Constants.NSID_CredEGS);
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		try
+//		{
+//			InnerDoSpecial();
+//		}
+//		catch (Throwable e)
+//		{
+//			try { Engine.popNameSpace(); } catch (Throwable e1) {}
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		try
+//		{
+//			Engine.popNameSpace();
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//	}
+//
+//	private static void InnerDoSpecial()
+//		throws BigBangJewelException
+//	{
+//		MasterDB ldb;
+//		ResultSet lrs;
+//		Payment lopP;
+//
+//		try
+//		{
+//			ldb = new MasterDB();
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		try
+//		{
+//			lrs = ldb.OpenRecordset("select * from credite_egs.tblBBReceipts where _TSCreate>'2013-06-15' and _TSCreate<'2013-06-17'");
+//		}
+//		catch (Throwable e)
+//		{
+//			try { ldb.Disconnect(); } catch (Throwable e1) {}
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		try
+//		{
+//			while (lrs.next())
+//			{
+//				lopP = new Payment(UUID.fromString(lrs.getString("FKProcess")));
+//				lopP.marrData = new PaymentData[] {new PaymentData()};
+//				lopP.marrData[0].midPaymentType = Constants.PayID_DirectToInsurer;
+//				lopP.Execute();
+//			}
+//		}
+//		catch (Throwable e)
+//		{
+//			try { lrs.close(); } catch (Throwable e1) {}
+//			try { ldb.Disconnect(); } catch (Throwable e1) {}
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		try
+//		{
+//			lrs.close();
+//		}
+//		catch (Throwable e)
+//		{
+//			try { ldb.Disconnect(); } catch (Throwable e1) {}
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		try
+//		{
+//			ldb.Disconnect();
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//	}
 }

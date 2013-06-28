@@ -26,6 +26,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class SubCasualtyOtherClosingTimes
 	extends SubCasualtyListingsBase
@@ -82,6 +83,9 @@ public class SubCasualtyOtherClosingTimes
 		IEntity lrefProcs;
 		MasterDB ldb;
 		ResultSet lrsPolicies;
+
+		if ( Utils.getCurrentAgent() != null )
+			return new SubCasualty[0];
 
 		try
 		{

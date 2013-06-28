@@ -1013,6 +1013,44 @@ public class ExpenseServiceImpl
 				"[:Sub Policy Coverage]", "[:Damages]", "[:Generic Object]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+		IEntity lrefPolicies;
+		IEntity lrefSubPolicies;
+
+		pstrBuffer.append(" AND (");
+		pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+		try
+		{
+			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+			pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+		}
+		catch (Throwable e)
+		{
+    		throw new BigBangException(e.getMessage(), e);
+		}
+		pstrBuffer.append(") [AuxPols] WHERE ([:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR ([:Mediator] IS NULL");
+		pstrBuffer.append(" AND [:Client:Mediator] = '").append(pidMediator.toString()).append("'))))");
+		pstrBuffer.append(" OR ");
+		pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+		try
+		{
+			lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+			pstrBuffer.append(lrefSubPolicies.SQLForSelectMulti());
+		}
+		catch (Throwable e)
+		{
+    		throw new BigBangException(e.getMessage(), e);
+		}
+		pstrBuffer.append(") [AuxSPols] WHERE ([:Subscriber:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR [:Policy:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR ([:Policy:Mediator] IS NULL");
+		pstrBuffer.append(" AND [:Policy:Client:Mediator] = '").append(pidMediator.toString()).append("'))))");
+		pstrBuffer.append(")");
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

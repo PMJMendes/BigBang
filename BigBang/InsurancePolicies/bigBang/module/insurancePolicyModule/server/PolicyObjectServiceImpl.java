@@ -48,6 +48,11 @@ public class PolicyObjectServiceImpl
 				"[:Inclusion Date]", "[:Exclusion Date]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

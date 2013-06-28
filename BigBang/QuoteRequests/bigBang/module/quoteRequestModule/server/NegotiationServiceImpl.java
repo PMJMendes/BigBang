@@ -441,6 +441,11 @@ public class NegotiationServiceImpl
 		return new String[] {"[:Process]", "[:Company]", "[:Company:Name]", "[:Limit Date]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

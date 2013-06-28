@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.ClientListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ClientHistoryCreation
 	extends ClientListingsBase
@@ -84,6 +85,7 @@ public class ClientHistoryCreation
 		IEntity lrefClients, lrefLogs;
 		MasterDB ldb;
 		ResultSet lrsClients;
+		UUID lidAgent;
 
 		try
 		{
@@ -117,6 +119,10 @@ public class ClientHistoryCreation
 
 		if ( parrParams[1] != null )
 			filterByAgent(lstrSQL, UUID.fromString(parrParams[1]));
+
+		lidAgent = Utils.getCurrentAgent();
+		if ( lidAgent != null )
+			filterByAgent(lstrSQL, lidAgent);
 
 		larrAux = new ArrayList<Client>();
 

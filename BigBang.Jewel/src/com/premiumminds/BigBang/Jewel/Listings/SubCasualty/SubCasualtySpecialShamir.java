@@ -27,6 +27,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class SubCasualtySpecialShamir
 {
@@ -96,6 +97,9 @@ public class SubCasualtySpecialShamir
 		IEntity lrefCasualties;
 		MasterDB ldb;
 		ResultSet lrsSubCs;
+
+		if ( Utils.getCurrentAgent() != null )
+			return new SubCasualty[0];
 
 		try
 		{

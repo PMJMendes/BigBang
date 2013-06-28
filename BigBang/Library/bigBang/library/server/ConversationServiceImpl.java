@@ -792,6 +792,11 @@ public class ConversationServiceImpl
 					"(SELECT MAX([Date]) FROM (" + lrefMessages.SQLForSelectAll() + ") [AuxMsgs] WHERE [Conversation] = [Aux].[PK])"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

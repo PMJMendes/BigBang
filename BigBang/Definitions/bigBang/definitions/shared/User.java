@@ -15,8 +15,9 @@ public class User
 	public UserProfile profile;
 	public String costCenterId;
 	public String email;
-	public String delegateId; //TODO USE
+	public String delegateId;
 	public String defaultPrinter;
+	public String mediatorId;
 
 	public User() {};
 
@@ -31,5 +32,6 @@ public class User
 		this.costCenterId = original.costCenterId;
 		this.email = original.email;
 		this.defaultPrinter = original.defaultPrinter;
+		this.mediatorId = original.mediatorId;
 	}
 }

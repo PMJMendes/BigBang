@@ -407,6 +407,12 @@ public class QuoteRequestServiceImpl
 		return new String[] {"[:Number]", "[:Process]", "[:Case Study]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+		pstrBuffer.append(" AND [:Mediator] = '").append(pidMediator.toString()).append("'");
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ReceiptHistoryImage
 	extends ReceiptListingsBase
@@ -84,6 +85,7 @@ public class ReceiptHistoryImage
 		IEntity lrefReceipts, lrefLogs;
 		MasterDB ldb;
 		ResultSet lrsReceipts;
+		UUID lidAgent;
 
 		larrAux = new ArrayList<Receipt>();
 
@@ -123,6 +125,10 @@ public class ReceiptHistoryImage
 
 		if ( parrParams[3] != null )
 			filterByCompany(lstrSQL, UUID.fromString(parrParams[3]));
+
+		lidAgent = Utils.getCurrentAgent();
+		if ( lidAgent != null )
+			filterByAgent(lstrSQL, lidAgent);
 
 		larrAux = new ArrayList<Receipt>();
 

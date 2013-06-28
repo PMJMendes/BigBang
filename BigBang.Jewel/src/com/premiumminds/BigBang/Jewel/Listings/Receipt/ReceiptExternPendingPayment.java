@@ -35,6 +35,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.Template;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ReceiptExternPendingPayment
 	extends ReceiptListingsBase
@@ -78,6 +79,7 @@ public class ReceiptExternPendingPayment
 		IEntity lrefReceipts, lrefSteps;
 		MasterDB ldb;
 		ResultSet lrsReceipts;
+		UUID lidAgent;
 
 		try
 		{
@@ -106,6 +108,10 @@ public class ReceiptExternPendingPayment
 			filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
 		if ( parrParams[1] != null )
 			filterByClientGroup(lstrSQL, UUID.fromString(parrParams[1]));
+
+		lidAgent = Utils.getCurrentAgent();
+		if ( lidAgent != null )
+			filterByAgent(lstrSQL, lidAgent);
 
 		larrAux = new ArrayList<Receipt>();
 

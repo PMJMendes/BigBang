@@ -46,6 +46,11 @@ public class QuoteRequestObjectServiceImpl
 				"[:Zip Code:Code]", "[:Zip Code:City]", "[:Zip Code:County]", "[:Zip Code:District]", "[:Zip Code:Country]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

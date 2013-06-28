@@ -313,6 +313,11 @@ public class AssessmentServiceImpl
 		return new String[] {"[:Reference]", "[:Process]", "[:Scheduled Date]", "[:Effective Date]", "[:Process:Running]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

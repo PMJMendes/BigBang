@@ -322,6 +322,11 @@ public class TotalLossServiceImpl
 		return new String[] {"[:Reference]", "[:Process]", "[:Salvage Type]", "[:Salvage Type:Type]", "[:Process:Running]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
