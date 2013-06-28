@@ -2591,13 +2591,19 @@ public class ReceiptServiceImpl
 				"[:End Date]", "[:Description]", "[:Status]", "[:Due Date]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+		filterByMediator(pstrBuffer, pidMediator.toString());
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
 		ReceiptSearchParameter lParam;
 		String lstrAux;
 		IEntity lrefPolicies;
-		IEntity lrefClients;
+		IEntity lrefSubPolicies;
         Calendar ldtAux;
 		IEntity lrefLogs;
 		int i;
@@ -2618,82 +2624,42 @@ public class ReceiptServiceImpl
 			pstrBuffer.append(" OR ");
 			pstrBuffer.append("(CAST([:Total Premium] AS NVARCHAR(20)) = N'").append(lstrAux).append("')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE (");
-			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Policy:Number] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:SubLine:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Policy:SubLine:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Policy:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Policy:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE (");
-			pstrBuffer.append("([:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Policy:Client:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("(CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
-			pstrBuffer.append("))))))");
+			pstrBuffer.append("(CAST([:Policy:Client:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxSPols] WHERE (");
-			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Sub Policy:Number] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:Subscriber:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Sub Policy:Subscriber:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("(CAST([:Subscriber:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("(CAST([:Sub Policy:Subscriber:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxSMPols] WHERE (");
-			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Sub Policy:Policy:Number] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:SubLine:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Sub Policy:Policy:SubLine:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Sub Policy:Policy:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%')");
-			pstrBuffer.append(")))))))");
+			pstrBuffer.append("([:Sub Policy:Policy:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(")");
 		}
 
 		if ( lParam.companyId != null )
 		{
-			pstrBuffer.append(" AND (([:Process:Parent] IN (SELECT [:Process] FROM (");
+			pstrBuffer.append(" AND (");
+			pstrBuffer.append("([:Policy:Company] = '").append(lParam.companyId).append("')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Policy:Policy:Company] = '").append(lParam.companyId).append("')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Casualty:Policy] IN (SELECT [PK] FROM (");
 			try
 			{
 				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
@@ -2704,27 +2670,19 @@ public class ReceiptServiceImpl
         		throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxPols] WHERE [:Company] = '").append(lParam.companyId).append("'))");
-			pstrBuffer.append(" OR ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Casualty:Sub Policy] IN (SELECT [PK] FROM (");
 			try
 			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+				lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefSubPolicies.SQLForSelectMulti());
 			}
 			catch (Throwable e)
 			{
         		throw new BigBangException(e.getMessage(), e);
 			}
-			pstrBuffer.append(") [AuxSPols] WHERE ([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxSMPols] WHERE [:Company] = '").append(lParam.companyId).append("')))))");
+			pstrBuffer.append(") [AuxSPols] WHERE [:Policy:Company] = '").append(lParam.companyId).append("'))");
+			pstrBuffer.append(")");
 		}
 
 		if ( lParam.managerId != null )
@@ -2734,64 +2692,7 @@ public class ReceiptServiceImpl
 
 		if ( lParam.mediatorId != null )
 		{
-			pstrBuffer.append(" AND ([:Mediator] = '").append(lParam.mediatorId).append("'");
-			pstrBuffer.append(" OR ([:Mediator] IS NULL");
-			pstrBuffer.append(" AND (([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE ([:Mediator] = '").append(lParam.mediatorId).append("'");
-			pstrBuffer.append(" OR ([:Mediator] IS NULL");
-			pstrBuffer.append(" AND ([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxCli] WHERE [:Mediator] = '").append(lParam.mediatorId).append("'))))))");
-			pstrBuffer.append(" OR ([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxSPols] WHERE ([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxSMPols] WHERE ([:Mediator] = '").append(lParam.mediatorId).append("'");
-			pstrBuffer.append(" OR ([:Mediator] IS NULL");
-			pstrBuffer.append(" AND ([:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxCli] WHERE [:Mediator] = '").append(lParam.mediatorId).append("')))))))))))");
+			filterByMediator(pstrBuffer, lParam.mediatorId);
 		}
 
 		if ( lParam.ownerId != null )
@@ -2870,9 +2771,46 @@ public class ReceiptServiceImpl
 			pstrBuffer.append("')");
 		}
 
-		if ( (lParam.subLineId != null) || (lParam.lineId != null) || (lParam.categoryId != null) )
+		if ( lParam.subLineId != null )
 		{
-			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
+			pstrBuffer.append(" AND (");
+			pstrBuffer.append("([:Policy:SubLine] = '").append(lParam.subLineId).append("')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Policy:Policy:SubLine] = '").append(lParam.subLineId).append("')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Casualty:Policy] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:SubLine] = '").append(lParam.subLineId).append("'))");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Casualty:Sub Policy] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefSubPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSPols] WHERE [:Policy:SubLine] = '").append(lParam.subLineId).append("'))");
+			pstrBuffer.append(")");
+		}
+		else if ( lParam.lineId != null )
+		{
+			pstrBuffer.append(" AND (");
+			pstrBuffer.append("([:Policy:SubLine:Line] = '").append(lParam.lineId).append("')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Policy:Policy:SubLine:Line] = '").append(lParam.lineId).append("')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Casualty:Policy] IN (SELECT [PK] FROM (");
 			try
 			{
 				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
@@ -2882,20 +2820,52 @@ public class ReceiptServiceImpl
 			{
         		throw new BigBangException(e.getMessage(), e);
 			}
-			pstrBuffer.append(") [AuxLine] WHERE ");
-			if ( lParam.subLineId != null )
+			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Line] = '").append(lParam.lineId).append("'))");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Casualty:Sub Policy] IN (SELECT [PK] FROM (");
+			try
 			{
-				pstrBuffer.append("[:SubLine] = '").append(lParam.subLineId);
+				lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefSubPolicies.SQLForSelectMulti());
 			}
-			else if ( lParam.lineId != null )
+			catch (Throwable e)
 			{
-				pstrBuffer.append("[:SubLine:Line] = '").append(lParam.lineId);
+        		throw new BigBangException(e.getMessage(), e);
 			}
-			else if ( lParam.categoryId != null )
+			pstrBuffer.append(") [AuxSPols] WHERE [:Policy:SubLine:Line] = '").append(lParam.lineId).append("'))");
+			pstrBuffer.append(")");
+		}
+		else if ( lParam.categoryId != null )
+		{
+			pstrBuffer.append(" AND (");
+			pstrBuffer.append("([:Policy:SubLine:Line:Category] = '").append(lParam.categoryId).append("')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Policy:Policy:SubLine:Line:Category] = '").append(lParam.categoryId).append("')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Casualty:Policy] IN (SELECT [PK] FROM (");
+			try
 			{
-				pstrBuffer.append("[:SubLine:Line:Category] = '").append(lParam.categoryId);
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
 			}
-			pstrBuffer.append("')");
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Line:Category] = '").append(lParam.categoryId).append("'))");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Sub Casualty:Sub Policy] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefSubPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSPols] WHERE [:Policy:SubLine:Line:Category] = '").append(lParam.categoryId).append("'))");
+			pstrBuffer.append(")");
 		}
 
 		if ( lParam.internalOnly )
@@ -3099,6 +3069,51 @@ public class ReceiptServiceImpl
 			lobjResult.statusIcon = translateStatus((Integer)lobjStatus.getAt(1));
 
 		return lobjResult;
+	}
+
+	private void filterByMediator(StringBuilder pstrBuffer, String pstrMedId)
+		throws BigBangException
+	{
+		IEntity lrefPolicies;
+		IEntity lrefSubPolicies;
+
+		pstrBuffer.append(" AND ([:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR ([:Mediator] IS NULL");
+		pstrBuffer.append(" AND ([:Policy:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR ([:Policy:Mediator] IS NULL");
+		pstrBuffer.append(" AND [:Policy:Client:Mediator] = '").append(pstrMedId).append("')");
+		pstrBuffer.append(" OR [:Sub Policy:Subscriber:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Sub Policy:Policy:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR ([:Sub Policy:Policy:Mediator] IS NULL");
+		pstrBuffer.append(" AND [:Sub Policy:Policy:Client:Mediator] = '").append(pstrMedId).append("')");
+		pstrBuffer.append(" OR [:Sub Casualty:Casualty:Client:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Sub Casualty:Policy] IN (SELECT [PK] FROM (");
+		try
+		{
+			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+			pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+		}
+		catch (Throwable e)
+		{
+    		throw new BigBangException(e.getMessage(), e);
+		}
+		pstrBuffer.append(") [AuxPols] WHERE ([:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR ([:Mediator] IS NULL");
+		pstrBuffer.append(" AND [:Client:Mediator] = '").append(pstrMedId).append("')))");
+		pstrBuffer.append(" OR [:Sub Casualty:Sub Policy] IN (SELECT [PK] FROM (");
+		try
+		{
+			lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+			pstrBuffer.append(lrefSubPolicies.SQLForSelectMulti());
+		}
+		catch (Throwable e)
+		{
+    		throw new BigBangException(e.getMessage(), e);
+		}
+		pstrBuffer.append(") [AuxSPols] WHERE ([:Subscriber:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Policy:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR ([:Policy:Mediator] IS NULL");
+		pstrBuffer.append(" AND [:Policy:Client:Mediator] = '").append(pstrMedId).append("'))))))");
 	}
 
 	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)

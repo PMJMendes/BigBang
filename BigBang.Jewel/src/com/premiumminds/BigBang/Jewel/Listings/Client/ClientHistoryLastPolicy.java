@@ -20,6 +20,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.ClientListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ClientHistoryLastPolicy
 	extends ClientListingsBase
@@ -88,6 +89,7 @@ public class ClientHistoryLastPolicy
 		IEntity lrefProcs;
 		MasterDB ldb;
 		ResultSet lrsClients;
+		UUID lidAgent;
 
 		larrAux = new ArrayList<Client>();
 
@@ -153,6 +155,10 @@ public class ClientHistoryLastPolicy
 
 		if ( parrParams[1] != null )
 			filterByAgent(lstrSQL, UUID.fromString(parrParams[1]));
+
+		lidAgent = Utils.getCurrentAgent();
+		if ( lidAgent != null )
+			filterByAgent(lstrSQL, lidAgent);
 
 		larrAux = new ArrayList<Client>();
 

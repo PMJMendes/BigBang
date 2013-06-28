@@ -20,6 +20,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.PolicyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class PolicyPendingReceipt
 	extends PolicyListingsBase
@@ -90,6 +91,7 @@ public class PolicyPendingReceipt
 		IEntity lrefLogs;
 		MasterDB ldb;
 		ResultSet lrsPolicies;
+		UUID lidAgent;
 
 		try
 		{
@@ -131,6 +133,10 @@ public class PolicyPendingReceipt
 
 		if ( parrParams[3] != null )
 			filterByCompany(lstrSQL, UUID.fromString(parrParams[3]));
+
+		lidAgent = Utils.getCurrentAgent();
+		if ( lidAgent != null )
+			filterByAgent(lstrSQL, lidAgent);
 
 		larrAux = new ArrayList<Policy>();
 

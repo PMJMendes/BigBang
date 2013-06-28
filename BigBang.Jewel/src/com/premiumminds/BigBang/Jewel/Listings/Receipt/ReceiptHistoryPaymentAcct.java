@@ -32,6 +32,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ReceiptHistoryPaymentAcct
 	extends ReceiptListingsBase
@@ -100,6 +101,9 @@ public class ReceiptHistoryPaymentAcct
 		MasterDB ldb;
 		ResultSet lrsReceipts;
 		Receipt lobjAux;
+
+		if ( Utils.getCurrentAgent() != null )
+			return new Receipt[0];
 
 		larrAux = new ArrayList<Receipt>();
 

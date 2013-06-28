@@ -456,6 +456,11 @@ public class MedicalFileServiceImpl
 		return new String[] {"[:Reference]", "[:Process]", "[:Next Date]", "[:Process:Running]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

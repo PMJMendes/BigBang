@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.PolicyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class PolicyHistoryValidation
 	extends PolicyListingsBase
@@ -84,6 +85,7 @@ public class PolicyHistoryValidation
 		IEntity lrefPolicies, lrefLogs;
 		MasterDB ldb;
 		ResultSet lrsPolicies;
+		UUID lidAgent;
 
 		try
 		{
@@ -123,6 +125,10 @@ public class PolicyHistoryValidation
 
 		if ( parrParams[3] != null )
 			filterByCompany(lstrSQL, UUID.fromString(parrParams[3]));
+
+		lidAgent = Utils.getCurrentAgent();
+		if ( lidAgent != null )
+			filterByAgent(lstrSQL, lidAgent);
 
 		larrAux = new ArrayList<Policy>();
 

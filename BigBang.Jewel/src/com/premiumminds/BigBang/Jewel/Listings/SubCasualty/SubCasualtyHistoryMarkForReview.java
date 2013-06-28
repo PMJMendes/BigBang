@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class SubCasualtyHistoryMarkForReview
 	extends SubCasualtyListingsBase
@@ -84,6 +85,9 @@ public class SubCasualtyHistoryMarkForReview
 		IEntity lrefubCs, lrefLogs;
 		MasterDB ldb;
 		ResultSet lrsPolicies;
+
+		if ( Utils.getCurrentAgent() != null )
+			return new SubCasualty[0];
 
 		try
 		{

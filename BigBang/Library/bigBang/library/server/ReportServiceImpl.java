@@ -30,6 +30,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.PrintConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionSetBase;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ReportServiceImpl
 	extends EngineImplementor
@@ -269,6 +270,16 @@ public class ReportServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		try
+		{
+			if ( Utils.getCurrentAgent() != null )
+				return new PrintSet[0];
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
 		larrAux = new ArrayList<PrintSet>();
 
 		try
@@ -339,6 +350,16 @@ public class ReportServiceImpl
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
+
+		try
+		{
+			if ( Utils.getCurrentAgent() != null )
+				return new TransactionSet[0];
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
 		larrAux = new ArrayList<TransactionSet>();
 

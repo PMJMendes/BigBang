@@ -237,6 +237,11 @@ public class HistoryServiceImpl
 		return new String[] {"[:User:Username]", "[:Timestamp]", "[:Operation:Name]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

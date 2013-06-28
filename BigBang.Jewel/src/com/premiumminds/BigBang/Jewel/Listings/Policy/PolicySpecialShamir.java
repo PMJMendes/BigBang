@@ -23,6 +23,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class PolicySpecialShamir
 {
@@ -84,6 +85,9 @@ public class PolicySpecialShamir
 		IEntity lrefObjects, lrefPolicies;
 		MasterDB ldb;
 		ResultSet lrsObjects;
+
+		if ( Utils.getCurrentAgent() != null )
+			return new PolicyObject[0];
 
 		try
 		{

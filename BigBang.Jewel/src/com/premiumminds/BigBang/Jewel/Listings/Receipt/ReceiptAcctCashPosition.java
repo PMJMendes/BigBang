@@ -28,6 +28,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ReceiptAcctCashPosition
 	extends ReceiptListingsBase
@@ -68,6 +69,9 @@ public class ReceiptAcctCashPosition
 		IEntity lrefReceipts, lrefSteps;
 		MasterDB ldb;
 		ResultSet lrsReceipts;
+
+		if ( Utils.getCurrentAgent() != null )
+			return new Receipt[0];
 
 		try
 		{

@@ -714,6 +714,11 @@ public class SubCasualtyServiceImpl
 		return new String[] {"[:Number]", "[:Process]", "[:Insurer Process]"};
 	}
 
+	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
+		throws BigBangException
+	{
+	}
+
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{

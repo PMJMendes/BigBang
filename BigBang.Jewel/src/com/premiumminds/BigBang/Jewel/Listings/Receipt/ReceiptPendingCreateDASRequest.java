@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.ReceiptListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ReceiptPendingCreateDASRequest
 	extends ReceiptListingsBase
@@ -84,6 +85,7 @@ public class ReceiptPendingCreateDASRequest
 		IEntity lrefReceipts, lrefSteps;
 		MasterDB ldb;
 		ResultSet lrsReceipts;
+		UUID lidAgent;
 
 		try
 		{
@@ -112,6 +114,10 @@ public class ReceiptPendingCreateDASRequest
 
 		if ( parrParams[3] != null )
 			filterByCompany(lstrSQL, UUID.fromString(parrParams[3]));
+
+		lidAgent = Utils.getCurrentAgent();
+		if ( lidAgent != null )
+			filterByAgent(lstrSQL, lidAgent);
 
 		if ( parrParams[4] != null )
 			lstrSQL.append(" AND [Maturity Date] >= '").append(parrParams[4]).append("'");

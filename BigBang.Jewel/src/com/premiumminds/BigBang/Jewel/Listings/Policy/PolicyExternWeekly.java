@@ -29,6 +29,7 @@ import com.premiumminds.BigBang.Jewel.Listings.PolicyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class PolicyExternWeekly
 	extends PolicyListingsBase
@@ -85,6 +86,7 @@ public class PolicyExternWeekly
 		IEntity lrefPolicies;
 		MasterDB ldb;
 		ResultSet lrsPolicies;
+		UUID lidAgent;
 
 		try
 		{
@@ -105,6 +107,10 @@ public class PolicyExternWeekly
 
 		if ( parrParams[1] != null )
 			filterByDates(lstrSQL, Timestamp.valueOf(parrParams[1] + " 00:00:00.0"));
+
+		lidAgent = Utils.getCurrentAgent();
+		if ( lidAgent != null )
+			filterByAgent(lstrSQL, lidAgent);
 
 		larrAux = new ArrayList<Policy>();
 
