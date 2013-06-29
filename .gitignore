@@ -1,0 +1,13 @@
+.metadata
+.classpath
+.project
+.settings
+bin
+lib
+gwt-unitCache
+classes
+deploy
+BigBang/war/bigbang
+BigBang.Tests/war/bigbang_tests
+Codigos Postais
+Ficheiros
