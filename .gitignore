@@ -11,3 +11,4 @@ BigBang/war/bigbang
 BigBang.Tests/war/bigbang_tests
 Codigos Postais
 Ficheiros
+!BigBang/war/WEB-INF/lib
