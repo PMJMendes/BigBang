@@ -1795,7 +1795,6 @@ public class ReceiptServiceImpl
 	{
 		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		IProcess lobjProcess;
 		UUID lidClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
@@ -1820,11 +1819,7 @@ public class ReceiptServiceImpl
 			{
 				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(receiptIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
-				else
-					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+				lidClient = lobjReceipt.getClient().getKey();
 			}
 			catch (Throwable e)
 			{
@@ -1942,7 +1937,6 @@ public class ReceiptServiceImpl
 	{
 		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		IProcess lobjProcess;
 		UUID lidClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
@@ -1962,11 +1956,7 @@ public class ReceiptServiceImpl
 			{
 				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(receiptIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
-				else
-					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+				lidClient = lobjReceipt.getClient().getKey();
 			}
 			catch (Throwable e)
 			{
@@ -2021,7 +2011,6 @@ public class ReceiptServiceImpl
 	{
 		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		IProcess lobjProcess;
 		UUID lidClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
@@ -2041,11 +2030,7 @@ public class ReceiptServiceImpl
 			{
 				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(receiptIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
-				else
-					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+				lidClient = lobjReceipt.getClient().getKey();
 			}
 			catch (Throwable e)
 			{
@@ -2127,7 +2112,6 @@ public class ReceiptServiceImpl
 	{
 		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		IProcess lobjProcess;
 		UUID lidClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
@@ -2147,11 +2131,7 @@ public class ReceiptServiceImpl
 			{
 				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(receiptIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
-				else
-					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+				lidClient = lobjReceipt.getClient().getKey();
 			}
 			catch (Throwable e)
 			{
@@ -2205,7 +2185,6 @@ public class ReceiptServiceImpl
 	{
 		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		IProcess lobjProcess;
 		UUID lidInsurer;
 		ArrayList<UUID> larrByInsurer;
 		UUID[] larrFinal;
@@ -2231,11 +2210,7 @@ public class ReceiptServiceImpl
 			{
 				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(receiptIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					lidInsurer = (UUID)lobjProcess.GetParent().GetData().getAt(2);
-				else
-					lidInsurer = (UUID)lobjProcess.GetParent().GetParent().GetData().getAt(2);
+				lidInsurer = lobjReceipt.getAbsolutePolicy().GetCompany().getKey();
 			}
 			catch (Throwable e)
 			{
@@ -2422,7 +2397,6 @@ public class ReceiptServiceImpl
 	{
 		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		IProcess lobjProcess;
 		UUID lidMediator;
 		ArrayList<UUID> larrByMediator;
 		UUID[] larrFinal;
@@ -2441,24 +2415,7 @@ public class ReceiptServiceImpl
 			{
 				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(receiptIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				lidMediator = (UUID)lobjReceipt.getAt(12);
-				if ( lidMediator == null )
-				{
-					if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					{
-						lidMediator = (UUID)lobjProcess.GetParent().GetData().getAt(11);
-						if ( lidMediator == null )
-							lidMediator = (UUID)lobjProcess.GetParent().GetParent().GetData().getAt(8);
-					}
-					else
-					{
-						lidMediator = (UUID)lobjProcess.GetParent().GetParent().GetData().getAt(11);
-						if ( lidMediator == null )
-							lidMediator = (UUID)lobjProcess.GetParent().GetParent().GetParent().GetData().getAt(8);
-					}
-				}
-
+				lidMediator = lobjReceipt.getMediator().getKey();
 			}
 			catch (Throwable e)
 			{
@@ -2507,7 +2464,6 @@ public class ReceiptServiceImpl
 	{
 		HashMap<UUID, ArrayList<UUID>> larrReceipts;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		IProcess lobjProcess;
 		UUID lidInsurer;
 		ArrayList<UUID> larrByInsurer;
 		UUID[] larrFinal;
@@ -2527,11 +2483,7 @@ public class ReceiptServiceImpl
 			{
 				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(receiptIds[i]));
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-					lidInsurer = (UUID)lobjProcess.GetParent().GetData().getAt(2);
-				else
-					lidInsurer = (UUID)lobjProcess.GetParent().GetParent().GetData().getAt(2);
+				lidInsurer = lobjReceipt.getAbsolutePolicy().GetCompany().getKey();
 			}
 			catch (Throwable e)
 			{
