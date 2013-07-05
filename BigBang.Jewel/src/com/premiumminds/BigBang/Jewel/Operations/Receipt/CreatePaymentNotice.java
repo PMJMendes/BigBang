@@ -508,8 +508,8 @@ public class CreatePaymentNotice
 					.append((lobjRec.getExternalDueDate() + "          ").substring(0, 10))
 					.append("</td>");
 			lstrBuffer.append("<td>")
-					.append((lobjRec.getAt(Receipt.I.DESCRIPTION) == null ? "" :
-						((String)lobjRec.getAt(Receipt.I.DESCRIPTION)) + "                         ").substring(0, 25))
+					.append(((lobjRec.getAt(Receipt.I.DESCRIPTION) == null ? "" :
+						((String)lobjRec.getAt(Receipt.I.DESCRIPTION))) + "                         ").substring(0, 25))
 					.append("</td>");
 			lstrBuffer.append("</tr>");
 		}
