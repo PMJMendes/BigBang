@@ -22,8 +22,8 @@ import Jewel.Engine.SysObjects.JewelEngineException;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.AccountingData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
 import com.premiumminds.BigBang.Jewel.Reports.InsurerAccountingReport;
@@ -130,7 +130,7 @@ public class InsurerAccountingMap
 	{
 		InsurerAccountingReport lrepIA;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 		DocOps lobjResult;
 
 		if ( mobjDoc != null )
@@ -151,7 +151,7 @@ public class InsurerAccountingMap
 		mdblTotal = lrepIA.mdblTotal;
 		mdtToday = lrepIA.mdtToday;
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = new Timestamp(new java.util.Date().getTime()).toString();
 		lobjDoc.midOwnerType = Constants.ObjID_Company;
 		lobjDoc.midOwnerId = (UUID)getAt(TransactionMapBase.I.OWNER);
@@ -185,7 +185,7 @@ public class InsurerAccountingMap
 		}
 
 		lobjResult = new DocOps();
-		lobjResult.marrCreate = new DocumentData[]{lobjDoc};
+		lobjResult.marrCreate2 = new DocDataLight[] {lobjDoc};
 
 		mobjDoc = lobjResult;
 
