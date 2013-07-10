@@ -201,7 +201,7 @@ public class MediatorAccountingMap
 			larrResult[3].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
 			larrResult[3].mdtDate = mdtToday;
 			larrResult[3].mdblAccount = new BigDecimal("2422");
-			larrResult[3].mdblValue = mdblTotal.abs();
+			larrResult[3].mdblValue = mdblRetention.abs();
 			larrResult[3].mstrSign = (mdblRetention.signum() > 0 ? "C" : "D");
 			larrResult[3].mlngBook = 6;
 			larrResult[3].mstrSupportDoc = ((Integer)mrefSet.getAt(TransactionSetBase.I.NUMBER)).toString();
