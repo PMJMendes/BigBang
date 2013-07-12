@@ -9,8 +9,8 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.HealthReceiptReport;
 
@@ -74,7 +74,7 @@ public class CreateInternalReceipt
 	{
 		HealthReceiptReport lrepHR;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		lrepHR = new HealthReceiptReport();
 		try
@@ -87,7 +87,7 @@ public class CreateInternalReceipt
 		}
 		lobjFile = lrepHR.Generate();
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = "Recibo de Saúde";
 		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 		lobjDoc.midOwnerId = null;
@@ -103,6 +103,6 @@ public class CreateInternalReceipt
 		lobjDoc.marrInfo[1].mstrValue = lrepHR.mstrValue;
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+		mobjDocOps.marrCreate2 = new DocDataLight[]{lobjDoc};
 	}
 }

@@ -17,8 +17,8 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
@@ -139,7 +139,7 @@ public class CreatePaymentNotice
 			}
 			mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
 			if ( mbTryEmail )
-				addAttachment(mobjDocOps.marrCreate[0].mid);
+				addAttachment(mobjDocOps.marrCreate2[0].mid);
 		}
 		else
 			mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
@@ -193,7 +193,7 @@ public class CreatePaymentNotice
 				{
 					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjSetClient.setAt(0, midSet);
-					lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetClient.setAt(1, mobjDocOps.marrCreate2[0].mobjFile);
 					lobjSetClient.setAt(2, false);
 					lobjSetClient.SaveToDb(pdb);
 					midSetDocument = lobjSetClient.getKey();
@@ -257,7 +257,7 @@ public class CreatePaymentNotice
 	{
 		PaymentNoticeReport lrepPN;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		lrepPN = new PaymentNoticeReport();
 		lrepPN.midClient = midClient;
@@ -265,7 +265,7 @@ public class CreatePaymentNotice
 		lrepPN.mbForEmail = pbForEmail;
 		lobjFile = lrepPN.Generate();
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = "Aviso de Cobrança";
 		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 		lobjDoc.midOwnerId = null;
@@ -281,7 +281,7 @@ public class CreatePaymentNotice
 		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepPN.mdblTotal);
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+		mobjDocOps.marrCreate2 = new DocDataLight[]{lobjDoc};
 	}
 
 	private boolean checkEmail()

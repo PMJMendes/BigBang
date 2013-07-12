@@ -196,7 +196,7 @@ public class QuoteRequestServiceImpl
 			if ( (negotiation.documents != null) && (negotiation.documents.length > 0) )
 			{
 				lopCN.mobjDocOps = new DocOps();
-				lopCN.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(negotiation.documents);
+				lopCN.mobjDocOps.marrCreate2 = DocumentServiceImpl.buildTreeLight(negotiation.documents);
 			}
 			else
 				lopCN.mobjDocOps = null;

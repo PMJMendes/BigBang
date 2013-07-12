@@ -17,7 +17,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -60,7 +60,7 @@ public class TriggerImageOnCreate
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 		IProcess lobjProc;
 		Receipt lobjReceipt;
 		AgendaItem lobjItem;
@@ -74,7 +74,7 @@ public class TriggerImageOnCreate
 		lobjProc = GetProcess();
 		midReceipt = lobjProc.GetDataKey();
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = "Original";
 		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 		lobjDoc.midOwnerId = null;
@@ -87,7 +87,7 @@ public class TriggerImageOnCreate
 		lobjDoc.mobjDSBridge.mbDelete = true;
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[] {lobjDoc};
+		mobjDocOps.marrCreate2 = new DocDataLight[] {lobjDoc};
 
 		mobjDocOps.RunSubOp(pdb, midReceipt);
 

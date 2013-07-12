@@ -16,8 +16,8 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.ContactInfoData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataFull;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
@@ -208,25 +208,25 @@ public class ExternMergeOtherHere
 			else
 			{
 				mobjDocOps = new DocOps();
-				mobjDocOps.marrModify = new DocumentData[larrDocs.length];
+				mobjDocOps.marrModify2 = new DocDataFull[larrDocs.length];
 				for ( i = 0; i < larrDocs.length; i++ )
 				{
-					mobjDocOps.marrModify[i] = new DocumentData();
-					mobjDocOps.marrModify[i].FromObject(larrContacts[i]);
-					mobjDocOps.marrModify[i].midOwnerId = midNewClient;
+					mobjDocOps.marrModify2[i] = new DocDataFull();
+					mobjDocOps.marrModify2[i].FromObject(larrContacts[i]);
+					mobjDocOps.marrModify2[i].midOwnerId = midNewClient;
 					larrDInfo = larrDocs[i].getCurrentInfo();
 					if ( larrDInfo != null )
 					{
-						mobjDocOps.marrModify[i].marrInfo = new DocInfoData[larrDInfo.length];
+						mobjDocOps.marrModify2[i].marrInfo = new DocInfoData[larrDInfo.length];
 						for ( j = 0; j < larrDInfo.length; j++ )
 						{
-							mobjDocOps.marrModify[i].marrInfo[j] = new DocInfoData();
-							mobjDocOps.marrModify[i].marrInfo[j].FromObject(larrDInfo[j]);
+							mobjDocOps.marrModify2[i].marrInfo[j] = new DocInfoData();
+							mobjDocOps.marrModify2[i].marrInfo[j].FromObject(larrDInfo[j]);
 						}
 					}
 				}
-				mobjDocOps.marrCreate = null;
-				mobjDocOps.marrDelete = null;
+				mobjDocOps.marrCreate2 = null;
+				mobjDocOps.marrDelete2 = null;
 				mobjDocOps.RunSubOp(pdb, null);
 			}
 
@@ -299,8 +299,8 @@ public class ExternMergeOtherHere
 
 			if ( mobjDocOps != null )
 			{
-				for ( i = 0; i < mobjDocOps.marrModify.length; i++ )
-					mobjDocOps.marrModify[i].mobjPrevValues.midOwnerId = lobjAux.getKey();
+				for ( i = 0; i < mobjDocOps.marrModify2.length; i++ )
+					mobjDocOps.marrModify2[i].mobjPrevValues.midOwnerId = lobjAux.getKey();
 				mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
 			}
 

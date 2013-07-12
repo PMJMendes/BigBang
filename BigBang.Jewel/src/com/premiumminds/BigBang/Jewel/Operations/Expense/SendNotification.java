@@ -11,8 +11,8 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.Expense;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
@@ -97,7 +97,7 @@ public class SendNotification
 				{
 					lobjSetPolicy = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjSetPolicy.setAt(0, midSet);
-					lobjSetPolicy.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetPolicy.setAt(1, mobjDocOps.marrCreate2[0].mobjFile);
 					lobjSetPolicy.setAt(2, false);
 					lobjSetPolicy.SaveToDb(pdb);
 					midSetDocument = lobjSetPolicy.getKey();
@@ -123,14 +123,14 @@ public class SendNotification
 	{
 		ExpenseMapReport lrepEM;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		lrepEM = new ExpenseMapReport();
 		lrepEM.midPolicy = midPolicy;
 		lrepEM.marrExpenseIDs = marrExpenseIDs;
 		lobjFile = lrepEM.Generate();
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = "Pedido de Reembolso";
 		lobjDoc.midOwnerType = Constants.ObjID_Expense;
 		lobjDoc.midOwnerId = null;
@@ -146,6 +146,6 @@ public class SendNotification
 		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepEM.mdblTotal);
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+		mobjDocOps.marrCreate2 = new DocDataLight[]{lobjDoc};
 	}
 }

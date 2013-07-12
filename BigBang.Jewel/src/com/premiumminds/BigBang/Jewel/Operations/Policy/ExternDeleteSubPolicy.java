@@ -11,7 +11,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataHeavy;
 import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyData;
@@ -130,11 +130,11 @@ public class ExternDeleteSubPolicy
 			else
 			{
 				mobjDocOps = new DocOps();
-				mobjDocOps.marrDelete = new DocumentData[larrDocs.length];
+				mobjDocOps.marrDelete2 = new DocDataHeavy[larrDocs.length];
 				for ( i = 0; i < larrDocs.length; i++ )
 				{
-					mobjDocOps.marrDelete[i] = new DocumentData();
-					mobjDocOps.marrDelete[i].mid = larrDocs[i].getKey();
+					mobjDocOps.marrDelete2[i] = new DocDataHeavy();
+					mobjDocOps.marrDelete2[i].mid = larrDocs[i].getKey();
 				}
 				mobjDocOps.RunSubOp(pdb, null);
 			}

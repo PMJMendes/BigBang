@@ -15,7 +15,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataHeavy;
 import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
@@ -310,11 +310,11 @@ public class ManageInsurers
 					else
 					{
 						marrDelete[i].mobjDocOps = new DocOps();
-						marrDelete[i].mobjDocOps.marrDelete = new DocumentData[larrDocs.length];
+						marrDelete[i].mobjDocOps.marrDelete2 = new DocDataHeavy[larrDocs.length];
 						for ( j = 0; j < larrDocs.length; j++ )
 						{
-							marrDelete[i].mobjDocOps.marrDelete[j] = new DocumentData();
-							marrDelete[i].mobjDocOps.marrDelete[j].mid = larrDocs[j].getKey();
+							marrDelete[i].mobjDocOps.marrDelete2[j] = new DocDataHeavy();
+							marrDelete[i].mobjDocOps.marrDelete2[j].mid = larrDocs[j].getKey();
 						}
 						marrDelete[i].mobjDocOps.RunSubOp(pdb, null);
 					}

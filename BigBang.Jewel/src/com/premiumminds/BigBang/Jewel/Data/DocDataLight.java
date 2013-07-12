@@ -12,6 +12,13 @@ public class DocDataLight
 
 	public transient byte[] mobjFile;
 
+	public void FromOld(DocumentData pobjSource)
+	{
+		super.FromOld(pobjSource);
+
+		this.mobjFile = pobjSource.mobjFile;
+	}
+
 	public void FromObject(ObjectBase pobjSource)
 	{
 		super.FromObject(pobjSource);

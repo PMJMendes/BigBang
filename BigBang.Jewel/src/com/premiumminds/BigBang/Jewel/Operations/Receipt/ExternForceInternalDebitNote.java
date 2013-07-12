@@ -11,8 +11,8 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
@@ -81,7 +81,7 @@ public class ExternForceInternalDebitNote
 			{
 				lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjSetClient.setAt(0, midPrintSet);
-				lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+				lobjSetClient.setAt(1, mobjDocOps.marrCreate2[0].mobjFile);
 				lobjSetClient.setAt(2, false);
 				lobjSetClient.SaveToDb(pdb);
 
@@ -128,7 +128,7 @@ public class ExternForceInternalDebitNote
 	{
 		HealthDebitNoteReport lrepHDN;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		lrepHDN = new HealthDebitNoteReport();
 		try
@@ -141,7 +141,7 @@ public class ExternForceInternalDebitNote
 		}
 		lobjFile = lrepHDN.Generate();
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = "Nota de Débito de Saúde";
 		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 		lobjDoc.midOwnerId = null;
@@ -157,6 +157,6 @@ public class ExternForceInternalDebitNote
 		lobjDoc.marrInfo[1].mstrValue = lrepHDN.mstrValue;
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+		mobjDocOps.marrCreate2 = new DocDataLight[]{lobjDoc};
 	}
 }

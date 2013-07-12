@@ -15,8 +15,8 @@ import Jewel.Petri.SysObjects.Operation;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
@@ -124,7 +124,7 @@ public class CreateSecondPaymentNotice
 				{
 					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjSetClient.setAt(0, midSet);
-					lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetClient.setAt(1, mobjDocOps.marrCreate2[0].mobjFile);
 					lobjSetClient.setAt(2, mbTryEmail);
 					lobjSetClient.SaveToDb(pdb);
 					midSetDocument = lobjSetClient.getKey();
@@ -148,14 +148,14 @@ public class CreateSecondPaymentNotice
 	{
 		SecondPaymentNoticeReport lrepPN;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		lrepPN = new SecondPaymentNoticeReport();
 		lrepPN.midClient = midClient;
 		lrepPN.marrReceiptIDs = marrReceiptIDs;
 		lobjFile = lrepPN.Generate();
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = "Aviso de Cobrança";
 		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 		lobjDoc.midOwnerId = null;
@@ -171,7 +171,7 @@ public class CreateSecondPaymentNotice
 		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepPN.mdblTotal);
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+		mobjDocOps.marrCreate2 = new DocDataLight[]{lobjDoc};
 	}
 
 	private boolean checkEmail()
@@ -239,7 +239,7 @@ public class CreateSecondPaymentNotice
 
 		mobjConvData.marrMessages[0].marrAttachments = new MessageAttachmentData[] {new MessageAttachmentData()};
 		mobjConvData.marrMessages[0].marrAttachments[0].midOwner = null;
-		mobjConvData.marrMessages[0].marrAttachments[0].midDocument = mobjDocOps.marrCreate[0].mid;
+		mobjConvData.marrMessages[0].marrAttachments[0].midDocument = mobjDocOps.marrCreate2[0].mid;
 
 		return true;
 	}

@@ -222,7 +222,7 @@ public class ClientServiceImpl
 			if ( (client.documents != null) && (client.documents.length > 0) )
 			{
 				lopCC.mobjDocOps = new DocOps();
-				lopCC.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(client.documents);
+				lopCC.mobjDocOps.marrCreate2 = DocumentServiceImpl.buildTreeLight(client.documents);
 			}
 			else
 				lopCC.mobjDocOps = null;

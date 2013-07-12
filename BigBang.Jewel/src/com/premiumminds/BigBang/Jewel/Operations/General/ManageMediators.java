@@ -15,7 +15,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataHeavy;
 import com.premiumminds.BigBang.Jewel.Data.MediatorData;
 import com.premiumminds.BigBang.Jewel.Data.MediatorDealData;
 import com.premiumminds.BigBang.Jewel.Data.MediatorExceptionData;
@@ -641,11 +641,11 @@ public class ManageMediators
 			else
 			{
 				pobjData.mobjDocOps = new DocOps();
-				pobjData.mobjDocOps.marrDelete = new DocumentData[larrDocs.length];
+				pobjData.mobjDocOps.marrDelete2 = new DocDataHeavy[larrDocs.length];
 				for ( i = 0; i < larrDocs.length; i++ )
 				{
-					pobjData.mobjDocOps.marrDelete[i] = new DocumentData();
-					pobjData.mobjDocOps.marrDelete[i].mid = larrDocs[i].getKey();
+					pobjData.mobjDocOps.marrDelete2[i] = new DocDataHeavy();
+					pobjData.mobjDocOps.marrDelete2[i].mid = larrDocs[i].getKey();
 				}
 				pobjData.mobjDocOps.RunSubOp(pdb, null);
 			}

@@ -12,7 +12,12 @@ public class DocDataHeavy
 
 	public byte[] mobjFile;
 
-	public DocDataHeavy mobjPrevValues;
+	public void FromOld(DocumentData pobjSource)
+	{
+		super.FromOld(pobjSource);
+
+		this.mobjFile = pobjSource.mobjFile;
+	}
 
 	public void FromObject(ObjectBase pobjSource)
 	{

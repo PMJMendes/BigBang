@@ -35,34 +35,73 @@ public class DocOps
 	public DocDataFull[] marrModify2;
 	public DocDataHeavy[] marrDelete2;
 
+	private void fromOld()
+	{
+		int i;
+
+		if ( (marrCreate != null) && (marrCreate2 == null) )
+		{
+			marrCreate2 = new DocDataLight[marrCreate.length];
+			for ( i = 0; i < marrCreate.length; i++ )
+			{
+				marrCreate2[i] = new DocDataLight();
+				marrCreate2[i].FromOld(marrCreate[i]);
+			}
+			marrCreate = null;
+		}
+
+		if ( (marrModify != null) && (marrModify2 == null)  )
+		{
+			marrModify2 = new DocDataFull[marrModify.length];
+			for ( i = 0; i < marrModify.length; i++ )
+			{
+				marrModify2[i] = new DocDataFull();
+				marrModify2[i].FromOld(marrModify[i]);
+			}
+			marrModify = null;
+		}
+
+		if ( (marrDelete != null) && (marrDelete2 == null)  )
+		{
+			marrDelete2 = new DocDataHeavy[marrDelete.length];
+			for ( i = 0; i < marrDelete.length; i++ )
+			{
+				marrDelete2[i] = new DocDataHeavy();
+				marrDelete2[i].FromOld(marrDelete[i]);
+			}
+			marrDelete = null;
+		}
+	}
 	public void LongDesc(StringBuilder pstrResult, String pstrLineBreak)
 	{
 		int i;
 
-		if ( (marrCreate != null) && (marrCreate.length > 0) )
-		{
-			if ( marrCreate.length == 1 )
-			{
-				pstrResult.append("Foi criado 1 documento:");
-				pstrResult.append(pstrLineBreak);
-				marrCreate[0].Describe(pstrResult, pstrLineBreak);
-			}
-			else
-			{
-				pstrResult.append("Foram criados ");
-				pstrResult.append(marrCreate.length);
-				pstrResult.append(" documentos:");
-				pstrResult.append(pstrLineBreak);
-				for ( i = 0; i < marrCreate.length; i++ )
-				{
-					pstrResult.append("Documento ");
-					pstrResult.append(i + 1);
-					pstrResult.append(":");
-					pstrResult.append(pstrLineBreak);
-					marrCreate[i].Describe(pstrResult, pstrLineBreak);
-				}
-			}
-		}
+		fromOld();
+
+//		if ( (marrCreate != null) && (marrCreate.length > 0) )
+//		{
+//			if ( marrCreate.length == 1 )
+//			{
+//				pstrResult.append("Foi criado 1 documento:");
+//				pstrResult.append(pstrLineBreak);
+//				marrCreate[0].Describe(pstrResult, pstrLineBreak);
+//			}
+//			else
+//			{
+//				pstrResult.append("Foram criados ");
+//				pstrResult.append(marrCreate.length);
+//				pstrResult.append(" documentos:");
+//				pstrResult.append(pstrLineBreak);
+//				for ( i = 0; i < marrCreate.length; i++ )
+//				{
+//					pstrResult.append("Documento ");
+//					pstrResult.append(i + 1);
+//					pstrResult.append(":");
+//					pstrResult.append(pstrLineBreak);
+//					marrCreate[i].Describe(pstrResult, pstrLineBreak);
+//				}
+//			}
+//		}
 
 		if ( (marrCreate2 != null) && (marrCreate2.length > 0) )
 		{
@@ -89,30 +128,30 @@ public class DocOps
 			}
 		}
 
-		if ( (marrModify != null) && (marrModify.length > 0) )
-		{
-			if ( marrModify.length == 1 )
-			{
-				pstrResult.append("Foi modificado 1 documento:");
-				pstrResult.append(pstrLineBreak);
-				marrModify[0].Describe(pstrResult, pstrLineBreak);
-			}
-			else
-			{
-				pstrResult.append("Foram modificados ");
-				pstrResult.append(marrModify.length);
-				pstrResult.append(" documentos:");
-				pstrResult.append(pstrLineBreak);
-				for ( i = 0; i < marrModify.length; i++ )
-				{
-					pstrResult.append("Documento ");
-					pstrResult.append(i + 1);
-					pstrResult.append(":");
-					pstrResult.append(pstrLineBreak);
-					marrModify[i].Describe(pstrResult, pstrLineBreak);
-				}
-			}
-		}
+//		if ( (marrModify != null) && (marrModify.length > 0) )
+//		{
+//			if ( marrModify.length == 1 )
+//			{
+//				pstrResult.append("Foi modificado 1 documento:");
+//				pstrResult.append(pstrLineBreak);
+//				marrModify[0].Describe(pstrResult, pstrLineBreak);
+//			}
+//			else
+//			{
+//				pstrResult.append("Foram modificados ");
+//				pstrResult.append(marrModify.length);
+//				pstrResult.append(" documentos:");
+//				pstrResult.append(pstrLineBreak);
+//				for ( i = 0; i < marrModify.length; i++ )
+//				{
+//					pstrResult.append("Documento ");
+//					pstrResult.append(i + 1);
+//					pstrResult.append(":");
+//					pstrResult.append(pstrLineBreak);
+//					marrModify[i].Describe(pstrResult, pstrLineBreak);
+//				}
+//			}
+//		}
 
 		if ( (marrModify2 != null) && (marrModify2.length > 0) )
 		{
@@ -139,30 +178,30 @@ public class DocOps
 			}
 		}
 
-		if ( (marrDelete != null) && (marrDelete.length > 0) )
-		{
-			if ( marrDelete.length == 1 )
-			{
-				pstrResult.append("Foi apagado 1 documento:");
-				pstrResult.append(pstrLineBreak);
-				marrDelete[0].Describe(pstrResult, pstrLineBreak);
-			}
-			else
-			{
-				pstrResult.append("Foram apagados ");
-				pstrResult.append(marrDelete.length);
-				pstrResult.append(" documentos:");
-				pstrResult.append(pstrLineBreak);
-				for ( i = 0; i < marrDelete.length; i++ )
-				{
-					pstrResult.append("Documento ");
-					pstrResult.append(i + 1);
-					pstrResult.append(":");
-					pstrResult.append(pstrLineBreak);
-					marrDelete[i].Describe(pstrResult, pstrLineBreak);
-				}
-			}
-		}
+//		if ( (marrDelete != null) && (marrDelete.length > 0) )
+//		{
+//			if ( marrDelete.length == 1 )
+//			{
+//				pstrResult.append("Foi apagado 1 documento:");
+//				pstrResult.append(pstrLineBreak);
+//				marrDelete[0].Describe(pstrResult, pstrLineBreak);
+//			}
+//			else
+//			{
+//				pstrResult.append("Foram apagados ");
+//				pstrResult.append(marrDelete.length);
+//				pstrResult.append(" documentos:");
+//				pstrResult.append(pstrLineBreak);
+//				for ( i = 0; i < marrDelete.length; i++ )
+//				{
+//					pstrResult.append("Documento ");
+//					pstrResult.append(i + 1);
+//					pstrResult.append(":");
+//					pstrResult.append(pstrLineBreak);
+//					marrDelete[i].Describe(pstrResult, pstrLineBreak);
+//				}
+//			}
+//		}
 
 		if ( (marrDelete2 != null) && (marrDelete2.length > 0) )
 		{
@@ -195,18 +234,20 @@ public class DocOps
 	{
 		int i;
 
+		fromOld();
+
 		try
 		{
-			if ( marrCreate != null )
-			{
-				for ( i = 0; i < marrCreate.length; i++ )
-				{
-					if ( pidOwner == null )
-						CreateDocument(pdb, marrCreate[i], marrCreate[i].midOwnerId);
-					else
-						CreateDocument(pdb, marrCreate[i], pidOwner);
-				}
-			}
+//			if ( marrCreate != null )
+//			{
+//				for ( i = 0; i < marrCreate.length; i++ )
+//				{
+//					if ( pidOwner == null )
+//						CreateDocument(pdb, marrCreate[i], marrCreate[i].midOwnerId);
+//					else
+//						CreateDocument(pdb, marrCreate[i], pidOwner);
+//				}
+//			}
 
 			if ( marrCreate2 != null )
 			{
@@ -219,11 +260,11 @@ public class DocOps
 				}
 			}
 
-			if ( marrModify != null )
-			{
-				for ( i = 0; i < marrModify.length; i++ )
-					ModifyDocument(pdb, marrModify[i]);
-			}
+//			if ( marrModify != null )
+//			{
+//				for ( i = 0; i < marrModify.length; i++ )
+//					ModifyDocument(pdb, marrModify[i]);
+//			}
 
 			if ( marrModify2 != null )
 			{
@@ -231,11 +272,11 @@ public class DocOps
 					ModifyDocument(pdb, marrModify2[i]);
 			}
 
-			if ( marrDelete != null )
-			{
-				for ( i = 0; i < marrDelete.length; i++ )
-					DeleteDocument(pdb, marrDelete[i]);
-			}
+//			if ( marrDelete != null )
+//			{
+//				for ( i = 0; i < marrDelete.length; i++ )
+//					DeleteDocument(pdb, marrDelete[i]);
+//			}
 
 			if ( marrDelete2 != null )
 			{
@@ -253,14 +294,16 @@ public class DocOps
 	{
 		int i;
 
-		if ( (marrCreate != null) && (marrCreate.length > 0) )
-		{
-			if ( marrCreate.length == 1 )
-				pstrResult.append("O documento criado será apagado.");
-			else
-				pstrResult.append("Os documentos criados serão apagados.");
-			pstrResult.append(pstrLineBreak);
-		}
+		fromOld();
+
+//		if ( (marrCreate != null) && (marrCreate.length > 0) )
+//		{
+//			if ( marrCreate.length == 1 )
+//				pstrResult.append("O documento criado será apagado.");
+//			else
+//				pstrResult.append("Os documentos criados serão apagados.");
+//			pstrResult.append(pstrLineBreak);
+//		}
 
 		if ( (marrCreate2 != null) && (marrCreate2.length > 0) )
 		{
@@ -271,24 +314,24 @@ public class DocOps
 			pstrResult.append(pstrLineBreak);
 		}
 
-		if ( (marrModify != null) && (marrModify.length > 0) )
-		{
-			pstrResult.append("Serão repostos os valores anteriores:");
-			pstrResult.append(pstrLineBreak);
-			if ( marrModify.length == 1 )
-				marrModify[0].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
-			else
-			{
-				for ( i = 0; i < marrModify.length; i++ )
-				{
-					pstrResult.append("Documento ");
-					pstrResult.append(i + 1);
-					pstrResult.append(":");
-					pstrResult.append(pstrLineBreak);
-					marrModify[i].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
-				}
-			}
-		}
+//		if ( (marrModify != null) && (marrModify.length > 0) )
+//		{
+//			pstrResult.append("Serão repostos os valores anteriores:");
+//			pstrResult.append(pstrLineBreak);
+//			if ( marrModify.length == 1 )
+//				marrModify[0].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
+//			else
+//			{
+//				for ( i = 0; i < marrModify.length; i++ )
+//				{
+//					pstrResult.append("Documento ");
+//					pstrResult.append(i + 1);
+//					pstrResult.append(":");
+//					pstrResult.append(pstrLineBreak);
+//					marrModify[i].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
+//				}
+//			}
+//		}
 
 		if ( (marrModify2 != null) && (marrModify2.length > 0) )
 		{
@@ -309,14 +352,14 @@ public class DocOps
 			}
 		}
 
-		if ( (marrDelete != null) && (marrDelete.length > 0) )
-		{
-			if ( marrDelete.length == 1 )
-				pstrResult.append("O documento apagado será reposto.");
-			else
-				pstrResult.append("Os documentos apagados serão repostos.");
-			pstrResult.append(pstrLineBreak);
-		}
+//		if ( (marrDelete != null) && (marrDelete.length > 0) )
+//		{
+//			if ( marrDelete.length == 1 )
+//				pstrResult.append("O documento apagado será reposto.");
+//			else
+//				pstrResult.append("Os documentos apagados serão repostos.");
+//			pstrResult.append(pstrLineBreak);
+//		}
 
 		if ( (marrDelete2 != null) && (marrDelete2.length > 0) )
 		{
@@ -332,30 +375,32 @@ public class DocOps
 	{
 		int i;
 
-		if ( (marrCreate != null) && (marrCreate.length > 0) )
-		{
-			if ( marrCreate.length == 1 )
-			{
-				pstrResult.append("Foi apagado 1 documento:");
-				pstrResult.append(pstrLineBreak);
-				marrCreate[0].Describe(pstrResult, pstrLineBreak);
-			}
-			else
-			{
-				pstrResult.append("Foram apagados ");
-				pstrResult.append(marrCreate.length);
-				pstrResult.append(" documentos:");
-				pstrResult.append(pstrLineBreak);
-				for ( i = 0; i < marrCreate.length; i++ )
-				{
-					pstrResult.append("Documento ");
-					pstrResult.append(i + 1);
-					pstrResult.append(":");
-					pstrResult.append(pstrLineBreak);
-					marrCreate[i].Describe(pstrResult, pstrLineBreak);
-				}
-			}
-		}
+		fromOld();
+
+//		if ( (marrCreate != null) && (marrCreate.length > 0) )
+//		{
+//			if ( marrCreate.length == 1 )
+//			{
+//				pstrResult.append("Foi apagado 1 documento:");
+//				pstrResult.append(pstrLineBreak);
+//				marrCreate[0].Describe(pstrResult, pstrLineBreak);
+//			}
+//			else
+//			{
+//				pstrResult.append("Foram apagados ");
+//				pstrResult.append(marrCreate.length);
+//				pstrResult.append(" documentos:");
+//				pstrResult.append(pstrLineBreak);
+//				for ( i = 0; i < marrCreate.length; i++ )
+//				{
+//					pstrResult.append("Documento ");
+//					pstrResult.append(i + 1);
+//					pstrResult.append(":");
+//					pstrResult.append(pstrLineBreak);
+//					marrCreate[i].Describe(pstrResult, pstrLineBreak);
+//				}
+//			}
+//		}
 
 		if ( (marrCreate2 != null) && (marrCreate2.length > 0) )
 		{
@@ -382,30 +427,30 @@ public class DocOps
 			}
 		}
 
-		if ( (marrModify != null) && (marrModify.length > 0) )
-		{
-			if ( marrModify.length == 1 )
-			{
-				pstrResult.append("Foi reposta a definição de 1 documento:");
-				pstrResult.append(pstrLineBreak);
-				marrModify[0].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
-			}
-			else
-			{
-				pstrResult.append("Foram repostas as definições de ");
-				pstrResult.append(marrModify.length);
-				pstrResult.append(" documentos:");
-				pstrResult.append(pstrLineBreak);
-				for ( i = 0; i < marrModify.length; i++ )
-				{
-					pstrResult.append("Documento ");
-					pstrResult.append(i + 1);
-					pstrResult.append(":");
-					pstrResult.append(pstrLineBreak);
-					marrModify[i].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
-				}
-			}
-		}
+//		if ( (marrModify != null) && (marrModify.length > 0) )
+//		{
+//			if ( marrModify.length == 1 )
+//			{
+//				pstrResult.append("Foi reposta a definição de 1 documento:");
+//				pstrResult.append(pstrLineBreak);
+//				marrModify[0].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
+//			}
+//			else
+//			{
+//				pstrResult.append("Foram repostas as definições de ");
+//				pstrResult.append(marrModify.length);
+//				pstrResult.append(" documentos:");
+//				pstrResult.append(pstrLineBreak);
+//				for ( i = 0; i < marrModify.length; i++ )
+//				{
+//					pstrResult.append("Documento ");
+//					pstrResult.append(i + 1);
+//					pstrResult.append(":");
+//					pstrResult.append(pstrLineBreak);
+//					marrModify[i].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
+//				}
+//			}
+//		}
 
 		if ( (marrModify2 != null) && (marrModify2.length > 0) )
 		{
@@ -432,30 +477,30 @@ public class DocOps
 			}
 		}
 
-		if ( (marrDelete != null) && (marrDelete.length > 0) )
-		{
-			if ( marrDelete.length == 1 )
-			{
-				pstrResult.append("Foi reposto 1 documento:");
-				pstrResult.append(pstrLineBreak);
-				marrDelete[0].Describe(pstrResult, pstrLineBreak);
-			}
-			else
-			{
-				pstrResult.append("Foram repostos ");
-				pstrResult.append(marrDelete.length);
-				pstrResult.append(" documentos:");
-				pstrResult.append(pstrLineBreak);
-				for ( i = 0; i < marrDelete.length; i++ )
-				{
-					pstrResult.append("Documento ");
-					pstrResult.append(i + 1);
-					pstrResult.append(":");
-					pstrResult.append(pstrLineBreak);
-					marrDelete[i].Describe(pstrResult, pstrLineBreak);
-				}
-			}
-		}
+//		if ( (marrDelete != null) && (marrDelete.length > 0) )
+//		{
+//			if ( marrDelete.length == 1 )
+//			{
+//				pstrResult.append("Foi reposto 1 documento:");
+//				pstrResult.append(pstrLineBreak);
+//				marrDelete[0].Describe(pstrResult, pstrLineBreak);
+//			}
+//			else
+//			{
+//				pstrResult.append("Foram repostos ");
+//				pstrResult.append(marrDelete.length);
+//				pstrResult.append(" documentos:");
+//				pstrResult.append(pstrLineBreak);
+//				for ( i = 0; i < marrDelete.length; i++ )
+//				{
+//					pstrResult.append("Documento ");
+//					pstrResult.append(i + 1);
+//					pstrResult.append(":");
+//					pstrResult.append(pstrLineBreak);
+//					marrDelete[i].Describe(pstrResult, pstrLineBreak);
+//				}
+//			}
+//		}
 
 		if ( (marrDelete2 != null) && (marrDelete2.length > 0) )
 		{
@@ -488,13 +533,15 @@ public class DocOps
 	{
 			int i;
 
+			fromOld();
+
 			try
 			{
-				if ( marrCreate != null )
-				{
-					for ( i = 0; i < marrCreate.length; i++ )
-						UndoCreateDocument(pdb, marrCreate[i]);
-				}
+//				if ( marrCreate != null )
+//				{
+//					for ( i = 0; i < marrCreate.length; i++ )
+//						UndoCreateDocument(pdb, marrCreate[i]);
+//				}
 
 				if ( marrCreate2 != null )
 				{
@@ -502,11 +549,11 @@ public class DocOps
 						UndoCreateDocument(pdb, marrCreate2[i]);
 				}
 
-				if ( marrModify != null )
-				{
-					for ( i = 0; i < marrModify.length; i++ )
-						UndoModifyDocument(pdb, marrModify[i]);
-				}
+//				if ( marrModify != null )
+//				{
+//					for ( i = 0; i < marrModify.length; i++ )
+//						UndoModifyDocument(pdb, marrModify[i]);
+//				}
 
 				if ( marrModify2 != null )
 				{
@@ -514,16 +561,16 @@ public class DocOps
 						UndoModifyDocument(pdb, marrModify2[i]);
 				}
 
-				if ( marrDelete != null )
-				{
-					for ( i = 0; i < marrDelete.length; i++ )
-					{
-						if ( pidOwner == null )
-							UndoDeleteDocument(pdb, marrDelete[i], marrDelete[i].midOwnerId);
-						else
-							UndoDeleteDocument(pdb, marrDelete[i], pidOwner);
-					}
-				}
+//				if ( marrDelete != null )
+//				{
+//					for ( i = 0; i < marrDelete.length; i++ )
+//					{
+//						if ( pidOwner == null )
+//							UndoDeleteDocument(pdb, marrDelete[i], marrDelete[i].midOwnerId);
+//						else
+//							UndoDeleteDocument(pdb, marrDelete[i], pidOwner);
+//					}
+//				}
 
 				if ( marrDelete2 != null )
 				{
@@ -548,9 +595,11 @@ public class DocOps
 		UndoableOperation.UndoSet[] larrResult;
 		int i, j;
 
-		llngCreates = ( marrCreate == null ? 0 : marrCreate.length ) + ( marrCreate2 == null ? 0 : marrCreate2.length );
-		llngModifies = ( marrModify == null ? 0 : marrModify.length ) + ( marrModify2 == null ? 0 : marrModify2.length );
-		llngDeletes = ( marrDelete == null ? 0 : marrDelete.length ) + ( marrDelete2 == null ? 0 : marrDelete2.length );
+		fromOld();
+
+		llngCreates = /*( marrCreate == null ? 0 : marrCreate.length ) +*/ ( marrCreate2 == null ? 0 : marrCreate2.length );
+		llngModifies = /*( marrModify == null ? 0 : marrModify.length ) +*/ ( marrModify2 == null ? 0 : marrModify2.length );
+		llngDeletes = /*( marrDelete == null ? 0 : marrDelete.length ) +*/ ( marrDelete2 == null ? 0 : marrDelete2.length );
 
 		if ( llngCreates + llngModifies + llngDeletes == 0 )
 			return new UndoableOperation.UndoSet[0];
@@ -563,11 +612,11 @@ public class DocOps
 		larrResult[0].marrCreated = new UUID[llngDeletes];
 
 		i = 0;
-		if ( marrCreate != null )
-		{
-			for ( j = 0; j < marrCreate.length; i++, j++ )
-				larrResult[0].marrDeleted[i] = marrCreate[j].mid;
-		}
+//		if ( marrCreate != null )
+//		{
+//			for ( j = 0; j < marrCreate.length; i++, j++ )
+//				larrResult[0].marrDeleted[i] = marrCreate[j].mid;
+//		}
 		if ( marrCreate2 != null )
 		{
 			for ( j = 0; j < marrCreate2.length; i++, j++ )
@@ -575,11 +624,11 @@ public class DocOps
 		}
 
 		i = 0;
-		if ( marrModify != null )
-		{
-			for ( j = 0; j < marrModify.length; i++, j++ )
-				larrResult[0].marrChanged[i] = marrModify[j].mid;
-		}
+//		if ( marrModify != null )
+//		{
+//			for ( j = 0; j < marrModify.length; i++, j++ )
+//				larrResult[0].marrChanged[i] = marrModify[j].mid;
+//		}
 		if ( marrModify2 != null )
 		{
 			for ( j = 0; j < marrModify2.length; i++, j++ )
@@ -587,11 +636,11 @@ public class DocOps
 		}
 
 		i = 0;
-		if ( marrDelete != null )
-		{
-			for ( j = 0; j < marrDelete.length; i++, j++ )
-				larrResult[0].marrCreated[i] = marrDelete[j].mid;
-		}
+//		if ( marrDelete != null )
+//		{
+//			for ( j = 0; j < marrDelete.length; i++, j++ )
+//				larrResult[0].marrCreated[i] = marrDelete[j].mid;
+//		}
 		if ( marrDelete2 != null )
 		{
 			for ( j = 0; j < marrDelete2.length; i++, j++ )
@@ -600,7 +649,7 @@ public class DocOps
 
 		return larrResult;
 	}
-
+/*
 	private void CreateDocument(SQLServer pdb, DocumentData pobjData, UUID pidOwner)
 		throws BigBangJewelException
 	{
@@ -935,7 +984,7 @@ public class DocOps
 			}
 		}
 	}
-
+*/
 	private void CreateDocument(SQLServer pdb, DocDataLight pobjData, UUID pidOwner)
 		throws BigBangJewelException
 	{
@@ -1022,7 +1071,6 @@ public class DocOps
 
 		pobjData.mobjPrevValues = new DocDataHeavy();
 		pobjData.mobjPrevValues.FromObject(lobjAux);
-		pobjData.mobjPrevValues.mobjPrevValues = null;
 
 		larrCIAux = lobjAux.getCurrentInfo();
 		pobjData.mobjPrevValues.marrInfo = new DocInfoData[larrCIAux.length];
@@ -1108,7 +1156,6 @@ public class DocOps
 			}
 
 			pobjData.FromObject(lobjAux);
-			pobjData.mobjPrevValues = null;
 
 			lrefDocuments.Delete(pdb, lobjAux.getKey());
 		}

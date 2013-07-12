@@ -26,6 +26,19 @@ public class DocDataBase
 
 	public DSBridgeData mobjDSBridge;
 
+	public void FromOld(DocumentData pobjSource)
+	{
+		this.mid = pobjSource.mid;
+		this.mstrName = pobjSource.mstrName;
+		this.midOwnerType = pobjSource.midOwnerType;
+		this.midOwnerId = pobjSource.midOwnerId;
+		this.midDocType = pobjSource.midDocType;
+		this.mstrText = pobjSource.mstrText;
+		this.mdtRefDate = pobjSource.mdtRefDate;
+		this.marrInfo = pobjSource.marrInfo;
+		this.mobjDSBridge = pobjSource.mobjDSBridge;
+	}
+
 	public void FromObject(ObjectBase pobjSource)
 	{
 		mid = pobjSource.getKey();

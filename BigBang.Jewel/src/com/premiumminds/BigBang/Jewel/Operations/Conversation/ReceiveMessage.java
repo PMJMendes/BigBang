@@ -238,10 +238,10 @@ public class ReceiveMessage
 				for ( i = 0; i < mobjData.marrAttachments.length; i++ )
 				{
 					if ( (mobjData.marrAttachments[i].midDocument == null) &&
-							(mobjData.mobjDocOps.marrCreate != null) &&
-							(mobjData.mobjDocOps.marrCreate.length > i) &&
-							(mobjData.mobjDocOps.marrCreate[i] != null) )
-						mobjData.marrAttachments[i].midDocument = mobjData.mobjDocOps.marrCreate[i].mid;
+							(mobjData.mobjDocOps.marrCreate2 != null) &&
+							(mobjData.mobjDocOps.marrCreate2.length > i) &&
+							(mobjData.mobjDocOps.marrCreate2[i] != null) )
+						mobjData.marrAttachments[i].midDocument = mobjData.mobjDocOps.marrCreate2[i].mid;
 
 					if ( mobjData.marrAttachments[i].midDocument == null )
 						continue;

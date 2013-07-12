@@ -24,8 +24,11 @@ import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataBase;
+import com.premiumminds.BigBang.Jewel.Data.DocDataFull;
+import com.premiumminds.BigBang.Jewel.Data.DocDataHeavy;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
@@ -38,66 +41,148 @@ public class DocumentServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public static DocumentData[] BuildDocTree(Document[] parrDocuments)
+	private static void buildDocBase(Document pobjSource, DocDataBase pobjDest)
 	{
-		DocumentData[] larrResult;
-		int i, j;
+		int i;
+
+		pobjDest.mid = (pobjSource.id == null ? null : UUID.fromString(pobjSource.id));
+		pobjDest.mstrName = pobjSource.name;
+		pobjDest.midOwnerType = UUID.fromString(pobjSource.ownerTypeId);
+		pobjDest.midOwnerId = UUID.fromString(pobjSource.ownerId);
+		pobjDest.midDocType = (pobjSource.docTypeId == null ? null : UUID.fromString(pobjSource.docTypeId));
+		pobjDest.mdtRefDate = (pobjSource.creationDate == null ? null :
+				Timestamp.valueOf(pobjSource.creationDate + " 00:00:00.0"));
+
+		if ( pobjSource.source != null )
+		{
+			pobjDest.mstrText = null;
+			pobjDest.mobjDSBridge = new DSBridgeData();
+			pobjDest.mobjDSBridge.mstrDSHandle = pobjSource.source.handle;
+			pobjDest.mobjDSBridge.mstrDSLoc = pobjSource.source.locationHandle;
+			pobjDest.mobjDSBridge.mstrDSTitle = null;
+			pobjDest.mobjDSBridge.mbDelete = false;
+		}
+		else if ( pobjSource.fileStorageId != null )
+		{
+			pobjDest.mobjDSBridge = null;
+			pobjDest.mstrText = null;
+		}
+		else
+		{
+			pobjDest.mobjDSBridge = null;
+			pobjDest.mstrText = pobjSource.text;
+		}
+		if ( pobjSource.parameters != null )
+		{
+			pobjDest.marrInfo = new DocInfoData[pobjSource.parameters.length];
+			for ( i = 0; i < pobjSource.parameters.length; i++ )
+			{
+				pobjDest.marrInfo[i] = new DocInfoData();
+				pobjDest.marrInfo[i].mstrType = pobjSource.parameters[i].name;
+				pobjDest.marrInfo[i].mstrValue = pobjSource.parameters[i].value;
+			}
+		}
+		else
+			pobjDest.marrInfo = null;
+	}
+
+	private static void buildDocLight(Document pobjSource, DocDataLight pobjDest)
+	{
+		buildDocBase(pobjSource, pobjDest);
+
+		if ( pobjSource.source != null )
+		{
+		}
+		else if ( pobjSource.fileStorageId != null )
+		{
+			pobjDest.mobjFile = FileServiceImpl.GetFileXferStorage().
+					get(UUID.fromString(pobjSource.fileStorageId)).GetVarData();
+		}
+		else
+		{
+			pobjDest.mobjFile = null;
+		}
+	}
+
+	private static void buildDocHeavy(Document pobjSource, DocDataHeavy pobjDest)
+	{
+		buildDocBase(pobjSource, pobjDest);
+
+		if ( pobjSource.source != null )
+		{
+		}
+		else if ( pobjSource.fileStorageId != null )
+		{
+			pobjDest.mobjFile = FileServiceImpl.GetFileXferStorage().
+					get(UUID.fromString(pobjSource.fileStorageId)).GetVarData();
+		}
+		else
+		{
+			pobjDest.mobjFile = null;
+		}
+	}
+
+	private static void buildDocFull(Document pobjSource, DocDataFull pobjDest)
+	{
+		buildDocLight(pobjSource, pobjDest);
+		pobjDest.mobjPrevValues = null;
+	}
+
+	public static DocDataLight[] buildTreeLight(Document[] parrDocuments)
+	{
+		DocDataLight[] larrResult;
+		int i;
 
 		if ( (parrDocuments == null) || (parrDocuments.length == 0) )
 			return null;
 
-		larrResult = new DocumentData[parrDocuments.length];
+		larrResult = new DocDataLight[parrDocuments.length];
 		for ( i = 0; i < parrDocuments.length; i++ )
 		{
-			larrResult[i] = new DocumentData();
-			larrResult[i].mid = (parrDocuments[i].id == null ? null : UUID.fromString(parrDocuments[i].id));
-			larrResult[i].mstrName = parrDocuments[i].name;
-			larrResult[i].midOwnerType = UUID.fromString(parrDocuments[i].ownerTypeId);
-			larrResult[i].midOwnerId = UUID.fromString(parrDocuments[i].ownerId);
-			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
-			larrResult[i].mdtRefDate = (parrDocuments[i].creationDate == null ? null :
-					Timestamp.valueOf(parrDocuments[i].creationDate + " 00:00:00.0"));
-
-			if ( parrDocuments[i].source != null )
-			{
-				larrResult[i].mstrText = null;
-				larrResult[i].mobjDSBridge = new DSBridgeData();
-				larrResult[i].mobjDSBridge.mstrDSHandle = parrDocuments[i].source.handle;
-				larrResult[i].mobjDSBridge.mstrDSLoc = parrDocuments[i].source.locationHandle;
-				larrResult[i].mobjDSBridge.mstrDSTitle = null;
-				larrResult[i].mobjDSBridge.mbDelete = false;
-			}
-			else if ( parrDocuments[i].fileStorageId != null )
-			{
-				larrResult[i].mobjDSBridge = null;
-				larrResult[i].mstrText = null;
-				larrResult[i].mobjFile = FileServiceImpl.GetFileXferStorage().
-						get(UUID.fromString(parrDocuments[i].fileStorageId)).GetVarData();
-			}
-			else
-			{
-				larrResult[i].mobjDSBridge = null;
-				larrResult[i].mstrText = parrDocuments[i].text;
-				larrResult[i].mobjFile = null;
-			}
-			if ( parrDocuments[i].parameters != null )
-			{
-				larrResult[i].marrInfo = new DocInfoData[parrDocuments[i].parameters.length];
-				for ( j = 0; j < parrDocuments[i].parameters.length; j++ )
-				{
-					larrResult[i].marrInfo[j] = new DocInfoData();
-					larrResult[i].marrInfo[j].mstrType = parrDocuments[i].parameters[j].name;
-					larrResult[i].marrInfo[j].mstrValue = parrDocuments[i].parameters[j].value;
-				}
-			}
-			else
-				larrResult[i].marrInfo = null;
+			larrResult[i] = new DocDataLight();
+			buildDocLight(parrDocuments[i], larrResult[i]);
 		}
 
 		return larrResult;
 	}
 
-	public static void WalkDocTree(DocumentData[] parrResults, Document[] parrDocuments)
+	public static DocDataHeavy[] buildTreeHeavy(Document[] parrDocuments)
+	{
+		DocDataHeavy[] larrResult;
+		int i;
+
+		if ( (parrDocuments == null) || (parrDocuments.length == 0) )
+			return null;
+
+		larrResult = new DocDataHeavy[parrDocuments.length];
+		for ( i = 0; i < parrDocuments.length; i++ )
+		{
+			larrResult[i] = new DocDataHeavy();
+			buildDocHeavy(parrDocuments[i], larrResult[i]);
+		}
+
+		return larrResult;
+	}
+
+	public static DocDataFull[] buildTreeFull(Document[] parrDocuments)
+	{
+		DocDataFull[] larrResult;
+		int i;
+
+		if ( (parrDocuments == null) || (parrDocuments.length == 0) )
+			return null;
+
+		larrResult = new DocDataFull[parrDocuments.length];
+		for ( i = 0; i < parrDocuments.length; i++ )
+		{
+			larrResult[i] = new DocDataFull();
+			buildDocFull(parrDocuments[i], larrResult[i]);
+		}
+
+		return larrResult;
+	}
+
+	public static void WalkDocTree(DocDataBase[] parrResults, Document[] parrDocuments)
 	{
 		int i;
 		
@@ -223,9 +308,9 @@ public class DocumentServiceImpl
 		larrAux[0] = document;
 
 		lopDOps = new DocOps();
-		lopDOps.marrCreate = BuildDocTree(larrAux);
-		lopDOps.marrModify = null;
-		lopDOps.marrDelete = null;
+		lopDOps.marrCreate2 = buildTreeLight(larrAux);
+		lopDOps.marrModify2 = null;
+		lopDOps.marrDelete2 = null;
 
 		lobjOp = BuildOuterOp(UUID.fromString(document.ownerTypeId), UUID.fromString(document.ownerId), lopDOps);
 
@@ -238,7 +323,7 @@ public class DocumentServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetDocument(lopDOps.marrCreate[0].mid);
+		return sGetDocument(lopDOps.marrCreate2[0].mid);
 	}
 
 	public Document saveDocument(Document document)
@@ -255,9 +340,9 @@ public class DocumentServiceImpl
 		larrAux[0] = document;
 
 		lopDOps = new DocOps();
-		lopDOps.marrModify = BuildDocTree(larrAux);
-		lopDOps.marrCreate = null;
-		lopDOps.marrDelete = null;
+		lopDOps.marrModify2 = buildTreeFull(larrAux);
+		lopDOps.marrCreate2 = null;
+		lopDOps.marrDelete2 = null;
 
 		lobjOp = BuildOuterOp(UUID.fromString(document.ownerTypeId), UUID.fromString(document.ownerId), lopDOps);
 		try
@@ -269,14 +354,14 @@ public class DocumentServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetDocument(lopDOps.marrModify[0].mid);
+		return sGetDocument(lopDOps.marrModify2[0].mid);
 	}
 
 	public void deleteDocument(String id)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Document lobjAuxDoc;
-		DocumentData lobjData;
+		DocDataHeavy lobjData;
 		DocOps lopDOps;
 		Operation lobjOp;
 
@@ -293,15 +378,15 @@ public class DocumentServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lobjData = new DocumentData();
+		lobjData = new DocDataHeavy();
 		lobjData.mid = lobjAuxDoc.getKey();
 		lobjData.midOwnerType = lobjAuxDoc.getOwnerType();
 		lobjData.midOwnerId = lobjAuxDoc.getOwnerID();
 
 		lopDOps = new DocOps();
-		lopDOps.marrDelete = new DocumentData[] {lobjData};
-		lopDOps.marrCreate = null;
-		lopDOps.marrModify = null;
+		lopDOps.marrDelete2 = new DocDataHeavy[] {lobjData};
+		lopDOps.marrCreate2 = null;
+		lopDOps.marrModify2 = null;
 
 		lobjOp = BuildOuterOp(lobjData.midOwnerType, lobjData.midOwnerId, lopDOps);
 

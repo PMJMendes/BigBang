@@ -177,7 +177,7 @@ public class InsuranceAgencyServiceImpl
 			if ( (agency.documents != null) && (agency.documents.length > 0) )
 			{
 				lopMIC.marrCreate[0].mobjDocOps = new DocOps();
-				lopMIC.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(agency.documents);
+				lopMIC.marrCreate[0].mobjDocOps.marrCreate2 = DocumentServiceImpl.buildTreeLight(agency.documents);
 			}
 			else
 				lopMIC.marrCreate[0].mobjDocOps = null;
@@ -197,7 +197,7 @@ public class InsuranceAgencyServiceImpl
 		if ( (agency.contacts != null) && (agency.contacts.length > 0) )
 			ContactsServiceImpl.WalkContactTree(lopMIC.marrCreate[0].mobjContactOps.marrCreate, agency.contacts);
 		if ( (agency.documents != null) && (agency.documents.length > 0) )
-			DocumentServiceImpl.WalkDocTree(lopMIC.marrCreate[0].mobjDocOps.marrCreate, agency.documents);
+			DocumentServiceImpl.WalkDocTree(lopMIC.marrCreate[0].mobjDocOps.marrCreate2, agency.documents);
 
 		return agency;
 	}

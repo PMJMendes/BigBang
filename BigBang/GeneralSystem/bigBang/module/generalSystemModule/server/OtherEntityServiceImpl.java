@@ -172,7 +172,7 @@ public class OtherEntityServiceImpl
 			if ( (entity.documents != null) && (entity.documents.length > 0) )
 			{
 				lopMOE.marrCreate[0].mobjDocOps = new DocOps();
-				lopMOE.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(entity.documents);
+				lopMOE.marrCreate[0].mobjDocOps.marrCreate2 = DocumentServiceImpl.buildTreeLight(entity.documents);
 			}
 			else
 				lopMOE.marrCreate[0].mobjDocOps = null;
@@ -196,7 +196,7 @@ public class OtherEntityServiceImpl
 		if ( (entity.contacts != null) && (entity.contacts.length > 0) )
 			ContactsServiceImpl.WalkContactTree(lopMOE.marrCreate[0].mobjContactOps.marrCreate, entity.contacts);
 		if ( (entity.documents != null) && (entity.documents.length > 0) )
-			DocumentServiceImpl.WalkDocTree(lopMOE.marrCreate[0].mobjDocOps.marrCreate, entity.documents);
+			DocumentServiceImpl.WalkDocTree(lopMOE.marrCreate[0].mobjDocOps.marrCreate2, entity.documents);
 
 		return entity;
 	}

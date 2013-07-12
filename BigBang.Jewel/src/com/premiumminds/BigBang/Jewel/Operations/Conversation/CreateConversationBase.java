@@ -202,10 +202,10 @@ public abstract class CreateConversationBase
 				{
 					if ( Constants.MsgDir_Incoming.equals(mobjData.midStartDir) &&
 							(mobjData.marrMessages[0].marrAttachments[i].midDocument == null) &&
-							(mobjData.marrMessages[0].mobjDocOps.marrCreate != null) &&
-							(mobjData.marrMessages[0].mobjDocOps.marrCreate.length > i) &&
-							(mobjData.marrMessages[0].mobjDocOps.marrCreate[i] != null) )
-						mobjData.marrMessages[0].marrAttachments[i].midDocument = mobjData.marrMessages[0].mobjDocOps.marrCreate[i].mid;
+							(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null) &&
+							(mobjData.marrMessages[0].mobjDocOps.marrCreate2.length > i) &&
+							(mobjData.marrMessages[0].mobjDocOps.marrCreate2[i] != null) )
+						mobjData.marrMessages[0].marrAttachments[i].midDocument = mobjData.marrMessages[0].mobjDocOps.marrCreate2[i].mid;
 
 					if ( mobjData.marrMessages[0].marrAttachments[i].midDocument == null )
 						continue;
