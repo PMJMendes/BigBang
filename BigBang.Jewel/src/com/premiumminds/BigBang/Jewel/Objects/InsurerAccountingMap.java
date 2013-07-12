@@ -214,7 +214,7 @@ public class InsurerAccountingMap
 		larrResult[0] = new AccountingData();
 		larrResult[0].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
 		larrResult[0].mdtDate = mdtToday;
-		larrResult[0].mdblAccount = new BigDecimal("1024");
+		larrResult[0].mdblAccount = new BigDecimal("1204");
 		larrResult[0].mdblValue = mdblTotal.abs();
 		larrResult[0].mstrSign = (mdblTotal.signum() > 0 ? "C" : "D");
 		larrResult[0].mlngBook = 6;
