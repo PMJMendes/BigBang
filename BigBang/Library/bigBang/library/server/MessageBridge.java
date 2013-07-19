@@ -264,6 +264,8 @@ public class MessageBridge
 				{
 					lobjItem = MailConnector.DoGetItem(lobjResult.mstrEmailID);
 					lobjResult.mstrSubject = lobjItem.getSubject();
+					if ( (lobjResult.mstrSubject != null) && (lobjResult.mstrSubject.length() > 250) )
+						lobjResult.mstrSubject = lobjResult.mstrSubject.substring(0, 250);
 					lobjResult.mstrBody = lobjItem.getBody().toString();
 					if ( lobjItem instanceof EmailMessage )
 					{
