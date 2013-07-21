@@ -35,7 +35,7 @@ public class DocOps
 	public DocDataFull[] marrModify2;
 	public DocDataHeavy[] marrDelete2;
 
-	private void fromOld()
+	public void fromOld()
 	{
 		int i;
 

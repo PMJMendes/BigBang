@@ -11,6 +11,12 @@ public class DocDataFull
 	{
 		super.FromOld(pobjSource);
 
-		this.mobjPrevValues.FromOld(pobjSource.mobjPrevValues);
+		if ( pobjSource.mobjPrevValues == null )
+			this.mobjPrevValues = null;
+		else
+		{
+			this.mobjPrevValues = new DocDataHeavy();
+			this.mobjPrevValues.FromOld(pobjSource.mobjPrevValues);
+		}
 	}
 }
