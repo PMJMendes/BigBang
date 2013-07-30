@@ -31,7 +31,7 @@ public class ReceiveImage
 	public ReceiptData mobjData;
 	public transient DSBridgeData mobjImage;
 	private UUID midReceipt;
-	private DocOps mobjDocOps;
+	public DocOps mobjDocOps;
 	private boolean mbWithAgenda;
 
 	public ReceiveImage(UUID pidProcess)

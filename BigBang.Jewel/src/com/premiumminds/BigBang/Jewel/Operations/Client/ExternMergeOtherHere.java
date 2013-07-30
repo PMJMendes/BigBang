@@ -38,7 +38,7 @@ public class ExternMergeOtherHere
 	public UUID midClientSource;
 	private ClientData mobjSource;
 	private ContactOps mobjContactOps;
-	private DocOps mobjDocOps;
+	public DocOps mobjDocOps;
 	private UUID[] marrSubProcIDs;
 	private UUID[] marrSubPolicyIDs;
 	private UUID midNewClient;

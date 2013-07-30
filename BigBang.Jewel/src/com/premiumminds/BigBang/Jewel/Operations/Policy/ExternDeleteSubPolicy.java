@@ -37,7 +37,7 @@ public class ExternDeleteSubPolicy
 	public String mstrReason;
 	private SubPolicyData mobjData;
 	private ContactOps mobjContactOps;
-	private DocOps mobjDocOps;
+	public DocOps mobjDocOps;
 	private PolicyExerciseData[] marrAuxExercises;
 
 	public ExternDeleteSubPolicy(UUID pidProcess)

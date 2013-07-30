@@ -30,7 +30,7 @@ public class ExternDeleteExpense
 	public String mstrReason;
 	private ExpenseData mobjData;
 	private ContactOps mobjContactOps;
-	private DocOps mobjDocOps;
+	public DocOps mobjDocOps;
 
 	public ExternDeleteExpense(UUID pidProcess)
 	{

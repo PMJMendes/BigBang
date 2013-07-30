@@ -31,7 +31,7 @@ public class ExternDeleteClient
 	public String mstrReason;
 	private ClientData mobjData;
 	private ContactOps mobjContactOps;
-	private DocOps mobjDocOps;
+	public DocOps mobjDocOps;
 
 	public ExternDeleteClient(UUID pidProcess)
 	{

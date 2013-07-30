@@ -38,7 +38,7 @@ public class CreateDASRequest
 	private static final long serialVersionUID = 1L;
 
 	public int mlngDays;
-	private DocOps mobjDocOps;
+	public DocOps mobjDocOps;
 	private UUID midClient;
 	private UUID midExternProcess;
 

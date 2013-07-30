@@ -1,5 +1,9 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -54,6 +58,38 @@ public class CreatePaymentNotice
 
 	private UUID midClient;
 //	private OutgoingMessageData mobjMessage;
+
+	public static class CPNInputStream
+		extends ObjectInputStream
+	{
+		public CPNInputStream(InputStream in)
+			throws IOException
+		{
+			super(in);
+		}
+
+	    protected java.io.ObjectStreamClass readClassDescriptor()
+	    	throws IOException ,ClassNotFoundException
+	    {
+	    	ObjectStreamClass desc = super.readClassDescriptor();
+	    	if ( CreatePaymentNotice.class.getName().equals(desc.getName()) )
+	    		return ObjectStreamClass.lookup(CreatePaymentNoticeOld.class);
+	    	return desc;
+	    };
+	}
+
+	public CreatePaymentNotice(CreatePaymentNoticeOld old)
+	{
+		super(null);
+
+		this.mbUseSets = old.mbUseSets;
+		this.midSet = old.midSet;
+		this.midSetDocument = old.midSetDocument;
+		this.midSetDetail = old.midSetDetail;
+		this.mobjDocOps = old.mobjDocOps;
+		this.mbTryEmail = (old.mbTryEmail == null ? false: old.mbTryEmail);
+		this.midClient = old.midClient;
+	}
 
 	public CreatePaymentNotice(UUID pidProcess)
 	{

@@ -31,7 +31,7 @@ public class ExternDeleteNegotiation
 	public Timestamp mdtAgendaDate;
 	private NegotiationData mobjData;
 	private ContactOps mobjContactOps;
-	private DocOps mobjDocOps;
+	public DocOps mobjDocOps;
 
 	public ExternDeleteNegotiation(UUID pidProcess)
 	{
