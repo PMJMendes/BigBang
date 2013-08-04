@@ -12,8 +12,8 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
@@ -103,7 +103,7 @@ public class SendPayment
 				{
 					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjSetClient.setAt(0, midSet);
-					lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetClient.setAt(1, mobjDocOps.marrCreate2[0].mobjFile);
 					lobjSetClient.setAt(2, false);
 					lobjSetClient.SaveToDb(pdb);
 					midSetDocument = lobjSetClient.getKey();
@@ -145,14 +145,14 @@ public class SendPayment
 	{
 		PaymentCoverLetterReport lrepPCL;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		lrepPCL = new PaymentCoverLetterReport();
 		lrepPCL.midClient = midClient;
 		lrepPCL.marrReceiptIDs = marrReceiptIDs;
 		lobjFile = lrepPCL.Generate();
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = "Envio de Pagamento";
 		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 		lobjDoc.midOwnerId = null;
@@ -168,6 +168,6 @@ public class SendPayment
 		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepPCL.mdblTotal.negate());
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+		mobjDocOps.marrCreate2 = new DocDataLight[]{lobjDoc};
 	}
 }

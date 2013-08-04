@@ -18,7 +18,7 @@ import Jewel.Petri.SysObjects.Operation;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
 import com.premiumminds.BigBang.Jewel.Objects.Expense;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -79,7 +79,7 @@ public class CreateExpense
 		Expense lobjAux;
 		IScript lobjScript;
 		IProcess lobjProc;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		try
 		{
@@ -94,7 +94,7 @@ public class CreateExpense
 
 			if ( mobjImage != null )
 			{
-				lobjDoc = new DocumentData();
+				lobjDoc = new DocDataLight();
 				lobjDoc.mstrName = "Original";
 				lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 				lobjDoc.midOwnerId = null;
@@ -107,7 +107,7 @@ public class CreateExpense
 				lobjDoc.mobjDSBridge.mbDelete = true;
 
 				mobjDocOps = new DocOps();
-				mobjDocOps.marrCreate = new DocumentData[] {lobjDoc};
+				mobjDocOps.marrCreate2 = new DocDataLight[] {lobjDoc};
 			}
 
 			if ( mobjContactOps != null )

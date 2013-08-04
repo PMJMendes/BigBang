@@ -259,7 +259,7 @@ public class MediatorServiceImpl
 			if ( (mediator.documents != null) && (mediator.documents.length > 0) )
 			{
 				lopMM.marrCreate[0].mobjDocOps = new DocOps();
-				lopMM.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(mediator.documents);
+				lopMM.marrCreate[0].mobjDocOps.marrCreate2 = DocumentServiceImpl.buildTreeLight(mediator.documents);
 			}
 			else
 				lopMM.marrCreate[0].mobjDocOps = null;
@@ -280,7 +280,7 @@ public class MediatorServiceImpl
 		if ( (mediator.contacts != null) && (mediator.contacts.length > 0) )
 			ContactsServiceImpl.WalkContactTree(lopMM.marrCreate[0].mobjContactOps.marrCreate, mediator.contacts);
 		if ( (mediator.documents != null) && (mediator.documents.length > 0) )
-			DocumentServiceImpl.WalkDocTree(lopMM.marrCreate[0].mobjDocOps.marrCreate, mediator.documents);
+			DocumentServiceImpl.WalkDocTree(lopMM.marrCreate[0].mobjDocOps.marrCreate2, mediator.documents);
 
 		return mediator;
 	}

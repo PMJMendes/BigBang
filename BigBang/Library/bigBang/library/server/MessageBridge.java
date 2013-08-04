@@ -24,7 +24,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.ContactInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
@@ -332,32 +332,32 @@ public class MessageBridge
 				lobjResult.marrAttachments = new MessageAttachmentData[pobjMessage.attachments.length];
 
 				lobjResult.mobjDocOps = new DocOps();
-				lobjResult.mobjDocOps.marrModify = null;
-				lobjResult.mobjDocOps.marrDelete = null;
-				lobjResult.mobjDocOps.marrCreate = new DocumentData[pobjMessage.attachments.length];
+				lobjResult.mobjDocOps.marrModify2 = null;
+				lobjResult.mobjDocOps.marrDelete2 = null;
+				lobjResult.mobjDocOps.marrCreate2 = new DocDataLight[pobjMessage.attachments.length];
 				for ( i = 0; i < pobjMessage.attachments.length; i++ )
 				{
 					lobjResult.marrAttachments[i] = new MessageAttachmentData();
 
-					lobjResult.mobjDocOps.marrCreate[i] = new DocumentData();
-					lobjResult.mobjDocOps.marrCreate[i].mstrName = pobjMessage.attachments[i].name;
-					lobjResult.mobjDocOps.marrCreate[i].midOwnerType = pidParentType;
-					lobjResult.mobjDocOps.marrCreate[i].midOwnerId = null;
-					lobjResult.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(pobjMessage.attachments[i].docTypeId);
-					lobjResult.mobjDocOps.marrCreate[i].mstrText = null;
+					lobjResult.mobjDocOps.marrCreate2[i] = new DocDataLight();
+					lobjResult.mobjDocOps.marrCreate2[i].mstrName = pobjMessage.attachments[i].name;
+					lobjResult.mobjDocOps.marrCreate2[i].midOwnerType = pidParentType;
+					lobjResult.mobjDocOps.marrCreate2[i].midOwnerId = null;
+					lobjResult.mobjDocOps.marrCreate2[i].midDocType = UUID.fromString(pobjMessage.attachments[i].docTypeId);
+					lobjResult.mobjDocOps.marrCreate2[i].mstrText = null;
 
 					if ( pobjMessage.attachments[i].storageId != null )
 					{
 						lidFile = pobjMessage.attachments[i].storageId == null ? null :
 								UUID.fromString(pobjMessage.attachments[i].storageId);
-						lobjResult.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
+						lobjResult.mobjDocOps.marrCreate2[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
 						FileServiceImpl.GetFileXferStorage().remove(lidFile);
 					}
 					else if ( pobjMessage.attachments[i].attachmentId != null )
 					{
 						try
 						{
-							lobjResult.mobjDocOps.marrCreate[i].mobjFile = MailConnector.DoGetAttachment(lobjResult.mstrEmailID,
+							lobjResult.mobjDocOps.marrCreate2[i].mobjFile = MailConnector.DoGetAttachment(lobjResult.mstrEmailID,
 									pobjMessage.attachments[i].attachmentId).GetVarData();
 						}
 						catch (Throwable e)
@@ -366,8 +366,7 @@ public class MessageBridge
 						}
 					}
 
-					lobjResult.mobjDocOps.marrCreate[i].marrInfo = null;
-					lobjResult.mobjDocOps.marrCreate[i].mobjPrevValues = null;
+					lobjResult.mobjDocOps.marrCreate2[i].marrInfo = null;
 				}
 			}
 		}

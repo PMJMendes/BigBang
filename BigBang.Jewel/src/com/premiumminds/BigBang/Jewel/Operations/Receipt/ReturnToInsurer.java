@@ -11,8 +11,8 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
@@ -100,7 +100,7 @@ public class ReturnToInsurer
 				{
 					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjSetClient.setAt(0, midSet);
-					lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetClient.setAt(1, mobjDocOps.marrCreate2[0].mobjFile);
 					lobjSetClient.setAt(2, false);
 					lobjSetClient.SaveToDb(pdb);
 					midSetDocument = lobjSetClient.getKey();
@@ -136,14 +136,14 @@ public class ReturnToInsurer
 	{
 		ReceiptReturnLetterReport lrepRRL;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		lrepRRL = new ReceiptReturnLetterReport();
 		lrepRRL.midInsurer = midInsurer;
 		lrepRRL.marrReceiptIDs = marrReceiptIDs;
 		lobjFile = lrepRRL.Generate();
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = "Devolução de Recibo";
 		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 		lobjDoc.midOwnerId = null;
@@ -159,6 +159,6 @@ public class ReturnToInsurer
 		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepRRL.mdblTotal);
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+		mobjDocOps.marrCreate2 = new DocDataLight[]{lobjDoc};
 	}
 }

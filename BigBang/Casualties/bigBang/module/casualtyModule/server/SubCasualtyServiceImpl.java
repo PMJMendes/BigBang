@@ -336,7 +336,7 @@ public class SubCasualtyServiceImpl
 			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
 			{
 				lopCR.mobjDocOps = new DocOps();
-				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
+				lopCR.mobjDocOps.marrCreate2 = DocumentServiceImpl.buildTreeLight(receipt.documents);
 			}
 			else
 				lopCR.mobjDocOps = null;

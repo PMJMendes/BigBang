@@ -20,13 +20,13 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.DASRequest;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
-import com.premiumminds.BigBang.Jewel.Objects.DASRequest;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.DASFormReport;
@@ -146,7 +146,7 @@ public class CreateDASRequest
 
 			lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjSetClient.setAt(0, lidSet);
-			lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+			lobjSetClient.setAt(1, mobjDocOps.marrCreate2[0].mobjFile);
 			lobjSetClient.setAt(2, false);
 			lobjSetClient.SaveToDb(pdb);
 			lidSetDocument = lobjSetClient.getKey();
@@ -197,16 +197,16 @@ public class CreateDASRequest
 	{
 		FileXfer lobjFile;
 		DASRequestReport lrepDR;
-		DocumentData lobjCover;
+		DocDataLight lobjCover;
 		DASFormReport lrepDF;
-		DocumentData lobjForm;
+		DocDataLight lobjForm;
 
 		lrepDR = new DASRequestReport();
 		lrepDR.midClient = midClient;
 		lrepDR.midReceipt = pidReceipt;
 		lobjFile = lrepDR.Generate();
 
-		lobjCover = new DocumentData();
+		lobjCover = new DocDataLight();
 		lobjCover.mstrName = "Pedido de DAS";
 		lobjCover.midOwnerType = Constants.ObjID_Receipt;
 		lobjCover.midOwnerId = null;
@@ -220,7 +220,7 @@ public class CreateDASRequest
 		lrepDF.midReceipt = pidReceipt;
 		lobjFile = lrepDF.Generate();
 
-		lobjForm = new DocumentData();
+		lobjForm = new DocDataLight();
 		lobjForm.mstrName = "DAS para Assinar";
 		lobjForm.midOwnerType = Constants.ObjID_Receipt;
 		lobjForm.midOwnerId = null;
@@ -230,7 +230,7 @@ public class CreateDASRequest
 		lobjForm.marrInfo = new DocInfoData[0];
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjCover, lobjForm};
+		mobjDocOps.marrCreate2 = new DocDataLight[]{lobjCover, lobjForm};
 
 		return lobjFile;
 	}

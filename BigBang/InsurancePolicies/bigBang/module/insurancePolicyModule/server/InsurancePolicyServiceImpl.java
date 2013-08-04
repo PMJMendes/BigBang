@@ -657,7 +657,7 @@ public class InsurancePolicyServiceImpl
 			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
 			{
 				lopCR.mobjDocOps = new DocOps();
-				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
+				lopCR.mobjDocOps.marrCreate2 = DocumentServiceImpl.buildTreeLight(receipt.documents);
 			}
 			else
 				lopCR.mobjDocOps = null;
@@ -762,7 +762,7 @@ public class InsurancePolicyServiceImpl
 			if ( (negotiation.documents != null) && (negotiation.documents.length > 0) )
 			{
 				lopCN.mobjDocOps = new DocOps();
-				lopCN.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(negotiation.documents);
+				lopCN.mobjDocOps.marrCreate2 = DocumentServiceImpl.buildTreeLight(negotiation.documents);
 			}
 			else
 				lopCN.mobjDocOps = null;

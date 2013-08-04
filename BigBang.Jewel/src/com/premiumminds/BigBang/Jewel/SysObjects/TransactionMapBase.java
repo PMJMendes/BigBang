@@ -169,7 +169,7 @@ public abstract class TransactionMapBase
 			{
 				lobjSetDoc = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjSetDoc.setAt(0, pidPrintSet);
-				lobjSetDoc.setAt(1, generateDocOp(pdb).marrCreate[0].mobjFile);
+				lobjSetDoc.setAt(1, generateDocOp(pdb).marrCreate2[0].mobjFile);
 				lobjSetDoc.setAt(2, false);
 				lobjSetDoc.SaveToDb(pdb);
 			}

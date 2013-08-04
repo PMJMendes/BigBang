@@ -16,8 +16,8 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DebitNoteData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.DebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.DebitNoteReport;
@@ -66,7 +66,7 @@ public class CreateDebitNote
 	{
 		DebitNote lobjNote;
 		DebitNoteReport lrepDN;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		try
 		{
@@ -88,7 +88,7 @@ public class CreateDebitNote
 			lrepDN.mdblValue = mobjData.mdblValue;
 			lrepDN.mdtDate = mobjData.mdtIssue;
 
-			lobjDoc = new DocumentData();
+			lobjDoc = new DocDataLight();
 			lobjDoc.mstrName = "Nota de Débito";
 			lobjDoc.midOwnerType = Constants.ObjID_Policy;
 			lobjDoc.midOwnerId = lrepDN.midPolicy;
@@ -101,7 +101,7 @@ public class CreateDebitNote
 			lobjDoc.marrInfo[0].mstrValue = mobjData.mstrNumber;
 
 			mobjDocOps = new DocOps();
-			mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+			mobjDocOps.marrCreate2 = new DocDataLight[]{lobjDoc};
 			mobjDocOps.RunSubOp(pdb, lrepDN.midPolicy);
 		}
 		catch (Throwable e)

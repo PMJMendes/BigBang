@@ -11,8 +11,8 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
@@ -99,7 +99,7 @@ public class ReturnToClient
 				{
 					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjSetClient.setAt(0, midSet);
-					lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetClient.setAt(1, mobjDocOps.marrCreate2[0].mobjFile);
 					lobjSetClient.setAt(2, false);
 					lobjSetClient.SaveToDb(pdb);
 					midSetDocument = lobjSetClient.getKey();
@@ -125,14 +125,14 @@ public class ReturnToClient
 	{
 		ExpenseReturnReport lrepER;
 		FileXfer lobjFile;
-		DocumentData lobjDoc;
+		DocDataLight lobjDoc;
 
 		lrepER = new ExpenseReturnReport();
 		lrepER.midClient = midClient;
 		lrepER.marrExpenseIDs = marrExpenseIDs;
 		lobjFile = lrepER.Generate();
 
-		lobjDoc = new DocumentData();
+		lobjDoc = new DocDataLight();
 		lobjDoc.mstrName = "Devolução de Despesas";
 		lobjDoc.midOwnerType = Constants.ObjID_Expense;
 		lobjDoc.midOwnerId = null;
@@ -148,6 +148,6 @@ public class ReturnToClient
 		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepER.mdblTotal);
 
 		mobjDocOps = new DocOps();
-		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+		mobjDocOps.marrCreate2 = new DocDataLight[]{lobjDoc};
 	}
 }

@@ -56,7 +56,7 @@ import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
@@ -563,15 +563,15 @@ public class ReceiptServiceImpl
 				lobjFile = new FileXfer(larrBuffer.length, "image/png", "tratado.png", lstreamInput);
 
 				lopVR.mobjDocOps = new DocOps();
-				lopVR.mobjDocOps.marrDelete = null;
-				lopVR.mobjDocOps.marrModify = null;
-				lopVR.mobjDocOps.marrCreate = new DocumentData[] {new DocumentData()};
-				lopVR.mobjDocOps.marrCreate[0].mstrName = "Tratado";
-				lopVR.mobjDocOps.marrCreate[0].midOwnerType = Constants.ObjID_Receipt;
-				lopVR.mobjDocOps.marrCreate[0].midOwnerId = lobjReceipt.getKey();
-				lopVR.mobjDocOps.marrCreate[0].midDocType = Constants.DocID_CutReceiptImage;
-				lopVR.mobjDocOps.marrCreate[0].mstrText = null;
-				lopVR.mobjDocOps.marrCreate[0].mobjFile = lobjFile.GetVarData();
+				lopVR.mobjDocOps.marrDelete2 = null;
+				lopVR.mobjDocOps.marrModify2 = null;
+				lopVR.mobjDocOps.marrCreate2 = new DocDataLight[] {new DocDataLight()};
+				lopVR.mobjDocOps.marrCreate2[0].mstrName = "Tratado";
+				lopVR.mobjDocOps.marrCreate2[0].midOwnerType = Constants.ObjID_Receipt;
+				lopVR.mobjDocOps.marrCreate2[0].midOwnerId = lobjReceipt.getKey();
+				lopVR.mobjDocOps.marrCreate2[0].midDocType = Constants.DocID_CutReceiptImage;
+				lopVR.mobjDocOps.marrCreate2[0].mstrText = null;
+				lopVR.mobjDocOps.marrCreate2[0].mobjFile = lobjFile.GetVarData();
 			}
 
 			lopVR.Execute();
@@ -1628,7 +1628,7 @@ public class ReceiptServiceImpl
 			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
 			{
 				lopCR.mobjDocOps = new DocOps();
-				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
+				lopCR.mobjDocOps.marrCreate2 = DocumentServiceImpl.buildTreeLight(receipt.documents);
 			}
 			else
 				lopCR.mobjDocOps = null;
