@@ -29,7 +29,7 @@ public class TriggerImageOnCreate
 
 	public transient DSBridgeData mobjImage;
 	private UUID midReceipt;
-	public DocOps mobjDocOps;
+	private DocOps mobjDocOps;
 	private boolean mbWithAgenda;
 
 	public TriggerImageOnCreate(UUID pidProcess)

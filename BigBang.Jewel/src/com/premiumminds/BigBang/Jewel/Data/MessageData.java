@@ -1,9 +1,5 @@
 package com.premiumminds.BigBang.Jewel.Data;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -37,63 +33,6 @@ public class MessageData
 
 	public DocOps mobjDocOps;
 	public ContactOps mobjContactOps;
-
-	public static class MDInputStream
-		extends ObjectInputStream
-	{
-		public MDInputStream(InputStream in)
-			throws IOException
-		{
-			super(in);
-		}
-
-	    protected java.io.ObjectStreamClass readClassDescriptor()
-	    	throws IOException ,ClassNotFoundException
-	    {
-	    	ObjectStreamClass desc = super.readClassDescriptor();
-	    	if ( MessageData[].class.getName().equals(desc.getName()) )
-	    		return ObjectStreamClass.lookup(MessageDataOld[].class);
-	    	if ( MessageData.class.getName().equals(desc.getName()) )
-	    		return ObjectStreamClass.lookup(MessageDataOld.class);
-	    	return desc;
-	    };
-	}
-
-	public void fromOld(MessageDataOld old)
-	{
-		int i;
-
-		this.mid = old.mid;
-		this.mstrSubject = old.mstrSubject;
-		this.midOwner = old.midOwner;
-		this.mlngNumber = old.mlngNumber;
-		this.midDirection = old.midDirection;
-		this.mbIsEmail = old.mbIsEmail;
-		this.mdtDate = old.mdtDate;
-		this.mstrBody = old.mstrBody;
-		this.marrAddresses = old.marrAddresses;
-		this.mstrEmailID = old.mstrEmailID;
-		this.mobjDocOps = old.mobjDocOps;
-		this.mobjContactOps = old.mobjContactOps;
-
-		if ( old.marrAttachments == null )
-			this.marrAttachments = null;
-		else
-		{
-			this.marrAttachments = new MessageAttachmentData[old.marrAttachments.length];
-			for ( i = 0; i < this.marrAttachments.length; i++ )
-			{
-				if ( old.marrAttachments[i] == null )
-					this.marrAttachments[i] = null;
-				else
-				{
-					this.marrAttachments[i] = new MessageAttachmentData();
-					this.marrAttachments[i].midDocument = old.marrAttachments[i];
-					this.marrAttachments[i].midOwner = this.mid;
-				}
-			}
-		}
-	}
 
 	public void FromObject(ObjectBase pobjSource)
 	{

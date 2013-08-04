@@ -29,7 +29,7 @@ public class ExternDeleteCasualty
 	public String mstrReason;
 	private CasualtyData mobjData;
 	private ContactOps mobjContactOps;
-	public DocOps mobjDocOps;
+	private DocOps mobjDocOps;
 
 	public ExternDeleteCasualty(UUID pidProcess)
 	{

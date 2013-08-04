@@ -33,7 +33,7 @@ public class ExternDeleteSubCasualty
 	public String mstrReason;
 	private SubCasualtyData mobjData;
 	private ContactOps mobjContactOps;
-	public DocOps mobjDocOps;
+	private DocOps mobjDocOps;
 
 	public ExternDeleteSubCasualty(UUID pidProcess)
 	{

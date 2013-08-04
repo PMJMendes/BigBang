@@ -38,7 +38,7 @@ public class ExternDeleteQuoteRequest
 	public String mstrReason;
 	private QuoteRequestData mobjData;
 	private ContactOps mobjContactOps;
-	public DocOps mobjDocOps;
+	private DocOps mobjDocOps;
 
 	public ExternDeleteQuoteRequest(UUID pidProcess)
 	{
