@@ -223,6 +223,7 @@ public class InsurerAccountingMap
 		larrResult[0].midDocType = Constants.ObjID_InsurerAccountingMap;
 		larrResult[0].mlngYear = (Integer)getAt(I.ENTRYYEAR);
 		larrResult[0].midFile = null;
+		larrResult[0].midCostCenter = null;
 
 		larrResult[1] = new AccountingData();
 		larrResult[1].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
@@ -236,6 +237,7 @@ public class InsurerAccountingMap
 		larrResult[1].midDocType = Constants.ObjID_InsurerAccountingMap;
 		larrResult[1].mlngYear = (Integer)getAt(I.ENTRYYEAR);
 		larrResult[1].midFile = null;
+		larrResult[1].midCostCenter = null;
 
 		return larrResult;
 	}

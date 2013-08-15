@@ -196,6 +196,7 @@ public class MediatorAccountingMap
 			larrResult[2].midDocType = Constants.ObjID_MediatorAccountingMap;
 			larrResult[2].mlngYear = (Integer)getAt(I.ENTRYYEAR);
 			larrResult[2].midFile = null;
+			larrResult[2].midCostCenter = null;
 
 			larrResult[3] = new AccountingData();
 			larrResult[3].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
@@ -209,6 +210,7 @@ public class MediatorAccountingMap
 			larrResult[3].midDocType = Constants.ObjID_MediatorAccountingMap;
 			larrResult[3].mlngYear = (Integer)getAt(I.ENTRYYEAR);
 			larrResult[3].midFile = null;
+			larrResult[3].midCostCenter = null;
 		}
 		else
 			larrResult = new AccountingData[2];
@@ -225,6 +227,7 @@ public class MediatorAccountingMap
 		larrResult[0].midDocType = Constants.ObjID_MediatorAccountingMap;
 		larrResult[0].mlngYear = (Integer)getAt(I.ENTRYYEAR);
 		larrResult[0].midFile = null;
+		larrResult[0].midCostCenter = null;
 
 		larrResult[1] = new AccountingData();
 		larrResult[1].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
@@ -238,6 +241,7 @@ public class MediatorAccountingMap
 		larrResult[1].midDocType = Constants.ObjID_MediatorAccountingMap;
 		larrResult[1].mlngYear = (Integer)getAt(I.ENTRYYEAR);
 		larrResult[1].midFile = null;
+		larrResult[1].midCostCenter = null;
 
 		return larrResult;
 	}

@@ -27,6 +27,7 @@ import Jewel.Engine.SysObjects.FileXfer;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
+import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
 
 public class AccountingExporter
 {
@@ -41,6 +42,7 @@ public class AccountingExporter
 		MasterDB ldb;
 		ResultSet lrs;
 		ArrayList<AccountingEntry> larrEntries;
+		CostCenter lobjCC;
 		FileFieldData[] larrFields;
 		FileSectionData[][] larrSections;
 		FileData lobjFile;
@@ -106,7 +108,19 @@ public class AccountingExporter
 			i = 0;
 			for ( AccountingEntry lobjEntry: larrEntries )
 			{
-				larrFields = new FileFieldData[8];
+				lobjCC = null;
+				if (lobjEntry.getAt(AccountingEntry.I.COSTCENTER) != null)
+				{
+					try
+					{
+						lobjCC = CostCenter.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjEntry.getAt(AccountingEntry.I.COSTCENTER));
+					}
+					catch (Throwable e)
+					{
+					}
+				}
+
+				larrFields = new FileFieldData[9];
 				larrFields[0] = new FileFieldData(larrFieldSpecs[0], ((BigDecimal)lobjEntry.getAt(AccountingEntry.I.ACCOUNT)).toString());
 				larrFields[1] = new FileFieldData(larrFieldSpecs[1], ((BigDecimal)lobjEntry.getAt(AccountingEntry.I.VALUE)).toString());
 				larrFields[2] = new FileFieldData(larrFieldSpecs[2], (String)lobjEntry.getAt(AccountingEntry.I.SIGN));
@@ -115,6 +129,7 @@ public class AccountingExporter
 				larrFields[5] = new FileFieldData(larrFieldSpecs[5], ((Integer)lobjEntry.getAt(AccountingEntry.I.BOOK)).toString());
 				larrFields[6] = new FileFieldData(larrFieldSpecs[6], (String)lobjEntry.getAt(AccountingEntry.I.SUPPORT));
 				larrFields[7] = new FileFieldData(larrFieldSpecs[7], (String)lobjEntry.getAt(AccountingEntry.I.DESCRIPTION));
+				larrFields[8] = new FileFieldData(larrFieldSpecs[8], (lobjCC == null ? "" : lobjCC.getLabel()));
 				larrSections[0][i] = new FileSectionData(lrefSection, larrFields);
 				i++;
 			}

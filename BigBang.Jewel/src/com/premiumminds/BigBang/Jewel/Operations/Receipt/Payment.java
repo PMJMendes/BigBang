@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
@@ -17,7 +18,9 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
+import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
 public class Payment
 	extends UndoableOperation
@@ -389,6 +392,7 @@ public class Payment
 		ArrayList<AccountingData> larrResult;
 		AccountingData lobjAux;
 		Receipt lobjReceipt;
+		CostCenter lobjCenter;
 		BigDecimal ldblTotal, ldblTotal119;
 		BigDecimal ldblComms, ldblStamp;
 		BigDecimal ldblRetro;
@@ -398,6 +402,18 @@ public class Payment
 		int llngMainBook;
 
 		lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
+		try
+		{
+			lobjCenter = CostCenter.GetInstance(Engine.getCurrentNameSpace(),
+					(UUID)UserDecoration.GetByUserID(Engine.getCurrentNameSpace(),
+							PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+									lobjReceipt.getAbsolutePolicy().GetProcessID()).GetManagerID())
+					.getAt(Constants.FKCostCenter_In_UserDecoration));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 		lstrAccount = lobjReceipt.getAbsolutePolicy().GetCompany().getEffectiveAccount();
 		if ( lstrAccount == null )
 			return null;
@@ -468,6 +484,7 @@ public class Payment
 				lobjAux.midDocType = Constants.ObjID_Receipt;
 				lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 				lobjAux.midFile = null;
+				lobjAux.midCostCenter = lobjCenter.getKey();
 				larrResult.add(lobjAux);
 			}
 
@@ -485,6 +502,7 @@ public class Payment
 				lobjAux.midDocType = Constants.ObjID_Receipt;
 				lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 				lobjAux.midFile = null;
+				lobjAux.midCostCenter = lobjCenter.getKey();
 				larrResult.add(lobjAux);
 			}
 
@@ -504,6 +522,7 @@ public class Payment
 				lobjAux.midDocType = Constants.ObjID_Receipt;
 				lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 				lobjAux.midFile = null;
+				lobjAux.midCostCenter = lobjCenter.getKey();
 				larrResult.add(lobjAux);
 			}
 
@@ -521,6 +540,7 @@ public class Payment
 				lobjAux.midDocType = Constants.ObjID_Receipt;
 				lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 				lobjAux.midFile = null;
+				lobjAux.midCostCenter = lobjCenter.getKey();
 				larrResult.add(lobjAux);
 
 				if ( ldblStamp.signum() != 0 )
@@ -537,6 +557,7 @@ public class Payment
 					lobjAux.midDocType = Constants.ObjID_Receipt;
 					lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 					lobjAux.midFile = null;
+					lobjAux.midCostCenter = lobjCenter.getKey();
 					larrResult.add(lobjAux);
 
 					ldblComms = ldblComms.subtract(ldblStamp);
@@ -554,6 +575,7 @@ public class Payment
 				lobjAux.midDocType = Constants.ObjID_Receipt;
 				lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 				lobjAux.midFile = null;
+				lobjAux.midCostCenter = lobjCenter.getKey();
 				larrResult.add(lobjAux);
 
 				lobjAux = new AccountingData();
@@ -568,6 +590,7 @@ public class Payment
 				lobjAux.midDocType = Constants.ObjID_Receipt;
 				lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 				lobjAux.midFile = null;
+				lobjAux.midCostCenter = lobjCenter.getKey();
 				larrResult.add(lobjAux);
 
 				lobjAux = new AccountingData();
@@ -582,6 +605,7 @@ public class Payment
 				lobjAux.midDocType = Constants.ObjID_Receipt;
 				lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 				lobjAux.midFile = null;
+				lobjAux.midCostCenter = lobjCenter.getKey();
 				larrResult.add(lobjAux);
 			}
 
@@ -599,6 +623,7 @@ public class Payment
 				lobjAux.midDocType = Constants.ObjID_Receipt;
 				lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 				lobjAux.midFile = null;
+				lobjAux.midCostCenter = lobjCenter.getKey();
 				larrResult.add(lobjAux);
 
 				lobjAux = new AccountingData();
@@ -613,6 +638,7 @@ public class Payment
 				lobjAux.midDocType = Constants.ObjID_Receipt;
 				lobjAux.mlngYear = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYYEAR);
 				lobjAux.midFile = null;
+				lobjAux.midCostCenter = lobjCenter.getKey();
 				larrResult.add(lobjAux);
 			}
 		}

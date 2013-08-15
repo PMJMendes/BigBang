@@ -26,6 +26,7 @@ public class AccountingEntry
 		public static final int DOCTYPE     =  8;
 		public static final int YEAR        =  9;
 		public static final int FILE        = 10;
+		public static final int COSTCENTER  = 11;
 	}
 
     public static AccountingEntry GetInstance(UUID pidNameSpace, UUID pidKey)

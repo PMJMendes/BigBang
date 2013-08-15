@@ -27,6 +27,7 @@ public class AccountingData
 	public UUID midDocType;
 	public Integer mlngYear;
 	public UUID midFile;
+	public UUID midCostCenter;
 
 	public void FromObject(ObjectBase pobjSource)
 	{
@@ -43,6 +44,7 @@ public class AccountingData
 		midDocType     = (UUID)       pobjSource.getAt(AccountingEntry.I.DOCTYPE);
 		mlngYear       = (Integer)    pobjSource.getAt(AccountingEntry.I.YEAR);
 		midFile        = (UUID)       pobjSource.getAt(AccountingEntry.I.FILE);
+		midCostCenter  = (UUID)       pobjSource.getAt(AccountingEntry.I.COSTCENTER);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -61,6 +63,7 @@ public class AccountingData
 			pobjDest.setAt(AccountingEntry.I.DOCTYPE,     midDocType);
 			pobjDest.setAt(AccountingEntry.I.YEAR,        mlngYear);
 			pobjDest.setAt(AccountingEntry.I.FILE,        midFile);
+			pobjDest.setAt(AccountingEntry.I.COSTCENTER,  midCostCenter);
 		}
 		catch (Throwable e)
 		{
