@@ -180,7 +180,7 @@ public class InsurerAccountingMap
 		if ( lrepIA.mstrExtraText != null )
 		{
 			lobjDoc.marrInfo[6] = new DocInfoData();
-			lobjDoc.marrInfo[6].mstrType = lrepIA.mstrExtraText;
+			lobjDoc.marrInfo[6].mstrType = lrepIA.mstrExtraText.substring(0, 50);
 			lobjDoc.marrInfo[6].mstrValue = String.format("%,.2f", lrepIA.mdblExtraValue);
 		}
 

@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.UUID;
 
 import org.apache.ecs.GenericElement;
@@ -347,6 +349,7 @@ public class ReportServiceImpl
 		IEntity lrefTransactions;
         MasterDB ldb;
         ResultSet lrsObjects;
+        TransactionSet[] larrResult;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -416,7 +419,21 @@ public class ReportServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new TransactionSet[larrAux.size()]);
+		larrResult = larrAux.toArray(new TransactionSet[larrAux.size()]);
+
+		Arrays.sort(larrResult, new Comparator<TransactionSet>()
+		{
+			public int compare(TransactionSet o1, TransactionSet o2)
+			{
+				if (o1.isComplete == o2.isComplete)
+					return o2.date.compareTo(o1.date);
+				if (o1.isComplete)
+					return 1;
+				return -1;
+			}
+		});
+
+		return larrResult;
 	}
 
 	public ReportItem[] getSubItems(String itemId)
