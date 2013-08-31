@@ -179,8 +179,11 @@ public class InsurerAccountingMap
 		lobjDoc.marrInfo[5].mstrValue = String.format("%,.2f", lrepIA.mdblTotal);
 		if ( lrepIA.mstrExtraText != null )
 		{
+			if ( lrepIA.mstrExtraText.length() > 50 )
+				lrepIA.mstrExtraText = lrepIA.mstrExtraText.substring(0, 50);
+
 			lobjDoc.marrInfo[6] = new DocInfoData();
-			lobjDoc.marrInfo[6].mstrType = lrepIA.mstrExtraText.substring(0, 50);
+			lobjDoc.marrInfo[6].mstrType = lrepIA.mstrExtraText;
 			lobjDoc.marrInfo[6].mstrValue = String.format("%,.2f", lrepIA.mdblExtraValue);
 		}
 
