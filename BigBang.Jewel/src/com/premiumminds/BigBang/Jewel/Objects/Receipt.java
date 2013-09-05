@@ -1001,7 +1001,7 @@ public class Receipt
     	if ( (ldblPercent == null) || (ldblBase == null) )
     		return null;
 
-		return ldblPercent.abs().multiply(ldblBase).divide(new BigDecimal(100.00)).setScale(2, RoundingMode.HALF_UP);
+		return ldblPercent.abs().multiply(ldblBase).divide(new BigDecimal(100.00), 2, RoundingMode.HALF_UP);
     }
 
 	private int GetNewAccountingNumber(SQLServer pdb, int plngYear)

@@ -161,9 +161,9 @@ public class ATFF
 				lstrBuilder.append("). Total calculado: ");
 
 				if ( llngLast < 0 )
-					ldblTotal = ldblTotal.multiply(new BigDecimal("12.0")).divide(new BigDecimal(llngNum)).setScale(2, RoundingMode.HALF_UP);
+					ldblTotal = ldblTotal.multiply(new BigDecimal("12.0")).divide(new BigDecimal(llngNum), 2, RoundingMode.HALF_UP);
 				else
-					ldblTotal = ldblTotal.multiply(ldblBCalc).divide(new BigDecimal(llngNum)).setScale(2, RoundingMode.HALF_UP);
+					ldblTotal = ldblTotal.multiply(ldblBCalc).divide(new BigDecimal(llngNum), 2, RoundingMode.HALF_UP);
 
 				lstrAux = String.format("%,.2f", (ldblTotal))/*.replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",")*/;
 				marrValues[llngResult].SetValue(lstrAux, pdb);

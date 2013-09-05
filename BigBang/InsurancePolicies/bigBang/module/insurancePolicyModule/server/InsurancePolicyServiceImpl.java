@@ -843,11 +843,11 @@ public class InsurancePolicyServiceImpl
 				{
 					lidFrac = (UUID)larrSubs[i].getAt(5);
 					if ( Constants.FracID_Semester.equals(lidFrac) )
-						ldblPremium = ldblPremium.divide(new BigDecimal(2)).setScale(2, RoundingMode.HALF_UP);
+						ldblPremium = ldblPremium.divide(new BigDecimal(2), 2, RoundingMode.HALF_UP);
 					else if ( Constants.FracID_Quarter.equals(lidFrac) )
-						ldblPremium = ldblPremium.divide(new BigDecimal(4)).setScale(2, RoundingMode.HALF_UP);
+						ldblPremium = ldblPremium.divide(new BigDecimal(4), 2, RoundingMode.HALF_UP);
 					else if ( Constants.FracID_Month.equals(lidFrac) )
-						ldblPremium = ldblPremium.divide(new BigDecimal(12)).setScale(2, RoundingMode.HALF_UP);
+						ldblPremium = ldblPremium.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
 				}
 
 				lstrDesc = "Custo de adesão, no período de " + ldtFrom.toString().subSequence(0, 10) + " a " +
