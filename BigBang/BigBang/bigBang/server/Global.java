@@ -1,32 +1,37 @@
 package bigBang.server;
 
-import javax.servlet.*;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.apache.log4j.Logger;
+
+import Jewel.Engine.Engine;
 import bigBang.library.server.DocuShareServiceImpl;
 import bigBang.library.server.EngineImplementor;
-
-import Jewel.Engine.*;
-import Jewel.Engine.SysObjects.*;
 
 public class Global
 	implements ServletContextListener, HttpSessionListener
 {
+	private static final Logger grefLogger = Logger.getLogger(Global.class);
+
 	public void contextInitialized(ServletContextEvent e)
 	{
+		grefLogger.debug("App started");
         try
         {
 			Engine.InitEngine(new EngineImplementor(e.getServletContext()));
 		}
-        catch (JewelEngineException e1)
+        catch (Throwable e1)
         {
-			e1.printStackTrace();
+        	grefLogger.fatal("Error in App Init", e1);
 		}
 	}
 
 	public void contextDestroyed(ServletContextEvent e)
 	{
+		grefLogger.debug("App killed");
 	}
 
 	public void sessionCreated(HttpSessionEvent arg0)
