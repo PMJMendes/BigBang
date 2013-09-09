@@ -3,9 +3,10 @@ package bigBang.library.server;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,17 +39,17 @@ public class FileServiceImpl
 	private static final long serialVersionUID = 1L;
 
 	@SuppressWarnings("unchecked")
-	public static Hashtable<UUID, FileXfer> GetFileXferStorage()
+	public static Map<UUID, FileXfer> GetFileXferStorage()
 	{
-		Hashtable<UUID, FileXfer> larrAux;
+		ConcurrentHashMap<UUID, FileXfer> larrAux;
 
         if (getSession() == null)
             return null;
 
-        larrAux = (Hashtable<UUID, FileXfer>)getSession().getAttribute("MADDS_FileXfer_Storage");
+        larrAux = (ConcurrentHashMap<UUID, FileXfer>)getSession().getAttribute("MADDS_FileXfer_Storage");
         if (larrAux == null)
         {
-        	larrAux = new Hashtable<UUID, FileXfer>();
+        	larrAux = new ConcurrentHashMap<UUID, FileXfer>();
             getSession().setAttribute("MADDS_FileXfer_Storage", larrAux);
         }
 
@@ -268,7 +269,7 @@ public class FileServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		Discard(storageId);
+		GetFileXferStorage().remove(storageId);
 	}
 
 	public void Discard(String pstrID)

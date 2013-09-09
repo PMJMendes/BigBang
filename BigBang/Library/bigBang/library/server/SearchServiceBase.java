@@ -3,8 +3,9 @@ package bigBang.library.server;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
@@ -180,17 +181,17 @@ public abstract class SearchServiceBase
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Hashtable<UUID, SearchWSpace> GetSearchWSStorage()
+	private static Map<UUID, SearchWSpace> GetSearchWSStorage()
 	{
-		Hashtable<UUID, SearchWSpace> larrAux;
+		ConcurrentHashMap<UUID, SearchWSpace> larrAux;
 
         if (getSession() == null)
             return null;
 
-        larrAux = (Hashtable<UUID, SearchWSpace>)getSession().getAttribute("BigBang_Search_Storage");
+        larrAux = (ConcurrentHashMap<UUID, SearchWSpace>)getSession().getAttribute("BigBang_Search_Storage");
         if (larrAux == null)
         {
-        	larrAux = new Hashtable<UUID, SearchWSpace>();
+        	larrAux = new ConcurrentHashMap<UUID, SearchWSpace>();
             getSession().setAttribute("BigBang_Search_Storage", larrAux);
         }
 
