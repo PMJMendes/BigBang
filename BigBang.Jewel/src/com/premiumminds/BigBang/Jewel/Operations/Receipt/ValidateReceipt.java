@@ -238,7 +238,7 @@ public class ValidateReceipt
     	{
 			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjItem.setAt(0, "Validação de Recibo");
-			lobjItem.setAt(1, lobjProc.GetManagerID());
+			lobjItem.setAt(1, lobjProc.GetParent().GetManagerID());
 			lobjItem.setAt(2, Constants.ProcID_Receipt);
 			lobjItem.setAt(3, ldtNow);
 			lobjItem.setAt(4, mdtPrevLimit);
