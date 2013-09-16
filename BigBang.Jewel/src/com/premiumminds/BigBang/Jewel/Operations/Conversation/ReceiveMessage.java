@@ -166,6 +166,8 @@ public class ReceiveMessage
 
 		try
 		{
+			if ( mobjData.mstrSubject == null )
+				mobjData.mstrSubject = (String)lobjConv.getAt(Conversation.I.SUBJECT);
 			mobjData.midOwner = lobjConv.getKey();
 			lobjMessage = Message.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjMessage);

@@ -79,6 +79,8 @@ public abstract class CreateConversationBase
 
 		if ( mobjData.mstrSubject == null )
 			mobjData.mstrSubject = mobjData.marrMessages[0].mstrSubject;
+		if ( mobjData.mstrSubject == null )
+			mobjData.mstrSubject = "(sem assunto)";
 		mobjData.midStartDir = mobjData.marrMessages[0].midDirection;
 
 		if ( mobjData.mdtDueDate == null )
@@ -127,6 +129,8 @@ public abstract class CreateConversationBase
 
 		try
 		{
+			if ( mobjData.marrMessages[0].mstrSubject == null )
+				mobjData.marrMessages[0].mstrSubject = mobjData.mstrSubject;
 			mobjData.marrMessages[0].midOwner = lobjConv.getKey();
 			mobjData.marrMessages[0].mlngNumber = 0;
 			lobjMessage = Message.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
