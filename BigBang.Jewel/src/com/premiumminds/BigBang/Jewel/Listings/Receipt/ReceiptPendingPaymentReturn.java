@@ -40,7 +40,7 @@ public class ReceiptPendingPaymentReturn
 		{
 			try
 			{
-				lidManager = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrAux[i].getAbsolutePolicy().GetProcessID()).GetManagerID();
+				lidManager = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrAux[i].GetProcessID()).GetParent().GetManagerID();
 			}
 			catch (Throwable e)
 			{
