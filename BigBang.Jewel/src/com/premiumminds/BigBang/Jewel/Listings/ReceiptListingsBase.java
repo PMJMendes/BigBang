@@ -17,6 +17,7 @@ import Jewel.Engine.Constants.TypeDefGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.ILog;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -179,7 +180,7 @@ public class ReceiptListingsBase
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[16];
+		larrCells = new TD[17];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Recibo");
 		ReportBuilder.styleCell(larrCells[0], false, false);
@@ -229,6 +230,9 @@ public class ReceiptListingsBase
 		larrCells[15] = ReportBuilder.buildHeaderCell("Meios");
 		ReportBuilder.styleCell(larrCells[15], false, true);
 
+		larrCells[16] = ReportBuilder.buildHeaderCell("Perfil");
+		ReportBuilder.styleCell(larrCells[16], false, true);
+
 		setWidths(larrCells);
 
 		return larrCells;
@@ -240,6 +244,7 @@ public class ReceiptListingsBase
 		Policy lobjPolicy;
 		Client lobjClient;
 		ILog lobjLog;
+		ObjectBase lobjProfile;
 		TD[] larrCells;
 
 		lobjPolicy = pobjReceipt.getAbsolutePolicy();
@@ -247,7 +252,16 @@ public class ReceiptListingsBase
 
 		lobjLog = pobjReceipt.getPaymentLog();
 
-		larrCells = new TD[16];
+		try
+		{
+			lobjProfile = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_OpProfile), pobjReceipt.getProfile());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		larrCells = new TD[17];
 
 		larrCells[0] = ReportBuilder.buildCell(pobjReceipt.getAt(Receipt.I.NUMBER), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -297,6 +311,9 @@ public class ReceiptListingsBase
 		larrCells[15] = ReportBuilder.buildCell((lobjLog == null ? null : getMeans(lobjLog)), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[15], true, true);
 
+		larrCells[16] = ReportBuilder.buildCell(lobjProfile.getLabel(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[16], true, true);
+
 		setWidths(larrCells);
 
 		return larrCells;
@@ -320,6 +337,7 @@ public class ReceiptListingsBase
 		parrCells[13].setWidth( 88);
 		parrCells[14].setWidth(100);
 		parrCells[15].setWidth( 50);
+		parrCells[16].setWidth( 50);
 	}
 
 	protected String getMeans(ILog pobjLog)
