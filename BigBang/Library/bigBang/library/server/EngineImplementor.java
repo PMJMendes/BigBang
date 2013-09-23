@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import Jewel.Engine.Engine;
+import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEngineImpl;
 import Jewel.Engine.SysObjects.JewelWorkerThread;
 
@@ -85,19 +87,51 @@ public class EngineImplementor
 
     protected void onAfterRequestDeserialized(RPCRequest rpcRequest)
     {
-    	grefLogger.debug("in|" + getDebugID().toString() + "|" + rpcRequest.getMethod().toString());
+    	String lstrUser;
+    	UUID lidUser;
+
+    	lstrUser = "(sem user)";
+    	lidUser = Engine.getCurrentUser();
+    	if ( lidUser != null )
+    	{
+    		try
+    		{
+				lstrUser = User.GetInstance(Engine.getCurrentNameSpace(), lidUser).getDisplayName();
+			}
+    		catch (Throwable e)
+    		{
+    	    	lstrUser = "(erro a obter o user)";
+			}
+    	}
+    	grefLogger.debug("in|" + getDebugID().toString() + "|" + lstrUser + "|" + rpcRequest.getMethod().toString());
 
     	super.onAfterRequestDeserialized(rpcRequest);
     }
 
     protected void onAfterResponseSerialized(String serializedResponse)
     {
+    	String lstrUser;
+    	UUID lidUser;
     	String lstrResp;
+
+    	lstrUser = "(sem user)";
+    	lidUser = Engine.getCurrentUser();
+    	if ( lidUser != null )
+    	{
+    		try
+    		{
+				lstrUser = User.GetInstance(Engine.getCurrentNameSpace(), lidUser).getDisplayName();
+			}
+    		catch (Throwable e)
+    		{
+    	    	lstrUser = "(erro a obter o user)";
+			}
+    	}
 
     	lstrResp = serializedResponse;
     	if ( (lstrResp != null) && (lstrResp.length() > 50) )
     		lstrResp = lstrResp.substring(0, 50);
-    	grefLogger.debug("out|" + getDebugID().toString() + "|" + lstrResp);
+    	grefLogger.debug("out|" + getDebugID().toString() + "|" + lstrUser + "|" + lstrResp);
 
     	super.onAfterResponseSerialized(serializedResponse);
     }
