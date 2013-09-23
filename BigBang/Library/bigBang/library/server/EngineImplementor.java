@@ -115,18 +115,16 @@ public class EngineImplementor
     	String lstrResp;
 
     	lstrUser = "(sem user)";
-    	lidUser = Engine.getCurrentUser();
-    	if ( lidUser != null )
-    	{
-    		try
-    		{
+		try
+		{
+	    	lidUser = Engine.getCurrentUser();
+	    	if ( lidUser != null )
 				lstrUser = User.GetInstance(Engine.getCurrentNameSpace(), lidUser).getDisplayName();
-			}
-    		catch (Throwable e)
-    		{
-    	    	lstrUser = "(erro a obter o user)";
-			}
     	}
+		catch (Throwable e)
+		{
+	    	lstrUser = "(erro a obter o user)";
+		}
 
     	lstrResp = serializedResponse;
     	if ( (lstrResp != null) && (lstrResp.length() > 50) )
