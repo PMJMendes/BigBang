@@ -1,9 +1,9 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
-
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
 public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBar {
 
@@ -14,6 +14,7 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 	//ADMIN
 	protected MenuItem deleteItem;
 	protected MenuItem voidItem;
+	protected MenuItem reactivateSubPolicy;
 
 	//DATA
 	protected MenuItem transferToPolicy;
@@ -91,6 +92,14 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 			}
 		});
 		addItem(SUB_MENU.ADMIN, voidItem);
+		reactivateSubPolicy = new MenuItem("Reactivar", new Command() {
+
+			@Override
+			public void execute() {
+				onReactivateSubPolicy();
+			}
+		});
+		addItem(SUB_MENU.ADMIN, reactivateSubPolicy);
 		deleteItem = new MenuItem("Eliminar", new Command() {
 
 			@Override
@@ -147,6 +156,10 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 		this.voidItem.setEnabled(allow);
 	}
 	
+	public void allowReactivateSubPolicy(boolean allow) {
+		this.reactivateSubPolicy.setEnabled(allow);
+	}
+	
 	public abstract void onDelete();
 
 	public abstract void onIncludeInsuredObject();
@@ -168,6 +181,8 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 	public abstract void onCreateReceipt();
 
 	public abstract void onVoid();
+
+	public abstract void onReactivateSubPolicy();
 
 	public void allowCreateHealthExpense(boolean allow) {
 		this.healthExpense.setEnabled(allow);

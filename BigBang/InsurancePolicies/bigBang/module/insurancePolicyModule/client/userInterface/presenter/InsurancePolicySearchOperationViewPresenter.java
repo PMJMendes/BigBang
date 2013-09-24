@@ -90,7 +90,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		CREATE_EXPENSE,
 		CREATE_RISK_ANALISYS, 
 		TRANSFER_TO_CLIENT, 
-		ON_NEW_RESULTS, CREATE_SUB_POLICY_RECEIPT, RECEIVE_MESSAGE, SEND_MESSAGE
+		ON_NEW_RESULTS,
+		CREATE_SUB_POLICY_RECEIPT,
+		RECEIVE_MESSAGE,
+		SEND_MESSAGE,
+		REACTIVATE_POLICY
 	}
 	public interface Display {
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -118,6 +122,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		void allowIncludeInsuredObject(boolean allow);
 		void allowValidatePolicy(boolean allow);
 		void allowVoidPolicy(boolean allow);
+		void allowReactivatePolicy(boolean allow);
 		void allowTransferBrokerage(boolean allow);
 		void allowCreateSubstitutePolicy(boolean allow);
 		void allowCreateInsuredObjectFromClient(boolean allow);
@@ -366,6 +371,9 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 					break;
 				case CREATE_SUB_POLICY_RECEIPT:
 					onCreateSubPolicyReceipt();
+					break;
+				case REACTIVATE_POLICY:
+					onReactivatePolicy();
 					break;
 				}
 
@@ -756,6 +764,22 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				.getCurrentState();
 		item.setParameter("show", "voidpolicy");
 		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	protected void onReactivatePolicy() {
+		broker.reactivatePolicy(policyId, new ResponseHandler<InsurancePolicy>() {
+
+			@Override
+			public void onResponse(InsurancePolicy response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice foi reactivada com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível reactivar a apólice"), TYPE.ALERT_NOTIFICATION));
+			}
+		});
 	}
 
 	protected void onDelete() {
@@ -1152,6 +1176,7 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		view.allowIncludeInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT));
 		view.allowValidatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VALIDATE_POLICY));
 		view.allowVoidPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY));
+		view.allowReactivatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.REACTIVATE_POLICY));
 		view.allowTransferBrokerage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_BROKERAGE));
 		view.allowCreateSubstitutePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUBSTITUTE_POLICY));
 		view.allowSendMessage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CONVERSATION));

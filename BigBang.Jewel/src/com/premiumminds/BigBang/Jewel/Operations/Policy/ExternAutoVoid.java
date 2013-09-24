@@ -51,7 +51,7 @@ public class ExternAutoVoid
 		try
 		{
 			lobjPolicy = (Policy)GetProcess().GetData();
-			lobjPolicy.setAt(13, Constants.StatusID_Voided);
+			lobjPolicy.setAt(13, Constants.StatusID_AutoVoided);
 			lobjPolicy.setAt(9, mdtEffectDate);
 			lobjPolicy.SaveToDb(pdb);
 		}

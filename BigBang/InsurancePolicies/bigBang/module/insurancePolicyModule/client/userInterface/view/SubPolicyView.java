@@ -172,6 +172,11 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 			}
 
 			@Override
+			public void onReactivateSubPolicy() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.REACTIVATE_SUBPOLICY));
+			}
+
+			@Override
 			protected void onCreateHealthExpense() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.CREATE_EXPENSE));
 			}
@@ -343,6 +348,11 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	@Override
 	public void allowVoid(boolean allow) {
 		toolbar.allowVoid(allow);
+	}
+
+	@Override
+	public void allowReactivateSubPolicy(boolean allow) {
+		toolbar.allowReactivateSubPolicy(allow);
 	}
 
 	@Override

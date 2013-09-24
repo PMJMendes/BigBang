@@ -429,6 +429,26 @@ public class InsuranceSubPolicyBrokerImpl extends DataBroker<SubPolicy> implemen
 	}
 
 	@Override
+	public void reactivateSubPolicy(String subPolicyId, final ResponseHandler<SubPolicy> handler) {
+		service.reactivateSubPolicy(subPolicyId, new BigBangAsyncCallback<SubPolicy>() {
+
+			@Override
+			public void onResponseSuccess(SubPolicy result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.REACTIVATE, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not reactivate the sub-policy")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
 	public void includeInsuredObject(String subPolicyId, InsuredObject object,
 			final ResponseHandler<InsuredObject> handler) {
 		service.includeObject(subPolicyId, object, new BigBangAsyncCallback<InsuredObject>() {

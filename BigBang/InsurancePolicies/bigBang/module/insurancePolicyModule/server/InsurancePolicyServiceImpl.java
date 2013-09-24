@@ -76,6 +76,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.PerformComputations;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.ReactivatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.TransferToClient;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.VoidPolicy;
@@ -947,6 +948,30 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return getPolicy(voiding.policyId);
+	}
+
+	public InsurancePolicy reactivatePolicy(String policyId)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		ReactivatePolicy lopRP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+
+			lopRP = new ReactivatePolicy(lobjPolicy.GetProcessID());
+			lopRP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return getPolicy(policyId);
 	}
 
 	public void deletePolicy(String policyId)

@@ -61,6 +61,7 @@ import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.DeleteSubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.PerformComputations;
+import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ReactivateSubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.TransferToPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ValidateSubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.VoidSubPolicy;
@@ -435,6 +436,30 @@ public class SubPolicyServiceImpl
 		}
 
 		return getSubPolicy(voiding.policyId);
+	}
+
+	public SubPolicy reactivateSubPolicy(String subPolicyId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubPolicy lobjSubPolicy;
+		ReactivateSubPolicy lopRSP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubPolicy = com.premiumminds.BigBang.Jewel.Objects.SubPolicy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(subPolicyId));
+
+			lopRSP = new ReactivateSubPolicy(lobjSubPolicy.GetProcessID());
+			lopRSP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return getSubPolicy(subPolicyId);
 	}
 
 	public Conversation sendMessage(Conversation conversation)

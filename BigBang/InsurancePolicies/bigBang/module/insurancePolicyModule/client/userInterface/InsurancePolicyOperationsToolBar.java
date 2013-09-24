@@ -36,6 +36,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	protected MenuItem deleteItem;
 	protected MenuItem brokerageTransfer;
 	protected MenuItem voidPolicy;
+	protected MenuItem reactivatePolicy;
 
 	//OTHER
 
@@ -195,6 +196,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.ADMIN, brokerageTransfer);
+
 		voidPolicy = new MenuItem("Anular Apólice", new Command() {
 
 			@Override
@@ -203,7 +205,15 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.ADMIN, voidPolicy);
-		
+		reactivatePolicy = new MenuItem("Reactivar Apólice", new Command() {
+
+			@Override
+			public void execute() {
+				onReactivatePolicy();
+			}
+		});
+		addItem(SUB_MENU.ADMIN, reactivatePolicy);
+
 		clientTransfer = new MenuItem("Transferir para Cliente", new Command(){
 
 			@Override
@@ -239,6 +249,10 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	
 	public void allowVoidPolicy(boolean allow) {
 		this.voidPolicy.setEnabled(allow);
+	}
+	
+	public void allowReactivatePolicy(boolean allow) {
+		this.reactivatePolicy.setEnabled(allow);
 	}
 
 	public void allowTransferBrokerage(boolean allow) {
@@ -300,6 +314,8 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	}
 
 	public abstract void onVoidPolicy();
+
+	public abstract void onReactivatePolicy();
 
 	public abstract void onBrokerageTransfer();
 

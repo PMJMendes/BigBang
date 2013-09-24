@@ -78,6 +78,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	void voidPolicy(PolicyVoiding voiding,	ResponseHandler<InsurancePolicy> responseHandler);
 
+	void reactivatePolicy(String policyId,	ResponseHandler<InsurancePolicy> responseHandler);
+
 	void issueDebitNote(String policyId, DebitNote note, ResponseHandler<Void> handler);
 
 	public void createNegotiation(Negotiation negotiation, ResponseHandler<Negotiation> handler);

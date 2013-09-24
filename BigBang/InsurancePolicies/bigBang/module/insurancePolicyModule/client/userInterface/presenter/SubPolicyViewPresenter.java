@@ -73,7 +73,9 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		CREATE_EXPENSE,
 		BACK, 
 		SUB_POLICY_SELECTED, 
-		NEW_INSURED_OBJECT, RECEIVE_MESSAGE
+		NEW_INSURED_OBJECT,
+		RECEIVE_MESSAGE,
+		REACTIVATE_SUBPOLICY
 	}
 
 	public static interface Display {
@@ -103,6 +105,8 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		void allowCreateReceipt(boolean allow);
 
 		void allowVoid(boolean allow);
+
+		void allowReactivateSubPolicy(boolean allow);
 
 		void allowDelete(boolean allow);
 
@@ -452,6 +456,9 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 				case RECEIVE_MESSAGE:
 					onReceiveMessage();
 					break;
+				case REACTIVATE_SUBPOLICY:
+					onReactivateSubPolicy();
+					break;
 				}
 			}
 		});
@@ -709,6 +716,22 @@ public class SubPolicyViewPresenter implements ViewPresenter{
 		item.setParameter("show", "voidsubpolicy");
 		NavigationHistoryManager.getInstance().go(item);
 
+	}
+
+	protected void onReactivateSubPolicy() {
+		subPolicyBroker.reactivateSubPolicy(subPolicyId, new ResponseHandler<SubPolicy>() {
+
+			@Override
+			public void onResponse(SubPolicy response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice-adesão foi reactivada com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível reactivar a apólice-adseão"), TYPE.ALERT_NOTIFICATION));
+			}
+		});
 	}
 
 	protected void onValidate() {

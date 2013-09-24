@@ -21,8 +21,8 @@ public class NotPayedIndication
 	private UUID midReceipt;
 	private UUID midPolicy;
 	private UUID midSubPolicy;
-	private UUID midPrevStatus;
-	private Timestamp mdtPrevEndDate;
+	public UUID midPrevStatus;
+	public Timestamp mdtPrevEndDate;
 	private UUID midRefProc;
 
 	public NotPayedIndication(UUID pidProcess)

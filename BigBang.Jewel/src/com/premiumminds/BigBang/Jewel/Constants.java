@@ -337,6 +337,8 @@ public class Constants
 	public static final UUID OPID_Policy_UndoTransferToClient            = UUID.fromString("7D4D06DC-8652-4E4E-B1F8-9FF200B460A5");
 	public static final UUID OPID_Policy_ExternAutoVoid                  = UUID.fromString("34FB7D31-175E-423A-8FEC-A03100CD86B2");
 	public static final UUID OPID_Policy_ExternUndoAutoVoid              = UUID.fromString("9F4ABCF3-F2FA-4515-A2F9-A03100CDC836");
+	public static final UUID OPID_Policy_ReactivatePolicy                = UUID.fromString("6C0E956E-DE6F-4531-B967-A243010FEDD4");
+	public static final UUID OPID_Policy_UndoReactivatePolicy            = UUID.fromString("F4CF2D2D-3B52-47F6-80C1-A2430114E5F2");
 
 	// Sub Policy Operations
 	public static final UUID OPID_SubPolicy_AutoProcessSubProcs          = UUID.fromString("60E3DCEF-E669-4816-8006-9FF30102C132");
@@ -368,6 +370,8 @@ public class Constants
 	public static final UUID OPID_SubPolicy_UndoTransferToPolicy         = UUID.fromString("063AF772-A40C-4895-9F95-9FF300FEA254");
 	public static final UUID OPID_SubPolicy_ExternAutoVoid               = UUID.fromString("658F89A9-006A-4A19-BEF0-A03101001F8B");
 	public static final UUID OPID_SubPolicy_ExternUndoAutoVoid           = UUID.fromString("0D1980F1-5BE1-4F55-B56D-A031010047E1");
+	public static final UUID OPID_SubPolicy_ReactivateSubPolicy          = UUID.fromString("315149E0-F4A9-4194-84E7-A24301194762");
+	public static final UUID OPID_SubPolicy_UndoReactivateSubPolicy      = UUID.fromString("51BD2488-7589-493B-A4E4-A24301182876");
 
 	// Receipt Operations
 	public static final UUID OPID_Receipt_AutoDisallowDelete             = UUID.fromString("C79AE4F9-F00E-40B1-9DF4-A01300C42A2C");
@@ -656,6 +660,7 @@ public class Constants
 	public static final UUID StatusID_InProgress = UUID.fromString("6489D7DF-A090-40B9-BD5E-9F98012C8BED");
 	public static final UUID StatusID_Valid      = UUID.fromString("421E16B3-BE47-4D9C-9011-9F98012C945E");
 	public static final UUID StatusID_Voided     = UUID.fromString("4F115B5C-0E23-444F-AA68-9F98012CA192");
+	public static final UUID StatusID_AutoVoided = UUID.fromString("FCE79588-054B-458D-9515-9F98012CB80E");
 
 	// Receipt Types
 	public static final UUID RecType_Continuing  = UUID.fromString("6B91D626-4CAD-4F53-8FD6-9F900111C39F");

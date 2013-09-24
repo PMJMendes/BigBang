@@ -72,6 +72,7 @@ public interface InsurancePolicyService
 	public void createSubPolicyReceipts(DebitNoteBatch batch) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy voidPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy reactivatePolicy(String policyId) throws SessionExpiredException, BigBangException;
 
 	public void deletePolicy(String policyId) throws SessionExpiredException, BigBangException;
 

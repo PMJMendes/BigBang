@@ -555,6 +555,26 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
+	public void reactivatePolicy(String policyId, final ResponseHandler<InsurancePolicy> handler) {
+		service.reactivatePolicy(policyId, new BigBangAsyncCallback<InsurancePolicy>() {
+
+			@Override
+			public void onResponseSuccess(InsurancePolicy result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.REACTIVATE_POLICY, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not reactivate the policy")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
 	public void issueDebitNote(final String policyId, DebitNote note, final ResponseHandler<Void> handler) {
 		service.createDebitNote(policyId, note, new BigBangAsyncCallback<Void>() {
 

@@ -29,5 +29,6 @@ public interface SubPolicyServiceAsync
 	void createReceipt(String subPolicyId, Receipt receipt, AsyncCallback<Receipt> callback);
 	void createExpense(Expense expense, AsyncCallback<Expense> callback);
 	void voidSubPolicy(PolicyVoiding voiding, AsyncCallback<SubPolicy> callback);
+	void reactivateSubPolicy(String subPolicyId, AsyncCallback<SubPolicy> callback);
 	void deleteSubPolicy(String subPolicyId, String reason, AsyncCallback<Void> callback);
 }

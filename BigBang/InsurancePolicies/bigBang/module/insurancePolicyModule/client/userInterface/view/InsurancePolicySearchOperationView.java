@@ -111,6 +111,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			}
 
 			@Override
+			public void onReactivatePolicy() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.REACTIVATE_POLICY));
+			}
+
+			@Override
 			public void onBrokerageTransfer() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.TRANSFER_BROKERAGE));
 			}
@@ -408,6 +413,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void allowVoidPolicy(boolean allow) {
 		toolbar.allowVoidPolicy(allow);
+	}
+
+	@Override
+	public void allowReactivatePolicy(boolean allow) {
+		toolbar.allowReactivatePolicy(allow);
 	}
 
 	@Override

@@ -143,6 +143,7 @@ public class BigBangConstants {
 			public static final String INCLUDE_INSURED_OBJECT = "984226BB-33EA-4988-A802-9FD4010FC200";
 			public static final String VALIDATE_POLICY = "841E9154-8037-46F7-8B98-9FD3011A9605";
 			public static final String VOID_POLICY = "DF2C50EF-5E4A-475A-AB1E-9FD401143D8A";
+			public static final String REACTIVATE_POLICY = "6C0E956E-DE6F-4531-B967-A243010FEDD4"; 
 			public static final String TRANSFER_BROKERAGE = "9568FAA4-ADBF-41AE-8FB9-9FD401140765";
 			public static final String CREATE_SUBSTITUTE_POLICY = "66504952-BCFD-4B6A-B8F0-9FD401138D07";
 			public static final String CREATE_INSURED_OBJECT_FROM_CLIENT = "783EFBDB-44DB-4CAA-BF88-9FD4010FDB91";
@@ -165,6 +166,7 @@ public class BigBangConstants {
 			public static final String VALIDATE = "E22C1D4C-2AF6-485F-BC02-9FF3010B1C80";
 			public static final String PERFORM_CALCULATIONS = "85224AA5-3C12-470F-9539-9FF30101B35E";
 			public static final String VOID = "FA8BF9F2-FEB2-49C7-A408-9FF300F34C38";
+			public static final String REACTIVATE = "315149E0-F4A9-4194-84E7-A24301194762";
 			public static final String TRANSFER_TO_POLICY = "E89D08A1-7BE7-4F2B-9E06-9FF3010A6138";
 			public static final String CREATE_EXPENSE = "BDAD68E7-7BA6-43AD-B10A-9FF300F5EE50";
 			public static final String CLOSE = null;

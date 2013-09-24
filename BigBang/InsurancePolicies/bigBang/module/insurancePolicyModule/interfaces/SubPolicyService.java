@@ -58,6 +58,7 @@ public interface SubPolicyService
 	public Expense createExpense(Expense expense) throws SessionExpiredException, BigBangException;
 
 	public SubPolicy voidSubPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
+	public SubPolicy reactivateSubPolicy(String subPolicyId) throws SessionExpiredException, BigBangException;
 
 	public void deleteSubPolicy(String policyId, String reason) throws SessionExpiredException, BigBangException;
 }

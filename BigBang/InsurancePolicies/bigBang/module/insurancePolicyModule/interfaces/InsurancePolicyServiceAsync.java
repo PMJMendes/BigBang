@@ -41,6 +41,7 @@ public interface InsurancePolicyServiceAsync
 	void createNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);
 	void createSubPolicyReceipts(DebitNoteBatch batch, AsyncCallback<Void> callback);
 	void voidPolicy(PolicyVoiding voiding, AsyncCallback<InsurancePolicy> callback);
+	void reactivatePolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void deletePolicy(String policyId, AsyncCallback<Void> callback);
 	void massCreateManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 }

@@ -80,6 +80,8 @@ public interface InsuranceSubPolicyBroker extends
 	
 	void voidSubPolicy(PolicyVoiding voiding, ResponseHandler<SubPolicy> responseHandler);
 
+	void reactivateSubPolicy(String subPolicyId, ResponseHandler<SubPolicy> responseHandler);
+
 	void createExpense(Expense expense, ResponseHandler<Expense> handler);
 
 	public void sendMessage(Conversation info,
