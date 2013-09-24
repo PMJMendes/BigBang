@@ -63,43 +63,45 @@ public class NotPayedIndication
 		lobjReceipt = (Receipt)GetProcess().GetData();
 		midReceipt = lobjReceipt.getKey();
 
-		try
+		midPolicy = null;
+		midSubPolicy = null;
+
+		if ( !lobjReceipt.isReverseCircuit() && !lobjReceipt.isForCasualties() )
 		{
-			lobjPolicy = lobjReceipt.getDirectPolicy();
-			lobjSubPolicy = lobjReceipt.getSubPolicy();
-		}
-		catch (BigBangJewelException e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
-		}
+			try
+			{
+				lobjPolicy = lobjReceipt.getDirectPolicy();
+				lobjSubPolicy = lobjReceipt.getSubPolicy();
+			}
+			catch (BigBangJewelException e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
 
-		if ( lobjPolicy != null )
-		{
-			midPolicy = lobjPolicy.getKey();
-			midRefProc = lobjPolicy.GetProcessID();
-			midPrevStatus = (UUID)lobjPolicy.getAt(13);
-			mdtPrevEndDate = (Timestamp)lobjPolicy.getAt(9);
+			if ( lobjPolicy != null )
+			{
+				midPolicy = lobjPolicy.getKey();
+				midRefProc = lobjPolicy.GetProcessID();
+				midPrevStatus = (UUID)lobjPolicy.getAt(13);
+				mdtPrevEndDate = (Timestamp)lobjPolicy.getAt(9);
 
-			lopEAV = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternAutoVoid(midRefProc);
-			lopEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(9);
-			lopEAV.midReceiptProc = GetProcess().getKey();
-			TriggerOp(lopEAV, pdb);
+				lopEAV = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternAutoVoid(midRefProc);
+				lopEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(9);
+				lopEAV.midReceiptProc = GetProcess().getKey();
+				TriggerOp(lopEAV, pdb);
+			}
+			else if ( lobjSubPolicy != null )
+			{
+				midSubPolicy = lobjSubPolicy.getKey();
+				midRefProc = lobjSubPolicy.GetProcessID();
+				midPrevStatus = (UUID)lobjSubPolicy.getAt(7);
+				mdtPrevEndDate = (Timestamp)lobjSubPolicy.getAt(4);
 
-			midSubPolicy = null;
-		}
-		else if ( lobjSubPolicy != null )
-		{
-			midSubPolicy = lobjSubPolicy.getKey();
-			midRefProc = lobjSubPolicy.GetProcessID();
-			midPrevStatus = (UUID)lobjSubPolicy.getAt(7);
-			mdtPrevEndDate = (Timestamp)lobjSubPolicy.getAt(4);
-
-			lopsEAV = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternAutoVoid(midRefProc);
-			lopsEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(9);
-			lopsEAV.midReceiptProc = GetProcess().getKey();
-			TriggerOp(lopsEAV, pdb);
-
-			midPolicy = null;
+				lopsEAV = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternAutoVoid(midRefProc);
+				lopsEAV.mdtEffectDate = (Timestamp)lobjReceipt.getAt(9);
+				lopsEAV.midReceiptProc = GetProcess().getKey();
+				TriggerOp(lopsEAV, pdb);
+			}
 		}
 	}
 
