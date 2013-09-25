@@ -21,7 +21,9 @@ import Jewel.Petri.SysObjects.ProcessData;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyExternWeekly;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryAutoVoiding;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryCreation;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryReactivation;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryValidation;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryVoiding;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPendingReceipt;
@@ -124,6 +126,18 @@ public class Policy
 		throws BigBangJewelException
 	{
 		return new PolicyHistoryVoiding().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportHistoryAutoVoiding(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyHistoryAutoVoiding().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportHistoryReactivation(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyHistoryReactivation().doReport(parrParams);
 	}
 
 	public static GenericElement[] printImportReport(String[] parrParams)
