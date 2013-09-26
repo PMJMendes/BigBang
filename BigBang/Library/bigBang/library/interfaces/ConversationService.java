@@ -32,6 +32,10 @@ public interface ConversationService
 
 	public Conversation saveConversation(Conversation conversation) throws SessionExpiredException, BigBangException;
 
+	public Message getForReply(String messageId) throws SessionExpiredException, BigBangException;
+	public Message getForReplyAll(String messageId) throws SessionExpiredException, BigBangException;
+	public Message getForForward(String messageId) throws SessionExpiredException, BigBangException;
+
 	public Conversation sendMessage(Message message, Integer replylimit) throws SessionExpiredException, BigBangException;
 	public Conversation repeatMessage(Message message, Integer replylimit) throws SessionExpiredException, BigBangException;
 	public Conversation receiveMessage(Message message, Integer replylimit) throws SessionExpiredException, BigBangException;

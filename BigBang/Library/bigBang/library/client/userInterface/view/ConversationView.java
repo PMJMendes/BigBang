@@ -82,9 +82,27 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 			}
 
 			@Override
-			protected void onSendMessage() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ConversationViewPresenter.Action>(ConversationViewPresenter.Action.TOOLBAR_SEND));
+			protected void onNewMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ConversationViewPresenter.Action>(ConversationViewPresenter.Action.TOOLBAR_NEW));
 
+			}
+
+			@Override
+			protected void onMessageReply() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ConversationViewPresenter.Action>(ConversationViewPresenter.Action.TOOLBAR_REPLY));
+				
+			}
+
+			@Override
+			protected void onMessageReplyAll() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ConversationViewPresenter.Action>(ConversationViewPresenter.Action.TOOLBAR_REPLYALL));
+				
+			}
+
+			@Override
+			protected void onForwardMessage() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ConversationViewPresenter.Action>(ConversationViewPresenter.Action.TOOLBAR_FORWARD));
+				
 			}
 
 			@Override
@@ -300,8 +318,26 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 
 
 	@Override
-	public void allowSendMessage(boolean hasPermission) {
-		toolbar.allowSendMessage(hasPermission);
+	public void allowNewMessage(boolean hasPermission) {
+		toolbar.allowNewMessage(hasPermission);
+	}
+
+
+	@Override
+	public void allowReplyMessage(boolean hasPermission) {
+		toolbar.allowReplyMessage(hasPermission);
+	}
+
+
+	@Override
+	public void allowReplyAllMessage(boolean hasPermission) {
+		toolbar.allowReplyAllMessage(hasPermission);
+	}
+
+
+	@Override
+	public void allowForwardMessage(boolean hasPermission) {
+		toolbar.allowForwardMessage(hasPermission);
 	}
 
 

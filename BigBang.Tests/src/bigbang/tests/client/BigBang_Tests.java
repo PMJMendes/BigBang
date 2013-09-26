@@ -64,6 +64,9 @@ public class BigBang_Tests
 //		TestConversationReceiveNew.DoTest();
 //		TestConversationEdit.DoTest();
 //		TestConversationSend.DoTest();
+//		TestConversationGetForReply.DoTest();
+//		TestConversationGetForReplyAll.DoTest();
+//		TestConversationGetForForward.DoTest();
 //		TestConversationRepeat.DoTest();
 //		TestConversationReceive.DoTest();
 //		TestConversationClose.DoTest();

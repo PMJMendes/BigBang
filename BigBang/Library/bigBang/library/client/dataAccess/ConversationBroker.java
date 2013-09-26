@@ -18,7 +18,16 @@ public interface ConversationBroker extends DataBrokerInterface<Conversation>{
 
 	void saveConversation(Conversation conversation,
 			ResponseHandler<Conversation> handler);
-	
+
+	void getForReply(String messageId,
+			ResponseHandler<Message> handler);
+
+	void getForReplyAll(String messageId,
+			ResponseHandler<Message> handler);
+
+	void getForForward(String messageId,
+			ResponseHandler<Message> handler);
+
 	void sendMessage(Message message, Integer replyLimit, 
 			ResponseHandler<Conversation> handler);
 	

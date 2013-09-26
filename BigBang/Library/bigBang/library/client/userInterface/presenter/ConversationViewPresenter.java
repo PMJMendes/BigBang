@@ -53,12 +53,19 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		SEND_MESSAGE,
 		RECEIVE_MESSAGE,
 		TOOLBAR_CANCEL,
-		TOOLBAR_SEND,
-		CLICK_BACK, TOOLBAR_EDIT,
+		TOOLBAR_NEW,
+		CLICK_BACK,
+		TOOLBAR_EDIT,
 		TOOLBAR_REPEAT,
 		TOOLBAR_CLOSE, 
 		TOOLBAR_RECEIVE, 
-		TOOLBAR_SAVE, CONVERSATION_BUTTON_CLICKED, FORM_CANCEL, TOOLBAR_REPOEN
+		TOOLBAR_SAVE,
+		CONVERSATION_BUTTON_CLICKED,
+		FORM_CANCEL,
+		TOOLBAR_REPOEN,
+		TOOLBAR_REPLY,
+		TOOLBAR_REPLYALL, 
+		TOOLBAR_FORWARD
 	}
 
 	public static interface Display<T extends ProcessBase>{
@@ -76,7 +83,10 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		void setFormVisible(boolean isSendMessage);
 		void addContact(String string, String mediatorId, String mediator);
 		void allowEdit(boolean hasPermission);
-		void allowSendMessage(boolean hasPermission);
+		void allowNewMessage(boolean hasPermission);
+		void allowReplyMessage(boolean hasPermission);
+		void allowReplyAllMessage(boolean hasPermission);
+		void allowForwardMessage(boolean hasPermission);
 		void allowRepeatMessage(boolean hasPermission);
 		void allowReceiveMessage(boolean hasPermission);
 		void allowClose(boolean hasPermission);
@@ -137,14 +147,23 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 				case TOOLBAR_RECEIVE:
 					onClickReceive();
 					break;
-				case TOOLBAR_REPEAT:
-					onClickRepeat();
-					break;
 				case TOOLBAR_SAVE:
 					onSave();
 					break;
-				case TOOLBAR_SEND:
-					onClickSend();
+				case TOOLBAR_NEW:
+					onClickNew();
+					break;
+				case TOOLBAR_REPLY:
+					onClickReply();
+					break;
+				case TOOLBAR_REPLYALL:
+					onClickReplyAll();
+					break;
+				case TOOLBAR_FORWARD:
+					onClickForward();
+					break;
+				case TOOLBAR_REPEAT:
+					onClickRepeat();
 					break;
 				case RECEIVE_MESSAGE:
 					onReceiveMessage();
@@ -177,6 +196,8 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 					break;
 				case TOOLBAR_REPOEN:
 					onReopen();
+					break;
+				default:
 					break;
 				}
 
@@ -405,7 +426,12 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		}
 
 	}
-	protected void onClickSend() {
+
+	protected void onSaveFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar as alterações."), TYPE.ALERT_NOTIFICATION));
+	}
+
+	protected void onClickNew() {
 		isSendMessage = true;
 		toSend = true;
 		Conversation conv = view.getForm().getValue();
@@ -414,20 +440,87 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		view.getSendMessageForm().setValue(conv);
 		view.setMainFormVisible(false);
 	}
-	protected void onSaveFailed() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar as alterações."), TYPE.ALERT_NOTIFICATION));
+
+	protected void onClickReply() {
+		broker.getForReply(currentMessage.id, new ResponseHandler<Message>() {
+
+			@Override
+			public void onResponse(Message response) {
+				isSendMessage = true;
+				toSend = true;
+				Conversation conv = view.getForm().getValue();
+				conv.messages = new Message[1];
+				conv.messages[0] = (response);
+				view.setFormVisible(isSendMessage);
+				view.getSendMessageForm().setValue(conv);
+				view.setMainFormVisible(false);
+				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem original."), TYPE.ALERT_NOTIFICATION));
+				
+			}});
+	}
+
+	protected void onClickReplyAll() {
+		broker.getForReplyAll(currentMessage.id, new ResponseHandler<Message>() {
+
+			@Override
+			public void onResponse(Message response) {
+				isSendMessage = true;
+				toSend = true;
+				Conversation conv = view.getForm().getValue();
+				conv.messages = new Message[1];
+				conv.messages[0] = (response);
+				view.setFormVisible(isSendMessage);
+				view.getSendMessageForm().setValue(conv);
+				view.setMainFormVisible(false);
+				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem original."), TYPE.ALERT_NOTIFICATION));
+				
+			}});
+	}
+
+	protected void onClickForward() {
+		broker.getForForward(currentMessage.id, new ResponseHandler<Message>() {
+
+			@Override
+			public void onResponse(Message response) {
+				isSendMessage = true;
+				toSend = true;
+				Conversation conv = view.getForm().getValue();
+				conv.messages = new Message[1];
+				conv.messages[0] = (response);
+				view.setFormVisible(isSendMessage);
+				view.getSendMessageForm().setValue(conv);
+				view.setMainFormVisible(false);
+				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem original."), TYPE.ALERT_NOTIFICATION));
+				
+			}});
 	}
 
 	protected void onClickRepeat() {
-		toSend = false;
 		isSendMessage = true;
-		view.setFormVisible(isSendMessage);
+		toSend = false;
 		Conversation conv = view.getForm().getValue();
 		conv.messages = new Message[1];
 		conv.messages[0] = (currentMessage);
-		view.setMainFormVisible(false);
+		view.setFormVisible(isSendMessage);
 		view.getSendMessageForm().setValue(conv);
+		view.setMainFormVisible(false);
 	}
+
 	protected void onClickReceive() {
 		isSendMessage = false;
 		Conversation conv = view.getForm().getValue();
@@ -436,6 +529,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		view.getReceiveMessageForm().setValue(conv);
 		view.setMainFormVisible(false);
 	}
+
 	protected void onClickClose() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "conversationclose");
@@ -503,7 +597,10 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 
 	protected void setPermissions() {
 		view.allowEdit(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.EDIT));
-		view.allowSendMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.SEND));
+		view.allowNewMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.SEND));
+		view.allowReplyMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.SEND) && (currentMessage != null));
+		view.allowReplyAllMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.SEND) && (currentMessage != null));
+		view.allowForwardMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.SEND) && (currentMessage != null));
 		view.allowRepeatMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REPEAT) && (currentMessage == null || !ConversationStub.Direction.INCOMING.equals(currentMessage.direction)));
 		view.allowReceiveMessage(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.RECEIVE));
 		view.allowClose(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.CLOSE));

@@ -263,10 +263,11 @@ public abstract class CreateConversationBase
 	    	}
 		}
 
+		if ( Constants.MsgDir_Outgoing.equals(mobjData.midStartDir) )
+			TriggerOp(new ExternInitialSend(mobjData.midProcess), pdb);
+
 		if ( mobjData.mdtDueDate == null )
 			TriggerOp(new TriggerAutoCloseProcess(mobjData.midProcess), pdb);
-		else if ( Constants.MsgDir_Outgoing.equals(mobjData.midStartDir) )
-			TriggerOp(new ExternInitialSend(mobjData.midProcess), pdb);
 
 		if ( mobjData.marrMessages[0].mbIsEmail )
 		{

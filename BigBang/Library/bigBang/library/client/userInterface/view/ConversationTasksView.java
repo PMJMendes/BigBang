@@ -69,8 +69,26 @@ public class ConversationTasksView<T> extends View implements ConversationTasksV
 			}
 
 			@Override
-			protected void onSend() {
-				handler.onActionInvoked(new ActionInvokedEvent<ConversationTasksViewPresenter.Action>(Action.CLICK_SEND));
+			protected void onNew() {
+				handler.onActionInvoked(new ActionInvokedEvent<ConversationTasksViewPresenter.Action>(Action.CLICK_NEW));
+				
+			}
+
+			@Override
+			protected void onReply() {
+				handler.onActionInvoked(new ActionInvokedEvent<ConversationTasksViewPresenter.Action>(Action.CLICK_REPLY));
+				
+			}
+
+			@Override
+			protected void onReplyAll() {
+				handler.onActionInvoked(new ActionInvokedEvent<ConversationTasksViewPresenter.Action>(Action.CLICK_REPLYALL));
+				
+			}
+
+			@Override
+			protected void onForward() {
+				handler.onActionInvoked(new ActionInvokedEvent<ConversationTasksViewPresenter.Action>(Action.CLICK_FORWARD));
 				
 			}
 
@@ -186,8 +204,23 @@ public class ConversationTasksView<T> extends View implements ConversationTasksV
 	}
 
 	@Override
-	public void allowSend(boolean b) {
-		toolbar.allowSend(b);
+	public void allowNew(boolean b) {
+		toolbar.allowNew(b);
+	}
+
+	@Override
+	public void allowReply(boolean b) {
+		toolbar.allowReply(b);
+	}
+
+	@Override
+	public void allowReplyAll(boolean b) {
+		toolbar.allowReplyAll(b);
+	}
+
+	@Override
+	public void allowForward(boolean b) {
+		toolbar.allowForward(b);
 	}
 
 	@Override

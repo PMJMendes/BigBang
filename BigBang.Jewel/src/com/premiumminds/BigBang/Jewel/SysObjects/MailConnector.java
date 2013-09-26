@@ -94,18 +94,6 @@ public class MailConnector
 		}
 	}
 
-	private static String getUserEmail()
-		throws BigBangJewelException
-	{
-		UserDecoration lobjDeco;
-
-    	lobjDeco = UserDecoration.GetByUserID(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
-		if ( lobjDeco == null )
-			return null;
-
-		return (String)lobjDeco.getAt(UserDecoration.I.EMAIL);
-	}
-
 	private static Session GetMailSession()
 		throws BigBangJewelException
 	{
@@ -294,6 +282,18 @@ public class MailConnector
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	public static String getUserEmail()
+		throws BigBangJewelException
+	{
+		UserDecoration lobjDeco;
+
+    	lobjDeco = UserDecoration.GetByUserID(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
+		if ( lobjDeco == null )
+			return null;
+
+		return (String)lobjDeco.getAt(UserDecoration.I.EMAIL);
 	}
 
 	public static void DoSendMail(OutgoingMessageData pobjMessage, SQLServer pdb)

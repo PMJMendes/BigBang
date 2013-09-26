@@ -50,6 +50,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReceiveMessage;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReopenProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.SendMessage;
 import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class ConversationServiceImpl
 	extends SearchServiceBase
@@ -88,7 +89,7 @@ public class ConversationServiceImpl
 		return null;
 	}
 
-	public static Message.MsgAddress sGetAddress(UUID pid)
+	public static Message.MsgAddress sGetAddress(UUID pid, boolean pbFilterOwners)
 		throws BigBangException
 	{
 		ContactInfo lobjInfo;
@@ -106,7 +107,7 @@ public class ConversationServiceImpl
 			if ( lobjAddr.getAt(MessageAddress.I.CONTACTINFO) != null )
 				lobjInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
 						(UUID)lobjAddr.getAt(MessageAddress.I.CONTACTINFO));
-			if ( Constants.UsageID_To.equals(lidUsage) && (lobjInfo != null) )
+			if ( (lobjInfo != null) && (!pbFilterOwners || Constants.UsageID_To.equals(lidUsage)))
 				lobjContact = ( lobjInfo == null ? null : lobjInfo.getOwner() );
 		}
 		catch (Throwable e)
@@ -164,7 +165,7 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
-	public static Message sGetMessage(UUID pid)
+	public static Message sGetMessage(UUID pid, boolean pbFilterOwners)
 		throws BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Message lobjMsg;
@@ -202,7 +203,7 @@ public class ConversationServiceImpl
 		{
 			lobjResult.addresses = new Message.MsgAddress[larrAddrs.length];
 			for ( i = 0; i < larrAddrs.length; i++ )
-				lobjResult.addresses[i] = sGetAddress(larrAddrs[i].getKey());
+				lobjResult.addresses[i] = sGetAddress(larrAddrs[i].getKey(), pbFilterOwners);
 		}
 
 		if ( larrAtts == null )
@@ -269,7 +270,7 @@ public class ConversationServiceImpl
 			{
 				if ( ((Timestamp)larrMsgs[i].getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE)).after(ldtLast) )
 					ldtLast = (Timestamp)larrMsgs[i].getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE);
-				lobjResult.messages[i] = sGetMessage(larrMsgs[i].getKey());
+				lobjResult.messages[i] = sGetMessage(larrMsgs[i].getKey(), true);
 			}
 			lobjResult.lastDate = ldtLast.toString().substring(0, 10);
 		}
@@ -539,6 +540,145 @@ public class ConversationServiceImpl
 		}
 
 		return sGetConversation(lopMD.mobjData.mid);
+	}
+
+	public Message getForReply(String messageId)
+		throws SessionExpiredException, BigBangException
+	{
+		Message lobjResult;
+		ArrayList<Message.MsgAddress> larrAddrs;
+		Message.MsgAddress.Usage lobjUsage;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lobjResult = sGetMessage(UUID.fromString(messageId), false);
+		lobjResult.id = null;
+		lobjResult.order = null;
+		lobjResult.direction = ConversationStub.Direction.OUTGOING;
+		lobjResult.date = null;
+		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
+		lobjResult.text = System.getProperty("line.separator") + "-------- Mensagem Original --------" + System.getProperty("line.separator") + lobjResult.text;
+		lobjResult.emailId = null;
+		lobjResult.attachments = new Message.Attachment[0];
+		if ( lobjResult.addresses != null )
+		{
+			larrAddrs = new ArrayList<Message.MsgAddress>();
+			lobjUsage = Message.MsgAddress.Usage.FROM;
+			for ( i = 0; i < lobjResult.addresses.length; i++ )
+			{
+				if ( (lobjResult.addresses[i] != null) && Message.MsgAddress.Usage.REPLYTO.equals(lobjResult.addresses[i].usage) )
+				{
+					lobjUsage = Message.MsgAddress.Usage.REPLYTO;
+					break;
+				}
+			}
+			for ( i = 0; i < lobjResult.addresses.length; i++ )
+			{
+				if ( (lobjResult.addresses[i] != null) && lobjUsage.equals(lobjResult.addresses[i].usage) )
+				{
+					lobjResult.addresses[i].usage = Message.MsgAddress.Usage.TO;
+					larrAddrs.add(lobjResult.addresses[i]);
+				}
+			}
+			lobjResult.addresses = larrAddrs.toArray(new Message.MsgAddress[larrAddrs.size()]);
+		}
+		else
+			lobjResult.addresses = new Message.MsgAddress[0];
+
+		return lobjResult;
+	}
+
+	public Message getForReplyAll(String messageId)
+		throws SessionExpiredException, BigBangException
+	{
+		Message lobjResult;
+		ArrayList<Message.MsgAddress> larrAddrs;
+		Message.MsgAddress.Usage lobjUsage;
+		String lstrEmail;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lstrEmail = MailConnector.getUserEmail();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = sGetMessage(UUID.fromString(messageId), false);
+		lobjResult.id = null;
+		lobjResult.order = null;
+		lobjResult.direction = ConversationStub.Direction.OUTGOING;
+		lobjResult.date = null;
+		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
+		lobjResult.text = System.getProperty("line.separator") + "-------- Mensagem Original --------" + System.getProperty("line.separator") + lobjResult.text;
+		lobjResult.emailId = null;
+		lobjResult.attachments = new Message.Attachment[0];
+		if ( lobjResult.addresses != null )
+		{
+			larrAddrs = new ArrayList<Message.MsgAddress>();
+			lobjUsage = Message.MsgAddress.Usage.FROM;
+			for ( i = 0; i < lobjResult.addresses.length; i++ )
+			{
+				if ( (lobjResult.addresses[i] != null) && Message.MsgAddress.Usage.REPLYTO.equals(lobjResult.addresses[i].usage) )
+				{
+					lobjUsage = Message.MsgAddress.Usage.REPLYTO;
+					break;
+				}
+			}
+			for ( i = 0; i < lobjResult.addresses.length; i++ )
+			{
+				if ( lobjResult.addresses[i] != null )
+				{
+					if ( (lstrEmail != null) && lstrEmail.equalsIgnoreCase(lobjResult.addresses[i].address) )
+						continue;
+
+					if ( Message.MsgAddress.Usage.CC.equals(lobjResult.addresses[i].usage) ||
+							Message.MsgAddress.Usage.BCC.equals(lobjResult.addresses[i].usage) ||
+							Message.MsgAddress.Usage.TO.equals(lobjResult.addresses[i].usage) )
+						larrAddrs.add(lobjResult.addresses[i]);
+					if ( lobjUsage.equals(lobjResult.addresses[i].usage) )
+					{
+						lobjResult.addresses[i].usage = Message.MsgAddress.Usage.TO;
+						larrAddrs.add(lobjResult.addresses[i]);
+					}
+				}
+			}
+			lobjResult.addresses = larrAddrs.toArray(new Message.MsgAddress[larrAddrs.size()]);
+		}
+		else
+			lobjResult.addresses = new Message.MsgAddress[0];
+
+		return lobjResult;
+	}
+
+	public Message getForForward(String messageId)
+		throws SessionExpiredException, BigBangException
+	{
+		Message lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lobjResult = sGetMessage(UUID.fromString(messageId), false);
+		lobjResult.id = null;
+		lobjResult.order = null;
+		lobjResult.direction = ConversationStub.Direction.OUTGOING;
+		lobjResult.date = null;
+		lobjResult.subject = (lobjResult.subject == null ? "Fw:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Fw: " + lobjResult.subject));
+		lobjResult.text = System.getProperty("line.separator") + "-------- Mensagem Original --------" + System.getProperty("line.separator") + lobjResult.text;
+		lobjResult.emailId = null;
+		lobjResult.addresses = new Message.MsgAddress[0];
+		if ( lobjResult.attachments == null )
+			lobjResult.attachments = new Message.Attachment[0];
+
+		return lobjResult;
 	}
 
 	public Conversation sendMessage(Message message, Integer replylimit)

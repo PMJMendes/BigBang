@@ -97,6 +97,72 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 		return;		
 	}
 
+	@Override
+	public void getForReply(String messageId, final ResponseHandler<Message> handler) {
+		service.getForReply(messageId, new BigBangAsyncCallback<Message>() {
+
+			@Override
+			public void onResponseSuccess(Message result) {
+				handler.onResponse(result);
+				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the original message")
+				});			
+				super.onResponseFailure(caught);
+			}
+			
+		});
+		
+	}
+
+	@Override
+	public void getForReplyAll(String messageId, final ResponseHandler<Message> handler) {
+		service.getForReplyAll(messageId, new BigBangAsyncCallback<Message>() {
+
+			@Override
+			public void onResponseSuccess(Message result) {
+				handler.onResponse(result);
+				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the original message")
+				});			
+				super.onResponseFailure(caught);
+			}
+			
+		});
+		
+	}
+
+	@Override
+	public void getForForward(String messageId, final ResponseHandler<Message> handler) {
+		service.getForForward(messageId, new BigBangAsyncCallback<Message>() {
+
+			@Override
+			public void onResponseSuccess(Message result) {
+				handler.onResponse(result);
+				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the original message")
+				});			
+				super.onResponseFailure(caught);
+			}
+			
+		});
+		
+	}
+
 
 	@Override
 	public void sendMessage(Message message, Integer replyLimit,
