@@ -20,6 +20,8 @@ public class UserFormValidator extends FormValidator<UserForm> {
 		valid &= validateDelegate();
 		valid &= validatePrinter();
 		valid &= validateMediator();
+		valid &= validateTitle();
+		valid &= validatePhone();
 
 		return new Result(
 				valid,
@@ -61,6 +63,14 @@ public class UserFormValidator extends FormValidator<UserForm> {
 
 	private boolean validateMediator() {
 		return validateGuid(form.mediator, true);
+	} 
+
+	private boolean validateTitle() {
+		return validateString(form.title, 0, 250, true);
+	} 
+
+	private boolean validatePhone() {
+		return validateString(form.phone, 0, 50, true);
 	}
 
 }

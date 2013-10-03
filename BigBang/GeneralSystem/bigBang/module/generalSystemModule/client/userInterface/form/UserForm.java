@@ -23,6 +23,8 @@ public class UserForm extends FormView<User> {
 	protected ExpandableListBoxFormField delegate;
 	protected ListBoxFormField printers;
 	protected ExpandableListBoxFormField mediator;
+	protected TextBoxFormField title;
+	protected TextBoxFormField phone;
 
 	private boolean printersInitialized = false;
 
@@ -38,6 +40,8 @@ public class UserForm extends FormView<User> {
 		delegate = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Delegado");
 		printers = new ListBoxFormField("Impressora pré-definida");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Agente Associado");
+		title = new TextBoxFormField("Título");
+		phone = new TextBoxFormField("Tel. Directo");
 
 		role.allowEdition(false);
 		costCenter.allowEdition(false);		
@@ -46,8 +50,10 @@ public class UserForm extends FormView<User> {
 		addFormField(username);
 		addFormField(password);
 		addFormField(email);
+		addFormField(phone);
 		addFormField(role);
 		addFormField(costCenter);
+		addFormField(title);
 		addFormField(delegate);
 		addFormField(printers);
 		addFormField(mediator);
@@ -109,6 +115,8 @@ public class UserForm extends FormView<User> {
 		info.delegateId = this.delegate.getValue();
 		info.defaultPrinter = this.printers.getValue();
 		info.mediatorId = this.mediator.getValue();
+		info.title = this.title.getValue();
+		info.phone = this.phone.getValue();
 		return info;
 	}
 
@@ -176,6 +184,16 @@ public class UserForm extends FormView<User> {
 			mediator.clear();
 		else
 			this.mediator.setValue(user.mediatorId);
+
+		if(user.title == null)
+			title.clear();
+		else
+			this.title.setValue(user.title);
+
+		if(user.phone == null)
+			phone.clear();
+		else
+			this.phone.setValue(user.phone);
 	}
 
 }

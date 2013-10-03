@@ -51,7 +51,7 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 					@Override
 					public void onResponse(TypifiedText response) {
 						subject.setValue(response.subject);
-						textBody.setValue(response.text);
+						buildText(response.text);
 					}
 
 					@Override
@@ -64,6 +64,7 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 
 			}
 		});
+
 		initWidget(wrapper);
 
 		labelPanel.add(labels);
@@ -111,7 +112,7 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 
 		this.labels.setValue(value.label);
 		this.subject.setValue(value.subject);
-		this.textBody.setValue(value.text);
+		buildText(value.text);
 		if(fireEvents)
 			ValueChangeEvent.fire(this, value);
 	}
@@ -120,7 +121,7 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 	public TypifiedText getValue() {
 		TypifiedText result = new TypifiedText();
 		result.subject = this.subject.getValue();
-		result.text = this.textBody.getValue();
+		result.text = this.textBody.getValue().replaceAll("\\</bigbang:.*:bb\\>",  "");
 		return result;
 	}
 
@@ -128,7 +129,7 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 	public void clear() {
 		labels.clear();
 		subject.clear();
-		textBody.clear();
+		clearText();
 	}
 
 	@Override
@@ -187,5 +188,99 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 	@Override
 	public void focus() {
 		subject.focus();		
+	}
+
+	private void clearText() {
+		textBody.setValue(deletePreKey(textBody.getValue().replaceAll("\\</bigbang:.*:bb\\>",  "")));
+	}
+
+	private void buildText(String newText) {
+		String result = getPreKey(newText) + deletePreKey(textBody.getValue().replaceAll("\\</bigbang:.*:bb\\>",  ""));
+
+		String key = nextKey(newText);
+		while ( key != null )
+		{
+			result = replaceSection(result, key, getSection(newText, key));
+			newText = deleteSection(newText, key);
+			key = nextKey(newText);
+		}
+
+		textBody.setValue(result);
+	}
+
+	private String nextKey(String source) {
+		int i, j;
+
+		i = source.indexOf("<bigbang:");
+		if ( i < 0 )
+			return null;
+
+		j = source.indexOf(":bb>", i + 9);
+		if ( j < 0 )
+			return null;
+
+		return source.substring(i + 9, j);
+	}
+
+	private String getSection(String source, String key) {
+		int i, j;
+		
+		i = source.indexOf("<bigbang:" + key + ":bb>");
+		if ( i < 0 )
+			return "";
+
+		j = source.indexOf("<bigbang:", i + 13 + key.length());
+		if ( j < 0 )
+			return source.substring(i);
+
+		return source.substring(i, j);
+	}
+
+	private String replaceSection(String source, String key, String newContent) {
+		int i, j;
+		
+		i = source.indexOf("<bigbang:" + key + ":bb>");
+		if ( i < 0 )
+			return source + newContent;
+
+		j = source.indexOf("<bigbang:", i + 13 + key.length());
+		if ( j < 0 )
+			return source.substring(0, i) + newContent;
+
+		return source.substring(0, i) + newContent + source.substring(j);
+	}
+
+	private String deleteSection(String source, String key) {
+		int i, j;
+		
+		i = source.indexOf("<bigbang:" + key + ":bb>");
+		if ( i < 0 )
+			return source;
+
+		j = source.indexOf("<bigbang:", i + 13 + key.length());
+		if ( j < 0 )
+			return source.substring(0, i);
+
+		return source.substring(0, i) + source.substring(j);
+	}
+
+	private String getPreKey(String source) {
+		int i;
+		
+		i = source.indexOf("<bigbang:");
+		if ( i < 0 )
+			return source;
+
+		return source.substring(0, i);
+	}
+
+	private String deletePreKey(String source) {
+		int i;
+		
+		i = source.indexOf("<bigbang:");
+		if ( i < 0 )
+			return "";
+
+		return source.substring(i);
 	}
 }

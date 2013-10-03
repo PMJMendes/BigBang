@@ -479,7 +479,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		if(Kind.EMAIL.equals(msg.kind)){
 			List<Message.MsgAddress> addresses = new ArrayList<Message.MsgAddress>();
 			List<String> outgoingAttachment = new ArrayList<String>();
-			msg.text = requestText.text;
+			msg.text = requestText.text.replaceAll("\\<bigbang:.*:bb\\>",  "").replaceAll("\\</bigbang:.*:bb\\>",  "");
 			addresses = getAddresses();
 			outgoingAttachment = getAttachments();
 

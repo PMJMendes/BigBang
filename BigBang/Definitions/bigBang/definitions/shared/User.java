@@ -18,6 +18,8 @@ public class User
 	public String delegateId;
 	public String defaultPrinter;
 	public String mediatorId;
+	public String title;
+	public String phone;
 
 	public User() {};
 
@@ -33,5 +35,7 @@ public class User
 		this.email = original.email;
 		this.defaultPrinter = original.defaultPrinter;
 		this.mediatorId = original.mediatorId;
+		this.title = original.title;
+		this.phone = original.phone;
 	}
 }

@@ -12,9 +12,11 @@ public interface ConversationServiceAsync
 	void getForPrinting(String id, AsyncCallback<String> callback);
 	void createFromEmail(Conversation conversation, AsyncCallback<Conversation> callback);
 	void saveConversation(Conversation conversation, AsyncCallback<Conversation> callback);
+	void getEmpty(AsyncCallback<Message> callback);
 	void getForReply(String messageId, AsyncCallback<Message> callback);
 	void getForReplyAll(String messageId, AsyncCallback<Message> callback);
 	void getForForward(String messageId, AsyncCallback<Message> callback);
+	void getForRepeat(String messageId, AsyncCallback<Message> callback);
 	void sendMessage(Message message, Integer replylimit, AsyncCallback<Conversation> callback);
 	void repeatMessage(Message message, Integer replylimit, AsyncCallback<Conversation> callback);
 	void receiveMessage(Message message, Integer replylimit, AsyncCallback<Conversation> callback);

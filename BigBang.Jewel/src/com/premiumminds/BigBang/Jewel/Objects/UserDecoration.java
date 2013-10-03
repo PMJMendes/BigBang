@@ -25,6 +25,8 @@ public class UserDecoration
 		public static int MIGRATIONID = 3;
 		public static int PRINTERNAME = 4;
 		public static int SURROGATE   = 5;
+		public static int TITLE       = 6;
+		public static int PHONE       = 7;
 	}
 
     public static UserDecoration GetInstance(UUID pidNameSpace, UUID pidKey)

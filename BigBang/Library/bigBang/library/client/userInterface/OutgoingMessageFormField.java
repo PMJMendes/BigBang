@@ -93,7 +93,7 @@ public class OutgoingMessageFormField extends FormField<OutgoingMessage>{
 		for(int i = 0; i<forwardFN.length; i++){
 			forwardFN[i] = (String)temp[i];
 		}
-		
+
 		message.forwardUserFullNames = forwardFN;
 		message.subject = text.getValue().subject;
 		message.text = "<html><body>" + text.getValue().text + "</body></html>";

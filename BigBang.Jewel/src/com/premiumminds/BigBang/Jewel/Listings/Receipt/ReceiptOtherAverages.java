@@ -363,7 +363,7 @@ public class ReceiptOtherAverages
 
 		larrCells = new TD[8];
 
-		larrCells[0] = ReportBuilder.buildCell(lobjCenter.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[0] = ReportBuilder.buildCell((String)lobjCenter.getAt(CostCenter.I.DISPLAYNAME), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
 
 		larrCells[1] = ReportBuilder.buildCell(llngCountA == 0 ? null : (Integer)(int)(((double)llngDaysA)/((double)llngCountA) + 0.5),

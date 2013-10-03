@@ -25,6 +25,7 @@ public class ManageCostCenters
 		public UUID mid;
 		public String mstrCode;
 		public String mstrName;
+		public Integer mlngMigrationID;
 		public CostCenterData mobjPrevValues;
 	}
 
@@ -185,6 +186,7 @@ public class ManageCostCenters
 					lobjAux = CostCenter.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].mid);
 					marrDelete[i].mstrCode = (String)lobjAux.getAt(0);
 					marrDelete[i].mstrName = (String)lobjAux.getAt(1);
+					marrDelete[i].mlngMigrationID = (Integer)lobjAux.getAt(2);
 					marrDelete[i].mobjPrevValues = null;
 					lrefCostCenters.Delete(pdb, marrDelete[i].mid);
 				}
@@ -363,6 +365,7 @@ public class ManageCostCenters
 					lobjAux = CostCenter.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjAux.setAt(0, marrDelete[i].mstrCode);
 					lobjAux.setAt(1, marrDelete[i].mstrName);
+					lobjAux.setAt(2, marrDelete[i].mlngMigrationID);
 					lobjAux.SaveToDb(pdb);
 					marrDelete[i].mid = lobjAux.getKey();
 				}

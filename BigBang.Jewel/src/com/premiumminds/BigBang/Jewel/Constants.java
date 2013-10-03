@@ -710,12 +710,14 @@ public class Constants
 	public static final UUID TID_InsurerAccounting   = UUID.fromString("501A9331-3FAB-478F-A682-A0270124E6B3");
 	public static final UUID TID_MediatorAccounting  = UUID.fromString("E9A0F1C0-AE70-49AD-887E-A0990128BB1E");
 	public static final UUID TID_PaymentReturnLetter = UUID.fromString("F8717681-DBC3-4186-B039-A0B0010A0B6D");
-	public static final UUID TID_Stamp               = UUID.fromString("BE3106A1-9C31-40D3-ACC2-A0B300D3E585");
 	public static final UUID TID_DASForm             = UUID.fromString("4C6C0B65-1FBA-417B-A2F5-A0E500E572B7");
-	public static final UUID TID_Logo                = UUID.fromString("73297AD9-2741-4EFC-87D7-A0FA011A93F5");
 	public static final UUID TID_HealthDebitNote     = UUID.fromString("C4E53620-782C-4F34-B038-A11200E6F58A");
 	public static final UUID TID_HealthReceipt       = UUID.fromString("06801686-C77A-4B90-A74A-A12A0120FE95");
 	public static final UUID TID_SecondPaymentNotice = UUID.fromString("FFF69D88-A509-4795-8995-A14E0109CE99");
+
+	public static final UUID TID_Stamp               = UUID.fromString("BE3106A1-9C31-40D3-ACC2-A0B300D3E585");
+	public static final UUID TID_Logo                = UUID.fromString("73297AD9-2741-4EFC-87D7-A0FA011A93F5");
+	public static final UUID TID_Signature           = UUID.fromString("214AF6B1-B5F1-418A-9206-A24600BE6DD9");
 
 	// Contact Types
 	public static final UUID CtTypeID_General        = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");

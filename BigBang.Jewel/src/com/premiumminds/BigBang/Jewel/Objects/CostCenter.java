@@ -13,6 +13,13 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class CostCenter
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int CODE          =  0;
+		public static int DISPLAYNAME   =  1;
+		public static int MIGRATIONID   =  2;
+	}
+
     public static CostCenter GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{

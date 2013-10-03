@@ -19,6 +19,8 @@ public interface ConversationBroker extends DataBrokerInterface<Conversation>{
 	void saveConversation(Conversation conversation,
 			ResponseHandler<Conversation> handler);
 
+	void getEmpty(ResponseHandler<Message> handler);
+
 	void getForReply(String messageId,
 			ResponseHandler<Message> handler);
 
@@ -26,6 +28,9 @@ public interface ConversationBroker extends DataBrokerInterface<Conversation>{
 			ResponseHandler<Message> handler);
 
 	void getForForward(String messageId,
+			ResponseHandler<Message> handler);
+
+	void getForRepeat(String messageId,
 			ResponseHandler<Message> handler);
 
 	void sendMessage(Message message, Integer replyLimit, 

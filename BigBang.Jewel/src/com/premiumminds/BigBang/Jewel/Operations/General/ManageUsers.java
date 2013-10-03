@@ -40,6 +40,8 @@ public class ManageUsers
 		public String mstrDefaultPrinter;
 		public UUID midDelegate;
 		public UUID midMediator;
+		public String mstrTitle;
+		public String mstrPhone;
 
 		public UserData mobjPrevValues;
 	}
@@ -191,6 +193,8 @@ public class ManageUsers
 					lobjAuxOuter.setAt(2, marrCreate[i].midCostCenter);
 					lobjAuxOuter.setAt(4, marrCreate[i].mstrDefaultPrinter);
 					lobjAuxOuter.setAt(5, marrCreate[i].midDelegate);
+					lobjAuxOuter.setAt(6, marrCreate[i].mstrTitle);
+					lobjAuxOuter.setAt(7, marrCreate[i].mstrPhone);
 					lobjAuxOuter.SaveToDb(pdb);
 
 					marrCreate[i].mid = lobjAuxBase.getKey();
@@ -231,6 +235,8 @@ public class ManageUsers
 					marrModify[i].mobjPrevValues.mstrDefaultPrinter = (String)lobjAuxOuter.getAt(4);
 					marrModify[i].mobjPrevValues.midDelegate = (UUID)lobjAuxOuter.getAt(5);
 					marrModify[i].mobjPrevValues.midMediator = (UUID)lobjAuxBase.getAt(4);
+					marrModify[i].mobjPrevValues.mstrTitle = (String)lobjAuxOuter.getAt(6);
+					marrModify[i].mobjPrevValues.mstrPhone = (String)lobjAuxOuter.getAt(7);
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 
 					lobjAuxBase.setAt(0, marrModify[i].mstrFullName);
@@ -244,6 +250,8 @@ public class ManageUsers
 					lobjAuxOuter.setAt(2, marrModify[i].midCostCenter);
 					lobjAuxOuter.setAt(4, marrModify[i].mstrDefaultPrinter);
 					lobjAuxOuter.setAt(5, marrModify[i].midDelegate);
+					lobjAuxOuter.setAt(6, marrModify[i].mstrTitle);
+					lobjAuxOuter.setAt(7, marrModify[i].mstrPhone);
 					lobjAuxOuter.SaveToDb(pdb);
 				}
 			}
@@ -276,6 +284,8 @@ public class ManageUsers
 					marrDelete[i].mstrDefaultPrinter = (String)lobjAuxOuter.getAt(4);
 					marrDelete[i].midDelegate = (UUID)lobjAuxOuter.getAt(5);
 					marrDelete[i].midMediator = (UUID)lobjAuxBase.getAt(4);
+					marrDelete[i].mstrTitle = (String)lobjAuxOuter.getAt(6);
+					marrDelete[i].mstrPhone = (String)lobjAuxOuter.getAt(7);
 					marrDelete[i].mobjPrevValues = null;
 
 					lrefDecorations.Delete(pdb, lobjAuxOuter.getKey());
@@ -563,68 +573,36 @@ public class ManageUsers
 		User lobjUser;
 		Mediator lobjMed;
 
-		pstrString.append("Nome: ");
-		pstrString.append(pobjData.mstrFullName);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("Username: ");
-		pstrString.append(pobjData.mstrUsername);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("Password: *****");
-		pstrString.append(pstrLineBreak);
-		pstrString.append("Perfil: ");
-
+		lobjProfile = null;
 		try
 		{
 			lobjProfile = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_Profile), pobjData.midProfile);
-			pstrString.append((String)lobjProfile.getAt(0));
 		}
 		catch (Throwable e)
 		{
-			pstrString.append("(Erro a obter o perfil.)");
 		}
-		pstrString.append(pstrLineBreak);
-
-		pstrString.append("Email: ");
-		pstrString.append(pobjData.mstrEmail);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("Centro de Custo: ");
-
+		lobjCostCenter = null;
 		try
 		{
 			lobjCostCenter = CostCenter.GetInstance(Engine.getCurrentNameSpace(), pobjData.midCostCenter);
-			pstrString.append((String)lobjCostCenter.getAt(1));
 		}
 		catch (Throwable e)
 		{
-			pstrString.append("(Erro a obter o centro de custo.)");
 		}
-
-		pstrString.append(pstrLineBreak);
-		pstrString.append("Impressora pré-definida: ");
-		pstrString.append(pobjData.mstrDefaultPrinter);
-
+		lobjUser = null;
 		if ( pobjData.midDelegate != null )
 		{
-			pstrString.append(pstrLineBreak);
-			pstrString.append("Utilizador Delegado: ");
-
 			try
 			{
 				lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), pobjData.midDelegate);
-				pstrString.append((String)lobjUser.getDisplayName());
 			}
 			catch (Throwable e)
 			{
-				pstrString.append("(Erro a obter o utilizador delegado.)");
 			}
 		}
-
+		lobjMed = null;
 		if ( pobjData.midMediator != null )
 		{
-			pstrString.append(pstrLineBreak);
-			pstrString.append("Agente: ");
-
-			lobjMed = null;
 			try
 			{
 				lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), pobjData.midMediator);
@@ -633,24 +611,58 @@ public class ManageUsers
 			{
 			}
 
-			try
+			if ( lobjMed == null )
 			{
-				if ( lobjMed == null )
+				try
 				{
 					if ( Constants.NSID_CredEGS.equals(Engine.getCurrentNameSpace()) )
 						lobjMed = Mediator.GetInstance(Constants.NSID_AMartins, pobjData.midMediator);
 					else
 						lobjMed = Mediator.GetInstance(Constants.NSID_CredEGS, pobjData.midMediator);
 				}
+				catch (Throwable e)
+				{
+				}
 			}
-			catch (Throwable e)
-			{
-			}
+		}
 
-			if ( lobjMed == null )
-				pstrString.append("(Erro a obter o agente associado.)");
-			else
-				pstrString.append((String)lobjMed.getLabel());
+		pstrString.append("Nome: ");
+		pstrString.append(pobjData.mstrFullName);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Título: ").append(pobjData.mstrTitle == null ? lobjCostCenter == null ? "(Erro a obter o centro de custo.)" :
+				lobjCostCenter.getAt(CostCenter.I.DISPLAYNAME) : pobjData.mstrTitle);
+		pstrString.append("Username: ");
+		pstrString.append(pobjData.mstrUsername);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Password: *****");
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Perfil: ");
+		pstrString.append(lobjProfile == null ? "(Erro a obter o perfil.)" : (String)lobjProfile.getAt(0));
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Email: ");
+		pstrString.append(pobjData.mstrEmail);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Telefone Directo: ");
+		pstrString.append(pobjData.mstrPhone);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Centro de Custo: ");
+		pstrString.append(lobjCostCenter == null ? "(Erro a obter o centro de custo.)" : lobjCostCenter.getLabel());
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Impressora pré-definida: ");
+		pstrString.append(pobjData.mstrDefaultPrinter);
+
+		if ( pobjData.midDelegate != null )
+		{
+			pstrString.append(pstrLineBreak);
+			pstrString.append("Utilizador Delegado: ");
+			pstrString.append(lobjUser == null ? "(Erro a obter o utilizador delegado.)" : (String)lobjUser.getDisplayName());
+		}
+
+		if ( pobjData.midMediator != null )
+		{
+			pstrString.append(pstrLineBreak);
+			pstrString.append("Agente: ");
+			pstrString.append(lobjMed == null ? "(Erro a obter o agente associado.)" : (String)lobjMed.getLabel());
 		}
 
 		pstrString.append(pstrLineBreak);

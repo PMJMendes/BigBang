@@ -218,6 +218,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 						view.clear();
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem recebida com sucesso"), TYPE.TRAY_NOTIFICATION));
 						removeSelectedItem();
+						getConversations();
 					}
 
 					@Override
@@ -235,6 +236,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 						view.clear();
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem recebida com sucesso"), TYPE.TRAY_NOTIFICATION));
 						removeSelectedItem();
+						getConversations();
 					}
 
 					@Override

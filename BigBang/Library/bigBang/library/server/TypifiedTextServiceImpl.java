@@ -7,13 +7,18 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
 import bigBang.definitions.shared.TypifiedText;
 import bigBang.library.interfaces.TypifiedTextService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
+import com.premiumminds.BigBang.Jewel.Objects.Template;
+import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
 public class TypifiedTextServiceImpl
 	extends EngineImplementor

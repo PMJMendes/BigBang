@@ -407,14 +407,14 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 	@Override
 	public void setListId(final String listId) {
+		listBroker.unregisterClient(this.listId, this);
+		this.listId = listId;
 		if(listId == null){
 			return;
 		}
 
-		listBroker.unregisterClient(this.listId, this);
 		String[] splitted = listId.split("/");
 		setTag(splitted[1]);
-		this.listId = listId;
 		list.clear();
 
 		if(firstTime ){

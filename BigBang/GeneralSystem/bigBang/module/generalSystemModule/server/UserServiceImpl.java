@@ -84,6 +84,8 @@ public class UserServiceImpl
 	        	lobjTmp.delegateId = ( lobjUserDeco.getAt(5) == null ? null : ((UUID)lobjUserDeco.getAt(5)).toString() );
 	        	lobjTmp.mediatorId = ( ((Jewel.Engine.Implementation.User)lobjUserDeco.getBaseUser()).getAt(4) == null ? null :
 	        			((UUID)((Jewel.Engine.Implementation.User)lobjUserDeco.getBaseUser()).getAt(4)).toString() );
+	        	lobjTmp.title = (String)lobjUserDeco.getAt(6);
+	        	lobjTmp.phone = (String)lobjUserDeco.getAt(7);
 	        	larrAux.add(lobjTmp);
 	        }
         }
@@ -143,6 +145,8 @@ public class UserServiceImpl
 			lopMU.marrModify[0].mstrDefaultPrinter = user.defaultPrinter;
 			lopMU.marrModify[0].midDelegate = ( user.delegateId == null ? null : UUID.fromString(user.delegateId) );
 			lopMU.marrModify[0].midMediator = ( user.mediatorId == null ? null : UUID.fromString(user.mediatorId) );
+			lopMU.marrModify[0].mstrTitle = user.title;
+			lopMU.marrModify[0].mstrPhone = user.phone;
 			lopMU.marrCreate = null;
 			lopMU.marrDelete = null;
 
@@ -185,6 +189,8 @@ public class UserServiceImpl
 			lopMU.marrCreate[0].mstrDefaultPrinter = user.defaultPrinter;
 			lopMU.marrCreate[0].midDelegate = ( user.delegateId == null ? null : UUID.fromString(user.delegateId) );
 			lopMU.marrCreate[0].midMediator = ( user.mediatorId == null ? null : UUID.fromString(user.mediatorId) );
+			lopMU.marrCreate[0].mstrTitle = user.title;
+			lopMU.marrCreate[0].mstrPhone = user.phone;
 			lopMU.marrModify = null;
 			lopMU.marrDelete = null;
 
@@ -233,6 +239,8 @@ public class UserServiceImpl
 			lopMU.marrDelete[0].midCostCenter = null;
 			lopMU.marrDelete[0].mstrDefaultPrinter = null;
 			lopMU.marrDelete[0].midDelegate = null;
+			lopMU.marrDelete[0].mstrTitle = null;
+			lopMU.marrDelete[0].mstrPhone = null;
 			lopMU.marrCreate = null;
 			lopMU.marrModify = null;
 

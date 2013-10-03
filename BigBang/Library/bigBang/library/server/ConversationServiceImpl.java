@@ -11,6 +11,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.Interfaces.IProcess;
@@ -38,9 +39,11 @@ import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
+import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
+import com.premiumminds.BigBang.Jewel.Objects.Template;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.CreateConversationBase;
@@ -542,6 +545,24 @@ public class ConversationServiceImpl
 		return sGetConversation(lopMD.mobjData.mid);
 	}
 
+	public Message getEmpty()
+		throws SessionExpiredException, BigBangException
+	{
+		Message lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lobjResult = new Message();
+		lobjResult.direction = ConversationStub.Direction.OUTGOING;
+		lobjResult.kind = Message.Kind.EMAIL;
+		lobjResult.text = getSignature() + "<br><bigbang:original:bb>";
+		lobjResult.attachments = new Message.Attachment[0];
+		lobjResult.addresses = new Message.MsgAddress[0];
+
+		return lobjResult;
+	}
+
 	public Message getForReply(String messageId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -559,7 +580,7 @@ public class ConversationServiceImpl
 		lobjResult.direction = ConversationStub.Direction.OUTGOING;
 		lobjResult.date = null;
 		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
-		lobjResult.text = System.getProperty("line.separator") + "-------- Mensagem Original --------" + System.getProperty("line.separator") + lobjResult.text;
+		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
 		lobjResult.emailId = null;
 		lobjResult.attachments = new Message.Attachment[0];
 		if ( lobjResult.addresses != null )
@@ -617,7 +638,7 @@ public class ConversationServiceImpl
 		lobjResult.direction = ConversationStub.Direction.OUTGOING;
 		lobjResult.date = null;
 		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
-		lobjResult.text = System.getProperty("line.separator") + "-------- Mensagem Original --------" + System.getProperty("line.separator") + lobjResult.text;
+		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
 		lobjResult.emailId = null;
 		lobjResult.attachments = new Message.Attachment[0];
 		if ( lobjResult.addresses != null )
@@ -672,9 +693,32 @@ public class ConversationServiceImpl
 		lobjResult.direction = ConversationStub.Direction.OUTGOING;
 		lobjResult.date = null;
 		lobjResult.subject = (lobjResult.subject == null ? "Fw:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Fw: " + lobjResult.subject));
-		lobjResult.text = System.getProperty("line.separator") + "-------- Mensagem Original --------" + System.getProperty("line.separator") + lobjResult.text;
+		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
 		lobjResult.emailId = null;
 		lobjResult.addresses = new Message.MsgAddress[0];
+		if ( lobjResult.attachments == null )
+			lobjResult.attachments = new Message.Attachment[0];
+
+		return lobjResult;
+	}
+
+	public Message getForRepeat(String messageId)
+		throws SessionExpiredException, BigBangException
+	{
+		Message lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lobjResult = sGetMessage(UUID.fromString(messageId), false);
+		lobjResult.id = null;
+		lobjResult.order = null;
+		lobjResult.direction = ConversationStub.Direction.OUTGOING;
+		lobjResult.date = null;
+		lobjResult.text = lobjResult.text + "<bigbang:signature:bb><bigbang:original:bb>";
+		lobjResult.emailId = null;
+		if ( lobjResult.attachments == null )
+			lobjResult.addresses = new Message.MsgAddress[0];
 		if ( lobjResult.attachments == null )
 			lobjResult.attachments = new Message.Attachment[0];
 
@@ -1179,5 +1223,49 @@ public class ConversationServiceImpl
 		}
 
 		return lsetResult;
+	}
+
+	private String getSignature()
+		throws SessionExpiredException, BigBangException
+	{
+		Template lobjSig;
+		FileXfer lobjFile;
+		String lstrSig;
+		User lobjCurrent;
+		UserDecoration lobjDeco;
+		CostCenter lobjCenter;
+
+		try
+		{
+			lobjSig = Template.GetInstance(Engine.getCurrentNameSpace(), Constants.TID_Signature);
+
+			if ( lobjSig.getAt(1) == null )
+				return "";
+
+			if ( lobjSig.getAt(1) instanceof FileXfer )
+				lobjFile = (FileXfer)lobjSig.getAt(1);
+			else
+				lobjFile = new FileXfer((byte[])lobjSig.getAt(1));
+			lstrSig = new String(lobjFile.getData(), "UTF-8");
+
+			lobjCurrent = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
+			lobjDeco = UserDecoration.GetByUserID(Engine.getCurrentNameSpace(), lobjCurrent.getKey());
+			lobjCenter = (lobjDeco.getAt(UserDecoration.I.COSTCENTER) == null ? null :
+					CostCenter.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjDeco.getAt(UserDecoration.I.COSTCENTER)));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lstrSig = lstrSig.replaceFirst("\\{\\{FullName\\}\\}", lobjCurrent.getFullName());
+		lstrSig = lstrSig.replaceFirst("\\{\\{Department\\}\\}", (lobjDeco.getAt(UserDecoration.I.TITLE) == null ? (lobjCenter == null ? "" :
+				(String)lobjCenter.getAt(CostCenter.I.DISPLAYNAME)) : (String)lobjDeco.getAt(UserDecoration.I.TITLE)));
+		lstrSig = lstrSig.replaceFirst("\\{\\{DirectPhone\\}\\}", (lobjDeco.getAt(UserDecoration.I.PHONE) == null ? "217 220 100" :
+				(String)lobjDeco.getAt(UserDecoration.I.PHONE)));
+		lstrSig = lstrSig.replaceFirst("\\{\\{Email\\}\\}", (lobjDeco.getAt(UserDecoration.I.EMAIL) == null ? "" :
+				(String)lobjDeco.getAt(UserDecoration.I.EMAIL)));
+
+		return "<bigbang:signature:bb>" + lstrSig;
 	}
 }

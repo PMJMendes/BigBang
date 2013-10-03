@@ -143,15 +143,15 @@ public abstract class ConversationTasksOperationsToolbar extends BigBangOperatio
 		newMenuItem.setEnabled(b);
 	}
 	public void allowReply(boolean b) {
-		newMenuItem.setEnabled(b);
+		replyMenuItem.setEnabled(b);
 	}
 	public void allowReplyAll(boolean b) {
-		newMenuItem.setEnabled(b);
+		replyAllMenuItem.setEnabled(b);
 	}
 	public void allowForward(boolean b) {
-		newMenuItem.setEnabled(b);
+		forwardMenuItem.setEnabled(b);
 	}
-	
+
 	@Override
 	public void lockAll() {
 		super.lockAll();

@@ -432,13 +432,26 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	}
 
 	protected void onClickNew() {
-		isSendMessage = true;
-		toSend = true;
-		Conversation conv = view.getForm().getValue();
-		conv.messages = new Message[1];
-		view.setFormVisible(isSendMessage);
-		view.getSendMessageForm().setValue(conv);
-		view.setMainFormVisible(false);
+		broker.getEmpty(new ResponseHandler<Message>() {
+
+			@Override
+			public void onResponse(Message response) {
+				isSendMessage = true;
+				toSend = true;
+				Conversation conv = view.getForm().getValue();
+				conv.messages = new Message[1];
+				conv.messages[0] = (response);
+				view.setFormVisible(isSendMessage);
+				view.getSendMessageForm().setValue(conv);
+				view.setMainFormVisible(false);
+				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem original."), TYPE.ALERT_NOTIFICATION));
+				
+			}});
 	}
 
 	protected void onClickReply() {
@@ -511,14 +524,26 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 	}
 
 	protected void onClickRepeat() {
-		isSendMessage = true;
-		toSend = false;
-		Conversation conv = view.getForm().getValue();
-		conv.messages = new Message[1];
-		conv.messages[0] = (currentMessage);
-		view.setFormVisible(isSendMessage);
-		view.getSendMessageForm().setValue(conv);
-		view.setMainFormVisible(false);
+		broker.getForRepeat(currentMessage.id, new ResponseHandler<Message>() {
+
+			@Override
+			public void onResponse(Message response) {
+				isSendMessage = true;
+				toSend = false;
+				Conversation conv = view.getForm().getValue();
+				conv.messages = new Message[1];
+				conv.messages[0] = (response);
+				view.setFormVisible(isSendMessage);
+				view.getSendMessageForm().setValue(conv);
+				view.setMainFormVisible(false);
+				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem original."), TYPE.ALERT_NOTIFICATION));
+				
+			}});
 	}
 
 	protected void onClickReceive() {

@@ -98,6 +98,28 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 	}
 
 	@Override
+	public void getEmpty(final ResponseHandler<Message> handler) {
+		service.getEmpty(new BigBangAsyncCallback<Message>() {
+
+			@Override
+			public void onResponseSuccess(Message result) {
+				handler.onResponse(result);
+				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the empty message")
+				});			
+				super.onResponseFailure(caught);
+			}
+			
+		});
+		
+	}
+
+	@Override
 	public void getForReply(String messageId, final ResponseHandler<Message> handler) {
 		service.getForReply(messageId, new BigBangAsyncCallback<Message>() {
 
@@ -144,6 +166,28 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 	@Override
 	public void getForForward(String messageId, final ResponseHandler<Message> handler) {
 		service.getForForward(messageId, new BigBangAsyncCallback<Message>() {
+
+			@Override
+			public void onResponseSuccess(Message result) {
+				handler.onResponse(result);
+				
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the original message")
+				});			
+				super.onResponseFailure(caught);
+			}
+			
+		});
+		
+	}
+
+	@Override
+	public void getForRepeat(String messageId, final ResponseHandler<Message> handler) {
+		service.getForRepeat(messageId, new BigBangAsyncCallback<Message>() {
 
 			@Override
 			public void onResponseSuccess(Message result) {
