@@ -116,9 +116,10 @@ public class AuthenticationServiceImpl
 
 		lobjUser = null;
 
-		if ( domain.equals("AMartins") )
+
+		if ( ("AMartins").equals(domain) )
 			lidNSpace = Constants.NSID_AMartins;
-		else if ( domain.equals("CrediteEGS") )
+		else if ( ("CrediteEGS").equals(domain) )
 			lidNSpace = Constants.NSID_CredEGS;
 		else
 			throw new BigBangException("Invalid login domain.");
