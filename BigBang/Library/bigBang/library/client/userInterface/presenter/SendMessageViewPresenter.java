@@ -2,17 +2,21 @@ package bigBang.library.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.dataAccess.ConversationBroker;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
@@ -54,8 +58,11 @@ public abstract class SendMessageViewPresenter<T extends ProcessBase> implements
 	protected String ownerId;
 	protected String ownerTypeId;
 
+	protected ConversationBroker broker;
+
 	public SendMessageViewPresenter(Display<T> view) {
 		setView((UIObject)view);
+		broker = (ConversationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CONVERSATION);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -126,9 +133,7 @@ public abstract class SendMessageViewPresenter<T extends ProcessBase> implements
 			@Override
 			public void onResponse(T response) {
 					view.getOwnerForm().setValue(response);
-					Conversation request = getFormattedRequest(ownerId);
-					view.getForm().setValue(request);
-					view.getForm().setReadOnly(false);
+					setFormattedRequest(ownerId);
 			}
 
 			@Override
@@ -138,10 +143,29 @@ public abstract class SendMessageViewPresenter<T extends ProcessBase> implements
 		});
 	}
 
-	protected Conversation getFormattedRequest(String ownerId) {
-		Conversation request = new Conversation();
-		request.parentDataObjectId = ownerId;
-		return request;
+	protected void setFormattedRequest(final String ownerId) {
+		broker.getEmpty(new ResponseHandler<Message>() {
+
+			@Override
+			public void onResponse(Message response) {
+				Conversation request = new Conversation();
+				request.parentDataObjectId = ownerId;
+				request.messages = new Message[1];
+				request.messages[0] = response;
+				view.getForm().setValue(request);
+				view.getForm().setReadOnly(false);
+				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a assinatura"), TYPE.ALERT_NOTIFICATION));
+				Conversation request = new Conversation();
+				request.parentDataObjectId = ownerId;
+				view.getForm().setValue(request);
+				view.getForm().setReadOnly(false);
+				
+			}});
 	}
 	protected abstract void fillOwner(String ownerId, ResponseHandler<T> responseHandler);
 
