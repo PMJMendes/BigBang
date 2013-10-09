@@ -85,7 +85,8 @@ public class MedicalFileData
 			pstrBuilder.append(pstrLineBreak).append("Detalhes da Baixa ou Internamento:").append(pstrLineBreak).append(pstrLineBreak);
 			for ( i = 0; i < marrDetails.length; i++ )
 			{
-				marrDetails[i].Describe(pstrBuilder, pstrLineBreak);
+				if ( marrDetails[i] != null )
+					marrDetails[i].Describe(pstrBuilder, pstrLineBreak);
 				pstrBuilder.append(pstrLineBreak);
 			}
 		}
