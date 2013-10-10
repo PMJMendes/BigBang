@@ -1169,15 +1169,24 @@ public class DocOps
 		throws BigBangJewelException
 	{
 		Document lobjAux;
+		FileXfer lobjFile;
 		Entity lrefDocuments;
 		Entity lrefDocInfo;
 		int i;
 
+		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+
 		if ( pobjData.mobjDSBridge != null )
 		{
 			if ( pobjData.mobjDSBridge.mbDelete )
-				DocuShareConnector.createItem(new FileXfer(pobjData.mobjFile), pobjData.mobjDSBridge.mstrDSTitle,
-						pobjData.mobjDSBridge.mstrDSLoc);
+			{
+				if ( pobjData.mobjFile == null )
+					lobjFile = lobjAux.getFile();
+				else
+					lobjFile = new FileXfer(pobjData.mobjFile);
+				if ( lobjFile != null )
+					DocuShareConnector.createItem(lobjFile, pobjData.mobjDSBridge.mstrDSTitle, pobjData.mobjDSBridge.mstrDSLoc);
+			}
 			else
 				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc, true);
 		}
@@ -1188,8 +1197,6 @@ public class DocOps
 					Constants.ObjID_Document));
 			lrefDocInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_DocInfo));
-
-			lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 
 			if ( pobjData.marrInfo != null )
 			{
