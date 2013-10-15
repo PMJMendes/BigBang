@@ -62,7 +62,7 @@ public class InsurancePolicyHeaderForm extends FormView<InsurancePolicy>{
 		client = new NavigationFormField("Cliente");
 		number.setFieldWidth("175px");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Apólice");
-		manager.setEmptyValueString("O mesmo do Cliente");
+		manager.setEmptyValueString("O utilizador actual");
 		manager.allowEdition(false);
 		insuranceAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 		insuranceAgency.allowEdition(false);
