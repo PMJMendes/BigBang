@@ -101,6 +101,7 @@ public class EmailReceiverForm extends FormView<Message>{
 		addSection("Receber Mensagem");
 
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
+		requestType.allowEdition(false);
 		subject = new TextBoxFormField("Tópico");
 		addFormField(requestType);
 		addFormField(subject);

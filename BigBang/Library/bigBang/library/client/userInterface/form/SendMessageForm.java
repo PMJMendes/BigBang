@@ -112,6 +112,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		documentsFrom.setFieldWidth("400px");
 
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
+		requestType.allowEdition(false);
 		text = new TypifiedTextSelector();	
 		to.setFieldWidth("400px");
 		replyLimit = new NumericTextBoxFormField("Prazo de Resposta", false);
@@ -415,7 +416,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 	protected void contactChoiceChanged(String id, boolean isOtherEntity) {
 
-		if(id == null || id.isEmpty() || BigBangConstants.TypifiedListValues.MEDIATOR_IDS.DIRECT.equalsIgnoreCase(id)){
+		if(id == null || id.isEmpty()){
 			clearEmails();
 			addContactButton.setEnabled(false);
 			return;
@@ -426,6 +427,9 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			addContactButton.setEnabled(true);
 			return;
 		}
+
+		if (BigBangConstants.TypifiedListValues.MEDIATOR_IDS.DIRECT.equalsIgnoreCase(id))
+			addContactButton.setEnabled(false);
 
 		otherEntityContacts.setVisible(isOtherEntity);
 
@@ -479,7 +483,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		if(Kind.EMAIL.equals(msg.kind)){
 			List<Message.MsgAddress> addresses = new ArrayList<Message.MsgAddress>();
 			List<String> outgoingAttachment = new ArrayList<String>();
-			msg.text = requestText.text.replaceAll("\\<bigbang:.*:bb\\>",  "").replaceAll("\\</bigbang:.*:bb\\>",  "");
+			msg.text = requestText.text.replaceAll("\\<bigbang:.*?:bb\\>",  "").replaceAll("\\</bigbang:.*?:bb\\>",  "");
 			addresses = getAddresses();
 			outgoingAttachment = getAttachments();
 

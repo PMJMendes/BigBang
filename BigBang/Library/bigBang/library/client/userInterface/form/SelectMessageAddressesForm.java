@@ -194,7 +194,7 @@ public class SelectMessageAddressesForm extends FormField<MsgAddress[]>{
 	
 	protected void contactChoiceChanged(String id, boolean isOtherEntity) {
 
-		if(id == null || id.isEmpty() || BigBangConstants.TypifiedListValues.MEDIATOR_IDS.DIRECT.equalsIgnoreCase(id)){
+		if(id == null || id.isEmpty() /*|| BigBangConstants.TypifiedListValues.MEDIATOR_IDS.DIRECT.equalsIgnoreCase(id)*/){
 			clearEmails();
 			return;
 		}

@@ -25,6 +25,7 @@ public class ReceiveMessageForm extends FormView<Conversation>{
 	public ReceiveMessageForm() {
 
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
+		requestType.allowEdition(false);
 		subject = new TextBoxFormField("Tópico");
 		expectsResponse = new RadioButtonFormField("Espera resposta");
 		expectsResponse.addOption("YES", "Sim");

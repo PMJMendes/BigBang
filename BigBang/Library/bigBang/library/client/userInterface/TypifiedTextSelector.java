@@ -121,7 +121,7 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 	public TypifiedText getValue() {
 		TypifiedText result = new TypifiedText();
 		result.subject = this.subject.getValue();
-		result.text = this.textBody.getValue().replaceAll("\\</bigbang:.*:bb\\>",  "");
+		result.text = this.textBody.getValue().replaceAll("\\</bigbang:.*?:bb\\>",  "");
 		return result;
 	}
 
@@ -191,11 +191,11 @@ public class TypifiedTextSelector extends FormField<TypifiedText> implements Typ
 	}
 
 	private void clearText() {
-		textBody.setValue(deletePreKey(textBody.getValue().replaceAll("\\</bigbang:.*:bb\\>",  "")));
+		textBody.setValue(deletePreKey(textBody.getValue().replaceAll("\\</bigbang:.*?:bb\\>",  "")));
 	}
 
 	private void buildText(String newText) {
-		String result = getPreKey(newText) + deletePreKey(textBody.getValue().replaceAll("\\</bigbang:.*:bb\\>",  ""));
+		String result = getPreKey(newText) + deletePreKey(textBody.getValue().replaceAll("\\</bigbang:.*?:bb\\>",  ""));
 
 		String key = nextKey(newText);
 		while ( key != null )
