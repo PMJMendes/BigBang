@@ -221,6 +221,7 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 		sectionsContainer = new VerticalPanel();
 		sectionsContainer.setWidth("100%");
 		sectionsContainer.getElement().getStyle().setPadding(10, Unit.PX);
+		sectionsContainer.add(printFrame);
 		
 		ScrollPanel scrollPanel2 = new ScrollPanel();
 		scrollPanel2.setSize("100%", "100%");
@@ -404,9 +405,9 @@ public class ConversationView<T extends ProcessBase> extends View implements Con
 
 	@Override
 	public void clearReportSections() {
-		this.sectionsContainer.clear();
-		this.sectionsContainer.add(this.printFrame);
-		this.sectionsContainer.setCellHeight(this.printFrame, "100%");		
+//		this.sectionsContainer.clear();
+//		this.sectionsContainer.add(this.printFrame);
+//		this.sectionsContainer.setCellHeight(this.printFrame, "100%");		
 	}
 
 

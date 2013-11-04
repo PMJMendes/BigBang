@@ -187,18 +187,21 @@ public class ReportViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onLoad(LoadEvent event) {
-				FileService.Util.getInstance().Discard(currentPrintFileId, new AsyncCallback<Void>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-					}
-				});
-				currentPrintFileId = null;
-				print();
+				if ( currentPrintFileId != null ) {
+					String str = currentPrintFileId;
+					currentPrintFileId = null;
+					print();
+					FileService.Util.getInstance().Discard(str, new AsyncCallback<Void>() {
+	
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+	
+						@Override
+						public void onSuccess(Void result) {
+						}
+					});
+				}
 			}
 		});
 		
@@ -206,17 +209,20 @@ public class ReportViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onLoad(LoadEvent event) {
-				FileService.Util.getInstance().Discard(currentExcelFileId, new AsyncCallback<Void>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-					}
-
-					@Override
-					public void onSuccess(Void result) {
-					}
-				});
-				currentPrintFileId = null;
+				if ( currentExcelFileId != null ) {
+					String str = currentExcelFileId;
+					currentExcelFileId = null;
+					FileService.Util.getInstance().Discard(str, new AsyncCallback<Void>() {
+	
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+	
+						@Override
+						public void onSuccess(Void result) {
+						}
+					});
+				}
 			}
 		});
 
