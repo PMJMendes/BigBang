@@ -20,6 +20,8 @@ public class Document
 	public String fileName;
 	public String fileStorageId;
 	public DocuShareHandle source;
+	public String exchangeEmailId; //Attached document helper tag, client-side only.
+	public String exchangeAttId; //Attached document helper tag, client-side only.
 	public DocInfo[] parameters;
 
 	public Document()
@@ -45,6 +47,7 @@ public class Document
 		this.fileName = orig.fileName;
 		this.fileStorageId = orig.fileStorageId;
 		this.source = orig.source;
+		this.exchangeAttId = orig.exchangeAttId;
 
 		if ( orig.parameters == null )
 			this.parameters = null;

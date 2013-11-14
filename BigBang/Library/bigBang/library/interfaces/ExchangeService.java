@@ -1,5 +1,6 @@
 package bigBang.library.interfaces;
 
+import bigBang.definitions.shared.Document;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.ExchangeItem;
 import bigBang.library.shared.ExchangeItemStub;
@@ -26,8 +27,9 @@ public interface ExchangeService
 		}
 	}
 
-	ExchangeItemStub[] getItems() throws SessionExpiredException, BigBangException;
-	ExchangeItemStub[] getItemsAll() throws SessionExpiredException, BigBangException;
+	ExchangeItemStub[] getItems(boolean sent) throws SessionExpiredException, BigBangException;
+	ExchangeItemStub[] getItemsAll(boolean sent) throws SessionExpiredException, BigBangException;
+	ExchangeItemStub[] getFolder(String id) throws SessionExpiredException, BigBangException;
 	ExchangeItem getItem(String id) throws SessionExpiredException, BigBangException;
-//	Attachment getAttachment(String emailId, String attachmentId) throws SessionExpiredException, BigBangException;
+	Document getAttAsDoc(String emailId, String attachmentId) throws SessionExpiredException, BigBangException;
 }

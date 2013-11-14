@@ -29,6 +29,7 @@ public class Message
 		public static int ISEMAIL   = 4;
 		public static int DATE      = 5;
 		public static int TEXT      = 6;
+		public static int EMAILID   = 7;
 	}
 
     public static Message GetInstance(UUID pidNameSpace, UUID pidKey)

@@ -147,11 +147,11 @@ public abstract class ReceiveMessageViewPresenter<T extends ProcessBase> impleme
 	}
 	
 	public void onReceiveMessageSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem recebida com sucesso"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem arquivada com sucesso"), TYPE.TRAY_NOTIFICATION));
 	}
 	
 	public void onReceiveMessageFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a mensagem"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem"), TYPE.ALERT_NOTIFICATION));
 	}
 	
 	protected void onFormValidationFailed() {

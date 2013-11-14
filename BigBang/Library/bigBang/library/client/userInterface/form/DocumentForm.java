@@ -550,7 +550,8 @@ public abstract class DocumentForm extends FormView<Document>{
 			for(int i = 0; i < details.size()-1; i++){
 				((DocumentDetailEntry) details.get(i)).setEditable(!readOnly);
 			}
-			details.get(details.size()-1).setVisible(!readOnly);
+			if ( details.size() > 0 )
+				details.get(details.size()-1).setVisible(!readOnly);
 			add.setVisible(!readOnly);
 		}
 

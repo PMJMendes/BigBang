@@ -18,6 +18,7 @@ public class MessageAttachmentData
 
 	public UUID midOwner;
 	public UUID midDocument;
+	public String mstrAttId;
 
 	public void FromObject(ObjectBase pobjSource)
 	{
@@ -25,6 +26,7 @@ public class MessageAttachmentData
 
 		midOwner    =   (UUID)pobjSource.getAt(MessageAttachment.I.OWNER);
 		midDocument =   (UUID)pobjSource.getAt(MessageAttachment.I.DOCUMENT);
+		mstrAttId   = (String)pobjSource.getAt(MessageAttachment.I.ATTACHMENTID);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -32,8 +34,9 @@ public class MessageAttachmentData
 	{
 		try
 		{
-			pobjDest.setAt(MessageAttachment.I.OWNER,    midOwner);
-			pobjDest.setAt(MessageAttachment.I.DOCUMENT, midDocument);
+			pobjDest.setAt(MessageAttachment.I.OWNER,        midOwner);
+			pobjDest.setAt(MessageAttachment.I.DOCUMENT,     midDocument);
+			pobjDest.setAt(MessageAttachment.I.ATTACHMENTID, mstrAttId);
 		}
 		catch (Throwable e)
 		{
@@ -46,18 +49,26 @@ public class MessageAttachmentData
 		Document lobjDoc;
 		DocumentData lobjData;
 
-		try
+
+		if ( mstrAttId !=  null )
 		{
-			lobjDoc = Document.GetInstance(Engine.getCurrentNameSpace(), midDocument);
-		}
-		catch (BigBangJewelException e)
-		{
-			pstrBuilder.append("(Erro a obter a definição do anexo.)").append(pstrLineBreak);
-			return;
+			pstrBuilder.append(pstrLineBreak).append("Anexo arquivado no servidor de Email.").append(pstrLineBreak);
 		}
 
-		lobjData = new DocumentData();
-		lobjData.FromObject(lobjDoc);
-		lobjData.Describe(pstrBuilder, pstrLineBreak);
+		if ( midDocument != null )
+		{
+			try
+			{
+				lobjDoc = Document.GetInstance(Engine.getCurrentNameSpace(), midDocument);
+			}
+			catch (BigBangJewelException e)
+			{
+				pstrBuilder.append("(Erro a obter a definição do anexo.)").append(pstrLineBreak);
+				return;
+			}
+			lobjData = new DocumentData();
+			lobjData.FromObject(lobjDoc);
+			lobjData.Describe(pstrBuilder, pstrLineBreak);
+		}
 	}
 }

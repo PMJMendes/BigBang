@@ -4,7 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -21,20 +25,33 @@ import javax.mail.util.ByteArrayDataSource;
 
 import microsoft.exchange.webservices.data.Attachment;
 import microsoft.exchange.webservices.data.BasePropertySet;
+import microsoft.exchange.webservices.data.BodyType;
+import microsoft.exchange.webservices.data.ConflictResolutionMode;
+import microsoft.exchange.webservices.data.DeleteMode;
 import microsoft.exchange.webservices.data.EmailAddress;
 import microsoft.exchange.webservices.data.EmailAddressCollection;
 import microsoft.exchange.webservices.data.EmailMessage;
 import microsoft.exchange.webservices.data.ExchangeService;
 import microsoft.exchange.webservices.data.ExchangeVersion;
+import microsoft.exchange.webservices.data.ExtendedProperty;
+import microsoft.exchange.webservices.data.ExtendedPropertyDefinition;
 import microsoft.exchange.webservices.data.FileAttachment;
 import microsoft.exchange.webservices.data.Folder;
+import microsoft.exchange.webservices.data.FolderId;
 import microsoft.exchange.webservices.data.FolderView;
 import microsoft.exchange.webservices.data.Item;
 import microsoft.exchange.webservices.data.ItemAttachment;
 import microsoft.exchange.webservices.data.ItemId;
 import microsoft.exchange.webservices.data.ItemSchema;
 import microsoft.exchange.webservices.data.ItemView;
+import microsoft.exchange.webservices.data.LogicalOperator;
+import microsoft.exchange.webservices.data.Mailbox;
+import microsoft.exchange.webservices.data.MapiPropertyType;
+import microsoft.exchange.webservices.data.NameResolution;
+import microsoft.exchange.webservices.data.NameResolutionCollection;
 import microsoft.exchange.webservices.data.PropertySet;
+import microsoft.exchange.webservices.data.SearchFilter;
+import microsoft.exchange.webservices.data.ServiceObject;
 import microsoft.exchange.webservices.data.SortDirection;
 import microsoft.exchange.webservices.data.WebCredentials;
 import microsoft.exchange.webservices.data.WellKnownFolderName;
@@ -57,6 +74,10 @@ import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
 public class MailConnector
 {
+    private static final UUID EXTPROPID_MSGID = UUID.fromString("99FC5365-04F9-41C9-90DE-904AD1A82AC8");
+    private static final UUID EXTPROPID_REFID = UUID.fromString("5BB5DCD6-C8C6-4AF9-80F6-A278F0F7CB9D");
+    private static final UUID EXTPROPID_THISID = UUID.fromString("D08B09DE-E1B3-47CE-9ECF-8D936F4DDA8A");
+
 	private static String getUserName()
 		throws BigBangJewelException
 	{
@@ -178,12 +199,29 @@ public class MailConnector
 		return lsvc;
 	}
 
-	private static Folder GetFolder(ExchangeService psvc)
+	private static Mailbox GetMailbox(ExchangeService psvc)
+		throws BigBangJewelException
+	{
+		String lstrEmail;
+		int i;
+
+		lstrEmail = getUserEmail();
+		if ( lstrEmail == null )
+			throw new BigBangJewelException("Erro: Utilizador sem endereço de email.");
+
+		i = lstrEmail.indexOf('@');
+		if ( i < 0 )
+			throw new BigBangJewelException("Erro: Utilizador com endereço de email inválido.");
+
+		return new Mailbox("bbsystem" + lstrEmail.substring(i));
+	}
+
+	private static Folder GetRoot(ExchangeService psvc)
 		throws BigBangJewelException
 	{
 		try
 		{
-			return Folder.bind(psvc, WellKnownFolderName.Inbox);
+			return Folder.bind(psvc, /*new FolderId(*/WellKnownFolderName.MsgFolderRoot/*, GetMailbox(psvc))*/);
 		}
 		catch (Throwable e)
 		{
@@ -191,9 +229,36 @@ public class MailConnector
 		}
 	}
 
-	private static Folder GetBigBangFolder(ExchangeService psvc)
+	private static Folder GetInbox(ExchangeService psvc)
 		throws BigBangJewelException
 	{
+		try
+		{
+			return Folder.bind(psvc, /*new FolderId(*/WellKnownFolderName.Inbox/*, GetMailbox(psvc))*/);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static Folder GetSentItems(ExchangeService psvc)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return Folder.bind(psvc, /*new FolderId(*/WellKnownFolderName.SentItems/*, GetMailbox(psvc))*/);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static Folder GetBaseBigBangFolder(ExchangeService psvc)
+		throws BigBangJewelException
+	{
+		FolderId lrefRoot;
 		Folder lobjFolder;
 		ArrayList<Folder> larrFolders;
 		int i;
@@ -202,8 +267,8 @@ public class MailConnector
 
 		try
 		{
-			larrFolders = psvc.findFolders(WellKnownFolderName.MsgFolderRoot,
-					new FolderView(Integer.MAX_VALUE)).getFolders();
+			lrefRoot = new FolderId(WellKnownFolderName.MsgFolderRoot, GetMailbox(psvc));
+			larrFolders = psvc.findFolders(lrefRoot, new FolderView(Integer.MAX_VALUE)).getFolders();
 
 			for ( i = 0; i < larrFolders.size(); i++ )
 			{
@@ -218,7 +283,7 @@ public class MailConnector
 			{
 				lobjFolder = new Folder(GetService());
 				lobjFolder.setDisplayName("bigbang");
-				lobjFolder.save(WellKnownFolderName.MsgFolderRoot);
+				lobjFolder.save(lrefRoot);
 			}
 		}
 		catch (Throwable e)
@@ -229,24 +294,27 @@ public class MailConnector
 		return lobjFolder;
 	}
 
-	private static Folder GetProcessedFolder(ExchangeService psvc)
+	private static Folder GetBigBangFolder(ExchangeService psvc, Date pdtRef)
 		throws BigBangJewelException
 	{
+		String lstrName;
+		FolderId lrefRoot;
 		Folder lobjFolder;
-		Folder lobjParent;
 		ArrayList<Folder> larrFolders;
 		int i;
 
+		lstrName = new SimpleDateFormat("yyyyMM").format(pdtRef);
+
 		lobjFolder = null;
-		lobjParent = GetBigBangFolder(psvc);
 
 		try
 		{
-			larrFolders = psvc.findFolders(lobjParent.getId(), new FolderView(Integer.MAX_VALUE)).getFolders();
+			lrefRoot = GetBaseBigBangFolder(psvc).getId();
+			larrFolders = psvc.findFolders(lrefRoot, new FolderView(Integer.MAX_VALUE)).getFolders();
 
 			for ( i = 0; i < larrFolders.size(); i++ )
 			{
-				if ( "tratados".equals(larrFolders.get(i).getDisplayName()) )
+				if ( lstrName.equals(larrFolders.get(i).getDisplayName()) )
 				{
 					lobjFolder = larrFolders.get(i);
 					break;
@@ -256,8 +324,8 @@ public class MailConnector
 			if ( lobjFolder == null )
 			{
 				lobjFolder = new Folder(GetService());
-				lobjFolder.setDisplayName("tratados");
-				lobjFolder.save(lobjParent.getId());
+				lobjFolder.setDisplayName(lstrName);
+				lobjFolder.save(lrefRoot);
 			}
 		}
 		catch (Throwable e)
@@ -268,17 +336,208 @@ public class MailConnector
 		return lobjFolder;
 	}
 
-	private static Item GetItem(ExchangeService psvc, String pstrUniqueID)
+//	private static Folder GetProcessedFolder(ExchangeService psvc)
+//		throws BigBangJewelException
+//	{
+//		Folder lobjFolder;
+//		Folder lobjParent;
+//		ArrayList<Folder> larrFolders;
+//		int i;
+//
+//		lobjFolder = null;
+//		lobjParent = GetBigBangFolder(psvc);
+//
+//		try
+//		{
+//			larrFolders = psvc.findFolders(lobjParent.getId(), new FolderView(Integer.MAX_VALUE)).getFolders();
+//
+//			for ( i = 0; i < larrFolders.size(); i++ )
+//			{
+//				if ( "tratados".equals(larrFolders.get(i).getDisplayName()) )
+//				{
+//					lobjFolder = larrFolders.get(i);
+//					break;
+//				}
+//			}
+//
+//			if ( lobjFolder == null )
+//			{
+//				lobjFolder = new Folder(GetService());
+//				lobjFolder.setDisplayName("tratados");
+//				lobjFolder.save(lobjParent.getId());
+//			}
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		return lobjFolder;
+//	}
+
+	private static ArrayList<Folder> GetFolders(ExchangeService psvc, FolderId prefSource)
+		throws BigBangJewelException
+	{
+		FolderView lobjView;
+
+		lobjView = new FolderView(Integer.MAX_VALUE);
+
+		try
+		{
+			return psvc.findFolders(prefSource, lobjView).getFolders();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static ArrayList<Item> GetItems(ExchangeService psvc, FolderId prefSource, int plngCount)
+		throws BigBangJewelException
+	{
+		ItemView lobjView;
+		PropertySet lobjPropSet;
+		SearchFilter lobjFilter;
+
+		lobjView = new ItemView(plngCount);
+		lobjPropSet = new PropertySet(BasePropertySet.FirstClassProperties);
+		lobjPropSet.setRequestedBodyType(BodyType.Text);
+		lobjView.setPropertySet(lobjPropSet);
+
+		try
+		{
+			lobjFilter = new SearchFilter.SearchFilterCollection(LogicalOperator.Or,
+					new SearchFilter.Not(new SearchFilter.Exists(GetPropDef())), new SearchFilter.IsEqualTo(GetPropDef(), "_"));
+			//All of this is because removeExtendedProperty throws a NullPointerException. See DoUnprocessItem.
+			lobjView.getOrderBy().add(ItemSchema.DateTimeReceived, SortDirection.Descending);
+			return psvc.findItems(prefSource, lobjFilter, lobjView).getItems();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static ArrayList<Item> GetItemByTag(ExchangeService psvc, FolderId prefSource, String pstrTag)
+		throws BigBangJewelException
+	{
+		ItemView lobjView;
+		SearchFilter lobjFilter;
+
+		lobjView = new ItemView(2);
+		lobjView.setPropertySet(new PropertySet(BasePropertySet.IdOnly, GetPropDef()));
+
+		try
+		{
+			lobjFilter = new SearchFilter.IsEqualTo(GetPropDef(), pstrTag);
+			return psvc.findItems(prefSource, lobjFilter, lobjView).getItems();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static Folder GetFolder(ExchangeService psvc, FolderId prefFolder)
 		throws BigBangJewelException
 	{
 		try
 		{
-			return Item.bind(psvc, new ItemId(pstrUniqueID), new PropertySet(BasePropertySet.FirstClassProperties/*,
+			return Folder.bind(psvc, prefFolder);
+		}
+		catch (Exception e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static Item GetItem(ExchangeService psvc, ItemId prefItem)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return Item.bind(psvc, prefItem, new PropertySet(
+					BasePropertySet.FirstClassProperties/*, GetPropDef(), GetRefDef(), GetThisDef(),
 					ItemSchema.Id, ItemSchema.Subject,
 					ItemSchema.Body, EmailMessageSchema.From, ItemSchema.DateTimeSent, ItemSchema.Attachments,
 					ItemSchema.MimeContent*/));
 		}
 		catch (Exception e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static ServiceObject[] GetContents(ExchangeService psvc, FolderId prefSource, int plngCount)
+		throws BigBangJewelException
+	{
+		Folder lobjAux;
+		FolderId lrefParent;
+		ArrayList<ServiceObject> larrTmp;
+
+		lobjAux = null;
+		if ( !prefSource.getUniqueId().equals(GetRoot(psvc).getId().getUniqueId()) )
+		{
+			lobjAux = GetFolder(psvc, prefSource);
+			try
+			{
+				lrefParent = lobjAux.getParentFolderId();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			lobjAux = GetFolder(psvc, lrefParent);
+		}
+
+		larrTmp = new ArrayList<ServiceObject>();
+
+		if ( prefSource.getUniqueId().equals(GetInbox(psvc).getId().getUniqueId()) )
+			larrTmp.add(GetSentItems(psvc));
+		if ( prefSource.getUniqueId().equals(GetSentItems(psvc).getId().getUniqueId()) )
+			larrTmp.add(GetInbox(psvc));
+		if ( lobjAux != null  )
+			larrTmp.add(lobjAux);
+		larrTmp.addAll(GetFolders(psvc, prefSource));
+		larrTmp.addAll(GetItems(psvc, prefSource, plngCount));
+
+		return larrTmp.toArray(new ServiceObject[larrTmp.size()]);
+	}
+
+	private static ExtendedPropertyDefinition GetPropDef()
+		throws BigBangJewelException
+	{
+		try
+		{
+			return new ExtendedPropertyDefinition(EXTPROPID_MSGID, "BigBang Tag", MapiPropertyType.String);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static ExtendedPropertyDefinition GetRefDef()
+		throws BigBangJewelException
+	{
+		try
+		{
+			return new ExtendedPropertyDefinition(EXTPROPID_REFID, "BigBang Linkback", MapiPropertyType.String);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private static ExtendedPropertyDefinition GetThisDef()
+		throws BigBangJewelException
+	{
+		try
+		{
+			return new ExtendedPropertyDefinition(EXTPROPID_THISID, "BigBang Self-Reference", MapiPropertyType.String);
+		}
+		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -294,6 +553,39 @@ public class MailConnector
 			return null;
 
 		return (String)lobjDeco.getAt(UserDecoration.I.EMAIL);
+	}
+
+	public static String getLoggedEmail()
+		throws BigBangJewelException
+	{
+		ExchangeService lsvc;
+		NameResolutionCollection larrNames;
+		String lstr;
+
+		lsvc = GetService();
+
+		try
+		{
+			larrNames = lsvc.resolveName("smtp:" + getUserEmail());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		lstr = null;
+		for ( NameResolution nr : larrNames )
+		{
+			lstr = nr.getMailbox().getAddress();
+		}
+
+		return lstr;
+	}
+
+	public static PropertySet getPropSet()
+		throws BigBangJewelException
+	{
+		return new PropertySet(BasePropertySet.FirstClassProperties/*, GetPropDef(), GetRefDef(), GetThisDef()*/);
 	}
 
 	public static void DoSendMail(OutgoingMessageData pobjMessage, SQLServer pdb)
@@ -435,82 +727,129 @@ public class MailConnector
 		}
 	}
 
-	public static Item[] DoGetMail()
+	public static ServiceObject[] DoGetMail(boolean pbSent)
 		throws BigBangJewelException
 	{
 		ExchangeService lsvc;
 		Folder lobjFolder;
-		ItemView lobjView;
-		ArrayList<Item> larrTmp;
 
 		lsvc = GetService();
 
-		lobjFolder = GetFolder(lsvc);
+		lobjFolder = ( pbSent ? GetSentItems(lsvc) : GetInbox(lsvc) );
 
 		if ( lobjFolder == null )
 			return null;
 
-		lobjView = new ItemView(30);
-
-		try
-		{
-			lobjView.getOrderBy().add(ItemSchema.DateTimeReceived, SortDirection.Descending);
-			larrTmp = lsvc.findItems(lobjFolder.getId(), lobjView).getItems();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return larrTmp.toArray(new Item[larrTmp.size()]);
+		return GetContents(lsvc, lobjFolder.getId(), 30);
 	}
 
-	public static Item[] DoGetMailAll()
+	public static ServiceObject[] DoGetMailAll(boolean pbSent)
 		throws BigBangJewelException
 	{
 		ExchangeService lsvc;
 		Folder lobjFolder;
-		ItemView lobjView;
-		ArrayList<Item> larrTmp;
 
 		lsvc = GetService();
 
-		lobjFolder = GetFolder(lsvc);
+		lobjFolder = ( pbSent ? GetSentItems(lsvc) : GetInbox(lsvc) );
 
 		if ( lobjFolder == null )
 			return null;
 
-		lobjView = new ItemView(Integer.MAX_VALUE);
+		return GetContents(lsvc, lobjFolder.getId(), Integer.MAX_VALUE);
+	}
 
+	public static ServiceObject[] DoGetFolder(String pstrUniqueID)
+		throws BigBangJewelException
+	{
 		try
 		{
-			lobjView.getOrderBy().add(ItemSchema.DateTimeReceived, SortDirection.Descending);
-			larrTmp = lsvc.findItems(lobjFolder.getId(), lobjView).getItems();
+			return GetContents(GetService(), new FolderId(pstrUniqueID), 30);
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-
-		return larrTmp.toArray(new Item[larrTmp.size()]);
 	}
 
 	public static Item DoGetItem(String pstrUniqueID)
 		throws BigBangJewelException
 	{
-		return GetItem(GetService(), pstrUniqueID);
+		try
+		{
+			return GetItem(GetService(), new ItemId(pstrUniqueID));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
-	public static Item DoProcessItem(String pstrUniqueID)
+	public static Map<String, String> DoProcessItem(String pstrUniqueID, UUID pidTag, Date pdtRef)
 		throws BigBangJewelException
 	{
 		ExchangeService lsvc;
+		Item litem;
+		FolderId lrefDest;
+		Item lnew;
+		ArrayList<Item> larrAux;
+		Map<String, String> larrResult;
 
 		lsvc = GetService();
 
+		larrResult = new HashMap<String, String>();
+
 		try
 		{
-			return Item.bind(lsvc, new ItemId(pstrUniqueID)).move(GetProcessedFolder(lsvc).getId());
+			litem = Item.bind(lsvc, new ItemId(pstrUniqueID));
+			lrefDest = GetBigBangFolder(lsvc, pdtRef).getId();
+
+			litem.setExtendedProperty(GetPropDef(), pidTag.toString());
+			litem.update(ConflictResolutionMode.AutoResolve);
+
+			lnew = litem.copy(lrefDest);
+			if ( lnew == null )
+			{
+				larrAux = GetItemByTag(lsvc, lrefDest, pidTag.toString());
+				if ( larrAux.size() == 1 )
+					lnew = Item.bind(lsvc, larrAux.get(0).getId());
+			}
+			if ( lnew != null )
+			{
+				larrResult.put("_", lnew.getId().getUniqueId());
+
+				lnew.setExtendedProperty(GetRefDef(), litem.getId().getUniqueId());
+				lnew.update(ConflictResolutionMode.AutoResolve);
+				lnew = Item.bind(lsvc, lnew.getId());
+
+				lnew.setExtendedProperty(GetThisDef(), lnew.getId().getUniqueId());
+				lnew.update(ConflictResolutionMode.AutoResolve);
+				lnew = Item.bind(lsvc, lnew.getId());
+
+				litem = Item.bind(lsvc, new ItemId(pstrUniqueID));
+				litem.load();
+
+				if ( litem.getHasAttachments() )
+				{
+					lnew = Item.bind(lsvc, lnew.getId());
+					lnew.load();
+
+					OUTER: for ( Attachment latti : litem.getAttachments() )
+					{
+						for ( Attachment lattn : lnew .getAttachments() )
+						{
+							if ( (((lattn.getContentId() != null) && lattn.getContentId().equals(latti.getContentId())) || 
+									((lattn.getName() != null) && lattn.getName().equals(latti.getName()))) &&
+									(larrResult.get(lattn.getId()) == null) )
+							{
+								larrResult.put(latti.getId(), lattn.getId());
+								larrResult.put(lattn.getId(), latti.getId()); //Ignored by caller, used for duplicate filename tracking
+								continue OUTER;
+							}
+						}
+					}
+				}
+			}
 		}
 		catch (BigBangJewelException e)
 		{
@@ -520,18 +859,43 @@ public class MailConnector
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+
+		return larrResult;
 	}
 
-	public static Item DoUnprocessItem(String pstrUniqueID)
+	public static void DoUnprocessItem(String pstrUniqueID)
 		throws BigBangJewelException
 	{
 		ExchangeService lsvc;
+		Item litem, lorig;
 
 		lsvc = GetService();
 
 		try
 		{
-			return Item.bind(lsvc, new ItemId(pstrUniqueID)).move(GetFolder(lsvc).getId());
+			litem = Item.bind(lsvc, new ItemId(pstrUniqueID));
+			litem.load(new PropertySet(BasePropertySet.IdOnly, GetRefDef()));
+			for ( ExtendedProperty lep : litem.getExtendedProperties() )
+			{
+				if ( EXTPROPID_REFID.equals(lep.getPropertyDefinition().getPropertySetId()) )
+				{
+					lorig = null;
+					try
+					{
+						lorig = Item.bind(lsvc, new ItemId((String)lep.getValue()));
+					}
+					catch (Throwable e1)
+					{
+					}
+					if ( lorig != null )
+					{
+						lorig.setExtendedProperty(GetPropDef(), "_"); //removeExtendedProperty throws NullPointerException
+						lorig.update(ConflictResolutionMode.AutoResolve);
+					}
+					break;
+				}
+			}
+			litem.delete(DeleteMode.HardDelete);
 		}
 		catch (BigBangJewelException e)
 		{
@@ -555,7 +919,7 @@ public class MailConnector
 
 		try
 		{
-			lobjItem = GetItem(lsvc, pstrEmailId);
+			lobjItem = GetItem(lsvc, new ItemId(pstrEmailId));
 			lobjItem.load();
 
 			for ( Attachment lobjAtt: lobjItem.getAttachments() )
@@ -753,21 +1117,32 @@ public class MailConnector
 
 		lobjResult = new MessageData();
 
+		lobjFrom = null;
+		larrTo = null;
+		larrCC = null;
+		larrBCC = null;
+		larrReplyTo = null;
 		try
 		{
 			lobjResult.mstrSubject = lobjItem.getSubject();
 			lobjResult.midOwner = null;
 			lobjResult.mlngNumber = -1;
-			lobjResult.midDirection = Constants.MsgDir_Incoming;
 			lobjResult.mbIsEmail = true;
 			lobjResult.mdtDate = new Timestamp(lobjItem.getDateTimeReceived().getTime());
 			lobjResult.mstrBody = lobjItem.getBody().toString();
 
-			lobjFrom = ((EmailMessage)lobjItem).getFrom();
-			larrTo = ((EmailMessage)lobjItem).getToRecipients();
-			larrCC = ((EmailMessage)lobjItem).getCcRecipients();
-			larrBCC = ((EmailMessage)lobjItem).getBccRecipients();
-			larrReplyTo = ((EmailMessage)lobjItem).getReplyTo();
+			lobjResult.midDirection = Constants.MsgDir_Incoming;
+			if ( lobjItem instanceof EmailMessage )
+			{
+				lobjFrom = ((EmailMessage)lobjItem).getFrom();
+				larrTo = ((EmailMessage)lobjItem).getToRecipients();
+				larrCC = ((EmailMessage)lobjItem).getCcRecipients();
+				larrBCC = ((EmailMessage)lobjItem).getBccRecipients();
+				larrReplyTo = ((EmailMessage)lobjItem).getReplyTo();
+
+				lobjResult.midDirection = ( getLoggedEmail().equalsIgnoreCase(lobjFrom.getAddress()) ?
+						Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming );
+			}
 		}
 		catch (Throwable e)
 		{

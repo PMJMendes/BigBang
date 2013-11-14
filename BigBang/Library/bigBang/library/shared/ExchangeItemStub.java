@@ -8,6 +8,8 @@ public class ExchangeItemStub
 	private static final long serialVersionUID = 1L;
 
 	public String id;
+	public boolean isFolder;
+	public boolean isFromMe;
 	public String subject;
 	public String from;
 	public String timestamp;

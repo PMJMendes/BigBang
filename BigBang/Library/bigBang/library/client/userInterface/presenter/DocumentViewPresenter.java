@@ -23,6 +23,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.DocuShareService;
 import bigBang.library.interfaces.DocuShareServiceAsync;
+import bigBang.library.interfaces.ExchangeService;
 import bigBang.library.shared.DocuShareItem;
 
 import com.google.gwt.core.client.GWT;
@@ -42,6 +43,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private String documentId;
 	private boolean newDocument;
 	private String ownerTypeId;
+	private String emailId;
+	private String attId;
 	protected boolean allow = true;
 
 	public static enum Action {
@@ -104,17 +107,41 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		ownerId = parameterHolder.getParameter("ownerid");
 		documentId = parameterHolder.getParameter("documentid");
 		ownerTypeId = parameterHolder.getParameter("ownertypeid");
+		emailId = parameterHolder.getParameter("emailId");
+		attId = parameterHolder.getParameter("attId");
 		boolean hasPermissions = true; //TODO PERMISSIONS
 
 		if(ownerId == null){
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um documento sem cliente associado."), TYPE.ALERT_NOTIFICATION));
+//			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um documento sem pasta associada."), TYPE.ALERT_NOTIFICATION));
 			view.setEditable(false);
-			return;
+//			return;
 		}
 		else{
 			broker.registerClient(this, ownerId);
-		}	
-		if(documentId.equalsIgnoreCase("new")){
+		}
+
+		if ( documentId == null ) {
+			ExchangeService.Util.getInstance().getAttAsDoc(emailId, attId, new BigBangAsyncCallback<Document>() {
+				@Override
+				public void onResponseSuccess(Document response) {
+					view.getForm().setValue(response);
+					view.setEditable(false);
+					view.lockToolbar(true);
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.removeParameter("documentid");
+					navig.removeParameter("ownertypeid");
+					navig.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(navig);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o anexo pedido."), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
+
+		else if(documentId.equalsIgnoreCase("new")){
 
 			if(hasPermissions){
 				Document doc = new Document();

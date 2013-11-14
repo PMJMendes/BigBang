@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -142,22 +143,25 @@ public class ReceiveQuote
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mobjMessage.mobjDocOps != null )
-			mobjMessage.mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+    	if ( mobjMessage != null )
+    	{
+			if ( mobjMessage.mobjDocOps != null )
+				mobjMessage.mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
 
-		if ( mobjMessage.mstrEmailID != null )
-		{
-			mbFromEmail = true;
-			try
+			if ( mobjMessage.mstrEmailID != null )
 			{
-				lobjItem = MailConnector.DoGetItem(mobjMessage.mstrEmailID);
-				mobjMessage.mstrSubject = lobjItem.getSubject();
-				mobjMessage.mstrBody = lobjItem.getBody().toString();
-				mstrNewEmailID = MailConnector.DoProcessItem(mobjMessage.mstrEmailID).getId().getUniqueId();
-			}
-			catch (Throwable e)
-			{
-				throw new JewelPetriException(e.getMessage(), e);
+				mbFromEmail = true;
+				try
+				{
+					lobjItem = MailConnector.DoGetItem(mobjMessage.mstrEmailID);
+					mobjMessage.mstrSubject = lobjItem.getSubject();
+					mobjMessage.mstrBody = lobjItem.getBody().toString();
+					mstrNewEmailID = MailConnector.DoProcessItem(mobjMessage.mstrEmailID, GetProcess().GetDataKey(), new Date()).get("_");
+				}
+				catch (Throwable e)
+				{
+					throw new JewelPetriException(e.getMessage(), e);
+				}
 			}
 		}
 	}
@@ -168,7 +172,8 @@ public class ReceiveQuote
 
 		lstrResult = new StringBuilder("A informação será retirada.");
 
-		if ( mbFromEmail )
+		if ( mstrNewEmailID != null )
+//		if ( mbIsEmail )
 			lstrResult.append(" O email recebido será re-disponibilizado para outra utilização.");
 
 		if ( mobjMessage.mobjDocOps != null )
@@ -183,7 +188,8 @@ public class ReceiveQuote
 
 		lstrResult = new StringBuilder("A informação foi retirada.");
 
-		if ( mbFromEmail )
+		if ( mstrNewEmailID != null )
+//		if ( mbIsEmail )
 			lstrResult.append(" O email recebido foi re-disponibilizado para outra utilização.");
 
 		if ( mobjMessage.mobjDocOps != null )
@@ -258,11 +264,12 @@ public class ReceiveQuote
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mbFromEmail )
+		if ( mstrNewEmailID != null )
+//		if ( mbFromEmail )
 		{
 			try
 			{
-				MailConnector.DoUnprocessItem(mstrNewEmailID);
+				MailConnector.DoUnprocessItem(/*mobjMessage.mstrEmailID*/mstrNewEmailID/*, mobjMessage.mbFromSent*/);
 			}
 			catch (Throwable e)
 			{

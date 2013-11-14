@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface.presenter;
 
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Message.Attachment;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -92,24 +93,48 @@ HasValue<Message> {
 			public void onSelectionChanged(SelectionChangedEvent event) {
 
 				if(view.getEmailList().getSelected().size() > 0){
-					service.getItem(((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue().id, new BigBangAsyncCallback<ExchangeItem>() {
+					ExchangeItemStub stub = ((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue();
+					if ( stub.isFolder )
+					{
+						view.clear();
+						view.clearList();
+						view.enableGetAll(false);
+						view.enableRefresh(false);
+						
+						service.getFolder(stub.id, new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
+							@Override
+							public void onResponseSuccess(ExchangeItemStub[] result) {
+								for(int i=0; i<result.length; i++){
+									view.addEmailEntry(result[i]);
+								}
+								view.enableGetAll(true);
+								view.enableRefresh(true);
+							}
+							
+							public void onResponseFailure(Throwable caught) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível o conteúdo da pasta."), TYPE.ERROR_NOTIFICATION));
+								view.enableRefresh(true);
+							};
+						});
+					}
+					else
+					{
+						service.getItem(stub.id, new BigBangAsyncCallback<ExchangeItem>() {
 
+							@Override
+							public void onResponseSuccess(ExchangeItem result) {
+								view.getForm().setValue(result);
+								view.setAttachments(result.attachments);
+							}
 
-						@Override
-						public void onResponseSuccess(ExchangeItem result) {
-							view.getForm().setValue(result);
-							view.setAttachments(result.attachments);
-						}
-
-						@Override
-						public void onResponseFailure(Throwable caught) {
-							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o e-mail."), TYPE.ERROR_NOTIFICATION));
-						};
-					});
-
+							@Override
+							public void onResponseFailure(Throwable caught) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o e-mail."), TYPE.ERROR_NOTIFICATION));
+							};
+						});
+					}
 				}
-
 			}
 		});
 
@@ -126,7 +151,7 @@ HasValue<Message> {
 					Attachment[] checked = view.getChecked();
 
 					for(int i = 0; i<checked.length; i++){
-						if(checked[i].docTypeId == null || checked[i].name == null){
+						if( checked[i].promote && (checked[i].docTypeId == null || checked[i].name == null) ){
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Todos os anexos a promover para documento devem ter nome e tipo."), TYPE.ALERT_NOTIFICATION));
 							return;
 						}
@@ -153,7 +178,7 @@ HasValue<Message> {
 		view.enableGetAll(false);
 		view.enableRefresh(false);
 		
-		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItems(false, new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
 			public void onResponseSuccess(ExchangeItemStub[] result) {
@@ -180,7 +205,7 @@ HasValue<Message> {
 		view.enableGetAll(false);
 		view.enableRefresh(false);
 		
-		service.getItemsAll(new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItemsAll(false, new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
 			public void onResponseSuccess(ExchangeItemStub[] result) {
@@ -232,6 +257,8 @@ HasValue<Message> {
 		newMessage.kind = Message.Kind.EMAIL;
 		newMessage.text = null;
 		newMessage.attachments = view.getChecked();
+		newMessage.direction = ( view.getForm().getValue().isFromMe ?
+				ConversationStub.Direction.OUTGOING : ConversationStub.Direction.INCOMING );
 
 		return newMessage;
 	}

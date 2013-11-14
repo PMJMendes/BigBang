@@ -1,12 +1,18 @@
 package com.premiumminds.BigBang.Jewel.Operations.Conversation;
 
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
@@ -14,7 +20,6 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
@@ -30,7 +35,6 @@ public abstract class CreateConversationBase
 	private static final long serialVersionUID = 1L;
 
 	public ConversationData mobjData;
-	private String mstrNewEmailID;
 
 	public CreateConversationBase(UUID pidProcess)
 	{
@@ -73,6 +77,7 @@ public abstract class CreateConversationBase
 		UUID lidContainer;
 		boolean b;
 		AgendaItem lobjAgendaItem;
+		Map<String, String> larrAttTrans;
 
 		if ( (mobjData.marrMessages == null) || (mobjData.marrMessages.length != 1) )
 			throw new JewelPetriException("Erro: Tem que indicar a mensagem inicial.");
@@ -204,15 +209,12 @@ public abstract class CreateConversationBase
 			{
 				for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ )
 				{
-					if ( Constants.MsgDir_Incoming.equals(mobjData.midStartDir) &&
-							(mobjData.marrMessages[0].marrAttachments[i].midDocument == null) &&
+					if ( (mobjData.marrMessages[0].marrAttachments[i].midDocument == null) &&
+							(mobjData.marrMessages[0].mobjDocOps != null) &&
 							(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null) &&
 							(mobjData.marrMessages[0].mobjDocOps.marrCreate2.length > i) &&
 							(mobjData.marrMessages[0].mobjDocOps.marrCreate2[i] != null) )
 						mobjData.marrMessages[0].marrAttachments[i].midDocument = mobjData.marrMessages[0].mobjDocOps.marrCreate2[i].mid;
-
-					if ( mobjData.marrMessages[0].marrAttachments[i].midDocument == null )
-						continue;
 
 					mobjData.marrMessages[0].marrAttachments[i].midOwner = lobjMessage.getKey();
 					lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -263,7 +265,7 @@ public abstract class CreateConversationBase
 	    	}
 		}
 
-		if ( Constants.MsgDir_Outgoing.equals(mobjData.midStartDir) )
+		if ( (mobjData.marrMessages[0].mstrEmailID == null) && Constants.MsgDir_Outgoing.equals(mobjData.midStartDir) )
 			TriggerOp(new ExternInitialSend(mobjData.midProcess), pdb);
 
 		if ( mobjData.mdtDueDate == null )
@@ -273,9 +275,25 @@ public abstract class CreateConversationBase
 		{
 			try
 			{
-				if ( Constants.MsgDir_Incoming.equals(mobjData.marrMessages[0].midDirection) )
+				if ( mobjData.marrMessages[0].mstrEmailID != null )
 				{
-					mstrNewEmailID = MailConnector.DoProcessItem(mobjData.marrMessages[0].mstrEmailID).getId().getUniqueId();
+					larrAttTrans = MailConnector.DoProcessItem(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mid,
+							mobjData.marrMessages[0].mdtDate);
+					mobjData.marrMessages[0].mstrEmailID = larrAttTrans.get("_");
+					mobjData.marrMessages[0].mstrBody = null;
+					mobjData.marrMessages[0].ToObject(lobjMessage);
+					lobjMessage.SaveToDb(pdb);
+
+					if ( mobjData.marrMessages[0].marrAttachments != null )
+					{
+						for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ )
+						{
+							mobjData.marrMessages[0].marrAttachments[i].mstrAttId = larrAttTrans.get(mobjData.marrMessages[0].marrAttachments[i].mstrAttId);
+							lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrMessages[0].marrAttachments[i].mid);
+							mobjData.marrMessages[0].marrAttachments[i].ToObject(lobjAttachment);
+							lobjAttachment.SaveToDb(pdb);
+						}
+					}
 				}
 				else
 				{
@@ -291,7 +309,7 @@ public abstract class CreateConversationBase
 
 	public boolean LocalCanUndo()
 	{
-		return Constants.MsgDir_Incoming.equals(mobjData.marrMessages[0].midDirection);
+		return (mobjData.marrMessages[0].mstrEmailID != null);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -300,7 +318,7 @@ public abstract class CreateConversationBase
 
 		lstrResult = new StringBuilder("O processo criado será eliminado.");
 
-		if ( mobjData.marrMessages[0].mbIsEmail && Constants.MsgDir_Incoming.equals(mobjData.marrMessages[0].midDirection) )
+		if ( mobjData.marrMessages[0].mbIsEmail && (mobjData.marrMessages[0].mstrEmailID != null) /*&& Constants.MsgDir_Incoming.equals(mobjData.marrMessages[0].midDirection)*/ )
 			lstrResult.append(" O email recebido será re-disponibilizado para outra utilização.");
 
 		if ( mobjData.marrMessages[0].mobjDocOps != null )
@@ -318,7 +336,7 @@ public abstract class CreateConversationBase
 
 		lstrResult = new StringBuilder("O processo criado foi eliminado.");
 
-		if ( mobjData.marrMessages[0].mbIsEmail && Constants.MsgDir_Incoming.equals(mobjData.marrMessages[0].midDirection) )
+		if ( mobjData.marrMessages[0].mbIsEmail && (mobjData.marrMessages[0].mstrEmailID != null) /*&& Constants.MsgDir_Incoming.equals(mobjData.marrMessages[0].midDirection)*/ )
 			lstrResult.append(" O email recebido foi re-disponibilizado para outra utilização.");
 
 		if ( mobjData.marrMessages[0].mobjDocOps != null )
@@ -333,30 +351,107 @@ public abstract class CreateConversationBase
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		HashMap<UUID, AgendaItem> larrItems;
+		ResultSet lrs;
+		IEntity lrefAux;
+		ObjectBase lobjAgendaProc;
+		MessageAttachment lobjAttachment;
+		MessageAddress lobjAddr;
+		Message lobjMsg;
+		Conversation lobjConv;
+		int i, j;
 		UUID lidContainer;
 		ExternAbortProcess lopEAP;
 
+		larrItems = new HashMap<UUID, AgendaItem>();
+		lrs = null;
 		try
 		{
-			lidContainer = Conversation.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid).getParentContainer();
+			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
+			lrs = lrefAux.SelectByMembers(pdb, new int[] {1}, new java.lang.Object[] {mobjData.midProcess}, new int[0]);
+			while ( lrs.next() )
+			{
+				lobjAgendaProc = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+				larrItems.put((UUID)lobjAgendaProc.getAt(0),
+						AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgendaProc.getAt(0)));
+			}
+			lrs.close();
 		}
-		catch (BigBangJewelException e)
+		catch (Throwable e)
+		{
+			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		try
+		{
+			for ( AgendaItem lobjItem: larrItems.values() )
+			{
+				lobjItem.ClearData(pdb);
+				lobjItem.getDefinition().Delete(pdb, lobjItem.getKey());
+			}
+		}
+		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mobjData.marrMessages[0].mobjDocOps != null )
-			mobjData.marrMessages[0].mobjDocOps.UndoSubOp(pdb, lidContainer);
+		lidContainer = null;
+		try
+		{
+			if ( mobjData != null )
+			{
+				lobjConv = Conversation.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+				lidContainer = lobjConv.getParentContainer();
+				if ( mobjData.marrMessages != null )
+				{
+					for ( i = 0; i < mobjData.marrMessages.length; i++ )
+					{
+						lobjMsg = Message.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrMessages[i].mid);
+						if ( mobjData.marrMessages[i].marrAttachments != null )
+						{
+							for ( j = 0; j < mobjData.marrMessages[i].marrAttachments.length; j++ )
+							{
+								lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(),
+										mobjData.marrMessages[i].marrAttachments[j].mid);
+								lobjAttachment.getDefinition().Delete(pdb, lobjAttachment.getKey());
+							}
+						}
+						if ( mobjData.marrMessages[i].marrAddresses != null )
+						{
+							for ( j = 0; j < mobjData.marrMessages[i].marrAddresses.length; j++ )
+							{
+								lobjAddr = MessageAddress.GetInstance(Engine.getCurrentNameSpace(),
+										mobjData.marrMessages[i].marrAddresses[j].mid);
+								lobjAddr.getDefinition().Delete(pdb, lobjAddr.getKey());
+							}
+						}
+						lobjMsg.getDefinition().Delete(pdb, lobjMsg.getKey());
+					}
+				}
+				lobjConv.getDefinition().Delete(pdb, lobjConv.getKey());
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
-		if ( mobjData.marrMessages[0].mobjContactOps != null )
-			mobjData.marrMessages[0].mobjContactOps.UndoSubOp(pdb, lidContainer);
+		if ( lidContainer != null )
+		{
+			if ( mobjData.marrMessages[0].mobjDocOps != null )
+				mobjData.marrMessages[0].mobjDocOps.UndoSubOp(pdb, lidContainer);
+
+			if ( mobjData.marrMessages[0].mobjContactOps != null )
+				mobjData.marrMessages[0].mobjContactOps.UndoSubOp(pdb, lidContainer);
+		}
 
 		if (mobjData.mdtDueDate == null )
 			PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess).Restart(pdb);
+		//Needed to allow the ExternAbortProcess trigger to run
 
 		lopEAP = new ExternAbortProcess(mobjData.midProcess);
-		lopEAP.mobjData = mobjData;
-		lopEAP.mstrReviveEmailID = mstrNewEmailID;
+		lopEAP.mstrReviveEmailID = mobjData.marrMessages[0].mstrEmailID;
 
 		TriggerOp(lopEAP, pdb);
 	}

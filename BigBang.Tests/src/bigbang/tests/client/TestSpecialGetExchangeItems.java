@@ -26,7 +26,7 @@ public class TestSpecialGetExchangeItems
 			}
 		};
 
-		Services.exchangeService.getItems(callback);
+		Services.exchangeService.getItems(false, callback);
 	}
 
 	private static void DoStep2()

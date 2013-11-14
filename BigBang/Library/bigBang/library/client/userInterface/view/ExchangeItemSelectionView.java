@@ -2,7 +2,6 @@ package bigBang.library.client.userInterface.view;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Message;
-import bigBang.definitions.shared.Message.Attachment;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -30,7 +29,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -185,7 +183,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		protected Label timestamp;
 		protected Image hasAttachments;
 		protected Label subject;
-		protected HTML bodyPreview;
+		protected Label bodyPreview;
 		protected boolean initialized = false;
 
 		public EmailEntry(ExchangeItemStub value) {
@@ -214,7 +212,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 				subject = getFormatedLabel();
 				subject.getElement().getStyle().setFontSize(11, Unit.PX);
 
-				bodyPreview = new HTML();
+				bodyPreview = new Label();
 				bodyPreview.getElement().getStyle().setFontSize(10, Unit.PX);
 				bodyPreview.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 
@@ -234,9 +232,20 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 			timestamp.setText(item.timestamp);
 			subject.setText(item.subject);
 			bodyPreview.setWordWrap(true);
-			bodyPreview.setHTML(item.bodyPreview);
+			bodyPreview.setText(item.bodyPreview);
 
 			setMetaData(new String[]{item.from, item.subject, item.timestamp});
+		}
+
+		@Override
+		public void setSelected(boolean selected, boolean fireEvents) {
+			super.setSelected(selected, fireEvents);
+			if(!this.initialized){return;}
+			if(selected){
+				this.bodyPreview.getElement().getStyle().setColor("white");
+			}else{
+				this.bodyPreview.getElement().getStyle().setColor("gray");
+			}
 		}
 	}
 
@@ -391,23 +400,14 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 
 	@Override
 	public Message.Attachment[] getChecked() {
-
-
-		int ammount = attachments.getChecked().size();
-		bigBang.definitions.shared.Message.Attachment[] attachs = new Message.Attachment[ammount];
-		int counter = 0;
-
-		Attachment temp;
+		bigBang.definitions.shared.Message.Attachment[] attachs = new Message.Attachment[attachments.size()];
 
 		for(int i = 0; i<attachments.size(); i++){
-			if(attachments.get(i).isChecked()){
-				temp = new Message.Attachment();
-				temp.docTypeId = ((AttachmentEntry)attachments.get(i)).getDocType().getValue();
-				temp.name =((AttachmentEntry)attachments.get(i)).getDocName().getValue();
-				temp.attachmentId = ((AttachmentEntry)attachments.get(i)).getValue().id;
-				attachs[counter] = temp;
-				counter++;
-			}
+			attachs[i] = new Message.Attachment();
+			attachs[i].docTypeId = ((AttachmentEntry)attachments.get(i)).getDocType().getValue();
+			attachs[i].name =((AttachmentEntry)attachments.get(i)).getDocName().getValue();
+			attachs[i].attachmentId = ((AttachmentEntry)attachments.get(i)).getValue().id;
+			attachs[i].promote = attachments.get(i).isChecked();
 		}
 
 		return attachs;
