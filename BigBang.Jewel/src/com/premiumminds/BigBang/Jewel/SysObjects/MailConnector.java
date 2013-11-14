@@ -221,7 +221,7 @@ public class MailConnector
 	{
 		try
 		{
-			return Folder.bind(psvc, /*new FolderId(*/WellKnownFolderName.MsgFolderRoot/*, GetMailbox(psvc))*/);
+			return Folder.bind(psvc, WellKnownFolderName.MsgFolderRoot);
 		}
 		catch (Throwable e)
 		{
@@ -234,7 +234,7 @@ public class MailConnector
 	{
 		try
 		{
-			return Folder.bind(psvc, /*new FolderId(*/WellKnownFolderName.Inbox/*, GetMailbox(psvc))*/);
+			return Folder.bind(psvc, WellKnownFolderName.Inbox);
 		}
 		catch (Throwable e)
 		{
@@ -247,7 +247,7 @@ public class MailConnector
 	{
 		try
 		{
-			return Folder.bind(psvc, /*new FolderId(*/WellKnownFolderName.SentItems/*, GetMailbox(psvc))*/);
+			return Folder.bind(psvc, WellKnownFolderName.SentItems);
 		}
 		catch (Throwable e)
 		{
