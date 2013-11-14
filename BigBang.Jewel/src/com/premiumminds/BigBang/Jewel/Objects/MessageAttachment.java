@@ -15,8 +15,9 @@ public class MessageAttachment
 {
 	public static class I
 	{
-		public static int OWNER    = 0;
-		public static int DOCUMENT = 1;
+		public static int OWNER        = 0;
+		public static int DOCUMENT     = 1;
+		public static int ATTACHMENTID = 2;
 	}
 
     public static MessageAttachment GetInstance(UUID pidNameSpace, UUID pidKey)

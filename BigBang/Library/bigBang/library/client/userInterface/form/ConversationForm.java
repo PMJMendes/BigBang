@@ -112,6 +112,8 @@ public class ConversationForm extends FormView<Conversation> implements Document
 					params.setParameter("ownerid", doc.ownerId);
 					params.setParameter("ownertypeid",doc.ownerTypeId);
 					params.setParameter("documentid", doc.id);
+					params.setParameter("emailId", doc.exchangeEmailId);
+					params.setParameter("attId", doc.exchangeAttId);
 					popup = new PopupPanel();
 
 					documentViewPresenter.setParameters(params);
@@ -168,36 +170,55 @@ public class ConversationForm extends FormView<Conversation> implements Document
 	}
 
 	private void setAttachments(Attachment[] info) {
+		boolean b = true;
 		
 		attachments.clear();
 		
 		if(info.length > 0){
 
 			for(Message.Attachment att : info){
-				documentBroker.registerClient(this, att.ownerId);
-				documentBroker.getDocument(att.ownerId, att.docId, new ResponseHandler<Document>() {
-
-					@Override
-					public void onResponse(Document response) {
-						addAttachment(new DocumentsList.Entry(response));
+				if ( att.ownerId != null ){
+					if ( b ){
+						documentBroker.registerClient(this, att.ownerId);
+						b = false;
 					}
 
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						return;
+					if ( att.docId != null ){
+						documentBroker.getDocument(att.ownerId, att.docId, new ResponseHandler<Document>() {
+		
+							@Override
+							public void onResponse(Document response) {
+								addAttachment(new DocumentsList.Entry(response));
+							}
+		
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								return;
+							}
+						});
 					}
-				});
+				}else{
+					Document doc = new Document();
+					doc.name = att.name;
+					doc.docTypeLabel = "";
+					doc.creationDate = att.date;
+					doc.exchangeAttId = att.attachmentId;
+					doc.exchangeEmailId = att.emailId;
+					addAttachment(new DocumentsList.Entry(doc));
+				}
 			}
 		}		
 	}
 
 	protected void addAttachment(DocumentsList.Entry entry) {
-		for(ListEntry<Document>  document: attachments){
-			if(document.getValue().id.equalsIgnoreCase(entry.getValue().id)){
-				return;
+		if(entry.getValue().id != null){ 
+			for(ListEntry<Document>  document: attachments){
+				if(document.getValue().id.equalsIgnoreCase(entry.getValue().id)){
+					return;
+				}
 			}
 		}
-		
+
 		attachments.add(entry);		
 	}
 

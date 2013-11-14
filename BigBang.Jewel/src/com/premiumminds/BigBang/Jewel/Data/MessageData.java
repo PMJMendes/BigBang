@@ -44,6 +44,7 @@ public class MessageData
 		midDirection =  (UUID)pobjSource.getAt(Message.I.DIRECTION);
 		mbIsEmail =  (Boolean)pobjSource.getAt(Message.I.ISEMAIL);
 		mdtDate =  (Timestamp)pobjSource.getAt(Message.I.DATE);
+		mstrEmailID = (String)pobjSource.getAt(Message.I.EMAILID);
 		mstrBody = ((Message)pobjSource).getText();
 	}
 
@@ -58,6 +59,7 @@ public class MessageData
 			pobjDest.setAt(Message.I.DIRECTION, midDirection);
 			pobjDest.setAt(Message.I.ISEMAIL,   mbIsEmail);
 			pobjDest.setAt(Message.I.DATE,      mdtDate);
+			pobjDest.setAt(Message.I.EMAILID,   mstrEmailID);
 			((Message)pobjDest).setText(mstrBody);
 		}
 		catch (Throwable e)
@@ -106,6 +108,11 @@ public class MessageData
 			pstrBuilder.append(pstrLineBreak).append("Anexos:").append(pstrLineBreak);
 			for ( i = 0; i < marrAttachments.length; i++ )
 				marrAttachments[i].Describe(pstrBuilder, pstrLineBreak);
+		}
+
+		if ( mstrEmailID !=  null )
+		{
+			pstrBuilder.append(pstrLineBreak).append("Informação adicional arquivada no servidor de Email.").append(pstrLineBreak);
 		}
 	}
 }

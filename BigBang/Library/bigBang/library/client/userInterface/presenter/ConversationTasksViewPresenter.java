@@ -258,12 +258,12 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(Conversation response) {
 					conversation = response;
 					resetView();
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem enviada com sucesso"), TYPE.TRAY_NOTIFICATION));
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem arquivada com sucesso"), TYPE.TRAY_NOTIFICATION));
 				}
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a mensagem."), TYPE.ALERT_NOTIFICATION));					
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem."), TYPE.ALERT_NOTIFICATION));					
 				}
 			});
 		}
@@ -279,12 +279,12 @@ public class ConversationTasksViewPresenter implements ViewPresenter, HasOperati
 				public void onResponse(Conversation response) {
 					conversation = response;
 					resetView();
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem enviada com sucesso"), TYPE.TRAY_NOTIFICATION));
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem arquivada com sucesso"), TYPE.TRAY_NOTIFICATION));
 				}
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível repetir a mensagem."), TYPE.ALERT_NOTIFICATION));					
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem."), TYPE.ALERT_NOTIFICATION));					
 				}
 			});
 		}

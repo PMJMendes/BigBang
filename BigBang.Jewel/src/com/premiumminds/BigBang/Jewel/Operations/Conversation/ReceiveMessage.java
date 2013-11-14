@@ -3,6 +3,7 @@ package com.premiumminds.BigBang.Jewel.Operations.Conversation;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -31,7 +32,7 @@ public class ReceiveMessage
 	public Timestamp mdtDueDate;
 	private UUID midPrevDir;
 	private Timestamp mdtPrevLimit;
-	private String mstrNewEmailID;
+//	private String mstrNewEmailID;
 
 	public ReceiveMessage(UUID pidProcess)
 	{
@@ -85,6 +86,7 @@ public class ReceiveMessage
 		MessageAttachment lobjAttachment;
 		int i, j, k;
 		boolean b;
+		Map<String, String> larrAttTrans;
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 
@@ -240,13 +242,11 @@ public class ReceiveMessage
 				for ( i = 0; i < mobjData.marrAttachments.length; i++ )
 				{
 					if ( (mobjData.marrAttachments[i].midDocument == null) &&
+							(mobjData.mobjDocOps != null) &&
 							(mobjData.mobjDocOps.marrCreate2 != null) &&
 							(mobjData.mobjDocOps.marrCreate2.length > i) &&
 							(mobjData.mobjDocOps.marrCreate2[i] != null) )
 						mobjData.marrAttachments[i].midDocument = mobjData.mobjDocOps.marrCreate2[i].mid;
-
-					if ( mobjData.marrAttachments[i].midDocument == null )
-						continue;
 
 					mobjData.marrAttachments[i].midOwner = lobjMessage.getKey();
 					lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -261,11 +261,26 @@ public class ReceiveMessage
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mobjData.mbIsEmail )
+		if ( mobjData.mstrEmailID != null )
 		{
 			try
 			{
-				mstrNewEmailID = MailConnector.DoProcessItem(mobjData.mstrEmailID).getId().getUniqueId();
+				larrAttTrans = MailConnector.DoProcessItem(mobjData.mstrEmailID, mobjData.mid, mobjData.mdtDate);
+				mobjData.mstrEmailID = larrAttTrans.get("_");
+				mobjData.mstrBody = null;
+				mobjData.ToObject(lobjMessage);
+				lobjMessage.SaveToDb(pdb);
+
+				if ( mobjData.marrAttachments != null )
+				{
+					for ( i = 0; i < mobjData.marrAttachments.length; i++ )
+					{
+						mobjData.marrAttachments[i].mstrAttId = larrAttTrans.get(mobjData.marrAttachments[i].mstrAttId);
+						lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrAttachments[i].mid);
+						mobjData.marrAttachments[i].ToObject(lobjAttachment);
+						lobjAttachment.SaveToDb(pdb);
+					}
+				}
 			}
 			catch (Throwable e)
 			{
@@ -280,7 +295,8 @@ public class ReceiveMessage
 
 		lstrResult = new StringBuilder("A informação será retirada.");
 
-		if ( mstrNewEmailID != null )
+		if ( mobjData.mstrEmailID != null )
+//		if ( mobjData.mbIsEmail )
 			lstrResult.append(" O email recebido será re-disponibilizado para outra utilização.");
 
 		if ( mobjData.mobjDocOps != null )
@@ -297,7 +313,8 @@ public class ReceiveMessage
 
 		lstrResult = new StringBuilder("A informação foi retirada.");
 
-		if ( mstrNewEmailID != null )
+		if ( mobjData.mstrEmailID != null )
+//		if ( mobjData.mbIsEmail )
 			lstrResult.append(" O email recebido foi re-disponibilizado para outra utilização.");
 
 		if ( mobjData.mobjDocOps != null )
@@ -419,11 +436,12 @@ public class ReceiveMessage
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mstrNewEmailID != null )
+		if ( mobjData.mstrEmailID != null )
+//		if ( mobjData.mbIsEmail )
 		{
 			try
 			{
-				MailConnector.DoUnprocessItem(mstrNewEmailID);
+				MailConnector.DoUnprocessItem(mobjData.mstrEmailID);
 			}
 			catch (Throwable e)
 			{

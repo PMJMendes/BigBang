@@ -13,6 +13,7 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
@@ -260,13 +261,15 @@ public class TotalLossServiceImpl
 		lopCC.mobjData.mstrSubject = conversation.subject;
 		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
 		lopCC.mobjData.midProcess = null;
-		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
-		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCC.mobjData.midStartDir = ( ConversationStub.Direction.OUTGOING.equals(conversation.startDir) ?
+				Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming ); // On NULL, default is INCOMING
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : ( ConversationStub.Direction.OUTGOING.equals(conversation.startDir) ?
+				Constants.MsgDir_Incoming : Constants.MsgDir_Outgoing ) );
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
-				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), Constants.MsgDir_Incoming);
+				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), lopCC.mobjData.midStartDir);
 
 		try
 		{

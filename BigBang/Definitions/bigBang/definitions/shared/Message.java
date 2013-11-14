@@ -23,8 +23,11 @@ public class Message
 		// For incoming
 		public String name;
 		public String attachmentId; //Outlook ID
+		public String emailId; //Outlook email ID, *mostly* unused
 		public String docTypeId;
 		public String storageId;
+		public String date;
+		public boolean promote; //Indicates whether the attachment should be promoted to a document
 
 		// For outgoing or display
 		public String docId;

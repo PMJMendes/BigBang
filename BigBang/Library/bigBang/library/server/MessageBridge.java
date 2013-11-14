@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
-import microsoft.exchange.webservices.data.EmailAddress;
-import microsoft.exchange.webservices.data.EmailMessage;
-import microsoft.exchange.webservices.data.Item;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -232,9 +229,7 @@ public class MessageBridge
 		throws BigBangException
 	{
 		MessageData lobjResult;
-		Item lobjItem;
-		EmailAddress lobjFrom;
-		UUID lidFile;
+		MessageData lobjAux;
 		int i;
 
 		lobjResult = new MessageData();
@@ -249,7 +244,7 @@ public class MessageBridge
 		lobjResult.mbIsEmail = Message.Kind.EMAIL.equals(pobjMessage.kind);
 		lobjResult.midDirection = ( pobjMessage.direction == null ? pidDefaultDir :
 				(ConversationStub.Direction.OUTGOING.equals(pobjMessage.direction) ? Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming) );
-		if ( lobjResult.mbIsEmail && Constants.MsgDir_Incoming.equals(lobjResult.midDirection) )
+		if ( lobjResult.mbIsEmail )
 		{
 			lobjResult.mstrEmailID = pobjMessage.emailId;
 			if ( lobjResult.mstrEmailID == null )
@@ -259,34 +254,19 @@ public class MessageBridge
 			}
 			else
 			{
-				lobjFrom = null;
 				try
 				{
-					lobjItem = MailConnector.DoGetItem(lobjResult.mstrEmailID);
-					lobjResult.mstrSubject = lobjItem.getSubject();
-					if ( (lobjResult.mstrSubject != null) && (lobjResult.mstrSubject.length() > 250) )
-						lobjResult.mstrSubject = lobjResult.mstrSubject.substring(0, 250);
-					lobjResult.mstrBody = lobjItem.getBody().toString();
-					if ( lobjItem instanceof EmailMessage )
-					{
-						lobjFrom = ((EmailMessage)lobjItem).getFrom();
-						lobjResult.marrAddresses = new MessageAddressData[1];
-						lobjResult.marrAddresses[0] = new MessageAddressData();
-						lobjResult.marrAddresses[0].mid = null;
-						lobjResult.marrAddresses[0].mstrAddress = lobjFrom.getAddress();
-						lobjResult.marrAddresses[0].midOwner = lobjResult.mid;
-						lobjResult.marrAddresses[0].midUsage = Constants.UsageID_From;
-						lobjResult.marrAddresses[0].midUser = null;
-						lobjResult.marrAddresses[0].midInfo = null;
-						lobjResult.marrAddresses[0].mstrDisplay = lobjFrom.getName();
-					}
-					else
-						lobjResult.marrAddresses = null;
+					lobjAux = MailConnector.GetAsData(lobjResult.mstrEmailID);
 				}
 				catch (Throwable e)
 				{
 					throw new BigBangException(e.getMessage(), e);
 				}
+				lobjResult.mstrSubject = lobjAux.mstrSubject;
+				if ( (lobjResult.mstrSubject != null) && (lobjResult.mstrSubject.length() > 250) )
+					lobjResult.mstrSubject = lobjResult.mstrSubject.substring(0, 250);
+				lobjResult.mstrBody = lobjAux.mstrBody;
+				lobjResult.marrAddresses = lobjAux.marrAddresses;
 			}
 		}
 		else
@@ -318,74 +298,24 @@ public class MessageBridge
 			}
 		}
 
-		lobjResult.mobjContactOps = handleAddresses(lobjResult.marrAddresses, pidParentType, pidParentID);
-
-		if ( Constants.MsgDir_Incoming.equals(lobjResult.midDirection) )
+		if ( !lobjResult.mbIsEmail || (pobjMessage.attachments == null) )
 		{
-			if ( !lobjResult.mbIsEmail || (pobjMessage.attachments == null) )
-			{
-				lobjResult.marrAttachments = null;
-				lobjResult.mobjDocOps = null;
-			}
-			else
-			{
-				lobjResult.marrAttachments = new MessageAttachmentData[pobjMessage.attachments.length];
-
-				lobjResult.mobjDocOps = new DocOps();
-				lobjResult.mobjDocOps.marrModify2 = null;
-				lobjResult.mobjDocOps.marrDelete2 = null;
-				lobjResult.mobjDocOps.marrCreate2 = new DocDataLight[pobjMessage.attachments.length];
-				for ( i = 0; i < pobjMessage.attachments.length; i++ )
-				{
-					lobjResult.marrAttachments[i] = new MessageAttachmentData();
-
-					lobjResult.mobjDocOps.marrCreate2[i] = new DocDataLight();
-					lobjResult.mobjDocOps.marrCreate2[i].mstrName = pobjMessage.attachments[i].name;
-					lobjResult.mobjDocOps.marrCreate2[i].midOwnerType = pidParentType;
-					lobjResult.mobjDocOps.marrCreate2[i].midOwnerId = null;
-					lobjResult.mobjDocOps.marrCreate2[i].midDocType = UUID.fromString(pobjMessage.attachments[i].docTypeId);
-					lobjResult.mobjDocOps.marrCreate2[i].mstrText = null;
-
-					if ( pobjMessage.attachments[i].storageId != null )
-					{
-						lidFile = pobjMessage.attachments[i].storageId == null ? null :
-								UUID.fromString(pobjMessage.attachments[i].storageId);
-						lobjResult.mobjDocOps.marrCreate2[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
-						FileServiceImpl.GetFileXferStorage().remove(lidFile);
-					}
-					else if ( pobjMessage.attachments[i].attachmentId != null )
-					{
-						try
-						{
-							lobjResult.mobjDocOps.marrCreate2[i].mobjFile = MailConnector.DoGetAttachment(lobjResult.mstrEmailID,
-									pobjMessage.attachments[i].attachmentId).GetVarData();
-						}
-						catch (Throwable e)
-						{
-							throw new BigBangException(e.getMessage(), e);
-						}
-					}
-
-					lobjResult.mobjDocOps.marrCreate2[i].marrInfo = null;
-				}
-			}
+			lobjResult.marrAttachments = null;
 		}
 		else
 		{
-			lobjResult.mobjDocOps = null;
-
-			if ( pobjMessage.attachments == null )
-				lobjResult.marrAttachments = null;
-			else
+			lobjResult.marrAttachments = new MessageAttachmentData[pobjMessage.attachments.length];
+			for ( i = 0; i < pobjMessage.attachments.length; i++ )
 			{
-				lobjResult.marrAttachments = new MessageAttachmentData[pobjMessage.attachments.length];
-				for ( i = 0; i < lobjResult.marrAttachments.length; i++ )
-				{
-					lobjResult.marrAttachments[i] = new MessageAttachmentData();
-					lobjResult.marrAttachments[i].midDocument = UUID.fromString(pobjMessage.attachments[i].docId);
-				}
+				lobjResult.marrAttachments[i] = new MessageAttachmentData();
+				lobjResult.marrAttachments[i].mstrAttId = pobjMessage.attachments[i].attachmentId;
+				lobjResult.marrAttachments[i].midDocument = ( pobjMessage.attachments[i].docId == null ? null :
+						UUID.fromString(pobjMessage.attachments[i].docId) );
 			}
 		}
+
+		lobjResult.mobjContactOps = handleAddresses(lobjResult.marrAddresses, pidParentType, pidParentID);
+		lobjResult.mobjDocOps = handleAttachments(lobjResult, pobjMessage.attachments, pidParentType, pidParentID);
 
 		return lobjResult;
 	}
@@ -536,6 +466,78 @@ public class MessageBridge
 		lopResult.marrDelete = null;
 
 		return lopResult;
+	}
+
+	private static DocOps handleAttachments(MessageData pobjMsg, Message.Attachment[] parrAttachments, UUID pidParentType, UUID pidParentID)
+		throws BigBangException
+	{
+		DocOps lobjResult;
+		UUID lidFile;
+		int i, j;
+
+		if ( !pobjMsg.mbIsEmail || (parrAttachments == null) )
+		{
+			lobjResult = null;
+		}
+		else
+		{
+			j = 0;
+			for ( i = 0; i < parrAttachments.length; i++ )
+			{
+				if ( parrAttachments[i].promote )
+					j++;
+			}
+
+			if ( j == 0 )
+			{
+				lobjResult = null;
+			}
+			else
+			{
+				lobjResult = new DocOps();
+				lobjResult.marrModify2 = null;
+				lobjResult.marrDelete2 = null;
+				lobjResult.marrCreate2 = new DocDataLight[j];
+				j = 0;
+				for ( i = 0; i < parrAttachments.length; i++ )
+				{
+					if ( parrAttachments[i].promote )
+					{
+						lobjResult.marrCreate2[j] = new DocDataLight();
+						lobjResult.marrCreate2[j].mstrName = parrAttachments[i].name;
+						lobjResult.marrCreate2[j].midOwnerType = pidParentType;
+						lobjResult.marrCreate2[j].midOwnerId = pidParentID;
+						lobjResult.marrCreate2[j].midDocType = UUID.fromString(parrAttachments[i].docTypeId);
+						lobjResult.marrCreate2[j].mstrText = null;
+
+						if ( parrAttachments[i].storageId != null )
+						{
+							lidFile = UUID.fromString(parrAttachments[i].storageId);
+							lobjResult.marrCreate2[j].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
+							FileServiceImpl.GetFileXferStorage().remove(lidFile);
+						}
+						else if ( parrAttachments[i].attachmentId != null )
+						{
+							try
+							{
+								lobjResult.marrCreate2[j].mobjFile = MailConnector.DoGetAttachment(pobjMsg.mstrEmailID,
+										parrAttachments[i].attachmentId).GetVarData();
+							}
+							catch (Throwable e)
+							{
+								throw new BigBangException(e.getMessage(), e);
+							}
+						}
+
+						lobjResult.marrCreate2[j].marrInfo = null;
+
+						j++;
+					}
+				}
+			}
+		}
+
+		return lobjResult;
 	}
 
 	private static Contact[] getParentContacts(UUID pidParentType, UUID pidParentID)

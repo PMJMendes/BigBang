@@ -11,6 +11,7 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.CompositeFieldContainer;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
@@ -307,13 +308,15 @@ public class QuoteRequestServiceImpl
 		lopCC.mobjData.mstrSubject = conversation.subject;
 		lopCC.mobjData.midType = UUID.fromString(conversation.requestTypeId);
 		lopCC.mobjData.midProcess = null;
-		lopCC.mobjData.midStartDir = Constants.MsgDir_Incoming;
-		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Outgoing );
+		lopCC.mobjData.midStartDir = ( ConversationStub.Direction.OUTGOING.equals(conversation.startDir) ?
+				Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming ); // On NULL, default is INCOMING
+		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : ( ConversationStub.Direction.OUTGOING.equals(conversation.startDir) ?
+				Constants.MsgDir_Incoming : Constants.MsgDir_Outgoing ) );
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_QuoteRequest,
-				lobjQReq.getKey(), Constants.MsgDir_Incoming);
+				lobjQReq.getKey(), lopCC.mobjData.midStartDir);
 
 		try
 		{

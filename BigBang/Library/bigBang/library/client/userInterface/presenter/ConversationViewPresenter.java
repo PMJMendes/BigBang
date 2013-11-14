@@ -412,12 +412,12 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 					view.setHistoryOwner(conversation);
 					conversation = response;
 					resetView();
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem recebida com sucesso"), TYPE.TRAY_NOTIFICATION));					
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem arquivada com sucesso"), TYPE.TRAY_NOTIFICATION));					
 				}
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a mensagem."), TYPE.ALERT_NOTIFICATION));					
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem."), TYPE.ALERT_NOTIFICATION));					
 				}
 			});
 		}

@@ -80,7 +80,6 @@ public class ReceiveMessageFormField extends FormField<Message>{
 		from = new TextBoxFormField("De");
 		body = new RichTextAreaFormField("Corpo da Mensagem");
 		body.showToolbar(false);
-		attachList = new List<Message.Attachment>();
 		selectEmail = new Button("Seleccionar E-mail");
 		emailPanel.add(selectEmail);
 		emailPanel.add(from);

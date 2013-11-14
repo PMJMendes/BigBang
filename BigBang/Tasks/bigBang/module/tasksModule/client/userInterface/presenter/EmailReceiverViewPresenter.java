@@ -7,6 +7,7 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
+import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.Message.Attachment;
@@ -118,26 +119,50 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 			public void onSelectionChanged(SelectionChangedEvent event) {
 
 				if(view.getEmailList().getSelected().size() > 0){
-					service.getItem(((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue().id, new BigBangAsyncCallback<ExchangeItem>() {
+					ExchangeItemStub stub = ((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue();
+					if ( stub.isFolder )
+					{
+						view.clear();
+						view.clearList();
+						view.enableGetAll(false);
+						view.enableRefresh(false);
+						
+						service.getFolder(stub.id, new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
+							@Override
+							public void onResponseSuccess(ExchangeItemStub[] result) {
+								for(int i=0; i<result.length; i++){
+									view.addEmailEntry(result[i]);
+								}
+								view.enableGetAll(true);
+								view.enableRefresh(true);
+							}
+							
+							public void onResponseFailure(Throwable caught) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível o conteúdo da pasta."), TYPE.ERROR_NOTIFICATION));
+								view.enableRefresh(true);
+							};
+						});
+					}
+					else
+					{
+						service.getItem(stub.id, new BigBangAsyncCallback<ExchangeItem>() {
 
+							@Override
+							public void onResponseSuccess(ExchangeItem result) {
+								view.getForm().setValue(result);
+								view.setAttachments(result.attachments);
+								view.getMessageForm().setReadOnly(false);
+								view.enableAllToolbar();
+							}
 
-						@Override
-						public void onResponseSuccess(ExchangeItem result) {
-							view.getForm().setValue(result);
-							view.setAttachments(result.attachments);
-							view.getMessageForm().setReadOnly(false);
-							view.enableAllToolbar();
-						}
-
-						@Override
-						public void onResponseFailure(Throwable caught) {
-							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o e-mail."), TYPE.ERROR_NOTIFICATION));
-						};
-					});
-
+							@Override
+							public void onResponseFailure(Throwable caught) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o e-mail."), TYPE.ERROR_NOTIFICATION));
+							};
+						});
+					}
 				}
-
 			}
 		});
 
@@ -169,7 +194,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 		view.clear();
 		view.enableGetAll(false);
 		view.enableRefresh(false);
-		service.getItemsAll(new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItemsAll(false, new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
 			public void onResponseSuccess(ExchangeItemStub[] result) {
@@ -193,7 +218,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 		Attachment[] checked = view.getChecked();
 
 		for(int i = 0; i<checked.length; i++){
-			if(checked[i].docTypeId == null || checked[i].name == null){
+			if( checked[i].promote && (checked[i].docTypeId == null || checked[i].name == null) ){
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Todos os anexos a promover para documento devem ter nome e tipo."), TYPE.ALERT_NOTIFICATION));
 				return;
 			}
@@ -202,12 +227,16 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 			ExchangeItem item = view.getForm().getInfo();
 
 			Conversation conversation = view.getConversationFields();
+			conversation.startDir = ( view.getForm().getValue().isFromMe ?
+					ConversationStub.Direction.OUTGOING : ConversationStub.Direction.INCOMING );
 			conversation.messages = new Message[]{view.getMessageForm().getInfo()};
 
 			conversation.id = conversation.messages[0].conversationId;
 			
 			conversation.messages[0].emailId = item.id;
 			conversation.messages[0].attachments = view.getChecked();
+			conversation.messages[0].direction = ( view.getForm().getValue().isFromMe ?
+					ConversationStub.Direction.OUTGOING : ConversationStub.Direction.INCOMING );
 
 			if(conversation.id == null){
 
@@ -216,14 +245,14 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 					@Override
 					public void onResponse(Conversation response) {
 						view.clear();
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem recebida com sucesso"), TYPE.TRAY_NOTIFICATION));
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem arquivada com sucesso"), TYPE.TRAY_NOTIFICATION));
 						removeSelectedItem();
 						getConversations();
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a mensagem."), TYPE.ERROR_NOTIFICATION));
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem."), TYPE.ERROR_NOTIFICATION));
 					}
 				});
 
@@ -234,14 +263,14 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 					@Override
 					public void onResponse(Conversation response) {
 						view.clear();
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem recebida com sucesso"), TYPE.TRAY_NOTIFICATION));
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem arquivada com sucesso"), TYPE.TRAY_NOTIFICATION));
 						removeSelectedItem();
 						getConversations();
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a mensagem"), TYPE.ALERT_NOTIFICATION));
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem"), TYPE.ALERT_NOTIFICATION));
 
 					}
 				});
@@ -279,7 +308,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 		view.enableGetAll(false);
 		view.enableRefresh(false);
 
-		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItems(false, new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
 			public void onResponseSuccess(ExchangeItemStub[] result) {
