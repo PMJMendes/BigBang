@@ -9,9 +9,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
 
-import microsoft.exchange.webservices.data.BodyType;
 import microsoft.exchange.webservices.data.Item;
-import microsoft.exchange.webservices.data.PropertySet;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -184,7 +182,6 @@ public class ConversationServiceImpl
 		throws BigBangException
 	{
 		Item lobjItem;
-		PropertySet lobjPropSet;
 		MessageAddress[] larrAddrs;
 		MessageAttachment[] larrAtts;
 		Message lobjResult;
@@ -203,9 +200,7 @@ public class ConversationServiceImpl
 		try
 		{
 			lobjItem = MailConnector.DoGetItem((String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID));
-			lobjPropSet = MailConnector.getPropSet();
-			lobjPropSet.setRequestedBodyType(BodyType.Text);
-			lobjItem.load(lobjPropSet);
+			lobjItem.load();
 
 			lobjResult.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getDateTimeSent());
 			lobjResult.subject = lobjItem.getSubject();
