@@ -505,13 +505,13 @@ public class Receipt
 	    		lobjSubPolicy = getSubPolicy();
 	    		if ( lobjSubPolicy == null )
 	    			return false;
-	    		if ( (lobjSubPolicy.getAt(4) != null) &&
+	    		if ( (lobjSubPolicy.getAt(SubPolicy.I.ENDDATE) != null) &&
 	    				(((Timestamp)lobjSubPolicy.getAt(4)).before((Timestamp)getAt(I.MATURITYDATE))) )
 	    			return false;
 	    	}
 	    	else
 	    	{
-	    		if ( (lobjPolicy.getAt(9) != null) &&
+	    		if ( (lobjPolicy.getAt(Policy.I.ENDDATE) != null) &&
 	    				(((Timestamp)lobjPolicy.getAt(9)).before((Timestamp)getAt(I.MATURITYDATE))) )
 	    			return false;
 	    	}
