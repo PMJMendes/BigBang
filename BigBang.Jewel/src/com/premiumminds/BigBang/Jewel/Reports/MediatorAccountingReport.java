@@ -62,14 +62,14 @@ public class MediatorAccountingReport
 		larrDetails = lobjMap.getCurrentDetails();
 
 		lobjMediator = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjMap.getAt(TransactionMapBase.I.OWNER));
-		if ( lobjMediator.getAt(7) == null )
+		if ( lobjMediator.getAt(Mediator.I.ZIPCODE) == null )
 			lobjZipCode = null;
 		else
 		{
 			try
 			{
 				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
-						(UUID)lobjMediator.getAt(7));
+						(UUID)lobjMediator.getAt(Mediator.I.ZIPCODE));
 			}
 			catch (Throwable e)
 			{
@@ -79,9 +79,9 @@ public class MediatorAccountingReport
 		mdtToday = new Timestamp(new java.util.Date().getTime());
 
 		larrParams = new HashMap<String, String>();
-		larrParams.put("MediatorName", (String)lobjMediator.getAt(0));
-		larrParams.put("MediatorAddress1", (lobjMediator.getAt(2) == null ? "" : (String)lobjMediator.getAt(2)));
-		larrParams.put("MediatorAddress2", (lobjMediator.getAt(3) == null ? "" : (String)lobjMediator.getAt(3)));
+		larrParams.put("MediatorName", (String)lobjMediator.getAt(Mediator.I.NAME));
+		larrParams.put("MediatorAddress1", (lobjMediator.getAt(Mediator.I.ADDRESS1) == null ? "" : (String)lobjMediator.getAt(Mediator.I.ADDRESS1)));
+		larrParams.put("MediatorAddress2", (lobjMediator.getAt(Mediator.I.ADDRESS2) == null ? "" : (String)lobjMediator.getAt(Mediator.I.ADDRESS2)));
 		larrParams.put("MediatorZipCode", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(0)));
 		larrParams.put("MediatorZipLocal", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(1)));
 		larrParams.put("Date", mdtToday.toString().substring(0, 10));
