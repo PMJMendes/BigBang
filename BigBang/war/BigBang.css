@@ -427,7 +427,10 @@ li.token-input-input-token-facebook {
 /*****************************************************************************************************/
 /* Generic                                                                                           */
 /*****************************************************************************************************/
-html {
+
+
+html
+{
 	overflow: hidden;
 	height: 100%;
 	width: 100%;
@@ -435,64 +438,125 @@ html {
 
 body {
 	overflow: hidden;
-	font: 8pt Verdana;
+	font-family: Arial, sans-serif;
+	font-size: .74em;
 	height: 100%;
 	width: 100%;
 	margin: 0;
 	padding: 0;
 }
 
-img {
+img
+{
 	display: block;
 }
 
-button { /* 	font: 8pt Verdana; */
+select {
+	height:25px;
+}
+
+button {
+	padding: 4px 12px;
+	line-height: 14px;
+	font-weight: bold;
+	border: 1px solid #337fb2;
+	/*color: #0c161d;*/
+	color: white;
 	white-space: nowrap;
 	margin: 0;
+
+	background: #44b1f4; /* Old browsers */
+	background: -moz-linear-gradient(top,  #44b1f4 0%, #358fcc 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#44b1f4), color-stop(100%,#358fcc)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #44b1f4 0%,#358fcc 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #44b1f4 0%,#358fcc 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #44b1f4 0%,#358fcc 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #44b1f4 0%,#358fcc 100%); /* W3C */
+
+	-webkit-border-radius: 2px;
+    border-radius: 2px;
 }
+
+button:hover,
+button:focus {
+	background: #358fcc;
+	cursor: pointer;
+}
+
+button[disabled] {
+	padding: 4px 12px;
+	line-height: 14px;
+	font-weight: bold;
+	border: 1px solid #aaaaaa;
+	/*color: #0c161d;*/
+	color: white;
+	white-space: nowrap;
+	margin: 0;
+	cursor: default;
+
+	background: #cccccc;
+
+	-webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
 
 /*****************************************************************************************************/
 /* Login screen                                                                                      */
 /*****************************************************************************************************/
-.loginOuter {
+
+.loginOuter
+{
 	width: 100%;
 }
 
 .loginWrapper {
 	vertical-align: middle !important;
+	background: #e7f3fa;
 }
 
 .loginInner {
+	background: #fff;
 	margin: auto;
-	border: 1px solid black;
+	border: 1px solid #c7e3f3;
 	height: 0;
 	width: 0;
+
+	webkit-border-radius: 2px;
+	border-radius: 2px;
 }
 
-.loginError {
+.loginError
+{
 	width: 214px;
 	text-align: center;
-	color: Red;
+	color: red;
 	padding: 10px 0 5px 0;
 	margin: auto;
 }
 
 .loginForm {
-	margin: 5px;
+	margin: 30px 50px 5px 50px;
 }
 
 .loginLabel {
-	width: 100px;
+	padding-right: 15px;
+	text-align: right;
+	font-size: 12px;
+	font-weight: bold;
+	color: #247aa9;
 }
 
 .loginInput {
-	width: 100px;
-	font: 8pt Verdana;
+	width: 150px;
+	padding: 3px 0;
+	margin-bottom: 5px;
 }
 
-.loginDomains {
+.loginDomains
+{
 	width: 100%;
-	font: 8pt Verdana;
+	
 }
 
 .loginButton {
@@ -501,19 +565,32 @@ button { /* 	font: 8pt Verdana; */
 	padding: 5px 0 10px 0;
 }
 
+.loginButton button.gwt-Button {
+	padding: 5px 100px 5px 100px;
+	margin-bottom: 35px;
+	font-size: 12px;
+}
+
 /*****************************************************************************************************/
 /* Main screen                                                                                       */
 /*****************************************************************************************************/
+
 .mainWrapper {
-	
+	width: 100%;
 }
 
 .mainHeader {
 	width: 100%;
+	background: #c5e3f7;
+	background: url('images/bg-header.png') top repeat;
 }
 
 .headerLogo {
 	width: 0;
+}
+
+.gwt-Image {
+	padding: 10px 5px 10px 30px;
 }
 
 .headerText {
@@ -521,185 +598,247 @@ button { /* 	font: 8pt Verdana; */
 }
 
 .headerText div {
-	text-align: center;
+	text-align: left;
+	padding: 35px 30px 30px 50px;
+	color: #0d2e43;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 1.9em;
+	margin-left: 35px;
+	text-shadow: 0 1px 0 #fff;
+}
+
+.messageLine,
+.messageLine-active {
+	width: 100%;
+	padding: 7px 20px;
+	background: #bedffa;
+	color: #114666;
+	border-top: 1px solid #9dceed;
 }
 
 .messageLine {
-	width: 100%;
-	padding: 5px;
-	color: red;
+	display: none;
+}
+
+.messageLine-active {
+	display: inline-block;
 }
 
 .mainContainer {
-	border-width: 1px 0 0 0;
-	border-style: solid;
-	border-color: black;
+	border-top: 1px solid #9dceed;
 	width: 100%;
 }
 
 .leftContainerWrapper {
-	
+	background: #dfeff9;
 }
 
 .leftContainer {
 	overflow: auto;
+	background: #dfeff9;
+	width: 22em !important;
+	border: none;
+	margin-top: 20px;
 }
 
-.rightContainerWrapper {
-	
+.rightContainerWrapper
+{
 }
 
 .rightContainer {
-	border-width: 0 0 0 1px;
-	border-style: solid;
-	border-color: black;
-	padding: 2px;
+	/*background: #F6F6F6;*/
+	background: #fff;
+	border-left: 1px solid #bedff3;
 	overflow: auto;
+	padding: 15px 0 0 20px;
 }
 
 .normalbk {
-	background-color: #87cefa;
+	background: #e7f3f3;
+	background: #dfeff9;
 }
 
 .alternate {
-	background-color: #d3eefd;
+	background: #fff;
 }
 
 /*****************************************************************************************************/
 /* Tree Nav                                                                                          */
 /*****************************************************************************************************/
+
 .jewel-Tree {
 	position: static !important;
+	/*background: #e8e8e8;*/
+	background: #e7f3f3;
+	background: #dfeff9;
 }
 
 .jewel-Tree table {
-	padding: 3px 3px 3px 7px;
+	padding: 10px 5px 2px 10px;
 }
 
+.jewel-Tree div div div.gwt-TreeItem,
 .jewel-Tree .gwt-TreeItem {
+	color: #0c2f44;
+	font-weight: normal;
 	cursor: pointer;
 	display: block !important;
-	padding: 2px 0 1px 0;
+	padding: 5px 0;
 	white-space: nowrap;
 }
+
+.jewel-Tree .gwt-TreeItem:hover,
+.jewel-Tree .gwt-TreeItem:active,
+.jewel-Tree div div div.gwt-TreeItem:hover,
+.jewel-Tree div div div.gwt-TreeItem:active {
+	text-decoration: underline;
+}
+
+.jewel-treenav-parent table tr td .gwt-TreeItem,
+.jewel-Tree table tr td .gwt-TreeItem {
+	font-weight: bold;
+	color: #061823;
+	text-decoration: none !important;
+}
+
+/**/
+.jewel-treenav-parent table tr td .gwt-TreeItem:hover,
+.jewel-Tree table tr td .gwt-TreeItem:hover  {
+	color: #1d638d;
+}
+
+.jewel-treenav-child,
+.jewel-treenav-parent .gwt-TreeItem {
+	color: #0c2f44;
+	font-weight: normal;
+}
+
+.jewel-treenav-child:hover,
+.jewel-treenav-parent .gwt-TreeItem:hover {
+	color: #1f4963;
+}
+
+
+/*
+.jewel-treenav-child table tr td .gwt-TreeItem {
+	background: aqua;
+}*/
+
 
 /*****************************************************************************************************/
 /* Main View                                                                                         */
 /*****************************************************************************************************/
+
 .jewel-ClosableTabPanel {
-	
+	margin-top: 5px;
 }
 
 .jewel-ClosableTabBar {
 	width: 100%;
+	background: #dfeff9;
 }
 
-.jewel-ClosableTabBar-TabBar-wrapper {
+.jewel-ClosableTabBar-TabBar-wrapper
+{
 	width: 100%;
 }
 
-.jewel-ClosableTabPanel .gwt-TabBar {
-	
+.jewel-ClosableTabPanel .gwt-TabBar
+{
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarFirst-wrapper {
+.jewel-ClosableTabPanel .gwt-TabBarFirst-wrapper
+{
 	display: none;
 	visibility: hidden;
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarFirst {
-	
+.jewel-ClosableTabPanel .gwt-TabBarFirst
+{
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarItem-wrapper {
-	background-color: white;
-	cursor: pointer;
-	border-width: 1px 0px 1px 1px;
-	border-style: solid;
-	border-color: black;
-}
 
-.jewel-ClosableTabPanel .gwt-TabBarItem {
-	
+.jewel-ClosableTabPanel .gwt-TabBarItem
+{
 }
 
 .jewel-ClosableTabBar-LabelWrapper {
 	vertical-align: middle !important;
+	padding: 6px 4px 6px 6px;
 }
 
-.jewel-ClosableTabBar-Label {
+.jewel-ClosableTabBar-Label
+{
 	margin: 2px;
 }
 
-.jewel-ClosableTabBar-CloseButtonWrapper {
-	
+.jewel-ClosableTabBar-CloseButtonWrapper
+{
 }
 
 .jewel-ClosableTabBar-CloseButton {
 	cursor: pointer;
-	margin: 2px;
+	margin: 7px 7px 0 3px; 
 }
 
-.jewel-ClosableTabPanel .gwt-TabBarItem-wrapper-selected {
-	cursor: default;
-	background-color: transparent;
-	border-color: black black transparent black;
-}
-
-.jewel-ClosableTabPanel .gwt-TabBarItem-selected {
-	
+.jewel-ClosableTabPanel .gwt-TabBarItem-selected:focus {
+	outline: none;
 }
 
 .jewel-ClosableTabPanel .gwt-TabBarRest-wrapper {
-	background-color: white;
-	border-width: 0px 0px 1px 1px;
-	border-style: solid;
-	border-color: white black black black;
+	background-color: #fff;
+	border-bottom: 1px solid #bedff3;
+	border-left: 1px solid #bedff3;
 }
 
 .jewel-ClosableTabBar-CloseAll-wrapper {
-	background-color: white;
-	border-width: 1px 0px 1px 0px;
-	border-style: solid;
-	border-color: white black black black;
+	background-color: #fff;
+	border-bottom: 1px solid #E0E0E0;
 	width: 0px;
 	vertical-align: middle !important;
 }
 
-.jewel-ClosableTabBar-CloseAll {
-	font: 8pt Verdana;
+.jewel-ClosableTabBar-CloseAll
+{
+	margin-right:10px;
 	white-space: nowrap;
 }
 
 .jewel-ClosableTabPanel .gwt-TabPanelBottom {
-	border-width: 0 1px 1px 1px;
-	border-style: solid;
-	border-color: black;
+	/*border: 1px solid #cde6e6;*/
+	border: 1px solid #bedff3;
+	border-top: transparent;
 }
 
 /*****************************************************************************************************/
 /* DynaSearch                                                                                        */
 /*****************************************************************************************************/
+
 .jewel-DynaSearch {
+	background: #e9f4fa;
+	padding-bottom: 35px !important;
+}
+
+.jewel-DynaSearch tr {
 	
 }
 
+/* Button */
 .jewel-DynaSearch-Search {
-	margin: 5px;
+	margin: 5px 0 10px 25px;
 }
 
 .jewel-DynaSearch-Results {
-	border-width: 1px 0 0 0;
-	border-style: solid;
-	border-color: black;
+	border-top: 1px solid #bedff3;
+	height: 100% !important;	
 }
 
 /*****************************************************************************************************/
 /* DynaView                                                                                          */
 /*****************************************************************************************************/
-.jewel-DynaView {
+
+.jewel-DynaView
+{
 	width: 100%;
 }
 
@@ -707,29 +846,55 @@ button { /* 	font: 8pt Verdana; */
 	width: 100%;
 }
 
-.jewel-DynaView-TabBar-wrapper {
+.jewel-DynaView-TabBar-wrapper
+{
 	width: 100%;
 }
 
-.jewel-DynaView .gwt-TabBar {
-	
+.jewel-DynaView .gwt-TabBar
+{
 }
 
-.jewel-DynaView .gwt-TabBarFirst-wrapper {
+.jewel-DynaView .gwt-TabBarFirst-wrapper
+{
 	display: none;
 	visibility: hidden;
 }
 
-.jewel-DynaView .gwt-TabBarFirst {
-	
+.jewel-DynaView .gwt-TabBarFirst
+{
+}
+
+.jewel-ClosableTabPanel .gwt-TabBarItem-wrapper-selected {
+	cursor: default;
+	background-color: #e9f4fa;
+	border-bottom: 0px !important;
+	border-right: 0px;
+	padding: 6px 4px;
+	font-weight: bold;
+	color: #0c2f44;
+}
+
+.jewel-ClosableTabPanel .gwt-TabBarItem-wrapper {
+	cursor: pointer;
+	border: 1px solid #bedff3;
+	border-bottom: 1px solid #bedff3 !important;
+	padding: 6px 4px;
+	border-right: 0;
+	border-bottom: 0;
+}
+
+.jewel-ClosableTabPanel .gwt-TabBarItem-selected:focus {
+	outline: none;
 }
 
 .jewel-DynaView .gwt-TabBarItem-wrapper {
-	background-color: white;
+	background-color: #f9f9f9;
 	cursor: pointer;
-	border-width: 1px 1px 1px 0;
-	border-style: solid;
-	border-color: black;
+	border: 1px solid #bedff3;
+	border-left: 0;
+	padding: 6px 4px 6px 6px;
+	color: #222;
 	vertical-align: middle !important;
 	text-align: center;
 }
@@ -739,35 +904,33 @@ button { /* 	font: 8pt Verdana; */
 }
 
 .jewel-DynaView .gwt-TabBarItem-wrapper-selected {
-	background-color: transparent;
+	background: #e9f4fa;
+	border: 1px solid #bedff3;
+	border-bottom: none;
 	cursor: default;
-	border-color: black black transparent black;
 }
 
 .jewel-DynaView .gwt-TabBarItem-selected {
-	
 }
 
 .jewel-DynaView .gwt-TabBarRest-wrapper {
 	background-color: transparent;
-	border-width: 1px 0 1px 0;
-	border-style: solid;
-	border-color: transparent black black black;
+	border-bottom: 1px solid #bedff3;
 }
 
 .jewel-DynaViewToolbar-Wrapper {
 	width: 0;
-	border-width: 1px 0 1px 0;
-	border-style: solid;
-	border-color: transparent black black black;
+	border-bottom: 1px solid #bedff3;
 }
 
 .jewel-DynaViewToolbar {
 	background-color: transparent;
-	margin: 0 5px 1px 0;
+	margin: 0 30px 1px 0;
+	border-top: 0;
 }
 
-.jewel-DynaView .gwt-TabPanelBottom {
+.jewel-DynaView .gwt-TabPanelBottom
+{
 	border-width: 0px;
 	border-style: none;
 }
@@ -775,247 +938,334 @@ button { /* 	font: 8pt Verdana; */
 /*****************************************************************************************************/
 /* DynaForm                                                                                          */
 /*****************************************************************************************************/
+
 .jewel-DynaForm {
-	
+	background: #e7f3f3;
+	background: #e9f4fa;
 }
 
 .jewel-DynaForm-Form {
 	table-layout: fixed;
+	padding: 20px;
 }
 
-.jewel-Control {
-	font: 8pt Verdana;
+table.jewel-DynaForm-Form .gwt-Label {
+	text-align: right;
+	padding-right: 5px;
+	color: #202C2C;
 }
+
+table.jewel-DynaForm-Form tr {
+	height: 30px;
+}
+
+table.jewel-DynaForm-Form td,
+.jewel-Control {
+	padding: 0;
+	line-height: 20px;
+}
+
+
 
 /*****************************************************************************************************/
 /* DynaFormActive                                                                                    */
 /*****************************************************************************************************/
-.jewel-DynaForm-ActionBar {
+
+.jewel-DynaForm-ActionBar
+{
 	margin: 5px;
 }
 
 /*****************************************************************************************************/
 /* DynaGrid                                                                                          */
 /*****************************************************************************************************/
-.jewel-DynaGrid {
+
+.jewel-DynaGrid
+{
 	width: 100%;
 }
 
 .jewel-DynaGrid-Main {
-	margin: 20px 5px 5px 5px;
+	margin: 20px 5px 5px 25px;
 }
 
 .jewel-DynaGrid-Toolbar {
 	width: 100%;
+	padding-bottom: 10px;
 }
 
+
+
 .jewel-DynaGrid-Unsort-Wrapper {
-	width: 0px;
+    width: 9% !important;
+    padding-bottom: 0 !important;
 }
 
 .jewel-DynaGrid-Refresh-Wrapper {
-	width: 0px;
+	padding-bottom: 0 !important;
 }
 
-.jewel-DynaGrid-New-Wrapper {
-	text-align: right;
-	width: 100%;
+.jewel-DynaGrid-Refresh-Wrapper {
+    width: 100%;
+}
+
+.jewel-DynaGrid-Unsort-Wrapper button.gwt-Button,
+.jewel-DynaGrid-Refresh-Wrapper button.gwt-Button {
+	background: none;
+	border: none;
+	color: #0b76b7;
+	text-decoration: underline;
+	padding-bottom: 0;
 }
 
 .jewel-DynaGrid-Grid {
-	border-width: 1px;
-	border-style: solid;
-	border-color: black;
+	border: 1px solid #888;
 	border-collapse: collapse;
 	cursor: pointer;
 	empty-cells: show;
 }
 
-.jewel-DynaGrid-Grid-HeaderCell {
-	background-color: LightGrey;
-	text-align: center;
-}
-
 .jewel-DynaGrid-Grid-Row {
-	border-color: Black;
+	border: 1px solid #ccc;
 }
 
 .jewel-DynaGrid-Grid-Row:hover td {
-	background-color: LightBlue;
-	border-color: Black;
+	background: #c7e3f3;
+	border: 1px solid #5caee1;
 }
 
 .jewel-DynaGrid-Grid-OddRow {
-	background-color: White;
+	background: #fff;
 }
 
 .jewel-DynaGrid-Grid-EvenRow {
-	background-color: LightCyan;
+	background: #e0f0f9;
+}
+
+.jewel-DynaGrid-Grid-HeaderCell {
+	background: #9dcfed;
+	text-align: center;
+	color: #0c2f44 !important;
+	font-weight: bold;
 }
 
 .jewel-DynaGrid-Grid-HeaderCell:hover {
-	background-color: LightBlue;
+	background: #bfdff3;
 }
 
-.jewel-DynaGrid-Grid-Selected {
-	background-color: #316ac5;
-	color: White;
-	border-color: Black;
-	cursor: default;
-}
-
+.jewel-DynaGrid-Grid-Selected,
 .jewel-DynaGrid-Grid-Selected:hover td {
-	background-color: #316ac5;
-	color: White;
-	border-color: Black;
+	background-color: #faf26d;
+	color: #509f9f;
 	cursor: default;
 }
 
 .jewel-DynaGrid-Grid-CellDiv {
 	white-space: nowrap;
 	overflow: hidden;
-	height: 13px;
+	padding: 8px;
+	color: #111;
+	width: 100px !important;
 }
 
 .jewel-DynaGrid-Grid td {
-	border-width: 1px;
-	border-color: Black;
-	border-style: solid;
+	padding: 2px 0;
+	border: 1px solid #5caee1;
 }
 
 .jewel-DynaGrid-Pagebar {
 	width: 100%;
+	margin-top: 8px;
+	padding-bottom: 20px;
 }
 
 .jewel-DynaGrid-First-Wrapper {
 	width: 0px;
 }
 
-.jewel-DynaGrid-Prev-Wrapper {
+.jewel-DynaGrid-First-Wrapper button.gwt-Button {
+	margin-right: 5px;
+}
+
+.jewel-DynaGrid-Prev-Wrapper
+{
 	width: 0px;
 }
 
 .jewel-DynaGrid-PageText-Wrapper {
 	width: 100%;
+	padding-top: 5px;
 }
 
 .jewel-DynaGrid-PageText {
 	text-align: center;
+	color: #555;
 }
 
-.jewel-DynaGrid-Next-Wrapper {
+.jewel-DynaGrid-Next-Wrapper
+{
 	width: 0px;
 }
 
-.jewel-DynaGrid-Last-Wrapper {
+.jewel-DynaGrid-Last-Wrapper
+{
 	width: 0px;
+}
+
+.jewel-DynaGrid-Last-Wrapper button.gwt-Button {
+	margin-left: 5px;
 }
 
 .jewel-DynaGrid-Editor {
-	border-width: 1px 0 0 0;
-	border-style: solid;
-	border-color: black;
-	padding: 20px 0 0 0;
+	border-top: 1px solid #bedff3;
+	padding: 30px 0 0 0;
 }
 
 /*****************************************************************************************************/
 /* Lookup                                                                                            */
 /*****************************************************************************************************/
-.jewel-Lookup-Display {
-	font: 8pt Verdana;
+
+.jewel-Lookup-Display,
+input.jewel-Control.jewel-StringBox {
+	/*line-height: 20px;*/
+	padding: 4px 0 5px 0;
+	margin-top: 2px;
+	font: 1em Arial, sans-serif;
+	border: 1px solid #c0c0c0;
+	
+	/* -webkit-border-radius: 2px;
+    border-radius: 2px; */
 }
 
 .jewel-Lookup-Button {
 	cursor: pointer;
-	border: 2px outset white;
+	background: #ddd;
+	border: 1px solid #bbb;
+	border-left: 0px;
+	padding: 5px 6px 6px 6px;
+	margin-top: 2px !important;
+
+	-webkit-border-radius: 0 2px 2px 0;
+    border-radius: 0 2px 2px 0;
+}
+
+.jewel-Datebox-Button {
+	cursor: pointer;
+	background: #ddd;
+	border: 1px solid #bbb;
+	border-left: 0px;
+	padding: 5px 6px 6px 6px;
+	margin-top: 2px !important;
+
+	-webkit-border-radius: 0 2px 2px 0;
+    border-radius: 0 2px 2px 0;
 }
 
 /*****************************************************************************************************/
 /* Lookup Popup                                                                                      */
 /*****************************************************************************************************/
-.jewel-LookupPopup {
+
+.jewel-LookupPopup
+{
 	border: 2px outset white;
 }
 
-.jewel-LookupPopup .dialogTop {
-	
+.jewel-LookupPopup .dialogTop
+{
 }
 
-.jewel-LookupPopup .dialogTopCenter {
-	
+.jewel-LookupPopup .dialogTopCenter
+{
 }
 
 .jewel-LookupPopup .dialogTopCenterInner {
-	background-color: blue;
-	color: white;
-	font: bold 10pt "Trebuchet MS";
-	border: 1px solid gray;
-	padding: 2px 2px 2px 5px;
+	color: #fff;
+	font-weight: bold;
+	font-family: inherit;
+	background: #5baee1;
+	border: 1px solid #3a9edb;
+	padding: 5px;
 }
 
 .jewel-LookupPopup .Caption {
 	cursor: default;
+	margin-left: 20px;
 }
 
 .jewel-LookupPopup .dialogMiddleCenter {
 	vertical-align: top;
-	background-color: #87cefa;
+	background-color: #F6F6F6;
+	background-color: #e7f3f3;
 }
 
-.jewel-LookupPopup .dialogContent {
+.jewel-LookupPopup .dialogContent
+{
 	height: 100%;
 }
 
-.jewel-LookupPopup-Error-Wrapper {
+.jewel-LookupPopup-Error-Wrapper
+{
 	height: 0;
 }
 
-.jewel-LookupPopup .messageLine {
+.jewel-LookupPopup .messageLine
+{
 	padding: 2px;
 	border-width: 1px;
 	border-style: none none solid none;
 	border-color: black;
 }
 
+
 /* This style is here because this bar only appears in Dynagrids inside Lookup Popups */
-.jewel-DynaGrid-Resultsbar-Wrapper {
+.jewel-DynaGrid-Resultsbar-Wrapper
+{
 	width: 100%;
 	text-align: center;
 	margin: 10px 0 0 0;
 }
 
-.jewel-DynaGrid-Resultsbar {
+.jewel-DynaGrid-Resultsbar
+{
 	margin: auto;
 }
 /*****************************************************************************************************/
 /* Datebox                                                                                           */
 /*****************************************************************************************************/
+
 .jewel-Datebox-Display {
-	font: 8pt Verdana;
+	padding: 4px 0 5px 0;
+	outline: none;
+	background: #f0f0f0;
+	border: 1px solid #c0c0c0;
 }
 
-.jewel-Datebox-Button {
-	cursor: pointer;
-	border: 2px outset white;
+input.Jewel-Control.Jewel-IntBox {
+	padding: 4px 0 5px 0;
+	outline: none;
+	background: #888;
 }
 
 /*****************************************************************************************************/
 /* DatePopup                                                                                         */
 /*****************************************************************************************************/
-.jewel-DatePopup {
+
+.jewel-DatePopup
+{
 	border: 2px outset white;
 	background-color: white;
 }
 
-.jewel-DatePopup .dialogTop {
-	
+.jewel-DatePopup .dialogTop
+{
 }
 
-.jewel-DatePopup .dialogTopCenter {
-	
+.jewel-DatePopup .dialogTopCenter
+{
 }
 
-.jewel-DatePopup .dialogTopCenterInner {
+.jewel-DatePopup .dialogTopCenterInner
+{
 	background-color: blue;
 	color: white;
 	font: bold 10pt "Trebuchet MS";
@@ -1023,131 +1273,158 @@ button { /* 	font: 8pt Verdana; */
 	padding: 2px 2px 2px 5px;
 }
 
-.jewel-DatePopup .Caption {
+.jewel-DatePopup .Caption
+{
 	cursor: default;
 }
 
-.jewel-DatePopup .dialogContent {
+.jewel-DatePopup .dialogContent
+{
 	margin: 5px;
 }
 
-.jewel-DatePopup-Datepicker {
+.jewel-DatePopup-Datepicker
+{
 	border-width: 1px;
 	border-style: solid;
 	border-color: black;
 	width: 100%;
 }
 
-.jewel-DatePopup-Datepicker .datePickerMonthSelector {
+.jewel-DatePopup-Datepicker .datePickerMonthSelector
+{
 	border-width: 0px 0px 1px 0px;
 	border-color: black;
 	border-style: solid;
 }
 
-.jewel-DatePopup-Datepicker .datePickerMonth {
+.jewel-DatePopup-Datepicker .datePickerMonth
+{
 	text-align: center;
 	font-weight: bold;
 	color: darkblue;
 	cursor: default;
 }
 
-.jewel-DatePopup-Datepicker .datePickerPreviousButton {
+.jewel-DatePopup-Datepicker .datePickerPreviousButton
+{
 	cursor: pointer;
 }
 
-.jewel-DatePopup-Datepicker .datePickerNextButton {
+.jewel-DatePopup-Datepicker .datePickerNextButton
+{
 	cursor: pointer;
 }
-
-.jewel-DatePopup-Datepicker .datePickerDays {
+.jewel-DatePopup-Datepicker .datePickerDays
+{
 	width: 100%;
 }
 
-.jewel-DatePopup-Datepicker .datePickerWeekendLabel {
+.jewel-DatePopup-Datepicker .datePickerWeekendLabel
+{
 	font-weight: bold;
 	padding: 5px 0px;
 	text-align: center;
 	cursor: default;
 }
 
-.jewel-DatePopup-Datepicker .datePickerWeekdayLabel {
+.jewel-DatePopup-Datepicker .datePickerWeekdayLabel
+{
 	font-weight: bold;
 	padding: 5px 0px;
 	text-align: center;
 	cursor: default;
 }
 
-.jewel-DatePopup-Datepicker .datePickerDay {
+.jewel-DatePopup-Datepicker .datePickerDay
+{
 	padding: 0px 0px 5px;
 	text-align: center;
 	cursor: pointer;
 }
 
-.jewel-DatePopup-Datepicker .datePickerDayIsToday {
+.jewel-DatePopup-Datepicker .datePickerDayIsToday
+{
 	text-decoration: underline;
 }
 
-.jewel-DatePopup-Datepicker .datePickerDayIsFiller {
+.jewel-DatePopup-Datepicker .datePickerDayIsFiller
+{
 	color: lightgray;
 }
 
-.jewel-DatePopup-Datepicker .datePickerDayIsValue {
+.jewel-DatePopup-Datepicker .datePickerDayIsValue
+{
 	font-weight: bold;
 	color: white;
 	background-color: blue;
 }
 
-.jewel-DatePopup-Timebar {
+.jewel-DatePopup-Timebar
+{
 	margin: 5px 0px;
 	width: 100%;
 }
 
-.jewel-DatePopup-Hours {
+.jewel-DatePopup-Hours
+{
 	width: 50px;
 }
 
-.jewel-DatePopup-Minutes {
+.jewel-DatePopup-Minutes
+{
 	width: 50px;
 }
 
-.jewel-DatePopup-Seconds {
+.jewel-DatePopup-Seconds
+{
 	width: 50px;
 }
 
-.jewel-DatePopup-Nanos {
+.jewel-DatePopup-Nanos
+{
 	width: 80px;
 }
 
-.jewel-DatePopup-Separator {
+.jewel-DatePopup-Separator
+{
 	font-weight: bold;
 	margin: 0 2px;
 }
 
-.jewel-DatePopup-Separator-Wrapper {
+.jewel-DatePopup-Separator-Wrapper
+{
 	vertical-align: baseline !important;
 }
 
-.jewel-DatePopup-Buttonbar {
+.jewel-DatePopup-Buttonbar
+{
 	width: 100%;
 }
 
-.jewel-DatePopup-Button-Wrapper {
+.jewel-DatePopup-Button-Wrapper
+{
 	width: 0;
 }
 
-.jewel-DatePopup-Buttongap-Wrapper {
+.jewel-DatePopup-Buttongap-Wrapper
+{
 	width: 100%;
 }
 
 /*****************************************************************************************************/
 /* MFileXfer                                                                                         */
 /*****************************************************************************************************/
+
 .Jewel-MFileXfer-Attach {
 	width: 58px;
+	margin-left: 10px;
 }
 
 .Jewel-MFileXfer-View {
 	width: 49px;
+	margin-left: 10px;
+	margin-right: 10px;
 }
 
 .Jewel-MFileXfer-Clear {
@@ -1157,20 +1434,23 @@ button { /* 	font: 8pt Verdana; */
 /*****************************************************************************************************/
 /* FilePopup                                                                                         */
 /*****************************************************************************************************/
-.jewel-FilePopup {
+
+.jewel-FilePopup
+{
 	border: 2px outset white;
 	background-color: white;
 }
 
-.jewel-FilePopup .dialogTop {
-	
+.jewel-FilePopup .dialogTop
+{
 }
 
-.jewel-FilePopup .dialogTopCenter {
-	
+.jewel-FilePopup .dialogTopCenter
+{
 }
 
-.jewel-FilePopup .dialogTopCenterInner {
+.jewel-FilePopup .dialogTopCenterInner
+{
 	background-color: blue;
 	color: white;
 	font: bold 10pt "Trebuchet MS";
@@ -1178,51 +1458,317 @@ button { /* 	font: 8pt Verdana; */
 	padding: 2px 2px 2px 5px;
 }
 
-.jewel-FilePopup .Caption {
+.jewel-FilePopup .Caption
+{
 	cursor: default;
 }
 
-.jewel-FilePopup .dialogContent {
+.jewel-FilePopup .dialogContent
+{
 	margin: 5px;
 }
 
-.jewel-FilePopup-Main {
+.jewel-FilePopup-Main
+{
 	height: 0;
 }
 
-.jewel-FilePopup-Form-Wrapper {
+.jewel-FilePopup-Form-Wrapper
+{
 	height: 0;
 }
 
-.jewel-FilePopup-Form {
+.jewel-FilePopup-Form
+{
 	margin: 0;
 	padding: 0;
 }
 
-.jewel-FilePopup-Upload {
-	
+.jewel-FilePopup-Upload
+{
 }
 
-.jewel-FilePopup-Buttonbar {
+.jewel-FilePopup-Buttonbar
+{
 	width: 100%;
 	margin: 5px 0 0 0;
 }
 
-.jewel-FilePopup-Ok-Wrapper {
+.jewel-FilePopup-Ok-Wrapper
+{
 	width: 100%;
 }
 
-.jewel-FilePopup-Cancel-Wrapper {
+.jewel-FilePopup-Cancel-Wrapper
+{
 	width: 0;
 }
 
 /*****************************************************************************************************/
 /* DynaReport                                                                                        */
 /*****************************************************************************************************/
-.jewel-DynaReport {
+
+.jewel-DynaReport
+{
+}
+
+.jewel-DynaReport-Open
+{
+	margin: 5px;
+}
+
+/*****************************************************************************************************/
+/* EnhanceDatePopup                                                                                  */
+/*****************************************************************************************************/
+
+.jewel-enhanced-DatePopup
+{
+	background-color: white;
+	border: 1px solid #ccc;
+	border-top:1px solid #999;
+}
+
+.jewel-enhanced-DatePopup .Caption
+{
+	cursor: default;
+}
+
+.jewel-enhanced-DatePopup .dialogContent
+{
+	margin: 5px;
+}
+
+.jewel-enhanced-DatePicker {
+  border: 1px solid #ccc;
+  border-top:1px solid #999;
+  cursor: default;
+}
+.jewel-enhanced-DatePicker td,
+.jewel-enhanced-DatePicker .datePickerMonthSelector td:focus {
+  outline: none;
+}
+.jewel-enhanced-DatePicker .datePickerMonthSelector td:focus {
+  outline: none;
+}
+.jewel-enhanced-DatePicker .datePickerDays {
+  width: 100%;
+  background: white;
+}
+.jewel-enhanced-DatePicker.datePickerDay,
+.jewel-enhanced-DatePicker .datePickerWeekdayLabel,
+.jewel-enhanced-DatePicker .datePickerWeekendLabel {
+  font-size: 85%;
+  text-align: center;
+  padding: 4px;
+  outline: none;
+  font-weight:bold;
+  color:#333;
+  border-right: 1px solid #EDEDED;
+  border-bottom: 1px solid #EDEDED;
+}
+.jewel-enhanced-DatePicker .datePickerWeekdayLabel,
+.jewel-enhanced-DatePicker .datePickerWeekendLabel {
+  background: #fff;
+  padding: 0px 4px 2px;
+  cursor: default;
+  color:#666;
+  font-size:70%;
+  font-weight:normal;
+}
+.jewel-enhanced-DatePicker .datePickerDay {
+  padding: 4px 7px;
+  cursor: hand;
+  cursor: pointer;
+}
+.jewel-enhanced-DatePicker .datePickerDayIsWeekend {
+  background: #f7f7f7;
+}
+.jewel-enhanced-DatePicker .datePickerDayIsFiller {
+  color: #999;
+  font-weight:normal;
+}
+.jewel-enhanced-DatePicker .datePickerDayIsValue {
+  background: #d7dfe8;
+}
+.jewel-enhanced-DatePicker .datePickerDayIsDisabled {
+  color: #AAAAAA;
+  font-style: italic;
+}
+.jewel-enhanced-DatePicker .datePickerDayIsHighlighted {
+  background: #F0E68C;
+}
+.jewel-enhanced-DatePicker .datePickerDayIsValueAndHighlighted {
+  background: #d7dfe8;
+}
+.jewel-enhanced-DatePicker .datePickerDayIsToday {
+	padding: 3px;
+	color: #fff;
+	text-align:center;
+ 	background-color: #4D90FE  ;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#4d90fe  ),to(#4787ed  ));
+	background-image: -webkit-linear-gradient(top,#4d90fe  ,#4787ed  );
+	background-image: -moz-linear-gradient(top,#4d90fe  ,#4787ed  );
+	background-image: -ms-linear-gradient(top,#4d90fe  ,#4787ed  );
+	background-image: -o-linear-gradient(top,#4d90fe  ,#4787ed  );
+	background-image: linear-gradient(top,#4d90fe  ,#4787ed  );
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+.jewel-enhanced-DatePicker .datePickerMonthSelector {
+  width: 100%;
+  padding: 1px 0 5px 0;
+  background: #fff;
+}
+.jewel-enhanced-DatePicker .datePickerPreviousButton,
+.jewel-enhanced-DatePicker .datePickerNextButton {
+  font-size: 120%;
+  line-height: 1em;
+  color: #3a6aad;
+  cursor: hand;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0px 4px;
+  outline: none;
+}
+.jewel-enhanced-DatePicker td.datePickerMonth {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  font-size: 100%;
+  font-weight: bold;
+  color: #333;
+}
+
+.google-button {
+	display: inline-block;
+	text-align: center;
+	color: #555  ;
+	font-size: 10px;
+	height: 25px;
+	padding: 0 5px;
+	margin-right:2px;
+	line-height: 25px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	-webkit-transition: all 0.218s;
+	-moz-transition: all 0.218s;
+	-ms-transition: all 0.218s;
+	-o-transition: all 0.218s;
+	transition: all 0.218s;
+	border: 1px solid gainsboro  ;
+	border: 1px solid rgba(0, 0, 0, 0.1)  ;
+	background-color: whiteSmoke  ;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#f5f5f5  ),to(#f1f1f1  ));
+	background-image: -webkit-linear-gradient(top,#f5f5f5  ,#f1f1f1  );
+	background-image: -moz-linear-gradient(top,#f5f5f5  ,#f1f1f1  );
+	background-image: -ms-linear-gradient(top,#f5f5f5  ,#f1f1f1  );
+	background-image: -o-linear-gradient(top,#f5f5f5  ,#f1f1f1  );
+	background-image: linear-gradient(top,#f5f5f5  ,#f1f1f1  );
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+	cursor: default;
+}
+
+.google-button:hover {
+	border: 1px solid #C6C6C6  ;
+	color: #333  ;
+	-webkit-transition: all 0.0s;
+	-moz-transition: all 0.0s;
+	-ms-transition: all 0.0s;
+	-o-transition: all 0.0s;
+	transition: all 0.0s;
+	background-color: #F8F8F8  ;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#f8f8f8  ),to(#f1f1f1  ));
+	background-image: -webkit-linear-gradient(top,#f8f8f8  ,#f1f1f1  );
+	background-image: -moz-linear-gradient(top,#f8f8f8  ,#f1f1f1  );
+	background-image: -ms-linear-gradient(top,#f8f8f8  ,#f1f1f1  );
+	background-image: -o-linear-gradient(top,#f8f8f8  ,#f1f1f1  );
+	background-image: linear-gradient(top,#f8f8f8  ,#f1f1f1  );
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1)  ;
+	-moz-box-shadow: 0 1px 1px rgba(0,0,0,0.1)  ;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.1)  ;
+	cursor: pointer;
+}
+
+.google-button:active {
+	background-color: #F6F6F6  ;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#f6f6f6  ),to(#f1f1f1  ));
+	background-image: -webkit-linear-gradient(top,#f6f6f6  ,#f1f1f1  );
+	background-image: -moz-linear-gradient(top,#f6f6f6  ,#f1f1f1  );
+	background-image: -ms-linear-gradient(top,#f6f6f6  ,#f1f1f1  );
+	background-image: -o-linear-gradient(top,#f6f6f6  ,#f1f1f1  );
+	background-image: linear-gradient(top,#f6f6f6  ,#f1f1f1  );
+	-webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1)  ;
+	-moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1)  ;
+	box-shadow: inset 0 1px 2px rgba(0,0,0,0.1)  ;
+}
+
+.google-button-blue {
+	border: 1px solid #3079ED  ;
+	color: white  ;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.1)  ;
+	text-transform: uppercase;
+	background-color: #4D90FE  ;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#4d90fe  ),to(#4787ed  ));
+	background-image: -webkit-linear-gradient(top,#4d90fe  ,#4787ed  );
+	background-image: -moz-linear-gradient(top,#4d90fe  ,#4787ed  );
+	background-image: -ms-linear-gradient(top,#4d90fe  ,#4787ed  );
+	background-image: -o-linear-gradient(top,#4d90fe  ,#4787ed  );
+	background-image: linear-gradient(top,#4d90fe  ,#4787ed  );
+}
+
+.google-button-blue:hover {
+	border: 1px solid #2F5BB7;
+	color: white  ;
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3)  ;
+	background-color: #357AE8  ;
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#4d90fe  ),to(#357ae8  ));
+	background-image: -webkit-linear-gradient(top,#4d90fe  ,#357ae8  );
+	background-image: -moz-linear-gradient(top,#4d90fe  ,#357ae8  );
+	background-image: -ms-linear-gradient(top,#4d90fe  ,#357ae8  );
+	background-image: -o-linear-gradient(top,#4d90fe  ,#357ae8  );
+	background-image: linear-gradient(top,#4d90fe  ,#357ae8  );
+}
+
+.jewel-enhanced-Control
+{
 	
 }
 
-.jewel-DynaReport-Open {
-	margin: 5px;
+.jewel-enhanced-DatePopup-Hours
+{
+	float:right;
+}
+
+.jewel-enhanced-DatePopup-Minutes, .jewel-enhanced-DatePopup-Hours, .jewel-enhanced-DatePopup-Seconds
+{
+	text-align:center;
+	width: 30px;
+	border: 1px solid #C6C6C6  ;
+}
+
+.jewel-enhanced-DatePopup-Timebar
+{
+	margin: 10px 0 10px 0;
+	width: 100%;
+	text-align:center;
+}
+
+.jewel-enhanced-DatePopup-Separator
+{
+	font-weight: bold;
+	margin: 2px;
+	text-align:center;
+}
+
+/*****************************************************************************************************/
+/* TriStateCheckbox                                                                                 */
+/*****************************************************************************************************/
+
+input.jewel-tristate-checkbox{
+	width:16px !important;
+	height:16px;
 }
