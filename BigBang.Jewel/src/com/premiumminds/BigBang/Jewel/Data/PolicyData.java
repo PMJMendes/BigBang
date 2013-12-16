@@ -248,7 +248,7 @@ public class PolicyData
 		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("Vencimento (d/m): ");
-		if ( (mlngMaturityDay != 0) && (mlngMaturityMonth != 0) )
+		if ( (mlngMaturityDay != null) && (mlngMaturityDay != 0) && (mlngMaturityMonth != null) && (mlngMaturityMonth != 0) )
 			pstrBuilder.append(mlngMaturityDay).append("/").append(mlngMaturityMonth);
 		pstrBuilder.append(pstrLineBreak);
 
