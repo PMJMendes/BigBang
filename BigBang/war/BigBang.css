@@ -427,10 +427,7 @@ li.token-input-input-token-facebook {
 /*****************************************************************************************************/
 /* Generic                                                                                           */
 /*****************************************************************************************************/
-
-
-html
-{
+html {
 	overflow: hidden;
 	height: 100%;
 	width: 100%;
@@ -438,68 +435,21 @@ html
 
 body {
 	overflow: hidden;
-	font-family: Arial, sans-serif;
-	font-size: .74em;
+	font: 8pt Verdana;
 	height: 100%;
 	width: 100%;
 	margin: 0;
 	padding: 0;
 }
 
-img
-{
+img {
 	display: block;
 }
 
-select {
-	height:25px;
-}
-
-button {
-	padding: 4px 12px;
-	line-height: 14px;
-	font-weight: bold;
-	border: 1px solid #337fb2;
-	/*color: #0c161d;*/
-	color: white;
+button { /* 	font: 8pt Verdana; */
 	white-space: nowrap;
 	margin: 0;
-
-	background: #44b1f4; /* Old browsers */
-	background: -moz-linear-gradient(top,  #44b1f4 0%, #358fcc 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#44b1f4), color-stop(100%,#358fcc)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #44b1f4 0%,#358fcc 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #44b1f4 0%,#358fcc 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #44b1f4 0%,#358fcc 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  #44b1f4 0%,#358fcc 100%); /* W3C */
-
-	-webkit-border-radius: 2px;
-    border-radius: 2px;
 }
-
-button:hover,
-button:focus {
-	background: #358fcc;
-	cursor: pointer;
-}
-
-button[disabled] {
-	padding: 4px 12px;
-	line-height: 14px;
-	font-weight: bold;
-	border: 1px solid #aaaaaa;
-	/*color: #0c161d;*/
-	color: white;
-	white-space: nowrap;
-	margin: 0;
-	cursor: default;
-
-	background: #cccccc;
-
-	-webkit-border-radius: 2px;
-    border-radius: 2px;
-}
-
 
 /*****************************************************************************************************/
 /* Login screen                                                                                      */
@@ -587,10 +537,6 @@ button[disabled] {
 
 .headerLogo {
 	width: 0;
-}
-
-.gwt-Image {
-	padding: 10px 5px 10px 30px;
 }
 
 .headerText {
