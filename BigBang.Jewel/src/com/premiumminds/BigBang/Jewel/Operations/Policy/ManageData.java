@@ -556,7 +556,6 @@ public class ManageData
 						lstrResult.append("A informação sobre este exercício será reposta:").append(pstrLineBreak);
 						mobjData.marrExercises[i].mobjPrevValues.Describe(lstrResult, pstrLineBreak);
 					}
-					mobjData.marrExercises[i].Describe(lstrResult, pstrLineBreak);
 					lstrResult.append(pstrLineBreak);
 				}
 			}
@@ -570,7 +569,7 @@ public class ManageData
 						lstrResult.append("(A repôr) ");
 						mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
 					}
-					if ( mobjData.marrValues[i].mbNew )
+					else if ( mobjData.marrValues[i].mbNew )
 					{
 						lstrResult.append("(A remover) ");
 						mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
@@ -673,7 +672,7 @@ public class ManageData
 				{
 					if ( mobjData.marrValues[i].mbDeleted )
 						lstrResult.append("(Reposto) ");
-					if ( mobjData.marrValues[i].mbNew )
+					else if ( mobjData.marrValues[i].mbNew )
 						lstrResult.append("(Removido) ");
 					else
 						lstrResult.append("(Valor reposto) ");

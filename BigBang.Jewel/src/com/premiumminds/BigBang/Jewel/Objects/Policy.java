@@ -743,7 +743,7 @@ public class Policy
 		{
 			lrefExercises = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyExercise)); 
 			lrsExercises = lrefExercises.SelectByMembers(pdb, new int[] {Constants.FKPolicy_In_Exercise},
-					new java.lang.Object[] {getKey()}, new int[] {-2});
+					new java.lang.Object[] {getKey()}, new int[] {-PolicyExercise.I.STARTDATE});
 		}
 		catch (Throwable e)
 		{

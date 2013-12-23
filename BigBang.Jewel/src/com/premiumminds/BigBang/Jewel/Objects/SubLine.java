@@ -19,6 +19,18 @@ import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 public class SubLine
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static final int NAME         = 0;
+		public static final int LINE         = 1;
+		public static final int OBJTYPE      = 2;
+		public static final int EXERCISETYPE = 3;
+		public static final int CALCCLASS    = 4;
+		public static final int PERCENT      = 5;
+		public static final int ISLIFE       = 6;
+		public static final int DESCRIPTION  = 7;
+	}
+
     public static SubLine GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{

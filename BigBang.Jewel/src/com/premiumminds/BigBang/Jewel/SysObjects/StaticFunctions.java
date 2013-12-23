@@ -100,7 +100,7 @@ public class StaticFunctions
 
 		try
 		{
-			Engine.pushNameSpace(Constants.NSID_CredEGS);
+			Engine.pushNameSpace(Constants.NSID_CredEGS, null);
 		}
 		catch (JewelEngineException e)
 		{
@@ -120,7 +120,7 @@ public class StaticFunctions
 
 		try
 		{
-			Engine.pushNameSpace(Constants.NSID_AMartins);
+			Engine.pushNameSpace(Constants.NSID_AMartins, null);
 		}
 		catch (JewelEngineException e)
 		{
@@ -141,12 +141,61 @@ public class StaticFunctions
 		return;
 	}
 
+	public static void AutoCreateExercises(UUID pidNameSpace)
+		throws BigBangJewelException
+	{
+		if ( !Constants.NSID_BigBang.equals(pidNameSpace) )
+			return;
+
+		try
+		{
+			Engine.pushNameSpace(Constants.NSID_CredEGS, Constants.UID_Root);
+		}
+		catch (JewelEngineException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		Exerciser.CreateExercises();
+
+		try
+		{
+			Engine.popNameSpace();
+		}
+		catch (JewelEngineException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			Engine.pushNameSpace(Constants.NSID_AMartins, Constants.UID_Root);
+		}
+		catch (JewelEngineException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		Exerciser.CreateExercises();
+
+		try
+		{
+			Engine.popNameSpace();
+		}
+		catch (JewelEngineException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return;
+	}
+
 	public static void DoSpecial(UUID pidNameSpace)
 		throws BigBangJewelException
 	{
 		try
 		{
-			Engine.pushNameSpace(Constants.NSID_CredEGS);
+			Engine.pushNameSpace(Constants.NSID_CredEGS, null);
 		}
 		catch (Throwable e)
 		{
