@@ -119,7 +119,7 @@ public class Exerciser
 		{
 			larrExercises = pol.GetCurrentExercises(ldb);
 			if ( (larrExercises.length == 0) ||
-					(((Timestamp)larrExercises[0].getAt(PolicyExercise.I.STARTDATE)).getYear() >= Calendar.getInstance().get(Calendar.YEAR)) )
+					(((Timestamp)larrExercises[0].getAt(PolicyExercise.I.STARTDATE)).getYear() + 1900 >= Calendar.getInstance().get(Calendar.YEAR)) )
 				continue;
 
 			lopONE = new OpenNewExercise(pol.GetProcessID());
