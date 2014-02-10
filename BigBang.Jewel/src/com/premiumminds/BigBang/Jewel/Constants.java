@@ -607,6 +607,7 @@ public class Constants
 	public static final UUID MCPID_Issuing    = UUID.fromString("C5BE51A9-7E0F-4970-962A-9EFC0135E9E1");
 	public static final UUID MCPID_Percentage = UUID.fromString("CECC8014-200C-4C4F-9F47-9EFC01368139");
 	public static final UUID MCPID_Negotiated = UUID.fromString("C7236BA7-73AD-40ED-B6DC-9EFC013691C8");
+	public static final UUID MCPID_IssuingCob = UUID.fromString("116EE6BD-D710-40BC-8308-A2CE00BE4BFF");
 	public static final UUID MCPID_Special    = UUID.fromString("071CE678-956B-4D41-94DE-9EFC013688B5");
 
 	// Client Types 
