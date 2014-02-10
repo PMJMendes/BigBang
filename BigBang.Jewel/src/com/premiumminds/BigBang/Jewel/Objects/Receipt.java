@@ -89,6 +89,8 @@ public class Receipt
 		public static final int SUBCASUALTY       = 25;
 	}
 
+	private static BigDecimal COLLECTION_COMMISSION = new BigDecimal("1.25");
+
     public static Receipt GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -959,6 +961,22 @@ public class Receipt
 		if ( Constants.MCPID_Issuing.equals(lidProfile) )
 		{
 			ldblPercent = getAbsolutePolicy().GetSubLine().getPercent();
+			ldblBase = (BigDecimal)getAt(I.COMMERCIALPREMIUM);
+			if ( (ldblBase != null) && (getAt(I.BONUSMALUS) != null) )
+			{
+				if ( (getAt(I.ISMALUS) == null) || !((Boolean)getAt(I.ISMALUS)) )
+					ldblBase = ldblBase.subtract((BigDecimal)getAt(I.BONUSMALUS));
+				else
+					ldblBase = ldblBase.add((BigDecimal)getAt(I.BONUSMALUS));
+			}
+			lbFound = true;
+		}
+
+		if ( Constants.MCPID_IssuingCob.equals(lidProfile) )
+		{
+			ldblPercent = getAbsolutePolicy().GetSubLine().getPercent();
+			if ( ldblPercent != null )
+				ldblPercent = ldblPercent.add(COLLECTION_COMMISSION);
 			ldblBase = (BigDecimal)getAt(I.COMMERCIALPREMIUM);
 			if ( (ldblBase != null) && (getAt(I.BONUSMALUS) != null) )
 			{
