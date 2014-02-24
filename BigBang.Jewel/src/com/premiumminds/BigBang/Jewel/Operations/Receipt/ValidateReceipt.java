@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -220,7 +221,24 @@ public class ValidateReceipt
 		}
 
 		if ( mobjDocOps != null )
-			mobjDocOps.UndoSubOp(pdb, midReceipt);
+		{
+			try
+			{
+				mobjDocOps.UndoSubOp(pdb, midReceipt);
+			}
+			catch(JewelPetriException e)
+			{
+				Throwable x;
+
+				x = e;
+				while ( x.getCause() != null )
+					x = x.getCause();
+				if ( !(x instanceof SQLException) )
+					throw e;
+				if ( !((SQLException)x).getSQLState().equals("23000") )
+					throw e;
+			}
+		}
 
 		lobjProc = GetProcess();
 
