@@ -86,6 +86,7 @@ public class ReceiptPendingValidation
 		MasterDB ldb;
 		ResultSet lrsReceipts;
 		UUID lidAgent;
+		Receipt lobjRec;
 
 		try
 		{
@@ -155,7 +156,12 @@ public class ReceiptPendingValidation
 		try
 		{
 			while ( lrsReceipts.next() )
-				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts));
+			{
+				lobjRec = Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts);
+				if ( lobjRec.getProfile().equals(Constants.ProfID_External) )
+					continue;
+				larrAux.add(lobjRec);
+			}
 		}
 		catch (Throwable e)
 		{
