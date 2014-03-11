@@ -26,7 +26,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
-import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceShortCircuit;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerForceShortCircuit;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.NotPayedIndication;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReturnToInsurer;
@@ -604,7 +604,7 @@ public class Axa
 	{
 		IProcess lrefRecProc;
 		IStep lobjStep;
-		ExternForceShortCircuit lopEFSC;
+		TriggerForceShortCircuit lopEFSC;
 
 		try
 		{
@@ -613,10 +613,10 @@ public class Axa
 			lobjStep = lrefRecProc.GetValidOperation(Constants.OPID_Receipt_Payment);
 			if ( lobjStep == null )
 			{
-				lobjStep = lrefRecProc.GetValidOperation(Constants.OPID_Receipt_ExternForceShortCircuit);
+				lobjStep = lrefRecProc.GetValidOperation(Constants.OPID_Receipt_TriggerForceShortCircuit);
 				if ( lobjStep == null )
 					return false;
-				lopEFSC = new ExternForceShortCircuit(lrefRecProc.getKey());
+				lopEFSC = new TriggerForceShortCircuit(lrefRecProc.getKey());
 				lopEFSC.Execute(pdb);
 				lobjStep = lrefRecProc.GetValidOperation(Constants.OPID_Receipt_Payment);
 			}

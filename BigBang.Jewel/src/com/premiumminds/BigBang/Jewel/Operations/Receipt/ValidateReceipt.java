@@ -32,6 +32,7 @@ public class ValidateReceipt
 	private UUID midReceipt;
 	private UUID midPrevManager;
 	private Timestamp mdtPrevLimit;
+	private boolean mbShort;
 
 	public ValidateReceipt(UUID pidProcess)
 	{
@@ -77,13 +78,23 @@ public class ValidateReceipt
 		throws JewelPetriException
 	{
 		IProcess lobjProc;
-		Receipt lobjAux;
+		Receipt lobjRec;
 		HashMap<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
+		UUID lidProfile;
 
 		lobjProc = GetProcess();
+		lobjRec = (Receipt)lobjProc.GetData();
+		try
+		{
+			lidProfile = lobjRec.getProfile();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		midReceipt = lobjProc.GetDataKey();
 		midPrevManager = lobjProc.GetManagerID();
@@ -92,10 +103,8 @@ public class ValidateReceipt
 
 		if ( mobjData != null )
 		{
-			lobjAux = (Receipt)lobjProc.GetData();
-
 			mobjData.mobjPrevValues = new ReceiptData();
-			mobjData.mobjPrevValues.FromObject(lobjAux);
+			mobjData.mobjPrevValues.FromObject(lobjRec);
 
 			mobjData.midManager = midPrevManager;
 			mobjData.mbInternal = mobjData.mobjPrevValues.mbInternal;
@@ -108,8 +117,8 @@ public class ValidateReceipt
 
 			try
 			{
-				mobjData.ToObject(lobjAux);
-				lobjAux.SaveToDb(pdb);
+				mobjData.ToObject(lobjRec);
+				lobjRec.SaveToDb(pdb);
 			}
 			catch (Throwable e)
 			{
@@ -148,6 +157,12 @@ public class ValidateReceipt
 		{
 			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
 			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		if ( Constants.ProfID_Simple.equals(lidProfile) && !lobjRec.isReverseCircuit() )
+		{
+			mbShort = true;
+			TriggerOp(new TriggerForceShortCircuit(lobjProc.getKey()), pdb);
 		}
 	}
 
@@ -271,6 +286,9 @@ public class ValidateReceipt
 		}
 
 		lobjProc.SetManagerID(midPrevManager, pdb);
+
+		if ( mbShort )
+			TriggerOp(new TriggerUndoShortCircuit(lobjProc.getKey()), pdb);
 	}
 
 	public UndoSet[] GetSets()
