@@ -173,11 +173,9 @@ public abstract class CreateReceiptBase
 
 			if ( lobjAux.isReverseCircuit() )
 				TriggerOp(new ExternForceReverse(lobjProc.getKey()), pdb);
-			else if ( Constants.ProfID_Simple.equals(lidProfile) )
-				TriggerOp(new ExternForceShortCircuit(lobjProc.getKey()), pdb);
 			else if ( Constants.ProfID_External.equals(lidProfile) )
 			{
-				TriggerOp(new ExternForceShortCircuit(lobjProc.getKey()), pdb);
+				TriggerOp(new TriggerForceShortCircuit(lobjProc.getKey()), pdb);
 				TriggerOp(new ExternBlockEndProcessSend(lobjProc.getKey()), pdb);
 			}
 		}

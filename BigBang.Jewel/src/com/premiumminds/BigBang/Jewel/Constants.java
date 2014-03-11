@@ -395,7 +395,8 @@ public class Constants
 	public static final UUID OPID_Receipt_UndoDebitNote                  = UUID.fromString("D0565F1D-F0B3-4FD8-AD3F-A01300C82715");
 	public static final UUID OPID_Receipt_CreatePaymentNotice            = UUID.fromString("102E9D79-A006-4757-ADBA-A01300C863B1");
 	public static final UUID OPID_Receipt_CreateSecondPaymentNotice      = UUID.fromString("6BC653FD-3265-4A3C-9307-A01300C8B2BC");
-	public static final UUID OPID_Receipt_ExternForceShortCircuit        = UUID.fromString("1EB5CA7C-01D0-4120-BAA2-A01300C8E4BD");
+	public static final UUID OPID_Receipt_TriggerForceShortCircuit       = UUID.fromString("1EB5CA7C-01D0-4120-BAA2-A01300C8E4BD");
+	public static final UUID OPID_Receipt_TriggerUndoShortCircuit        = UUID.fromString("21A98932-1495-4D58-8DCE-A2EB00B488AF");
 	public static final UUID OPID_Receipt_CreateOrderNumberRequest       = UUID.fromString("7AC19720-D364-4FBD-A01F-A01300C92666");
 	public static final UUID OPID_Receipt_CreateDASRequest               = UUID.fromString("4CAD549D-2903-4A42-9767-A01300C98B51");
 	public static final UUID OPID_Receipt_CreateSignatureRequest         = UUID.fromString("563A630A-276A-48E8-96D3-A01300C9AF24");

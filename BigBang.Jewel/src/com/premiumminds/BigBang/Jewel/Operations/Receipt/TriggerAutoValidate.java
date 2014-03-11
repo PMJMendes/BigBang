@@ -9,6 +9,7 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class TriggerAutoValidate
 	extends UndoableOperation
@@ -17,6 +18,7 @@ public class TriggerAutoValidate
 
 	private UUID midReceipt;
 	private UUID midPrevManager;
+	private boolean mbShort;
 
 	public TriggerAutoValidate(UUID pidProcess)
 	{
@@ -43,16 +45,34 @@ public class TriggerAutoValidate
 		return null;
 	}
 
-	protected void Run(SQLServer pdb) throws JewelPetriException
+	protected void Run(SQLServer pdb)
+		throws JewelPetriException
 	{
 		IProcess lobjProc;
+		Receipt lobjRec;
+		UUID lidProfile;
 
 		lobjProc = GetProcess();
+		lobjRec = (Receipt)lobjProc.GetData();
+		try
+		{
+			lidProfile = lobjRec.getProfile();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		midReceipt = lobjProc.GetDataKey();
 		midPrevManager = lobjProc.GetManagerID();
 
 		lobjProc.SetManagerID(Engine.getCurrentUser(), pdb);
+
+		if ( Constants.ProfID_Simple.equals(lidProfile) && !lobjRec.isReverseCircuit() )
+		{
+			mbShort = true;
+			TriggerOp(new TriggerForceShortCircuit(lobjProc.getKey()), pdb);
+		}
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -68,7 +88,13 @@ public class TriggerAutoValidate
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
-		GetProcess().SetManagerID(midPrevManager, pdb);
+		IProcess lobjProc;
+
+		lobjProc = GetProcess();
+		lobjProc.SetManagerID(midPrevManager, pdb);
+
+		if ( mbShort )
+			TriggerOp(new TriggerUndoShortCircuit(lobjProc.getKey()), pdb);
 	}
 
 	public UndoSet[] GetSets()
