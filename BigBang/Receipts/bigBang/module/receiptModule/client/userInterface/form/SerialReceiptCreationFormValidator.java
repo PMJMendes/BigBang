@@ -83,7 +83,10 @@ public class SerialReceiptCreationFormValidator extends FormValidator<SerialRece
 	}
 
 	private boolean validateSalesPremium() {
-		return validateNumber(form.salesPremium, form.bonusMalusValue.getValue() == null);
+		return validateNumber(form.salesPremium,
+				form.bonusMalusValue.getValue() == null &&
+				(BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.BACKCHARGE.equalsIgnoreCase(form.type.getValue()) ||
+				BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CASUALTY.equalsIgnoreCase(form.type.getValue())));
 	}
 
 	private boolean validateCommission() {
