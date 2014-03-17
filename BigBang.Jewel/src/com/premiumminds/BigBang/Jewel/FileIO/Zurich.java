@@ -182,7 +182,7 @@ public class Zurich
 				return;
 			}
 
-			lstrReceipt = parrData[Fields.RECEIPT].getData();
+			lstrReceipt = parrData[Fields.RECEIPT].getData().trim().replaceFirst("^0+(?!$)", "");
 			if ( parrSet.contains(lstrReceipt) )
 			{
 				createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_2_RepeatedReceipt, null);
