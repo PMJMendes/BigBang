@@ -581,7 +581,7 @@ public class Payment
 				lobjAux = new AccountingData();
 				lobjAux.mlngNumber = (Integer)lobjReceipt.getAt(Receipt.I.ENTRYNUMBER);
 				lobjAux.mdtDate = new Timestamp(pdtDate.getTimeInMillis());
-				lobjAux.mdblAccount = new BigDecimal("1203");
+				lobjAux.mdblAccount = new BigDecimal("1207");
 				lobjAux.mdblValue = ldblComms.abs();
 				lobjAux.mstrSign = (ldblComms.signum() > 0 ? "D" : "C");
 				lobjAux.mlngBook = 6;

@@ -232,7 +232,7 @@ public class MediatorAccountingMap
 		larrResult[1] = new AccountingData();
 		larrResult[1].mlngNumber = (Integer)getAt(I.ENTRYNUMBER);
 		larrResult[1].mdtDate = mdtToday;
-		larrResult[1].mdblAccount = new BigDecimal("1203");
+		larrResult[1].mdblAccount = new BigDecimal("1207");
 		larrResult[1].mdblValue = mdblTotal.abs();
 		larrResult[1].mstrSign = (mdblTotal.signum() > 0 ? "C" : "D");
 		larrResult[1].mlngBook = 6;
