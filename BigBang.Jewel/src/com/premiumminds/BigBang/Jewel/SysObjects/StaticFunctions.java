@@ -118,7 +118,7 @@ public class StaticFunctions
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		try
+		/*try
 		{
 			Engine.pushNameSpace(Constants.NSID_AMartins, null);
 		}
@@ -136,7 +136,7 @@ public class StaticFunctions
 		catch (JewelEngineException e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
-		}
+		}*/
 
 		return;
 	}
@@ -167,7 +167,7 @@ public class StaticFunctions
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		try
+		/*try
 		{
 			Engine.pushNameSpace(Constants.NSID_AMartins, Constants.UID_Root);
 		}
@@ -185,7 +185,7 @@ public class StaticFunctions
 		catch (JewelEngineException e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
-		}
+		}*/
 
 		return;
 	}

@@ -43,9 +43,9 @@ public class AuthenticationServiceImpl
 			return null;
 		lobjUser = null;
 
-		if ( domain.equals("AMartins") )
+		/*if ( domain.equals("AMartins") )
 			lidNSpace = Constants.NSID_AMartins;
-		else if ( domain.equals("CrediteEGS") )
+		else */if ( domain.equals("CrediteEGS") )
 			lidNSpace = Constants.NSID_CredEGS;
 		else
 			throw new BigBangException("Invalid login domain.");
@@ -117,9 +117,9 @@ public class AuthenticationServiceImpl
 		lobjUser = null;
 
 
-		if ( ("AMartins").equals(domain) )
+		/*if ( ("AMartins").equals(domain) )
 			lidNSpace = Constants.NSID_AMartins;
-		else if ( ("CrediteEGS").equals(domain) )
+		else */if ( ("CrediteEGS").equals(domain) )
 			lidNSpace = Constants.NSID_CredEGS;
 		else
 			throw new BigBangException("Invalid login domain.");

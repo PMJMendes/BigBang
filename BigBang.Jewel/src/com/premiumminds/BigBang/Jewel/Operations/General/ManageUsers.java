@@ -611,7 +611,7 @@ public class ManageUsers
 			{
 			}
 
-			if ( lobjMed == null )
+			/*if ( lobjMed == null )
 			{
 				try
 				{
@@ -623,7 +623,7 @@ public class ManageUsers
 				catch (Throwable e)
 				{
 				}
-			}
+			}*/
 		}
 
 		pstrString.append("Nome: ");

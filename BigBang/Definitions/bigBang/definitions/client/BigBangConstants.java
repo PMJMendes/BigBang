@@ -340,8 +340,8 @@ public class BigBangConstants {
 		public static final int DEFAULT_DOMAIN_INDEX = 0;
 		
 		public static final String[] DOMAINS = new String[] {
-			"CrediteEGS",
-			"AMartins"
+			"CrediteEGS"/*,
+			"AMartins"*/
 		};
 	}
 }
