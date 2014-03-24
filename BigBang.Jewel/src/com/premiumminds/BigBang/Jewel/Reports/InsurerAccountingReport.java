@@ -241,7 +241,7 @@ public class InsurerAccountingReport
 		{
 			while ( lrsRecs.next() )
 			{
-				lstrAux = lrsRecs.getString(InsurerReceipt.I.NUMBER + 2).substring(lstrFilter.length() - 1);
+				lstrAux = lrsRecs.getString(InsurerReceipt.I.NUMBER + 2).substring(lstrFilter.length() - 1, lstrFilter.length() + 3);
 				llngAux = Integer.parseInt(lstrAux);
 				if ( llngAux >= llngResult )
 					llngResult = llngAux + 1;
