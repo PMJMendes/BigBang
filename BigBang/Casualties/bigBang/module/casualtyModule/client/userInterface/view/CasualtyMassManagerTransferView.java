@@ -94,6 +94,7 @@ public class CasualtyMassManagerTransferView extends
 			p.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
 			p.caseStudy = (Boolean) filtersPanel.getFilterValue(Filters.CASE_STUDY);
 			p.includeClosed = (Boolean) filtersPanel.getFilterValue(Filters.INCLUDE_CLOSED);
+			p.closedOnly = false;
 
 			parameters[0] = p;
 

@@ -28,6 +28,7 @@ public class SubCasualty
 
 	public String managerId;
 
+	public String inheritCasualtyNumber;
 	public String inheritInsurerId;
 	public String inheritInsurerName;
 	public String inheritMasterClientId;

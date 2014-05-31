@@ -3,22 +3,11 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-
 import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
@@ -44,6 +33,15 @@ import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
 import bigBang.module.casualtyModule.client.resources.Resources;
 import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyItemSection;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 
 public class SubCasualtyForm extends FormView<SubCasualty> {
 
@@ -172,6 +170,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				if(event.getValue().equalsIgnoreCase("true")){
 					insuredObject.setVisible(true);
 					insuredObjectName.setVisible(false);
+
+					setReference(referenceType.getValue(), referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue());
 				}else{
 					insuredObject.setVisible(false);
 					insuredObjectName.setVisible(true);
@@ -208,7 +208,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 					policyReference.setValue(null, true);
 					subPolicyReference.setValue(null, true);
 				}
-				setReference(referenceType.getValue(), referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue());
+				else if((belongsToPolicy.getValue() != null) && belongsToPolicy.getValue().equalsIgnoreCase("true"))
+					setReference(referenceType.getValue(), referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue());
 				updateItemSections();
 			}
 		};
@@ -257,20 +258,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				navigationItem.pushIntoStackParameter("display", "search");
 				navigationItem.setParameter("casualtyid", info.casualtyId);
 				casualty.setValue(navigationItem);
-				
-				CasualtyDataBroker casualtyBroker = (CasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CASUALTY);
-				casualtyBroker.getCasualty(info.casualtyId, new ResponseHandler<Casualty>() {
-
-					@Override
-					public void onResponse(Casualty response) {
-						casualty.setValueName("#" + response.processNumber + " - " + response.clientName);
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						return;
-					}
-				});
+				casualty.setValueName(info.inheritCasualtyNumber);
 			}else{
 				casualty.setValue(null);
 				casualty.setValueName(null);
@@ -278,17 +266,17 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 			number.setValue(info.number);
 			
-			referenceType.setValue(info.referenceTypeId, true);
-			
-			setReference(info.referenceTypeId, info.referenceId);
-			
 			if(info.insuredObjectName != null){
 				belongsToPolicy.setValue("false", true);
 				insuredObjectName.setValue(info.insuredObjectName);
 			}else{
+				setReference(info.referenceTypeId, info.referenceId);
+
 				belongsToPolicy.setValue("true", true);
 				insuredObject.setValue(info.insuredObjectId);
 			}
+			
+			referenceType.setValue(info.referenceTypeId, true);
 			
 			if(info.referenceTypeId == null) {
 				referenceType.setValue(null, true);
@@ -454,7 +442,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	}
 
 	public void setReference(String referenceTypeId, String referenceId){
-		if(referenceId != null) {
+		if((referenceId != null) && (referenceId != null)) {
 			if(referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)) {
 				insuredObject.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECT + "/" + referenceId, new ResponseHandler<Void>() {
 

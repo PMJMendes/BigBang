@@ -37,4 +37,7 @@ public interface CasualtyDataBroker extends DataBrokerInterface<Casualty> {
 
 	void subCasualtyReopen(String casualtyId, String subCasualtyId,
 			String motive, ResponseHandler<SubCasualty> responseHandler);
+
+	public void getDeadCasualtiesForClient(String ownerId,
+			ResponseHandler<Collection<CasualtyStub>> responseHandler);
 }

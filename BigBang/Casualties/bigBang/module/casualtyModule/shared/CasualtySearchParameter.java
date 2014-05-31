@@ -15,4 +15,5 @@ public class CasualtySearchParameter
 	public String insuredObject;
 
 	public boolean includeClosed;
+	public boolean closedOnly;
 }

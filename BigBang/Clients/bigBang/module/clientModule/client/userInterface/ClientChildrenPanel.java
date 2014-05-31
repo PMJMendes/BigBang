@@ -25,6 +25,7 @@ public class ClientChildrenPanel extends View  {
 	public HistoryList historyList;
 	public SubProcessesList subProcessesList;
 	public ClientDeadPoliciesList deadInsurancePoliciesList;
+	public ClientDeadCasualtiesList deadCasualtiesList;
 
 	public ClientChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
@@ -39,6 +40,7 @@ public class ClientChildrenPanel extends View  {
 		historyList = new HistoryList();
 		subProcessesList = new SubProcessesList();
 		deadInsurancePoliciesList = new ClientDeadPoliciesList();
+		deadCasualtiesList = new ClientDeadCasualtiesList();
 		conversationList = new ConversationList();
 		
 		wrapper.add(this.contactsList, "Contactos");
@@ -50,6 +52,7 @@ public class ClientChildrenPanel extends View  {
 		wrapper.add(this.subProcessesList, "Sub-Processos");
 		wrapper.add(this.historyList, "Histórico");
 		wrapper.add(this.deadInsurancePoliciesList, "Apólices Antigas");
+		wrapper.add(this.deadCasualtiesList, "Sinistros Antigos");
 
 	}
 
@@ -75,6 +78,6 @@ public class ClientChildrenPanel extends View  {
 		this.subProcessesList.setOwner(clientId);
 		this.historyList.setOwner(clientId);
 		this.deadInsurancePoliciesList.setOwner(clientId);
+		this.deadCasualtiesList.setOwner(clientId);
 	}
-
 }

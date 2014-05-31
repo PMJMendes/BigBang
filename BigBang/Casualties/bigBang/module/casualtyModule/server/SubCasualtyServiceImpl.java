@@ -124,6 +124,7 @@ public class SubCasualtyServiceImpl
 		lobjResult.text = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.DESCRIPTION);
 		lobjResult.managerId = lobjProcess.GetManagerID().toString();
 		lobjResult.internalNotes = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.NOTES);
+		lobjResult.inheritCasualtyNumber = lobjCasualty.getLabel();
 		lobjResult.inheritInsurerId = lobjComp.getKey().toString();
 		lobjResult.inheritInsurerName = lobjComp.getLabel();
 		lobjResult.inheritMasterClientId = lobjClient.getKey().toString();

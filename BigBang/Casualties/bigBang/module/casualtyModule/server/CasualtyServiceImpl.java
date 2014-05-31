@@ -555,7 +555,35 @@ public class CasualtyServiceImpl
 
 	protected String[] getColumns()
 	{
-		return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Client]", "[:Client:Name]", "[:Client:Number]"};
+		IEntity lrefSubs;
+		String lstrMulti;
+		String lstrSingle;
+
+		lstrMulti = null;
+		lstrSingle = null;
+		try
+		{
+			lrefSubs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+			lstrMulti = lrefSubs.SQLForSelectMulti();
+			lstrSingle = lrefSubs.SQLForSelectSingle();
+		}
+		catch (Throwable e)
+		{
+			return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
+					"NULL", "NULL", "NULL", "NULL", "NULL"};
+		}
+
+		return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
+				"(SELECT [:Policy:SubLine:Description] FROM (" + lstrMulti + ") [SC1] WHERE [:Number] = " +
+						"(SELECT MIN([:Number]) FROM (" + lstrSingle + ") [SC0] WHERE [:Casualty]=[Aux].[PK]))",
+				"(SELECT [:Sub Policy:Policy:SubLine:Description] FROM (" + lstrMulti + ") [SC1] WHERE [:Number] = " +
+						"(SELECT MIN([:Number]) FROM (" + lstrSingle + ") [SC0] WHERE [:Casualty]=[Aux].[PK]))",
+				"(SELECT [:Policy Object:Name] FROM (" + lstrMulti + ") [SC1] WHERE [:Number] = " +
+						"(SELECT MIN([:Number]) FROM (" + lstrSingle + ") [SC0] WHERE [:Casualty]=[Aux].[PK]))",
+				"(SELECT [:Sub Policy Object:Name] FROM (" + lstrMulti + ") [SC1] WHERE [:Number] = " +
+						"(SELECT MIN([:Number]) FROM (" + lstrSingle + ") [SC0] WHERE [:Casualty]=[Aux].[PK]))",
+				"(SELECT [:Generic Object] FROM (" + lstrMulti + ") [SC1] WHERE [:Number] = " +
+						"(SELECT MIN([:Number]) FROM (" + lstrSingle + ") [SC0] WHERE [:Casualty]=[Aux].[PK]))"};
 	}
 
 	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
@@ -581,6 +609,10 @@ public class CasualtyServiceImpl
 		if ( !lParam.includeClosed )
 		{
 			pstrBuffer.append(" AND [:Process:Running] = 1");
+		}
+		else if ( lParam.closedOnly )
+		{
+			pstrBuffer.append(" AND [:Process:Running] = 0");
 		}
 
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
@@ -741,28 +773,36 @@ public class CasualtyServiceImpl
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
-		IProcess lobjProcess;
 		CasualtyStub lobjResult;
-		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSub;
+//		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSub;
 		String lstrCat;
 		String lstrObj;
 
-		lobjProcess = null;
-		lstrCat = null;
-		lstrObj = null;
-		try
-		{
-			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
-			lobjSub = ((com.premiumminds.BigBang.Jewel.Objects.Casualty)lobjProcess.GetData()).GetFirstSubCasualty();
-			if ( lobjSub != null )
-			{
-				lstrCat = lobjSub.GetSubLine().getDescription();
-				lstrObj = lobjSub.GetObjectName();
-			}
-		}
-		catch (Throwable e)
-		{
-		}
+//		lstrCat = null;
+//		lstrObj = null;
+//		try
+//		{
+//			lobjSub = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
+//					pid).GetFirstSubCasualty();
+//			if ( lobjSub != null )
+//			{
+//				lstrCat = lobjSub.GetSubLine().getDescription();
+//				lstrObj = lobjSub.GetObjectName();
+//			}
+//		}
+//		catch (Throwable e)
+//		{
+//		}
+
+		lstrCat = (String)parrValues[8];
+		if (lstrCat == null)
+			lstrCat = (String)parrValues[9];
+
+		lstrObj = (String)parrValues[10];
+		if (lstrObj == null)
+			lstrObj = (String)parrValues[11];
+		if (lstrObj == null)
+			lstrObj = (String)parrValues[12];
 
 		lobjResult = new CasualtyStub();
 
@@ -773,10 +813,10 @@ public class CasualtyServiceImpl
 		lobjResult.clientName = (String)parrValues[5];
 		lobjResult.casualtyDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		lobjResult.caseStudy = (Boolean)parrValues[3];
-		lobjResult.isOpen = lobjProcess.IsRunning();
+		lobjResult.isOpen = (Boolean)parrValues[7];
 		lobjResult.policyCategory = lstrCat;
 		lobjResult.insuredObject = lstrObj;
-		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
+		lobjResult.processId = (parrValues[1] == null ? null : ((UUID)parrValues[1]).toString());
 		return lobjResult;
 	}
 

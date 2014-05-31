@@ -175,7 +175,8 @@ CasualtyDataBroker {
 			final ResponseHandler<Collection<CasualtyStub>> responseHandler) {
 		CasualtySearchParameter parameter = new CasualtySearchParameter();
 		parameter.ownerId = ownerId;
-		parameter.includeClosed = true;
+		parameter.includeClosed = false;
+		parameter.closedOnly = false;
 
 		CasualtySortParameter sort = new CasualtySortParameter(SortableField.DATE, SortOrder.DESC);
 
@@ -384,5 +385,29 @@ CasualtyDataBroker {
 
 	}
 
+	@Override
+	public void getDeadCasualtiesForClient(String ownerId,
+			final ResponseHandler<Collection<CasualtyStub>> responseHandler) {
+		CasualtySearchParameter parameter = new CasualtySearchParameter();
+		parameter.ownerId = ownerId;
+		parameter.includeClosed = true;
+		parameter.closedOnly = true;
 
+		CasualtySortParameter sort = new CasualtySortParameter(SortableField.DATE, SortOrder.DESC);
+
+		getSearchBroker().search(new SearchParameter[]{parameter}, new SortParameter[]{sort}, -1, new ResponseHandler<Search<CasualtyStub>>() {
+
+			@Override
+			public void onResponse(Search<CasualtyStub> response) {
+				responseHandler.onResponse(response.getResults());
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				responseHandler.onError(new String[]{
+						new String("Could not get the casualties for client")
+				});
+			}
+		}, true);
+	}
 }
