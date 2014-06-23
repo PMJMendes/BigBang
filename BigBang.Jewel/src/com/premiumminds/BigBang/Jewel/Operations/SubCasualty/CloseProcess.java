@@ -65,6 +65,12 @@ public class CloseProcess
 		Calendar ldtAux2;
 		SubCasualty lobjSubCasualty;
 
+		lobjSubCasualty = (SubCasualty)GetProcess().GetData();
+		midReviewer = (UUID)lobjSubCasualty.getAt(SubCasualty.I.REVIEWER);
+
+		if (!Engine.getCurrentUser().equals(midReviewer))
+			throw new JewelPetriException("O processo só pode ser encerrado pelo utilizador designado para esse fim.");
+
 		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
 		try
@@ -105,8 +111,6 @@ public class CloseProcess
 
 		try
 		{
-			lobjSubCasualty = (SubCasualty)GetProcess().GetData();
-			midReviewer = (UUID)lobjSubCasualty.getAt(SubCasualty.I.REVIEWER);
 			mdtReviewDate = (Timestamp)lobjSubCasualty.getAt(SubCasualty.I.REVIEWDATE);
 			lobjSubCasualty.setAt(SubCasualty.I.REVIEWER, null);
 			lobjSubCasualty.setAt(SubCasualty.I.REVIEWDATE, null);

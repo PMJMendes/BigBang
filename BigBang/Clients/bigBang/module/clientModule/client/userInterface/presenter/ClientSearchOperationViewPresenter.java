@@ -95,6 +95,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<QuoteRequestStub> getQuoteRequestList();
 		HasValueSelectables<CasualtyStub> getCasualtyList();
 		HasValueSelectables<InsurancePolicyStub> getDeadPoliciesList();
+		HasValueSelectables<CasualtyStub> getDeadCasualtyList();
 		HasValueSelectables<ConversationStub> getConversationList();
 
 		//General
@@ -404,6 +405,21 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					navItem.pushIntoStackParameter("display", "search");
 					navItem.setParameter("policyid", itemId);
 					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		view.getDeadCasualtyList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<CasualtyStub> selected = (ValueSelectable<CasualtyStub>) event.getFirstSelected();
+				CasualtyStub item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					goToCasualty(itemId);
 				}
 			}
 		});

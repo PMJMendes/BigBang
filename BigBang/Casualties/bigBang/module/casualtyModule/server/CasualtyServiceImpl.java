@@ -669,11 +669,11 @@ public class CasualtyServiceImpl
 		if ( lParam.insuredObject != null )
 		{
 			lstrAux = lParam.insuredObject.trim().replace("'", "''").replace(" ", "%");
-			pstrBuffer.append(" AND ([:Process] IN (SELECT [:Process:Parent] FROM (");
+			pstrBuffer.append(" AND ([PK] IN (SELECT [:Casualty] FROM (");
 			try
 			{
 				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
-				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{

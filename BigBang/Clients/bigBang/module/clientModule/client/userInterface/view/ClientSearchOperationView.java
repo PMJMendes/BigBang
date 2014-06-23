@@ -378,6 +378,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	}
 
 	@Override
+	public HasValueSelectables<CasualtyStub> getDeadCasualtyList() {
+		return this.childrenPanel.deadCasualtiesList;
+	}
+
+	@Override
 	public void setForCreation(boolean forCreation) {
 		if(forCreation) {
 			form.setForCreate();
