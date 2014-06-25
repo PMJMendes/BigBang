@@ -187,7 +187,7 @@ public class ExpenseReturnReport
 
 			mlngCount++;
 			mdblTotal = ( lobjExpense.getAt(Expense.I.SETTLEMENT) == null ? mdblTotal :
-					mdblTotal.add((BigDecimal)lobjExpense.getAt(Expense.I.SETTLEMENT)) );
+					mdblTotal.add((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES)) );
 		}
 
 		larrParams.put("Count", "" + mlngCount + " despesa" + (mlngCount == 1 ? "" : "s"));

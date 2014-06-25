@@ -96,6 +96,7 @@ public class ExpenseData
 
 		pstrBuilder.append("Data do Sinistro: ");
 		pstrBuilder.append(mdtDate.toString().substring(0, 10));
+		pstrBuilder.append(pstrLineBreak);
 
 		if ( midPolicyObject != null )
 		{

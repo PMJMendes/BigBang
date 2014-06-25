@@ -64,25 +64,22 @@ public class SerialExpenseCreationFormValidator extends FormValidator<SerialExpe
 	}
 
 	private boolean validateInsuredObject() {
-		if(!validateBelongsToPolicy()){
-			return false;
-		}
-		
-		boolean valid = validateInsuredObjectInList();
-		
+		boolean valid = false;
+
+		valid |= validateInsuredObjectInList();
 		valid |= validateInsuredObjectInText();
-		
+
 		return valid;
 	}
 
 	private boolean validateInsuredObjectInList() {
-		if ( form.belongsToPolicy.getValue().equalsIgnoreCase("true") )
+		if ( "true".equalsIgnoreCase(form.belongsToPolicy.getValue()) )
 			return validateGuid(form.insuredObject, false);
 		return true;
 	}
 
 	private boolean validateInsuredObjectInText() {
-		if ( !form.belongsToPolicy.getValue().equalsIgnoreCase("true") )
+		if ( "false".equalsIgnoreCase(form.belongsToPolicy.getValue()) )
 			return validateString(form.insuredObjectName, 1, 250, false);
 		return true;
 	}

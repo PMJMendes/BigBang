@@ -61,6 +61,23 @@ public class SubPolicyCoverage
 
         return "";
     }
+    
+    public String getLabel()
+    {
+    	if ( mrefCoverage == null )
+    	{
+			try
+			{
+				Initialize();
+			}
+			catch (Throwable e)
+			{
+				return "";
+			}
+    	}
+
+    	return mrefCoverage.getLabel();
+    };
 
 	public Coverage GetCoverage()
 	{

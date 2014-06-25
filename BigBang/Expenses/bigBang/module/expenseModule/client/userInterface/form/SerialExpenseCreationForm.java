@@ -435,6 +435,8 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		belongsToPolicy.setReadOnly(!b);
 		settleButton.setEnabled(b);
 		notes.setReadOnly(!b);
+		if (b)
+			validate();
 	}
 
 	public void clearExpense() {
