@@ -123,7 +123,12 @@ public class ReceiptHistoryPaymentAcct
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		lstrSQL.append(" AND DATEDIFF(day, [Timestamp], '" + parrParams[0] + "') = 0)");
+		lstrSQL.append(" AND DATEDIFF(day, [Timestamp], '" + parrParams[0] + "') = 0");
+
+		if (parrParams[1] != null)
+			lstrSQL.append(" AND [User] = '" + parrParams[1] + "'");
+
+		lstrSQL.append(")");
 
 		larrAux = new ArrayList<Receipt>();
 
