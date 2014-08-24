@@ -53,8 +53,9 @@ public class TriggerCloseProcess
 			if ( !Constants.ProcID_SubCasualty.equals(larrSubProcs[i].GetScriptID()) )
 				continue;
 
-			if ( !larrSubProcs[i].IsRunning() )
-				larrSubProcs[i].Restart(pdb);
+// JMMM - ExternDisallowUndoClose is now OverrideRunning
+//			if ( !larrSubProcs[i].IsRunning() )
+//				larrSubProcs[i].Restart(pdb);
 			TriggerOp(new ExternDisallowUndoClose(larrSubProcs[i].getKey()), pdb);
 		}
 
@@ -83,8 +84,9 @@ public class TriggerCloseProcess
 			if ( !Constants.ProcID_SubCasualty.equals(larrSubProcs[i].GetScriptID()) )
 				continue;
 
-			if ( !larrSubProcs[i].IsRunning() )
-				larrSubProcs[i].Restart(pdb);
+// JMMM - ExternReallowUndoClose is now OverrideRunning
+//			if ( !larrSubProcs[i].IsRunning() )
+//				larrSubProcs[i].Restart(pdb);
 			TriggerOp(new ExternReallowUndoClose(larrSubProcs[i].getKey()), pdb);
 		}
 
