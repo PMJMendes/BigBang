@@ -83,8 +83,8 @@ public class Exerciser
 		{
 			try
 			{
-				lrs = lrefPolicies.SelectByMembers(ldb, new int[] {Policy.I.SUBLINE, Policy.I.STATUS},
-						new java.lang.Object[] {sl.getKey(), Constants.StatusID_Valid}, null);
+				lrs = lrefPolicies.SelectByMembers(ldb, new int[] {Policy.I.SUBLINE, Policy.I.STATUS, Policy.I.DURATION},
+						new java.lang.Object[] {sl.getKey(), Constants.StatusID_Valid, Constants.DurID_Ongoing}, null);
 			}
 			catch (Throwable e)
 			{

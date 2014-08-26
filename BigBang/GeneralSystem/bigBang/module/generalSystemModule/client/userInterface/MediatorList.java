@@ -23,6 +23,7 @@ public class MediatorList extends FilterableList<Mediator> implements MediatorDa
 	
 	public MediatorList() {
 		super();
+
 		header = new ListHeader();
 		header.setText("Mediadores");
 		header.showNewButton("Novo");
@@ -38,13 +39,18 @@ public class MediatorList extends FilterableList<Mediator> implements MediatorDa
 	@Override
 	public void updateFooterText() {
 		int size = size();
-		String text = new String();
-		if(size == 0)
+		String text;
+		switch(size){
+		case 0:
 			text = "Sem mediadores";
-		if(size == 1)
+			break;
+		case 1:
 			text = "1 mediador";
-		if(size > 1)
+			break;
+		default:
 			text = size + " mediadores";
+			break;
+		}
 		
 		setFooterText(text);
 	}
@@ -122,5 +128,4 @@ public class MediatorList extends FilterableList<Mediator> implements MediatorDa
 			}
 		});
 	}
-
 }

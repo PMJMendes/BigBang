@@ -181,7 +181,7 @@ public class SubCasualtyData
 
 		if ( midServiceCenter != null )
 		{
-			pstrBuilder.append("Oficina: ");
+			pstrBuilder.append("Oficina/Outra Entidade: ");
 			try
 			{
 				lobjSC = OtherEntity.GetInstance(Engine.getCurrentNameSpace(), midServiceCenter);
@@ -190,7 +190,7 @@ public class SubCasualtyData
 			{
 				lobjSC = null;
 			}
-			pstrBuilder.append(lobjSC == null ? "(erro a obter a oficina)" : lobjSC.getLabel());
+			pstrBuilder.append(lobjSC == null ? "(erro a obter a outra entidade)" : lobjSC.getLabel());
 			pstrBuilder.append(pstrLineBreak);
 		}
 

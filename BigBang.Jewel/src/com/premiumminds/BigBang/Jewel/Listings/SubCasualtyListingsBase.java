@@ -156,7 +156,7 @@ public class SubCasualtyListingsBase
 		larrCells[6] = ReportBuilder.buildHeaderCell("Processo");
 		ReportBuilder.styleCell(larrCells[6], false, true);
 
-		larrCells[7] = ReportBuilder.buildHeaderCell("Oficina");
+		larrCells[7] = ReportBuilder.buildHeaderCell("Outra Ent");
 		ReportBuilder.styleCell(larrCells[7], false, true);
 
 		larrCells[8] = ReportBuilder.buildHeaderCell("Judicial");

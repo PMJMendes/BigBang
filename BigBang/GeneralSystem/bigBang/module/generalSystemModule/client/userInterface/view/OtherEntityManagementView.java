@@ -13,6 +13,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.OtherEntityChildrenPanel;
 import bigBang.module.generalSystemModule.client.userInterface.OtherEntityList;
+import bigBang.module.generalSystemModule.client.userInterface.OtherEntityListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.StandardGeneralSystemOperationsToolbar;
 import bigBang.module.generalSystemModule.client.userInterface.form.OtherEntityForm;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.OtherEntityManagementViewPresenter;
@@ -184,7 +185,7 @@ public class OtherEntityManagementView extends View implements OtherEntityManage
 				return;
 			}
 		}
-		OtherEntityList.OtherEntityEntry entry = new OtherEntityList.OtherEntityEntry(newEntity);
+		OtherEntityListEntry entry = new OtherEntityListEntry(newEntity);
 		this.list.add(0, entry);
 		this.list.getScrollable().scrollToTop();
 		entry.setSelected(true, false);

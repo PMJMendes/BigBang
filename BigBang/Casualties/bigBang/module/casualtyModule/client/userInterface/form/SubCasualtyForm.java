@@ -115,7 +115,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		belongsToPolicy.addOption("true", "Presente na apólice");
 		belongsToPolicy.addOption("false", "Outra");
 		carRepair = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.OTHER_ENTITY, null);
-		carRepair.setLabelText("Oficina");
+		carRepair.setLabelText("Oficina / Outra Entidade");
 		
 		addSection("Informação Geral");
 		addFormField(casualty, false);

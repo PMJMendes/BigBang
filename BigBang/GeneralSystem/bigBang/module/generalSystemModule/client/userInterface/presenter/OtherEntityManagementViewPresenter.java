@@ -217,17 +217,17 @@ public class OtherEntityManagementViewPresenter implements ViewPresenter {
 	}
 
 	protected void onRefresh() {
-
 		broker.requireDataRefresh();
 		broker.getOtherEntities(new ResponseHandler<OtherEntity[]>() {
 
 			@Override
 			public void onResponse(OtherEntity[] response) {
+				return;
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onGetListFailed();
+				return; //onGetListFailed();
 			}
 		});
 	}

@@ -10,7 +10,6 @@ import bigBang.definitions.shared.OtherEntity;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
-import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -20,34 +19,6 @@ public class OtherEntityList extends FilterableList<OtherEntity> implements Othe
 	protected ListHeader header;
 	protected OtherEntityBroker broker;
 	protected int otherEntityDataVersion;
-
-	public static class OtherEntityEntry extends ListEntry<OtherEntity>{
-
-		public OtherEntityEntry(OtherEntity value) {
-			super(value);
-			setHeight("40px");
-		}
-
-		@Override
-		public <I extends Object> void setInfo(I infoGeneric){
-			OtherEntity info = (OtherEntity) infoGeneric;
-
-			if(info.id == null){
-				setTitle("Nova Entidade");
-				return;
-			}
-
-			setTitle(info.name);
-			setText(info.typeLabel);
-			
-			setMetaData(new String[]{
-					info.name,
-					info.typeLabel
-			});
-		}
-
-
-	}
 
 	public OtherEntityList() {
 		super();
@@ -60,23 +31,12 @@ public class OtherEntityList extends FilterableList<OtherEntity> implements Othe
 		onSizeChanged();
 		showFilterField(false);
 		
-		broker.requireDataRefresh();
-		broker.getOtherEntities(new ResponseHandler<OtherEntity[]>() {
-			
-			@Override
-			public void onResponse(OtherEntity[] response) {
-				return;
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				return;
-			}
-		});
+		broker = (OtherEntityBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.OTHER_ENTITY);
+		broker.registerClient(this);
 	}
 
 	@Override
-	protected void onSizeChanged(){
+	protected void updateFooterText(){
 		int size = this.size();
 		String text;
 		switch(size){
@@ -92,9 +52,6 @@ public class OtherEntityList extends FilterableList<OtherEntity> implements Othe
 		}
 
 		setFooterText(text);
-
-		broker = (OtherEntityBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.OTHER_ENTITY);
-		broker.registerClient(this);
 	}
 
 	public HasClickHandlers getNewButton(){
@@ -110,7 +67,6 @@ public class OtherEntityList extends FilterableList<OtherEntity> implements Othe
 		if(dataElementId.equals(BigBangConstants.EntityIds.OTHER_ENTITY)){
 			this.otherEntityDataVersion = number;
 		}
-
 	}
 
 	@Override
@@ -118,19 +74,20 @@ public class OtherEntityList extends FilterableList<OtherEntity> implements Othe
 		if(dataElementId.equals(BigBangConstants.EntityIds.OTHER_ENTITY)){
 			return this.otherEntityDataVersion;
 		}
-		return -1;	}
+		return -1;
+	}
 
 	@Override
 	public void setOtherEntities(OtherEntity[] entities) {
 		clear();
 		for(OtherEntity entity : entities){
-			add(new OtherEntityEntry(entity));
+			add(new OtherEntityListEntry(entity));
 		}
 	}
 
 	@Override
 	public void addOtherEntity(OtherEntity entity) {
-		add(0, new OtherEntityEntry(entity));
+		add(0, new OtherEntityListEntry(entity));
 	}
 
 	@Override
@@ -148,10 +105,9 @@ public class OtherEntityList extends FilterableList<OtherEntity> implements Othe
 		for(ValueSelectable<OtherEntity> ent : this){
 			if(entityId.equalsIgnoreCase(ent.getValue().id)){
 				remove(ent);
+				break;
 			}
-			break;
-		}		// TODO Auto-generated method stub
-
+		}
 	}
 
 	public void hideNewButton() {
@@ -162,4 +118,21 @@ public class OtherEntityList extends FilterableList<OtherEntity> implements Othe
 		header.getRefreshButton().setVisible(false);
 	}
 
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		broker.requireDataRefresh();
+		broker.getOtherEntities(new ResponseHandler<OtherEntity[]>() {
+			
+			@Override
+			public void onResponse(OtherEntity[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
+	}
 }

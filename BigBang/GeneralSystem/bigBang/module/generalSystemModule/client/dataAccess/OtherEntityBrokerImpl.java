@@ -34,7 +34,7 @@ public class OtherEntityBrokerImpl extends DataBroker<OtherEntity> implements Ot
 
 	@Override
 	public void requireDataRefresh() {
-
+		this.needsRefresh = true;
 	}
 
 	@Override
