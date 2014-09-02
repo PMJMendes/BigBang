@@ -161,6 +161,9 @@ public class Constants
 	public static final UUID ObjID_DisabilityType           = UUID.fromString("027296D7-1573-46F2-BD95-A1340114B485");
 	public static final UUID ObjID_OtherEntityType          = UUID.fromString("A110EE56-A8A1-4E7A-B564-A148011C3FD9");
 	public static final UUID ObjID_SalvageType              = UUID.fromString("1E2C47DF-B4AA-4A7D-9512-A150010491EC");
+	public static final UUID ObjID_InjuryCause              = UUID.fromString("CECE0118-B15A-4F8E-87D7-A39A00E81BAF");
+	public static final UUID ObjID_InjuryType               = UUID.fromString("85387A5F-D744-4B00-A813-A39A00E83F3C");
+	public static final UUID ObjID_InjuredPart              = UUID.fromString("038230AA-2100-4F0E-91B7-A39A00E8637A");
 
 	public static final UUID ObjID_FieldType                = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues              = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");

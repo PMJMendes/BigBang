@@ -17,6 +17,7 @@ import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
+import bigBang.definitions.shared.SubCasualtyStub;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -506,6 +507,17 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 
 	@Override
+	public HasValueSelectables<SubCasualtyStub> getSubCasualtyList()
+	{
+		return childrenPanel.subCasualtiesList;
+	}
+
+	@Override
+	public HasValueSelectables<ConversationStub> getConversationList() {
+		return childrenPanel.conversationList;
+	}
+
+	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return childrenPanel.historyList;
 	}
@@ -513,6 +525,12 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
 		return childrenPanel.subProcessesList;
+	}
+
+	@Override
+	public HasValueSelectables<SubCasualtyStub> getDeadSubCasualtyList()
+	{
+		return childrenPanel.deadSubCasualtiesList;
 	}
 
 	@Override
@@ -690,10 +708,5 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void allowReceiveMessage(boolean allow) {
 		toolbar.allowReceiveMessage(allow);
-	}
-
-	@Override
-	public HasValueSelectables<ConversationStub> getConversationList() {
-		return childrenPanel.conversationList;
 	}
 }

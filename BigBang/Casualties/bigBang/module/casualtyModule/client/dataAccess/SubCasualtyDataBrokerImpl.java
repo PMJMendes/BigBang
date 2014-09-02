@@ -205,6 +205,60 @@ implements SubCasualtyDataBroker{
 	}
 
 	@Override
+	public void getLiveSubCasualtiesForPolicy(String policyId, final ResponseHandler<Collection<SubCasualtyStub>> responseHandler)
+	{
+		SubCasualtySearchParameter parameter = new SubCasualtySearchParameter();
+		parameter.policyId = policyId;
+		parameter.includeClosed = false;
+		parameter.closedOnly = false;
+		SearchParameter[] parameters = new SearchParameter[] { parameter };
+		SubCasualtySortParameter sort = new SubCasualtySortParameter(SortableField.NUMBER, SortOrder.DESC);
+		SortParameter[] sorts = new SortParameter[] { sort };
+
+		getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<SubCasualtyStub>>()
+		{
+			@Override
+			public void onResponse(Search<SubCasualtyStub> response)
+			{
+				responseHandler.onResponse(response.getResults());
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors)
+			{
+				responseHandler.onError(new String[] { new String("Could not get the live sub casualties for the given policy") });
+			}
+		}, true);
+	}
+
+	@Override
+	public void getDeadSubCasualtiesForPolicy(String policyId, final ResponseHandler<Collection<SubCasualtyStub>> responseHandler)
+	{
+		SubCasualtySearchParameter parameter = new SubCasualtySearchParameter();
+		parameter.policyId = policyId;
+		parameter.includeClosed = true;
+		parameter.closedOnly = true;
+		SearchParameter[] parameters = new SearchParameter[] { parameter };
+		SubCasualtySortParameter sort = new SubCasualtySortParameter(SortableField.NUMBER, SortOrder.DESC);
+		SortParameter[] sorts = new SortParameter[] { sort };
+
+		getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<SubCasualtyStub>>()
+		{
+			@Override
+			public void onResponse(Search<SubCasualtyStub> response)
+			{
+				responseHandler.onResponse(response.getResults());
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors)
+			{
+				responseHandler.onError(new String[] { new String("Could not get the dead sub casualties for the given policy") });
+			}
+		}, true);
+	}
+
+	@Override
 	public SearchDataBroker<SubCasualtyStub> getSearchBroker() {
 		return this.searchBroker;
 	}
@@ -429,5 +483,4 @@ implements SubCasualtyDataBroker{
 		});
 				
 	}
-
 }

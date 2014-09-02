@@ -6,8 +6,6 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.Implementation.Entity;
-import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
@@ -166,6 +164,12 @@ public class SubCasualtyServiceImpl
 					((BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.CAPITAL)).doubleValue() );
 			lobjResult.items[i].deductible = ( larrItems[i].getAt(SubCasualtyItem.I.DEDUCTIBLE) == null ? null :
 					((BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.DEDUCTIBLE)).doubleValue() );
+			lobjResult.items[i].injuryCauseId = ( larrItems[i].getAt(SubCasualtyItem.I.INJURYCAUSE) == null ? null :
+					((UUID)larrItems[i].getAt(SubCasualtyItem.I.INJURYCAUSE)).toString() );
+			lobjResult.items[i].injuryTypeId = ( larrItems[i].getAt(SubCasualtyItem.I.INJURYTYPE) == null ? null :
+					((UUID)larrItems[i].getAt(SubCasualtyItem.I.INJURYTYPE)).toString() );
+			lobjResult.items[i].injuredPartId = ( larrItems[i].getAt(SubCasualtyItem.I.INJUREDPART) == null ? null :
+					((UUID)larrItems[i].getAt(SubCasualtyItem.I.INJUREDPART)).toString() );
 			lobjResult.items[i].notes = (String)larrItems[i].getAt(SubCasualtyItem.I.NOTES);
 
 			ldblTotal = ( ldblTotal == null ? ldblLocal : (ldblLocal == null ? ldblTotal : ldblTotal.add(ldblLocal)) );
@@ -252,6 +256,12 @@ public class SubCasualtyServiceImpl
 						new BigDecimal(subCasualty.items[i].value + "") );
 				lopMD.mobjData.marrItems[i].mdblDeductible = ( subCasualty.items[i].deductible == null ? null :
 						new BigDecimal(subCasualty.items[i].deductible + "") );
+				lopMD.mobjData.marrItems[i].midInjuryCause = ( subCasualty.items[i].injuryCauseId == null ? null :
+						UUID.fromString(subCasualty.items[i].injuryCauseId) );
+				lopMD.mobjData.marrItems[i].midInjuryType = ( subCasualty.items[i].injuryTypeId == null ? null :
+						UUID.fromString(subCasualty.items[i].injuryTypeId) );
+				lopMD.mobjData.marrItems[i].midInjuredPart = ( subCasualty.items[i].injuredPartId == null ? null :
+						UUID.fromString(subCasualty.items[i].injuredPartId) );
 				lopMD.mobjData.marrItems[i].mstrNotes = subCasualty.items[i].notes;
 
 				lopMD.mobjData.marrItems[i].mbNew = ( !subCasualty.items[i].deleted && (subCasualty.items[i].id == null) );
@@ -728,11 +738,19 @@ public class SubCasualtyServiceImpl
 	{
 		SubCasualtySearchParameter lParam;
 		String lstrAux;
-		IEntity lrefCasualties;
 
 		if ( !(pParam instanceof SubCasualtySearchParameter) )
 			return false;
 		lParam = (SubCasualtySearchParameter)pParam;
+
+		if ( !lParam.includeClosed )
+		{
+			pstrBuffer.append(" AND [:Process:Running] = 1");
+		}
+		else if ( lParam.closedOnly )
+		{
+			pstrBuffer.append(" AND [:Process:Running] = 0");
+		}
 
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
 		{
@@ -745,17 +763,12 @@ public class SubCasualtyServiceImpl
 
 		if ( lParam.ownerId != null )
 		{
-			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Casualty));
-				pstrBuffer.append(lrefCasualties.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+			pstrBuffer.append(" AND [:Casualty] = '").append(lParam.ownerId).append("'");
+		}
+
+		if ( lParam.casualtyDate != null )
+		{
+			pstrBuffer.append(" AND [:Casualty:Date] = '").append(lParam.casualtyDate).append("'");
 		}
 
 		if ( lParam.clientId != null )
@@ -763,9 +776,9 @@ public class SubCasualtyServiceImpl
 			pstrBuffer.append(" AND [:Casualty:Client] = '").append(lParam.clientId).append("'");
 		}
 
-		if ( lParam.casualtyDate != null )
+		if ( lParam.policyId != null )
 		{
-			pstrBuffer.append(" AND [:Casualty:Date] = '").append(lParam.casualtyDate).append("'");
+			pstrBuffer.append(" AND [:Policy] = '").append(lParam.policyId).append("'");
 		}
 
 		return true;

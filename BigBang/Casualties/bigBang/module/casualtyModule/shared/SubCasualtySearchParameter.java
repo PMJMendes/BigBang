@@ -10,4 +10,8 @@ public class SubCasualtySearchParameter
 	public String ownerId;
 	public String casualtyDate;
 	public String clientId;
+	public String policyId;
+
+	public boolean includeClosed = true;
+	public boolean closedOnly = false;
 }

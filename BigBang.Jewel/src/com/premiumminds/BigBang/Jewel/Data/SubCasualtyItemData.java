@@ -29,6 +29,9 @@ public class SubCasualtyItemData
 	public BigDecimal mdblCapital;
 	public BigDecimal mdblDeductible;
 	public String mstrNotes;
+	public UUID midInjuryCause;
+	public UUID midInjuryType;
+	public UUID midInjuredPart;
 
 	public boolean mbNew;
 	public boolean mbDeleted;
@@ -49,6 +52,9 @@ public class SubCasualtyItemData
 		mdblCapital          = (BigDecimal)pobjSource.getAt(SubCasualtyItem.I.CAPITAL);
 		mdblDeductible       = (BigDecimal)pobjSource.getAt(SubCasualtyItem.I.DEDUCTIBLE);
 		mstrNotes            =     (String)pobjSource.getAt(SubCasualtyItem.I.NOTES);
+		midInjuryCause       =       (UUID)pobjSource.getAt(SubCasualtyItem.I.INJURYCAUSE);
+		midInjuryType        =       (UUID)pobjSource.getAt(SubCasualtyItem.I.INJURYTYPE);
+		midInjuredPart       =       (UUID)pobjSource.getAt(SubCasualtyItem.I.INJUREDPART);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -66,6 +72,9 @@ public class SubCasualtyItemData
 			pobjDest.setAt(SubCasualtyItem.I.CAPITAL,            mdblCapital);
 			pobjDest.setAt(SubCasualtyItem.I.DEDUCTIBLE,         mdblDeductible);
 			pobjDest.setAt(SubCasualtyItem.I.NOTES,              mstrNotes);
+			pobjDest.setAt(SubCasualtyItem.I.INJURYCAUSE,        midInjuryCause);
+			pobjDest.setAt(SubCasualtyItem.I.INJURYTYPE,         midInjuryType);
+			pobjDest.setAt(SubCasualtyItem.I.INJUREDPART,        midInjuredPart);
 		}
 		catch (Throwable e)
 		{
@@ -109,7 +118,7 @@ public class SubCasualtyItemData
 			pstrBuilder.append(pstrLineBreak);
 		}
 
-		pstrBuilder.append("Tipo de danos: ");
+		pstrBuilder.append("Tipologia: ");
 		if ( midType != null )
 		{
 			try
@@ -119,7 +128,7 @@ public class SubCasualtyItemData
 			}
 			catch (Throwable e)
 			{
-				pstrBuilder.append("(Erro a obter o tipo de danos.)");
+				pstrBuilder.append("(Erro a obter a tipologia.)");
 			}
 		}
 		else
@@ -157,6 +166,51 @@ public class SubCasualtyItemData
 		else
 			pstrBuilder.append("Não indicado.");
 		pstrBuilder.append(pstrLineBreak);
+
+		if ( midInjuryCause != null )
+		{
+			pstrBuilder.append("Causa do Sinistro: ");
+			try
+			{
+				lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_InjuryCause), midInjuryCause);
+				pstrBuilder.append(lobjType.getLabel());
+			}
+			catch (Throwable e)
+			{
+				pstrBuilder.append("(Erro a obter a causa do sinistro.)");
+			}
+			pstrBuilder.append(pstrLineBreak);
+		}
+
+		if ( midInjuryType != null )
+		{
+			pstrBuilder.append("Tipo de Lesão: ");
+			try
+			{
+				lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_InjuryType), midInjuryType);
+				pstrBuilder.append(lobjType.getLabel());
+			}
+			catch (Throwable e)
+			{
+				pstrBuilder.append("(Erro a obter o tipo de lesão.)");
+			}
+			pstrBuilder.append(pstrLineBreak);
+		}
+
+		if ( midInjuredPart != null )
+		{
+			pstrBuilder.append("Parte do Corpo Atingida: ");
+			try
+			{
+				lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_InjuredPart), midInjuredPart);
+				pstrBuilder.append(lobjType.getLabel());
+			}
+			catch (Throwable e)
+			{
+				pstrBuilder.append("(Erro a obter a parte do corpo atingida.)");
+			}
+			pstrBuilder.append(pstrLineBreak);
+		}
 
 		if ( mstrNotes != null )
 		{

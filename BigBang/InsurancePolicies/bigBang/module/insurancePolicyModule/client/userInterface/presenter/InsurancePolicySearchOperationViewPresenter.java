@@ -19,6 +19,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.SubCasualtyStub;
 import bigBang.definitions.shared.InsuredObjectStub.Change;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.StructuredFieldContainer;
@@ -144,9 +145,11 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		HasValueSelectables<SubPolicyStub> getSubPoliciesList();
 		HasValueSelectables<ReceiptStub> getReceiptsList();
 		HasValueSelectables<ExpenseStub> getExpensesList();
+		HasValueSelectables<SubCasualtyStub> getSubCasualtyList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 		HasValueSelectables<ConversationStub> getConversationList();
+		HasValueSelectables<SubCasualtyStub> getDeadSubCasualtyList();
 
 
 		Widget asWidget();
@@ -467,6 +470,19 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				}
 			}
 		});
+		view.getSubCasualtyList().addSelectionChangedEventHandler(new SelectionChangedEventHandler()
+		{
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event)
+			{
+				@SuppressWarnings("unchecked")
+				SubCasualtyStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<SubCasualtyStub>) event.getFirstSelected()).getValue();
+				if (selectedValue != null)
+				{
+					showSubCasualty(selectedValue);
+				}
+			}
+		});
 		view.getSubProcessesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -486,6 +502,19 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 				HistoryItemStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<HistoryItemStub>) event.getFirstSelected()).getValue();
 				if(selectedValue != null) {
 					showHistory(selectedValue);
+				}
+			}
+		});
+		view.getDeadSubCasualtyList().addSelectionChangedEventHandler(new SelectionChangedEventHandler()
+		{
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event)
+			{
+				@SuppressWarnings("unchecked")
+				SubCasualtyStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<SubCasualtyStub>) event.getFirstSelected()).getValue();
+				if (selectedValue != null)
+				{
+					showSubCasualty(selectedValue);
 				}
 			}
 		});
@@ -677,13 +706,24 @@ public class InsurancePolicySearchOperationViewPresenter implements ViewPresente
 		}
 	}
 
-
 	protected void showExpense(ExpenseStub selectedValue) {
 		NavigationHistoryItem item = new NavigationHistoryItem();
 		item.setParameter("section", "expense");
 		item.setStackParameter("display");
 		item.pushIntoStackParameter("display", "search");
 		item.setParameter("expenseid", selectedValue.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	protected void showSubCasualty(SubCasualtyStub selectedValue)
+	{
+		NavigationHistoryItem item = new NavigationHistoryItem();
+		item.setParameter("section", "casualty");
+		item.setStackParameter("display");
+		item.pushIntoStackParameter("display", "search");
+		item.pushIntoStackParameter("display", "subcasualty");
+		item.setParameter("ownerid", selectedValue.casualtyId);
+		item.setParameter("subcasualtyid", selectedValue.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

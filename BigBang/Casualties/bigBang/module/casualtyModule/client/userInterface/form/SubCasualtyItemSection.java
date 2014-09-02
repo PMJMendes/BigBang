@@ -35,6 +35,9 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 	protected NumericTextBoxFormField settlement;
 	protected NumericTextBoxFormField itemValue;
 	protected NumericTextBoxFormField deductible;
+	protected ExpandableListBoxFormField injuryCause;
+	protected ExpandableListBoxFormField injuryType;
+	protected ExpandableListBoxFormField injuredPart;
 	protected TextAreaFormField notes;
 	
 	protected Button removeButton;
@@ -44,7 +47,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		removeButton = new Button("Remover");
 
 		coverage = new ExpandableListBoxFormField("Cobertura");
-		damageType = new ExpandableListBoxFormField(null, "Tipo de Dano");
+		damageType = new ExpandableListBoxFormField(null, "Tipologia");
 		damages = new NumericTextBoxFormField("Valor dos Danos", true);
 		damages.setUnitsLabel("€");
 		damages.setFieldWidth("175px");
@@ -54,8 +57,11 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		itemValue = new NumericTextBoxFormField("Capital Segurado", true);
 		itemValue.setUnitsLabel("€");
 		deductible = new NumericTextBoxFormField("Franquia", true);
+		injuryCause = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INJURY_CAUSE, "Causa do Sinistro");
+		injuryType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INJURY_TYPE, "Tipo de Lesão");
+		injuredPart = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INJURED_PART, "Parte do Corpo");
 		notes = new TextAreaFormField("Notas do Detalhe");
-		
+
 		addFormFieldGroup(new FormField<?>[]{
 				coverage,
 				itemValue,
@@ -66,6 +72,12 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 				damageType,
 				damages,
 				settlement
+		}, true);
+
+		addFormFieldGroup(new FormField<?>[]{
+				injuryCause,
+				injuryType,
+				injuredPart
 		}, true);
 		
 		addFormFieldGroup(new FormField<?>[]{
@@ -111,6 +123,9 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 			settlement.setValue(item.settlement);
 			deductible.setValue(item.deductible);
 			itemValue.setValue(item.value);
+			injuryCause.setValue(item.injuryCauseId);
+			injuryType.setValue(item.injuryTypeId);
+			injuredPart.setValue(item.injuredPartId);
 			notes.setValue(item.notes);
 		}
 	}
@@ -234,6 +249,9 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 			result.settlement = settlement.getValue();
 			result.deductible = deductible.getValue();
 			result.value = itemValue.getValue();
+			result.injuryCauseId = injuryCause.getValue();
+			result.injuryTypeId = injuryType.getValue();
+			result.injuredPartId = injuredPart.getValue();
 			result.notes = notes.getValue();
 		}
 

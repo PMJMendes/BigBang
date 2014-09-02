@@ -20,6 +20,9 @@ public class SubCasualty
 		public Double deductible; //Unidades desconhecidas
 		public Double value; //Em €
 		public boolean isManual;
+		public String injuryCauseId; //Lista tipificada das causas de lesão
+		public String injuryTypeId; //Lista tipificada dos tipos de lesão
+		public String injuredPartId; //Lista tipificada das partes de corpo atingidas
 		public String notes;
 
 		public boolean deleted;

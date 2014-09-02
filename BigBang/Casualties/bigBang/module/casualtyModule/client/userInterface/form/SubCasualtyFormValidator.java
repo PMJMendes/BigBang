@@ -97,6 +97,9 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validateNumber(section.deductible, 0.0, null, true);
 		valid &= validateNumber(section.itemValue, 0.0, null, true);
 		valid &= validateGuid(section.damageType, false);
+		valid &= validateGuid(section.injuryCause, true);
+		valid &= validateGuid(section.injuryType, true);
+		valid &= validateGuid(section.injuredPart, true);
 		valid &= validateString(section.notes, 0, 250, true);
 
 		return valid;

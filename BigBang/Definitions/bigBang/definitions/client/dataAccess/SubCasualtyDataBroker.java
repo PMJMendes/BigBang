@@ -19,9 +19,12 @@ public interface SubCasualtyDataBroker extends DataBrokerInterface<SubCasualty> 
 	
 	public void deleteSubCasualty(String subCasualtyId, String reason, ResponseHandler<Void> handler);
 
-	public void getSubCasualties(String ownerId,
-			ResponseHandler<Collection<SubCasualtyStub>> responseHandler);
-	
+	public void getSubCasualties(String ownerId, ResponseHandler<Collection<SubCasualtyStub>> responseHandler);
+
+	public void getLiveSubCasualtiesForPolicy(String policyId, ResponseHandler<Collection<SubCasualtyStub>> responseHandler);
+
+	public void getDeadSubCasualtiesForPolicy(String ownerId, ResponseHandler<Collection<SubCasualtyStub>> responseHandler);
+
 	public SearchDataBroker<SubCasualtyStub> getSearchBroker();
 	
 	public void markForClosing(String subCasualtyId, String revisorId, ResponseHandler<Void> handler);

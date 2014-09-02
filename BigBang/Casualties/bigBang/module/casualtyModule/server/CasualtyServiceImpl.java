@@ -378,6 +378,12 @@ public class CasualtyServiceImpl
 						new BigDecimal(subCasualty.items[i].value + "") );
 				lopCSC.mobjData.marrItems[i].mdblDeductible = ( subCasualty.items[i].deductible == null ? null :
 						new BigDecimal(subCasualty.items[i].deductible + "") );
+				lopCSC.mobjData.marrItems[i].midInjuryCause = ( subCasualty.items[i].injuryCauseId == null ? null :
+						UUID.fromString(subCasualty.items[i].injuryCauseId) );
+				lopCSC.mobjData.marrItems[i].midInjuryType = ( subCasualty.items[i].injuryTypeId == null ? null :
+						UUID.fromString(subCasualty.items[i].injuryTypeId) );
+				lopCSC.mobjData.marrItems[i].midInjuredPart = ( subCasualty.items[i].injuredPartId == null ? null :
+						UUID.fromString(subCasualty.items[i].injuredPartId) );
 				lopCSC.mobjData.marrItems[i].mstrNotes = subCasualty.items[i].notes;
 
 				lopCSC.mobjData.marrItems[i].mbNew = !subCasualty.items[i].deleted;

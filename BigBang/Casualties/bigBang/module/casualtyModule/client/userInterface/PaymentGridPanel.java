@@ -35,7 +35,7 @@ public class PaymentGridPanel extends View{
 
 	public void setValue(MedicalFile.MedicalDetail[] details){
 
-		grid.resize(details.length+1, 4);
+		grid.resize(details.length+1, 5);
 
 		setTitles();
 
@@ -48,8 +48,10 @@ public class PaymentGridPanel extends View{
 			((Label)grid.getWidget(i, 1)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 			grid.setWidget(i, 2, new Label(details[i-1].disabilityTypeLabel));
 			((Label)grid.getWidget(i, 2)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			grid.setWidget(i, 3, new Label(details[i-1].benefits != null ? nf.format(details[i-1].benefits) : ""));
+			grid.setWidget(i, 3, new Label(details[i-1].percentDisability != null ? details[i-1].percentDisability.toString() + "%" : "-%"));
 			((Label)grid.getWidget(i, 3)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			grid.setWidget(i, 4, new Label(details[i-1].benefits != null ? nf.format(details[i-1].benefits) : ""));
+			((Label)grid.getWidget(i, 4)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
 			if((i % 2) != 0){
 				grid.getRowFormatter().getElement(i).getStyle().setBackgroundColor("#CCC");
@@ -67,14 +69,16 @@ public class PaymentGridPanel extends View{
 		((Label)grid.getWidget(0, 1)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		grid.setWidget(0,2, new Label("Tipo"));
 		((Label)grid.getWidget(0, 2)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		grid.setWidget(0,3, new Label("Valor (€)"));
+		grid.setWidget(0,3, new Label("% Inval"));
 		((Label)grid.getWidget(0, 3)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		grid.setWidget(0,4, new Label("Valor (€)"));
+		((Label)grid.getWidget(0, 4)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		
 		grid.getColumnFormatter().setWidth(0, "100px");
 		grid.getColumnFormatter().setWidth(1, "100px");
 		grid.getColumnFormatter().setWidth(2, "100px");
 		grid.getColumnFormatter().setWidth(3, "100px");
-
+		grid.getColumnFormatter().setWidth(4, "100px");
 	}
 
 }

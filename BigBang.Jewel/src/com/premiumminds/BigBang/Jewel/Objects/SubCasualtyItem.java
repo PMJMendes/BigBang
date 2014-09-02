@@ -15,16 +15,19 @@ public class SubCasualtyItem
 {
 	public static class I
 	{
-		public static int SUBCASUALTY        = 0;
-		public static int POLICYCOVERAGE     = 1;
-		public static int SUBOPOLICYCOVERAGE = 2;
-		public static int TYPE               = 3;
-		public static int DAMAGES            = 4;
-		public static int SETTLEMENT         = 5;
-		public static int MANUAL             = 6;
-		public static int CAPITAL            = 7;
-		public static int DEDUCTIBLE         = 8;
-		public static int NOTES              = 9;
+		public static int SUBCASUALTY        =  0;
+		public static int POLICYCOVERAGE     =  1;
+		public static int SUBOPOLICYCOVERAGE =  2;
+		public static int TYPE               =  3;
+		public static int DAMAGES            =  4;
+		public static int SETTLEMENT         =  5;
+		public static int MANUAL             =  6;
+		public static int CAPITAL            =  7;
+		public static int DEDUCTIBLE         =  8;
+		public static int NOTES              =  9;
+		public static int INJURYCAUSE        = 10;
+		public static int INJURYTYPE         = 11;
+		public static int INJUREDPART        = 12;
 	}
 
     public static SubCasualtyItem GetInstance(UUID pidNameSpace, UUID pidKey)

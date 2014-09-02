@@ -1,7 +1,5 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
-import com.google.gwt.user.client.ui.StackPanel;
-
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
@@ -15,6 +13,8 @@ import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.View;
 
+import com.google.gwt.user.client.ui.StackPanel;
+
 public class InsurancePolicyChildrenPanel extends View {
 
 	protected InsurancePolicy insurancePolicy;
@@ -25,9 +25,11 @@ public class InsurancePolicyChildrenPanel extends View {
 	public SubPoliciesList subPoliciesList;
 	public ReceiptsList receiptsList;
 	public ExpensesList expensesList;
+	public InsurancePolicySubCasualtyList subCasualtiesList;
 	public ConversationList conversationList;
 	public SubProcessesList subProcessesList;
 	public HistoryList historyList;
+	public InsurancePolicyDeadSubCasualtyList deadSubCasualtiesList;
 
 	public InsurancePolicyChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
@@ -39,18 +41,22 @@ public class InsurancePolicyChildrenPanel extends View {
 		subPoliciesList = new SubPoliciesList();
 		receiptsList = new ReceiptsList();
 		expensesList = new ExpensesList();
+		subCasualtiesList = new InsurancePolicySubCasualtyList();
 		conversationList = new ConversationList();
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
+		deadSubCasualtiesList = new InsurancePolicyDeadSubCasualtyList();
 
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
 		wrapper.add(subPoliciesList, "Apólices Adesão");
 		wrapper.add(receiptsList, "Recibos");
 		wrapper.add(expensesList, "Despesas de Saúde");
+		wrapper.add(subCasualtiesList, "Sub-Sinistros");
 		wrapper.add(conversationList, "Trocas de Mensagens");
 		wrapper.add(subProcessesList, "Sub-Processos");
 		wrapper.add(historyList, "Histórico");
+		wrapper.add(deadSubCasualtiesList, "Sub-Sinistros Antigos");
 
 		this.policyBrokerClient = getPolicyBrokerClient();
 		((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY)).registerClient(this.policyBrokerClient);
@@ -73,9 +79,11 @@ public class InsurancePolicyChildrenPanel extends View {
 		this.subPoliciesList.setOwner(policyId);
 		this.receiptsList.setOwner(policyId, BigBangConstants.EntityIds.INSURANCE_POLICY);
 		this.expensesList.setOwner(policyId);
+		this.subCasualtiesList.setOwner(policyId);
 		this.conversationList.setOwner(policyId);
 		this.subProcessesList.setOwner(policyId);
 		this.historyList.setOwner(policyId);
+		this.deadSubCasualtiesList.setOwner(policyId);
 	}
 
 	protected InsurancePolicyDataBrokerClient getPolicyBrokerClient(){
