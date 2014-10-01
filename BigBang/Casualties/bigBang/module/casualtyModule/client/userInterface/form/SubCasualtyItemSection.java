@@ -18,6 +18,7 @@ import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
+import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
@@ -38,6 +39,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 	protected ExpandableListBoxFormField injuryCause;
 	protected ExpandableListBoxFormField injuryType;
 	protected ExpandableListBoxFormField injuredPart;
+	protected CheckBoxFormField thirdParty;
 	protected TextAreaFormField notes;
 	
 	protected Button removeButton;
@@ -60,6 +62,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		injuryCause = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INJURY_CAUSE, "Causa do Sinistro");
 		injuryType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INJURY_TYPE, "Tipo de Lesão");
 		injuredPart = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INJURED_PART, "Parte do Corpo");
+		thirdParty = new CheckBoxFormField("Paga A Terceiros");
 		notes = new TextAreaFormField("Notas do Detalhe");
 
 		addFormFieldGroup(new FormField<?>[]{
@@ -71,7 +74,8 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		addFormFieldGroup(new FormField<?>[]{
 				damageType,
 				damages,
-				settlement
+				settlement,
+				thirdParty
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
@@ -126,6 +130,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 			injuryCause.setValue(item.injuryCauseId);
 			injuryType.setValue(item.injuryTypeId);
 			injuredPart.setValue(item.injuredPartId);
+			thirdParty.setValue(item.isThirdParty);
 			notes.setValue(item.notes);
 		}
 	}
@@ -252,6 +257,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 			result.injuryCauseId = injuryCause.getValue();
 			result.injuryTypeId = injuryType.getValue();
 			result.injuredPartId = injuredPart.getValue();
+			result.isThirdParty = thirdParty.getValue();
 			result.notes = notes.getValue();
 		}
 

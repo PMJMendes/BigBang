@@ -32,6 +32,7 @@ public class SubCasualtyItemData
 	public UUID midInjuryCause;
 	public UUID midInjuryType;
 	public UUID midInjuredPart;
+	public boolean mbThirdParty;
 
 	public boolean mbNew;
 	public boolean mbDeleted;
@@ -55,6 +56,7 @@ public class SubCasualtyItemData
 		midInjuryCause       =       (UUID)pobjSource.getAt(SubCasualtyItem.I.INJURYCAUSE);
 		midInjuryType        =       (UUID)pobjSource.getAt(SubCasualtyItem.I.INJURYTYPE);
 		midInjuredPart       =       (UUID)pobjSource.getAt(SubCasualtyItem.I.INJUREDPART);
+		mbThirdParty         =    (Boolean)pobjSource.getAt(SubCasualtyItem.I.THIRDPARTY);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -75,6 +77,7 @@ public class SubCasualtyItemData
 			pobjDest.setAt(SubCasualtyItem.I.INJURYCAUSE,        midInjuryCause);
 			pobjDest.setAt(SubCasualtyItem.I.INJURYTYPE,         midInjuryType);
 			pobjDest.setAt(SubCasualtyItem.I.INJUREDPART,        midInjuredPart);
+			pobjDest.setAt(SubCasualtyItem.I.THIRDPARTY,         mbThirdParty);
 		}
 		catch (Throwable e)
 		{
@@ -162,6 +165,8 @@ public class SubCasualtyItemData
 			pstrBuilder.append(mdblSettlement);
 			if ( !mbIsManual )
 				pstrBuilder.append(" (calculado automaticamente)");
+			if ( mbThirdParty )
+				pstrBuilder.append(" (paga a terceiros)");
 		}
 		else
 			pstrBuilder.append("Não indicado.");

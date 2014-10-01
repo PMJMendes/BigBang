@@ -170,6 +170,7 @@ public class SubCasualtyServiceImpl
 					((UUID)larrItems[i].getAt(SubCasualtyItem.I.INJURYTYPE)).toString() );
 			lobjResult.items[i].injuredPartId = ( larrItems[i].getAt(SubCasualtyItem.I.INJUREDPART) == null ? null :
 					((UUID)larrItems[i].getAt(SubCasualtyItem.I.INJUREDPART)).toString() );
+			lobjResult.items[i].isThirdParty = (Boolean)larrItems[i].getAt(SubCasualtyItem.I.THIRDPARTY);
 			lobjResult.items[i].notes = (String)larrItems[i].getAt(SubCasualtyItem.I.NOTES);
 
 			ldblTotal = ( ldblTotal == null ? ldblLocal : (ldblLocal == null ? ldblTotal : ldblTotal.add(ldblLocal)) );
@@ -262,6 +263,7 @@ public class SubCasualtyServiceImpl
 						UUID.fromString(subCasualty.items[i].injuryTypeId) );
 				lopMD.mobjData.marrItems[i].midInjuredPart = ( subCasualty.items[i].injuredPartId == null ? null :
 						UUID.fromString(subCasualty.items[i].injuredPartId) );
+				lopMD.mobjData.marrItems[i].mbThirdParty = subCasualty.items[i].isThirdParty;
 				lopMD.mobjData.marrItems[i].mstrNotes = subCasualty.items[i].notes;
 
 				lopMD.mobjData.marrItems[i].mbNew = ( !subCasualty.items[i].deleted && (subCasualty.items[i].id == null) );

@@ -384,6 +384,7 @@ public class CasualtyServiceImpl
 						UUID.fromString(subCasualty.items[i].injuryTypeId) );
 				lopCSC.mobjData.marrItems[i].midInjuredPart = ( subCasualty.items[i].injuredPartId == null ? null :
 						UUID.fromString(subCasualty.items[i].injuredPartId) );
+				lopCSC.mobjData.marrItems[i].mbThirdParty = subCasualty.items[i].isThirdParty;
 				lopCSC.mobjData.marrItems[i].mstrNotes = subCasualty.items[i].notes;
 
 				lopCSC.mobjData.marrItems[i].mbNew = !subCasualty.items[i].deleted;

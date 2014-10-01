@@ -28,6 +28,7 @@ public class SubCasualtyItem
 		public static int INJURYCAUSE        = 10;
 		public static int INJURYTYPE         = 11;
 		public static int INJUREDPART        = 12;
+		public static int THIRDPARTY         = 13;
 	}
 
     public static SubCasualtyItem GetInstance(UUID pidNameSpace, UUID pidKey)

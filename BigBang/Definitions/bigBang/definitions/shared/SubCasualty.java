@@ -23,6 +23,7 @@ public class SubCasualty
 		public String injuryCauseId; //Lista tipificada das causas de lesão
 		public String injuryTypeId; //Lista tipificada dos tipos de lesão
 		public String injuredPartId; //Lista tipificada das partes de corpo atingidas
+		public boolean isThirdParty; //Indica se a indemnização foi paga a terceiros
 		public String notes;
 
 		public boolean deleted;
