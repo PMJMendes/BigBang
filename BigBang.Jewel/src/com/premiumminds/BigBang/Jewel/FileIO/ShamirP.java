@@ -31,7 +31,7 @@ public class ShamirP
 	extends FileIOBase
 {
 	public static final UUID FKPolicy = UUID.fromString("04460908-B283-4AC1-A8C5-A0FE012D2C5E");
-	public static final UUID FKClient = UUID.fromString("AB113677-2276-435D-8366-A0FE00E1B27C");
+	public static final UUID FKClient = UUID.fromString("093D3EB1-3207-42CC-9ACA-A0FE00E1D29E");
 	public static final UUID FKManager = UUID.fromString("DC1712D5-EDEF-4039-8C82-A0FE00E13F90");
 	public static final UUID RDef_Imports = UUID.fromString("5D287368-3C08-40BE-B850-A125012D3E12");
 	public static final UUID FormatID_ShamirP = UUID.fromString("9689FDF3-E88E-43FC-80F8-A126011E4265");
