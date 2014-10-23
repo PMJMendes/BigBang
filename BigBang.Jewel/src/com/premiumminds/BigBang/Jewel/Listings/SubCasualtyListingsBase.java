@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -87,6 +89,49 @@ public class SubCasualtyListingsBase
 	{
 		TR[] larrRows;
 		TD lcell;
+
+		Arrays.sort(parrSubCs, new Comparator<SubCasualty>()
+		{
+			public int compare(SubCasualty o1, SubCasualty o2)
+			{
+				Client c1, c2;
+				SubLine s1, s2;
+
+				c1 = null;
+				c2 = null;
+				try
+				{
+					c1 = o1.GetClient();
+					c2 = o2.GetClient();
+				}
+				catch (Throwable e)
+				{
+				}
+
+				if ((c2 == null) || c2.getLabel().equals(c1.getLabel()))
+				{
+					s1 = null;
+					s2 = null;
+					try
+					{
+						s1 = o1.GetSubLine();
+						s2 = o2.GetSubLine();
+					}
+					catch (Throwable e)
+					{
+					}
+
+					if ((s2 == null) || s2.getDescription().equals(s1.getDescription()))
+					{
+						return o1.getLabel().compareTo(o2.getLabel());
+					}
+
+					return s1.getDescription().compareTo(s2.getDescription());
+				}
+
+				return c1.getLabel().compareTo(c2.getLabel());
+			}
+		});
 
 		larrRows = new TR[3];
 
