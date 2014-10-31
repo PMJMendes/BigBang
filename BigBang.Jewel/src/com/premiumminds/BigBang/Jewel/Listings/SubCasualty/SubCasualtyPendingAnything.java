@@ -61,7 +61,7 @@ public class SubCasualtyPendingAnything
 		{
 			try
 			{
-				larrResult[i] = buildDataSection(User.GetInstance(Engine.getCurrentNameSpace(), lid).getDisplayName(), larrMap.get(lid));
+				larrResult[i] = buildDataSection(User.GetInstance(Engine.getCurrentNameSpace(), lid).getDisplayName(), larrMap.get(lid), false);
 			}
 			catch (BigBangJewelException e)
 			{
