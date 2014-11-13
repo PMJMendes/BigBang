@@ -38,12 +38,22 @@ public class ExchangeServiceImpl
 	private static ExchangeItemStub[] sToClient(ServiceObject[] parrSource)
 		throws BigBangException
 	{
+		String lstrEmail;
 		ExchangeItemStub[] larrResults;
 		int i;
 		PropertySet lobjPropSet;
 		EmailAddress lobjFrom;
 		MessageBody lobjBody;
 		String lstrBody;
+
+		try
+		{
+			lstrEmail = MailConnector.getLoggedEmail();
+		}
+		catch (Throwable e)
+		{
+			lstrEmail = null;
+		}
 
 		larrResults = new ExchangeItemStub[parrSource.length];
 		lobjPropSet = new PropertySet(BasePropertySet.FirstClassProperties);
@@ -84,8 +94,8 @@ public class ExchangeServiceImpl
 					try
 					{
 						parrSource[i].load(lobjPropSet);
-						if ( lobjFrom != null )
-							larrResults[i].isFromMe = MailConnector.getLoggedEmail().equalsIgnoreCase(lobjFrom.getAddress());
+						if ((lobjFrom != null) && (lstrEmail != null))
+							larrResults[i].isFromMe = lstrEmail.equalsIgnoreCase(lobjFrom.getAddress());
 						else
 							larrResults[i].isFromMe = false;
 						larrResults[i].attachmentCount = ((Item)parrSource[i]).getAttachments().getCount();
