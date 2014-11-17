@@ -288,7 +288,7 @@ public class SubCasualtyExternGeneral
 
 		larrRows[2] = ReportBuilder.constructDualRow("Total de Pagamentos a Terceiros", ldblThirds, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[3] = ReportBuilder.constructDualRow("Total de Pagamentos ao Tomados", ldblDirects, TypeDefGUIDs.T_Decimal, false);
+		larrRows[3] = ReportBuilder.constructDualRow("Total de Pagamentos ao Tomador", ldblDirects, TypeDefGUIDs.T_Decimal, false);
 
 		larrRows[4] = ReportBuilder.constructDualRow("Total de Franquias", ldblDeductibles, TypeDefGUIDs.T_Decimal, false);
 
@@ -299,31 +299,37 @@ public class SubCasualtyExternGeneral
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[8];
+		larrCells = new TD[10];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("Modalidade");
 		ReportBuilder.styleCell(larrCells[0], false, false);
 
-		larrCells[1] = ReportBuilder.buildHeaderCell("N. Processo");
+		larrCells[1] = ReportBuilder.buildHeaderCell("N. Apólice");
 		ReportBuilder.styleCell(larrCells[1], false, true);
 
-		larrCells[2] = ReportBuilder.buildHeaderCell("Data Sinistro");
+		larrCells[2] = ReportBuilder.buildHeaderCell("N. Processo");
 		ReportBuilder.styleCell(larrCells[2], false, true);
 
-		larrCells[3] = ReportBuilder.buildHeaderCell("Objecto/Sinistrado");
+		larrCells[3] = ReportBuilder.buildHeaderCell("Data Sinistro");
 		ReportBuilder.styleCell(larrCells[3], false, true);
 
-		larrCells[4] = ReportBuilder.buildHeaderCell("Pagamentos a Terceiros");
+		larrCells[4] = ReportBuilder.buildHeaderCell("Objecto/Sinistrado");
 		ReportBuilder.styleCell(larrCells[4], false, true);
 
-		larrCells[5] = ReportBuilder.buildHeaderCell("Pagamentos ao Tomador");
+		larrCells[5] = ReportBuilder.buildHeaderCell("Pagamentos a Terceiros");
 		ReportBuilder.styleCell(larrCells[5], false, true);
 
-		larrCells[6] = ReportBuilder.buildHeaderCell("Franquias");
+		larrCells[6] = ReportBuilder.buildHeaderCell("Pagamentos ao Tomador");
 		ReportBuilder.styleCell(larrCells[6], false, true);
 
-		larrCells[7] = ReportBuilder.buildHeaderCell("Descrição");
+		larrCells[7] = ReportBuilder.buildHeaderCell("Franquias");
 		ReportBuilder.styleCell(larrCells[7], false, true);
+
+		larrCells[8] = ReportBuilder.buildHeaderCell("Encerrado");
+		ReportBuilder.styleCell(larrCells[8], false, true);
+
+		larrCells[9] = ReportBuilder.buildHeaderCell("Descrição");
+		ReportBuilder.styleCell(larrCells[9], false, true);
 
 		setWidths(larrCells);
 
@@ -336,6 +342,7 @@ public class SubCasualtyExternGeneral
 		SubLine lobjSubLine;
 		Casualty lobjC;
 		SubCasualtyValues lobjValues;
+		SubCasualtyMarkers lobjMarkers;
 		TD[] larrCells;
 
 		lobjSubLine = pobjSubC.GetSubLine();
@@ -344,32 +351,41 @@ public class SubCasualtyExternGeneral
 		lobjValues = null;
 		if (mmapValues.containsKey(pobjSubC.getKey()))
 			lobjValues = mmapValues.get(pobjSubC.getKey());
+		lobjMarkers = null;
+		if (mmapData.containsKey(pobjSubC.getKey()))
+			lobjMarkers = mmapData.get(pobjSubC.getKey());
 
-		larrCells = new TD[8];
+		larrCells = new TD[10];
 
 		larrCells[0] = ReportBuilder.buildCell(lobjSubLine.getDescription(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
 
-		larrCells[1] = ReportBuilder.buildCell(pobjSubC.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[1] = ReportBuilder.buildCell(pobjSubC.getAbsolutePolicy().getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[1], true, true);
 
-		larrCells[2] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DATE), TypeDefGUIDs.T_Date);
+		larrCells[2] = ReportBuilder.buildCell(pobjSubC.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[2], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell(pobjSubC.GetObjectName(), TypeDefGUIDs.T_String);
+		larrCells[3] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(lobjValues == null ? new BigDecimal(0) : lobjValues.mdblThirds, TypeDefGUIDs.T_Decimal);
+		larrCells[4] = ReportBuilder.buildCell(pobjSubC.GetObjectName(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[4], true, true);
 
-		larrCells[5] = ReportBuilder.buildCell(lobjValues == null ? new BigDecimal(0) : lobjValues.mdblDirects, TypeDefGUIDs.T_Decimal);
+		larrCells[5] = ReportBuilder.buildCell(lobjValues == null ? new BigDecimal(0) : lobjValues.mdblThirds, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
-		larrCells[6] = ReportBuilder.buildCell(lobjValues == null ? new BigDecimal(0) : lobjValues.mdblDeductibles, TypeDefGUIDs.T_Decimal);
+		larrCells[6] = ReportBuilder.buildCell(lobjValues == null ? new BigDecimal(0) : lobjValues.mdblDirects, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[6], true, true);
 
-		larrCells[7] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DESCRIPTION), TypeDefGUIDs.T_String);
+		larrCells[7] = ReportBuilder.buildCell(lobjValues == null ? new BigDecimal(0) : lobjValues.mdblDeductibles, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[7], true, true);
+
+		larrCells[8] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtClosed, TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[8], true, true);
+
+		larrCells[9] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DESCRIPTION), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[9], true, true);
 
 		setWidths(larrCells);
 
@@ -381,11 +397,13 @@ public class SubCasualtyExternGeneral
 		parrCells[ 0].setWidth(100);
 		parrCells[ 1].setWidth(100);
 		parrCells[ 2].setWidth(100);
-		parrCells[ 3].setWidth(300);
-		parrCells[ 4].setWidth(100);
+		parrCells[ 3].setWidth(100);
+		parrCells[ 4].setWidth(300);
 		parrCells[ 5].setWidth(100);
 		parrCells[ 6].setWidth(100);
-		parrCells[ 7].setWidth(500);
+		parrCells[ 7].setWidth(100);
+		parrCells[ 8].setWidth(100);
+		parrCells[ 9].setWidth(500);
 	}
 
 	protected void getValuesData()
