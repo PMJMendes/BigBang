@@ -1,17 +1,14 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
-import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
-import Jewel.Petri.Objects.PNLog;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -204,7 +201,7 @@ public class StaticFunctions
 
 		try
 		{
-			InnerDoSpecial();
+//			InnerDoSpecial();
 		}
 		catch (Throwable e)
 		{
@@ -222,105 +219,84 @@ public class StaticFunctions
 		}
 	}
 
-	private static int InnerDoSpecial()
-		throws BigBangJewelException
-	{
-		IEntity lrefLogs;
-		MasterDB ldb;
-		ResultSet lrs;
-		PNLog lobjLog;
-		ArrayList<UUID> larrAux;
-		com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData lop;
-		int i;
-
-		try
-		{
-			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		larrAux = new ArrayList<UUID>();
-		try
-		{
-			lrs = lrefLogs.SelectByMembers(ldb, new int[] {Jewel.Petri.Constants.FKOperation_In_Log},
-					new java.lang.Object[] {Constants.OPID_Policy_ManageData}, null);
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			while (lrs.next())
-				larrAux.add(UUID.fromString(lrs.getString(1)));
-		}
-		catch (Throwable e)
-		{
-			try { lrs.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrs.close();
-
-			ldb.BeginTrans();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		i = 0;
-		try
-		{
-			for ( UUID lid : larrAux )
-			{
-				lobjLog = PNLog.GetInstance(Engine.getCurrentNameSpace(), lid);
-				lop = (com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData)lobjLog.GetOperationData();
-				if ( lop == null )
-					continue;
-				if ( lop.mobjDocOps != null )
-					lop.mobjDocOps.fromOld();
-				lobjLog.replaceOperationData(lop);
-				lobjLog.SaveToDb(ldb);
-				i++;
-			}
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Rollback(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Commit();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return i;
-	}
+//	private static int InnerDoSpecial()
+//		throws BigBangJewelException
+//	{
+//		ArrayList<UndoInsurerAccounting> larrOps;
+//		InsurerAccountingSet lobjSet;
+//		UndoInsurerAccounting lopIA;
+//		MasterDB ldb;
+//		int i;
+//
+//		larrOps = new ArrayList<UndoInsurerAccounting>();
+//		try
+//		{
+//			lobjSet = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString("A4F75C91-CF6F-4A02-982B-A3E200C345FB"));
+//			for (TransactionMapBase lobjMap : lobjSet.getCurrentMaps())
+//			{
+//				if ( lobjMap.isSettled() )
+//					continue;
+//
+//				for (TransactionDetailBase lobjDetail : lobjMap.getCurrentDetails())
+//				{
+//					lopIA = new UndoInsurerAccounting(lobjDetail.getReceipt().GetProcessID());
+//					lopIA.midNameSpace = Engine.getCurrentNameSpace();
+//					lopIA.midSourceLog = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjDetail.getReceipt().GetProcessID()).GetLiveLog(Constants.OPID_Receipt_InsurerAccounting).getKey();
+//					larrOps.add(lopIA);
+//				}
+//			}
+//			ldb = new MasterDB();
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		try
+//		{
+//			ldb.BeginTrans();
+//		}
+//		catch (Throwable e)
+//		{
+//			try { ldb.Disconnect(); } catch (Throwable e1) {}
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		i = 0;
+//		try
+//		{
+//			for (UndoInsurerAccounting lop : larrOps)
+//			{
+//				lop.Execute(ldb);
+//				i++;
+//			}
+//		}
+//		catch (Throwable e)
+//		{
+//			try { ldb.Rollback(); } catch (Throwable e1) {}
+//			try { ldb.Disconnect(); } catch (Throwable e1) {}
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		try
+//		{
+//			ldb.Commit();
+//		}
+//		catch (Throwable e)
+//		{
+//			try { ldb.Disconnect(); } catch (Throwable e1) {}
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		try
+//		{
+//			ldb.Disconnect();
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		return i;
+//	}
 }
