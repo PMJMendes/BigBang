@@ -212,7 +212,7 @@ public class ExternMergeOtherHere
 				for ( i = 0; i < larrDocs.length; i++ )
 				{
 					mobjDocOps.marrModify2[i] = new DocDataFull();
-					mobjDocOps.marrModify2[i].FromObject(larrContacts[i]);
+					mobjDocOps.marrModify2[i].FromObject(larrDocs[i]);
 					mobjDocOps.marrModify2[i].midOwnerId = midNewClient;
 					larrDInfo = larrDocs[i].getCurrentInfo();
 					if ( larrDInfo != null )
