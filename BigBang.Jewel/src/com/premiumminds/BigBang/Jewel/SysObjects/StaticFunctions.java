@@ -231,7 +231,7 @@ public class StaticFunctions
 //		larrOps = new ArrayList<UndoInsurerAccounting>();
 //		try
 //		{
-//			lobjSet = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString("A4F75C91-CF6F-4A02-982B-A3E200C345FB"));
+//			lobjSet = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString("A4C52831-B1C1-416D-82CB-A3EE00B452E5"));
 //			for (TransactionMapBase lobjMap : lobjSet.getCurrentMaps())
 //			{
 //				if ( lobjMap.isSettled() )
