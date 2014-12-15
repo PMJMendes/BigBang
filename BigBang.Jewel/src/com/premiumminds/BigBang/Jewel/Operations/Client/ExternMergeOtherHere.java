@@ -131,22 +131,31 @@ public class ExternMergeOtherHere
 					if ( Constants.ProcID_Policy.equals(larrSubProcs[i].GetScriptID()) )
 					{
 						lobjPol = (Policy)larrSubProcs[i].GetData();
-						lobjPol.setAt(Policy.I.CLIENT, midNewClient);
-						lobjPol.SaveToDb(pdb);
+						if (lobjPol != null)
+						{
+							lobjPol.setAt(Policy.I.CLIENT, midNewClient);
+							lobjPol.SaveToDb(pdb);
+						}
 					}
 
 					if ( Constants.ProcID_QuoteRequest.equals(larrSubProcs[i].GetScriptID()) )
 					{
 						lobjQR = (QuoteRequest)larrSubProcs[i].GetData();
-						lobjQR.setAt(QuoteRequest.I.CLIENT, midNewClient);
-						lobjQR.SaveToDb(pdb);
+						if (lobjQR != null)
+						{
+							lobjQR.setAt(QuoteRequest.I.CLIENT, midNewClient);
+							lobjQR.SaveToDb(pdb);
+						}
 					}
 
 					if ( Constants.ProcID_Casualty.equals(larrSubProcs[i].GetScriptID()) )
 					{
 						lobjCas = (Casualty)larrSubProcs[i].GetData();
-						lobjCas.setAt(Casualty.I.CLIENT, midNewClient);
-						lobjCas.SaveToDb(pdb);
+						if (lobjCas != null)
+						{
+							lobjCas.setAt(Casualty.I.CLIENT, midNewClient);
+							lobjCas.SaveToDb(pdb);
+						}
 					}
 				}
 			}
