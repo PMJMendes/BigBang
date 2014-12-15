@@ -317,7 +317,7 @@ public class CreatePaymentNotice
 			mobjConvData.mdtDueDate = null;
 
 			mobjConvData.marrMessages = new MessageData[] {new MessageData()};
-			mobjConvData.marrMessages[0].mstrSubject = "Envio de Aviso(s) de Cobrança";
+			mobjConvData.marrMessages[0].mstrSubject = "Aviso(s) de Cobrança - " + lobjClient.getLabel();
 			mobjConvData.marrMessages[0].midOwner = null;
 			mobjConvData.marrMessages[0].mlngNumber = 0;
 			mobjConvData.marrMessages[0].midDirection = Constants.MsgDir_Outgoing;
