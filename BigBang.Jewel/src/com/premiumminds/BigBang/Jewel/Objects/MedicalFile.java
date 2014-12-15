@@ -39,6 +39,19 @@ public class MedicalFile
 		}
 	}
 
+    public static MedicalFile GetInstance(UUID pidNameSpace, ResultSet prsObject)
+		throws BigBangJewelException
+	{
+	    try
+	    {
+			return (MedicalFile)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_MedicalFile), prsObject);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
 	public void Initialize()
 		throws JewelEngineException
 	{

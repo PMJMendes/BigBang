@@ -15,6 +15,7 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyExternAT;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyExternGeneral;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryClosing;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyHistoryCreation;
@@ -113,6 +114,12 @@ public class Casualty
 		throws BigBangJewelException
 	{
 		return new SubCasualtyExternGeneral().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportExternAT(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyExternAT().doReport(parrParams);
 	}
 
 	public static GenericElement[] printReportSubOtherClosingTimes(String[] parrParams)

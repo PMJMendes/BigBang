@@ -31,6 +31,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Template;
@@ -88,7 +89,7 @@ public class SubCasualtyExternGeneral
 
 		larrResult = new GenericElement[2];
 
-		larrResult[0] = buildHeaderSection();
+		larrResult[0] = buildHeaderSection(parrParams[0]);
 
 		try
 		{
@@ -113,26 +114,65 @@ public class SubCasualtyExternGeneral
 		ArrayList<SubCasualty> larrAux;
 		IEntity lrefSubCs;
 		IEntity lrefCas;
+		IEntity lrefLogs;
 		MasterDB ldb;
 		ResultSet lrsSubCs;
 
 		if ( Utils.getCurrentAgent() != null )
 			return new SubCasualty[0];
 
+		lstrSQL = new StringBuilder();
 		try
 		{
 			lrefSubCs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
 			lrefCas = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Casualty));
+			lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
 
-			lstrSQL = new StringBuilder();
 			lstrSQL.append("SELECT * FROM (" +
 					lrefSubCs.SQLForSelectAll() + ") [AuxSubC] WHERE [Casualty] IN (SELECT [PK] FROM (" +
 					lrefCas.SQLForSelectByMembers(new int[] {Casualty.I.CLIENT}, new java.lang.Object[] {parrParams[0]}, null) +
-					") [AuxCas])");
+					") [AuxCas] WHERE 1=1");
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if (parrParams[1] != null)
+		{
+			lstrSQL.append(" AND [Date] >= '").append(parrParams[1]).append("'");
+		}
+
+		if (parrParams[2] != null)
+		{
+			lstrSQL.append(" AND [Date] < DATEADD(d, 1, '").append(parrParams[2]).append("')");
+		}
+
+		lstrSQL.append(")");
+
+		if ((parrParams[3] != null) || (parrParams[4] != null))
+		{
+			try
+			{
+				lstrSQL.append(" AND [Process] IN (SELECT [Process] FROM (")
+					.append(lrefLogs.SQLForSelectByMembers(
+							new int[] {Jewel.Petri.Constants.FKOperation_In_Log, Jewel.Petri.Constants.Undone_In_Log},
+							new java.lang.Object[] {Constants.OPID_SubCasualty_CloseProcess, false},
+							null))
+					.append(") [AuxLogs] WHERE 1=1");
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			if ( parrParams[3] != null )
+				lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[3]).append("'");
+
+			if ( parrParams[4] != null )
+				lstrSQL.append(" AND [Timestamp] < DATEADD(d, 1, '").append(parrParams[4]).append("')");
+
+			lstrSQL.append(")");
 		}
 
 		larrAux = new ArrayList<SubCasualty>();
@@ -190,13 +230,14 @@ public class SubCasualtyExternGeneral
 		return larrAux.toArray(new SubCasualty[larrAux.size()]);
 	}
 
-	protected Table buildHeaderSection()
+	protected Table buildHeaderSection(String lstrClient)
 		throws BigBangJewelException
 	{
+		Client lobjClient;
+		Template lobjLogo;
 		Table ltbl;
 		TR[] larrRows;
 		TD[] larrCells;
-		Template lobjLogo;
 		FileXfer lobjFile;
 		String lstr64;
 		IMG lobjImg;
@@ -204,6 +245,7 @@ public class SubCasualtyExternGeneral
 
 		try
 		{
+			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(lstrClient));
 			lobjLogo = Template.GetInstance(Engine.getCurrentNameSpace(), Constants.TID_Logo);
 		}
 		catch (Throwable e)
@@ -233,6 +275,8 @@ public class SubCasualtyExternGeneral
 		lobjDiv.setStyle("font-size: small;");
 		larrCells[1].addElementToRegistry(lobjDiv);
 		larrCells[1].setAlign("right");
+		lobjDiv.addElementToRegistry(new Strong(lobjClient.getLabel()));
+		lobjDiv.addElementToRegistry(new BR());
 		lobjDiv.addElementToRegistry(new Strong("Sinistralidade do Cliente"));
 		lobjDiv.addElementToRegistry(new BR());
 		lobjDiv.addElementToRegistry(ReportBuilder.BuildValue(TypeDefGUIDs.T_Date, new Timestamp(new java.util.Date().getTime())));
