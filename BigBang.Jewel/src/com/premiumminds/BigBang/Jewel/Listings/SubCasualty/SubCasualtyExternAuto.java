@@ -1,11 +1,13 @@
 package com.premiumminds.BigBang.Jewel.Listings.SubCasualty;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
@@ -24,25 +26,32 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
-import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
+import com.premiumminds.BigBang.Jewel.Objects.Assessment;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
-import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
-import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
-import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
+import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Template;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
-public class SubCasualtyExternAT
+public class SubCasualtyExternAuto
 	extends SubCasualtyListingsBase
 {
-	private static final String gstrAT = "53DB03E7-F423-4656-A23A-9EE9010A5B87";
+	private static final String gstrAuto = "7F5F77EB-8348-4914-8525-9EE9010AB1C6";
+
+	protected static class SubCasualtyValues
+	{
+		public BigDecimal mdblDirects;
+		public BigDecimal mdblThirds;
+		public BigDecimal mdblDeductibles;
+	}
+
+	protected HashMap<UUID, SubCasualtyValues> mmapValues;
 
 	public GenericElement[] doReport(String[] parrParams)
 		throws BigBangJewelException
@@ -59,7 +68,25 @@ public class SubCasualtyExternAT
 		{
 			public int compare(SubCasualty o1, SubCasualty o2)
 			{
-				return o1.getLabel().compareTo(o2.getLabel());
+				SubLine s1, s2;
+
+				s1 = null;
+				s2 = null;
+				try
+				{
+					s1 = o1.GetSubLine();
+					s2 = o2.GetSubLine();
+				}
+				catch (Throwable e)
+				{
+				}
+
+				if ((s1 == null) || (s2 == null) || s2.getDescription().equals(s1.getDescription()))
+				{
+					return o1.getLabel().compareTo(o2.getLabel());
+				}
+
+				return s1.getDescription().compareTo(s2.getDescription());
 			}
 		});
 
@@ -110,11 +137,11 @@ public class SubCasualtyExternAT
 
 			lstrSQL.append("SELECT * FROM (" +
 					lrefSubCs.SQLForSelectAll() + ") [AuxSubC] WHERE (([Policy] IN (SELECT [PK] FROM (" +
-					lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + gstrAT + "'"}, null) +
+					lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + gstrAuto + "'"}, null) +
 					") [AuxP1]) OR [Sub Policy] IN (SELECT [PK] FROM (" +
 					lrefSubPs.SQLForSelectAll() +
 					") [AuxSubP] WHERE [Policy] IN (SELECT [PK] FROM (" +
-					lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + gstrAT + "'"}, null) +
+					lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + gstrAuto + "'"}, null) +
 					") [AuxP2]))) AND [Casualty] IN (SELECT [PK] FROM (" +
 					lrefCas.SQLForSelectByMembers(new int[] {Casualty.I.CLIENT}, new java.lang.Object[] {parrParams[0]}, null) +
 					") [AuxCas] WHERE 1=1");
@@ -265,7 +292,7 @@ public class SubCasualtyExternAT
 		larrCells[1].setAlign("right");
 		lobjDiv.addElementToRegistry(new Strong(lobjClient.getLabel()));
 		lobjDiv.addElementToRegistry(new BR());
-		lobjDiv.addElementToRegistry(new Strong("Sinistralidade de Acidentes de Trabalho"));
+		lobjDiv.addElementToRegistry(new Strong("Sinistralidade do Cliente"));
 		lobjDiv.addElementToRegistry(new BR());
 		lobjDiv.addElementToRegistry(ReportBuilder.BuildValue(TypeDefGUIDs.T_Date, new Timestamp(new java.util.Date().getTime())));
 
@@ -280,16 +307,44 @@ public class SubCasualtyExternAT
 	protected TR[] buildDataTable(String pstrHeader, SubCasualty[] parrSubCs)
 		throws BigBangJewelException
 	{
+		BigDecimal ldblDirects;
+		BigDecimal ldblThirds;
+		SubCasualtyValues lobjValues;
+		int i;
 		TR[] larrRows;
 		TD lcell;
 
-		larrRows = new TR[1];
+		getValuesData();
+
+		ldblDirects = BigDecimal.ZERO;
+		ldblThirds = BigDecimal.ZERO;
+		for ( i = 0; i < parrSubCs.length; i++ )
+		{
+			if (mmapValues.containsKey(parrSubCs[i].getKey()))
+			{
+				lobjValues = mmapValues.get(parrSubCs[i].getKey());
+				ldblDirects = ldblDirects.add(lobjValues.mdblDirects);
+				ldblThirds = ldblThirds.add(lobjValues.mdblThirds);
+			}
+		}
+
+		larrRows = new TR[4];
 
 		lcell = new TD();
 		lcell.setColSpan(2);
 		lcell.addElement(buildInner(parrSubCs));
 		ReportBuilder.styleInnerContainer(lcell);
 		larrRows[0] = ReportBuilder.buildRow(new TD[] {lcell});
+
+		lcell = ReportBuilder.buildHeaderCell("");
+		lcell.setColSpan(2);
+		ReportBuilder.styleCell(lcell, true, false);
+		larrRows[1] = ReportBuilder.buildRow(new TD[] {lcell});
+		ReportBuilder.styleRow(larrRows[1], false);
+
+		larrRows[2] = ReportBuilder.constructDualRow("Total de Pagamentos a Terceiros", ldblThirds, TypeDefGUIDs.T_Decimal, false);
+
+		larrRows[3] = ReportBuilder.constructDualRow("Total de Pagamentos ao Tomador", ldblDirects, TypeDefGUIDs.T_Decimal, false);
 
 		return larrRows;
 	}
@@ -298,7 +353,7 @@ public class SubCasualtyExternAT
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[9];
+		larrCells = new TD[10];
 
 		larrCells[0] = ReportBuilder.buildHeaderCell("N. Apólice");
 		ReportBuilder.styleCell(larrCells[0], false, false);
@@ -309,155 +364,52 @@ public class SubCasualtyExternAT
 		larrCells[2] = ReportBuilder.buildHeaderCell("Data Sinistro");
 		ReportBuilder.styleCell(larrCells[2], false, true);
 
-		larrCells[3] = ReportBuilder.buildHeaderCell("Sinistrado");
+		larrCells[3] = ReportBuilder.buildHeaderCell("Matricula");
 		ReportBuilder.styleCell(larrCells[3], false, true);
 
-		larrCells[4] = ReportBuilder.buildHeaderCell("Tipo de Lesão");
+		larrCells[4] = ReportBuilder.buildHeaderCell("Data 1ª Perit");
 		ReportBuilder.styleCell(larrCells[4], false, true);
 
-		larrCells[5] = ReportBuilder.buildHeaderCell("Causa da Lesão");
+		larrCells[5] = ReportBuilder.buildHeaderCell("Responsabilidade");
 		ReportBuilder.styleCell(larrCells[5], false, true);
 
-		larrCells[6] = ReportBuilder.buildHeaderCell("Parte do Corpo");
+		larrCells[6] = ReportBuilder.buildHeaderCell("Pagamentos a Terceiros");
 		ReportBuilder.styleCell(larrCells[6], false, true);
 
-		larrCells[7] = ReportBuilder.buildHeaderCell("Encerrado");
+		larrCells[7] = ReportBuilder.buildHeaderCell("Pagamentos ao Tomador");
 		ReportBuilder.styleCell(larrCells[7], false, true);
 
-		larrCells[8] = ReportBuilder.buildHeaderCell("Descrição");
+		larrCells[8] = ReportBuilder.buildHeaderCell("Encerrado");
 		ReportBuilder.styleCell(larrCells[8], false, true);
 
-		setWidths(larrCells);
-
-		return larrCells;
-	}
-
-	protected TD[] buildDetailHeaderRow()
-	{
-		TD[] larrCells;
-
-		larrCells = new TD[9];
-
-		larrCells[0] = ReportBuilder.buildHeaderCell("");
-		ReportBuilder.styleCell(larrCells[0], true, false);
-
-		larrCells[1] = ReportBuilder.buildHeaderCell("");
-		ReportBuilder.styleCell(larrCells[1], true, true);
-
-		larrCells[2] = ReportBuilder.buildHeaderCell("Ficha Clínica");
-		ReportBuilder.styleCell(larrCells[2], true, true);
-
-		larrCells[3] = ReportBuilder.buildHeaderCell("Tipo Invalidez");
-		ReportBuilder.styleCell(larrCells[3], true, true);
-
-		larrCells[4] = ReportBuilder.buildHeaderCell("De");
-		ReportBuilder.styleCell(larrCells[4], true, true);
-
-		larrCells[5] = ReportBuilder.buildHeaderCell("Até");
-		ReportBuilder.styleCell(larrCells[5], true, true);
-
-		larrCells[6] = ReportBuilder.buildHeaderCell("% Invalidez");
-		ReportBuilder.styleCell(larrCells[6], true, true);
-
-		larrCells[7] = ReportBuilder.buildHeaderCell("Valor Ind");
-		ReportBuilder.styleCell(larrCells[7], true, true);
-
-		larrCells[8] = ReportBuilder.buildHeaderCell("Local");
-		ReportBuilder.styleCell(larrCells[8], true, true);
+		larrCells[9] = ReportBuilder.buildHeaderCell("Descrição");
+		ReportBuilder.styleCell(larrCells[9], false, true);
 
 		setWidths(larrCells);
 
 		return larrCells;
-	}
-
-	protected Table buildInner(SubCasualty[] parrSubCs)
-		throws BigBangJewelException
-	{
-		Table ltbl;
-		ArrayList<TR> larrRows;
-		TR lrow;
-		int i;
-
-		getMarkersData();
-
-		larrRows = new ArrayList<TR>();
-
-		lrow = ReportBuilder.buildRow(buildInnerHeaderRow());
-		ReportBuilder.styleRow(lrow, true);
-		larrRows.add(lrow);
-
-		lrow = ReportBuilder.buildRow(buildDetailHeaderRow());
-		ReportBuilder.styleRow(lrow, true);
-		larrRows.add(lrow);
-
-		for ( i = 0; i < parrSubCs.length; i++ )
-		{
-			lrow = ReportBuilder.buildRow(buildRow(parrSubCs[i]));
-			ReportBuilder.styleRow(lrow, false);
-			larrRows.add(lrow);
-
-			larrRows.addAll(buildMedicalRows(parrSubCs[i]));
-		}
-
-		ltbl = ReportBuilder.buildTable(larrRows.toArray(new TR[larrRows.size()]));
-		ReportBuilder.styleTable(ltbl, true);
-
-		return ltbl;
 	}
 
 	protected TD[] buildRow(SubCasualty pobjSubC)
 		throws BigBangJewelException
 	{
 		Casualty lobjC;
-		SubCasualtyItem[] larrItems;
-		ObjectBase lobjType, lobjCause, lobjPart;
+		Assessment lobjA;
+		SubCasualtyValues lobjValues;
 		SubCasualtyMarkers lobjMarkers;
 		TD[] larrCells;
 
 		lobjC = pobjSubC.GetCasualty();
-		larrItems = pobjSubC.GetCurrentItems();
+		lobjA = getFirstEffectiveAssessment(pobjSubC.getKey());
 
-		lobjType = null;
-		lobjCause = null;
-		lobjPart = null;
-		if (larrItems.length > 0)
-		{
-			try
-			{
-				lobjType = larrItems[0].getAt(SubCasualtyItem.I.INJURYTYPE) == null ? null :
-						Engine.GetWorkInstance(Engine.FindEntity(pobjSubC.getNameSpace(), Constants.ObjID_InjuryType),
-								(UUID)larrItems[0].getAt(SubCasualtyItem.I.INJURYTYPE));
-			}
-			catch (Throwable e)
-			{
-			}
-
-			try
-			{
-				lobjCause = larrItems[0].getAt(SubCasualtyItem.I.INJURYCAUSE) == null ? null :
-						Engine.GetWorkInstance(Engine.FindEntity(pobjSubC.getNameSpace(), Constants.ObjID_InjuryCause),
-								(UUID)larrItems[0].getAt(SubCasualtyItem.I.INJURYCAUSE));
-			}
-			catch (Throwable e)
-			{
-			}
-
-			try
-			{
-				lobjPart = larrItems[0].getAt(SubCasualtyItem.I.INJUREDPART) == null ? null :
-						Engine.GetWorkInstance(Engine.FindEntity(pobjSubC.getNameSpace(), Constants.ObjID_InjuredPart),
-								(UUID)larrItems[0].getAt(SubCasualtyItem.I.INJUREDPART));
-			}
-			catch (Throwable e)
-			{
-			}
-		}
-
+		lobjValues = null;
+		if (mmapValues.containsKey(pobjSubC.getKey()))
+			lobjValues = mmapValues.get(pobjSubC.getKey());
 		lobjMarkers = null;
 		if (mmapData.containsKey(pobjSubC.getKey()))
 			lobjMarkers = mmapData.get(pobjSubC.getKey());
 
-		larrCells = new TD[9];
+		larrCells = new TD[10];
 
 		larrCells[0] = ReportBuilder.buildCell(pobjSubC.getAbsolutePolicy().getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[0], true, false);
@@ -471,20 +423,23 @@ public class SubCasualtyExternAT
 		larrCells[3] = ReportBuilder.buildCell(pobjSubC.GetObjectName(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(lobjType == null ? "" : lobjType.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[4] = ReportBuilder.buildCell(lobjA == null ? null : lobjA.getAt(Assessment.I.EFFECTIVEDATE), TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[4], true, true);
 
-		larrCells[5] = ReportBuilder.buildCell(lobjCause == null ? "" : lobjCause.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[5] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.PERCENTFAULT), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[5], true, true);
 
-		larrCells[6] = ReportBuilder.buildCell(lobjPart == null ? "" : lobjPart.getLabel(), TypeDefGUIDs.T_String);
+		larrCells[6] = ReportBuilder.buildCell(lobjValues == null ? new BigDecimal(0) : lobjValues.mdblThirds, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[6], true, true);
 
-		larrCells[7] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtClosed, TypeDefGUIDs.T_Date);
+		larrCells[7] = ReportBuilder.buildCell(lobjValues == null ? new BigDecimal(0) : lobjValues.mdblDirects, TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[7], true, true);
 
-		larrCells[8] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DESCRIPTION), TypeDefGUIDs.T_String);
+		larrCells[8] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtClosed, TypeDefGUIDs.T_Date);
 		ReportBuilder.styleCell(larrCells[8], true, true);
+
+		larrCells[9] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DESCRIPTION), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[9], true, true);
 
 		setWidths(larrCells);
 
@@ -496,51 +451,36 @@ public class SubCasualtyExternAT
 		parrCells[ 0].setWidth(100);
 		parrCells[ 1].setWidth(100);
 		parrCells[ 2].setWidth(100);
-		parrCells[ 3].setWidth(300);
+		parrCells[ 3].setWidth(100);
 		parrCells[ 4].setWidth(100);
 		parrCells[ 5].setWidth(100);
 		parrCells[ 6].setWidth(100);
 		parrCells[ 7].setWidth(100);
-		parrCells[ 8].setWidth(500);
+		parrCells[ 8].setWidth(100);
+		parrCells[ 9].setWidth(500);
 	}
 
-	private ArrayList<TR> buildMedicalRows(SubCasualty pobjSubC)
+	protected void getValuesData()
 		throws BigBangJewelException
 	{
-		MedicalFile[] larrMedFs;
-		ArrayList<TR> larrRows;
-		TR lrow;
-		int i;
-
-		larrMedFs = getFiles(pobjSubC.getKey());
-
-		larrRows = new ArrayList<TR>();
-
-		for (i = 0; i < larrMedFs.length; i++)
-		{
-			lrow = ReportBuilder.buildRow(buildMedicalRow(larrMedFs[i]));
-			ReportBuilder.styleRow(lrow, false);
-			larrRows.add(lrow);
-
-			larrRows.addAll(buildDetailRows(larrMedFs[i]));
-		}
-
-		return larrRows;
-	}
-
-	private MedicalFile[] getFiles(UUID pidSubC)
-		throws BigBangJewelException
-	{
-		ArrayList<MedicalFile> larrAux;
-		IEntity lrefMedFs;
+		IEntity lrefSubCDets;
+		String lstrSQL;
 		MasterDB ldb;
-		ResultSet lrsMedFs;
+		ResultSet lrsSubCDets;
+		UUID lidAux;
+		SubCasualtyValues lobjAux;
 
-		larrAux = new ArrayList<MedicalFile>();
+		if ( mmapValues != null )
+			return;
 
 		try
 		{
-			lrefMedFs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MedicalFile));
+			lrefSubCDets = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualtyItem));
+
+			lstrSQL = "SELECT [Sub Casualty], COALESCE(SUM(CASE [Third Party] WHEN 0 THEN [Settlement] ELSE 0.0 END), 0.0) Directs, " +
+					"COALESCE(SUM(CASE [Third Party] WHEN 1 THEN [Settlement] ELSE 0.0 END), 0) Thirds, " +
+					"COALESCE(SUM([Expected Deductible]), 0) Deductibles FROM (" +
+					lrefSubCDets.SQLForSelectAll() + ") [Main] GROUP BY [Sub Casualty];";
 
 			ldb = new MasterDB();
 		}
@@ -551,8 +491,38 @@ public class SubCasualtyExternAT
 
 		try
 		{
-			lrsMedFs = lrefMedFs.SelectByMembers(ldb, new int[] {MedicalFile.I.SUBCASUALTY}, new java.lang.Object[] {pidSubC},
-					new int[] {MedicalFile.I.REFERENCE});
+			lrsSubCDets = ldb.OpenRecordset(lstrSQL.toString());
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		mmapValues = new HashMap<UUID, SubCasualtyValues>();
+
+		try
+		{
+			while ( lrsSubCDets.next() )
+			{
+				lidAux = UUID.fromString(lrsSubCDets.getString(1));
+				lobjAux = new SubCasualtyValues();
+				lobjAux.mdblDirects = lrsSubCDets.getBigDecimal(2);
+				lobjAux.mdblThirds = lrsSubCDets.getBigDecimal(3);
+				lobjAux.mdblDeductibles = lrsSubCDets.getBigDecimal(4);
+				mmapValues.put(lidAux, lobjAux);
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsSubCDets.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsSubCDets.close();
 		}
 		catch (Throwable e)
 		{
@@ -562,19 +532,66 @@ public class SubCasualtyExternAT
 
 		try
 		{
-			while ( lrsMedFs.next() )
-				larrAux.add(MedicalFile.GetInstance(Engine.getCurrentNameSpace(), lrsMedFs));
+			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{
-			try { lrsMedFs.close(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private Assessment getFirstEffectiveAssessment(UUID pidSubC)
+		throws BigBangJewelException
+	{
+		Assessment larrAux;
+		IEntity lrefAssessments;
+		MasterDB ldb;
+		ResultSet lrsAssessments;
+
+		larrAux = null;
+
+		try
+		{
+			lrefAssessments = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Assessment));
+
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsAssessments = lrefAssessments.SelectByMembers(ldb, new int[] {Assessment.I.SUBCASUALTY}, new java.lang.Object[] {pidSubC},
+					new int[] {Assessment.I.EFFECTIVEDATE});
+		}
+		catch (Throwable e)
+		{
 			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
-			lrsMedFs.close();
+			while ( lrsAssessments.next() )
+			{
+				larrAux = Assessment.GetInstance(Engine.getCurrentNameSpace(), lrsAssessments);
+				if (larrAux.getAt(Assessment.I.EFFECTIVEDATE) != null)
+					break;
+				larrAux = null;
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsAssessments.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsAssessments.close();
 		}
 		catch (Throwable e)
 		{
@@ -591,116 +608,7 @@ public class SubCasualtyExternAT
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new MedicalFile[larrAux.size()]);
-	}
-
-	private TD[] buildMedicalRow(MedicalFile pobjMedF)
-	{
-		TD[] larrCells;
-
-		larrCells = new TD[9];
-
-		larrCells[0] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[0], true, false);
-
-		larrCells[1] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[1], true, true);
-
-		larrCells[2] = ReportBuilder.buildCell(pobjMedF.getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[2], true, true);
-
-		larrCells[3] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[3], true, true);
-
-		larrCells[4] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[4], true, true);
-
-		larrCells[5] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[5], true, true);
-
-		larrCells[6] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[6], true, true);
-
-		larrCells[7] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[7], true, true);
-
-		larrCells[8] = ReportBuilder.buildCell(pobjMedF.getAt(MedicalFile.I.NOTES), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[8], true, true);
-
-		setWidths(larrCells);
-
-		return larrCells;
-	}
-
-	private ArrayList<TR> buildDetailRows(MedicalFile pobjMedF)
-		throws BigBangJewelException
-	{
-		MedicalDetail[] larrMedDets;
-		ArrayList<TR> larrRows;
-		TR lrow;
-		int i;
-
-		larrMedDets = pobjMedF.GetCurrentDetails();
-
-		larrRows = new ArrayList<TR>();
-
-		for (i = 0; i < larrMedDets.length; i++)
-		{
-			lrow = ReportBuilder.buildRow(buildMedicalDetailRow(larrMedDets[i]));
-			ReportBuilder.styleRow(lrow, false);
-			larrRows.add(lrow);
-		}
-
-		return larrRows;
-	}
-
-	private TD[] buildMedicalDetailRow(MedicalDetail pobjMedDet)
-	{
-		ObjectBase lobjType;
-		TD[] larrCells;
-
-		lobjType = null;
-		try
-		{
-			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DisabilityType),
-					(UUID)pobjMedDet.getAt(MedicalDetail.I.DISABILITYTYPE));
-		}
-		catch (Throwable e)
-		{
-		}
-
-		larrCells = new TD[9];
-
-		larrCells[0] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[0], true, false);
-
-		larrCells[1] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[1], true, true);
-
-		larrCells[2] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[2], true, true);
-
-		larrCells[3] = ReportBuilder.buildCell(lobjType == null ? null : lobjType.getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[3], true, true);
-
-		larrCells[4] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.STARTDATE), TypeDefGUIDs.T_Date);
-		ReportBuilder.styleCell(larrCells[4], true, true);
-
-		larrCells[5] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.ENDDATE), TypeDefGUIDs.T_Date);
-		ReportBuilder.styleCell(larrCells[5], true, true);
-
-		larrCells[6] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.PERCENT), TypeDefGUIDs.T_Integer);
-		ReportBuilder.styleCell(larrCells[6], true, true);
-
-		larrCells[7] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.BENEFITS), TypeDefGUIDs.T_Decimal);
-		ReportBuilder.styleCell(larrCells[7], true, true);
-
-		larrCells[8] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.PLACE), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[8], true, true);
-
-		setWidths(larrCells);
-
-		return larrCells;
+		return larrAux;
 	}
 
 	private GenericElement[] doNotValid()
