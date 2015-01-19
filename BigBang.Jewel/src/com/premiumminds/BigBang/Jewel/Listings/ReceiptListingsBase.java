@@ -396,18 +396,18 @@ public class ReceiptListingsBase
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.CLIENT}, new java.lang.Object[] {pidClient}, null))
 					.append(") [AuxPols1]) OR [Sub Policy] IN (SELECT [PK] FROM (")
 					.append(lrefSubPolicies.SQLForSelectByMembers(new int[] {SubPolicy.I.SUBSCRIBER}, new java.lang.Object[] {pidClient}, null))
-					.append(") [AuxSPols1]) OR [Sub Casualty] IN ((SELECT [PK] FROM (")
+					.append(") [AuxSPols1]) OR [Sub Casualty] IN (SELECT [PK] FROM (")
 					.append(lrefSubCasualties.SQLForSelectAll())
 					.append(") [AuxSCas1] WHERE ([Policy] IN (SELECT [PK] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.CLIENT}, new java.lang.Object[] {pidClient}, null))
 					.append(") [AuxPols2]) OR [Sub Policy] IN (SELECT [PK] FROM (")
 					.append(lrefSubPolicies.SQLForSelectByMembers(new int[] {SubPolicy.I.SUBSCRIBER}, new java.lang.Object[] {pidClient}, null))
-					.append(") [AuxSPols2]))) UNION (SELECT [PK] FROM (")
+					.append(") [AuxSPols2])) UNION ALL SELECT [PK] FROM (")
 					.append(lrefSubCasualties.SQLForSelectByMembers(new int[] {SubCasualty.I.POLICY,  SubCasualty.I.SUBPOLICY},
 							new java.lang.Object[] {null, null}, null))
 					.append(") [AuxSCas2] WHERE [Casualty] IN (SELECT [PK] FROM (")
 					.append(lrefCasualties.SQLForSelectByMembers(new int[] {Casualty.I.CLIENT}, new java.lang.Object[] {pidClient}, null))
-					.append(") [AuxCas]))))");
+					.append(") [AuxCas])))");
 		}
 		catch (Throwable e)
 		{

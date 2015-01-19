@@ -91,7 +91,17 @@ public class ReceiptExternAuditPending
 
 			lstrSQL = new StringBuilder();
 			lstrSQL.append("SELECT * FROM (")
-					.append(lrefReceipts.SQLForSelectAll()).append(") [AuxRecs] WHERE [Process] IN (SELECT [Process] FROM(")
+					.append(lrefReceipts.SQLForSelectAll()).append(") [AuxRecs] WHERE 1=1");
+
+			lidAgent = Utils.getCurrentAgent();
+			if ( lidAgent != null )
+				filterByAgent(lstrSQL, lidAgent);
+
+			if ( parrParams[0] != null )
+				filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
+
+
+			lstrSQL.append(" AND [Process] IN (SELECT [Process] FROM (")
 					.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
 							Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_CreatePaymentNotice, false}, null))
 					.append(") [AuxLogs] WHERE 1=1");
@@ -101,9 +111,12 @@ public class ReceiptExternAuditPending
 				lstrSQL.append(" AND [Timestamp] >= '").append(parrParams[1]).append("-01-01'");
 				lstrSQL.append(" AND [Timestamp] < '").append(Integer.parseInt(parrParams[1]) + 1).append("-01-01'");
 
-				lstrSQL.append(") AND ([Process] IN (SELECT [Process] FROM(")
+				lstrSQL.append(") AND ([Process] IN (SELECT [Process] FROM (")
 						.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
 								Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_Payment, false}, null))
+						.append(" UNION ALL ")
+						.append(lrefLogs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Log,
+								Jewel.Petri.Constants.Undone_In_Log}, new java.lang.Object[] {Constants.OPID_Receipt_ExternAllowSendPayment, false}, null))
 						.append(") [AuxLogs] WHERE 1=1");
 
 				lstrSQL.append(" AND [Timestamp] >= '").append(Integer.parseInt(parrParams[1]) + 1).append("-01-01'");
@@ -117,7 +130,7 @@ public class ReceiptExternAuditPending
 					.append(lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step,
 							Jewel.Petri.Constants.FKLevel_In_Step}, new java.lang.Object[] {Constants.OPID_Receipt_Payment,
 							Constants.UrgID_Pending}, null))
-					.append(" UNION ")
+					.append(" UNION ALL ")
 					.append(lrefSteps.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.FKOperation_In_Step,
 							Jewel.Petri.Constants.FKLevel_In_Step}, new java.lang.Object[] {Constants.OPID_Receipt_ExternAllowSendPayment,
 							Constants.UrgID_Valid}, null))
@@ -127,13 +140,6 @@ public class ReceiptExternAuditPending
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-
-		if ( parrParams[0] != null )
-			filterByClient(lstrSQL, UUID.fromString(parrParams[0]));
-
-		lidAgent = Utils.getCurrentAgent();
-		if ( lidAgent != null )
-			filterByAgent(lstrSQL, lidAgent);
 
 		larrAux = new ArrayList<Receipt>();
 
