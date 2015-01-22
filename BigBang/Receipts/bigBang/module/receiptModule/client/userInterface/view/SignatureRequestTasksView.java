@@ -50,6 +50,11 @@ public class SignatureRequestTasksView extends View implements SignatureRequestT
 			public void onRepeat() {
 				handler.onActionInvoked(new ActionInvokedEvent<SignatureRequestTasksViewPresenter.Action>(Action.REPEAT));
 			}
+
+			@Override
+			protected void onGoToProcess() {
+				handler.onActionInvoked(new ActionInvokedEvent<SignatureRequestTasksViewPresenter.Action>(Action.GO_TO_PROCESS));
+			}
 		};
 		wrapper.add(toolbar);
 		
@@ -88,6 +93,7 @@ public class SignatureRequestTasksView extends View implements SignatureRequestT
 	@Override
 	public void clearAllowedPermissions() {
 		toolbar.hideAll();
+		toolbar.setGoToProcessVisible();
 	}
 
 	@Override

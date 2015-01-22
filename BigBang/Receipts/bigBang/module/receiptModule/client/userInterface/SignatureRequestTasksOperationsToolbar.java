@@ -9,6 +9,7 @@ public abstract class SignatureRequestTasksOperationsToolbar extends
 		BigBangOperationsToolBar {
 
 	protected MenuItem receive, repeat, cancel;
+	private MenuItem goToProcess;
 	
 	public SignatureRequestTasksOperationsToolbar(){
 		hideAll();
@@ -38,7 +39,19 @@ public abstract class SignatureRequestTasksOperationsToolbar extends
 				onCancelRequest();
 			}
 		});
+		addItem(cancel);
+
+		goToProcess = new MenuItem("Navegar para Pedido", new Command() {
+
+			@Override
+			public void execute() {
+				onGoToProcess();
+			}
+		});
+		addItem(goToProcess);
 	}
+
+	protected abstract void onGoToProcess();
 	
 	@Override
 	public void onEditRequest() {
@@ -67,6 +80,10 @@ public abstract class SignatureRequestTasksOperationsToolbar extends
 	
 	public void allowCancel(boolean allow){
 		this.cancel.setVisible(allow);
+	}
+
+	public void setGoToProcessVisible() {
+		goToProcess.setVisible(true);
 	}
 
 }
