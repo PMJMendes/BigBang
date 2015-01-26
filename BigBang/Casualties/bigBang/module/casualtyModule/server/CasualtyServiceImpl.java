@@ -596,7 +596,8 @@ public class CasualtyServiceImpl
 	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
 		throws BigBangException
 	{
-		pstrBuffer.append(" AND [:Client:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" AND ([:Client:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR [:Client:Group:Mediator] = '").append(pidMediator.toString()).append("')");
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)

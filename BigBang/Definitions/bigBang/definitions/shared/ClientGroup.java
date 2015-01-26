@@ -10,6 +10,7 @@ public class ClientGroup
 	public String name;
 	public String id;
 	public String parentGroupId;
+	public String mediatorId;
 	public ClientGroup[] subGroups;
 	
 	public ClientGroup(){

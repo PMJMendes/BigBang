@@ -1035,7 +1035,8 @@ public class ExpenseServiceImpl
 		}
 		pstrBuffer.append(") [AuxPols] WHERE ([:Mediator] = '").append(pidMediator.toString()).append("'");
 		pstrBuffer.append(" OR ([:Mediator] IS NULL");
-		pstrBuffer.append(" AND [:Client:Mediator] = '").append(pidMediator.toString()).append("'))))");
+		pstrBuffer.append(" AND ([:Client:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR [:Client:Group:Mediator] = '").append(pidMediator.toString()).append("')))))");
 		pstrBuffer.append(" OR ");
 		pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
 		try
@@ -1048,9 +1049,11 @@ public class ExpenseServiceImpl
     		throw new BigBangException(e.getMessage(), e);
 		}
 		pstrBuffer.append(") [AuxSPols] WHERE ([:Subscriber:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR [:Subscriber:Group:Mediator] = '").append(pidMediator.toString()).append("'");
 		pstrBuffer.append(" OR [:Policy:Mediator] = '").append(pidMediator.toString()).append("'");
 		pstrBuffer.append(" OR ([:Policy:Mediator] IS NULL");
-		pstrBuffer.append(" AND [:Policy:Client:Mediator] = '").append(pidMediator.toString()).append("'))))");
+		pstrBuffer.append(" AND ([:Policy:Client:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR [:Policy:Client:Group:Mediator] = '").append(pidMediator.toString()).append("')))))");
 		pstrBuffer.append(")");
 	}
 

@@ -693,7 +693,8 @@ public class ClientServiceImpl
 	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
 		throws BigBangException
 	{
-		pstrBuffer.append(" AND [:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" AND ([:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR [:Group:Mediator] = '").append(pidMediator.toString()).append("')");
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)

@@ -28,6 +28,8 @@ public class ManageClientGroups
 		public String mstrName;
 		public UUID midParent;
 		public GroupData[] marrSubGroups;
+		public UUID midMediator;
+
 		public GroupData mobjPrevValues;
 	}
 
@@ -359,6 +361,7 @@ public class ManageClientGroups
 				lobjAuxGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjAuxGroup.setAt(0, parrData[i].mstrName);
 				lobjAuxGroup.setAt(1, parrData[i].midParent);
+				lobjAuxGroup.setAt(3, parrData[i].midMediator);
 				lobjAuxGroup.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -387,6 +390,7 @@ public class ManageClientGroups
 			parrData[i].mobjPrevValues.mid = lobjAuxGroup.getKey();
 			parrData[i].mobjPrevValues.mstrName = (String)lobjAuxGroup.getAt(0);
 			parrData[i].mobjPrevValues.midParent = (UUID)lobjAuxGroup.getAt(1);
+			parrData[i].mobjPrevValues.midMediator = (UUID)lobjAuxGroup.getAt(3);
 			parrData[i].mobjPrevValues.marrSubGroups = null;
 			parrData[i].mobjPrevValues.mobjPrevValues = null;
 
@@ -394,6 +398,7 @@ public class ManageClientGroups
 			{
 				lobjAuxGroup.setAt(0, parrData[i].mstrName);
 				lobjAuxGroup.setAt(1, parrData[i].midParent);
+				lobjAuxGroup.setAt(3, parrData[i].midMediator);
 				lobjAuxGroup.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -416,6 +421,7 @@ public class ManageClientGroups
 			lobjAuxGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(), parrData[i].mid);
 			parrData[i].mstrName = (String)lobjAuxGroup.getAt(0);
 			parrData[i].midParent = (UUID)lobjAuxGroup.getAt(1);
+			parrData[i].midMediator = (UUID)lobjAuxGroup.getAt(3);
 			parrData[i].mobjPrevValues = null;
 			larrSubGroups = lobjAuxGroup.GetCurrentSubGroups();
 			if ( larrSubGroups == null )
@@ -477,6 +483,7 @@ public class ManageClientGroups
 			{
 				lobjAuxGroup.setAt(0, parrData[i].mobjPrevValues.mstrName);
 				lobjAuxGroup.setAt(1, parrData[i].mobjPrevValues.midParent);
+				lobjAuxGroup.setAt(3, parrData[i].mobjPrevValues.midMediator);
 				lobjAuxGroup.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -499,6 +506,7 @@ public class ManageClientGroups
 				lobjAuxGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjAuxGroup.setAt(0, parrData[i].mstrName);
 				lobjAuxGroup.setAt(1, parrData[i].midParent);
+				lobjAuxGroup.setAt(3, parrData[i].midMediator);
 				lobjAuxGroup.SaveToDb(pdb);
 				parrData[i].mid = lobjAuxGroup.getKey();
 			}
@@ -594,11 +602,29 @@ public class ManageClientGroups
 
 	private void DescribeGroup(StringBuilder pstrString, GroupData pobjData, String pstrLineBreak, String pstrPrefix, boolean pbRecurse)
 	{
-		ObjectBase lobjParent;
+		ObjectBase lobjParent, lobjMed;
 		int i;
 
 		pstrString.append("Grupo: ");
 		pstrString.append(pobjData.mstrName);
+		pstrString.append(pstrLineBreak);
+
+		pstrString.append("Agente: ");
+		if ( pobjData.midMediator == null )
+			pstrString.append("<nenhum>");
+		else
+		{
+			try
+			{
+				lobjMed = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_Mediator), pobjData.midMediator);
+				pstrString.append((String)lobjMed.getLabel());
+			}
+			catch (Throwable e)
+			{
+				pstrString.append("(Erro a obter o mediador do grupo.)");
+			}
+		}
 		pstrString.append(pstrLineBreak);
 
 		if ( pstrPrefix == null )

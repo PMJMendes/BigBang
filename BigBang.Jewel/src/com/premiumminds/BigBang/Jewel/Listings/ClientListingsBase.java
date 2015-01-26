@@ -360,7 +360,19 @@ public class ClientListingsBase
 	protected void filterByAgent(StringBuilder pstrSQL, UUID pidAgent)
 		throws BigBangJewelException
 	{
-		pstrSQL.append(" AND [Mediator] = '" + pidAgent.toString() + "'");
+		IEntity lrefGroups;
+
+		try
+		{
+			lrefGroups = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup));
+
+			pstrSQL.append(" AND ([Mediator] = '" + pidAgent.toString() + "'");
+			pstrSQL.append(" OR [Group] IN (SELECT [PK] FROM (").append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null)).append(")))");
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	protected void getTotalsData()

@@ -16,6 +16,14 @@ import Jewel.Engine.SysObjects.ObjectBase;
 public class ClientGroup
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int NAME          =  0;
+		public static int PARENT        =  1;
+		public static int MIGRATIONID   =  2;
+		public static int MEDIATOR      =  3;
+	}
+
     public static ClientGroup GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{

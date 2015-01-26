@@ -63,6 +63,7 @@ import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingMap;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingSet;
@@ -3031,17 +3032,62 @@ public class ReceiptServiceImpl
 	{
 		IEntity lrefPolicies;
 		IEntity lrefSubPolicies;
+		IEntity lrefGroups;
 
 		pstrBuffer.append(" AND ([:Mediator] = '").append(pstrMedId).append("'");
 		pstrBuffer.append(" OR ([:Mediator] IS NULL");
 		pstrBuffer.append(" AND ([:Policy:Mediator] = '").append(pstrMedId).append("'");
 		pstrBuffer.append(" OR ([:Policy:Mediator] IS NULL");
-		pstrBuffer.append(" AND [:Policy:Client:Mediator] = '").append(pstrMedId).append("')");
+		pstrBuffer.append(" AND ([:Policy:Client:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Policy:Client:Group] IN (SELECT [PK] FROM (");
+		try
+		{
+			lrefGroups = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup));
+			pstrBuffer.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pstrMedId}, null));
+		}
+		catch (Throwable e)
+		{
+    		throw new BigBangException(e.getMessage(), e);
+		}
+		pstrBuffer.append(") [AuxGrp])))");
 		pstrBuffer.append(" OR [:Sub Policy:Subscriber:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Sub Policy:Subscriber:Group] IN (SELECT [PK] FROM (");
+		try
+		{
+			lrefGroups = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup));
+			pstrBuffer.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pstrMedId}, null));
+		}
+		catch (Throwable e)
+		{
+    		throw new BigBangException(e.getMessage(), e);
+		}
+		pstrBuffer.append(") [AuxGrp])");
 		pstrBuffer.append(" OR [:Sub Policy:Policy:Mediator] = '").append(pstrMedId).append("'");
 		pstrBuffer.append(" OR ([:Sub Policy:Policy:Mediator] IS NULL");
-		pstrBuffer.append(" AND [:Sub Policy:Policy:Client:Mediator] = '").append(pstrMedId).append("')");
+		pstrBuffer.append(" AND ([:Sub Policy:Policy:Client:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Sub Policy:Policy:Client:Group] IN (SELECT [PK] FROM (");
+		try
+		{
+			lrefGroups = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup));
+			pstrBuffer.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pstrMedId}, null));
+		}
+		catch (Throwable e)
+		{
+    		throw new BigBangException(e.getMessage(), e);
+		}
+		pstrBuffer.append(") [AuxGrp])))");
 		pstrBuffer.append(" OR [:Sub Casualty:Casualty:Client:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Sub Casualty:Casualty:Client:Group] IN (SELECT [PK] FROM (");
+		try
+		{
+			lrefGroups = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup));
+			pstrBuffer.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pstrMedId}, null));
+		}
+		catch (Throwable e)
+		{
+    		throw new BigBangException(e.getMessage(), e);
+		}
+		pstrBuffer.append(") [AuxGrp])");
 		pstrBuffer.append(" OR [:Sub Casualty:Policy] IN (SELECT [PK] FROM (");
 		try
 		{
@@ -3054,7 +3100,8 @@ public class ReceiptServiceImpl
 		}
 		pstrBuffer.append(") [AuxPols] WHERE ([:Mediator] = '").append(pstrMedId).append("'");
 		pstrBuffer.append(" OR ([:Mediator] IS NULL");
-		pstrBuffer.append(" AND [:Client:Mediator] = '").append(pstrMedId).append("')))");
+		pstrBuffer.append(" AND ([:Client:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Client:Group:Mediator] = '").append(pstrMedId).append("'))))");
 		pstrBuffer.append(" OR [:Sub Casualty:Sub Policy] IN (SELECT [PK] FROM (");
 		try
 		{
@@ -3066,9 +3113,11 @@ public class ReceiptServiceImpl
     		throw new BigBangException(e.getMessage(), e);
 		}
 		pstrBuffer.append(") [AuxSPols] WHERE ([:Subscriber:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Subscriber:Group:Mediator] = '").append(pstrMedId).append("'");
 		pstrBuffer.append(" OR [:Policy:Mediator] = '").append(pstrMedId).append("'");
 		pstrBuffer.append(" OR ([:Policy:Mediator] IS NULL");
-		pstrBuffer.append(" AND [:Policy:Client:Mediator] = '").append(pstrMedId).append("'))))))");
+		pstrBuffer.append(" AND ([:Policy:Client:Mediator] = '").append(pstrMedId).append("'");
+		pstrBuffer.append(" OR [:Policy:Client:Group:Mediator] = '").append(pstrMedId).append("')))))))");
 	}
 
 	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)

@@ -67,6 +67,7 @@ public class ClientGroupServiceImpl
 	        	lobjTmp.id = lobjGroup.getKey().toString();
 	        	lobjTmp.name = (String)lobjGroup.getAt(0);
 	        	lobjTmp.parentGroupId = (lobjGroup.getAt(1) == null ? null : ((UUID)lobjGroup.getAt(1)).toString());
+	        	lobjTmp.mediatorId = (lobjGroup.getAt(3) == null ? null : ((UUID)lobjGroup.getAt(3)).toString());
 //	        	lobjTmp.subGroups = getSubGroupsForGroup(lobjGroup);
 	        	lobjTmp.subGroups = null;
 	        	larrAux.add(lobjTmp);
@@ -227,6 +228,7 @@ public class ClientGroupServiceImpl
 			larrResult[i].id = larrSubGroups[i].getKey().toString();
 			larrResult[i].name = (String)larrSubGroups[i].getAt(0);
 			larrResult[i].parentGroupId = ((UUID)larrSubGroups[i].getAt(1)).toString();
+	        larrResult[i].mediatorId = (larrSubGroups[i].getAt(3) == null ? null : ((UUID)larrSubGroups[i].getAt(3)).toString());
 			larrResult[i].subGroups = getSubGroupsForGroup(larrSubGroups[i]);
 		}
 
@@ -247,6 +249,7 @@ public class ClientGroupServiceImpl
 			larrResult[i].mstrName = parrGroups[i].name;
 			larrResult[i].midParent = (pidParent == null ?
 					(parrGroups[i].parentGroupId == null ? null : UUID.fromString(parrGroups[i].parentGroupId)) : pidParent);
+			larrResult[i].midMediator = (parrGroups[i].mediatorId == null ? null : UUID.fromString(parrGroups[i].mediatorId));
 			larrResult[i].marrSubGroups = (pbRecurse && parrGroups[i].subGroups != null ?
 					BuildGroupArray(prefOp, parrGroups[i].subGroups, larrResult[i].mid, pbRecurse) : null);
 			larrResult[i].mobjPrevValues = null;

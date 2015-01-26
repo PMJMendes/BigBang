@@ -24,6 +24,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
@@ -450,7 +451,7 @@ public class ReceiptListingsBase
 					.append(lrefSubPolicies.SQLForSelectAll())
 					.append(") [AuxSPols2] WHERE [Subscriber] IN (SELECT [PK] FROM (")
 					.append(lrefClients.SQLForSelectByMembers(new int[] {Client.I.GROUP}, new java.lang.Object[] {pidGroup}, null))
-					.append(") [AuxCli4])))) UNION (SELECT [PK] FROM (")
+					.append(") [AuxCli4])))) UNION ALL (SELECT [PK] FROM (")
 					.append(lrefSubCasualties.SQLForSelectByMembers(new int[] {SubCasualty.I.POLICY,  SubCasualty.I.SUBPOLICY},
 							new java.lang.Object[] {null, null}, null))
 					.append(") [AuxSCas2] WHERE [Casualty] IN (SELECT [PK] FROM (")
@@ -473,6 +474,7 @@ public class ReceiptListingsBase
 		IEntity lrefSubCasualties;
 		IEntity lrefCasualties;
 		IEntity lrefClients;
+		IEntity lrefGroups;
 
 		try
 		{
@@ -481,37 +483,55 @@ public class ReceiptListingsBase
 			lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
 			lrefCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Casualty));
 			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+			lrefGroups = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup));
 
-			pstrSQL.append(" AND ([Policy] IN ((SELECT [PK] FROM (")
+			pstrSQL.append(" AND ([Policy] IN (SELECT [PK] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
-					.append(") [AuxPols1]) UNION (SELECT [PK] FROM (")
+					.append(") [AuxPols1] UNION ALL SELECT [PK] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.MEDIATOR}, new java.lang.Object[] {null}, null))
 					.append(") [AuxPols2] WHERE [Client] IN (SELECT [PK] FROM (")
 					.append(lrefClients.SQLForSelectByMembers(new int[] {Client.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
-					.append(") [AuxCli1]))) OR [Sub Policy] IN (SELECT [PK] FROM (")
+					.append(") [AuxCli1] UNION ALL SELECT [PK] FROM (")
+					.append(lrefClients.SQLForSelectAll())
+					.append(") [AuxCli1b] WHERE [Group] IN (SELECT [PK] FROM (")
+					.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
+					.append(") [AuxGrp1]))) OR [Sub Policy] IN (SELECT [PK] FROM (")
 					.append(lrefSubPolicies.SQLForSelectAll())
 					.append(") [AuxSPols1] WHERE [Subscriber] IN (SELECT [PK] FROM (")
 					.append(lrefClients.SQLForSelectByMembers(new int[] {Client.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
-					.append(") [AuxCli2])) OR [Sub Casualty] IN ((SELECT [PK] FROM (")
+					.append(") [AuxCli2] UNION ALL SELECT [PK] FROM (")
+					.append(lrefClients.SQLForSelectAll())
+					.append(") [AuxCli2b] WHERE [Group] IN (SELECT [PK] FROM (")
+					.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
+					.append(") [AuxGrp2]))) OR [Sub Casualty] IN (SELECT [PK] FROM (")
 					.append(lrefSubCasualties.SQLForSelectAll())
-					.append(") [AuxSCas1] WHERE ([Policy] IN ((SELECT [PK] FROM (")
+					.append(") [AuxSCas1] WHERE [Policy] IN (SELECT [PK] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
-					.append(") [AuxPols3]) UNION (SELECT [PK] FROM (")
+					.append(") [AuxPols3] UNION ALL SELECT [PK] FROM (")
 					.append(lrefPolicies.SQLForSelectByMembers(new int[] {Policy.I.MEDIATOR}, new java.lang.Object[] {null}, null))
 					.append(") [AuxPols4] WHERE [Client] IN (SELECT [PK] FROM (")
 					.append(lrefClients.SQLForSelectByMembers(new int[] {Client.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
-					.append(") [AuxCli3]))) OR [Sub Policy] IN (SELECT [PK] FROM (")
+					.append(") [AuxCli3] UNION ALL SELECT [PK] FROM (")
+					.append(lrefClients.SQLForSelectAll())
+					.append(") [AuxCli3b] WHERE [Group] IN (SELECT [PK] FROM (")
+					.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
+					.append(") [AuxGrp3]))) OR [Sub Policy] IN (SELECT [PK] FROM (")
 					.append(lrefSubPolicies.SQLForSelectAll())
 					.append(") [AuxSPols2] WHERE [Subscriber] IN (SELECT [PK] FROM (")
 					.append(lrefClients.SQLForSelectByMembers(new int[] {Client.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
-					.append(") [AuxCli4])))) UNION (SELECT [PK] FROM (")
-					.append(lrefSubCasualties.SQLForSelectByMembers(new int[] {SubCasualty.I.POLICY,  SubCasualty.I.SUBPOLICY},
-							new java.lang.Object[] {null, null}, null))
-					.append(") [AuxSCas2] WHERE [Casualty] IN (SELECT [PK] FROM (")
+					.append(") [AuxCli4] UNION ALL SELECT [PK] FROM (")
+					.append(lrefClients.SQLForSelectAll())
+					.append(") [AuxCli4b] WHERE [Group] IN (SELECT [PK] FROM (")
+					.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
+					.append(") [AuxGrp4]))) OR [Casualty] IN (SELECT [PK] FROM (")
 					.append(lrefCasualties.SQLForSelectAll())
 					.append(") [AuxCas] WHERE [Client] IN (SELECT [PK] FROM (")
 					.append(lrefClients.SQLForSelectByMembers(new int[] {Client.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
-					.append(") [AuxCli5])))))");
+					.append(") [AuxCli5] UNION ALL SELECT [PK] FROM (")
+					.append(lrefClients.SQLForSelectAll())
+					.append(") [AuxCli5b] WHERE [Group] IN (SELECT [PK] FROM (")
+					.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
+					.append(") [AuxGrp5])))))");
 		}
 		catch (Throwable e)
 		{

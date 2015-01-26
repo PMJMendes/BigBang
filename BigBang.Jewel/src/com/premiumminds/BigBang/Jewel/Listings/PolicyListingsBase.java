@@ -22,6 +22,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
@@ -343,15 +344,21 @@ public class PolicyListingsBase
 		throws BigBangJewelException
 	{
 		IEntity lrefClients;
+		IEntity lrefGroups;
 
 		try
 		{
 			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+			lrefGroups = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup));
 
 			pstrSQL.append(" AND ([Mediator] = '" + pidAgent.toString() + "' OR ([Mediator] IS NULL")
 					.append(" AND [Client] IN (SELECT [PK] FROM (")
 					.append(lrefClients.SQLForSelectByMembers(new int[] {Client.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
-					.append(") [AuxCli])))");
+					.append(") [AuxCli1] UNION ALL SELECT [PK] FROM (")
+					.append(lrefClients.SQLForSelectAll())
+					.append(") [AuxCli1b] WHERE [Group] IN (SELECT [PK] FROM (")
+					.append(lrefGroups.SQLForSelectByMembers(new int[] {ClientGroup.I.MEDIATOR}, new java.lang.Object[] {pidAgent}, null))
+					.append(") [AuxGrp]))))");
 		}
 		catch (Throwable e)
 		{

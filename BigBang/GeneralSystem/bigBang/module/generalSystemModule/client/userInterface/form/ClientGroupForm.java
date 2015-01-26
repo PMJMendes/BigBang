@@ -13,16 +13,20 @@ public class ClientGroupForm extends FormView<ClientGroup> {
 
 	protected ExpandableListBoxFormField parentGroup;
 	protected TextBoxFormField name;
+	protected ExpandableListBoxFormField mediator;
 	
 	public ClientGroupForm(){
 		name = new TextBoxFormField("Nome");
 		parentGroup = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CLIENT_GROUP, "Grupo pai");
 		parentGroup.allowEdition(false);
+		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
+		mediator.allowEdition(false);
 		
 		addSection("Grupo de Clientes");
 		
 		addFormField(name);
 		addFormField(parentGroup);
+		addFormField(mediator);
 		setValidator(new ClientGroupFormValidator(this));
 	}
 	
@@ -31,6 +35,7 @@ public class ClientGroupForm extends FormView<ClientGroup> {
 		ClientGroup info = value == null ? new ClientGroup() : new ClientGroup(value);
 		info.name = name.getValue();
 		info.parentGroupId = parentGroup.getValue();
+		info.mediatorId = mediator.getValue();
 		return info;
 	}
 
@@ -46,6 +51,7 @@ public class ClientGroupForm extends FormView<ClientGroup> {
 		}
 		name.setValue(info.name);
 		parentGroup.setValue(info.parentGroupId);
+		mediator.setValue(info.mediatorId);
 		for(ValueSelectable <TipifiedListItem> e : parentGroup.getListItems()) {
 			ListEntry<TipifiedListItem> entry = (ListEntry<TipifiedListItem>) e;
 			entry.setVisible(!e.getValue().id.equalsIgnoreCase(info.id));

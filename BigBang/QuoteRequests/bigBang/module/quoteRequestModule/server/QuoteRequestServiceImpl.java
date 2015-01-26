@@ -413,7 +413,10 @@ public class QuoteRequestServiceImpl
 	protected void filterAgentUser(StringBuilder pstrBuffer, UUID pidMediator)
 		throws BigBangException
 	{
-		pstrBuffer.append(" AND [:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" AND ([:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR ([:Mediator] IS NULL");
+		pstrBuffer.append(" AND ([:Client:Mediator] = '").append(pidMediator.toString()).append("'");
+		pstrBuffer.append(" OR [:Client:Group:Mediator] = '").append(pidMediator.toString()).append("')))");
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
