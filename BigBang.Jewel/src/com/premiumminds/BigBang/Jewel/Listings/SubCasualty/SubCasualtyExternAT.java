@@ -298,72 +298,52 @@ public class SubCasualtyExternAT
 	{
 		TD[] larrCells;
 
-		larrCells = new TD[9];
+		larrCells = new TD[15];
 
-		larrCells[0] = ReportBuilder.buildHeaderCell("N. Apólice");
-		ReportBuilder.styleCell(larrCells[0], false, false);
+		larrCells[ 0] = ReportBuilder.buildHeaderCell("N. Apólice");
+		ReportBuilder.styleCell(larrCells[ 0], false, false);
 
-		larrCells[1] = ReportBuilder.buildHeaderCell("N. Processo");
-		ReportBuilder.styleCell(larrCells[1], false, true);
+		larrCells[ 1] = ReportBuilder.buildHeaderCell("N. Processo");
+		ReportBuilder.styleCell(larrCells[ 1], false, true);
 
-		larrCells[2] = ReportBuilder.buildHeaderCell("Data Sinistro");
-		ReportBuilder.styleCell(larrCells[2], false, true);
+		larrCells[ 2] = ReportBuilder.buildHeaderCell("Data Sinistro");
+		ReportBuilder.styleCell(larrCells[ 2], false, true);
 
-		larrCells[3] = ReportBuilder.buildHeaderCell("Sinistrado");
-		ReportBuilder.styleCell(larrCells[3], false, true);
+		larrCells[ 3] = ReportBuilder.buildHeaderCell("Sinistrado");
+		ReportBuilder.styleCell(larrCells[ 3], false, true);
 
-		larrCells[4] = ReportBuilder.buildHeaderCell("Tipo de Lesão");
-		ReportBuilder.styleCell(larrCells[4], false, true);
+		larrCells[ 4] = ReportBuilder.buildHeaderCell("Tipo de Lesão");
+		ReportBuilder.styleCell(larrCells[ 4], false, true);
 
-		larrCells[5] = ReportBuilder.buildHeaderCell("Causa da Lesão");
-		ReportBuilder.styleCell(larrCells[5], false, true);
+		larrCells[ 5] = ReportBuilder.buildHeaderCell("Causa da Lesão");
+		ReportBuilder.styleCell(larrCells[ 5], false, true);
 
-		larrCells[6] = ReportBuilder.buildHeaderCell("Parte do Corpo");
-		ReportBuilder.styleCell(larrCells[6], false, true);
+		larrCells[ 6] = ReportBuilder.buildHeaderCell("Parte do Corpo");
+		ReportBuilder.styleCell(larrCells[ 6], false, true);
 
-		larrCells[7] = ReportBuilder.buildHeaderCell("Encerrado");
-		ReportBuilder.styleCell(larrCells[7], false, true);
+		larrCells[ 7] = ReportBuilder.buildHeaderCell("Tipo Incap");
+		ReportBuilder.styleCell(larrCells[ 7], false, true);
 
-		larrCells[8] = ReportBuilder.buildHeaderCell("Descrição");
-		ReportBuilder.styleCell(larrCells[8], false, true);
+		larrCells[ 8] = ReportBuilder.buildHeaderCell("% Incap");
+		ReportBuilder.styleCell(larrCells[ 8], false, true);
 
-		setWidths(larrCells);
+		larrCells[ 9] = ReportBuilder.buildHeaderCell("De");
+		ReportBuilder.styleCell(larrCells[ 9], false, true);
 
-		return larrCells;
-	}
+		larrCells[10] = ReportBuilder.buildHeaderCell("Até");
+		ReportBuilder.styleCell(larrCells[10], false, true);
 
-	protected TD[] buildDetailHeaderRow()
-	{
-		TD[] larrCells;
+		larrCells[11] = ReportBuilder.buildHeaderCell("Valor Ind");
+		ReportBuilder.styleCell(larrCells[11], false, true);
 
-		larrCells = new TD[9];
+		larrCells[12] = ReportBuilder.buildHeaderCell("Local");
+		ReportBuilder.styleCell(larrCells[12], false, true);
 
-		larrCells[0] = ReportBuilder.buildHeaderCell("");
-		ReportBuilder.styleCell(larrCells[0], true, false);
+		larrCells[13] = ReportBuilder.buildHeaderCell("Encerrado");
+		ReportBuilder.styleCell(larrCells[13], false, true);
 
-		larrCells[1] = ReportBuilder.buildHeaderCell("");
-		ReportBuilder.styleCell(larrCells[1], true, true);
-
-		larrCells[2] = ReportBuilder.buildHeaderCell("Ficha Clínica");
-		ReportBuilder.styleCell(larrCells[2], true, true);
-
-		larrCells[3] = ReportBuilder.buildHeaderCell("Tipo Invalidez");
-		ReportBuilder.styleCell(larrCells[3], true, true);
-
-		larrCells[4] = ReportBuilder.buildHeaderCell("De");
-		ReportBuilder.styleCell(larrCells[4], true, true);
-
-		larrCells[5] = ReportBuilder.buildHeaderCell("Até");
-		ReportBuilder.styleCell(larrCells[5], true, true);
-
-		larrCells[6] = ReportBuilder.buildHeaderCell("% Invalidez");
-		ReportBuilder.styleCell(larrCells[6], true, true);
-
-		larrCells[7] = ReportBuilder.buildHeaderCell("Valor Ind");
-		ReportBuilder.styleCell(larrCells[7], true, true);
-
-		larrCells[8] = ReportBuilder.buildHeaderCell("Local");
-		ReportBuilder.styleCell(larrCells[8], true, true);
+		larrCells[14] = ReportBuilder.buildHeaderCell("Descrição");
+		ReportBuilder.styleCell(larrCells[14], false, true);
 
 		setWidths(larrCells);
 
@@ -376,6 +356,8 @@ public class SubCasualtyExternAT
 		Table ltbl;
 		ArrayList<TR> larrRows;
 		TR lrow;
+		TD[] larrCells;
+		ArrayList<TR> larrInner;
 		int i;
 
 		getMarkersData();
@@ -386,17 +368,16 @@ public class SubCasualtyExternAT
 		ReportBuilder.styleRow(lrow, true);
 		larrRows.add(lrow);
 
-		lrow = ReportBuilder.buildRow(buildDetailHeaderRow());
-		ReportBuilder.styleRow(lrow, true);
-		larrRows.add(lrow);
-
 		for ( i = 0; i < parrSubCs.length; i++ )
 		{
-			lrow = ReportBuilder.buildRow(buildRow(parrSubCs[i]));
+			larrCells = buildRow(parrSubCs[i]);
+			larrInner = buildMedicalRows(parrSubCs[i], larrCells);
+
+			lrow = ReportBuilder.buildRow(larrCells);
 			ReportBuilder.styleRow(lrow, false);
 			larrRows.add(lrow);
 
-			larrRows.addAll(buildMedicalRows(parrSubCs[i]));
+			larrRows.addAll(larrInner);
 		}
 
 		ltbl = ReportBuilder.buildTable(larrRows.toArray(new TR[larrRows.size()]));
@@ -457,34 +438,52 @@ public class SubCasualtyExternAT
 		if (mmapData.containsKey(pobjSubC.getKey()))
 			lobjMarkers = mmapData.get(pobjSubC.getKey());
 
-		larrCells = new TD[9];
+		larrCells = new TD[15];
 
-		larrCells[0] = ReportBuilder.buildCell(pobjSubC.getAbsolutePolicy().getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[0], true, false);
+		larrCells[ 0] = ReportBuilder.buildCell(pobjSubC.getAbsolutePolicy().getLabel(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 0], true, false);
 
-		larrCells[1] = ReportBuilder.buildCell(pobjSubC.getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[1], true, true);
+		larrCells[ 1] = ReportBuilder.buildCell(pobjSubC.getLabel(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 1], true, true);
 
-		larrCells[2] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DATE), TypeDefGUIDs.T_Date);
-		ReportBuilder.styleCell(larrCells[2], true, true);
+		larrCells[ 2] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DATE), TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[ 2], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell(pobjSubC.GetObjectName(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[3], true, true);
+		larrCells[ 3] = ReportBuilder.buildCell(pobjSubC.GetObjectName(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 3], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(lobjType == null ? "" : lobjType.getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[4], true, true);
+		larrCells[ 4] = ReportBuilder.buildCell(lobjType == null ? "" : lobjType.getLabel(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 4], true, true);
 
-		larrCells[5] = ReportBuilder.buildCell(lobjCause == null ? "" : lobjCause.getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[5], true, true);
+		larrCells[ 5] = ReportBuilder.buildCell(lobjCause == null ? "" : lobjCause.getLabel(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 5], true, true);
 
-		larrCells[6] = ReportBuilder.buildCell(lobjPart == null ? "" : lobjPart.getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[6], true, true);
+		larrCells[ 6] = ReportBuilder.buildCell(lobjPart == null ? "" : lobjPart.getLabel(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 6], true, true);
 
-		larrCells[7] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtClosed, TypeDefGUIDs.T_Date);
-		ReportBuilder.styleCell(larrCells[7], true, true);
+		larrCells[ 7] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 7], true, true);
 
-		larrCells[8] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DESCRIPTION), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[8], true, true);
+		larrCells[ 8] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 8], true, true);
+
+		larrCells[ 9] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 9], true, true);
+
+		larrCells[10] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[10], true, true);
+
+		larrCells[11] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[11], true, true);
+
+		larrCells[12] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[12], true, true);
+
+		larrCells[13] = ReportBuilder.buildCell(lobjMarkers == null ? null : lobjMarkers.mdtClosed, TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[13], true, true);
+
+		larrCells[14] = ReportBuilder.buildCell(lobjC.getAt(Casualty.I.DESCRIPTION), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[14], true, true);
 
 		setWidths(larrCells);
 
@@ -501,15 +500,20 @@ public class SubCasualtyExternAT
 		parrCells[ 5].setWidth(100);
 		parrCells[ 6].setWidth(100);
 		parrCells[ 7].setWidth(100);
-		parrCells[ 8].setWidth(500);
+		parrCells[ 8].setWidth(100);
+		parrCells[ 9].setWidth(100);
+		parrCells[10].setWidth(100);
+		parrCells[11].setWidth(100);
+		parrCells[12].setWidth(100);
+		parrCells[13].setWidth(100);
+		parrCells[14].setWidth(500);
 	}
 
-	private ArrayList<TR> buildMedicalRows(SubCasualty pobjSubC)
+	private ArrayList<TR> buildMedicalRows(SubCasualty pobjSubC, TD[] parrFirst)
 		throws BigBangJewelException
 	{
 		MedicalFile[] larrMedFs;
 		ArrayList<TR> larrRows;
-		TR lrow;
 		int i;
 
 		larrMedFs = getFiles(pobjSubC.getKey());
@@ -518,11 +522,7 @@ public class SubCasualtyExternAT
 
 		for (i = 0; i < larrMedFs.length; i++)
 		{
-			lrow = ReportBuilder.buildRow(buildMedicalRow(larrMedFs[i]));
-			ReportBuilder.styleRow(lrow, false);
-			larrRows.add(lrow);
-
-			larrRows.addAll(buildDetailRows(larrMedFs[i]));
+			larrRows.addAll(buildDetailRows(larrMedFs[i], parrFirst));
 		}
 
 		return larrRows;
@@ -594,45 +594,7 @@ public class SubCasualtyExternAT
 		return larrAux.toArray(new MedicalFile[larrAux.size()]);
 	}
 
-	private TD[] buildMedicalRow(MedicalFile pobjMedF)
-	{
-		TD[] larrCells;
-
-		larrCells = new TD[9];
-
-		larrCells[0] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[0], true, false);
-
-		larrCells[1] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[1], true, true);
-
-		larrCells[2] = ReportBuilder.buildCell(pobjMedF.getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[2], true, true);
-
-		larrCells[3] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[3], true, true);
-
-		larrCells[4] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[4], true, true);
-
-		larrCells[5] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[5], true, true);
-
-		larrCells[6] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[6], true, true);
-
-		larrCells[7] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[7], true, true);
-
-		larrCells[8] = ReportBuilder.buildCell(pobjMedF.getAt(MedicalFile.I.NOTES), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[8], true, true);
-
-		setWidths(larrCells);
-
-		return larrCells;
-	}
-
-	private ArrayList<TR> buildDetailRows(MedicalFile pobjMedF)
+	private ArrayList<TR> buildDetailRows(MedicalFile pobjMedF, TD[] parrFirst)
 		throws BigBangJewelException
 	{
 		MedicalDetail[] larrMedDets;
@@ -644,17 +606,27 @@ public class SubCasualtyExternAT
 
 		larrRows = new ArrayList<TR>();
 
-		for (i = 0; i < larrMedDets.length; i++)
+		if (larrMedDets.length > 0)
 		{
-			lrow = ReportBuilder.buildRow(buildMedicalDetailRow(larrMedDets[i]));
-			ReportBuilder.styleRow(lrow, false);
-			larrRows.add(lrow);
+			i = 0;
+			if (parrFirst != null)
+			{
+				buildMedicalDetailRow(larrMedDets[i], parrFirst);
+				i++;
+			}
+
+			for (; i < larrMedDets.length; i++)
+			{
+				lrow = ReportBuilder.buildRow(buildMedicalDetailRow(larrMedDets[i], null));
+				ReportBuilder.styleRow(lrow, false);
+				larrRows.add(lrow);
+			}
 		}
 
 		return larrRows;
 	}
 
-	private TD[] buildMedicalDetailRow(MedicalDetail pobjMedDet)
+	private TD[] buildMedicalDetailRow(MedicalDetail pobjMedDet, TD[] parrFirst)
 	{
 		ObjectBase lobjType;
 		TD[] larrCells;
@@ -669,36 +641,57 @@ public class SubCasualtyExternAT
 		{
 		}
 
-		larrCells = new TD[9];
+		larrCells = parrFirst == null ? new TD[15] : parrFirst;
 
-		larrCells[0] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[0], true, false);
+		larrCells[ 7] = ReportBuilder.buildCell(lobjType == null ? null : lobjType.getLabel(), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[ 7], true, true);
 
-		larrCells[1] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[1], true, true);
+		larrCells[ 8] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.PERCENT), TypeDefGUIDs.T_Integer);
+		ReportBuilder.styleCell(larrCells[ 8], true, true);
 
-		larrCells[2] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[2], true, true);
+		larrCells[ 9] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.STARTDATE), TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[ 9], true, true);
 
-		larrCells[3] = ReportBuilder.buildCell(lobjType == null ? null : lobjType.getLabel(), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[3], true, true);
+		larrCells[10] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.ENDDATE), TypeDefGUIDs.T_Date);
+		ReportBuilder.styleCell(larrCells[10], true, true);
 
-		larrCells[4] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.STARTDATE), TypeDefGUIDs.T_Date);
-		ReportBuilder.styleCell(larrCells[4], true, true);
+		larrCells[11] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.BENEFITS), TypeDefGUIDs.T_Decimal);
+		ReportBuilder.styleCell(larrCells[11], true, true);
 
-		larrCells[5] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.ENDDATE), TypeDefGUIDs.T_Date);
-		ReportBuilder.styleCell(larrCells[5], true, true);
+		larrCells[12] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.PLACE), TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(larrCells[12], true, true);
 
-		larrCells[6] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.PERCENT), TypeDefGUIDs.T_Integer);
-		ReportBuilder.styleCell(larrCells[6], true, true);
+		if (parrFirst == null)
+		{
+			larrCells[ 0] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[ 0], true, false);
+		
+			larrCells[ 1] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[ 1], true, true);
+		
+			larrCells[ 2] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[ 2], true, true);
+		
+			larrCells[ 3] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[ 3], true, true);
+		
+			larrCells[ 4] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[ 4], true, true);
+		
+			larrCells[ 5] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[ 5], true, true);
+		
+			larrCells[ 6] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[ 6], true, true);
 
-		larrCells[7] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.BENEFITS), TypeDefGUIDs.T_Decimal);
-		ReportBuilder.styleCell(larrCells[7], true, true);
+			larrCells[13] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[13], true, true);
 
-		larrCells[8] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.PLACE), TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(larrCells[8], true, true);
+			larrCells[14] = ReportBuilder.buildCell("", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(larrCells[14], true, true);
 
-		setWidths(larrCells);
+			setWidths(larrCells);
+		}
 
 		return larrCells;
 	}
