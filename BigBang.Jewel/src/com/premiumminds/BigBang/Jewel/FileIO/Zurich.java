@@ -49,9 +49,11 @@ public class Zurich
 		public static final int CAPITAL              = 12;
 		public static final int OBJECT               = 13;
 		public static final int COMMERCIALPREMIUM    = 14;
-		public static final int TOTALPREMIUM         = 15;
-		public static final int COLLECTIONCOMMISSION = 16;
-		public static final int ISSUINGCOMMISSION    = 17;
+		public static final int ADMINFEES            = 15;
+		public static final int CERTIFICATEFEES      = 16;
+		public static final int TOTALPREMIUM         = 17;
+		public static final int COLLECTIONCOMMISSION = 18;
+		public static final int ISSUINGCOMMISSION    = 19;
 	}
 
 	public static class StatusCodes
