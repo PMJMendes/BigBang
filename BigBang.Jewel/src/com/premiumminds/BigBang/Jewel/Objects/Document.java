@@ -9,6 +9,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -104,11 +105,52 @@ public class Document
 	public DocInfo[] getCurrentInfo()
 		throws BigBangJewelException
 	{
+	    MasterDB ldb;
+		DocInfo[] larrResult;
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			larrResult = getCurrentInfo(ldb);
+		}
+		catch (BigBangJewelException e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrResult;
+	}
+
+	public DocInfo[] getCurrentInfo(SQLServer pdb)
+		throws BigBangJewelException
+	{
 		ArrayList<DocInfo> larrAux;
 		int[] larrMembers;
 		java.lang.Object[] larrParams;
 		IEntity lrefDocInfo;
-	    MasterDB ldb;
 	    ResultSet lrsInfo;
 
 		larrAux = new ArrayList<DocInfo>();
@@ -121,20 +163,11 @@ public class Document
 		try
 		{
 			lrefDocInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DocInfo)); 
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
 
-		try
-		{
-			lrsInfo = lrefDocInfo.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+			lrsInfo = lrefDocInfo.SelectByMembers(pdb, larrMembers, larrParams, new int[0]);
 		}
 		catch (Throwable e)
 		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -146,29 +179,17 @@ public class Document
 		catch (BigBangJewelException e)
 		{
 			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw e;
 		}
 		catch (Throwable e)
 		{
 			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
 			lrsInfo.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{

@@ -1072,7 +1072,7 @@ public class DocOps
 		pobjData.mobjPrevValues = new DocDataHeavy();
 		pobjData.mobjPrevValues.FromObject(lobjAux);
 
-		larrCIAux = lobjAux.getCurrentInfo();
+		larrCIAux = lobjAux.getCurrentInfo(pdb);
 		pobjData.mobjPrevValues.marrInfo = new DocInfoData[larrCIAux.length];
 		for ( i = 0; i < larrCIAux.length; i++ )
 		{
@@ -1146,7 +1146,7 @@ public class DocOps
 
 			lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 
-			larrCIAux = lobjAux.getCurrentInfo();
+			larrCIAux = lobjAux.getCurrentInfo(pdb);
 			pobjData.marrInfo = new DocInfoData[larrCIAux.length];
 			for ( i = 0; i < larrCIAux.length; i++ )
 			{
