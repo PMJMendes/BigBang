@@ -17,7 +17,8 @@ public class SubLineFormValidator extends FormValidator<SubLineForm> {
 		valid &= validatePeriodType();
 		valid &= validatePercentage();
 		valid &= validateIsLife();
-		
+		valid &= validateIsHR();
+
 		return new Result(valid, this.validationMessages);
 	}
 
@@ -27,6 +28,10 @@ public class SubLineFormValidator extends FormValidator<SubLineForm> {
 
 	private boolean validateIsLife() {
 		return form.isLife.getValue() != null;
+	}
+
+	private boolean validateIsHR() {
+		return form.isHR.getValue() != null;
 	}
 
 	private boolean validatePercentage() {

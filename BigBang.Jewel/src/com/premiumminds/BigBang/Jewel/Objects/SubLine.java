@@ -29,6 +29,7 @@ public class SubLine
 		public static final int PERCENT      = 5;
 		public static final int ISLIFE       = 6;
 		public static final int DESCRIPTION  = 7;
+		public static final int BISHR        = 8;
 	}
 
     public static SubLine GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -76,12 +77,12 @@ public class SubLine
 
     public UUID getObjectType()
     {
-    	return (UUID)getAt(2);
+    	return (UUID)getAt(I.OBJTYPE);
     }
 
     public UUID getExerciseType()
     {
-    	return (UUID)getAt(3);
+    	return (UUID)getAt(I.EXERCISETYPE);
     }
 
     public Line getLine()
@@ -169,13 +170,13 @@ public class SubLine
     public DetailedBase GetDetailedObject(Policy pobjPolicy, SubPolicy pobjSubPolicy)
     	throws BigBangJewelException
     {
-    	if ( getAt(4) == null )
+    	if ( getAt(I.CALCCLASS) == null )
     		return null;
 
 		try
 		{
 			if ( mrefClass == null )
-				mrefClass = Class.forName(((String)getAt(4)).replaceAll("MADDS", "Jewel"));
+				mrefClass = Class.forName(((String)getAt(I.CALCCLASS)).replaceAll("MADDS", "Jewel"));
 			if ( mrefConst == null )
 				mrefConst = mrefClass.getConstructor(new Class<?>[] {Policy.class, SubPolicy.class});
 			return (DetailedBase)mrefConst.newInstance(new java.lang.Object[] {pobjPolicy, pobjSubPolicy});
@@ -188,19 +189,27 @@ public class SubLine
 
     public BigDecimal getPercent()
     {
-    	return (BigDecimal)getAt(5);
+    	return (BigDecimal)getAt(I.PERCENT);
     }
 
     public boolean getIsLife()
     {
-    	return (Boolean)getAt(6);
+    	return (Boolean)getAt(I.ISLIFE);
     }
 
     public String getDescription()
     {
-    	if ( getAt(7) == null )
+    	if ( getAt(I.DESCRIPTION) == null )
     		return getLine().getCategory().getLabel();
 
-    	return (String)getAt(7);
+    	return (String)getAt(I.DESCRIPTION);
+    }
+
+    public boolean isHR()
+    {
+    	if ( getAt(I.BISHR) == null )
+    		return false;
+
+    	return (Boolean)getAt(I.BISHR);
     }
 }

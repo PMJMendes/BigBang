@@ -580,6 +580,7 @@ public class CoveragesServiceImpl
 			larrResult[i].commissionPercent = (larrSubLines[i].getAt(5) == null ? null : ((BigDecimal)larrSubLines[i].getAt(5)).doubleValue());
 			larrResult[i].isLife = (Boolean)larrSubLines[i].getAt(6);
 			larrResult[i].description = (String)larrSubLines[i].getAt(7);
+			larrResult[i].isHR = (Boolean)larrSubLines[i].getAt(8);
 			larrResult[i].coverages = getCoveragesForSubLine(larrSubLines[i]);
 		}
 
@@ -704,6 +705,7 @@ public class CoveragesServiceImpl
 					new BigDecimal(parrSubLines[i].commissionPercent + ""));
 			larrResult[i].mbIsLife = parrSubLines[i].isLife;
 			larrResult[i].mstrDescription = parrSubLines[i].description;
+			larrResult[i].mbIsHR = parrSubLines[i].isHR;
 			larrResult[i].marrCoverages = (pbRecurse && parrSubLines[i].coverages != null ?
 					BuildCoverageArray(prefOp, parrSubLines[i].coverages, larrResult[i].mid) : null);
 			larrResult[i].mobjPrevValues = null;

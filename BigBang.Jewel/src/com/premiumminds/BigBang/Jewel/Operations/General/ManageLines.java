@@ -46,6 +46,7 @@ public class ManageLines
 		public UUID midExercisePeriod;
 		public BigDecimal mdblPercent;
 		public Boolean mbIsLife;
+		public Boolean mbIsHR;
 		public String mstrDescription;
 		public CoverageData[] marrCoverages;
 		public SubLineData mobjPrevValues;
@@ -920,6 +921,7 @@ public class ManageLines
 				lobjAuxSubLine.setAt(5, parrData[i].mdblPercent);
 				lobjAuxSubLine.setAt(6, parrData[i].mbIsLife);
 				lobjAuxSubLine.setAt(7, parrData[i].mstrDescription);
+				lobjAuxSubLine.setAt(8, parrData[i].mbIsHR);
 				lobjAuxSubLine.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1013,6 +1015,7 @@ public class ManageLines
 			parrData[i].mobjPrevValues.mdblPercent = (BigDecimal)lobjAuxSubLine.getAt(5);
 			parrData[i].mobjPrevValues.mbIsLife = (Boolean)lobjAuxSubLine.getAt(6);
 			parrData[i].mobjPrevValues.mstrDescription = (String)lobjAuxSubLine.getAt(7);
+			parrData[i].mobjPrevValues.mbIsHR = (Boolean)lobjAuxSubLine.getAt(8);
 			parrData[i].mobjPrevValues.marrCoverages = null;
 			parrData[i].mobjPrevValues.mobjPrevValues = null;
 
@@ -1025,6 +1028,7 @@ public class ManageLines
 				lobjAuxSubLine.setAt(5, parrData[i].mdblPercent);
 				lobjAuxSubLine.setAt(6, parrData[i].mbIsLife);
 				lobjAuxSubLine.setAt(7, parrData[i].mstrDescription);
+				lobjAuxSubLine.setAt(8, parrData[i].mbIsHR);
 				lobjAuxSubLine.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1147,6 +1151,7 @@ public class ManageLines
 			parrData[i].mdblPercent = (BigDecimal)lobjAuxSubLine.getAt(5);
 			parrData[i].mbIsLife = (Boolean)lobjAuxSubLine.getAt(6);
 			parrData[i].mstrDescription = (String)lobjAuxSubLine.getAt(7);
+			parrData[i].mbIsHR = (Boolean)lobjAuxSubLine.getAt(8);
 			parrData[i].mobjPrevValues = null;
 			larrCoverages = lobjAuxSubLine.GetCurrentCoverages();
 			if ( larrCoverages == null )
@@ -1347,6 +1352,7 @@ public class ManageLines
 				lobjAuxSubLine.setAt(5, parrData[i].mobjPrevValues.mdblPercent);
 				lobjAuxSubLine.setAt(6, parrData[i].mobjPrevValues.mbIsLife);
 				lobjAuxSubLine.setAt(7, parrData[i].mobjPrevValues.mstrDescription);
+				lobjAuxSubLine.setAt(8, parrData[i].mobjPrevValues.mbIsHR);
 				lobjAuxSubLine.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1681,6 +1687,8 @@ public class ManageLines
 		pstrString.append(pobjData.mstrName);
 		if ( (pobjData.mbIsLife != null) && ((Boolean)pobjData.mbIsLife) )
 			pstrString.append(" (Vida)");
+		if ( pobjData.mbIsHR != null )
+			pstrString.append((Boolean)pobjData.mbIsHR ? " (RH)" : " (não-RH)");
 		pstrString.append(pstrLineBreak);
 
 		if ( pobjData.mstrDescription != null )

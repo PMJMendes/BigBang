@@ -15,6 +15,7 @@ public class SubLineForm extends FormView<SubLine> {
 	protected NumericTextBoxFormField percentage;
 	protected RadioButtonFormField isLife;
 	protected TextBoxFormField description;
+	protected RadioButtonFormField isHR;
 	protected SubLine subLine;
 	
 	
@@ -30,6 +31,9 @@ public class SubLineForm extends FormView<SubLine> {
 		isLife = new RadioButtonFormField("Vida");
 		isLife.addOption("1", "Sim");
 		isLife.addOption("0", "Não");
+		isHR = new RadioButtonFormField("Área");
+		isHR.addOption("1", "RH");
+		isHR.addOption("0", "Não RH");
 		description = new TextBoxFormField("Descrição");
 		addFormField(name, false);
 		addFormField(description, false);
@@ -37,6 +41,7 @@ public class SubLineForm extends FormView<SubLine> {
 		addFormField(periodType, true);
 		addFormField(percentage, true);
 		addFormField(isLife, true);
+		addFormField(isHR, true);
 		setValidator(new SubLineFormValidator(this));
 	}
 	
@@ -51,6 +56,8 @@ public class SubLineForm extends FormView<SubLine> {
 		subLine.commissionPercent = percentage.getValue();
 		String isLifeValue = isLife.getValue();
 		subLine.isLife = isLifeValue == null ? null : isLifeValue.equalsIgnoreCase("1") ? true : false;
+		String isHRValue = isHR.getValue();
+		subLine.isHR = isHRValue == null ? null : isHRValue.equalsIgnoreCase("1") ? true : false;
 		return subLine;
 	}
 
@@ -62,6 +69,7 @@ public class SubLineForm extends FormView<SubLine> {
 		this.periodType.setValue(info.exercisePeriodId);
 		this.description.setValue(info.description);
 		this.isLife.setValue(info.isLife == null ? null : info.isLife ? "1" : "0");
+		this.isHR.setValue(info.isHR == null ? null : info.isHR ? "1" : "0");
 		this.percentage.setValue(info.commissionPercent);
 	}
 
