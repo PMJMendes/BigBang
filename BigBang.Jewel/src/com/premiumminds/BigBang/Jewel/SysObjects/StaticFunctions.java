@@ -58,7 +58,10 @@ public class StaticFunctions
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		Engine.getUserData().put("DocuShare", larrParams.get("DOCUSHARE"));
+		if (larrParams.get("DOCUSHARE") != null)
+			Engine.getUserData().put("DocuShare", larrParams.get("DOCUSHARE"));
+		if (larrParams.get("FTP") != null)
+			Engine.getUserData().put("FTP", larrParams.get("FTP"));
 
 		Engine.getUserData().put("MailServer", larrParams.get("SERVER"));
 

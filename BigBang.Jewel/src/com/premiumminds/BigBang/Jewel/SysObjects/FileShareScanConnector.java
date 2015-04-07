@@ -16,21 +16,43 @@ import javax.activation.MimetypesFileTypeMap;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
+import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 
 public class FileShareScanConnector
 {
-	private static String SCAN_ROOT_NAME = "Collection-59066";
-	private static String REMOVED_ROOT_NAME = "Collection-116558";
-	private static File SCAN_ROOT = new File(SCAN_ROOT_NAME);
+	private static String SCAN_ROOT_NAME;
+	private static String REMOVED_ROOT_NAME;
+	private static File SCAN_ROOT;
+
+	private static void checkRoots()
+		throws BigBangJewelException
+	{
+		try
+		{
+	        if ((Engine.getUserData() == null) || (Engine.getUserData().get("FTP") == null))
+	        	SCAN_ROOT_NAME = new File(".").getCanonicalPath();
+			else
+	        	SCAN_ROOT_NAME = (String)Engine.getUserData().get("FTP");
+
+	        REMOVED_ROOT_NAME = SCAN_ROOT_NAME + "\\Deleted";
+	        SCAN_ROOT = new File(SCAN_ROOT_NAME);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
 
 	public static File[] getItems(String pstrFolder, boolean pbWithFolders)
 		throws BigBangJewelException
 	{
 		File lhFolder;
 		File[] larrResult;
+
+		checkRoots();
 
 		if ( pbWithFolders )
 			return getItemsContext(pstrFolder, false);
@@ -240,6 +262,8 @@ public class FileShareScanConnector
 		String lstrFrom;
 		String lstrTo;
 
+		checkRoots();
+
 		lstrName = new File(pstrItem).getName();
 		lstrFrom = ( pstrFrom != null ? pstrFrom :
 				( pbIsUndo ? REMOVED_ROOT_NAME : SCAN_ROOT_NAME )) + "\\" + lstrName;
@@ -275,6 +299,8 @@ public class FileShareScanConnector
 		File lhFolder;
 		File[] larrResult;
 		ArrayList<File> larrItems;
+
+		checkRoots();
 
 		if ( pstrFolder == null )
 		{

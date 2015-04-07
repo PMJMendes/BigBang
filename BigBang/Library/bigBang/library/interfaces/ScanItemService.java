@@ -7,7 +7,7 @@ import bigBang.library.shared.SessionExpiredException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("FileShareScanService")
+@RemoteServiceRelativePath("ScanItemService")
 public interface ScanItemService
 	extends ImageSubService
 {
