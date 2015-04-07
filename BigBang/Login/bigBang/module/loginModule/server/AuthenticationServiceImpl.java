@@ -206,7 +206,7 @@ public class AuthenticationServiceImpl
 
 		/*if ( ("AMartins").equals(domain) )
 			lidNSpace = Constants.NSID_AMartins;
-		else */if ( ("CrediteEGS").equals(domain) )
+		else */if ( ("Credite-EGS").equals(domain) )
 			lidNSpace = Constants.NSID_CredEGS;
 		else if ( domain.equals("Leiria") )
 			lidNSpace = Constants.NSID_Leiria;
