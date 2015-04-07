@@ -7,7 +7,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.HasNavigationStateChangedHandlers;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 import bigBang.module.tasksModule.client.userInterface.DocumentImagePanel;
 import bigBang.module.tasksModule.client.userInterface.MailOrganizerToolbar;
 import bigBang.module.tasksModule.client.userInterface.form.MailOrganizerForm;
@@ -101,12 +101,12 @@ public class MailOrganizerView extends View implements MailOrganizerViewPresente
 	}
 
 	@Override
-	public DocuShareItem getSelectedDocushareItem() {
+	public ScanItem getSelectedScanItem() {
 		return documentPanel.getCurrentItem();
 	}
 
 	@Override
-	public String getDocuShareHandle() {
+	public String getScanHandle() {
 		return documentPanel.getCurrentItem().handle;
 	}
 

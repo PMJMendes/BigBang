@@ -13,7 +13,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -34,7 +34,7 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.ImageHandlerPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 import bigBang.module.expenseModule.client.userInterface.ExpensePolicyWrapper;
 import bigBang.module.receiptModule.client.userInterface.presenter.PolicyChoiceFromListViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.PolicyChoiceFromListView;
@@ -111,7 +111,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 
 		HasEditableValue<ExpensePolicyWrapper> getForm();
 
-		DocuShareItem getSelectedDocuShareItem();
+		ScanItem getSelectedScanItem();
 
 		void enableMarkExpense(boolean b);
 
@@ -125,7 +125,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 
 		void setSubPolicies(String id);
 
-		void removeDocuShareItem(DocuShareHandle handle);
+		void removeScanItem(ScanHandle handle);
 
 		void panelNavigateBack();
 
@@ -149,7 +149,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 
 		boolean isSubPolicy();
 
-		void markExpense(DocuShareItem currentItem);
+		void markExpense(ScanItem currentItem);
 	}
 
 	@Override
@@ -274,9 +274,9 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 	protected void onSave() {
 		if(view.getForm().validate()) {
 			ExpensePolicyWrapper toSave = view.getForm().getInfo();
-			final DocuShareHandle handle = new DocuShareHandle();
+			final ScanHandle handle = new ScanHandle();
 
-			handle.handle = view.getSelectedDocuShareItem().handle;
+			handle.handle = view.getSelectedScanItem().handle;
 
 			expenseBroker.serialCreateExpense(toSave.expense, handle, new ResponseHandler<Expense> () {
 
@@ -284,7 +284,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 				public void onResponse(Expense response) {
 					editing = false;
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Despesa de saúde criada com sucesso."), TYPE.TRAY_NOTIFICATION));
-					view.removeDocuShareItem(handle);
+					view.removeScanItem(handle);
 					view.panelNavigateBack();
 					expensePolicyWrapper = new ExpensePolicyWrapper();
 				}
@@ -315,7 +315,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 
 	protected void onMarkExpense() {
 
-		DocuShareItem currentItem = view.getSelectedDocuShareItem();
+		ScanItem currentItem = view.getSelectedScanItem();
 		view.enablePolicyNumber(false);
 		view.markExpense(currentItem);
 		view.enableMarkExpense(false);

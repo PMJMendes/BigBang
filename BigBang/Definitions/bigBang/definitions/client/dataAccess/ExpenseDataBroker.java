@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
@@ -41,11 +41,11 @@ public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
 
 	void getExpensesForOwner(String ownerId, ResponseHandler<Collection<ExpenseStub>> handler);
 
-	void serialCreateExpense(Expense expense, DocuShareHandle handle,
+	void serialCreateExpense(Expense expense, ScanHandle handle,
 			ResponseHandler<Expense> responseHandler);
 
 	void massReceiveProof(String[] toReceive,
-			DocuShareHandle handle, ResponseHandler<Void> responseHandler);
+			ScanHandle handle, ResponseHandler<Void> responseHandler);
 
 	void sendMessage(Conversation info,
 			ResponseHandler<Conversation> responseHandler);

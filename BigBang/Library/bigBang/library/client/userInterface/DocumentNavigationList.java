@@ -1,8 +1,9 @@
 package bigBang.library.client.userInterface;
 
 import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 
-public class DocumentNavigationList extends FilterableList<DocuShareItem> {
+public class DocumentNavigationList extends FilterableList<ScanItem> {
 
 	private String location;
 	
@@ -14,32 +15,38 @@ public class DocumentNavigationList extends FilterableList<DocuShareItem> {
 		this.location = location;
 	}
 
-	protected class DocumentEntry extends ListEntry<DocuShareItem> {
+	protected class DocumentEntry extends ListEntry<ScanItem> {
 
-		public DocumentEntry(DocuShareItem value) {
+		public DocumentEntry(ScanItem value) {
 			super(value);
 		}
 
 		public <I extends Object> void setInfo(I info) {
-			DocuShareItem item = (DocuShareItem) info;
-			setTitle(item.desc);
+			ScanItem item = (ScanItem) info;
+			if (item instanceof DocuShareItem)
+				setTitle(((DocuShareItem)item).desc);
+			else
+				setTitle(item.fileName);
 		};
 	}
 	
-	protected class FolderEntry extends NavigationListEntry<DocuShareItem> {
+	protected class FolderEntry extends NavigationListEntry<ScanItem> {
 
-		public FolderEntry(DocuShareItem value) {
+		public FolderEntry(ScanItem value) {
 			super(value);
 		}
 		
 		public <I extends Object> void setInfo(I info) {
-			DocuShareItem item = (DocuShareItem) info;
-			setTitle(item.desc);
+			ScanItem item = (ScanItem) info;
+			if (item instanceof DocuShareItem)
+				setTitle(((DocuShareItem)item).desc);
+			else
+				setTitle(item.fileName);
 		};
 		
 	}
 	
-	public void addEntryForItem(DocuShareItem item){
+	public void addEntryForItem(ScanItem item){
 		if(item.directory){
 			add(new FolderEntry(item));
 		}else{

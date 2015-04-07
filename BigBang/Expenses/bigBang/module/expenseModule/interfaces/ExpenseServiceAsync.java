@@ -1,7 +1,7 @@
 package bigBang.module.expenseModule.interfaces;
 
 import bigBang.definitions.shared.Conversation;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
@@ -23,9 +23,9 @@ public interface ExpenseServiceAsync
 	void sendMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void receiveMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void deleteExpense(String expenseId, String reason, AsyncCallback<Void> callback);
-	void serialCreateExpense(Expense expense, DocuShareHandle source, AsyncCallback<Expense> callback);
+	void serialCreateExpense(Expense expense, ScanHandle source, AsyncCallback<Expense> callback);
 	void massSendNotification(String[] expenseIds, AsyncCallback<Void> callback);
-	void massReceiveReception(String[] expenseIds, DocuShareHandle source, AsyncCallback<Void> callback);
+	void massReceiveReception(String[] expenseIds, ScanHandle source, AsyncCallback<Void> callback);
 	void massNotifyClient(String[] expenseIds, AsyncCallback<Void> callback);
 	void massReturnToClient(String[] expenseIds, AsyncCallback<Void> callback);
 }

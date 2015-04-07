@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Receipt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -32,7 +32,7 @@ public class TestReceiptReceiveImage
 
 	private static void DoStep2(Receipt receipt)
 	{
-		DocuShareHandle source;
+		ScanHandle source;
 
 		AsyncCallback<Receipt> callback = new AsyncCallback<Receipt>()
 		{
@@ -47,7 +47,7 @@ public class TestReceiptReceiveImage
 			}
 		};
 
-		source = new DocuShareHandle();
+		source = new ScanHandle();
 		source.handle = "Document-467769";
 		source.locationHandle = null;
 

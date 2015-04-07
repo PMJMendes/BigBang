@@ -6,7 +6,7 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.library.client.Checkable;
 import bigBang.library.client.EventBus;
@@ -29,7 +29,7 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ImageHandlerPanel;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -71,9 +71,9 @@ public class ProofReceptionViewPresenter implements ViewPresenter {
 
 		void addExpenseToSelection(ExpenseStub stub);
 		
-		DocuShareItem getCurrentItem();
+		ScanItem getCurrentItem();
 
-		DocuShareItem getLocationItem();
+		ScanItem getLocationItem();
 
 		NavigationPanel getNavigationPanel();
 	}
@@ -178,7 +178,7 @@ public class ProofReceptionViewPresenter implements ViewPresenter {
 	}
 	
 	protected void receiveProof(
-			Collection<ValueSelectable<ExpenseStub>> all, DocuShareItem item, DocuShareItem locationItem) {
+			Collection<ValueSelectable<ExpenseStub>> all, ScanItem item, ScanItem locationItem) {
 
 		String[] toReceive = new String[all.size()];
 		
@@ -194,7 +194,7 @@ public class ProofReceptionViewPresenter implements ViewPresenter {
 			counter++;
 		}
 
-		DocuShareHandle handle = new DocuShareHandle();
+		ScanHandle handle = new ScanHandle();
 		handle.handle = item.handle;
 		handle.locationHandle = locationItem == null ? null : locationItem.handle;
 		

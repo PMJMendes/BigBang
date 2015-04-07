@@ -1,13 +1,13 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.HasNavigationStateChangedHandlers;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 import bigBang.module.receiptModule.client.userInterface.ReceiptImagePanel;
 import bigBang.module.receiptModule.client.userInterface.SerialReceiptCreationToolbar;
 import bigBang.module.receiptModule.client.userInterface.form.SerialReceiptCreationForm;
@@ -250,12 +250,12 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public DocuShareItem getSelectedDocuShareItem() {
+	public ScanItem getSelectedScanItem() {
 		return receiptPanel.getCurrentItem();
 	}
 
 	@Override
-	public void removeDocuShareItem(DocuShareHandle handle) {
+	public void removeScanItem(ScanHandle handle) {
 
 		if(handle!= null){
 			receiptPanel.removeSelected(handle.handle);
@@ -269,7 +269,7 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	}
 
 	@Override
-	public void markReceipt(DocuShareItem currentItem) {
+	public void markReceipt(ScanItem currentItem) {
 		receiptPanel.markReceipt(currentItem.handle);
 	}
 

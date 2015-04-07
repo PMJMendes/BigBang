@@ -18,7 +18,7 @@ import Jewel.Petri.SysObjects.Operation;
 import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ConversationStub;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
@@ -577,7 +577,7 @@ public class ExpenseServiceImpl
 		}
 	}
 
-	public Expense serialCreateExpense(Expense expense, DocuShareHandle source)
+	public Expense serialCreateExpense(Expense expense, ScanHandle source)
 		throws SessionExpiredException, BigBangException
 	{
 		ExpenseData lobjData;
@@ -739,7 +739,7 @@ public class ExpenseServiceImpl
 		}
 	}
 
-	public void massReceiveReception(String[] expenseIds, DocuShareHandle source)
+	public void massReceiveReception(String[] expenseIds, ScanHandle source)
 		throws SessionExpiredException, BigBangException
 	{
 		MasterDB ldb;

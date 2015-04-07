@@ -1,7 +1,7 @@
 package bigBang.library.interfaces;
 
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("DocuShareService")
 public interface DocuShareService
-	extends ImageSubService
+	extends ScanItemService
 {
 	/**
 	 * Utility class for simplifying access to the instance of async service.
@@ -24,7 +24,6 @@ public interface DocuShareService
 		}
 	}
 
-	DocuShareItem[] getItems(String pstrFolder, boolean pbWithFolders) throws SessionExpiredException, BigBangException;
-	DocuShareItem[] getContext(String ownerId, String ownerTypeId) throws SessionExpiredException, BigBangException;
-	String getItem(String pstrItem) throws SessionExpiredException, BigBangException;
+	boolean isDocuSharePresent() throws SessionExpiredException, BigBangException;
+	ScanItem[] getContext(String ownerId, String ownerTypeId) throws SessionExpiredException, BigBangException;
 }

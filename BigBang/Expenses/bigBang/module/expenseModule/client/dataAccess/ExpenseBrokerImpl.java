@@ -12,7 +12,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
@@ -458,7 +458,7 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 
 
 	@Override
-	public void serialCreateExpense(Expense expense, DocuShareHandle handle,
+	public void serialCreateExpense(Expense expense, ScanHandle handle,
 			final ResponseHandler<Expense> responseHandler) {
 		service.serialCreateExpense(expense, handle, new BigBangAsyncCallback<Expense>() {
 
@@ -487,7 +487,7 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 
 
 	@Override
-	public void massReceiveProof(String[] toReceive, DocuShareHandle handle,
+	public void massReceiveProof(String[] toReceive, ScanHandle handle,
 			final ResponseHandler<Void> responseHandler) {
 		service.massReceiveReception(toReceive, handle, new BigBangAsyncCallback<Void>() {
 

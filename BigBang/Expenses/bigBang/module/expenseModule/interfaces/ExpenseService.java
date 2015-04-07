@@ -1,7 +1,7 @@
 package bigBang.module.expenseModule.interfaces;
 
 import bigBang.definitions.shared.Conversation;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.library.interfaces.ImageSubService;
 import bigBang.library.interfaces.SearchService;
@@ -44,9 +44,9 @@ public interface ExpenseService
 
 	public void deleteExpense(String expenseId, String reason) throws SessionExpiredException, BigBangException;
 
-	public Expense serialCreateExpense(Expense expense, DocuShareHandle source) throws SessionExpiredException, BigBangException;
+	public Expense serialCreateExpense(Expense expense, ScanHandle source) throws SessionExpiredException, BigBangException;
 	public void massSendNotification(String[] expenseIds) throws SessionExpiredException, BigBangException;
-	public void massReceiveReception(String[] expenseIds, DocuShareHandle source) throws SessionExpiredException, BigBangException;
+	public void massReceiveReception(String[] expenseIds, ScanHandle source) throws SessionExpiredException, BigBangException;
 	public void massNotifyClient(String[] expenseIds) throws SessionExpiredException, BigBangException;
 	public void massReturnToClient(String[] expenseIds) throws SessionExpiredException, BigBangException;
 }

@@ -6,7 +6,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.OwnerRef;
@@ -47,10 +47,10 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 	void getReceiptsWithNumber(String label,
 			ResponseHandler<Collection<ReceiptStub>> handler);
 
-	void serialCreateReceipt(Receipt receipt, DocuShareHandle source,
+	void serialCreateReceipt(Receipt receipt, ScanHandle source,
 			ResponseHandler<Receipt> handler);
 
-	void receiveImage(Receipt receipt, DocuShareHandle source, ResponseHandler<Receipt> handler);
+	void receiveImage(Receipt receipt, ScanHandle source, ResponseHandler<Receipt> handler);
 
 	void massCreatePaymentNotice(String[] receiptIds,
 			ResponseHandler<Void> handler);

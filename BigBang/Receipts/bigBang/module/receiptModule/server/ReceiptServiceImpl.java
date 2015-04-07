@@ -29,7 +29,7 @@ import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.OwnerRef;
@@ -586,7 +586,7 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 	
-	public Receipt receiveImage(Receipt receipt, DocuShareHandle source)
+	public Receipt receiveImage(Receipt receipt, ScanHandle source)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
@@ -1577,7 +1577,7 @@ public class ReceiptServiceImpl
 		}
 	}
 
-	public Receipt serialCreateReceipt(Receipt receipt, DocuShareHandle source)
+	public Receipt serialCreateReceipt(Receipt receipt, ScanHandle source)
 		throws SessionExpiredException, BigBangException
 	{
 		ProcessData lobjPolicy;

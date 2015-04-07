@@ -5,7 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -22,7 +22,7 @@ import bigBang.library.client.event.NavigationStateChangedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.ImageHandlerPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 import bigBang.module.tasksModule.client.userInterface.DocumentImagePanel;
 import bigBang.module.tasksModule.client.userInterface.view.MailOrganizerView;
 
@@ -50,9 +50,9 @@ public class MailOrganizerViewPresenter implements ViewPresenter{
 
 		HasEditableValue<Document> getForm();
 
-		DocuShareItem getSelectedDocushareItem();
+		ScanItem getSelectedScanItem();
 
-		String getDocuShareHandle();
+		String getScanHandle();
 
 		String getDirectoryHandle();
 
@@ -130,8 +130,8 @@ public class MailOrganizerViewPresenter implements ViewPresenter{
 
 		if(view.getForm().validate()){
 			Document doc = view.getForm().getInfo();
-			final DocuShareHandle handle = new DocuShareHandle();
-			handle.handle = view.getDocuShareHandle();
+			final ScanHandle handle = new ScanHandle();
+			handle.handle = view.getScanHandle();
 			handle.locationHandle = view.getDirectoryHandle();
 			doc.source = handle;
 			broker.createDocumentSerial(doc, new ResponseHandler<Document>() {

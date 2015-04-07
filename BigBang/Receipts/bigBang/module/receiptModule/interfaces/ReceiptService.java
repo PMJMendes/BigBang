@@ -3,7 +3,7 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.OwnerRef;
 import bigBang.definitions.shared.Receipt;
@@ -38,7 +38,7 @@ public interface ReceiptService
 	public Receipt getReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt editReceipt(Receipt receipt) throws SessionExpiredException, BigBangException;
-	public Receipt receiveImage(Receipt receipt, DocuShareHandle source) throws SessionExpiredException, BigBangException;
+	public Receipt receiveImage(Receipt receipt, ScanHandle source) throws SessionExpiredException, BigBangException;
 	public Receipt transferToOwner(String receiptId, OwnerRef newOwner) throws SessionExpiredException, BigBangException;
 
 	public Receipt editAndValidateReceipt(Receipt receipt, Rectangle rect) throws SessionExpiredException, BigBangException;
@@ -76,7 +76,7 @@ public interface ReceiptService
 
 	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 
-	public Receipt serialCreateReceipt(Receipt receipt, DocuShareHandle source) throws SessionExpiredException, BigBangException;
+	public Receipt serialCreateReceipt(Receipt receipt, ScanHandle source) throws SessionExpiredException, BigBangException;
 	public void massCreatePaymentNotice(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massCreateSecondPaymentNotice(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massCreateSignatureRequest(String[] receiptIds, int replylimit) throws SessionExpiredException, BigBangException;

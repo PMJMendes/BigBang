@@ -9,11 +9,11 @@ import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicyStub;
@@ -33,7 +33,7 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.ImageHandlerPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 import bigBang.module.receiptModule.client.userInterface.view.PolicyChoiceFromListView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptChoiceFromListView;
 import bigBang.module.receiptModule.client.userInterface.view.SubPolicyChoiceFromListView;
@@ -116,13 +116,13 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 		void setFocusOnReceipt();
 
-		DocuShareItem getSelectedDocuShareItem();
+		ScanItem getSelectedScanItem();
 
-		void removeDocuShareItem(DocuShareHandle handle);
+		void removeScanItem(ScanHandle handle);
 
 		void panelNavigateBack();
 
-		void markReceipt(DocuShareItem currentItem);
+		void markReceipt(ScanItem currentItem);
 
 		void clearOwner();
 
@@ -668,10 +668,10 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	protected void onSave() {
 		if(view.getForm().validate()) {
 			ReceiptOwnerWrapper toSend = view.getForm().getInfo();
-			final DocuShareHandle handle = new DocuShareHandle();
+			final ScanHandle handle = new ScanHandle();
 
 			if(hasReceiptFile){
-				handle.handle = view.getSelectedDocuShareItem().handle;
+				handle.handle = view.getSelectedScanItem().handle;
 			}
 
 			if(toSend.receipt.id == null){
@@ -683,7 +683,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 						editingOwner = false;
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 						if(hasReceiptFile){
-							view.removeDocuShareItem(handle);
+							view.removeScanItem(handle);
 							view.panelNavigateBack();
 							receiptOwnerWrapper = new ReceiptOwnerWrapper();
 						}
@@ -705,7 +705,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
 						view.clear();
 						if(hasReceiptFile){
-							view.removeDocuShareItem(handle);
+							view.removeScanItem(handle);
 						}
 					}
 
@@ -723,7 +723,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 	protected void onMarkReceipt() {
 
-		DocuShareItem currentItem = view.getSelectedDocuShareItem();
+		ScanItem currentItem = view.getSelectedScanItem();
 		view.enableReceiptNumber(false);
 		view.markReceipt(currentItem);
 		view.enableMarkReceipt(false);

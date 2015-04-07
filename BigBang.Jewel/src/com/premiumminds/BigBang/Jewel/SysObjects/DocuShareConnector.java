@@ -47,7 +47,7 @@ public class DocuShareConnector
 	{
 		DSServer lrefResult;
 
-        if (Engine.getUserData() == null)
+        if (!isConfigured())
             return null;
 
         lrefResult = (DSServer)Engine.getUserData().get("BigBang_DocuShare_Server");
@@ -55,7 +55,7 @@ public class DocuShareConnector
         {
         	try
         	{
-				lrefResult = DSFactory.createServer("192.168.0.17", 1099);
+				lrefResult = DSFactory.createServer((String)Engine.getUserData().get("DocuShare"), 1099);
 			}
         	catch (Throwable e)
         	{
@@ -94,6 +94,14 @@ public class DocuShareConnector
         }
 
         return lrefResult;
+	}
+
+	public static boolean isConfigured()
+	{
+        if (Engine.getUserData() == null)
+            return false;
+
+        return Engine.getUserData().get("DocuShare") != null;
 	}
 
 	public static void LogOff()

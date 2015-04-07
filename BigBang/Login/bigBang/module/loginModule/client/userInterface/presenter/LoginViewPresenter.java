@@ -10,6 +10,7 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.Session;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.interfaces.DocuShareService;
 import bigBang.module.loginModule.interfaces.AuthenticationService;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
 import bigBang.module.loginModule.shared.LoginDomain;
@@ -226,6 +227,13 @@ public class LoginViewPresenter implements ViewPresenter {
 		this.view.showLoading(false);
 		GWT.log("Authentication success for " + Session.getUsername());
 		EventBus.getInstance().fireEvent(new LoginSuccessEvent());
+
+		DocuShareService.Util.getInstance().isDocuSharePresent(new BigBangAsyncCallback<Boolean>() {
+			@Override
+			public void onResponseSuccess(Boolean result) {
+				Session.setHasDocushare(result);
+			}
+		});
 	}
 	
 	private void onLoginFailed(){

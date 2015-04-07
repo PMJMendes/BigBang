@@ -58,6 +58,8 @@ public class StaticFunctions
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		Engine.getUserData().put("DocuShare", larrParams.get("DOCUSHARE"));
+
 		Engine.getUserData().put("MailServer", larrParams.get("SERVER"));
 
 		Engine.getUserData().put("Printer", larrParams.get("PRINTER"));

@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.event.ContentChangedEvent;
 import bigBang.library.client.event.ContentChangedEventHandler;
@@ -16,7 +16,7 @@ import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FileUploadPopup;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -171,7 +171,7 @@ public abstract class DocumentForm extends FormView<Document>{
 	private Label noteLabel;
 	private Label fileLabel;
 	private SubmitCompleteHandler submitHandler;
-	private ValueChangeHandler<DocuShareItem> valueChangeHandler;
+	private ValueChangeHandler<ScanItem> valueChangeHandler;
 	private Button add;
 	List<DocInfo> details;
 	DocInfo[] docInfo;
@@ -179,7 +179,7 @@ public abstract class DocumentForm extends FormView<Document>{
 	protected String fileStorageId;
 	private boolean hasFile;
 	protected String mimeType;
-	protected DocuShareHandle docushareHandle;
+	protected ScanHandle scanHandle;
 
 
 	public DocumentForm(){
@@ -359,14 +359,14 @@ public abstract class DocumentForm extends FormView<Document>{
 		uploadDialog = new FileUploadPopup.FileUploadPopupDocuShare();
 		uploadDialog.setParameters(value.ownerId, value.ownerTypeId);
 
-		valueChangeHandler = new ValueChangeHandler<DocuShareItem>() {
+		valueChangeHandler = new ValueChangeHandler<ScanItem>() {
 
 			@Override
-			public void onValueChange(ValueChangeEvent<DocuShareItem> event) {
-				docushareHandle = new DocuShareHandle();
-				docushareHandle.handle = event.getValue().handle;
-				docushareHandle.locationHandle = uploadDialog.getDirectoryHandle();
-				onDocushareItemChanged(event.getValue());
+			public void onValueChange(ValueChangeEvent<ScanItem> event) {
+				scanHandle = new ScanHandle();
+				scanHandle.handle = event.getValue().handle;
+				scanHandle.locationHandle = uploadDialog.getDirectoryHandle();
+				onScanItemChanged(event.getValue());
 			}
 		};
 
@@ -423,7 +423,7 @@ public abstract class DocumentForm extends FormView<Document>{
 			newDoc.parameters[i] = details.get(i).getValue();
 		}
 
-		newDoc.source = docushareHandle;
+		newDoc.source = scanHandle;
 		newDoc.text = note.getValue();
 
 		return newDoc;
@@ -446,7 +446,7 @@ public abstract class DocumentForm extends FormView<Document>{
 		fileStorageId = info.fileStorageId;
 		hasFile = info.hasFile;
 		mimeType = info.mimeType;
-		docushareHandle = info.source;
+		scanHandle = info.source;
 
 	}
 
@@ -566,13 +566,13 @@ public abstract class DocumentForm extends FormView<Document>{
 		fileStorageId = null;
 		filename.setValue("");
 		mimeType = "";
-		docushareHandle = null;
+		scanHandle = null;
 
 	}
 
 	protected abstract void onSubmitComplete(String results);
 
-	protected abstract void onDocushareItemChanged(DocuShareItem value);
+	protected abstract void onScanItemChanged(ScanItem value);
 
 	protected void onRemoveListEntry(DocumentDetailEntry documentDetailEntry) {
 
@@ -606,8 +606,8 @@ public abstract class DocumentForm extends FormView<Document>{
 	}
 
 
-	public DocuShareHandle getDocuShareHandle() {
-		return docushareHandle;
+	public ScanHandle getScanHandle() {
+		return scanHandle;
 	}
 
 }

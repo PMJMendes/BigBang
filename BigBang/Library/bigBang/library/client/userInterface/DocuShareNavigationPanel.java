@@ -1,6 +1,6 @@
 package bigBang.library.client.userInterface;
 
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectionChangedEvent;
@@ -13,7 +13,7 @@ import bigBang.library.interfaces.DocuShareService;
 import bigBang.library.interfaces.DocuShareServiceAsync;
 import bigBang.library.interfaces.FileService;
 import bigBang.library.interfaces.FileServiceAsync;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class DocuShareNavigationPanel extends View implements HasValue<DocuShareItem> {
+public class DocuShareNavigationPanel extends View implements HasValue<ScanItem> {
 
 	protected NavigationPanel navigationPanel;
 	protected DocuShareServiceAsync service;
@@ -59,9 +59,9 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
-				ValueSelectable<DocuShareItem> selectable = (ValueSelectable<DocuShareItem>) event.getFirstSelected();
+				ValueSelectable<ScanItem> selectable = (ValueSelectable<ScanItem>) event.getFirstSelected();
 				if(selectable != null){
-					DocuShareItem item = selectable.getValue();
+					ScanItem item = selectable.getValue();
 					if(item.directory){
 						navigateToDirectoryList(item.handle, true);
 					}else{
@@ -156,10 +156,10 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 
 		if(dirDesc == null && ownerId != null && ownerTypeId != null){
 			list.showLoading(true);
-			service.getContext(ownerId, ownerTypeId, new BigBangAsyncCallback<DocuShareItem[]>() {
+			service.getContext(ownerId, ownerTypeId, new BigBangAsyncCallback<ScanItem[]>() {
 
 				@Override
-				public void onResponseSuccess(DocuShareItem[] result) {
+				public void onResponseSuccess(ScanItem[] result) {
 					for(int i = 0; i < result.length; i++){
 						list.addEntryForItem(result[i]);
 					}
@@ -178,10 +178,10 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 			});
 		}else{
 			list.showLoading(true);
-			service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<DocuShareItem[]>() {
+			service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<ScanItem[]>() {
 
 				@Override
-				public void onResponseSuccess(DocuShareItem[] result) {
+				public void onResponseSuccess(ScanItem[] result) {
 					for(int i = 0; i < result.length; i++){
 						list.addEntryForItem(result[i]);
 					}
@@ -205,7 +205,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<DocuShareItem> handler) {
+			ValueChangeHandler<ScanItem> handler) {
 		return addHandler(handler, ValueChangeEvent.getType());
 	}
 
@@ -216,8 +216,8 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 		navigateToDirectoryList(null, true);
 	}
 
-	public DocuShareHandle getDocuShareHandle() {
-		DocuShareHandle handle = new DocuShareHandle();
+	public ScanHandle getDocuShareHandle() {
+		ScanHandle handle = new ScanHandle();
 		handle.locationHandle = getList().getLocation();
 		handle.handle = getHandle();
 		return handle;
@@ -228,18 +228,18 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	}
 
 	@Override
-	public DocuShareItem getValue() {
+	public ScanItem getValue() {
 		return null;
 	}
 
 	@Override
-	public void setValue(DocuShareItem value) {
+	public void setValue(ScanItem value) {
 		return;
 
 	}
 
 	@Override
-	public void setValue(DocuShareItem value, boolean fireEvents) {
+	public void setValue(ScanItem value, boolean fireEvents) {
 		return;
 	}
 

@@ -1,7 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
-import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -9,7 +9,7 @@ import bigBang.library.client.userInterface.DocumentOperationsToolBar;
 import bigBang.library.client.userInterface.form.DocumentForm;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -20,7 +20,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	ActionInvokedEventHandler<Action> actionHandler;
 	private DocumentOperationsToolBar toolbar;
 	protected String fileInfo;
-	protected DocuShareItem docuShareItem;
+	protected ScanItem scanItem;
 
 	public DocumentView(){
 
@@ -67,8 +67,8 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 			}
 
 			@Override
-			protected void onDocushareItemChanged(DocuShareItem value) {
-				docuShareItem = value;
+			protected void onScanItemChanged(ScanItem value) {
+				scanItem = value;
 				uploadDialog.hidePopup();
 				actionHandler.onActionInvoked(new ActionInvokedEvent<DocumentViewPresenter.Action>(Action.NEW_FILE_FROM_DOCUSHARE));
 			}
@@ -85,8 +85,8 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	}
 
 	@Override
-	public DocuShareHandle getDocuShareHandle(){
-		return form.getDocuShareHandle();
+	public ScanHandle getScanHandle(){
+		return form.getScanHandle();
 	}
 	@Override
 	protected void initializeView() {
@@ -166,8 +166,8 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	}
 
 	@Override
-	public DocuShareItem getDocuShareItem() {
-		return docuShareItem;
+	public ScanItem getScanItem() {
+		return scanItem;
 	}
 
 

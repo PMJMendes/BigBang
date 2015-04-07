@@ -1,6 +1,5 @@
 package bigBang.module.expenseModule.client.userInterface.view;
 
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -29,7 +28,7 @@ import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.SelectedProcessesList;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 import bigBang.module.expenseModule.client.dataAccess.ExpenseSearchDataBroker;
 import bigBang.module.expenseModule.client.userInterface.ExpenseImagePanel;
 import bigBang.module.expenseModule.client.userInterface.ExpenseSearchPanel;
@@ -334,12 +333,12 @@ public class ProofReceptionView extends View implements ProofReceptionViewPresen
 	}
 
 	@Override
-	public DocuShareItem getCurrentItem() {
+	public ScanItem getCurrentItem() {
 		return imagePanel.getCurrentItem();
 	}
 
 	@Override
-	public DocuShareItem getLocationItem() {
+	public ScanItem getLocationItem() {
 		return imagePanel.getCurrentLocationItem();
 	}
 

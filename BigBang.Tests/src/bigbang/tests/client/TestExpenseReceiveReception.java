@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -13,7 +13,7 @@ public class TestExpenseReceiveReception
 
 	private static void DoStep1()
 	{
-		DocuShareHandle handle;
+		ScanHandle handle;
 
 		AsyncCallback<Void> callback = new AsyncCallback<Void>()
 		{
@@ -28,7 +28,7 @@ public class TestExpenseReceiveReception
 			}
 		};
 
-		handle = new DocuShareHandle();
+		handle = new ScanHandle();
 		handle.handle = "Document-501016";
 
 		Services.expenseService.massReceiveReception(new String[] {"74E660B1-20A7-4097-8260-A10100A7463C",

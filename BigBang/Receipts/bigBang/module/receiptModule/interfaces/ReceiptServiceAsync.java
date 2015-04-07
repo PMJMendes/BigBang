@@ -3,7 +3,7 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.OwnerRef;
 import bigBang.definitions.shared.Receipt;
@@ -21,7 +21,7 @@ public interface ReceiptServiceAsync
 	void getReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void editReceipt(Receipt receipt, AsyncCallback<Receipt> callback);
 	void editAndValidateReceipt(Receipt receipt, Rectangle rect, AsyncCallback<Receipt> callback);
-	void receiveImage(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
+	void receiveImage(Receipt receipt, ScanHandle source, AsyncCallback<Receipt> callback);
 	void transferToOwner(String receiptId, OwnerRef newOwner, AsyncCallback<Receipt> callback);
 	void validateReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void setForReturn(Receipt.ReturnMessage message, AsyncCallback<Receipt> callback);
@@ -46,7 +46,7 @@ public interface ReceiptServiceAsync
 	void sendMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void receiveMessage(Conversation conversation, AsyncCallback<Conversation> callback);
 	void deleteReceipt(String receiptId, AsyncCallback<Void> callback);
-	void serialCreateReceipt(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
+	void serialCreateReceipt(Receipt receipt, ScanHandle source, AsyncCallback<Receipt> callback);
 	void massCreatePaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);
 	void massCreateSecondPaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);
 	void massCreateSignatureRequest(String[] receiptIds, int replylimit, AsyncCallback<Void> callback);

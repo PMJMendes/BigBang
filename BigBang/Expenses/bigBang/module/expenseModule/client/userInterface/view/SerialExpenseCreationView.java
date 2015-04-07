@@ -4,14 +4,14 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.HasNavigationStateChangedHandlers;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 import bigBang.module.expenseModule.client.userInterface.ExpenseImagePanel;
 import bigBang.module.expenseModule.client.userInterface.ExpensePolicyWrapper;
 import bigBang.module.expenseModule.client.userInterface.SerialExpenseCreationToolbar;
@@ -116,7 +116,7 @@ public class SerialExpenseCreationView extends View implements SerialExpenseCrea
 	}
 
 	@Override
-	public DocuShareItem getSelectedDocuShareItem() {
+	public ScanItem getSelectedScanItem() {
 		return expensePanel.getCurrentItem();
 	}
 
@@ -161,7 +161,7 @@ public class SerialExpenseCreationView extends View implements SerialExpenseCrea
 	}
 
 	@Override
-	public void removeDocuShareItem(DocuShareHandle handle) {
+	public void removeScanItem(ScanHandle handle) {
 		expensePanel.removeSelected(handle.handle);
 	}
 
@@ -225,7 +225,7 @@ public class SerialExpenseCreationView extends View implements SerialExpenseCrea
 	}
 
 	@Override
-	public void markExpense(DocuShareItem currentItem) {
+	public void markExpense(ScanItem currentItem) {
 		expensePanel.markExpense(currentItem.handle);
 		
 	}

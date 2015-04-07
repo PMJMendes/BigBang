@@ -15,7 +15,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.OwnerRef;
@@ -410,7 +410,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	}
 
 	@Override
-	public void serialCreateReceipt(Receipt receipt, DocuShareHandle source, final ResponseHandler<Receipt> handler){
+	public void serialCreateReceipt(Receipt receipt, ScanHandle source, final ResponseHandler<Receipt> handler){
 		service.serialCreateReceipt(receipt, source, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
@@ -438,7 +438,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	}
 
 	@Override
-	public void receiveImage(Receipt receipt, DocuShareHandle source,
+	public void receiveImage(Receipt receipt, ScanHandle source,
 			final ResponseHandler<Receipt> handler) {
 		service.receiveImage(receipt, source, new BigBangAsyncCallback<Receipt>() {
 

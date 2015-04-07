@@ -5,7 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.ScanHandle;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -21,10 +21,10 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
-import bigBang.library.interfaces.DocuShareService;
-import bigBang.library.interfaces.DocuShareServiceAsync;
+import bigBang.library.interfaces.ScanItemService;
+import bigBang.library.interfaces.ScanItemServiceAsync;
 import bigBang.library.interfaces.ExchangeService;
-import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -37,7 +37,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private Display view;
 	private boolean bound = false;
 	private DocumentsBroker broker;
-	protected DocuShareServiceAsync docuShareservice;
+	protected ScanItemServiceAsync scanItemService;
 	private int versionNumber;
 	private String ownerId;
 	private String documentId;
@@ -54,13 +54,15 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		ADD_NEW_DETAIL, 
 		DELETE, 
 		UPLOAD_SUCCESS,
-		DOWNLOAD_FILE, NEW_FILE_FROM_DISK, NEW_FILE_FROM_DOCUSHARE
+		DOWNLOAD_FILE,
+		NEW_FILE_FROM_DISK,
+		NEW_FILE_FROM_DOCUSHARE
 	}
 
 	public DocumentViewPresenter(Display view){
 
 		broker = (DocumentsBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.DOCUMENT);
-		docuShareservice = DocuShareService.Util.getInstance();
+		scanItemService = ScanItemService.Util.getInstance();
 		this.setView((UIObject) view);
 
 	}
@@ -78,11 +80,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		void hasFile(boolean b);
 		void setFilename(String string);
 		void setFileStorageId(String string);
-		DocuShareHandle getDocuShareHandle();
+		ScanHandle getScanHandle();
 		String getLocationHandle();
 		void setMimeType(String mimeType);
 		void setToolBarSaveMode(boolean b);
-		DocuShareItem getDocuShareItem();
+		ScanItem getScanItem();
 
 	}
 
@@ -218,12 +220,10 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					removeDocument();
 					break;
 				}
-
 				case DOWNLOAD_FILE:{
 					downloadFile();
 					break;
 				}
-
 				case NEW_FILE_FROM_DISK:{
 					String fileInfo = view.getFileInfo();
 					String[] splitted = fileInfo.split("!");
@@ -233,8 +233,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					break;
 				}
 				case NEW_FILE_FROM_DOCUSHARE:{
-					DocuShareItem item = view.getDocuShareItem();
-					DocuShareHandle handle = new DocuShareHandle();
+					ScanItem item = view.getScanItem();
+					ScanHandle handle = new ScanHandle();
 					handle.handle = item.handle;
 					handle.locationHandle = view.getLocationHandle();
 					view.setFilename(item.fileName);
@@ -242,6 +242,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					view.hasFile(true);
 					break;
 				}
+				case ADD_NEW_DETAIL:
+					break;
+				case UPLOAD_SUCCESS:
+					break;
+				default:
+					break;
 				}
 			}
 
@@ -254,8 +260,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		if(view.getCurrentFileStorageId() != null){
 			Window.open(GWT.getModuleBaseURL() + "bbfile?fileref=" + view.getCurrentFileStorageId() , null, null);
 		}else{
-			DocuShareHandle handle = view.getDocuShareHandle();
-			docuShareservice.getItem(handle.handle, new BigBangAsyncCallback<String>() {
+			ScanHandle handle = view.getScanHandle();
+			scanItemService.getItem(handle.handle, new BigBangAsyncCallback<String>() {
 
 				@Override
 				public void onResponseSuccess(String result) {

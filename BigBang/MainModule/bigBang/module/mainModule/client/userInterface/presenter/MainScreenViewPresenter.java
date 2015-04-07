@@ -147,10 +147,10 @@ public class MainScreenViewPresenter implements ViewPresenter {
 					item.setParameter("section", "receipt");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
-					//				case SHOW_SECTION_RISK_ANALISYS:
-					//					item.setParameter("section", "riskanalisys");
-					//					NavigationHistoryManager.getInstance().go(item);
-					//					break;
+				case SHOW_SECTION_RISK_ANALISYS:
+//					item.setParameter("section", "riskanalisys");
+//					NavigationHistoryManager.getInstance().go(item);
+					break;
 				case SHOW_SECTION_CASUALTY:
 					item.setParameter("section", "casualty");
 					NavigationHistoryManager.getInstance().go(item);

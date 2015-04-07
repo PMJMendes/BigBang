@@ -13,6 +13,7 @@ import bigBang.definitions.shared.ImageItem;
 import bigBang.library.interfaces.DocuShareService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.DocuShareItem;
+import bigBang.library.shared.ScanItem;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.SysObjects.DocuShareConnector;
@@ -31,7 +32,13 @@ public class DocuShareServiceImpl
 		DocuShareConnector.LogOff();
 	}
 
-	public DocuShareItem[] getItems(String pstrFolder, boolean pbWithFolders)
+	public boolean isDocuSharePresent()
+		throws SessionExpiredException, BigBangException
+	{
+		return DocuShareConnector.isConfigured();
+	}
+
+	public ScanItem[] getItems(String pstrFolder, boolean pbWithFolders)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
@@ -47,7 +54,7 @@ public class DocuShareServiceImpl
 		}
 	}
 
-	public DocuShareItem[] getContext(String ownerId, String ownerTypeId)
+	public ScanItem[] getContext(String ownerId, String ownerTypeId)
 		throws SessionExpiredException, BigBangException 
 	{
 		if ( Engine.getCurrentUser() == null )
@@ -131,13 +138,13 @@ public class DocuShareServiceImpl
 		return lobjResult;
 	}
 
-	private DocuShareItem[] translateItemsAux(DSObject[] parrItems)
+	private ScanItem[] translateItemsAux(DSObject[] parrItems)
 		throws BigBangException
 	{
-		DocuShareItem[] larrResult;
+		ScanItem[] larrResult;
 		int i;
 		
-		larrResult = new DocuShareItem[parrItems.length];
+		larrResult = new ScanItem[parrItems.length];
 		for ( i = 0; i < parrItems.length; i++ )
 			larrResult[i] = getItemAux(parrItems[i]);
 		return larrResult;
