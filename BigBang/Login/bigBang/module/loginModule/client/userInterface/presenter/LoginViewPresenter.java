@@ -2,7 +2,6 @@ package bigBang.module.loginModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -13,6 +12,7 @@ import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.loginModule.interfaces.AuthenticationService;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
+import bigBang.module.loginModule.shared.LoginDomain;
 import bigBang.module.loginModule.shared.LoginResponse;
 
 import com.google.gwt.core.client.GWT;
@@ -47,6 +47,8 @@ public class LoginViewPresenter implements ViewPresenter {
 	private AuthenticationServiceAsync service;
 	private boolean bound = false;
 
+	private LoginDomain[] domains = new LoginDomain[0];
+
 	public LoginViewPresenter(Display view){
 		service = AuthenticationService.Util.getInstance();
 		this.setView((UIObject) view);
@@ -59,26 +61,36 @@ public class LoginViewPresenter implements ViewPresenter {
 
 	public void go(final HasWidgets container) {
 		checkActiveSession(new ResponseHandler<Boolean>() {
-
 			@Override
 			public void onResponse(Boolean response) {
 				if(!response){
 					checkIntegratedLogin(new ResponseHandler<Boolean>() {
-
 						@Override
 						public void onResponse(Boolean response) {
 							if(!response){
 								bind();
-								view.setDomains(BigBangConstants.Session.DOMAINS);
-								String domain = Window.Location.getParameter("domain");
-
-								if(domain != null && isKnownDomain(domain)){
-									view.getDomain().setValue(domain);
-								}else{
-									view.getDomain().setValue(BigBangConstants.Session.DOMAINS[BigBangConstants.Session.DEFAULT_DOMAIN_INDEX]);
-								}
+								view.setDomains(new String[0]);
 								container.clear();
 								container.add(LoginViewPresenter.this.view.asWidget());
+
+								getDomains(new ResponseHandler<String[]>() {
+									@Override
+									public void onResponse(String[] response) {
+										view.setDomains(response);
+										String domain = Window.Location.getParameter("domain");
+
+										if(domain != null && isKnownDomain(domain)){
+											view.getDomain().setValue(domain);
+										}else{
+											view.getDomain().setValue(response[0]);
+										}
+									}
+
+									@Override
+									public void onError(Collection<ResponseError> errors) {
+										view.showErrorMessage("Não foi possível obter a lista de domínios do Big Bang.");
+									}
+								});
 							}
 						}
 
@@ -112,7 +124,7 @@ public class LoginViewPresenter implements ViewPresenter {
 		});
 	}
 	
-	private void checkIntegratedLogin(final ResponseHandler<Boolean> handler){
+	private void checkIntegratedLogin(final ResponseHandler<Boolean> handler) {
 		final String domain = Window.Location.getParameter("domain");
 		if(domain == null || !isKnownDomain(domain)){
 			handler.onResponse(false);
@@ -137,7 +149,26 @@ public class LoginViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
+	private void getDomains(final ResponseHandler<String[]> handler) {
+		service.getDomains(new BigBangAsyncCallback<LoginDomain[]>() {
+			@Override
+			public void onResponseSuccess(LoginDomain[] result) {
+				domains = result;
+				String[] response = new String[result.length];
+				for (int i = 0; i < result.length; i++) {
+					response[i] = result[i].domainName;
+				}
+				handler.onResponse(response);
+			}
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[] {new String("Could not get the application domains.")});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
 	private void checkLogin(String username, String password, final String domain){
 		view.showLoading(true);
 		service.login(username, password, domain, new BigBangAsyncCallback<LoginResponse>() {
@@ -153,11 +184,10 @@ public class LoginViewPresenter implements ViewPresenter {
 		view.getPassword().setValue("");
 	}
 
-	private boolean isKnownDomain(String domain){
-		String[] domains = BigBangConstants.Session.DOMAINS;
+	private boolean isKnownDomain(String domain) {
 		if(domain != null) {
 			for(int i = 0; i < domains.length; i++){
-				if(domain.equalsIgnoreCase(domains[i])){
+				if(domain.equalsIgnoreCase(domains[i].domainName)){
 					return true;
 				}
 			}

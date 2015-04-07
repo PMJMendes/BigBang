@@ -337,14 +337,4 @@ public class BigBangConstants {
 		public static final String PRINT_SET = "F3B52F31-9C2F-4AD3-B566-A032010C5077";
 		public static final String TRANSACTION = "3108E23A-45C2-4F1C-983E-A032010C566E";
 	}
-
-	//Session related constants
-	public static class Session{
-		public static final int DEFAULT_DOMAIN_INDEX = 0;
-		
-		public static final String[] DOMAINS = new String[] {
-			"CrediteEGS"/*,
-			"AMartins"*/
-		};
-	}
 }

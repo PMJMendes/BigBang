@@ -8,6 +8,8 @@ public class Constants
     public static final UUID NSID_BigBang  = UUID.fromString("C37B81F0-860F-4868-9177-9E15008B3EFD");
     public static final UUID NSID_CredEGS  = UUID.fromString("A1CC31A3-E471-4568-B5FC-9E15008E98C9");
     //public static final UUID NSID_AMartins = UUID.fromString("90CB8FFB-1555-49D8-9594-9E15008EDC72");
+    public static final UUID NSID_Leiria   = UUID.fromString("337A0A77-8942-43AA-9EC0-A47001171A77");
+    public static final UUID NSID_Angola   = UUID.fromString("980B1995-5522-4EAB-8E35-A46E00C39917");
 
     //Users
     public static final UUID UID_Root = UUID.fromString("091B8442-B7B0-40FA-B517-9EB00068A390");

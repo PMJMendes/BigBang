@@ -2,6 +2,7 @@ package bigBang.module.loginModule.interfaces;
 
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.loginModule.shared.LoginDomain;
 import bigBang.module.loginModule.shared.LoginResponse;
 
 import com.google.gwt.core.client.GWT;
@@ -20,7 +21,8 @@ public interface AuthenticationService extends RemoteService {
 			return instance;
 		}
 	}
-	
+
+	public LoginDomain[] getDomains() throws BigBangException;
 	public LoginResponse login(String domain) throws BigBangException;
 	public LoginResponse login(String username, String password, String domain) throws BigBangException;
 	public String logout() throws BigBangException;

@@ -1,28 +1,111 @@
 package bigBang.module.loginModule.server;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.EntityGUIDs;
+import Jewel.Engine.Constants.Miscellaneous;
+import Jewel.Engine.Constants.ObjectGUIDs;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Extensions.User_Manager;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.NameSpace;
+import Jewel.Engine.Implementation.User;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.Interfaces.INameSpace;
+import Jewel.Engine.Security.Password;
+import Jewel.Engine.SysObjects.JewelEngineException;
+import bigBang.library.server.DocuShareServiceImpl;
+import bigBang.library.server.EngineImplementor;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.loginModule.interfaces.AuthenticationService;
+import bigBang.module.loginModule.shared.LoginDomain;
+import bigBang.module.loginModule.shared.LoginResponse;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-
-import Jewel.Engine.*;
-import Jewel.Engine.Constants.*;
-import Jewel.Engine.DataAccess.*;
-import Jewel.Engine.Extensions.*;
-import Jewel.Engine.Implementation.*;
-import Jewel.Engine.Interfaces.*;
-import Jewel.Engine.Security.*;
-import Jewel.Engine.SysObjects.*;
-import bigBang.library.server.*;
-import bigBang.library.shared.*;
-import bigBang.module.loginModule.interfaces.*;
-import bigBang.module.loginModule.shared.LoginResponse;
 
 public class AuthenticationServiceImpl
 	extends EngineImplementor
 	implements AuthenticationService
 {
 	private static final long serialVersionUID = 1L;
+
+	public LoginDomain[] getDomains()
+		throws BigBangException
+	{
+		IEntity lrefNameSpace;
+		ArrayList<LoginDomain> larrNames;
+        MasterDB ldb;
+        ResultSet lrs;
+        INameSpace lrefNSpace;
+        LoginDomain lobjAux;
+
+        try
+        {
+			lrefNameSpace = Entity.GetInstance(EntityGUIDs.E_NameSpace);
+
+			larrNames = new ArrayList<LoginDomain>();
+
+	        ldb = new MasterDB();
+        }
+        catch (Throwable e)
+        {
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+	        lrs = lrefNameSpace.SelectByMembers(ldb, new int[] {3}, new java.lang.Object[] {Constants.NSID_BigBang}, new int[] {0});
+        }
+        catch (Throwable e)
+        {
+        	try { ldb.Disconnect(); } catch (SQLException e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+	        while (lrs.next())
+	        {
+	            lrefNSpace = NameSpace.GetInstance(lrs);
+	            lobjAux = new LoginDomain();
+	            lobjAux.domainName = lrefNSpace.getName();
+	            lobjAux.domainId = lrefNSpace.getKey().toString();
+	            larrNames.add(lobjAux);
+	        }
+        }
+        catch (Throwable e)
+        {
+        	try { lrs.close(); } catch (SQLException e1) {}
+        	try { ldb.Disconnect(); } catch (SQLException e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+	        lrs.close();
+        }
+        catch (Throwable e)
+        {
+        	try { ldb.Disconnect(); } catch (SQLException e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+			ldb.Disconnect();
+		}
+        catch (Throwable e)
+        {
+        	throw new BigBangException(e.getMessage(), e);
+		}
+
+        return larrNames.toArray(new LoginDomain[larrNames.size()]);
+	}
 
 	public LoginResponse login(String domain)
 		throws BigBangException
@@ -47,6 +130,10 @@ public class AuthenticationServiceImpl
 			lidNSpace = Constants.NSID_AMartins;
 		else */if ( domain.equals("CrediteEGS") )
 			lidNSpace = Constants.NSID_CredEGS;
+		else if ( domain.equals("Leiria") )
+			lidNSpace = Constants.NSID_Leiria;
+		else if ( domain.equals("Angola") )
+			lidNSpace = Constants.NSID_Angola;
 		else
 			throw new BigBangException("Invalid login domain.");
 
@@ -121,6 +208,10 @@ public class AuthenticationServiceImpl
 			lidNSpace = Constants.NSID_AMartins;
 		else */if ( ("CrediteEGS").equals(domain) )
 			lidNSpace = Constants.NSID_CredEGS;
+		else if ( domain.equals("Leiria") )
+			lidNSpace = Constants.NSID_Leiria;
+		else if ( domain.equals("Angola") )
+			lidNSpace = Constants.NSID_Angola;
 		else
 			throw new BigBangException("Invalid login domain.");
 
