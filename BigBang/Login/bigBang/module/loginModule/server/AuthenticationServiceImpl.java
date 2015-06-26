@@ -134,6 +134,8 @@ public class AuthenticationServiceImpl
 			lidNSpace = Constants.NSID_Leiria;
 		else if ( domain.equals("Angola") )
 			lidNSpace = Constants.NSID_Angola;
+		else if ( domain.equals("Rede Comercial") )
+			lidNSpace = Constants.NSID_RedeCom;
 		else
 			throw new BigBangException("Invalid login domain.");
 
@@ -212,6 +214,8 @@ public class AuthenticationServiceImpl
 			lidNSpace = Constants.NSID_Leiria;
 		else if ( domain.equals("Angola") )
 			lidNSpace = Constants.NSID_Angola;
+		else if ( domain.equals("Rede Comercial") )
+			lidNSpace = Constants.NSID_RedeCom;
 		else
 			throw new BigBangException("Invalid login domain.");
 
