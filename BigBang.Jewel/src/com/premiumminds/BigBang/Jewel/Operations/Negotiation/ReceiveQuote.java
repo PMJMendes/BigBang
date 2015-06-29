@@ -8,7 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-import microsoft.exchange.webservices.data.Item;
+import microsoft.exchange.webservices.data.core.service.item.Item;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
