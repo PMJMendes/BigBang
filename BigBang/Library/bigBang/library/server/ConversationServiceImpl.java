@@ -1397,14 +1397,10 @@ public class ConversationServiceImpl
 		try
 		{
 			lobjSig = Template.GetInstance(Engine.getCurrentNameSpace(), Constants.TID_Signature);
-
-			if ( lobjSig.getAt(1) == null )
+			lobjFile = lobjSig.getFile();
+			if ( lobjFile == null )
 				return "";
 
-			if ( lobjSig.getAt(1) instanceof FileXfer )
-				lobjFile = (FileXfer)lobjSig.getAt(1);
-			else
-				lobjFile = new FileXfer((byte[])lobjSig.getAt(1));
 			lstrSig = new String(lobjFile.getData(), "UTF-8");
 
 			lobjCurrent = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser());

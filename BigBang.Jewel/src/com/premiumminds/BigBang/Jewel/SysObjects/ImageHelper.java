@@ -40,13 +40,10 @@ public class ImageHelper
 		lobjGraphics.clearRect(plngX, plngY, plngW, plngH);
 
 		lobjStamp = Template.GetInstance(Engine.getCurrentNameSpace(), Constants.TID_Stamp);
+		lobjFile = lobjStamp.getFile();
 
-		if ( lobjStamp.getAt(1) != null )
+		if ( lobjFile != null )
 		{
-			if ( lobjStamp.getAt(1) instanceof FileXfer )
-				lobjFile = (FileXfer)lobjStamp.getAt(1);
-			else
-				lobjFile = new FileXfer((byte[])lobjStamp.getAt(1));
 			lstreamInput = new ByteArrayInputStream(lobjFile.getData());
 			try
 			{

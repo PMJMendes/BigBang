@@ -21,6 +21,7 @@ public class Constants
     // Global Objects
     public static final UUID ObjID_AppParams                = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
     public static final UUID ObjID_Template                 = UUID.fromString("F13322EE-E13E-4562-B723-9FF100F5E6BE");
+    public static final UUID ObjID_TemplateOverride         = UUID.fromString("289BBBD3-51C4-4953-B087-A4D700EF731D");
 	public static final UUID ObjID_PrintSet                 = UUID.fromString("FEBF3C68-0891-4B4D-AD90-A021010A219F");
 	public static final UUID ObjID_PrintSetDocument         = UUID.fromString("526FDF76-E1D2-4FA8-B048-A021010ADF38");
 	public static final UUID ObjID_PrintSetDetail           = UUID.fromString("6780283B-97E8-4ED3-B4BF-A021010B98C2");

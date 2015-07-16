@@ -222,12 +222,9 @@ public class ReceiptExternAuditPending
 		larrCells = new TD[2];
 
 		larrCells[0] = new TD();
-		if ( lobjLogo.getAt(1) != null )
+		lobjFile = lobjLogo.getFile();
+		if ( lobjFile != null )
 		{
-			if ( lobjLogo.getAt(1) instanceof FileXfer )
-				lobjFile = (FileXfer)lobjLogo.getAt(1);
-			else
-				lobjFile = new FileXfer((byte[])lobjLogo.getAt(1));
 			lstr64 = Base64.encodeBase64String(lobjFile.getData());
 			lobjImg = new IMG();
 			lobjImg.setSrc("data:" + lobjFile.getContentType() + ";base64," + lstr64);
