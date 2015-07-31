@@ -671,6 +671,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			final ScanHandle handle = new ScanHandle();
 
 			if(hasReceiptFile){
+				handle.docushare = view.getSelectedScanItem().docushare;
 				handle.handle = view.getSelectedScanItem().handle;
 			}
 

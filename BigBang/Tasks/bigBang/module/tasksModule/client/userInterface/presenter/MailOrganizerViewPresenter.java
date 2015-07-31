@@ -131,6 +131,7 @@ public class MailOrganizerViewPresenter implements ViewPresenter{
 		if(view.getForm().validate()){
 			Document doc = view.getForm().getInfo();
 			final ScanHandle handle = new ScanHandle();
+			handle.docushare = view.getSelectedScanItem().docushare;
 			handle.handle = view.getScanHandle();
 			handle.locationHandle = view.getDirectoryHandle();
 			doc.source = handle;

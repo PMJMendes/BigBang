@@ -276,6 +276,7 @@ public class SerialExpenseCreationViewPresenter implements ViewPresenter{
 			ExpensePolicyWrapper toSave = view.getForm().getInfo();
 			final ScanHandle handle = new ScanHandle();
 
+			handle.docushare = view.getSelectedScanItem().docushare;
 			handle.handle = view.getSelectedScanItem().handle;
 
 			expenseBroker.serialCreateExpense(toSave.expense, handle, new ResponseHandler<Expense> () {

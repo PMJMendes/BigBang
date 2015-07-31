@@ -21,6 +21,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.DocInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.SysObjects.DocuShareConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.FileShareScanConnector;
 
 public class DocOps
 	extends SubOperation
@@ -994,8 +995,16 @@ public class DocOps
 
 		if ( (pobjData.mobjDSBridge != null) && !pobjData.mobjDSBridge.mbHandled )
 		{
-			pobjData.mobjFile = DocuShareConnector.getItemAsFile(pobjData.mobjDSBridge.mstrDSHandle).GetVarData();
-			pobjData.mobjDSBridge.mstrDSTitle = DocuShareConnector.getItemTitle(pobjData.mobjDSBridge.mstrDSHandle);
+			if (pobjData.mobjDSBridge.mbDocushare)
+			{
+				pobjData.mobjFile = DocuShareConnector.getItemAsFile(pobjData.mobjDSBridge.mstrDSHandle).GetVarData();
+				pobjData.mobjDSBridge.mstrDSTitle = DocuShareConnector.getItemTitle(pobjData.mobjDSBridge.mstrDSHandle);
+			}
+			else
+			{
+				pobjData.mobjFile = FileShareScanConnector.getItemAsFile(pobjData.mobjDSBridge.mstrDSHandle).GetVarData();
+				pobjData.mobjDSBridge.mstrDSTitle = FileShareScanConnector.getItemTitle(pobjData.mobjDSBridge.mstrDSHandle);
+			}
 		}
 
 		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -1034,10 +1043,20 @@ public class DocOps
 
 		if ( (pobjData.mobjDSBridge != null)  && !pobjData.mobjDSBridge.mbHandled )
 		{
-			if ( pobjData.mobjDSBridge.mbDelete )
-				DocuShareConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
+			if (pobjData.mobjDSBridge.mbDocushare)
+			{
+				if ( pobjData.mobjDSBridge.mbDelete )
+					DocuShareConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
+				else
+					DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null, false);
+			}
 			else
-				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null, false);
+			{
+				if ( pobjData.mobjDSBridge.mbDelete )
+					FileShareScanConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
+				else
+					FileShareScanConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null, false);
+			}
 			pobjData.mobjDSBridge.mbHandled = true;
 		}
 	}
@@ -1053,8 +1072,16 @@ public class DocOps
 
 		if ( pobjData.mobjDSBridge != null )
 		{
-			pobjData.mobjFile = DocuShareConnector.getItemAsFile(pobjData.mobjDSBridge.mstrDSHandle).GetVarData();
-			pobjData.mobjDSBridge.mstrDSTitle = DocuShareConnector.getItemTitle(pobjData.mobjDSBridge.mstrDSHandle);
+			if (pobjData.mobjDSBridge.mbDocushare)
+			{
+				pobjData.mobjFile = DocuShareConnector.getItemAsFile(pobjData.mobjDSBridge.mstrDSHandle).GetVarData();
+				pobjData.mobjDSBridge.mstrDSTitle = DocuShareConnector.getItemTitle(pobjData.mobjDSBridge.mstrDSHandle);
+			}
+			else
+			{
+				pobjData.mobjFile = FileShareScanConnector.getItemAsFile(pobjData.mobjDSBridge.mstrDSHandle).GetVarData();
+				pobjData.mobjDSBridge.mstrDSTitle = FileShareScanConnector.getItemTitle(pobjData.mobjDSBridge.mstrDSHandle);
+			}
 		}
 
 		try
@@ -1121,10 +1148,20 @@ public class DocOps
 
 		if ( pobjData.mobjDSBridge != null )
 		{
-			if ( pobjData.mobjDSBridge.mbDelete )
-				DocuShareConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
+			if (pobjData.mobjDSBridge.mbDocushare)
+			{
+				if ( pobjData.mobjDSBridge.mbDelete )
+					DocuShareConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
+				else
+					DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null, false);
+			}
 			else
-				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null, false);
+			{
+				if ( pobjData.mobjDSBridge.mbDelete )
+					FileShareScanConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
+				else
+					FileShareScanConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null, false);
+			}
 		}
 	}
 
@@ -1185,10 +1222,28 @@ public class DocOps
 				else
 					lobjFile = new FileXfer(pobjData.mobjFile);
 				if ( lobjFile != null )
-					DocuShareConnector.createItem(lobjFile, pobjData.mobjDSBridge.mstrDSTitle, pobjData.mobjDSBridge.mstrDSLoc);
+				{
+					if (pobjData.mobjDSBridge.mbDocushare)
+					{
+						DocuShareConnector.createItem(lobjFile, pobjData.mobjDSBridge.mstrDSTitle, pobjData.mobjDSBridge.mstrDSLoc);
+					}
+					else
+					{
+						FileShareScanConnector.createItem(lobjFile, pobjData.mobjDSBridge.mstrDSTitle, pobjData.mobjDSBridge.mstrDSLoc);
+					}
+				}
 			}
 			else
-				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc, true);
+			{
+				if (pobjData.mobjDSBridge.mbDocushare)
+				{
+					DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc, true);
+				}
+				else
+				{
+					FileShareScanConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc, true);
+				}
+			}
 		}
 
 		try
@@ -1222,11 +1277,22 @@ public class DocOps
 
 		if ( pobjData.mobjDSBridge != null )
 		{
-			if ( pobjData.mobjDSBridge.mbDelete )
-				DocuShareConnector.createItem(new FileXfer(pobjData.mobjFile), pobjData.mobjDSBridge.mstrDSTitle,
-						pobjData.mobjDSBridge.mstrDSLoc);
+			if (pobjData.mobjDSBridge.mbDocushare)
+			{
+				if ( pobjData.mobjDSBridge.mbDelete )
+					DocuShareConnector.createItem(new FileXfer(pobjData.mobjFile), pobjData.mobjDSBridge.mstrDSTitle,
+							pobjData.mobjDSBridge.mstrDSLoc);
+				else
+					DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc, true);
+			}
 			else
-				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc, true);
+			{
+				if ( pobjData.mobjDSBridge.mbDelete )
+					FileShareScanConnector.createItem(new FileXfer(pobjData.mobjFile), pobjData.mobjDSBridge.mstrDSTitle,
+							pobjData.mobjDSBridge.mstrDSLoc);
+				else
+					FileShareScanConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc, true);
+			}
 		}
 
 		try

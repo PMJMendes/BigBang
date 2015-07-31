@@ -57,6 +57,7 @@ public class DocumentServiceImpl
 		{
 			pobjDest.mstrText = null;
 			pobjDest.mobjDSBridge = new DSBridgeData();
+			pobjDest.mobjDSBridge.mbDocushare = pobjSource.source.docushare;
 			pobjDest.mobjDSBridge.mstrDSHandle = pobjSource.source.handle;
 			pobjDest.mobjDSBridge.mstrDSLoc = pobjSource.source.locationHandle;
 			pobjDest.mobjDSBridge.mstrDSTitle = null;

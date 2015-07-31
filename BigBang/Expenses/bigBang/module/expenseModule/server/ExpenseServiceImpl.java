@@ -610,6 +610,7 @@ public class ExpenseServiceImpl
 		if ( source != null )
 		{
 			lobjImage = new DSBridgeData();
+			lobjImage.mbDocushare = source.docushare;
 			lobjImage.mstrDSHandle = source.handle;
 			lobjImage.mstrDSLoc = source.locationHandle;
 			lobjImage.mstrDSTitle = null;
@@ -779,6 +780,7 @@ public class ExpenseServiceImpl
 			if ( (lobjDocOps == null) && (source != null) )
 			{
 				lobjImage = new DSBridgeData();
+				lobjImage.mbDocushare = source.docushare;
 				lobjImage.mstrDSHandle = source.handle;
 				lobjImage.mstrDSLoc = source.locationHandle;
 				lobjImage.mstrDSTitle = null;

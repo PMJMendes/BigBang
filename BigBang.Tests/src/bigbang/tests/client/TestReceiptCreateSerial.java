@@ -40,6 +40,7 @@ public class TestReceiptCreateSerial
 		receipt.issueDate = "2011-11-30";
 
 		source = new ScanHandle();
+		source.docushare = true;
 		source.handle = "Document-456130";
 		source.locationHandle = null;
 

@@ -235,6 +235,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				case NEW_FILE_FROM_DOCUSHARE:{
 					ScanItem item = view.getScanItem();
 					ScanHandle handle = new ScanHandle();
+					handle.docushare = item.docushare;
 					handle.handle = item.handle;
 					handle.locationHandle = view.getLocationHandle();
 					view.setFilename(item.fileName);

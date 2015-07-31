@@ -156,6 +156,7 @@ public class DocuShareServiceImpl
 		DocuShareItem lobjResult;
 
 		lobjResult = new DocuShareItem();
+		lobjResult.docushare = true;
 		lobjResult.directory = (pobjDSItem instanceof DSCollection);
 		lobjResult.handle = pobjDSItem.getHandle().toString();
 		try

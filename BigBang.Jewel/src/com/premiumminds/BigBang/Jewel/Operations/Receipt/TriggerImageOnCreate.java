@@ -81,6 +81,7 @@ public class TriggerImageOnCreate
 		lobjDoc.midDocType = Constants.DocID_ReceiptScan;
 		lobjDoc.mstrText = null;
 		lobjDoc.mobjDSBridge = new DSBridgeData();
+		lobjDoc.mobjDSBridge.mbDocushare = mobjImage.mbDocushare;
 		lobjDoc.mobjDSBridge.mstrDSHandle = mobjImage.mstrDSHandle;
 		lobjDoc.mobjDSBridge.mstrDSLoc = mobjImage.mstrDSLoc;
 		lobjDoc.mobjDSBridge.mstrDSTitle = null;

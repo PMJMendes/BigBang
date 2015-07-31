@@ -125,6 +125,7 @@ public class ScanItemServiceImpl
 		ScanItem lobjResult;
 
 		lobjResult = new ScanItem();
+		lobjResult.docushare = false;
 		lobjResult.directory = phFile.isDirectory();
 		lobjResult.handle = phFile.getAbsolutePath();
 		try

@@ -29,6 +29,7 @@ public class TestExpenseReceiveReception
 		};
 
 		handle = new ScanHandle();
+		handle.docushare = true;
 		handle.handle = "Document-501016";
 
 		Services.expenseService.massReceiveReception(new String[] {"74E660B1-20A7-4097-8260-A10100A7463C",

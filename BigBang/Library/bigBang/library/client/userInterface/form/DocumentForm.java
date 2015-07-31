@@ -364,6 +364,7 @@ public abstract class DocumentForm extends FormView<Document>{
 			@Override
 			public void onValueChange(ValueChangeEvent<ScanItem> event) {
 				scanHandle = new ScanHandle();
+				scanHandle.docushare = event.getValue().docushare;
 				scanHandle.handle = event.getValue().handle;
 				scanHandle.locationHandle = uploadDialog.getDirectoryHandle();
 				onScanItemChanged(event.getValue());

@@ -608,6 +608,7 @@ public class ReceiptServiceImpl
 		lopRI = new ReceiveImage(lobjReceipt.GetProcessID());
 		lopRI.mobjData = toServerData(receipt, lobjReceipt);
 		lopRI.mobjImage = new DSBridgeData();
+		lopRI.mobjImage.mbDocushare = source.docushare;
 		lopRI.mobjImage.mstrDSHandle = source.handle;
 		lopRI.mobjImage.mstrDSLoc = source.locationHandle;
 		lopRI.mobjImage.mstrDSTitle = null;
@@ -1613,6 +1614,7 @@ public class ReceiptServiceImpl
 			if ( source != null )
 			{
 				lopCR.mobjImage = new DSBridgeData();
+				lopCR.mobjImage.mbDocushare = source.docushare;
 				lopCR.mobjImage.mstrDSHandle = source.handle;
 				lopCR.mobjImage.mstrDSLoc = source.locationHandle;
 				lopCR.mobjImage.mstrDSTitle = null;

@@ -7,6 +7,7 @@ public class DSBridgeData
 {
 	private static final long serialVersionUID = 1L;
 
+	public boolean mbDocushare;
 	public String mstrDSHandle;
 	public String mstrDSLoc;
 	public String mstrDSTitle;

@@ -48,6 +48,7 @@ public class TestReceiptReceiveImage
 		};
 
 		source = new ScanHandle();
+		source.docushare = true;
 		source.handle = "Document-467769";
 		source.locationHandle = null;
 

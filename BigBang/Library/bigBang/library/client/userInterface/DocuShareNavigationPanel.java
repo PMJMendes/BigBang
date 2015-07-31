@@ -218,6 +218,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<ScanItem>
 
 	public ScanHandle getDocuShareHandle() {
 		ScanHandle handle = new ScanHandle();
+		handle.docushare = true;
 		handle.locationHandle = getList().getLocation();
 		handle.handle = getHandle();
 		return handle;

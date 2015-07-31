@@ -195,6 +195,7 @@ public class ProofReceptionViewPresenter implements ViewPresenter {
 		}
 
 		ScanHandle handle = new ScanHandle();
+		handle.docushare = item.docushare;
 		handle.handle = item.handle;
 		handle.locationHandle = locationItem == null ? null : locationItem.handle;
 		

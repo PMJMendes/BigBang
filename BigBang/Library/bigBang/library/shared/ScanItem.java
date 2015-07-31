@@ -7,6 +7,7 @@ public class ScanItem
 {
 	private static final long serialVersionUID = 1L;
 
+	public boolean docushare;
 	public boolean directory;
 	public String handle;
 	public String fileName;
