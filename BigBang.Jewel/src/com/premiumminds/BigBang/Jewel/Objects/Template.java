@@ -93,7 +93,7 @@ public class Template
 		try
 		{
 			if ( lrsInfo.next() )
-				lobjResult = TemplateOverride.GetInstance(getNameSpace(), lrsInfo);
+				lobjResult = TemplateOverride.GetInstance(Engine.getCurrentNameSpace(), lrsInfo);
 		}
 		catch (BigBangJewelException e)
 		{
