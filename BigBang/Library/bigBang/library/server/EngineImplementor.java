@@ -138,4 +138,9 @@ public class EngineImplementor
 	{
 		return new DebugThread(prefThread, getSession(), getDebugID());
 	}
+
+	public void Log(String pstrEntry)
+	{
+    	grefLogger.debug(pstrEntry);
+	}
 }
