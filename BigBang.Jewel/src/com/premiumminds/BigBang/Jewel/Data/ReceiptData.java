@@ -150,7 +150,7 @@ public class ReceiptData
 
 		pstrBuilder.append("Prémio Total: ");
 		pstrBuilder.append(mdblTotal == null ? "(não indicado)" : mdblTotal.toPlainString());
-		pstrBuilder.append(" (Prémio Comercial: ");
+		pstrBuilder.append(" (Prémio Simples/Com: ");
 		pstrBuilder.append(mdblCommercial == null ? "não indicado" : mdblCommercial.toPlainString());
 		pstrBuilder.append(")");
 		pstrBuilder.append(pstrLineBreak);

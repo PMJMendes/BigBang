@@ -64,7 +64,7 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 		number.setEditable(false);
 		number.setFieldWidth("175px");
 		taxNumber = new TextBoxFormField("Nº Contribuinte");
-		taxNumber.setFieldWidth("100px");
+		taxNumber.setFieldWidth("150px");
 		address = new AddressFormField();
 		group = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CLIENT_GROUP, "Grupo");
 		group.allowEdition(false);

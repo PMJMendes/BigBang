@@ -247,20 +247,23 @@ public class PrintConnector
 	private static void finalPrint(PDDocument pdoc, boolean pbStationary)
 		throws BigBangJewelException
 	{
+		PrintService lrefSvc;
 		PrinterJob lrefPJob;
 		Media lrefMedia;
 		HashPrintRequestAttributeSet lobjSet;
 
-		lrefPJob = getPrinter();
-		lrefPJob.setPageable(pdoc);
+		lrefSvc = getPrinter();
 
-		if ( pbStationary )
-			lrefMedia = getTray(lrefPJob);
-		else
-			lrefMedia = null;
+		lrefPJob = PrinterJob.getPrinterJob();
 
 		try
 		{
+			lrefPJob.setPrintService(lrefSvc);
+			lrefPJob.setPageable(pdoc);
+
+			lrefMedia = null;
+			if ( pbStationary )
+				lrefMedia = getTray(lrefSvc);
 			if ( lrefMedia != null )
 			{
 				lobjSet = new HashPrintRequestAttributeSet();
@@ -279,27 +282,30 @@ public class PrintConnector
 	private static void finalPrint(final BufferedImage pimg, boolean pbStationary)
 		throws BigBangJewelException
 	{
+		PrintService lrefSvc;
 		PrinterJob lrefPJob;
 		PageFormat lrefPF;
 		Paper lobjPaper;
 		Media lrefMedia;
 		HashPrintRequestAttributeSet lobjSet;
 
-		lrefPJob = getPrinter();
-		lrefPF = lrefPJob.defaultPage();
-		lobjPaper = (Paper)lrefPF.getPaper().clone();
-		lobjPaper.setImageableArea(0, 0, lobjPaper.getWidth(), lobjPaper.getHeight());
-		lrefPF.setPaper(lobjPaper);
+		lrefSvc = getPrinter();
 
-		lrefPJob.setPrintable(new InnerPrintable(pimg), lrefPF);
-
-		if ( pbStationary )
-			lrefMedia = getTray(lrefPJob);
-		else
-			lrefMedia = null;
+		lrefPJob = PrinterJob.getPrinterJob();
 
 		try
 		{
+			lrefPJob.setPrintService(lrefSvc);
+			lrefPF = lrefPJob.defaultPage();
+			lobjPaper = (Paper)lrefPF.getPaper().clone();
+			lobjPaper.setImageableArea(0, 0, lobjPaper.getWidth(), lobjPaper.getHeight());
+			lrefPF.setPaper(lobjPaper);
+
+			lrefPJob.setPrintable(new InnerPrintable(pimg), lrefPF);
+
+			lrefMedia = null;
+			if ( pbStationary )
+				lrefMedia = getTray(lrefSvc);
 			if ( lrefMedia != null )
 			{
 				lobjSet = new HashPrintRequestAttributeSet();
@@ -315,32 +321,23 @@ public class PrintConnector
 		}
 	}
 
-	private static PrinterJob getPrinter()
+	private static PrintService getPrinter()
 		throws BigBangJewelException
 	{
 		String lstrPrinter;
-		PrinterJob lrefPJob;
 		PrintService[] larrServices;
-		boolean b;
 		int i;
 
 		try
 		{
 			lstrPrinter = (String)Engine.getUserData().get("Printer");
 
-			lrefPJob = PrinterJob.getPrinterJob();
 			larrServices = PrinterJob.lookupPrintServices();
-			larrServices = PrinterJob.lookupPrintServices(); //JMMM: Chamada duplicada para ver se funciona à segunda
 
-			b = false;
 			for ( i = 0; i < larrServices.length; i++ )
 			{
-				if ( larrServices[i].getName().indexOf(lstrPrinter) != -1)
-				{
-					lrefPJob.setPrintService(larrServices[i]);
-					b = true;
-					break;
-				}
+				if (larrServices[i].getName().indexOf(lstrPrinter) != -1)
+					return larrServices[i];
 			}
 		}
 		catch (Throwable e)
@@ -348,25 +345,28 @@ public class PrintConnector
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		if ( !b )
-			throw new BigBangJewelException("Impressora definida (" + lstrPrinter + ") não encontrada.");
-		
-		return lrefPJob;
+		throw new BigBangJewelException("Impressora definida (" + lstrPrinter + ") não encontrada.");
 	}
 
-	private static Media getTray(PrinterJob prefJob)
+	private static Media getTray(PrintService prefSvc)
 	{
 		Media[] larrMedia;
+		String lstrAux;
 		int i;
 
-		larrMedia = (Media[])prefJob.getPrintService().getSupportedAttributeValues(Media.class, null, null);
+		larrMedia = (Media[])prefSvc.getSupportedAttributeValues(Media.class, null, null);
 
 		if ( larrMedia == null )
 			return null;
 
 		for ( i = 0; i < larrMedia.length; i++ )
-			if ( larrMedia[i].toString().contains("Tray 3") )
+		{
+			lstrAux = larrMedia[i].toString().toLowerCase();
+			if (lstrAux.contains("tray") && lstrAux.contains("3"))
+			{
 				return larrMedia[i];
+			}
+		}
 
 		return null;
 	}
