@@ -58,6 +58,12 @@ public class StaticFunctions
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		if (larrParams.get("CURRENCY") != null)
+			Engine.getUserData().put("CURRENCY", larrParams.get("CURRENCY"));
+
+		if (larrParams.get("TAX") != null)
+			Engine.getUserData().put("TAX", larrParams.get("TAX"));
+
 		if (larrParams.get("DOCUSHARE") != null)
 			Engine.getUserData().put("DocuShare", larrParams.get("DOCUSHARE"));
 		if (larrParams.get("FTP") != null)

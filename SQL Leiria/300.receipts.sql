@@ -9,6 +9,9 @@ delete from bbleiria.tblPNSteps where FKProcess in
 delete from bbleiria.tblPNNodes where FKProcess in
 (select PK from bbleiria.tblPNProcesses where FKScript='62D0A72A-525E-450C-9917-9F8A00EB38AC');
 
+delete from bbleiria.tblPNLogs where FKExternProcess in
+(select PK from bbleiria.tblPNProcesses where FKScript='62D0A72A-525E-450C-9917-9F8A00EB38AC');
+
 delete from bbleiria.tblPNProcesses where FKScript='62D0A72A-525E-450C-9917-9F8A00EB38AC';
 
 insert into bbleiria.tblBBReceipts (PK, ReceiptNumber, FKReceiptType, FKProcess, TotalPremium, CommercialPremium, Commissions, Retrocessions, FATValue, IssueDate, MaturityDate,

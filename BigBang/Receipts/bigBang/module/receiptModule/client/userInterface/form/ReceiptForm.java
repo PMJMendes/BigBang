@@ -5,6 +5,7 @@ import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.FormField;
+import bigBang.library.client.Session;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.DatePickerFormField;
@@ -60,24 +61,24 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		subPolicy = new NavigationFormField("Apólice Adesão");
 		subCasualty = new NavigationFormField("Sub-Sinistro");
 		totalPremium = new NumericTextBoxFormField("Prémio Total", true);
-		totalPremium.setUnitsLabel("€");
+		totalPremium.setUnitsLabel(Session.getCurrency());
 		totalPremium.setFieldWidth("100px");
 		totalPremium.setTextAligment(TextAlignment.RIGHT);
-		salesPremium = new  NumericTextBoxFormField("Prémio Comercial", true);
-		salesPremium.setUnitsLabel("€");
+		salesPremium = new  NumericTextBoxFormField("Prémio Simples/Com", true);
+		salesPremium.setUnitsLabel(Session.getCurrency());
 		salesPremium.setFieldWidth("100px");
 		salesPremium.setTextAligment(TextAlignment.RIGHT);
 		commission = new NumericTextBoxFormField("Comissão", true);
-		commission.setUnitsLabel("€");
+		commission.setUnitsLabel(Session.getCurrency());
 		commission.setFieldWidth("100px");
 		commission.setTextAligment(TextAlignment.RIGHT);
 		retro = new NumericTextBoxFormField("Retrocessões", true);
-		retro.setUnitsLabel("€");
+		retro.setUnitsLabel(Session.getCurrency());
 		retro.setFieldWidth("100px");
 		retro.setTextAligment(TextAlignment.RIGHT);
 		fat = new NumericTextBoxFormField("FAT", true);
 		fat.setFieldWidth("100px");
-		fat.setUnitsLabel("€");
+		fat.setUnitsLabel(Session.getCurrency());
 		fat.setTextAligment(TextAlignment.RIGHT);
 
 		bonusMalusOption = new ListBoxFormField("Bonus/Malus");
@@ -88,7 +89,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 		bonusMalusValue = new NumericTextBoxFormField("Valor", true);
 		bonusMalusValue.setFieldWidth("100px");
-		bonusMalusValue.setUnitsLabel("€");
+		bonusMalusValue.setUnitsLabel(Session.getCurrency());
 		issueDate = new DatePickerFormField("Data de Emissão");
 		coverageStart = new DatePickerFormField("Vigência");
 		coverageEnd = new DatePickerFormField("Até");

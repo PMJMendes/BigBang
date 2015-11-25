@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.client.userInterface.form;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.FormField;
+import bigBang.library.client.Session;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
@@ -247,24 +248,24 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptOwnerWra
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
 		type.allowEdition(false);
 		totalPremium = new NumericTextBoxFormField("Prémio Total", true);
-		totalPremium.setUnitsLabel("€");
+		totalPremium.setUnitsLabel(Session.getCurrency());
 		totalPremium.setFieldWidth("100px");
 		totalPremium.setTextAligment(TextAlignment.RIGHT);
-		salesPremium = new  NumericTextBoxFormField("Prémio Comercial", true);
-		salesPremium.setUnitsLabel("€");
+		salesPremium = new  NumericTextBoxFormField("Prémio Simples/Com", true);
+		salesPremium.setUnitsLabel(Session.getCurrency());
 		salesPremium.setFieldWidth("100px");
 		salesPremium.setTextAligment(TextAlignment.RIGHT);
 		commission = new NumericTextBoxFormField("Comissão", true);
-		commission.setUnitsLabel("€");
+		commission.setUnitsLabel(Session.getCurrency());
 		commission.setFieldWidth("100px");
 		commission.setTextAligment(TextAlignment.RIGHT);
 		retro = new NumericTextBoxFormField("Retrocessões", true);
-		retro.setUnitsLabel("€");
+		retro.setUnitsLabel(Session.getCurrency());
 		retro.setFieldWidth("100px");
 		retro.setTextAligment(TextAlignment.RIGHT);
 		fat = new NumericTextBoxFormField("FAT", true);
 		fat.setFieldWidth("100px");
-		fat.setUnitsLabel("€");
+		fat.setUnitsLabel(Session.getCurrency());
 		fat.setTextAligment(TextAlignment.RIGHT);
 		issueDate = new DatePickerFormField("Data de Emissão");
 		coverageStart = new DatePickerFormField("Vigência");
@@ -285,7 +286,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptOwnerWra
 
 		bonusMalusValue = new NumericTextBoxFormField("Valor", true);
 		bonusMalusValue.setFieldWidth("100px");
-		bonusMalusValue.setUnitsLabel("€");
+		bonusMalusValue.setUnitsLabel(Session.getCurrency());
 
 		addFormField(type, true);
 

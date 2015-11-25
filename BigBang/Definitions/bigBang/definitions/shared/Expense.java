@@ -13,7 +13,7 @@ public class Expense
 		private static final long serialVersionUID = 1L;
 
 		public String expenseId;
-		public Double settlement; //Em €
+		public Double settlement; //Em moeda
 	}
 
 	public static class ReturnEx
@@ -29,7 +29,7 @@ public class Expense
 	public String lineName;
 	public String subLineName;
 	public String managerId;
-	public Double settlement; //Em €
+	public Double settlement; //Em moeda
 	public boolean isManual;
 	public String notes;
 	public String referenceSubLineId; //TODO usar para obter a lista de coberturas

@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.TotalLossFile;
+import bigBang.library.client.Session;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
@@ -20,13 +21,13 @@ public class TotalLossFileForm extends FormView<TotalLossFile>{
 		salvageType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.SALVAGE_TYPE, "Posse do Salvado");	
 		salvageType.allowEdition(false);
 		capital = new NumericTextBoxFormField("Capital", true);
-		capital.setUnitsLabel("€");
+		capital.setUnitsLabel(Session.getCurrency());
 		deductible = new NumericTextBoxFormField("Franquia", true);
-		deductible.setUnitsLabel("€");
+		deductible.setUnitsLabel(Session.getCurrency());
 		settlement = new NumericTextBoxFormField("Indemnização", true);
-		settlement.setUnitsLabel("€");
+		settlement.setUnitsLabel(Session.getCurrency());
 		salvageValue = new NumericTextBoxFormField("Valor do Salvado", true);
-		salvageValue.setUnitsLabel("€");
+		salvageValue.setUnitsLabel(Session.getCurrency());
 		salvageBuyer = new TextAreaFormField("Comprador do salvado");
 		
 		addFormField(salvageType);

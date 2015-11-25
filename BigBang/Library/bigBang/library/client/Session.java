@@ -8,6 +8,7 @@ public class Session {
 	private static boolean isRoot;
 	private static boolean isAgent;
 	private static boolean hasDocuShare;
+	private static String currency;
 
 	public static void setUserId(String userId) {
 		Session.userId = userId;
@@ -37,6 +38,10 @@ public class Session {
 		Session.hasDocuShare = hasDocuShare;
 	}
 
+	public static void setCurrency(String currency) {
+		Session.currency = currency;
+	}
+
 	public static String getUserId() {
 		return Session.userId;
 	}
@@ -63,6 +68,10 @@ public class Session {
 
 	public static boolean hasDocuShare() {
 		return Session.hasDocuShare;
+	}
+
+	public static String getCurrency() {
+		return Session.currency;
 	}
 
 	public static void invalidate(){

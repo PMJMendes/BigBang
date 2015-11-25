@@ -10,6 +10,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 
 import bigBang.definitions.shared.Receipt.PaymentInfo.Payment;
+import bigBang.library.client.Session;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
@@ -28,7 +29,7 @@ public class PaymentsForm extends FormView<Payment[]> {
 
 		totalLabel = new NumericTextBoxFormField("Total", true);
 		totalLabel.setFieldWidth("175px");
-		totalLabel.setUnitsLabel("€");
+		totalLabel.setUnitsLabel(Session.getCurrency());
 		totalLabel.setEditable(false);
 		addWidget(totalLabel, true);
 		

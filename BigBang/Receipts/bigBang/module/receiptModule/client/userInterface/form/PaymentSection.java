@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Button;
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Receipt.PaymentInfo.Payment;
 import bigBang.library.client.FormField;
+import bigBang.library.client.Session;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
@@ -39,7 +40,7 @@ public class PaymentSection extends FormViewSection {
 			}
 		};
 		paymentValue = new NumericTextBoxFormField("Valor", true);
-		paymentValue.setUnitsLabel("€");
+		paymentValue.setUnitsLabel(Session.getCurrency());
 		paymentValue.setFieldWidth("175px");
 		bank = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.BANK, "Banco");
 		chequeOrTransferNumber = new TextBoxFormField("Número de Cheque ou Transferência");

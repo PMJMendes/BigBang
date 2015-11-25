@@ -172,7 +172,7 @@ public class InsurerAccountingMap
 		lobjDoc.marrInfo[3].mstrType = "Saldo";
 		lobjDoc.marrInfo[3].mstrValue = String.format("%,.2f", lrepIA.mdblPreTax);
 		lobjDoc.marrInfo[4] = new DocInfoData();
-		lobjDoc.marrInfo[4].mstrType = "Imposto de Selo";
+		lobjDoc.marrInfo[4].mstrType = "Retenção Fiscal";
 		lobjDoc.marrInfo[4].mstrValue = String.format("%,.2f", lrepIA.mdblTax);
 		lobjDoc.marrInfo[5] = new DocInfoData();
 		lobjDoc.marrInfo[5].mstrType = "Total a Liquidar";
@@ -392,7 +392,7 @@ public class InsurerAccountingMap
 
 		larrRows[7] = ReportBuilder.constructDualRow("Saldo Bruto", ldblPreTax, TypeDefGUIDs.T_Decimal, false);
 
-		larrRows[8] = ReportBuilder.constructDualRow("Imposto de Selo", ldblTax, TypeDefGUIDs.T_Decimal, false);
+		larrRows[8] = ReportBuilder.constructDualRow("Retenção Fiscal", ldblTax, TypeDefGUIDs.T_Decimal, false);
 
 		larrRows[9] = ReportBuilder.constructDualRow("Saldo Total", ldblTotal, TypeDefGUIDs.T_Decimal, false);
 

@@ -15,10 +15,10 @@ public class SubCasualty
 		public String id; //Campo auxiliar para ajudar os serviços, manter inalterado
 		public String coverageId; //Lista tipificada das coberturas da (sub)apólice
 		public String damageTypeId; //Lista tipificada, campo obrigatório
-		public Double damages; //Em €
-		public Double settlement; //Em €
+		public Double damages; //Em moeda
+		public Double settlement; //Em moeda
 		public Double deductible; //Unidades desconhecidas
-		public Double value; //Em €
+		public Double value; //Em moeda
 		public boolean isManual;
 		public String injuryCauseId; //Lista tipificada das causas de lesão
 		public String injuryTypeId; //Lista tipificada dos tipos de lesão

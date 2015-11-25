@@ -10,6 +10,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class MedicalDetailData
 	implements DataBridge
@@ -112,7 +113,9 @@ public class MedicalDetailData
 
 		if ( mdblBenefits != null )
 		{
-			pstrBuilder.append("Valor da Indemnização (€): ");
+			pstrBuilder.append("Valor da Indemnização (");
+			pstrBuilder.append(Utils.getCurrency());
+			pstrBuilder.append("): ");
 			pstrBuilder.append(mdblBenefits);
 			pstrBuilder.append(pstrLineBreak);
 		}

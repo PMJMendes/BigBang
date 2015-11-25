@@ -223,6 +223,7 @@ public class LoginViewPresenter implements ViewPresenter {
 		Session.setDomain(loginResponse.domain);
 		Session.setIsRoot(loginResponse.isSU);
 		Session.setIsAgent(loginResponse.isAgent);
+		Session.setCurrency(loginResponse.currency);
 
 		this.view.showLoading(false);
 		GWT.log("Authentication success for " + Session.getUsername());

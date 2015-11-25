@@ -26,6 +26,7 @@ import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;
+import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
@@ -134,7 +135,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			this.descriptionLabel.setText(r.description == null ? "" : r.description);
 			this.descriptionLabel.setTitle("Descrição");
 			
-			this.premiumLabel.setText(nf.format(r.totalPremium)+"€");
+			this.premiumLabel.setText(nf.format(r.totalPremium)+Session.getCurrency());
 			this.premiumLabel.setTitle("Prémio total");
 			this.maturityDateLabel.setText((r.maturityDate == null ? "" : r.maturityDate) + " / " + (r.endDate == null ? "" : r.endDate));
 			this.maturityDateLabel.setTitle("Vigência");

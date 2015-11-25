@@ -4,6 +4,7 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.FieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer;
 import bigBang.definitions.shared.StructuredFieldContainer.Coverage;
+import bigBang.library.client.Session;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
 
@@ -194,7 +195,7 @@ public abstract class CoverageFieldsGrid extends Grid implements HasValue<FieldC
 				break;
 			case NUMERIC:
 				fields[row][column] = new Field(TYPE.NUMBER);
-				if(labels[column-2] != null && labels[column-2].equals("€")){
+				if(labels[column-2] != null && labels[column-2].equals(Session.getCurrency())){
 					fields[row][column].setAsMoney(true);
 				}
 				break;

@@ -9,6 +9,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualtyStub;
+import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
@@ -112,7 +113,7 @@ public class SubCasualtyList extends FilterableList<SubCasualtyStub> implements 
 			Resources r = GWT.create(Resources.class);
 			openImage.setResource(c.isOpen ? r.activeCasualtyIcon() : r.inactiveCasualtyIcon());
 			
-			valueLabel.setText(c.totalDamages != null ?  c.totalDamages + "€" : "-");
+			valueLabel.setText(c.totalDamages != null ?  c.totalDamages + Session.getCurrency() : "-");
 			
 			initialized = true;
 			setSelected(this.isSelected(), false);

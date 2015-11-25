@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.DebitNote;
+import bigBang.library.client.Session;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.List;
@@ -27,7 +28,7 @@ public class ReceiptAssociateWithDebitNoteView extends View implements ReceiptAs
 
 		public DebitNoteEntry(DebitNote value) {
 			super(value);
-			this.setTitle(value.value + "€");
+			this.setTitle(value.value + Session.getCurrency());
 			this.setText("Data de Vencimento: " + value.maturityDate);
 			setHeight("40px");
 		}

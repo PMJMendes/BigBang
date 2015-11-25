@@ -31,6 +31,7 @@ import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
@@ -119,7 +120,7 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 				dateLabel.setText(value.expenseDate);
 				Resources resources = GWT.create(Resources.class);
 				statusIcon.setResource(value.isOpen ? resources.active() : resources.inactive());
-				valueLabel.setText(value.value + "€");
+				valueLabel.setText(value.value + Session.getCurrency());
 			}
 
 			setMetaData(new String[]{

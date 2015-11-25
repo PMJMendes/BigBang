@@ -10,6 +10,7 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.Session;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
@@ -58,7 +59,7 @@ public class ExpenseForm extends FormView<Expense>{
 
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Despesa");
 		settlement = new NumericTextBoxFormField("Indemnização", true);
-		settlement.setUnitsLabel("€");
+		settlement.setUnitsLabel(Session.getCurrency());
 		settlement.setFieldWidth("175px");
 		settleButton = new Button("Substituir");
 		settleButton.setHeight("22px");
@@ -75,7 +76,7 @@ public class ExpenseForm extends FormView<Expense>{
 		value = new NumericTextBoxFormField("Valor", true);
 		value.setMandatory(true);
 		value.setFieldWidth("175px");
-		value.setUnitsLabel("€");
+		value.setUnitsLabel(Session.getCurrency());
 		isOpen = new TextBoxFormField("Estado");
 		isOpen.setFieldWidth("175px");
 

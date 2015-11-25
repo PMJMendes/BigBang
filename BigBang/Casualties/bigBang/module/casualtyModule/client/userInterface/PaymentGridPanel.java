@@ -1,6 +1,7 @@
 package bigBang.module.casualtyModule.client.userInterface;
 
 import bigBang.definitions.shared.MedicalFile;
+import bigBang.library.client.Session;
 import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.i18n.client.NumberFormat;
@@ -71,7 +72,7 @@ public class PaymentGridPanel extends View{
 		((Label)grid.getWidget(0, 2)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		grid.setWidget(0,3, new Label("% Inval"));
 		((Label)grid.getWidget(0, 3)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		grid.setWidget(0,4, new Label("Valor (€)"));
+		grid.setWidget(0,4, new Label("Valor (" + Session.getCurrency() + ")"));
 		((Label)grid.getWidget(0, 4)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		
 		grid.getColumnFormatter().setWidth(0, "100px");

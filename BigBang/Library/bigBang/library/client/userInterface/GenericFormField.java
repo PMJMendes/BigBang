@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.Session;
 
 public class GenericFormField extends FormField<String> {
 
@@ -264,7 +265,7 @@ public class GenericFormField extends FormField<String> {
 	public void setUnitsLabel(String label){
 		myField.setUnitsLabel(label);
 		if(myField instanceof NumericFormFieldWrapper){
-			if(label != null && label.equals("€")){
+			if(label != null && label.equals(Session.getCurrency())){
 				setAsMoney(true);
 			}
 		}

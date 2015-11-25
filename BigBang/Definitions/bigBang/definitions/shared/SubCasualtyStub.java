@@ -14,6 +14,6 @@ public class SubCasualtyStub
 	public String lineName;
 	public String subLineName;
 	public String insurerProcessNumber; //Pode ser null, enquanto não se souber o número
-	public String totalDamages; //Em €
+	public String totalDamages; //Em moeda
 	public boolean isOpen;
 }

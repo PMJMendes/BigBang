@@ -27,6 +27,7 @@ import bigBang.module.loginModule.shared.LoginDomain;
 import bigBang.module.loginModule.shared.LoginResponse;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class AuthenticationServiceImpl
 	extends EngineImplementor
@@ -177,6 +178,7 @@ public class AuthenticationServiceImpl
 			lobjResult.domain = lobjNSpace.getLabel();
 			lobjResult.isSU = Constants.ProfileID_Root.equals(lobjUser.getProfile().getKey());
 			lobjResult.isAgent = Constants.ProfileID_Agent.equals(lobjUser.getProfile().getKey());
+			lobjResult.currency = Utils.getCurrency();
 			return lobjResult;
 		}
 		catch (BigBangException e)
@@ -288,6 +290,7 @@ public class AuthenticationServiceImpl
 			lobjResult.domain = lobjNSpace.getLabel();
 			lobjResult.isSU = Constants.ProfileID_Root.equals(lobjUser.getProfile().getKey());
 			lobjResult.isAgent = Constants.ProfileID_Agent.equals(lobjUser.getProfile().getKey());
+			lobjResult.currency = Utils.getCurrency();
 			return lobjResult;
 		}
 		catch (BigBangException e)
@@ -371,6 +374,7 @@ public class AuthenticationServiceImpl
 			lobjResult.domain = NameSpace.GetInstance(lidNSpace).getLabel();
 			lobjResult.isSU = Constants.ProfileID_Root.equals(lobjUser.getProfile().getKey());
 			lobjResult.isAgent = Constants.ProfileID_Agent.equals(lobjUser.getProfile().getKey());
+			lobjResult.currency = Utils.getCurrency();
 		}
 		catch(Throwable e)
 		{

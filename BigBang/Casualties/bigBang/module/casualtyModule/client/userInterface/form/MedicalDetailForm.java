@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.MedicalFile.MedicalDetail;
+import bigBang.library.client.Session;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
@@ -31,7 +32,7 @@ public class MedicalDetailForm extends FormView<MedicalDetail>{
 		disabilityPercent.setUnitsLabel("%");
 		endDate = new DatePickerFormField("Data de fim");
 		benefits = new NumericTextBoxFormField("Valor da indemnização", true);
-		benefits.setUnitsLabel("€");
+		benefits.setUnitsLabel(Session.getCurrency());
 
 		removeButton = new Button("Remover");
 

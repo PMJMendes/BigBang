@@ -4,6 +4,7 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.Session;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
@@ -56,10 +57,10 @@ public class SubPolicyHeaderForm extends FormView<SubPolicy>{
 		fractioning.setMandatory(true);
 		premium = new NumericTextBoxFormField("Prémio Comercial Anual", true);
 		premium.setFieldWidth("175px");
-		premium.setUnitsLabel("€");
+		premium.setUnitsLabel(Session.getCurrency());
 		totalPremium = new NumericTextBoxFormField("Prémio Total Anual", true);
 		totalPremium.setFieldWidth("175px");
-		totalPremium.setUnitsLabel("€");
+		totalPremium.setUnitsLabel(Session.getCurrency());
 
 		policyStatus = new TextBoxFormField("Estado");
 		policyStatus.setFieldWidth("100%");

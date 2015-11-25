@@ -10,6 +10,7 @@ import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.Session;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.CheckBoxFormField;
@@ -155,7 +156,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		manager.setMandatory(true);
 
 		settlement = new NumericTextBoxFormField("Indemnização", false);
-		settlement.setUnitsLabel("€");
+		settlement.setUnitsLabel(Session.getCurrency());
 		settlement.setFieldWidth("175px");
 		settlement.setMandatory(true);
 		settleButton = new Button("Substituir");
@@ -177,7 +178,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 
 		expenseValue = new NumericTextBoxFormField("Valor", true);
 		expenseValue.setFieldWidth("175px");
-		expenseValue.setUnitsLabel("€");
+		expenseValue.setUnitsLabel(Session.getCurrency());
 		expenseValue.setMandatory(true);
 
 		coverageId = new ExpandableListBoxFormField("Cobertura");

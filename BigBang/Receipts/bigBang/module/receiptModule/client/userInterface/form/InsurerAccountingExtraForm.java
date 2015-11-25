@@ -5,6 +5,7 @@ import java.util.List;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.InsurerAccountingExtra;
+import bigBang.library.client.Session;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
@@ -36,11 +37,11 @@ FormView<InsurerAccountingExtra[]> {
 
 			insurerId = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 			value = new NumericTextBoxFormField("Valor", true);
-			value.setUnitsLabel("€");
+			value.setUnitsLabel(Session.getCurrency());
 			description = new TextBoxFormField("Descrição");
 			description.setFieldWidth("350px");
 			isCommission = new CheckBoxFormField("Comissão");
-			isTax = new CheckBoxFormField("Imposto de Selo");
+			isTax = new CheckBoxFormField("Retenção Fiscal");
 
 			remove = new Button("Remover");
 			

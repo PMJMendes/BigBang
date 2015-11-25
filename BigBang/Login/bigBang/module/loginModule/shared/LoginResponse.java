@@ -12,4 +12,5 @@ public class LoginResponse
 	public String domain;
 	public boolean isSU;
 	public boolean isAgent;
+	public String currency;
 }

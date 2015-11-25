@@ -16,6 +16,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ATFF
 	extends DetailedBase
@@ -168,7 +169,8 @@ public class ATFF
 				lstrAux = String.format("%,.2f", (ldblTotal))/*.replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",")*/;
 				marrValues[llngResult].SetValue(lstrAux, pdb);
 				lstrBuilder.append(lstrAux);
-				lstrBuilder.append("€. ");
+				lstrBuilder.append(Utils.getCurrency());
+				lstrBuilder.append(". ");
 
 				if ( ldblProv == null )
 				{
@@ -182,14 +184,16 @@ public class ATFF
 					lstrAux = String.format("%,.2f", (ldblTotal))/*.replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",")*/;
 					lstrBuilder.append("Desvio calculado: ");
 					lstrBuilder.append(lstrAux);
-					lstrBuilder.append("€. ");
+					lstrBuilder.append(Utils.getCurrency());
+					lstrBuilder.append(". ");
 					marrValues[llngDelta].SetValue(lstrAux, pdb);
 
 					ldblTotal = ldblTotal.multiply(ldblTCom).setScale(2, RoundingMode.HALF_UP);
 					lstrAux = String.format("%,.2f", (ldblTotal))/*.replaceAll("\\.", "#").replaceAll(",", ".").replaceAll("#", ",")*/;
 					lstrBuilder.append("Prémio de acerto calculado: ");
 					lstrBuilder.append(lstrAux);
-					lstrBuilder.append("€. ");
+					lstrBuilder.append(Utils.getCurrency());
+					lstrBuilder.append(". ");
 					marrValues[llngPremium].SetValue(lstrAux, pdb);
 				}
 			}
