@@ -31,6 +31,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionDetailBase;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionSetBase;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class InsurerAccountingMap
 	extends TransactionMapBase
@@ -318,7 +319,7 @@ public class InsurerAccountingMap
 		BigDecimal ldblExtraValue;
 		BigDecimal ldblTotalPremiums, ldblDirectPremiums, ldblPayablePremiums;
 		BigDecimal ldblTotalComms, ldblLifeComms, ldblTaxableComms;
-		BigDecimal ldblPreTax, ldblTax, ldblTotal;
+		BigDecimal ldblPreTax, ldblTaxCoeff, ldblTax, ldblTotal;
 		boolean lbSubtract;
 		int i;
 
@@ -366,7 +367,12 @@ public class InsurerAccountingMap
 
 		ldblPayablePremiums = ldblTotalPremiums.subtract(ldblDirectPremiums);
 		ldblTaxableComms = ldblTotalComms.subtract(ldblLifeComms);
-		ldblTax = ldblTaxableComms.multiply(new BigDecimal(2.0/102.0)).setScale(2, RoundingMode.HALF_UP);
+
+		ldblTaxCoeff = Utils.getCommissionsTax();
+		ldblTaxCoeff = ldblTaxCoeff.add(new BigDecimal(100)).setScale(10);
+		ldblTaxCoeff = Utils.getCommissionsTax().setScale(10).divide(ldblTaxCoeff, RoundingMode.HALF_UP);
+		ldblTax = ldblTaxableComms.multiply(ldblTaxCoeff).setScale(2, RoundingMode.HALF_UP);
+
 		ldblPreTax = ldblPayablePremiums.subtract(ldblTotalComms);
 		if ( lbSubtract )
 			ldblPreTax = ldblPreTax.subtract(ldblExtraValue);
