@@ -1,5 +1,7 @@
 package bigBang.definitions.client;
 
+import java.util.UUID;
+
 /**
  * Class that holds important information which should be shared across modules
  */
@@ -160,6 +162,13 @@ public class BigBangConstants {
 			public static final String CREATE_RISK_ANALISYS = null;
 			public static final String TRANSFER_TO_CLIENT = "E8DBFC9B-C24F-4F62-BE4E-9FF200B406C8";
 			public static final String CONVERSATION = "DF06C139-4D61-44D1-81EE-9FD30118E9D3";
+			
+			public static class PolicyFractioning {
+				public static final String YEAR     = "B8234D73-4432-45A0-B670-9F8101580CB5";
+				public static final String SEMESTER = "9EDAE32A-29DF-46F1-B37B-9F8101581416";
+				public static final String QUARTER  = "6165B7A7-1768-4A3E-A482-9F81015819BA";
+				public static final String MONTH    = "4D5AAE28-4CC6-4B50-A478-9F8101582002";
+			}
 		}
 		
 		public static class InsuranceSubPolicyProcess {
