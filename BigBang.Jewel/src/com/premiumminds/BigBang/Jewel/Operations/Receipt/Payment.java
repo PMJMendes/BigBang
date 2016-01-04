@@ -187,7 +187,8 @@ public class Payment
 		ldtToday.set(Calendar.SECOND, 0);
 		ldtToday.set(Calendar.MILLISECOND, 0);
 		if ( !lobjReceipt.isReverseCircuit() && !lbDirect && !Constants.RecType_Backcharge.equals(lidType) &&
-				!Constants.ProfID_VIPNoDAS.equals(lidProfile) && !Constants.ProfID_EmailNoDAS.equals(lidProfile))
+			!Constants.ProfID_VIPNoDAS.equals(lidProfile) && !Constants.ProfID_EmailNoDAS.equals(lidProfile) &&
+			!Constants.ProfID_External.equals(lidProfile))
 		{
 			if ( ldtToday.getTime().getTime() > ((Timestamp)lobjReceipt.getAt(11)).getTime() )
 			{
