@@ -87,10 +87,10 @@ public class TextConverter
 		long llngAux1, llngAux2, llngAux3, llngAux4;
 
 		if (pdblAmount == null)
-			return "zero euros";
+			return "zero " + Utils.getCurrTxt() + "s";
 
 		if (Math.abs(pdblAmount) < 0.005)
-			return "zero euros";
+			return "zero " + Utils.getCurrTxt() + "s";
 
 		if (pdblAmount < 0)
 			return "menos " + fromCurrency(-pdblAmount);
@@ -107,21 +107,21 @@ public class TextConverter
 				llngAux3 = llngAux1 / 1000000;
 				llngAux4 = llngAux1 - 1000000 * llngAux3;
 				if (llngAux4 == 0)
-					lstrAux1 = lstrAux1 + " de euros";
+					lstrAux1 = lstrAux1 + " de " + Utils.getCurrTxt() + "s";
 				else
 				{
 					if (llngAux4 == 1)
-						lstrAux1 = lstrAux1 + " euro";
+						lstrAux1 = lstrAux1 + " " + Utils.getCurrTxt();
 					else
-						lstrAux1 = lstrAux1 + " euros";
+						lstrAux1 = lstrAux1 + " " + Utils.getCurrTxt() + "s";
 				}
 			}
 			else
 			{
 				if (llngAux1 == 1)
-					lstrAux1 = lstrAux1 + " euro";
+					lstrAux1 = lstrAux1 + " " + Utils.getCurrTxt();
 				else
-					lstrAux1 = lstrAux1 + " euros";
+					lstrAux1 = lstrAux1 + " " + Utils.getCurrTxt() + "s";
 			}
 			if (llngAux2 == 0)
 				return lstrAux1;
