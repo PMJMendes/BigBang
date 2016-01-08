@@ -61,6 +61,9 @@ public class StaticFunctions
 		if (larrParams.get("CURRENCY") != null)
 			Engine.getUserData().put("CURRENCY", larrParams.get("CURRENCY"));
 
+		if (larrParams.get("CURRTXT") != null)
+			Engine.getUserData().put("CURRTXT", larrParams.get("CURRTXT"));
+
 		if (larrParams.get("TAX") != null)
 			Engine.getUserData().put("TAX", larrParams.get("TAX"));
 

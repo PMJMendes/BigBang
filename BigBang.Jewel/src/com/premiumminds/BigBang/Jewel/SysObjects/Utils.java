@@ -28,6 +28,11 @@ public class Utils
 		return (String)Engine.getUserData().get("CURRENCY");
 	}
 
+	public static String getCurrTxt()
+	{
+		return (String)Engine.getUserData().get("CURRTXT");
+	}
+
 	public static BigDecimal getCommissionsTax()
 	{
 		try
