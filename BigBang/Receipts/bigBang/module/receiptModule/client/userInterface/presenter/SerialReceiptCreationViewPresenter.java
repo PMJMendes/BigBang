@@ -809,6 +809,8 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		policy.totalPremium = newTotalPremium;
 		policy.premium = newSalesPremium;
 		
+		policyBroker.updatePolicyHeader(policy);
+		
 		// Persists the modifications in the database
 		policyBroker.persistPolicy(policy.id, new ResponseHandler<InsurancePolicy>() {
 
