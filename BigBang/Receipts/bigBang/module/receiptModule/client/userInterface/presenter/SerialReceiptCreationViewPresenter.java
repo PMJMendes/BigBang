@@ -1,7 +1,6 @@
 package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -681,9 +680,6 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 					@Override
 					public void onResponse(Receipt response) {
-						if (BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CONTINUING.equalsIgnoreCase(response.typeId)) {
-							updatePolicyContinuingReceipt(view.getForm().getInfo().policy, response);
-						}
 						editing = false;
 						editingOwner = false;
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo criado com sucesso."), TYPE.TRAY_NOTIFICATION));
@@ -705,9 +701,6 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 					@Override
 					public void onResponse(Receipt response) {
-						if (BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.CONTINUING.equalsIgnoreCase(response.typeId)) {
-							updatePolicyContinuingReceipt(view.getForm().getInfo().policy, response);
-						}
 						editing = false;
 						editingOwner = false;
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
@@ -753,79 +746,5 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	public void setParameters(HasParameters parameterHolder) {
 		receiptOwnerWrapper = new ReceiptOwnerWrapper();
 		view.clear();
-	}
-	
-	/**
-	 * Updates policy's premiums when a continuing receipt is saved.
-	 * 
-	 * @whotoblame jcamilo
-	 * @param policy - The policy to update
-	 */
-	private void updatePolicyContinuingReceipt(InsurancePolicy policy, Receipt receipt) {
-
-		// Previous verifications for mandatory data for calculations
-		if (policy.fractioningId == null) {
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", 
-					"Erro no update de prémios de apólice associada ao recibo: o tipo de fraccionamento não está definido na apólice."), 
-					TYPE.ALERT_NOTIFICATION));
-			return;
-		}
-		
-		if (receipt.totalPremium == null) {
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", 
-					"Erro no update de prémios de apólice associada ao recibo: o recibo não tem prémio total definido."), 
-					TYPE.ALERT_NOTIFICATION));
-			return;
-		}
-		
-		if (receipt.salesPremium == null) {
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", 
-					"Erro no update de prémios de apólice associada ao recibo: o recibo não tem prémio comercial definido."), 
-					TYPE.ALERT_NOTIFICATION));
-			return;
-		}
-
-		// Defines the coefficient according to the policy fractioning
-		int coefficient;
-		if (BigBangConstants.OperationIds.InsurancePolicyProcess.PolicyFractioning.YEAR.equalsIgnoreCase(policy.fractioningId)) {
-			coefficient = 1;
-		} else if (BigBangConstants.OperationIds.InsurancePolicyProcess.PolicyFractioning.SEMESTER.equalsIgnoreCase(policy.fractioningId)) {
-			coefficient = 2;
-		} else if (BigBangConstants.OperationIds.InsurancePolicyProcess.PolicyFractioning.QUARTER.equalsIgnoreCase(policy.fractioningId)) {
-			coefficient = 4;
-		} else if (BigBangConstants.OperationIds.InsurancePolicyProcess.PolicyFractioning.MONTH.equalsIgnoreCase(policy.fractioningId)) {
-			coefficient = 12;
-		} else {
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", 
-					"Erro no update de prémios de apólice associada ao recibo: o tipo de fraccionamento não foi considerado no cálculo de coeficiente."), 
-					TYPE.ALERT_NOTIFICATION));		
-			return;
-		}
-		
-		// Calculates the premiums to update the policy, according to the receipt's premiums
-		double newTotalPremium = receipt.totalPremium * coefficient;
-		double newSalesPremium = receipt.salesPremium * coefficient;
-		
-		policy.totalPremium = newTotalPremium;
-		policy.premium = newSalesPremium;
-		
-		policyBroker.updatePolicyHeader(policy);
-		
-		// Persists the modifications in the database
-		policyBroker.persistPolicy(policy.id, new ResponseHandler<InsurancePolicy>() {
-
-			@Override
-			public void onResponse(InsurancePolicy response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", 
-						"Foram actualizados os prémios da apólice."), TYPE.TRAY_NOTIFICATION));
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", 
-						"Erro no update de prémios de apólice associada ao recibo: o tipo de fraccionamento não foi considerado no cálculo de coeficiente."), 
-						TYPE.ALERT_NOTIFICATION));		
-			}
-		});
 	}
 }
