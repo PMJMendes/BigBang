@@ -1081,4 +1081,78 @@ public class Policy
     {
     	return GetSubLine().GetDetailedObject(this, pobjSubPolicy);
     }
+    
+    /**
+	 * This method sets the sales premium of the policy. It's called 
+	 * when a continuing receipt is created.
+	 * 
+	 * @whotoblame jcamilo
+	 */
+    public void SetSalesPremium(SQLServer pdb, Object salesPremium) 
+    		throws BigBangJewelException {
+    	try {
+    		BigDecimal newPremium = calculateValueWithFractioning(salesPremium);
+    		internalSetAt(I.PREMIUM, newPremium);
+    		SaveToDb(pdb);
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+	}
+    
+	/**
+	 * This method sets the total premium of the policy. It's called 
+	 * when a continuing receipt is created.
+	 * 
+	 * @whotoblame jcamilo
+	 */
+    public void SetTotalPremium(SQLServer pdb, Object totalPremium) 
+    		throws BigBangJewelException {
+    	try {
+    		BigDecimal newPremium = calculateValueWithFractioning(totalPremium);
+    		internalSetAt(I.TOTALPREMIUM, newPremium);
+    		SaveToDb(pdb);
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+	}
+    
+    /**
+	 * This method calculates the new value for a premium, according to the type of fractioning
+	 * of the policy
+	 * 
+	 * @whotoblame jcamilo
+	 */
+    private BigDecimal calculateValueWithFractioning(Object premium) 
+    	throws BigBangJewelException {
+    	
+    	// Previous verifications for mandatory data for calculations
+    	if (this.getAt(I.FRACTIONING) == null) {
+    		throw new BigBangJewelException("Erro no update de prémios de " +
+    				"apólice associada ao recibo: o tipo de fraccionamento não está definido na apólice.");
+    	}
+		
+		if (premium == null) {
+			throw new BigBangJewelException("Erro no update de prémios de " +
+    				"apólice associada ao recibo: o recibo não tem prémio definido.");
+		}
+		
+		// Defines the coefficient according to the policy fractioning
+		int coefficient;
+		UUID fractioning = (UUID) this.getAt(I.FRACTIONING);
+		if (Constants.FracID_Month.equals(fractioning)) {
+			coefficient = 1;
+		} else if (Constants.FracID_Semester.equals(fractioning)) {
+			coefficient = 2;
+		} else if (Constants.FracID_Quarter.equals(fractioning)) {
+			coefficient = 4;
+		} else if (Constants.FracID_Month.equals(fractioning)) {
+			coefficient = 12;
+		} else {
+			throw new BigBangJewelException("Erro no update de prémios de apólice associada ao recibo: " +
+					"o tipo de fraccionamento não foi considerado no cálculo de coeficiente.");
+		}
+		
+		return ((BigDecimal) premium).multiply(new BigDecimal(coefficient));
+	}
+
 }

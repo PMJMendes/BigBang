@@ -220,5 +220,11 @@ public class ReceiptData
 			pstrBuilder.append(mstrNotes);
 			pstrBuilder.append(pstrLineBreak);
 		}
+		
+		// If the commercial and total premiums were updated, that information is registered in the historic
+		if ( midType.equals(Constants.RecType_Continuing) ) {
+			pstrBuilder.append("Foram actualizados os prémios total e comercial da apólice.");
+			pstrBuilder.append(pstrLineBreak);
+		}
 	}
 }
