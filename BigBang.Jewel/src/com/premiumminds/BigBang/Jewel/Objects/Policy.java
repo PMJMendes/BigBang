@@ -1081,10 +1081,10 @@ public class Policy
     {
     	return GetSubLine().GetDetailedObject(this, pobjSubPolicy);
     }
-    
+
     /**
-	 * This method sets the sales premium of the policy. It's called 
-	 * when a continuing receipt is created.
+	 * This method calculates a new sales premium for the policy, if necessary.
+	 * It's called by the CreateReceipt policy operation for continuing receipts. 
 	 */
     public BigDecimal CheckSalesPremium(BigDecimal totalPremium) {
 		BigDecimal newPremium = calculateValueWithFractioning(totalPremium);
@@ -1093,10 +1093,10 @@ public class Policy
 		}
 		return newPremium;
 	}
-    
-	/**
-	 * This method sets the total premium of the policy. It's called 
-	 * when a continuing receipt is created.
+
+    /**
+	 * This method calculates a new total premium for the policy, if necessary.
+	 * It's called by the CreateReceipt policy operation for continuing receipts. 
 	 */
     public BigDecimal CheckTotalPremium(BigDecimal totalPremium) {
 		BigDecimal newPremium = calculateValueWithFractioning(totalPremium);
