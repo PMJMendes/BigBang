@@ -94,6 +94,7 @@ public class CreateReceipt
 				} catch (Throwable e) {
 					throw new JewelPetriException(e.getMessage(), e);
 				}
+				premiumChanged = true;
 			}
 		}
 	}
