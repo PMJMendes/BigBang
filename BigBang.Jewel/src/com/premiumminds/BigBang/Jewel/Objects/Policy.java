@@ -1085,74 +1085,66 @@ public class Policy
     /**
 	 * This method sets the sales premium of the policy. It's called 
 	 * when a continuing receipt is created.
-	 * 
-	 * @whotoblame jcamilo
 	 */
-    public void SetSalesPremium(SQLServer pdb, Object salesPremium) 
-    		throws BigBangJewelException {
-    	try {
-    		BigDecimal newPremium = calculateValueWithFractioning(salesPremium);
-    		internalSetAt(I.PREMIUM, newPremium);
-    		SaveToDb(pdb);
-    	} catch (Throwable e) {
-    		throw new BigBangJewelException(e.getMessage(), e);
-    	}
+    public BigDecimal CheckSalesPremium(BigDecimal totalPremium) {
+		BigDecimal newPremium = calculateValueWithFractioning(totalPremium);
+		if (!verifyChange((BigDecimal)getAt(I.PREMIUM), newPremium)) {
+			return null;
+		}
+		return newPremium;
 	}
     
 	/**
 	 * This method sets the total premium of the policy. It's called 
 	 * when a continuing receipt is created.
-	 * 
-	 * @whotoblame jcamilo
 	 */
-    public void SetTotalPremium(SQLServer pdb, Object totalPremium) 
-    		throws BigBangJewelException {
-    	try {
-    		BigDecimal newPremium = calculateValueWithFractioning(totalPremium);
-    		internalSetAt(I.TOTALPREMIUM, newPremium);
-    		SaveToDb(pdb);
-    	} catch (Throwable e) {
-    		throw new BigBangJewelException(e.getMessage(), e);
-    	}
+    public BigDecimal CheckTotalPremium(BigDecimal totalPremium) {
+		BigDecimal newPremium = calculateValueWithFractioning(totalPremium);
+		if (!verifyChange((BigDecimal)getAt(I.TOTALPREMIUM), newPremium)) {
+			return null;
+		}
+		return newPremium;
 	}
-    
+
     /**
 	 * This method calculates the new value for a premium, according to the type of fractioning
 	 * of the policy
 	 * 
 	 * @whotoblame jcamilo
 	 */
-    private BigDecimal calculateValueWithFractioning(Object premium) 
-    	throws BigBangJewelException {
-    	
-    	// Previous verifications for mandatory data for calculations
-    	if (this.getAt(I.FRACTIONING) == null) {
-    		throw new BigBangJewelException("Erro no update de prémios de " +
-    				"apólice associada ao recibo: o tipo de fraccionamento não está definido na apólice.");
+    private BigDecimal calculateValueWithFractioning(BigDecimal premium) {
+    	if ((getAt(I.FRACTIONING) == null) || (getAt(I.FRACTIONING).equals(Constants.FracID_Single)) ||
+    			(getAt(I.FRACTIONING).equals(Constants.FracID_Variable)) || (premium == null)) {
+    		return null;
     	}
-		
-		if (premium == null) {
-			throw new BigBangJewelException("Erro no update de prémios de " +
-    				"apólice associada ao recibo: o recibo não tem prémio definido.");
-		}
-		
-		// Defines the coefficient according to the policy fractioning
+
 		int coefficient;
-		UUID fractioning = (UUID) this.getAt(I.FRACTIONING);
-		if (Constants.FracID_Month.equals(fractioning)) {
-			coefficient = 1;
-		} else if (Constants.FracID_Semester.equals(fractioning)) {
+		UUID fractioning = (UUID)this.getAt(I.FRACTIONING);
+		if (Constants.FracID_Semester.equals(fractioning)) {
 			coefficient = 2;
 		} else if (Constants.FracID_Quarter.equals(fractioning)) {
 			coefficient = 4;
 		} else if (Constants.FracID_Month.equals(fractioning)) {
 			coefficient = 12;
 		} else {
-			throw new BigBangJewelException("Erro no update de prémios de apólice associada ao recibo: " +
-					"o tipo de fraccionamento não foi considerado no cálculo de coeficiente.");
+			coefficient = 1;
 		}
-		
-		return ((BigDecimal) premium).multiply(new BigDecimal(coefficient));
+
+		return premium.multiply(new BigDecimal(coefficient));
 	}
 
+    /**
+	 * This method decides whether a change to a saved value is warranted, given a new calculated value
+	 */
+    private boolean verifyChange(BigDecimal savedVal, BigDecimal newVal) {
+    	if (newVal == null) {
+    		return false;
+    	}
+
+    	if (savedVal == null) {
+    		return true;
+    	}
+
+    	return (savedVal.subtract(newVal).abs().compareTo(new BigDecimal("0.001")) > 0);
+    }
 }
