@@ -26,34 +26,34 @@ import com.premiumminds.BigBang.Jewel.SysObjects.FileIOBase;
 
 /**
  * Class responsible for importing Tranquilidade's receipts 
- * 
- * @whotoblame jcamilo
- * @param policy - The policy to update
  */
-public class Tranquilidade
-	extends FileIOBase
-{
-	// TODO: Not defined yet (how to do it? How to generate the GUID? Ask João)
-	public static final UUID ObjID_TypeTranslator = UUID.fromString("");
+public class Tranquilidade extends FileIOBase {
+	// TODO: Not defined yet (how to do it? How to generate the GUID? Ask João) - CURRENTLY the same as AXA
+	/*CORRI ISTO para adaptar a axa para dar pelo menos para o continuado... dps tenho que re-actualizar
+	  update [MADDSMasterDB].[bigbang].[tblAXATranslate] 
+			  set TInput = 'Continuado' where FKReceiptType = '6B91D626-4CAD-4F53-8FD6-9F900111C39F'
+			  e apaguei o fidm por engano
+			  e acabei por fazer outra "martelada" no método correspondente*/
+	public static final UUID ObjID_TypeTranslator = UUID.fromString("90643E1D-3CE8-428A-9107-A12700FC73C4");
 	// TODO: The same as the others, but kind of "blindly"
 	public static final UUID RDef_Imports = UUID.fromString("8D11763D-4B0B-44EF-8779-A0A701270881");
-	public static final UUID FormatID_Tranquilidade = UUID.fromString("8BCB98C9-CA43-4803-91DB-A587010F23E5");
+	public static final UUID FormatID_Tranquilidade = UUID.fromString("4BC02E69-056D-41C4-A4E0-A593010D8893");
 	// TODO: The same as the others, but kind of "blindly"
 	public static final UUID ObjID_ImportStatus   = UUID.fromString("EE1BF5D6-4116-410F-9A9B-A0A700F4F569");
 	
 	public static class Fields {
-	    public static final int POLICY       		=  0;
-	    public static final int RECEIPT      		=  1;
-	    public static final int CREATIONDATE 		=  3;
-	    public static final int STARTDATE    		=  4;
-	    public static final int ENDDATE      		=  5;
-	    public static final int LIMITDATE    		=  6;
-	    public static final int TOTALPREMIUM 		=  7;
-	    public static final int COLLECTORCOMMISSION	=  8;
-	    public static final int MEDIATORCOMMISSION	=  9;
-	    public static final int RECEIPTTYPE			=  10;
-	    public static final int RECEIPTSTATE		=  11;
-	    public static final int SALESPREMIUM		=  12;
+	    public static final int POLICY       		=  2;
+	    public static final int RECEIPT      		=  3;
+	    public static final int CREATIONDATE 		=  4;
+	    public static final int STARTDATE    		=  5;
+	    public static final int ENDDATE      		=  6;
+	    public static final int LIMITDATE    		=  7;
+	    public static final int TOTALPREMIUM 		=  10;
+	    public static final int COLLECTORCOMMISSION	=  11;
+	    public static final int MEDIATORCOMMISSION	=  13;
+	    public static final int RECEIPTTYPE			=  16;
+	    public static final int RECEIPTSTATE		=  17;
+	    public static final int SALESPREMIUM		=  20;
 	}
 	
 	public static class StatusCodes {
@@ -100,7 +100,7 @@ public class Tranquilidade
 		parsedReceipts = new HashSet<String>();
 		
 		// Gets the receipts' array from the file data, and iterates it, parsing each receipt individually
-		receiptsArray = mobjData.getData()[0];
+		receiptsArray = mobjData.getData()[1];
 
 		for ( i = 0; i < receiptsArray.length; i++ ) {
 			try {
@@ -186,7 +186,7 @@ public class Tranquilidade
 			}
 			
 			// Gets the policy to which the receipt is associated, and if it does not exist, logs an error
-			receiptPolicy = FindPolicy(lineData[Fields.POLICY].getData(), true);
+			receiptPolicy = FindPolicy(lineData[Fields.POLICY].getData().trim(), true);
 			if ( receiptPolicy == null ) {
 				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_1_NoPolicy, null);
 				return;
@@ -212,8 +212,6 @@ public class Tranquilidade
 				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_4_UnknownType, null);
 				return;
 			}
-			
-			// TODO: Estado recibo ainda não está. lá vem "RC", aqui vem "OK". não sei...
 			
 			// Adds the receipt to the parsed ones
 			parsedReceipts.add(receiptNumber);
@@ -431,7 +429,14 @@ public class Tranquilidade
 	 */
 	private UUID ProcessReceiptType(String receiptType) throws BigBangJewelException {
 		
-		String receiptTypeAux;
+		if (receiptType.equals("Continuado")) {
+			return UUID.fromString("6B91D626-4CAD-4F53-8FD6-9F900111C39F");
+		} else {
+			return UUID.fromString("6B91D626-4CAD-4F53-8FD6-9F900111C39F");
+		}
+		// TODO: nao vale a pena dizer que isto é uma tentativa...
+		
+		/*String receiptTypeAux;
 		UUID receiptGuid;
 		IEntity receiptTypeEntity;
 		MasterDB ldb;
@@ -490,7 +495,7 @@ public class Tranquilidade
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return receiptGuid;
+		return receiptGuid;*/
 	}
 	
 	/** 
