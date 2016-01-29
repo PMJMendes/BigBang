@@ -28,19 +28,12 @@ import com.premiumminds.BigBang.Jewel.SysObjects.FileIOBase;
  * Class responsible for importing Tranquilidade's receipts 
  */
 public class Tranquilidade extends FileIOBase {
-	// TODO: Not defined yet (how to do it? How to generate the GUID? Ask João) - CURRENTLY the same as AXA
-	/*CORRI ISTO para adaptar a axa para dar pelo menos para o continuado... dps tenho que re-actualizar
-	  update [MADDSMasterDB].[bigbang].[tblAXATranslate] 
-			  set TInput = 'Continuado' where FKReceiptType = '6B91D626-4CAD-4F53-8FD6-9F900111C39F'
-			  e apaguei o fidm por engano
-			  e acabei por fazer outra "martelada" no método correspondente*/
-	public static final UUID ObjID_TypeTranslator = UUID.fromString("90643E1D-3CE8-428A-9107-A12700FC73C4");
-	// TODO: The same as the others, but kind of "blindly"
-	public static final UUID RDef_Imports = UUID.fromString("8D11763D-4B0B-44EF-8779-A0A701270881");
-	public static final UUID FormatID_Tranquilidade = UUID.fromString("4BC02E69-056D-41C4-A4E0-A593010D8893");
-	// TODO: The same as the others, but kind of "blindly"
-	public static final UUID ObjID_ImportStatus   = UUID.fromString("EE1BF5D6-4116-410F-9A9B-A0A700F4F569");
 	
+	public static final UUID ObjID_TypeTranslator = UUID.fromString("D5CB3950-A195-4FD5-8629-A59A00F34322");
+	public static final UUID RDef_Imports = UUID.fromString("8D11763D-4B0B-44EF-8779-A0A701270881");
+	public static final UUID FormatID_Tranquilidade = UUID.fromString("A2501623-ECF1-4486-90E9-A59A00CBC830");
+	public static final UUID ObjID_ImportStatus   = UUID.fromString("EE1BF5D6-4116-410F-9A9B-A0A700F4F569");
+
 	public static class Fields {
 	    public static final int POLICY       		=  2;
 	    public static final int RECEIPT      		=  3;
@@ -238,8 +231,8 @@ public class Tranquilidade extends FileIOBase {
 			createdReceipt.mobjData.mdblFAT = null;
 			createdReceipt.mobjData.mdblBonusMalus = null;
 			createdReceipt.mobjData.mbIsMalus = null;
-			createdReceipt.mobjData.mdtIssue = creationDate; // TODO: Check if this is the date to store as issue date
-			createdReceipt.mobjData.mdtMaturity = startDate; // TODO: Check if this is the date to store as maturity date
+			createdReceipt.mobjData.mdtIssue = creationDate;
+			createdReceipt.mobjData.mdtMaturity = startDate;
 			createdReceipt.mobjData.mdtEnd = endDate;
 			createdReceipt.mobjData.mdtDue = limitDate;
 			createdReceipt.mobjData.midMediator = null;
@@ -429,14 +422,13 @@ public class Tranquilidade extends FileIOBase {
 	 */
 	private UUID ProcessReceiptType(String receiptType) throws BigBangJewelException {
 		
-		if (receiptType.equals("Continuado")) {
+		/*if (receiptType.equals("Continuado")) {
 			return UUID.fromString("6B91D626-4CAD-4F53-8FD6-9F900111C39F");
 		} else {
 			return UUID.fromString("6B91D626-4CAD-4F53-8FD6-9F900111C39F");
-		}
-		// TODO: nao vale a pena dizer que isto é uma tentativa...
+		}*/
 		
-		/*String receiptTypeAux;
+		String receiptTypeAux;
 		UUID receiptGuid;
 		IEntity receiptTypeEntity;
 		MasterDB ldb;
@@ -495,7 +487,7 @@ public class Tranquilidade extends FileIOBase {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return receiptGuid;*/
+		return receiptGuid;
 	}
 	
 	/** 
