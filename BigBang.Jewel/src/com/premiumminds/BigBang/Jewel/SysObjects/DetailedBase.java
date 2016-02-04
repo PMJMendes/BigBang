@@ -184,6 +184,20 @@ public abstract class DetailedBase
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+		
+		BigDecimal  policySalesPremium = (BigDecimal) pobjPolicy.getAt(Policy.I.PREMIUM);
+		if (policySalesPremium == null) {
+			pstrBuilder.append("O prémio comercial anual é de preenchimento obrigatório mas não está preenchido.\n");
+		} else if (policySalesPremium.compareTo(BigDecimal.ZERO) == 0 ||  policySalesPremium.signum() == -1) {
+			pstrBuilder.append("O prémio comercial anual deve corresponder a um valor positivo.\n");
+		}
+
+		BigDecimal  policyTotalPremium = (BigDecimal) pobjPolicy.getAt(Policy.I.TOTALPREMIUM);
+		if (policyTotalPremium == null) {
+			pstrBuilder.append("O prémio total anual é de preenchimento obrigatório mas não está preenchido.\n");
+		} else if (policyTotalPremium.compareTo(BigDecimal.ZERO) == 0 ||  policyTotalPremium.signum() == -1) {
+			pstrBuilder.append("O prémio total anual deve corresponder a um valor positivo.\n");
+		}
 
 		if ( pobjPolicy.getLabel().charAt(0) == '-' )
 			pstrBuilder.append("O número de apólice é provisório.\n");

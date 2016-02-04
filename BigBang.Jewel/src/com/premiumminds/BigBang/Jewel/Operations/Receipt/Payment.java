@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
 import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
@@ -31,6 +32,8 @@ public class Payment
 	private UUID midReceipt;
 	private UUID midPrevStatus;
 	private AccountingData[] marrAccounting;
+	
+	public boolean premiumChanged;
 
 	public Payment(UUID pidProcess)
 	{
@@ -72,6 +75,12 @@ public class Payment
 				marrAccounting[i].Describe(lstrBuilder, pstrLineBreak);
 				lstrBuilder.append(pstrLineBreak);
 			}
+		}
+		
+		if (premiumChanged) {
+			lstrBuilder.append(pstrLineBreak)
+				.append("Foram actualizados os prémios total e comercial da apólice.")
+				.append(pstrLineBreak);
 		}
 
 		return lstrBuilder.toString();
@@ -222,6 +231,41 @@ public class Payment
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
+		}
+		
+		try {
+			UpdatePremium(pdb, lobjReceipt);
+		} catch (BigBangJewelException e) {
+			throw new JewelPetriException(e.getMessage(), e);
+		} 
+	}
+	
+	/**
+	 * This method calls the CreateReceiptBase's method "Run", and afterwards checks
+	 * if the created receipt is a continuing receipt, in which case it updates the policy's
+	 * total and sales's premiums.
+	 * @throws BigBangJewelException 
+	 */
+	protected void UpdatePremium(SQLServer pdb, Receipt lobjReceipt) 
+			throws JewelPetriException, BigBangJewelException {
+		
+		premiumChanged = false;
+
+		if ( lobjReceipt.getAt(Receipt.I.TYPE).equals(Constants.RecType_Continuing) ) {
+			Policy policy = lobjReceipt.getAbsolutePolicy();
+			BigDecimal newPremium = policy.CheckSalesPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.COMMERCIALPREMIUM));
+			BigDecimal newTotalPr = policy.CheckTotalPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.TOTALPREMIUM));
+
+			if ((newPremium != null) || (newTotalPr != null)) {
+				try {
+					policy.setAt(Policy.I.PREMIUM, newPremium);
+					policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
+					policy.SaveToDb(pdb);
+				} catch (Throwable e) {
+					throw new JewelPetriException(e.getMessage(), e);
+				}
+				premiumChanged = true;
+			}
 		}
 	}
 

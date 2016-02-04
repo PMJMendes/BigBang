@@ -1109,8 +1109,6 @@ public class Policy
     /**
 	 * This method calculates the new value for a premium, according to the type of fractioning
 	 * of the policy
-	 * 
-	 * @whotoblame jcamilo
 	 */
     private BigDecimal calculateValueWithFractioning(BigDecimal premium) {
     	if ((getAt(I.FRACTIONING) == null) || (getAt(I.FRACTIONING).equals(Constants.FracID_Single)) ||
