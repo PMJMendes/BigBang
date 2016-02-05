@@ -33,7 +33,8 @@ public class Payment
 	private UUID midPrevStatus;
 	private AccountingData[] marrAccounting;
 	
-	public boolean premiumChanged;
+	public BigDecimal prevPremium;
+	public BigDecimal prevTotalPremium;
 
 	public Payment(UUID pidProcess)
 	{
@@ -76,8 +77,8 @@ public class Payment
 				lstrBuilder.append(pstrLineBreak);
 			}
 		}
-		
-		if (premiumChanged) {
+
+		if ((prevPremium != null) || (prevTotalPremium != null)) {
 			lstrBuilder.append(pstrLineBreak)
 				.append("Foram actualizados os prémios total e comercial da apólice.")
 				.append(pstrLineBreak);
@@ -240,35 +241,6 @@ public class Payment
 		} 
 	}
 	
-	/**
-	 * This method calls the CreateReceiptBase's method "Run", and afterwards checks
-	 * if the created receipt is a continuing receipt, in which case it updates the policy's
-	 * total and sales's premiums.
-	 * @throws BigBangJewelException 
-	 */
-	protected void UpdatePremium(SQLServer pdb, Receipt lobjReceipt) 
-			throws JewelPetriException, BigBangJewelException {
-		
-		premiumChanged = false;
-
-		if ( lobjReceipt.getAt(Receipt.I.TYPE).equals(Constants.RecType_Continuing) ) {
-			Policy policy = lobjReceipt.getAbsolutePolicy();
-			BigDecimal newPremium = policy.CheckSalesPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.COMMERCIALPREMIUM));
-			BigDecimal newTotalPr = policy.CheckTotalPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.TOTALPREMIUM));
-
-			if ((newPremium != null) || (newTotalPr != null)) {
-				try {
-					policy.setAt(Policy.I.PREMIUM, newPremium);
-					policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
-					policy.SaveToDb(pdb);
-				} catch (Throwable e) {
-					throw new JewelPetriException(e.getMessage(), e);
-				}
-				premiumChanged = true;
-			}
-		}
-	}
-
 	public String UndoDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrBuilder;
@@ -323,6 +295,12 @@ public class Payment
 				marrAccounting[i].Describe(lstrBuilder, pstrLineBreak);
 				lstrBuilder.append(pstrLineBreak);
 			}
+		}
+
+		if ((prevPremium != null) || (prevTotalPremium != null)) {
+			lstrBuilder.append(pstrLineBreak)
+				.append("Foram repostos os valores anteriores para os prémios total e comercial da apólice.")
+				.append(pstrLineBreak);
 		}
 
 		return lstrBuilder.toString();
@@ -404,6 +382,12 @@ public class Payment
 				throw new JewelPetriException(e.getMessage(), e);
 			}
 		}
+		
+		try {
+			UnUpdatePremium(pdb, lobjReceipt);
+		} catch (BigBangJewelException e) {
+			throw new JewelPetriException(e.getMessage(), e);
+		} 
 	}
 
 	public UndoSet[] GetSets()
@@ -693,5 +677,46 @@ public class Payment
 		}
 
 		return larrResult.toArray(new AccountingData[larrResult.size()]);
+	}
+
+	private void UpdatePremium(SQLServer pdb, Receipt lobjReceipt) 
+			throws BigBangJewelException {
+		prevPremium = null;
+		prevTotalPremium = null;
+
+		if ( lobjReceipt.getAt(Receipt.I.TYPE).equals(Constants.RecType_Continuing) ) {
+			Policy policy = lobjReceipt.getDirectPolicy();
+			if (policy != null) {
+				// JMMM - These functions already return NULL when the values don't change
+				BigDecimal newPremium = policy.CheckSalesPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.COMMERCIALPREMIUM));
+				BigDecimal newTotalPr = policy.CheckTotalPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.TOTALPREMIUM));
+
+				if ((newPremium != null) || (newTotalPr != null)) {
+					prevPremium = (BigDecimal)policy.getAt(Policy.I.PREMIUM);
+					prevTotalPremium = (BigDecimal)policy.getAt(Policy.I.TOTALPREMIUM);
+					try {
+						policy.setAt(Policy.I.PREMIUM, newPremium);
+						policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
+						policy.SaveToDb(pdb);
+					} catch(Throwable e) {
+						throw new BigBangJewelException(e.getMessage(), e);
+					}
+				}
+			}
+		}
+	}
+
+	private void UnUpdatePremium(SQLServer pdb, Receipt lobjReceipt) 
+			throws BigBangJewelException {
+		if ((prevPremium != null) || (prevTotalPremium != null)) {
+			Policy policy = lobjReceipt.getDirectPolicy();
+			try {
+				policy.setAt(Policy.I.PREMIUM, prevPremium);
+				policy.setAt(Policy.I.TOTALPREMIUM, prevTotalPremium);
+				policy.SaveToDb(pdb);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
 	}
 }
