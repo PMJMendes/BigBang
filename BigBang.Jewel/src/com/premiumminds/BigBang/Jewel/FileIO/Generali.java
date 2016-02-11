@@ -25,28 +25,28 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.SysObjects.FileIOBase;
 
 /**
- * Class responsible for importing Tranquilidade's receipts 
+ * Class responsible for importing Generali's receipts 
  */
-public class Tranquilidade extends FileIOBase {
+public class Generali extends FileIOBase {
 	
-	public static final UUID ObjID_TypeTranslator = UUID.fromString("D5CB3950-A195-4FD5-8629-A59A00F34322");
+	public static final UUID ObjID_TypeTranslator = UUID.fromString("C02BA415-DF20-46B0-B4F7-A59C0123DA6C");
 	public static final UUID RDef_Imports = UUID.fromString("8D11763D-4B0B-44EF-8779-A0A701270881");
-	public static final UUID FormatID_Tranquilidade = UUID.fromString("A2501623-ECF1-4486-90E9-A59A00CBC830");
+	public static final UUID FormatID_Generali = UUID.fromString("1C288653-113E-4499-822B-A59B0116EE1B");
 	public static final UUID ObjID_ImportStatus   = UUID.fromString("EE1BF5D6-4116-410F-9A9B-A0A700F4F569");
 
 	public static class Fields {
-	    public static final int POLICY       		=  2;
-	    public static final int RECEIPT      		=  3;
-	    public static final int CREATIONDATE 		=  4;
-	    public static final int STARTDATE    		=  5;
-	    public static final int ENDDATE      		=  6;
-	    public static final int LIMITDATE    		=  7;
-	    public static final int TOTALPREMIUM 		=  10;
-	    public static final int COLLECTORCOMMISSION	=  11;
-	    public static final int MEDIATORCOMMISSION	=  13;
-	    public static final int RECEIPTTYPE			=  16;
-	    public static final int RECEIPTSTATE		=  17;
-	    public static final int SALESPREMIUM		=  20;
+		public static final int POLICY       		=  9;
+		public static final int RECEIPT      		=  10;
+		public static final int CREATIONDATE 		=  11;
+		public static final int STARTDATE    		=  16;
+	    public static final int ENDDATE      		=  17;
+	    public static final int DUEDATE      		=  18;
+	    public static final int RECEIPTTYPE			=  19;
+	    public static final int TOTALPREMIUM 		=  25;
+	    public static final int SALESPREMIUM		=  26;
+	    public static final int FAT					=  29;
+	    public static final int SALESCOMMISSION		=  35;
+	    public static final int COLLECTORCOMMISSION	=  36;
 	}
 	
 	public static class StatusCodes {
@@ -55,10 +55,9 @@ public class Tranquilidade extends FileIOBase {
 	    public static final UUID Code_2_RepeatedReceipt = UUID.fromString("20C24636-8F0D-4B28-B117-A0A700F5FC10");
 	    public static final UUID Code_3_ExistingReceipt = UUID.fromString("81FCAFAE-31F4-481C-9431-A0A700F5FC10");
 	    public static final UUID Code_4_UnknownType     = UUID.fromString("FD82165C-492B-460A-8CE0-A0A700F5FC10");
-	    public static final UUID Code_5_BadFileLine     = UUID.fromString("AD012EF2-DAC6-4F80-A74A-A0A700F5FC10");
-	    public static final UUID Code_6_InternalError   = UUID.fromString("C8E3D6D7-D3DE-45A7-AB40-A0A700F9FADE");
-	    public static final UUID Code_7_TotalPremError  = UUID.fromString("7F96CF04-665A-46BF-B7B7-F823D64FF2D8");
-	    public static final UUID Code_8_SalesPremError  = UUID.fromString("267F8473-FAEC-483F-8624-FEF3680CEC8C");
+	    public static final UUID Code_5_InternalError   = UUID.fromString("C8E3D6D7-D3DE-45A7-AB40-A0A700F9FADE");
+	    public static final UUID Code_6_TotalPremError  = UUID.fromString("7F96CF04-665A-46BF-B7B7-F823D64FF2D8");
+	    public static final UUID Code_7_SalesPremError  = UUID.fromString("267F8473-FAEC-483F-8624-FEF3680CEC8C");
 	}
 	
 	public UUID GetStatusTable() throws BigBangJewelException {
@@ -66,7 +65,7 @@ public class Tranquilidade extends FileIOBase {
 	}
 	
 	/** 
-	 * The method responsible for parsing the content of the file from Tranquilidade
+	 * The method responsible for parsing the content of the file from Generali
 	 */
 	public void Parse() throws BigBangJewelException {
 		MasterDB ldb;
@@ -95,8 +94,8 @@ public class Tranquilidade extends FileIOBase {
 		parsedReceipts = new HashSet<String>();
 		
 		// Gets the receipts' array from the file data, and iterates it, parsing each receipt individually
-		receiptsArray = mobjData.getData()[1];
-
+		receiptsArray = mobjData.getData()[0];
+		
 		for ( i = 0; i < receiptsArray.length; i++ ) {
 			try {
 				ldb.BeginTrans();
@@ -131,8 +130,8 @@ public class Tranquilidade extends FileIOBase {
 		
 		// Creates a new entry in the database, with the information about the processing
 		try {
-			createReport(ldb, "Importação Tranquilidade", 
-					RDef_Imports, FormatID_Tranquilidade.toString() + "|" + midSession.toString());
+			createReport(ldb, "Importação Generali", 
+					RDef_Imports, FormatID_Generali.toString() + "|" + midSession.toString());
 		} catch (BigBangJewelException e) {
 			try { 
 				ldb.Disconnect(); 
@@ -144,8 +143,7 @@ public class Tranquilidade extends FileIOBase {
 		
 		try {
 			ldb.Disconnect();
-		}
-		catch (Throwable e) {
+		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
@@ -157,6 +155,7 @@ public class Tranquilidade extends FileIOBase {
 			HashSet<String> parsedReceipts, SQLServer pdb) throws BigBangJewelException {
 		
 		String lineToParse;
+		String policyNumber;
 		Policy receiptPolicy;
 		String receiptNumber;
 		UUID receiptTypeGuid;
@@ -165,26 +164,23 @@ public class Tranquilidade extends FileIOBase {
 		Timestamp endDate;
 		Timestamp limitDate;
 		BigDecimal totalPremium;
-		BigDecimal commission; //COMMISSION = Collector Commission + Mediator Commission
+		BigDecimal commission; //COMMISSION = Collector Commission + Sales Commission
 		BigDecimal salesPremium;
+		BigDecimal fat;
 		CreateReceipt createdReceipt;
 		
 		lineToParse = lineData[Fields.POLICY].getData() + lineData[Fields.RECEIPT].getData();
 		
 		try {
 			
-			// Checks if the receipt state is defined as OK, and if not, logs an error
-			if (!"OK".equalsIgnoreCase(lineData[Fields.RECEIPTSTATE].getData())) {
-				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_5_BadFileLine, null);
-				return; 
-			}
-			
 			// Gets the policy to which the receipt is associated, and if it does not exist, logs an error
-			receiptPolicy = FindPolicy(lineData[Fields.POLICY].getData().trim(), true);
+			policyNumber = lineData[Fields.POLICY].getData().trim()
+					.replaceFirst("\\d{4}-", "").replaceAll("-.*", "");
+			receiptPolicy = FindPolicy(policyNumber, true);
 			if ( receiptPolicy == null ) {
 				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_1_NoPolicy, null);
 				return;
-			}
+			}	
 			
 			// Gets the receipt number, and if it was previously processed, logs an error
 			receiptNumber = lineData[Fields.RECEIPT].getData().trim();
@@ -192,14 +188,14 @@ public class Tranquilidade extends FileIOBase {
 				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_2_RepeatedReceipt, null);
 				return;
 			}
-			
+
 			// Checks if the receipt exists in the database, and if it exists, logs an error
 			if (FindReceipt(receiptNumber, receiptPolicy.GetProcessID())) {
 				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_3_ExistingReceipt, null);
 				return;
 			}
 			
-			// Gets the receipt type from the input file, and checks if it corresponds to a parametrized type in 
+			// Gets the receipt type from the input file, and checks if it corresponds to a parameterized type in 
 			// BigBang. If it doesn't, logs an error
 			receiptTypeGuid = ProcessReceiptType(lineData[Fields.RECEIPTTYPE].getData());
 			if (receiptTypeGuid == null) {
@@ -210,28 +206,29 @@ public class Tranquilidade extends FileIOBase {
 			// Checks the total premium, and if it equal to 0, logs an error.
 			totalPremium = BuildDecimal(lineData[Fields.TOTALPREMIUM].getData());
 			if (totalPremium.compareTo(BigDecimal.ZERO) == 0) {
-				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_7_TotalPremError, null);
+				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_6_TotalPremError, null);
 				return;
 			}
-						
+			
 			// Checks the sales premium, and if it equal to 0, logs an error.
 			salesPremium = BuildDecimal(lineData[Fields.SALESPREMIUM].getData());	
 			if (salesPremium.compareTo(BigDecimal.ZERO) == 0) {
-				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_8_SalesPremError, null);
+				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_7_SalesPremError, null);
 				return;
 			}
 			
 			// Adds the receipt to the parsed ones
 			parsedReceipts.add(receiptNumber);
-			
+						
 			// Gets the values needed to create a receipt, and creates it
 			creationDate = BuildDate(lineData[Fields.CREATIONDATE].getData());
 			startDate = BuildDate(lineData[Fields.STARTDATE].getData());
 			endDate = BuildDate(lineData[Fields.ENDDATE].getData());
-			limitDate = BuildDate(lineData[Fields.LIMITDATE].getData());
 			commission = BuildDecimal(lineData[Fields.COLLECTORCOMMISSION].getData())
-					.add(BuildDecimal(lineData[Fields.MEDIATORCOMMISSION].getData()));	
+					.add(BuildDecimal(lineData[Fields.SALESCOMMISSION].getData()));
 			createdReceipt = new CreateReceipt(receiptPolicy.GetProcessID());
+			limitDate = BuildDate(lineData[Fields.DUEDATE].getData());
+			fat = BuildDecimal(lineData[Fields.FAT].getData());
 			
 			// Sets the new recipe with the (possible) values and stores it
 			createdReceipt.mobjData = new ReceiptData();
@@ -251,17 +248,18 @@ public class Tranquilidade extends FileIOBase {
 			createdReceipt.mobjData.midMediator = null;
 			createdReceipt.mobjData.mstrNotes = null;
 			createdReceipt.mobjData.mstrDescription = null;
-	
+			createdReceipt.mobjData.mdblFAT = fat;
+			
 			createdReceipt.mobjImage = null;
 			createdReceipt.mobjContactOps = null;
 			createdReceipt.mobjDocOps = null;
-	
-			createdReceipt.Execute(pdb);
 			
+			createdReceipt.Execute(pdb);
+						
 		} catch (Throwable e) {
-			createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_6_InternalError, null);
+			createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_5_InternalError, null);
 			return;
-		}
+		}				
 		
 		createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_0_Ok, createdReceipt.mobjData.mid);
 	}	
@@ -282,9 +280,9 @@ public class Tranquilidade extends FileIOBase {
 		ResultSet fetchedPolicies;
 		
 		// Gets the GUID representing the company in the DB, and if it doesn't exists, throws an exception 
-		companyGuid = Company.FindCompany(Engine.getCurrentNameSpace(), "TSE");
+		companyGuid = Company.FindCompany(Engine.getCurrentNameSpace(), "GEN");
 		if (companyGuid == null) {
-			throw new BigBangJewelException("Inesperado: Companhia de Seguros Tranquilidade não encontrada.");
+			throw new BigBangJewelException("Inesperado: Companhia de Seguros Generali não encontrada.");
 		}
 		
 		// In case it is the first call (meaning it is not recursive), it removes the white spaces from the policy number
@@ -294,7 +292,7 @@ public class Tranquilidade extends FileIOBase {
 		
 		fetchedPolicy = null;
 		policiesFound = 0;
-		
+			
 		// Gets the entity responsible for fetching and manipulating policies
 		try {
 			policyEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
@@ -302,7 +300,7 @@ public class Tranquilidade extends FileIOBase {
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-		
+			
 		// Gets the policies from that company, with a given number (it should return 1)
 		try {
 			fetchedPolicies = policyEntity.SelectByMembers(ldb, new int[] {0, 2}, 
@@ -318,38 +316,35 @@ public class Tranquilidade extends FileIOBase {
 		
 		// Iterates the fetched policies and increases the counter
 		try {
-	        while (fetchedPolicies.next()) {
-	        	fetchedPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), fetchedPolicies);
-	        	policiesFound++;
-	        }
-        }
-        catch (Throwable e) {
+			while (fetchedPolicies.next()) {
+				fetchedPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), fetchedPolicies);
+		       	policiesFound++;
+			}
+		} catch (Throwable e) {
 			try { fetchedPolicies.close(); } catch (Throwable e2) {}
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
-        	throw new BigBangJewelException(e.getMessage(), e);
-        }
-		
+		    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+				
 		// "Cleanup"
 		try {
 			fetchedPolicies.close();
-        }
-		catch (Throwable e) {
+		} catch (Throwable e) {
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 		try {
 			ldb.Disconnect();
-		}
-		catch (Throwable e) {
+		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-		
+				
 		// If it wasn't possible to get the policy, and it was the first try, 
 		// it tries again
 		if (shouldRetry && (policiesFound == 0)) {
 			fetchedPolicy = FindPolicy(policyNumber, false);
 		}
-		
+				
 		// If there is more than one policy found (which is an error, for there should only 
 		// be a policy or a given number)
 		if (policiesFound > 1) {
@@ -502,7 +497,8 @@ public class Tranquilidade extends FileIOBase {
 	 * This method transforms the string with a date from the file into a Timestamp
 	 */
 	private Timestamp BuildDate(String pstrDate) {
-		return Timestamp.valueOf(pstrDate + " 00:00:00.0");
+		String[] dateParts = pstrDate.split("-");
+		return Timestamp.valueOf(dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0] + " 00:00:00.0");
 	}
 
 	
