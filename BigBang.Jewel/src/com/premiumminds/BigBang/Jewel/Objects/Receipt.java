@@ -874,18 +874,30 @@ public class Receipt
 
     public String getExternalDueDate()
     {
-    	String lstrDtAux;
     	Timestamp ldtAux;
     	Calendar ldtAux2;
+
+    	try
+    	{
+			if ( Constants.ProfID_Angola.equals(getProfile()))
+			{
+				if ( getAt(I.DUEDATE) == null )
+				{
+					return "";
+				}
+				return ((Timestamp)getAt(I.DUEDATE)).toString().substring(0, 10);
+			}
+		}
+    	catch (BigBangJewelException e) {}
 
 		if ( Constants.RecType_New.equals((UUID)getAt(I.TYPE)) ||
 				Constants.RecType_Adjustment.equals((UUID)getAt(I.TYPE)) )
 		{
-			lstrDtAux = "Imediata*";
+			return "Imediata*";
 		}
 		else if ( getAt(I.DUEDATE) == null )
 		{
-			lstrDtAux = "";
+			return "";
 		}
 		else
 		{
@@ -897,10 +909,8 @@ public class Receipt
 		    	ldtAux2.add(Calendar.DAY_OF_MONTH, -5);
 		    	ldtAux = new Timestamp(ldtAux2.getTimeInMillis());
 			}
-			lstrDtAux = ldtAux.toString().substring(0, 10);
+			return ldtAux.toString().substring(0, 10);
 		}
-
-		return lstrDtAux;
 	}
 
 	public void initAccounting(SQLServer pdb, int plngYear)

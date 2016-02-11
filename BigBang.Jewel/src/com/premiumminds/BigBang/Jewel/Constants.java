@@ -634,6 +634,7 @@ public class Constants
 	public static final UUID ProfID_VIPNoDAS   = UUID.fromString("624A580F-F961-457A-A699-A10301134BE0");
 	public static final UUID ProfID_Email      = UUID.fromString("AAE32765-F04F-41C2-BA3B-A14900FB1628");
 	public static final UUID ProfID_EmailNoDAS = UUID.fromString("282FA883-C0B1-45C3-BDB8-A14900FB1ED4");
+	public static final UUID ProfID_Angola     = UUID.fromString("53912AF8-21D2-4F11-AD04-A5A900E8E20D");
 
 	// Object Types
 	public static final UUID ObjTypeID_Person    = UUID.fromString("EDD94689-EFED-4B50-AA6E-9F9501402700");
