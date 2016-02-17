@@ -28,6 +28,7 @@ import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryValidation;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyHistoryVoiding;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPendingReceipt;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPendingValidation;
+import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPortfolioClient;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPortfolioLive;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicyPortfolioNoReceipts;
 import com.premiumminds.BigBang.Jewel.Listings.Policy.PolicySpecialShamir;
@@ -162,6 +163,12 @@ public class Policy
 		throws BigBangJewelException
 	{
 		return new PolicyExternWeekly().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportPortfolioClient(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new PolicyPortfolioClient().doReport(parrParams);
 	}
 
     private SubLine mrefSubLine;
