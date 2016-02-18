@@ -337,13 +337,17 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		
 		//Iterates the coverages, and adds them to a table
 		for ( int i = 0; i < coverages.length; i++ ) {
-			TD[] coverage = new TD[1];
 			
-			coverage[0] = ReportBuilder.buildCell(coverages[i].GetCoverage().getAt(Coverage.I.NAME), TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(coverage[0], false, false);
-			
-			tableRows[i] = ReportBuilder.buildRow(coverage);
-			ReportBuilder.styleRow(tableRows[i], false);
+			// Only lists coverages present at the policy
+			if ((Boolean)coverages[i].getAt(2) == true) {
+				TD[] coverage = new TD[1];
+				
+				coverage[0] = ReportBuilder.buildCell(coverages[i].GetCoverage().getAt(Coverage.I.NAME), TypeDefGUIDs.T_String);
+				ReportBuilder.styleCell(coverage[0], false, false);
+				
+				tableRows[i] = ReportBuilder.buildRow(coverage);
+				ReportBuilder.styleRow(tableRows[i], false);
+			}
 		}
 		
 		table = ReportBuilder.buildTable(tableRows);
