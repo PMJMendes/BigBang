@@ -173,6 +173,8 @@ public class Constants
 	public static final UUID ObjID_FieldValues              = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
 
 	public static final UUID ObjID_TypifiedText             = UUID.fromString("0F218912-1626-4A2C-BF68-9FE100F72735");
+	
+	public static final UUID ObjID_NoDeductibleType         = UUID.fromString("B2388B42-396E-49F0-94D4-A09900FBDDFB");
 
 
 	// Process Scripts

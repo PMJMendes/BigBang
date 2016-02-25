@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.SysObjects.JewelEngineException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -174,6 +175,7 @@ public abstract class DetailedBase
 		PolicyCoverage[] larrCoverages;
 		HashMap<UUID, UUID> larrTrueCoverages;
 		PolicyValue[] larrValues;
+		boolean dedTypeSettable = false;
 
 		try
 		{
@@ -223,6 +225,31 @@ public abstract class DetailedBase
 		{
 			if ( larrTrueCoverages.get(larrValues[i].GetTax().GetCoverage().getKey()) == null )
 				continue;
+			
+			// When the type of Deductible Type is "No Deductible Type", the value associated should be 0.
+			// BigBang does not allow for a field to be mandatory when another field has a given value,
+			// so in order to do this, a workaround is necessary.
+			// Some considerations: GUID are unique in the database, so to check if the value is "No Deductible Type", 
+			// I can check for it's PK on the table bigbang.tblBBDeductibleTypes. The Deductible type is defined for
+			// a lot of policy categories, so checking for all their GUIDS means you'd have to check for more than a 
+			// hundred. In order to avoid that I check if its name is "Franquia". This means that it only works if the
+			// fields is named "Franquia". Also, also note that this implementation only works if the value for the 
+			// deductible type comes after (in the form) the value from the deductible type's type.
+			if (larrValues[i].GetValue() != null && larrValues[i].GetValue().
+					equals(Constants.ObjID_NoDeductibleType.toString())) {
+				dedTypeSettable = true; // "No Deductible Type" detected
+			}
+			
+			if (dedTypeSettable) {
+				if (larrValues[i].GetTax().getLabel().equals("Franquia")) {
+					try {
+						larrValues[i].setAt(0, "0"); // The Field with the deductible type value is set to 0
+					} catch (JewelEngineException e) {
+						throw new BigBangJewelException(e.getMessage(), e);
+					}
+					dedTypeSettable = false;
+				}
+			} 
 
 			if ( larrValues[i].GetValue() == null )
 			{
