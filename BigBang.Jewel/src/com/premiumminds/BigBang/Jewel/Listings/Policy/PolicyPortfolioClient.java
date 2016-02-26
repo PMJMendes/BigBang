@@ -220,8 +220,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		policyCoverages = policy.GetCurrentCoverages();
 		
 		// Increases the value for the total premium
-		if (policy.getAt(Policy.I.PREMIUM) != null) {
-			premiumTotal = premiumTotal.add((BigDecimal)policy.getAt(Policy.I.PREMIUM));
+		if (policy.getAt(Policy.I.TOTALPREMIUM) != null) {
+			premiumTotal = premiumTotal.add((BigDecimal)policy.getAt(Policy.I.TOTALPREMIUM));
 		}
 		
 		// Policy Number
@@ -264,25 +264,17 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		dataCells[6] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(dataCells[6], true, true);
 		
-		// Sales' Premium
-		if (policy.getAt(Policy.I.PREMIUM) == null) {
+		// Total Premium
+		if (policy.getAt(Policy.I.TOTALPREMIUM) == null) {
 			dataCells[7] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
 		} else {
-			dataCells[7] = ReportBuilder.buildCell(policy.getAt(Policy.I.PREMIUM), TypeDefGUIDs.T_Decimal);
+			dataCells[7] = ReportBuilder.buildCell(policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
 		}
 		ReportBuilder.styleCell(dataCells[7], true, true);
 		
-		// Total Premium
-		if (policy.getAt(Policy.I.TOTALPREMIUM) == null) {
-			dataCells[8] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-		} else {
-			dataCells[8] = ReportBuilder.buildCell(policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
-		}
-		ReportBuilder.styleCell(dataCells[8], true, true);
-		
 		// Notes - intentionally left blank
-		dataCells[9] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(dataCells[9], true, true);
+		dataCells[8] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(dataCells[8], true, true);
 		
 		setWidths(dataCells);
 
@@ -389,14 +381,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		cells[6] = ReportBuilder.buildHeaderCell("Capital");
 		ReportBuilder.styleCell(cells[6], false, true);
 
-		cells[7] = ReportBuilder.buildHeaderCell("Prémio Comercial");
+		cells[7] = ReportBuilder.buildHeaderCell("Prémio Total Anual");
 		ReportBuilder.styleCell(cells[7], false, true);
 
-		cells[8] = ReportBuilder.buildHeaderCell("Prémio Total Anual");
+		cells[8] = ReportBuilder.buildHeaderCell("Observações");
 		ReportBuilder.styleCell(cells[8], false, true);
-
-		cells[9] = ReportBuilder.buildHeaderCell("Observações");
-		ReportBuilder.styleCell(cells[9], false, true);
 
 		setWidths(cells);
 
@@ -416,7 +405,6 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		cells[6].setWidth(90);
 		cells[7].setWidth(90);
 		cells[8].setWidth(90);
-		cells[9].setWidth(90);
 	}
 	
 	/** 
