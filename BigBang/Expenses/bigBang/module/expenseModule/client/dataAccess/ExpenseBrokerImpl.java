@@ -435,7 +435,8 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 				parameter
 		};
 		
-		ExpenseSortParameter sort = new ExpenseSortParameter(SortableField.NUMBER, SortOrder.DESC);
+		// jcamilo: change from relevance to date by request from Ana (Saúde)
+		ExpenseSortParameter sort = new ExpenseSortParameter(SortableField.DATE, SortOrder.DESC);
 		SortParameter[] sorts = new SortParameter[]{
 				sort
 		};

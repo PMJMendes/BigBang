@@ -26,6 +26,7 @@ import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.ImageItem;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ConversationServiceImpl;
@@ -1335,6 +1336,13 @@ public class ExpenseServiceImpl
 
 		if ( lParam.field == ExpenseSortParameter.SortableField.DATE )
 			pstrBuffer.append("[:Date]");
+		
+		// jcamilo: Added the sorting order
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
 
 		return true;
 	}
