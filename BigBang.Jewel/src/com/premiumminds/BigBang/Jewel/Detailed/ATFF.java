@@ -40,7 +40,7 @@ public class ATFF
 
 			for ( i = 0; i < ((Timestamp)marrExercises[ex].getAt(PolicyExercise.I.STARTDATE)).getMonth(); i++ )
 			{
-				j = FindValue(FindFieldID("LEGAL", "C" + (i + 1)), null, lidExercise, j + 1);
+				j = FindValue(FindFieldDef("LEGAL", "C" + (i + 1)), null, lidExercise, j + 1);
 				if ( (j >= 0) && (marrValues[j].GetValue() != null) )
 					pstrBuilder.append("O campo do mês ").append(i + 1).append(" do exercício de ")
 							.append(marrExercises[marrExercises.length - 1].getLabel())
@@ -73,7 +73,7 @@ public class ATFF
 		int i, j;
 		StringBuilder lstrBuilder;
 
-		j = FindValue(FindFieldID("H", "BCALC"), null, null, 0);
+		j = FindValue(FindFieldDef("H", "BCALC"), null, null, 0);
 		lstrAux = marrValues[j].GetValue();
 		if ( lstrAux == null )
 			throw new PolicyCalculationException("Erro: Base de cálculo não está preenchida");
@@ -87,7 +87,7 @@ public class ATFF
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		j = FindValue(FindFieldID("H", "TCOM"), null, null, j + 1);
+		j = FindValue(FindFieldDef("H", "TCOM"), null, null, j + 1);
 		lstrAux = marrValues[j].GetValue();
 		if ( lstrAux == null )
 			throw new PolicyCalculationException("Erro: Taxa comercial não está preenchida");
@@ -107,11 +107,11 @@ public class ATFF
 		{
 			lidExercise = marrExercises[ex].getKey();
 
-			llngResult = FindValue(FindFieldID("LEGAL", "CCALC"), null, lidExercise, j + 1);
-			llngDelta = FindValue(FindFieldID("LEGAL", "DELTA"), null, lidExercise, llngResult + 1);
-			llngPremium = FindValue(FindFieldID("LEGAL", "PCALC"), null, lidExercise, llngDelta + 1);
+			llngResult = FindValue(FindFieldDef("LEGAL", "CCALC"), null, lidExercise, j + 1);
+			llngDelta = FindValue(FindFieldDef("LEGAL", "DELTA"), null, lidExercise, llngResult + 1);
+			llngPremium = FindValue(FindFieldDef("LEGAL", "PCALC"), null, lidExercise, llngDelta + 1);
 
-			j = FindValue(FindFieldID("LEGAL", "CPROV"), null, lidExercise, llngPremium + 1);
+			j = FindValue(FindFieldDef("LEGAL", "CPROV"), null, lidExercise, llngPremium + 1);
 			lstrAux = marrValues[j].GetValue();
 			if ( lstrAux == null )
 				ldblProv = null;
@@ -125,7 +125,7 @@ public class ATFF
 			llngLast = -1;
 			for ( i = 0; i < 12; i++ )
 			{
-				j = FindValue(FindFieldID("LEGAL", "C" + (i + 1)), null, lidExercise, j + 1);
+				j = FindValue(FindFieldDef("LEGAL", "C" + (i + 1)), null, lidExercise, j + 1);
 				lstrAux = marrValues[j].GetValue();
 				if ( lstrAux != null )
 				{

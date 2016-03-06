@@ -55,7 +55,7 @@ public class AutoIndiv
 		if ( (marrObjects == null) || (marrObjects.length != 1) )
 			throw new PolicyCalculationException("Esta modalidade de apólice obriga a ter uma e só uma unidade de risco.");
 
-		i = FindValue(FindFieldID("H", "BCALC"), marrObjects[0].getKey(), null, 0);
+		i = FindValue(FindFieldDef("H", "BCALC"), marrObjects[0].getKey(), null, 0);
 		lstrAux = marrValues[i].GetValue();
 		if ( lstrAux == null )
 			throw new PolicyCalculationException("O valor da viatura não está preenchido. Não há cálculos detalhados a efectuar.");
@@ -74,13 +74,13 @@ public class AutoIndiv
 		j = -1;
 		for ( String lstr: new String[] {"CCC", "IRE", "FR", "FNAT", "AVAND", "GT"} )
 		{
-			j = FindCoverage(FindCoverageID(lstr), j + 1);
+			j = FindCoverage(FindCoverageDef(lstr), j + 1);
 			if ( !marrCoverages[j].IsPresent() )
 				continue;
 
 			lstrBuilder.append("Para a cobertura de ").append(marrCoverages[j].getLabel()).append(", ");
 
-			i = FindValue(FindFieldID(lstr, "CAP"), null, null, i);
+			i = FindValue(FindFieldDef(lstr, "CAP"), null, null, i);
 			if ( marrValues[i].GetValue() == null )
 			{
 				lstrAux = String.format("%,.2f", ldblValue);
@@ -88,7 +88,7 @@ public class AutoIndiv
 				marrValues[i].SetValue(lstrAux, pdb);
 			}
 
-			i = FindValue(FindFieldID(lstr, "TFRANQ"), null, null, i);
+			i = FindValue(FindFieldDef(lstr, "TFRANQ"), null, null, i);
 			lstrAux = marrValues[i].GetValue();
 			if ( lstrAux != null )
 			{
@@ -103,7 +103,7 @@ public class AutoIndiv
 				}
 				if ( "%".equals(lstrAux) )
 				{
-					i = FindValue(FindFieldID(lstr, "FMAX"), null, null, i);
+					i = FindValue(FindFieldDef(lstr, "FMAX"), null, null, i);
 					if ( marrValues[i].GetValue() == null )
 					{
 						lstrAux = String.format("%,.2f", ldblFMax);

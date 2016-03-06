@@ -30,13 +30,13 @@ public class Vida_Risco_Individual
 		PolicyValue lobjPERCEM;
 		ObjectBase lobjAux;
 
-		if ( marrObjects == null )
+		if ( (marrObjects == null) || (marrObjects.length == 0) )
 		{
 			pstrBuilder.append("Esta modalidade de apólice obriga a ter unidades de risco, consoante o indicado no campo 'Nº de Cabeças'.\n");
 			return;
 		}
 
-		i = FindValue(FindFieldID("H", "NCAB"), null, null, 0);
+		i = FindValue(FindFieldDef("H", "NCAB"), null, null, 0);
 		if ( i < -1 )
 		{
 			pstrBuilder.append("O campo 'Nº de Cabeças'")
