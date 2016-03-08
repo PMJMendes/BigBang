@@ -840,7 +840,7 @@ public class InsurancePolicyServiceImpl
 		{
 			for ( i = 0; i < larrSubs.length; i++ )
 			{
-				ldblPremium = (BigDecimal)larrSubs[i].getAt(8);
+				ldblPremium = (BigDecimal)larrSubs[i].getAt(12); // Total Premium
 				if ( ldblPremium == null )
 					ldblPremium = BigDecimal.ZERO;
 				else
