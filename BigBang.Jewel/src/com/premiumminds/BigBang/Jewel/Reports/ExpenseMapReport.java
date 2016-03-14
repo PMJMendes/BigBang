@@ -111,9 +111,10 @@ public class ExpenseMapReport
 				{
 					lstrObject = ( lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT) == null ? (String)lobjExpense.getAt(Expense.I.GENERICOBJECT) :
 							SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(Expense.I.SUBPOLICYOBJECT)).getLabel() );
-					lobjCoverage = ( lobjExpense.getAt(Expense.I.POLICYCOVERAGE) == null ? null :
+					lobjCoverage = ( lobjExpense.getAt(Expense.I.SUBPOLICYCOVERAGE) == null ? null :
 							SubPolicyCoverage.GetInstance(Engine.getCurrentNameSpace(),
 							(UUID)lobjExpense.getAt(Expense.I.SUBPOLICYCOVERAGE)).GetCoverage() );
+					// Small bug fix: it was checking if lobjExpense.getAt(Expense.I.POLICYCOVERAGE) wrongly, when getting the coverage
 				}
 			}
 			catch (Throwable e)
