@@ -840,12 +840,12 @@ public class InsurancePolicyServiceImpl
 		{
 			for ( i = 0; i < larrSubs.length; i++ )
 			{
-				ldblPremium = (BigDecimal)larrSubs[i].getAt(12); // Total Premium
+				ldblPremium = (BigDecimal)larrSubs[i].getAt(com.premiumminds.BigBang.Jewel.Objects.SubPolicy.I.TOTALPREMIUM);
 				if ( ldblPremium == null )
 					ldblPremium = BigDecimal.ZERO;
 				else
 				{
-					lidFrac = (UUID)larrSubs[i].getAt(5);
+					lidFrac = (UUID)larrSubs[i].getAt(com.premiumminds.BigBang.Jewel.Objects.SubPolicy.I.FRACTIONING);
 					if ( Constants.FracID_Semester.equals(lidFrac) )
 						ldblPremium = ldblPremium.divide(new BigDecimal(2), 2, RoundingMode.HALF_UP);
 					else if ( Constants.FracID_Quarter.equals(lidFrac) )
