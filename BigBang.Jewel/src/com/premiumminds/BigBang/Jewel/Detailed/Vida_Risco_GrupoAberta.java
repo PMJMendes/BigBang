@@ -30,14 +30,14 @@ public class Vida_Risco_GrupoAberta
 		PolicyCoverage lobjMAJFM;
 		PolicyValue lobjPERCEM;
 
-		i = FindCoverage(FindCoverageID("MAJFM"), 0);
+		i = FindCoverage(FindCoverageDef("MAJFM"), 0);
 		if ( i < -1 )
 			return;
 		lobjMAJFM = marrCoverages[i];
 
 		if ( (lobjMAJFM.IsPresent() != null) && lobjMAJFM.IsPresent() )
 		{
-			i = FindValue(FindFieldID("MAJFM", "PERCEM"), null, null, 0);
+			i = FindValue(FindFieldDef("MAJFM", "PERCEM"), null, null, 0);
 			if ( i < -1 )
 			{
 				pstrBuilder.append("O campo 'Percentagem por Filho' da cobertura 'Majoração do Capital por Filhos Menores'")
@@ -62,14 +62,14 @@ public class Vida_Risco_GrupoAberta
 		SubPolicyCoverage lobjMAJFM;
 		SubPolicyValue lobjPERCEM;
 
-		i = FindSubCoverage(FindCoverageID("MAJFM"), 0);
+		i = FindSubCoverage(FindCoverageDef("MAJFM"), 0);
 		if ( i < -1 )
 			return;
 		lobjMAJFM = marrSubCoverages[i];
 
 		if ( (lobjMAJFM.IsPresent() != null) && lobjMAJFM.IsPresent() )
 		{
-			i = FindSubValue(FindFieldID("MAJFM", "PERCEM"), null, null, 0);
+			i = FindSubValue(FindFieldDef("MAJFM", "PERCEM"), null, null, 0);
 			if ( i < -1 )
 			{
 				pstrBuilder.append("O campo 'Percentagem por Filho' da cobertura 'Majoração do Capital por Filhos Menores'")
