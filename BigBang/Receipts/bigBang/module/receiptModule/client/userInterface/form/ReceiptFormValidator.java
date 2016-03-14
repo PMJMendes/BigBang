@@ -95,7 +95,8 @@ public class ReceiptFormValidator extends FormValidator<ReceiptForm> {
 			Date polDate = DateTimeFormat.getFormat("yyyy-MM-dd").parse(form.getValue().inheritEndDate);
 			Date recDate = form.coverageStart.getValue();
 
-			if (polDate.before(recDate)) {
+			if (polDate.before(recDate) && 
+					!BigBangConstants.OperationIds.ReceiptProcess.ReceiptType.REVERSAL.equalsIgnoreCase(form.type.getValue())) {
 				form.coverageStart.setInvalid(true);
 				return false;
 			}
