@@ -88,13 +88,13 @@ FormValidator<InsurancePolicyHeaderForm> {
 			Date endDate = form.endDate.getValue();
 
 			if(startDate != null && endDate != null){
-				if(startDate.before(endDate)){
-					return true;
-				}
-				else{
+				if(endDate.before(startDate)){
 					form.startDate.setInvalid(true);
 					form.endDate.setInvalid(true);
 					return false;
+				}
+				else{
+					return true;
 				}
 
 			}else{
