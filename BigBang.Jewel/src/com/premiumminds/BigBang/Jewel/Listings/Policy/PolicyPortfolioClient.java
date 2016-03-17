@@ -288,14 +288,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			if (policyValues.length == 0) {
 				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
 			} else {
-				dataCells[cellNumber] = buildInsuredValueTable(policyCoverages, policyValues);
+				dataCells[cellNumber] = buildInsuredValueByCoverageTable(policyCoverages, policyValues, "CAP");
 			}	
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
 		// Tax
 		if (reportParams[paramCheck++].equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			if (policyValues.length == 0) {
+				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			} else {
+				dataCells[cellNumber] = buildInsuredValueByCoverageTable(policyCoverages, policyValues, "TCOM");
+			}	
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 				
@@ -391,9 +395,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	}
 	
 	/** 
-	 * This method is responsible for building the table with the insured values associated with a coverage from a given policy
+	 * This method is responsible for building the table with the values - with a given identifier tag - associated 
+	 * with a coverage from a given policy
 	 */
-	protected TD buildInsuredValueTable(PolicyCoverage[] coverages, PolicyValue[] policyValues) {
+	protected TD buildInsuredValueByCoverageTable(PolicyCoverage[] coverages, PolicyValue[] policyValues, String tag) {
 		
 		TD content;
 
@@ -411,17 +416,27 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				
 				TD[] value = new TD[1];
 				
+				boolean inserted = false;
+				
 				// Iterates the values and gets the insured values' ones
 				for ( int u = 0; u < policyValues.length; u++ ) {
-					if (policyValues[u].GetTax().GetTag() != null && policyValues[u].GetTax().GetTag().equals("CAP") &&
-							policyValues[u].GetTax().GetCoverage().getKey().equals(coverages[i].GetCoverage().getKey())) {
+					if (policyValues[u].GetTax().GetTag() != null && policyValues[u].GetTax().GetTag().equals(tag) &&
+							policyValues[u].GetTax().GetCoverage().getKey().equals(coverages[i].GetCoverage().getKey()) &&
+							policyValues[u].GetValue() != null) {
 						value[0] = ReportBuilder.buildCell(policyValues[u].GetValue(), TypeDefGUIDs.T_String);
-						ReportBuilder.styleCell(value[0], false, false);
-						
-						tableRows[i] = ReportBuilder.buildRow(value);
-						ReportBuilder.styleRow(tableRows[i], false);
+						inserted = true;
+						break;
 					}
 				}
+				
+				if (!inserted) {
+					value[0] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+				}
+				
+				ReportBuilder.styleCell(value[0], false, false);
+				tableRows[i] = ReportBuilder.buildRow(value);
+				ReportBuilder.styleRow(tableRows[i], false);
+				
 			}
 		}
 		
