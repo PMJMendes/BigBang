@@ -30,6 +30,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Coverage;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
@@ -38,7 +39,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
  */
 public class PolicyPortfolioClient extends PolicyListingsBase {
 	
-	BigDecimal premiumTotal;
+	private BigDecimal premiumTotal;
 	
 	/** 
 	 * The method responsible for creating the report
@@ -98,7 +99,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		tableRows[rowNum++] = ReportBuilder.constructDualRow("Nº de Apólices", policies.length, TypeDefGUIDs.T_Integer, false);
 
 		// Build the row with the total prize
-		tableRows[rowNum++] = ReportBuilder.constructDualRow("Total de Prémios", premiumTotal, TypeDefGUIDs.T_Decimal, false);
+		if (reportParams[10].equals("1")) {
+			tableRows[rowNum++] = ReportBuilder.constructDualRow("Total de Prémios", premiumTotal, TypeDefGUIDs.T_Decimal, false);
+		}
 
 		table = ReportBuilder.buildTable(tableRows);
 		ReportBuilder.styleTable(table, false);
@@ -208,6 +211,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		String maturity;
 		PolicyObject[] policyObjects;
 		PolicyCoverage[] policyCoverages;
+		PolicyValue[] policyValues;
 		
 		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
 		TD[] dataCells = new TD[cellNumber];
@@ -224,6 +228,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 							policy.getAt(Policy.I.MATURITYDAY).toString();
 		policyObjects = policy.GetCurrentObjects();
 		policyCoverages = policy.GetCurrentCoverages();
+		policyValues = policy.GetCurrentValues();
 		
 		// Increases the value for the total premium
 		if (policy.getAt(Policy.I.TOTALPREMIUM) != null) {
@@ -278,9 +283,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
-		// Insured Value - intentionally left blank
+		// Insured Value
 		if (reportParams[paramCheck++].equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			if (policyValues.length == 0) {
+				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			} else {
+				dataCells[cellNumber] = buildInsuredValueTable(policyCoverages, policyValues);
+			}	
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
@@ -369,6 +378,50 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				
 				tableRows[i] = ReportBuilder.buildRow(coverage);
 				ReportBuilder.styleRow(tableRows[i], false);
+			}
+		}
+		
+		table = ReportBuilder.buildTable(tableRows);
+		ReportBuilder.styleTable(table, true);
+		
+		content.addElement(table);
+		ReportBuilder.styleInnerContainer(content);
+		
+		return content;
+	}
+	
+	/** 
+	 * This method is responsible for building the table with the insured values associated with a coverage from a given policy
+	 */
+	protected TD buildInsuredValueTable(PolicyCoverage[] coverages, PolicyValue[] policyValues) {
+		
+		TD content;
+
+		content = new TD();
+		content.setColSpan(1);
+		
+		Table table;
+		TR[] tableRows  = new TR[coverages.length];
+		
+		//Iterates the coverages, and adds them to a table
+		for ( int i = 0; i < coverages.length; i++ ) {
+			
+			// Only lists coverages present at the policy
+			if ((Boolean)coverages[i].getAt(2) == true) {
+				
+				TD[] value = new TD[1];
+				
+				// Iterates the values and gets the insured values' ones
+				for ( int u = 0; u < policyValues.length; u++ ) {
+					if (policyValues[u].GetTax().GetTag() != null && policyValues[u].GetTax().GetTag().equals("CAP") &&
+							policyValues[u].GetTax().GetCoverage().getKey().equals(coverages[i].GetCoverage().getKey())) {
+						value[0] = ReportBuilder.buildCell(policyValues[u].GetValue(), TypeDefGUIDs.T_String);
+						ReportBuilder.styleCell(value[0], false, false);
+						
+						tableRows[i] = ReportBuilder.buildRow(value);
+						ReportBuilder.styleRow(tableRows[i], false);
+					}
+				}
 			}
 		}
 		
