@@ -792,7 +792,7 @@ public class Constants
 		public static final UUID CONSTRUCTION_ASSEMBLY	= UUID.fromString("6DB46133-2789-4B5E-B8FF-9EE9010A8E9D");
 		public static final UUID AGRICULTURAL  			= UUID.fromString("A3F44708-4666-425C-AA70-9EE9010A9E0D");
 		public static final UUID AUTOMOBILE   			= UUID.fromString("7F5F77EB-8348-4914-8525-9EE9010AB1C6");
-		public static final UUID RESPONSABILITY			= UUID.fromString("2442DD02-F525-4CE3-9CFF-9EE9010ABC44");
+		public static final UUID RESPONSIBILITY			= UUID.fromString("2442DD02-F525-4CE3-9CFF-9EE9010ABC44");
 		public static final UUID TRANSPORTED_GOODS		= UUID.fromString("E2732D85-E204-4A71-A5D4-9EE9010AC7B1");
 		public static final UUID MARINE_VESSELS			= UUID.fromString("00960D0F-F31F-4A9E-AE7E-9EE9010AD157");
 		public static final UUID RAIL_VEHICLES			= UUID.fromString("370DE151-6ABF-4561-A8BD-9EE9010ADC2A");
@@ -802,15 +802,26 @@ public class Constants
 		public static final UUID RETIREMENT_FUND		= UUID.fromString("696A51D8-B21A-4DA8-B8E9-9EE901153338");
 	}
 	
-	// Policy Categories
+	// Policy Sublines
 	public static class PolicySubLines {
-		public static final UUID AUTO_INDIVIDUAL   		= UUID.fromString("E08BDBD3-4F59-45B9-975E-9EE9011AA8AC");
+		public static final UUID AUTO_INDIVIDUAL   		= UUID.fromString("22FE8580-E680-4EC7-9ABB-9EE9011AA269");
+		public static final UUID AUTO_FLEET		  		= UUID.fromString("E08BDBD3-4F59-45B9-975E-9EE9011AA8AC");
 	}
 	
-	// Policy Coverages
-	public static class PolicyCoverages {
-		public static final UUID WORK_LEGAL		   		= UUID.fromString("53F0CDF9-593E-41D1-BD15-9F9100E78B08");
-		public static final UUID RESPONSABILITY_VALUE	= UUID.fromString("A19BDF86-4FF8-4BA0-A96A-9F920158BDAB");
+	// Policy's Coverages' TAGS
+	public static class PolicyCoveragesTags {
+		public static final String LEGAL				= "LEGAL";
+		public static final String HEADER				= "H";
+	}
+	
+	// Values' Retrieval TAGS
+	public static class PolicyValuesTags {
+		public static final String TERRITORIAL_SCOPE	= "AMBT";
+		public static final String CONTRACT_NAME		= "NEMP";
+		public static final String TEMPORARY_VALUE		= "CPROV";
+		public static final String VALUE				= "CAP";
+		public static final String SALES_TAX			= "TCOM";
+		public static final String HITTING_RATE			= "TXACE";
 	}
 
 	// FK Constants

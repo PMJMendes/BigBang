@@ -37,11 +37,13 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 /**
- * Class responsible for the creation of the Client's Portfolio Report
+ * Class responsible for the creation of the Client's Portfolio's Report
  */
 public class PolicyPortfolioClient extends PolicyListingsBase {
 	
 	private BigDecimal premiumTotal;
+	
+	private UUID fauxId;
 	
 	/** 
 	 * The method responsible for creating the report
@@ -55,573 +57,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Gets the policies from the DB
 		policies = getPortfolio(reportParams);
 
-		// Creates the report (this one only has on section)
+		// Creates the report (this one only has one section)
 		reportResult = new GenericElement[1];
 		reportResult[0] = buildClientPortfolioTable("Relatório de Carteira de Clientes", policies, reportParams);
 
 		return reportResult;
 	}
 	
-	/** 
-	 * The method responsible for printing the table corresponding to a client's portfolio
-	 */
-	protected Table buildClientPortfolioTable(String headerTitle, Policy[] policies, String[] reportParams)
-		throws BigBangJewelException {
-			
-		Table table;
-		TR[] tableRows;
-		TD mainContent;
-		int rowNum = 0;
-		String clientOrGroupTitle;
-		HashMap<String, ArrayList<Policy>> policiesMap;
-
-		tableRows = new TR[5];
-		premiumTotal = BigDecimal.ZERO;
-		
-		// Creates a map with the policies separated by "ramo"
-		policiesMap = getPoliciesMap(policies);
-
-		// Gets the table row with the report's name
-		tableRows[rowNum++] = ReportBuilder.constructDualHeaderRowCell(headerTitle);
-		
-		// Gets the client's or group's name (if any) and creates the corresponding row
-		clientOrGroupTitle = getClientOrGroup(reportParams);
-		if (clientOrGroupTitle != null) {
-			tableRows[rowNum++] = ReportBuilder.constructDualIntermediateRowCell(clientOrGroupTitle);
-		}
-
-		// Builds the row corresponding to the "real content" of the report - meaning... the values from the policies
-		mainContent = new TD();
-		mainContent.setColSpan(2);
-		mainContent.addElement(buildReportInfo(policiesMap, policies.length, reportParams));
-		ReportBuilder.styleInnerContainer(mainContent);
-		tableRows[rowNum++] = ReportBuilder.buildRow(new TD[] {mainContent});
-
-		// Builds the row with the total number of policies
-		tableRows[rowNum++] = ReportBuilder.constructDualRow("Nº de Apólices", policies.length, TypeDefGUIDs.T_Integer, false);
-
-		// Build the row with the total prize
-		if (reportParams[10].equals("1")) {
-			tableRows[rowNum++] = ReportBuilder.constructDualRow("Total de Prémios", premiumTotal, TypeDefGUIDs.T_Decimal, false);
-		}
-
-		table = ReportBuilder.buildTable(tableRows);
-		ReportBuilder.styleTable(table, false);
-
-		return table;
-	}
-	
-	/** 
-	 * This method creates an HashMap with policies grouped by "ramo"
-	 */
-	private HashMap<String, ArrayList<Policy>> getPoliciesMap(Policy[] policies) {
-		
-		HashMap<String, ArrayList<Policy>> policiesMap;
-		String policySubline; 
-		policiesMap = new HashMap<String, ArrayList<Policy>>();
-		
-		for(int i = 0; i < policies.length; i++) {
-			policySubline = policies[i].GetSubLine().getDescription();
-			if (policiesMap.get(policySubline) == null) {
-				policiesMap.put(policySubline, new ArrayList<Policy>());
-			}
-			policiesMap.get(policySubline).add(policies[i]);
-		}
-		
-		return policiesMap;
-	}
-	
-	/** 
-	 * This method gets the client name or group name to display in the second row in the table
-	 */
-	private String getClientOrGroup (String[] reportParams) throws BigBangJewelException {
-		
-		String displayName;
-		
-		// If the client's name is defined, it always displays the client's name. If the group name is defined, it is displayed
-		if ( reportParams[0] != null ) {
-			Client client = Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(reportParams[0]));
-			displayName = (String) client.getAt(Client.I.NAME);
-		} else if ( reportParams[1] != null ) {
-			ClientGroup clientGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(reportParams[1]));
-			displayName = (String) clientGroup.getAt(ClientGroup.I.NAME);
-		} else {
-			displayName = null;
-		}
-		
-		return displayName;
-	}
-
-	/** 
-	 * The method responsible for building the rows in the report with the policies' info
-	 */
-	protected Table buildReportInfo(HashMap<String, ArrayList<Policy>> policiesMap, 
-									int numberOfPolicies, String[] reportParams) throws BigBangJewelException {
-		
-		Table table;
-		TR[] tableRows  = new TR[numberOfPolicies + 1 + policiesMap.size()];
-		int rowNum= 0;
-		
-		// Builds the row with the column names
-		tableRows[rowNum++] = ReportBuilder.buildRow(buildInnerHeaderRow(reportParams));
-		ReportBuilder.styleRow(tableRows[0], true);
-		
-		// Iterates the hashmap with the several policies by "ramo", and creates a line 
-		// with the name of that "ramo", followed by the information about the policies
-		for (String subline: policiesMap.keySet()) {
-			tableRows[rowNum++] = buildSublineRow(subline, reportParams);
-			Object[] policies = policiesMap.get(subline).toArray();
-			
-			for (int i = 0; i < policies.length; i++) {
-				tableRows[rowNum] = ReportBuilder.buildRow(buildRow((Policy)policies[i], reportParams));
-				ReportBuilder.styleRow(tableRows[rowNum++], false);
-			}
-		}
-		
-		table = ReportBuilder.buildTable(tableRows);
-		ReportBuilder.styleTable(table, true);
-		
-		return table;
-	}
-
-	/** 
-	 * This method builds the row with the information about the preceding policies' "ramo"
-	 */
-	private TR buildSublineRow(String subline, String[] reportParams) {
-		
-		TD rowContent;
-		TR row;
-		
-		// Builds the TD with the content
-		rowContent = ReportBuilder.buildCell("Ramo: " + subline, TypeDefGUIDs.T_String);
-		rowContent.setColSpan(10);
-		ReportBuilder.styleCell(rowContent, true, false);
-		
-		// Builds the TR encapsulating the TD 
-		row = ReportBuilder.buildRow(new TD[] {rowContent});
-		row.setStyle("height:35px; font-weight:bold;");
-		
-		return row;
-	}
-	
-	/** 
-	 * This method is responsible for building a row with information about a given policy
-	 */
-	protected TD[] buildRow(Policy policy, String[] reportParams) throws BigBangJewelException {
-		
-		Company company;
-		String maturity;
-		UUID currentExercise;
-		PolicyObject[] policyObjects;
-		HashMap<UUID, CoverageData> valuesByObject;
-		String riskSite = "";
-		
-		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
-		TD[] dataCells = new TD[cellNumber];
-		cellNumber = 0;
-		int paramCheck = 2;
-		
-		currentExercise = getCurrentExercise(policy.GetCurrentExercises());
-		
-		company = policy.GetCompany();
-		maturity = ((policy.getAt(Policy.I.MATURITYMONTH) == null) || 
-					((Integer) policy.getAt(Policy.I.MATURITYMONTH) == -1) ||
-					(policy.getAt(Policy.I.MATURITYDAY) == null) ||
-					((Integer) policy.getAt(Policy.I.MATURITYDAY) == -1)) ?
-							null :
-							policy.getAt(Policy.I.MATURITYMONTH).toString() + " / " + 
-							policy.getAt(Policy.I.MATURITYDAY).toString();
-		
-		policyObjects = policy.GetCurrentObjects();
-		
-		valuesByObject = getValuesByObject(policy, currentExercise);
-
-		// Increases the value for the total premium
-		if (policy.getAt(Policy.I.TOTALPREMIUM) != null) {
-			premiumTotal = premiumTotal.add((BigDecimal)policy.getAt(Policy.I.TOTALPREMIUM));
-		}
-		
-		// Policy Number
-		if (reportParams[paramCheck++].equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(policy.getLabel(), TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-		}
-		
-		// Insurance Company
-		if (reportParams[paramCheck++].equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(company.getAt(Company.I.NAME), TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-		}
-		
-		// Maturity
-		if (reportParams[paramCheck++].equals("1")) {
-			if (maturity == null) {
-				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-			} else {
-				dataCells[cellNumber] = ReportBuilder.buildCell(maturity, TypeDefGUIDs.T_String);
-			}
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-		}
-		
-		// Iterates Policy Objects 
-		if (policyObjects.length == 0) {
-			
-			// Empty policyObjects column
-			if (reportParams[paramCheck++].equals("1")) {
-				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-				ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-			}
-			
-			// Policy Coverages
-			if (reportParams[paramCheck++].equals("1")) {
-				dataCells[cellNumber] = buildCoverageRelatedTable(valuesByObject.get(UUID.fromString("0")).getCoverages());
-				ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-			}
-			
-			// "Local de Risco" - null
-			if (reportParams[paramCheck++].equals("1")) {
-				dataCells[cellNumber] = ReportBuilder.buildCell("-", TypeDefGUIDs.T_String);
-				ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-			}
-			
-			// Insured Value
-			if (reportParams[paramCheck++].equals("1")) {
-				dataCells[cellNumber] = buildCoverageRelatedTable(valuesByObject.get(UUID.fromString("0")).getInsuredValues());
-				ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-			}
-			
-			// Tax
-			if (reportParams[paramCheck++].equals("1")) {
-				dataCells[cellNumber] = buildCoverageRelatedTable(valuesByObject.get(UUID.fromString("0")).getTaxes());
-				ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-			}
-		} else {
-			
-			for (int i=0; i<policyObjects.length; i++) {
-				
-				riskSite = getRiskSite(policy, policyObjects[i]);
-				
-				UUID objectKey = policyObjects[i].getKey();
-				
-				// Policy Object name
-				if (reportParams[paramCheck++].equals("1")) {
-					String objectName = getObjectName(policy, policyObjects[i]);
-					dataCells[cellNumber] = ReportBuilder.buildCell(objectName, TypeDefGUIDs.T_String);
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-				}
-				
-				// Policy Coverages
-				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = buildCoverageRelatedTable(valuesByObject.get(objectKey).getCoverages());
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-				}
-				
-				// "Local de Risco"
-				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = ReportBuilder.buildCell(riskSite, TypeDefGUIDs.T_String);
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-				}
-				
-				// Insured Value
-				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = buildCoverageRelatedTable(valuesByObject.get(objectKey).getInsuredValues());
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-				}
-				
-				// Tax
-				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = buildCoverageRelatedTable(valuesByObject.get(objectKey).getTaxes());
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-				}
-			}
-		}
-		
-		// Total Premium
-		if (reportParams[paramCheck++].equals("1")) {
-			if (policy.getAt(Policy.I.TOTALPREMIUM) == null) {
-				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-			} else {
-				dataCells[cellNumber] = ReportBuilder.buildCell(policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
-			}
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-		}
-		
-		// Notes - intentionally left blank
-		if (reportParams[paramCheck++].equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-		}
-		
-		setWidths(dataCells, reportParams);
-
-		return dataCells;
-	}
-
-	private String getObjectName(Policy policy, PolicyObject policyObject) {
-		
-		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
-		UUID policySubLine = policy.GetSubLine().getKey();
-
-		// Risk site differs with different policies' categories
-		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE) &&
-			policySubLine.equals(Constants.PolicySubLines.AUTO_INDIVIDUAL)) {
-			return (String) policyObject.getAt(PolicyObject.I.MAKEANDMODEL);
-		} else {
-			return (String) policyObject.getAt(PolicyObject.I.NAME);
-		}
-	}
-
-	private HashMap<UUID, CoverageData> getValuesByObject(
-			Policy policy, UUID currentExercise) throws BigBangJewelException {
-		
-		PolicyObject[] objects;
-		PolicyValue[] values;
-		PolicyCoverage[] coverages;
-		
-		HashMap<UUID, CoverageData> result = new HashMap<UUID, CoverageData>();
-		
-		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
-		UUID policySubLine = policy.GetSubLine().getKey();
-		
-		objects = policy.GetCurrentObjects();
-		coverages = policy.GetCurrentCoverages();
-		
-		CoverageData policyCoverage = new CoverageData();
-		
-		// Special Cases
-		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)) {
-			if (policySubLine.equals(Constants.PolicySubLines.AUTO_INDIVIDUAL)) {
-				values = policy.GetCurrentValues();
-				policyCoverage.buildArrays(coverages, values, true, false, null, currentExercise);
-				policyCoverage.setTaxes(new ArrayList<String>(Arrays.asList("-")));
-			} else {
-				policyCoverage.setInsuredValues(new ArrayList<String>(Arrays.asList("Diversos")));
-				policyCoverage.setTaxes(new ArrayList<String>(Arrays.asList("-")));
-				if (policy.GetCurrentObjects().length== 1) {
-					policyCoverage.setCoverages(new ArrayList<String>(Arrays.asList("Diversos")));
-				} else {
-					policyCoverage.buildArrays(coverages, null, false, false, null, currentExercise);
-				}
-			}
-		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
-			values = policy.GetCurrentValues();
-			policyCoverage.buildArrays(coverages, values, false, false, null, currentExercise);
-			policyCoverage.setInsuredValues(new ArrayList<String>(Arrays.asList(getValueWithCoverageAndTag(policy, Constants.PolicyCoverages.WORK_LEGAL, "CPROV"))));
-			policyCoverage.setTaxes(new ArrayList<String>(Arrays.asList(getValueWithCoverageAndTag(policy, null, "TCOM"))));
-		} else if (policyCat.equals(Constants.PolicyCategories.LIFE)) {
-			values = policy.GetCurrentValues();
-			policyCoverage.buildArrays(coverages, values, true, false, null, currentExercise);
-			policyCoverage.setTaxes(new ArrayList<String>(Arrays.asList(getValueWithCoverageAndTag(policy, null, "TCOM"))));
-		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSABILITY)) {
-			values = policy.GetCurrentValues();
-			policyCoverage.buildArrays(coverages, values, true, false, null, currentExercise);
-			policyCoverage.setInsuredValues(new ArrayList<String>(Arrays.asList(getValueWithCoverageAndTag(policy, Constants.PolicyCoverages.RESPONSABILITY_VALUE, "CAP"))));
-			policyCoverage.setTaxes(new ArrayList<String>(Arrays.asList(getValueWithCoverageAndTag(policy, null, "TXACE"))));
-		} else if (policyCat.equals(Constants.PolicyCategories.PERSONAL_ACCIDENTS)) {
-			values = policy.GetCurrentValues();
-			policyCoverage.buildArrays(coverages, values, true, false, null, currentExercise);
-			policyCoverage.setInsuredValues(new ArrayList<String>(Arrays.asList(getValueWithCoverageAndTag(policy, Constants.PolicyCoverages.RESPONSABILITY_VALUE, "CAP"))));
-			policyCoverage.setTaxes(new ArrayList<String>(Arrays.asList("-")));
-		} else if (policyCat.equals(Constants.PolicyCategories.DISEASE)) {
-			values = policy.GetCurrentValues();
-			policyCoverage.buildArrays(coverages, values, true, false, null, currentExercise);
-			policyCoverage.setInsuredValues(new ArrayList<String>(Arrays.asList(getValueWithCoverageAndTag(policy, Constants.PolicyCoverages.RESPONSABILITY_VALUE, "CAP"))));
-			policyCoverage.setTaxes(new ArrayList<String>(Arrays.asList("-")));
-		}
-		
-		if (objects == null) {
-			values = policy.GetCurrentValues();
-			policyCoverage.buildArrays(coverages, values, true, true, null, currentExercise);
-			result.put(UUID.fromString("0"), policyCoverage);
-		}
-		
-		for (int i=0; i<objects.length; i++) {
-			values = policy.GetCurrentKeyedValues(objects[i].getKey(), currentExercise);
-			policyCoverage.buildArrays(coverages, values, true, true, objects[i].getKey(), currentExercise);
-			result.put(objects[i].getKey(), policyCoverage);
-		}
-		
-		return result;
-	}
-
-	private String getValueWithCoverageAndTag(Policy policy, UUID coveragePK,
-			String tag) throws BigBangJewelException {
-		
-		PolicyValue[] values = policy.GetCurrentValues();
-		
-		for (int i=0; i<values.length; i++) {
-			if (values[i].GetTax().GetTag() != null && 
-				(values[i].GetTax().GetTag().equals(tag) ||
-				 tag == null) &&
-				(values[i].GetTax().GetCoverage().getKey().equals(coveragePK) ||
-				 coveragePK == null) &&
-				 values[i].GetValue() != null) {
-				
-				return values[i].GetValue();
-			}
-		}
-		
-		return null;
-	}
-
-	private UUID getCurrentExercise(PolicyExercise[] exercises) {
-		Timestamp maxDate = new Timestamp(1);
-		UUID result = null; 
-		for (int i = 0; i<exercises.length; i++) {
-			if (((Timestamp)exercises[i].getAt(PolicyExercise.I.STARTDATE)).after(maxDate)) {
-				result = exercises[i].getKey();
-			}
-		}
-		return result;
-	}
-
-	/** 
-	 * This method is responsible for building the table with the names of all the coverages from a given policy
-	 */
-	protected TD buildCoverageRelatedTable(ArrayList<String> data) {
-		
-		TD content;
-
-		content = new TD();
-		content.setColSpan(1);
-		
-		Table table;
-		TR[] tableRows  = new TR[data.size()];
-		
-		//Iterates the coverages, and adds them to a table
-		for ( int i = 0; i < data.size(); i++ ) {
-			
-			TD[] coverage = new TD[1];
-			
-			coverage[0] = ReportBuilder.buildCell(data.get(i), TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(coverage[0], false, false);
-				
-			tableRows[i] = ReportBuilder.buildRow(coverage);
-			ReportBuilder.styleRow(tableRows[i], false);
-		}
-		
-		table = ReportBuilder.buildTable(tableRows);
-		ReportBuilder.styleTable(table, true);
-		
-		content.addElement(table);
-		ReportBuilder.styleInnerContainer(content);
-		
-		return content;
-	}
-	
-
-	
-	/** 
-	 * The method responsible for getting columns' titles
-	 */
-	protected TD[] buildInnerHeaderRow(String[] reportParams) {
-
-		TD[] cells;
-
-		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
-		cells = new TD[cellNumber];
-		int paramCheck = 2;
-
-		cellNumber = 0;
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Apólice");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Companhia");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Venc. (M/D)");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Pessoas/Bens Seguros");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Coberturas");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Local de Risco");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Capital");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Taxa");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Prémio Total Anual");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Observações");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		setWidths(cells, reportParams);
-
-		return cells;
-	}
-	
-	/** 
-	 * The method which defines the width for the columns
-	 */
-	protected void setWidths(TD[] cells, String[] reportParams) {
-		
-		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
-		double multiplier = cellNumber / 10;
-
-		cellNumber = 0;
-		
-		int paramCheck = 2;
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (130 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (250 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (100 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (250 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (250 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
-		}
-	}
 	
 	/** 
 	 * The method responsible for getting the data needed by the report
@@ -710,75 +152,831 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		return policies.toArray(new Policy[policies.size()]);
 	}
 	
-	private String getRiskSite(Policy policy, PolicyObject object) throws BigBangJewelException {
-		
-		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
-		
-		PolicyValue[] vals = policy.GetCurrentValues();
-		
-		// Risk site differs with different policies' categories
-		if (policyCat.equals(Constants.PolicyCategories.MULTIRISK)) {
-			String address = (String) (object.getAt(PolicyObject.I.ADDRESS1) == null ? 
-						"": 
-							object.getAt(PolicyObject.I.ADDRESS1));
-			address = (String) (object.getAt(PolicyObject.I.ADDRESS2) == null ? 
-					address : 
-						address + " " + object.getAt(PolicyObject.I.ADDRESS2));
-			address = (String) (object.getAt(PolicyObject.I.ZIPCODE) == null ? 
-					address : 
-						address + ", " + object.getAt(PolicyObject.I.ZIPCODE));
-			address = (String) (object.getAt(PolicyObject.I.CITYNUMBER) == null ? 
-					address : 
-						address + " - " + object.getAt(PolicyObject.I.CITYNUMBER));
-
-			// TODO: incompleto e eventualmente errado. check ReceiptReturnLetterReport, l.61
+	
+	/** 
+	 * The method responsible for printing the table corresponding to a client's portfolio
+	 */
+	protected Table buildClientPortfolioTable(String headerTitle, Policy[] policies, String[] reportParams)
+		throws BigBangJewelException {
 			
-			return address;
+		Table table;
+		TR[] tableRows;
+		TD mainContent;
+		int rowNum = 0;
+		String clientOrGroupTitle;
+		HashMap<String, ArrayList<Policy>> policiesMap;
+
+		tableRows = new TR[5];
+		premiumTotal = BigDecimal.ZERO;
+		fauxId = UUID.randomUUID();
+		
+		// Creates a map with the policies separated by "ramo"
+		policiesMap = getPoliciesMap(policies);
+
+		// Gets the table row with the report's name
+		tableRows[rowNum++] = ReportBuilder.constructDualHeaderRowCell(headerTitle);
+		
+		// Gets the client's or group's name (if any) and creates the corresponding row
+		clientOrGroupTitle = getClientOrGroup(reportParams);
+		if (clientOrGroupTitle != null) {
+			tableRows[rowNum++] = ReportBuilder.constructDualIntermediateRowCell(clientOrGroupTitle);
+		}
+
+		// Builds the row corresponding to the "real content" of the report - meaning... the values from the policies
+		mainContent = new TD();
+		mainContent.setColSpan(2);
+		mainContent.addElement(buildReportInfo(policiesMap, policies.length, reportParams));
+		ReportBuilder.styleInnerContainer(mainContent);
+		tableRows[rowNum++] = ReportBuilder.buildRow(new TD[] {mainContent});
+
+		// Builds the row with the total number of policies
+		tableRows[rowNum++] = ReportBuilder.constructDualRow("Nº de Apólices", policies.length, TypeDefGUIDs.T_Integer, false);
+
+		// Build the row with the total prize
+		if (reportParams[10].equals("1")) {
+			tableRows[rowNum++] = ReportBuilder.constructDualRow("Total de Prémios", premiumTotal, TypeDefGUIDs.T_Decimal, false);
+		}
+
+		table = ReportBuilder.buildTable(tableRows);
+		ReportBuilder.styleTable(table, false);
+
+		return table;
+	}
+	
+	
+	/** 
+	 * This method creates an HashMap with policies grouped by "ramo"
+	 */
+	private HashMap<String, ArrayList<Policy>> getPoliciesMap(Policy[] policies) {
+		
+		HashMap<String, ArrayList<Policy>> policiesMap;
+		String policySubline; 
+		policiesMap = new HashMap<String, ArrayList<Policy>>();
+		
+		for(int i = 0; i < policies.length; i++) {
+			policySubline = policies[i].GetSubLine().getDescription();
+			if (policiesMap.get(policySubline) == null) {
+				policiesMap.put(policySubline, new ArrayList<Policy>());
+			}
+			policiesMap.get(policySubline).add(policies[i]);
 		}
 		
-		for (int i = 0; i<vals.length; i++) {
-			if (vals[i].GetTax().GetTag() != null &&
-				vals[i].GetObjectID().equals(object.getKey()) &&
-				vals[i].GetValue() != null) {
-				
-				if (policyCat.equals(Constants.PolicyCategories.RESPONSABILITY)) {
-					if( vals[i].GetTax().GetTag().equals("AMBT")) {
-						return vals[i].GetValue();
-					}
-				}	
-				if (policyCat.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
-					if( vals[i].GetTax().GetTag().equals("NEMP")) {
-						return vals[i].GetValue();
-					}
-				}	
-				
+		return policiesMap;
+	}
+	
+	
+	/** 
+	 * This method gets the client's name or group's name to display in the second row in the table
+	 */
+	private String getClientOrGroup (String[] reportParams) throws BigBangJewelException {
+		
+		String displayName;
+		
+		// If the client's name is defined, it always displays the client's name. If the group name is defined, it is displayed
+		if ( reportParams[0] != null ) {
+			Client client = Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(reportParams[0]));
+			displayName = (String) client.getAt(Client.I.NAME);
+		} else if ( reportParams[1] != null ) {
+			ClientGroup clientGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(reportParams[1]));
+			displayName = (String) clientGroup.getAt(ClientGroup.I.NAME);
+		} else {
+			displayName = null;
+		}
+		
+		return displayName;
+	}
+	
+	
+	/** 
+	 * The method responsible for building the rows in the report with the policies' info
+	 */
+	protected Table buildReportInfo(HashMap<String, ArrayList<Policy>> policiesMap, 
+									int numberOfPolicies, String[] reportParams) throws BigBangJewelException {
+		
+		Table table;
+		TR[] tableRows  = new TR[numberOfPolicies + 1 + policiesMap.size()];
+		int rowNum= 0;
+		
+		// Builds the row with the column names
+		tableRows[rowNum++] = ReportBuilder.buildRow(buildInnerHeaderRow(reportParams));
+		ReportBuilder.styleRow(tableRows[0], true);
+		
+		// Iterates the hashmap with the several policies by "ramo", and creates a line 
+		// with the name of that "ramo", followed by the information about the policies
+		for (String subline: policiesMap.keySet()) {
+			tableRows[rowNum++] = buildSublineRow(subline, reportParams);
+			Object[] policies = policiesMap.get(subline).toArray();
+			
+			for (int i = 0; i < policies.length; i++) {
+				tableRows[rowNum] = ReportBuilder.buildRow(buildRow((Policy)policies[i], reportParams));
+				ReportBuilder.styleRow(tableRows[rowNum++], false);
 			}
 		}
 		
+		table = ReportBuilder.buildTable(tableRows);
+		ReportBuilder.styleTable(table, true);
+		
+		return table;
+	}
+	
+	
+	/** 
+	 * The method responsible for getting columns' titles
+	 */
+	protected TD[] buildInnerHeaderRow(String[] reportParams) {
+
+		TD[] cells;
+
+		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
+		cells = new TD[cellNumber];
+		int paramCheck = 2;
+
+		cellNumber = 0;
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Apólice");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Companhia");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Venc. (M/D)");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Pessoas/Bens Seguros");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Coberturas");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Local de Risco");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Capital");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Taxa");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Prémio Total Anual");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Observações");
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+
+		setWidths(cells, reportParams);
+
+		return cells;
+	}
+	
+	
+	/** 
+	 * This method builds the row with the information about the preceding policies' "ramo"
+	 */
+	private TR buildSublineRow(String subline, String[] reportParams) {
+		
+		TD rowContent;
+		TR row;
+		
+		// Builds the TD with the content
+		rowContent = ReportBuilder.buildCell("Ramo: " + subline, TypeDefGUIDs.T_String);
+		rowContent.setColSpan(10);
+		ReportBuilder.styleCell(rowContent, true, false);
+		
+		// Builds the TR encapsulating the TD 
+		row = ReportBuilder.buildRow(new TD[] {rowContent});
+		row.setStyle("height:35px; font-weight:bold;");
+		
+		return row;
+	}
+	
+	
+	/** 
+	 * This method is responsible for building a row with information about a given policy
+	 */
+	protected TD[] buildRow(Policy policy, String[] reportParams) throws BigBangJewelException {
+		
+		Company company;
+		String maturity;
+		PolicyObject[] policyObjects;
+		HashMap<UUID, CoverageData> valuesByObject;
+		
+		// Gets the number of columns to initialize the TD's array
+		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
+		TD[] dataCells = new TD[cellNumber];
+		
+		// Variables used to know which parameter is being checked for display, and which 
+		// cell is being built
+		cellNumber = 0;
+		int paramCheck = 2;
+		
+		company = policy.GetCompany();
+		
+		maturity = ((policy.getAt(Policy.I.MATURITYMONTH) == null) || 
+					((Integer) policy.getAt(Policy.I.MATURITYMONTH) == -1) ||
+					(policy.getAt(Policy.I.MATURITYDAY) == null) ||
+					((Integer) policy.getAt(Policy.I.MATURITYDAY) == -1)) ?
+							null :
+							policy.getAt(Policy.I.MATURITYMONTH).toString() + " / " + 
+							policy.getAt(Policy.I.MATURITYDAY).toString();
+		
+		policyObjects = policy.GetCurrentObjects();
+		
+		valuesByObject = getValuesByObject(policy);
+
+		// Increases the value for the total premium
+		if (policy.getAt(Policy.I.TOTALPREMIUM) != null) {
+			premiumTotal = premiumTotal.add((BigDecimal)policy.getAt(Policy.I.TOTALPREMIUM));
+		}
+		
+		// Policy Number
+		if (reportParams[paramCheck++].equals("1")) {
+			dataCells[cellNumber] = ReportBuilder.buildCell(policy.getLabel(), TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+		}
+		
+		// Insurance Company
+		if (reportParams[paramCheck++].equals("1")) {
+			dataCells[cellNumber] = ReportBuilder.buildCell(company.getAt(Company.I.NAME), TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+		}
+		
+		// Maturity
+		if (reportParams[paramCheck++].equals("1")) {
+			if (maturity == null) {
+				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			} else {
+				dataCells[cellNumber] = ReportBuilder.buildCell(maturity, TypeDefGUIDs.T_String);
+			}
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+		}
+		
+		// Iterates the objects (if any, otherwise it makes a "forced iteration") and builds the row
+		// corresponding to a given object
+		for (int i=0; i<=policyObjects.length; i++) {
+			
+			// If there are no objects, uses a "faux" key to retrieve the coverages, insured values, 
+			// risk site and taxes
+			UUID objectKey;
+			if (policyObjects.length != 0 && policyObjects.length > i) {
+				objectKey = policyObjects[i].getKey();
+			} else {
+				objectKey = fauxId;
+			}
+			
+			// Needed to guarantee that the following code is executed when there are no objects, and 
+			// to prevent a java.lang.ArrayIndexOutOfBoundsException
+			if (policyObjects.length == 0 || policyObjects.length > i) {
+			
+				// Policy Object's Name
+				if (reportParams[paramCheck++].equals("1")) {
+					String objectName = (policyObjects.length==0) ? " " : getObjectName(policy, policyObjects[i]);
+					dataCells[cellNumber] = ReportBuilder.buildCell(objectName, TypeDefGUIDs.T_String);
+					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+				}
+					
+				// Policy Coverages
+				if (reportParams[paramCheck++].equals("1")) {
+					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getCoverages());
+					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+				}
+					
+				// Risk Site
+				if (reportParams[paramCheck++].equals("1")) {
+					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getRiskSite());
+					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+				}
+					
+				// Insured Value
+				if (reportParams[paramCheck++].equals("1")) {
+					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getInsuredValues());
+					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+				}
+					
+				// Tax
+				if (reportParams[paramCheck++].equals("1")) {
+					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getTaxes());
+					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+				}
+			}
+		}
+		
+		// Total Premium
+		if (reportParams[paramCheck++].equals("1")) {
+			if (policy.getAt(Policy.I.TOTALPREMIUM) == null) {
+				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			} else {
+				dataCells[cellNumber] = ReportBuilder.buildCell(policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
+			}
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+		}
+		
+		// Notes - intentionally left blank
+		if (reportParams[paramCheck++].equals("1")) {
+			dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+		}
+		
+		setWidths(dataCells, reportParams);
+
+		return dataCells;
+	}
+
+
+	/** 
+	 * The method which defines the width for the columns
+	 */
+	protected void setWidths(TD[] cells, String[] reportParams) {
+		
+		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
+		double multiplier = cellNumber / 10;
+
+		cellNumber = 0;
+		
+		int paramCheck = 2;
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (130 * multiplier));
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (250 * multiplier));
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (100 * multiplier));
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (250 * multiplier));
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (250 * multiplier));
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (90 * multiplier));
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (90 * multiplier));
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (90 * multiplier));
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (90 * multiplier));
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth((int) (90 * multiplier));
+		}
+	}
+	
+	
+	/** 
+	 * This method builds an HashMap with the coverages, the insured values, 
+	 * the risk site and the taxes related with a given object. 
+	 * This HashMap is retrieved in a way that it can be used in a consistent form,
+	 * even if the way it is being built changes (A LOT) according to the policy's
+	 * category
+	 */
+	private HashMap<UUID, CoverageData> getValuesByObject(Policy policy) 
+			throws BigBangJewelException {
+		
+		PolicyObject[] policyObjects;
+		
+		HashMap<UUID, CoverageData> result = new HashMap<UUID, CoverageData>();
+		
+		policyObjects = policy.GetCurrentObjects();
+		
+		CoverageData coverageData;
+		
+		// Iterates the policy's objects (if any)
+		// In case the policy does not have objects, it uses a "faux" object
+		for (int i=0; i<=policyObjects.length; i++) {
+			
+			UUID objectKey;
+			
+			PolicyObject insuredObject;
+			if (policyObjects.length != 0 && policyObjects.length > i) {
+				insuredObject = policyObjects.length==0 ? null :policyObjects[i];
+				objectKey = insuredObject.getKey();
+			} else {
+				insuredObject = null;
+				objectKey = fauxId; // faux
+			}
+			
+			// Needed to guarantee that the following code is executed when there are no objects, and 
+			// to prevent a java.lang.ArrayIndexOutOfBoundsException
+			if (policyObjects.length == 0 || policyObjects.length > i) {
+				
+				// Gets the Data related to the coverages and inserts in the HashMap
+				coverageData = buildCoverageData(policy, insuredObject);
+				result.put(objectKey, coverageData);
+				
+			}			
+		}
+		return result;
+	}
+	
+
+	/** 
+	 * This method gets the object name according to the policy's category
+	 */
+	private String getObjectName(Policy policy, PolicyObject policyObject) {
+
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		UUID policySubLine = policy.GetSubLine().getKey();
+		
+		// For an automobile / Individual, it's the mark and model
+		// otherwise, it's the policy object's name
+		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE) &&
+			policySubLine.equals(Constants.PolicySubLines.AUTO_INDIVIDUAL)) {
+			return (String) policyObject.getAt(PolicyObject.I.MAKEANDMODEL);
+		} else {
+			return (String) policyObject.getAt(PolicyObject.I.NAME);
+		}
+	}
+	
+	
+	/** 
+	 * This method returns a TD containing a value or a table of values, 
+	 * contained in an ArrayList
+	 */
+	private TD buildValuesTable(ArrayList<String> data) {
+
+		TD content;
+
+		content = new TD();
+		content.setColSpan(1);
+		
+		if (data == null) {
+			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+		} 
+		
+		// Builds a "simple" TD or a table with a TD with each value
+		if (data.size() == 1) {
+			content = ReportBuilder.buildCell(data.get(0), TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(content, false, false);
+			ReportBuilder.styleInnerContainer(content);
+		} else {
+			
+			Table table;
+			TR[] tableRows  = new TR[data.size()];
+			
+			// Iterates the values, and adds them to the table
+			for ( int i = 0; i < data.size(); i++ ) {
+				TD[] coverage = new TD[1];
+				
+				coverage[0] = ReportBuilder.buildCell(data.get(i), TypeDefGUIDs.T_String);
+				ReportBuilder.styleCell(coverage[0], false, false);
+					
+				tableRows[i] = ReportBuilder.buildRow(coverage);
+				ReportBuilder.styleRow(tableRows[i], false);
+			}
+			
+			table = ReportBuilder.buildTable(tableRows);
+			ReportBuilder.styleTable(table, true);
+			
+			content.addElement(table);
+			ReportBuilder.styleInnerContainer(content);
+		}
+		
+		return content;
+	}
+	
+	
+	/** 
+	 * This method populates a CoverageData class with the values related to a given object.
+	 * Upon population, it acts differently according to the policy's category
+	 */
+	private CoverageData buildCoverageData(Policy policy, PolicyObject insuredObject) 
+			throws BigBangJewelException {
+
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		UUID policySubLine = policy.GetSubLine().getKey();
+		
+		CoverageData coverageData = new CoverageData();
+		
+		PolicyValue[] policyValues = getPolicyValues(policy, insuredObject);
+		
+		PolicyCoverage[] policyCoverages = null;
+		
+		/*
+		 * Policy Coverages' set 
+		 */
+		// In case of an Automobile / Fleet policy, and only one policy object,
+		// it should read "Diversos"
+		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE) &&
+			policySubLine.equals(Constants.PolicySubLines.AUTO_FLEET) &&
+			policy.GetCurrentObjects().length == 1) {
+			coverageData.setCoverages("Diversos");
+		} else {
+			policyCoverages = policy.GetCurrentCoverages();
+			coverageData.setCoverages(policyCoverages);
+		}
+		
+		
+		/*
+		 * Policy Risk Site's set 
+		 */
+		coverageData.setRiskSite(getRiskSite(policy, insuredObject, policyValues));
+		
+		
+		/*
+		 * Policy Insured Values' set
+		 */
+		coverageData.setInsuredValues(getInsuredValues(policy, policyValues, policyCoverages));
+		
+		
+		/*
+		 * Policy Taxes' set
+		 */
+		coverageData.setTaxes(getTaxes(policy, policyValues, policyCoverages));
+		
+		return coverageData;
+	}
+
+
+	/**
+	 * This method gets the policy values, whether they are related to a given exercise
+	 * and/or object, or simply related to the "general" policy
+	 */
+	private PolicyValue[] getPolicyValues(Policy policy, PolicyObject insuredObject) 
+			throws BigBangJewelException {
+
+		UUID currentExercise = getCurrentExercise(policy.GetCurrentExercises());
+		
+		PolicyValue[] values = null; 
+		
+		if (insuredObject != null && currentExercise != null)  {
+			values = policy.GetCurrentKeyedValues(insuredObject.getKey(), currentExercise);
+		}
+		
+		if (values == null || values.length==0) { 	// TODO: not good. debug later.
+			values = policy.GetCurrentValues();
+		}
+		
+		return values;
+	}
+
+
+	/**
+	 * This method gets the risk site (if any) according to the policy's category
+	 */
+	private String getRiskSite(Policy policy, PolicyObject insuredObject,
+			PolicyValue[] policyValues) {
+
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+
+		// If policy is MULTIRRISK
+		if (policyCat.equals(Constants.PolicyCategories.MULTIRISK)) {
+			String address = (String) (insuredObject.getAt(PolicyObject.I.ADDRESS1) == null ? ""
+					: insuredObject.getAt(PolicyObject.I.ADDRESS1));
+			address = (String) (insuredObject.getAt(PolicyObject.I.ADDRESS2) == null ? address
+					: address + " " + insuredObject.getAt(PolicyObject.I.ADDRESS2));
+			address = (String) (insuredObject.getAt(PolicyObject.I.ZIPCODE) == null ? address
+					: address + ", " + insuredObject.getAt(PolicyObject.I.ZIPCODE));
+			address = (String) (insuredObject.getAt(PolicyObject.I.CITYNUMBER) == null ? address
+					: address + " - " + insuredObject.getAt(PolicyObject.I.CITYNUMBER));
+
+			// TODO: incompleto e eventualmente errado. check ReceiptReturnLetterReport, l.61
+			return address;
+		}
+
+		// If policy is RESPONSABILITY or CONSTRUCTION_ASSEMBLY, the risk site 
+		// is retrieved from the policy values
+		for (int i = 0; i < policyValues.length; i++) {
+			if (policyValues[i].GetTax().GetTag() != null
+					&& (policyValues[i].GetObjectID()==null ||
+							policyValues[i].GetObjectID().equals(insuredObject.getKey()))
+					&& policyValues[i].GetValue() != null) {
+
+				if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
+					if (policyValues[i].GetTax().GetTag().equals(Constants.PolicyValuesTags.TERRITORIAL_SCOPE)) {
+						return policyValues[i].GetValue();
+					}
+				}
+				if (policyCat
+						.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
+					if (policyValues[i].GetTax().GetTag().equals(Constants.PolicyValuesTags.CONTRACT_NAME)) {
+						return policyValues[i].GetValue();
+					}
+				}
+
+			}
+		}
+
 		return "-";
 	}
 	
-	@SuppressWarnings("unused")
+	
+	/** 
+	 * This method gets the insured values according to the category.
+	 * If they are related with the coverages, they are returned in the same
+	 * order than the coverages, with a white space when the value does not
+	 * exist for a given coverage
+	 */
+	private ArrayList<String> getInsuredValues(Policy policy,
+			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) throws BigBangJewelException {
+
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		UUID policySubLine = policy.GetSubLine().getKey();
+		
+		ArrayList<String> result = new ArrayList<String>(); 
+		
+		/*
+		 * Special Cases
+		 */
+		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE) &&
+			policySubLine.equals(Constants.PolicySubLines.AUTO_FLEET) &&
+			policy.GetCurrentObjects().length == 1) {
+			// For an automobile / Fleet with only one insured object, it should read "Diversos"
+			result.add("Diversos");
+			return result;
+		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+			// For Work Accidents, the insured value corresponds to the temporary value from the legal coverage
+			result.add(getValueWithTags(policyValues, Constants.PolicyCoveragesTags.LEGAL, Constants.PolicyValuesTags.TEMPORARY_VALUE));
+			return result;
+		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
+			// For Responsibility policies, the value comes from the insured value in the policy header
+			result.add(getValueWithTags(policyValues, Constants.PolicyCoveragesTags.HEADER, Constants.PolicyValuesTags.VALUE));
+			return result;
+		}
+		
+		/*
+		 * "Default case" - to each coverage corresponds a given insured value
+		 */
+		
+		for ( int i = 0; i < policyCoverages.length; i++ ) {
+			
+			// Only lists the values for the coverages present at the policy
+			if (policyCoverages[i].IsPresent()) {
+				
+				boolean wasInserted = false;
+				
+				// Iterates the values and gets the insured values' ones
+				for ( int u = 0; u < policyValues.length; u++ ) {
+					if (policyValues[u].GetTax().GetTag() != null && 
+							policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverages[i].GetCoverage().getKey()) &&
+							policyValues[u].GetTax().GetTag().equals(Constants.PolicyValuesTags.VALUE) &&
+							policyValues[u].GetValue() != null) {
+						result.add(policyValues[u].GetValue());
+						wasInserted = true;
+					}
+				}
+				
+				if (!wasInserted) {
+					result.add(" ");
+				}
+			}
+		}
+		
+		if (result.size() == 0) {
+			return null;
+		}
+		
+		return result;
+	}
+
+
+	/** 
+	 * This method gets the taxes according to the category.
+	 * If they are related with the coverages, they are returned in the same
+	 * order than the coverages, with a white space when the value does not
+	 * exist for a given coverage
+	 * Note that there are some categories without an associated tax
+	 */
+	private ArrayList<String> getTaxes(Policy policy,
+			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) {
+
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		
+
+		ArrayList<String> result = new ArrayList<String>(); 
+		
+		/*
+		 * Special Cases
+		 */
+		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS) ||
+				policyCat.equals(Constants.PolicyCategories.LIFE)) {
+			// If the policy is in the work accidents or life categories, the tax corresponds to 
+			// the sales tax from the policy header
+			result.add(getValueWithTags(policyValues, Constants.PolicyCoveragesTags.HEADER, Constants.PolicyValuesTags.SALES_TAX));
+			return result;
+		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
+			// If the policy is a responsibility policy, the tax is the "hitting rate"
+			result.add(getValueWithTags(policyValues, Constants.PolicyCoveragesTags.HEADER, Constants.PolicyValuesTags.HITTING_RATE));
+			return result;
+		} 
+		
+		/*
+		 * Direct tax-coverage correspondence
+		 */
+		if (policyCat.equals(Constants.PolicyCategories.MULTIRISK) ||
+				policyCat.equals(Constants.PolicyCategories.PERSONAL_ACCIDENTS) ||
+				policyCat.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
+			
+			for ( int i = 0; i < policyCoverages.length; i++ ) {
+				
+				// Only lists the values for the coverages present at the policy
+				if (policyCoverages[i].IsPresent()) {
+					
+					boolean wasInserted = false;
+					
+					// Iterates the values and gets the insured values' ones
+					for ( int u = 0; u < policyValues.length; u++ ) {
+						if (policyValues[u].GetTax().GetTag() != null && 
+								policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverages[i].GetCoverage().getKey()) &&
+								policyValues[u].GetTax().GetTag().equals(Constants.PolicyValuesTags.SALES_TAX) &&
+								policyValues[u].GetValue() != null) {
+							result.add(policyValues[u].GetValue());
+							wasInserted = true;
+						}
+					}
+					
+					if (!wasInserted) {
+						result.add(" ");
+					}
+				}
+			}		
+			return result;
+		}
+		
+		// Default - no tax
+		return new ArrayList<String>(Arrays.asList("-"));
+	}
+
+
+	/** 
+	 * This method gets and iterates the policy exercises, and returns the current one
+	 * (the one with the newer start date)
+	 */
+	private UUID getCurrentExercise(PolicyExercise[] exercises) {
+		Timestamp maxDate = new Timestamp(1);
+		UUID result = null; 
+		for (int i = 0; i<exercises.length; i++) {
+			if (((Timestamp)exercises[i].getAt(PolicyExercise.I.STARTDATE)).after(maxDate)) {
+				result = exercises[i].getKey();
+			}
+		}
+		return result;
+	}
+	
+	
+	/** 
+	 * This method iterates the policy values and returns the one with a given coverage's tag
+	 * and a given tax's tag (if any)
+	 */
+	private String getValueWithTags(PolicyValue[] policyValues, String coverageTag,
+			String taxTag) {
+		
+		for (int i=0; i<policyValues.length; i++) {
+			if (policyValues[i].GetTax().GetTag() != null && 
+				(policyValues[i].GetTax().GetTag().equals(taxTag) ||
+						taxTag == null) &&
+				(policyValues[i].GetTax().GetCoverage().GetTag().equals(coverageTag) ||
+						coverageTag == null) &&
+						policyValues[i].GetValue() != null) {
+				
+				return policyValues[i].GetValue();
+			}
+		}
+		
+		return null;
+	}
+	
+	
+	/** 
+	 * Inner class which holds the coverages, insured values, risk site an taxes
+	 * to display in the report in a "as general purpose as possible" way
+	 */
 	private class CoverageData {
 		
-		private ArrayList <String> coverages;
-		private ArrayList <String> insuredValues;
-		private ArrayList <String> taxes;
+		private ArrayList<String> coverages;
+		private ArrayList<String> insuredValues;
+		private ArrayList<String> riskSite;
+		private ArrayList<String> taxes;
 		
 		CoverageData () {
 			coverages = new ArrayList<String>();
 			insuredValues = new ArrayList<String>();
+			riskSite = new ArrayList<String>();
 			taxes = new ArrayList<String>();
-		}
-		
-		CoverageData (boolean storeValues, boolean storeTaxes) {
-			coverages = new ArrayList<String>();
-			if (storeValues) {
-				insuredValues = new ArrayList<String>();
-			}
-			if (storeTaxes) {
-				taxes = new ArrayList<String>();
-			}
 		}
 
 		public ArrayList<String> getCoverages() {
@@ -788,65 +986,47 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		public ArrayList<String> getInsuredValues() {
 			return insuredValues;
 		}
+		
+		public ArrayList<String> getRiskSite() {
+			return riskSite;
+		}
 
 		public ArrayList<String> getTaxes() {
 			return taxes;
 		}
 		
-		public void setCoverages(ArrayList<String> coverages) {
-			this.coverages = coverages;
-		}
+		public void setCoverages(PolicyCoverage[] policyCoverages) {
 
-		public void setInsuredValues(ArrayList<String> insuredValues) {
-			this.insuredValues = insuredValues;
-		}
-
-		public void setTaxes(ArrayList<String> taxes) {
-			this.taxes = taxes;
-		}
-
-		public void buildArrays(PolicyCoverage[] policyCoverages, PolicyValue[] policyValues,
-				boolean insertValue, boolean insertTax, UUID objectId, UUID exerciseID) {
-			
-			//Iterates the coverages, and adds them to a table
-			for ( int i = 0; i < policyCoverages.length; i++ ) {
-				
-				// Only lists coverages present at the policy
+			if (policyCoverages == null || policyCoverages.length == 0) {
+				coverages.add(" ");
+			}
+			for (int i=0; i<policyCoverages.length; i++) {
+				// Only inserts the coverages present at the policy
 				if (policyCoverages[i].IsPresent()) {
-					coverages.add((String) policyCoverages[i].GetCoverage().getAt(Coverage.I.NAME));
-					
-					boolean wasValInserted = false;
-					boolean wasTaxInserted = false;
-					
-					// Iterates the values and gets the insured values' ones
-					for ( int u = 0; u < policyValues.length; u++ ) {
-						if (policyValues[u].GetTax().GetTag() != null && 
-							policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverages[i].GetCoverage().getKey()) &&
-							(objectId == null || policyValues[u].GetObjectID().equals(objectId)) &&
-							(exerciseID == null || policyValues[u].GetExerciseID().equals(exerciseID)) &&
-							policyValues[u].GetValue() != null) {
-							
-							if (policyValues[u].GetTax().GetTag().equals("CAP") && insertValue) {
-								insuredValues.add(policyValues[u].GetValue());
-								wasValInserted = true;
-							}
-							
-							if (policyValues[u].GetTax().GetTag().equals("TCOM") && insertTax) {
-								taxes.add(policyValues[u].GetValue());
-								wasTaxInserted = true;
-							}
-						}
-					}
-					
-					if (!wasValInserted && insertValue) {
-						insuredValues.add(" ");
-					}
-					
-					if (!wasTaxInserted && insertTax) {
-						taxes.add(" ");
-					}
+					coverages.add((String) policyCoverages[i].GetCoverage()
+							.getAt(Coverage.I.NAME));
 				}
 			}
 		}
-	};
+		
+		public void setCoverages(String coverage) {
+
+			coverages.add(coverage);
+		}
+		
+		public void setRiskSite(String site) {
+
+			riskSite.add(site);
+		}
+		
+		public void setInsuredValues(ArrayList<String> values) {
+
+			insuredValues = values;
+		}
+		
+		public void setTaxes(ArrayList<String> taxesList) {
+
+			taxes = taxesList;
+		}
+	}
 }
