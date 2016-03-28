@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Listings.Policy;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,10 +17,13 @@ import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.Constants.TypeDefGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -264,7 +268,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Iterates the hashmap with the several policies by "ramo", and creates a line 
 		// with the name of that "ramo", followed by the information about the policies
 		for (String subline: policiesMap.keySet()) {
-			tableRows[rowNum++] = buildSublineRow(subline, reportParams);
+			tableRows[rowNum++] = buildSublineRow(subline);
 			Object[] policies = policiesMap.get(subline).toArray();
 			
 			for (int i = 0; i < policies.length; i++) {
@@ -352,7 +356,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	/** 
 	 * This method builds the row with the information about the preceding policies' "ramo"
 	 */
-	private TR buildSublineRow(String subline, String[] reportParams) {
+	private TR buildSublineRow(String subline) {
 		
 		TD rowContent;
 		TR row;
@@ -462,7 +466,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					
 				// Risk Site
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getRiskSite());
+					dataCells[cellNumber] = buildValuesTable(splitValue(valuesByObject.get(objectKey).getRiskSite()));
 					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 				}
 					
@@ -500,7 +504,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		return dataCells;
 	}
-
+	
 
 	/** 
 	 * The method which defines the width for the columns
@@ -544,6 +548,33 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth((int) (90 * multiplier));
 		}
+	}
+	
+	
+	/**
+	 * This method is used to split the string with the risk site, which
+	 * could be "too wide", and wreck the report's look.
+	 */
+	private ArrayList<String> splitValue(ArrayList<String> riskSite) {
+		
+		ArrayList<String> result = new ArrayList<String>();
+		
+		String[] split = riskSite.get(0).split("\\s+");
+		String tmp = "";
+		int switchCode = 1;
+		for (int i = 0; i<split.length; i++) {
+			tmp = tmp + " " + split[i];
+			if ((tmp.length() / 40) >= switchCode) {
+				result.add(tmp);
+				tmp = "";
+				switchCode++;
+			} else if (i+1 == split.length) {
+				result.add(tmp);
+			}
+		}
+		
+		return (result.size()==0 ? riskSite : result);
+		
 	}
 	
 	
@@ -599,6 +630,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private String getObjectName(Policy policy, PolicyObject policyObject) {
 
+		if (policyObject == null) {
+			return " ";
+		}
+		
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
 		UUID policySubLine = policy.GetSubLine().getKey();
 		
@@ -694,7 +729,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		/*
 		 * Policy Risk Site's set 
 		 */
-		coverageData.setRiskSite(getRiskSite(policy, insuredObject, policyValues));
+		try {
+			coverageData.setRiskSite(getRiskSite(policy, insuredObject, policyValues));
+		} catch (Throwable e) {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
 		
 		
 		/*
@@ -723,9 +762,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		
 		PolicyValue[] values = null; 
 		
-		if (insuredObject != null && currentExercise != null)  {
+		/*if (insuredObject != null)  {
 			values = policy.GetCurrentKeyedValues(insuredObject.getKey(), currentExercise);
-		}
+		} else {
+			values = policy.GetCurrentKeyedValues(null, currentExercise);
+		}*/
 		
 		if (values == null || values.length==0) { 	// TODO: not good. debug later.
 			values = policy.GetCurrentValues();
@@ -737,10 +778,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 	/**
 	 * This method gets the risk site (if any) according to the policy's category
+	 * @throws JewelEngineException 
+	 * @throws InvocationTargetException 
 	 */
 	private String getRiskSite(Policy policy, PolicyObject insuredObject,
-			PolicyValue[] policyValues) {
+			PolicyValue[] policyValues) throws InvocationTargetException, JewelEngineException {
 
+		if (insuredObject == null || policyValues == null) {
+			return " ";
+		}
+		
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
 
 		// If policy is MULTIRRISK
@@ -749,12 +796,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					: insuredObject.getAt(PolicyObject.I.ADDRESS1));
 			address = (String) (insuredObject.getAt(PolicyObject.I.ADDRESS2) == null ? address
 					: address + " " + insuredObject.getAt(PolicyObject.I.ADDRESS2));
-			address = (String) (insuredObject.getAt(PolicyObject.I.ZIPCODE) == null ? address
-					: address + ", " + insuredObject.getAt(PolicyObject.I.ZIPCODE));
-			address = (String) (insuredObject.getAt(PolicyObject.I.CITYNUMBER) == null ? address
-					: address + " - " + insuredObject.getAt(PolicyObject.I.CITYNUMBER));
+			UUID zipGUID = (UUID) insuredObject.getAt(PolicyObject.I.ZIPCODE);
+			if (zipGUID != null) {
+				ObjectBase zipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode), 
+						zipGUID);
+				address = address + " " + zipCode.getAt(0);
+				address = address + " " + zipCode.getAt(1);
+			}
 
-			// TODO: incompleto e eventualmente errado. check ReceiptReturnLetterReport, l.61
 			return address;
 		}
 
@@ -810,7 +859,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
 			// For Work Accidents, the insured value corresponds to the temporary value from the legal coverage
-			result.add(getValueWithTags(policyValues, Constants.PolicyCoveragesTags.LEGAL, Constants.PolicyValuesTags.TEMPORARY_VALUE));
+			String valueWithTags = getValueWithTags(policyValues, Constants.PolicyCoveragesTags.LEGAL, Constants.PolicyValuesTags.TEMPORARY_VALUE);
+			if (valueWithTags == null || valueWithTags.length()==0) {
+				valueWithTags = getValueWithTags(policyValues, Constants.PolicyCoveragesTags.LEGAL, Constants.PolicyValuesTags.VALUE);
+			}
+			result.add(valueWithTags);
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			// For Responsibility policies, the value comes from the insured value in the policy header
@@ -837,6 +890,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 							policyValues[u].GetValue() != null) {
 						result.add(policyValues[u].GetValue());
 						wasInserted = true;
+						break;
 					}
 				}
 				
@@ -906,6 +960,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								policyValues[u].GetValue() != null) {
 							result.add(policyValues[u].GetValue());
 							wasInserted = true;
+							break;
 						}
 					}
 					
@@ -931,7 +986,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		UUID result = null; 
 		for (int i = 0; i<exercises.length; i++) {
 			if (((Timestamp)exercises[i].getAt(PolicyExercise.I.STARTDATE)).after(maxDate)) {
-				result = exercises[i].getKey();
+				maxDate = (Timestamp)exercises[i].getAt(PolicyExercise.I.STARTDATE);
+				result = (UUID) exercises[i].getKey();
 			}
 		}
 		return result;
