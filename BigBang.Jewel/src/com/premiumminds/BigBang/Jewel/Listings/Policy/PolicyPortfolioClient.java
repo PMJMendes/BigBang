@@ -316,14 +316,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			cells[cellNumber] = ReportBuilder.buildHeaderCell("Pessoas/Bens Seguros");
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
-
+		
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Coberturas");
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Local de Risco");
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Local de Risco");
+			cells[cellNumber] = ReportBuilder.buildHeaderCell("Coberturas");
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 
@@ -414,23 +414,19 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		
 		// Policy Number
 		if (reportParams[paramCheck++].equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(policy.getLabel(), TypeDefGUIDs.T_String);
+			dataCells[cellNumber] = safeBuildCell(policy.getLabel(), TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
 		// Insurance Company
 		if (reportParams[paramCheck++].equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(company.getAt(Company.I.NAME), TypeDefGUIDs.T_String);
+			dataCells[cellNumber] = safeBuildCell(company.getAt(Company.I.NAME), TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
 		// Maturity
 		if (reportParams[paramCheck++].equals("1")) {
-			if (maturity == null) {
-				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-			} else {
-				dataCells[cellNumber] = ReportBuilder.buildCell(maturity, TypeDefGUIDs.T_String);
-			}
+			dataCells[cellNumber] = safeBuildCell(maturity, TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
@@ -454,19 +450,19 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// Policy Object's Name
 				if (reportParams[paramCheck++].equals("1")) {
 					String objectName = (policyObjects.length==0) ? " " : getObjectName(policy, policyObjects[i]);
-					dataCells[cellNumber] = ReportBuilder.buildCell(objectName, TypeDefGUIDs.T_String);
+					dataCells[cellNumber] = safeBuildCell(objectName, TypeDefGUIDs.T_String);
 					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 				}
-					
-				// Policy Coverages
-				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getCoverages());
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-				}
-					
+				
 				// Risk Site
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[cellNumber] = buildValuesTable(splitValue(valuesByObject.get(objectKey).getRiskSite()));
+					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+				}
+				
+				// Policy Coverages
+				if (reportParams[paramCheck++].equals("1")) {
+					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getCoverages());
 					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 				}
 					
@@ -486,11 +482,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		
 		// Total Premium
 		if (reportParams[paramCheck++].equals("1")) {
-			if (policy.getAt(Policy.I.TOTALPREMIUM) == null) {
-				dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-			} else {
-				dataCells[cellNumber] = ReportBuilder.buildCell(policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
-			}
+			dataCells[cellNumber] = safeBuildCell(policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
@@ -567,7 +559,6 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			if ((tmp.length() / 40) >= switchCode) {
 				result.add(tmp);
 				tmp = "";
-				switchCode++;
 			} else if (i+1 == split.length) {
 				result.add(tmp);
 			}
@@ -665,7 +656,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		
 		// Builds a "simple" TD or a table with a TD with each value
 		if (data.size() == 1) {
-			content = ReportBuilder.buildCell(data.get(0), TypeDefGUIDs.T_String);
+			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(content, false, false);
 			ReportBuilder.styleInnerContainer(content);
 		} else {
@@ -677,7 +668,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			for ( int i = 0; i < data.size(); i++ ) {
 				TD[] coverage = new TD[1];
 				
-				coverage[0] = ReportBuilder.buildCell(data.get(i), TypeDefGUIDs.T_String);
+				coverage[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String);
 				ReportBuilder.styleCell(coverage[0], false, false);
 					
 				tableRows[i] = ReportBuilder.buildRow(coverage);
@@ -705,9 +696,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
 		UUID policySubLine = policy.GetSubLine().getKey();
 		
+		UUID currentExercise = getCurrentExercise(policy.GetCurrentExercises());
+		
 		CoverageData coverageData = new CoverageData();
 		
-		PolicyValue[] policyValues = getPolicyValues(policy, insuredObject);
+		PolicyValue[] policyValues = policy.GetCurrentValues();
 		
 		PolicyCoverage[] policyCoverages = null;
 		
@@ -739,40 +732,17 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		/*
 		 * Policy Insured Values' set
 		 */
-		coverageData.setInsuredValues(getInsuredValues(policy, policyValues, policyCoverages));
+		coverageData.setInsuredValues(getInsuredValues(policy, insuredObject, 
+				currentExercise, policyValues, policyCoverages));
 		
 		
 		/*
 		 * Policy Taxes' set
 		 */
-		coverageData.setTaxes(getTaxes(policy, policyValues, policyCoverages));
+		coverageData.setTaxes(getTaxes(policy, insuredObject, 
+				currentExercise, policyValues, policyCoverages));
 		
 		return coverageData;
-	}
-
-
-	/**
-	 * This method gets the policy values, whether they are related to a given exercise
-	 * and/or object, or simply related to the "general" policy
-	 */
-	private PolicyValue[] getPolicyValues(Policy policy, PolicyObject insuredObject) 
-			throws BigBangJewelException {
-
-		UUID currentExercise = getCurrentExercise(policy.GetCurrentExercises());
-		
-		PolicyValue[] values = null; 
-		
-		/*if (insuredObject != null)  {
-			values = policy.GetCurrentKeyedValues(insuredObject.getKey(), currentExercise);
-		} else {
-			values = policy.GetCurrentKeyedValues(null, currentExercise);
-		}*/
-		
-		if (values == null || values.length==0) { 	// TODO: not good. debug later.
-			values = policy.GetCurrentValues();
-		}
-		
-		return values;
 	}
 
 
@@ -784,14 +754,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private String getRiskSite(Policy policy, PolicyObject insuredObject,
 			PolicyValue[] policyValues) throws InvocationTargetException, JewelEngineException {
 
-		if (insuredObject == null || policyValues == null) {
+		if (policyValues == null) {
 			return " ";
 		}
 		
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
 
 		// If policy is MULTIRRISK
-		if (policyCat.equals(Constants.PolicyCategories.MULTIRISK)) {
+		if (policyCat.equals(Constants.PolicyCategories.MULTIRISK) && insuredObject!=null) {
 			String address = (String) (insuredObject.getAt(PolicyObject.I.ADDRESS1) == null ? ""
 					: insuredObject.getAt(PolicyObject.I.ADDRESS1));
 			address = (String) (insuredObject.getAt(PolicyObject.I.ADDRESS2) == null ? address
@@ -809,9 +779,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// If policy is RESPONSABILITY or CONSTRUCTION_ASSEMBLY, the risk site 
 		// is retrieved from the policy values
-		for (int i = 0; i < policyValues.length; i++) {
+		for (int i = 0; i<policyValues.length; i++) {
 			if (policyValues[i].GetTax().GetTag() != null
-					&& (policyValues[i].GetObjectID()==null ||
+					&& (policyValues[i].GetObjectID()==null || insuredObject == null || 
 							policyValues[i].GetObjectID().equals(insuredObject.getKey()))
 					&& policyValues[i].GetValue() != null) {
 
@@ -820,13 +790,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						return policyValues[i].GetValue();
 					}
 				}
-				if (policyCat
-						.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
+				if (policyCat.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
 					if (policyValues[i].GetTax().GetTag().equals(Constants.PolicyValuesTags.CONTRACT_NAME)) {
 						return policyValues[i].GetValue();
 					}
 				}
-
 			}
 		}
 
@@ -841,7 +809,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * exist for a given coverage
 	 */
 	private ArrayList<String> getInsuredValues(Policy policy,
-			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) throws BigBangJewelException {
+			PolicyObject insuredObject, UUID currentExercise, PolicyValue[] policyValues, 
+			PolicyCoverage[] policyCoverages) throws BigBangJewelException {
 
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
 		UUID policySubLine = policy.GetSubLine().getKey();
@@ -859,15 +828,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
 			// For Work Accidents, the insured value corresponds to the temporary value from the legal coverage
-			String valueWithTags = getValueWithTags(policyValues, Constants.PolicyCoveragesTags.LEGAL, Constants.PolicyValuesTags.TEMPORARY_VALUE);
+			String valueWithTags = getValueWithTags(policyValues, insuredObject, currentExercise, 
+					Constants.PolicyCoveragesTags.LEGAL, Constants.PolicyValuesTags.TEMPORARY_VALUE);
 			if (valueWithTags == null || valueWithTags.length()==0) {
-				valueWithTags = getValueWithTags(policyValues, Constants.PolicyCoveragesTags.LEGAL, Constants.PolicyValuesTags.VALUE);
+				valueWithTags = getValueWithTags(policyValues, insuredObject, currentExercise, 
+						Constants.PolicyCoveragesTags.LEGAL, Constants.PolicyValuesTags.VALUE);
 			}
 			result.add(valueWithTags);
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			// For Responsibility policies, the value comes from the insured value in the policy header
-			result.add(getValueWithTags(policyValues, Constants.PolicyCoveragesTags.HEADER, Constants.PolicyValuesTags.VALUE));
+			result.add(getValueWithTags(policyValues, insuredObject, currentExercise, 
+					Constants.PolicyCoveragesTags.HEADER, Constants.PolicyValuesTags.VALUE));
 			return result;
 		}
 		
@@ -880,23 +852,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// Only lists the values for the coverages present at the policy
 			if (policyCoverages[i].IsPresent()) {
 				
-				boolean wasInserted = false;
-				
-				// Iterates the values and gets the insured values' ones
-				for ( int u = 0; u < policyValues.length; u++ ) {
-					if (policyValues[u].GetTax().GetTag() != null && 
-							policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverages[i].GetCoverage().getKey()) &&
-							policyValues[u].GetTax().GetTag().equals(Constants.PolicyValuesTags.VALUE) &&
-							policyValues[u].GetValue() != null) {
-						result.add(policyValues[u].GetValue());
-						wasInserted = true;
-						break;
-					}
-				}
-				
-				if (!wasInserted) {
-					result.add(" ");
-				}
+				result.add(getCoverageValues(insuredObject, currentExercise, 
+						policyValues, policyCoverages[i], Constants.PolicyValuesTags.VALUE));
 			}
 		}
 		
@@ -916,7 +873,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * Note that there are some categories without an associated tax
 	 */
 	private ArrayList<String> getTaxes(Policy policy,
-			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) {
+			PolicyObject insuredObject, UUID currentExercise, PolicyValue[] policyValues, 
+			PolicyCoverage[] policyCoverages) {
 
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
 		
@@ -930,11 +888,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				policyCat.equals(Constants.PolicyCategories.LIFE)) {
 			// If the policy is in the work accidents or life categories, the tax corresponds to 
 			// the sales tax from the policy header
-			result.add(getValueWithTags(policyValues, Constants.PolicyCoveragesTags.HEADER, Constants.PolicyValuesTags.SALES_TAX));
+			result.add(getValueWithTags(policyValues, insuredObject, currentExercise, 
+					Constants.PolicyCoveragesTags.HEADER, Constants.PolicyValuesTags.SALES_TAX));
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			// If the policy is a responsibility policy, the tax is the "hitting rate"
-			result.add(getValueWithTags(policyValues, Constants.PolicyCoveragesTags.HEADER, Constants.PolicyValuesTags.HITTING_RATE));
+			result.add(getValueWithTags(policyValues, insuredObject, currentExercise, 
+					Constants.PolicyCoveragesTags.HEADER, Constants.PolicyValuesTags.HITTING_RATE));
 			return result;
 		} 
 		
@@ -950,23 +910,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// Only lists the values for the coverages present at the policy
 				if (policyCoverages[i].IsPresent()) {
 					
-					boolean wasInserted = false;
-					
-					// Iterates the values and gets the insured values' ones
-					for ( int u = 0; u < policyValues.length; u++ ) {
-						if (policyValues[u].GetTax().GetTag() != null && 
-								policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverages[i].GetCoverage().getKey()) &&
-								policyValues[u].GetTax().GetTag().equals(Constants.PolicyValuesTags.SALES_TAX) &&
-								policyValues[u].GetValue() != null) {
-							result.add(policyValues[u].GetValue());
-							wasInserted = true;
-							break;
-						}
-					}
-					
-					if (!wasInserted) {
-						result.add(" ");
-					}
+					result.add(getCoverageValues(insuredObject, currentExercise, 
+							policyValues, policyCoverages[i], Constants.PolicyValuesTags.SALES_TAX));
 				}
 			}		
 			return result;
@@ -998,22 +943,169 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * This method iterates the policy values and returns the one with a given coverage's tag
 	 * and a given tax's tag (if any)
 	 */
-	private String getValueWithTags(PolicyValue[] policyValues, String coverageTag,
-			String taxTag) {
+	private String getValueWithTags(PolicyValue[] policyValues, PolicyObject insuredObject, 
+			UUID exerciseId, String coverageTag, String taxTag) {
+		
+		UUID objectID = insuredObject==null ? null : insuredObject.getKey();
 		
 		for (int i=0; i<policyValues.length; i++) {
-			if (policyValues[i].GetTax().GetTag() != null && 
-				(policyValues[i].GetTax().GetTag().equals(taxTag) ||
-						taxTag == null) &&
-				(policyValues[i].GetTax().GetCoverage().GetTag().equals(coverageTag) ||
-						coverageTag == null) &&
-						policyValues[i].GetValue() != null) {
-				
-				return policyValues[i].GetValue();
+			
+			// The value is either associated to a given coverage, or there is 
+			// no coverage to compare
+			if (coverageTag == null ||
+					coverageTag.equals(policyValues[i].GetTax().GetCoverage().GetTag())) {
+				// The value is either associated to a given tax, or there is 
+				// no tax to compare
+				if (taxTag == null || 
+					(policyValues[i].GetTax().GetTag() != null && 
+					policyValues[i].GetTax().GetTag().equals(taxTag))) {
+					// Checks if the value corresponds to a given object and exercise, or 
+					// in case any of these is null, if the value is not associated with it 
+					if ((policyValues[i].GetObjectID() == null && objectID == null ||
+						(objectID != null && objectID.equals(policyValues[i].GetObjectID()))) &&
+						(policyValues[i].GetExerciseID() == null && exerciseId == null ||
+						(exerciseId != null && exerciseId.equals(policyValues[i].GetExerciseID())))) {
+						return policyValues[i].GetValue();
+					}
+				}
 			}
 		}
 		
+		// If we got to this point, it could mean that it was not possible to get the value
+		// associated with an object or an exercise. That is, although the policy has associated objects
+		// and exercises, the values are not associated with one (or both) of those.
+		// Further iterations are needed, and returns the first associated with the policy, starting from 
+		// "end to start", considering that the last ones are the more recent
+		if (objectID == null && exerciseId != null) {
+			for (int i=policyValues.length-1; i>=0; i--) {
+				
+				// The value is either associated to a given coverage, or there is 
+				// no coverage to compare
+				if (coverageTag == null ||
+						coverageTag.equals(policyValues[i].GetTax().GetCoverage().GetTag())) {
+					// The value is either associated to a given tax, or there is 
+					// no tax to compare
+					if (taxTag == null || 
+						(policyValues[i].GetTax().GetTag() != null && 
+						policyValues[i].GetTax().GetTag().equals(taxTag))) {
+						// Checks if the value is associated with the exercise
+						if (exerciseId.equals(policyValues[i].GetExerciseID())) {
+							return policyValues[i].GetValue();
+						}
+					}
+				}
+			}
+		}
+		if (objectID != null && exerciseId == null) {
+			for (int i=policyValues.length-1; i>=0; i--) {
+				
+				// The value is either associated to a given coverage, or there is 
+				// no coverage to compare
+				if (coverageTag == null ||
+						coverageTag.equals(policyValues[i].GetTax().GetCoverage().GetTag())) {
+					// The value is either associated to a given tax, or there is 
+					// no tax to compare
+					if (taxTag == null || 
+						(policyValues[i].GetTax().GetTag() != null && 
+						policyValues[i].GetTax().GetTag().equals(taxTag))) {
+						// Checks if the value is associated with the object
+						if (objectID.equals(policyValues[i].GetObjectID())) {
+							return policyValues[i].GetValue();
+						}
+					}
+				}
+			}
+		}
+		for (int i=policyValues.length-1; i>=0; i--) {
+			
+			// The value is either associated to a given coverage, or there is 
+			// no coverage to compare
+			if (coverageTag == null ||
+					coverageTag.equals(policyValues[i].GetTax().GetCoverage().GetTag())) {
+				// The value is either associated to a given tax, or there is 
+				// no tax to compare
+				if (taxTag == null || 
+					(policyValues[i].GetTax().GetTag() != null && 
+					policyValues[i].GetTax().GetTag().equals(taxTag))) {
+					return policyValues[i].GetValue();
+				}
+			}
+		}
+				
 		return null;
+	}
+	
+	
+	/** 
+	 * This method iterates the policy values and returns the one with a given tax's tag,
+	 * corresponding to a given coverage
+	 */
+	private String getCoverageValues(PolicyObject insuredObject,
+			UUID currentExercise, PolicyValue[] policyValues,
+			PolicyCoverage policyCoverage, String valueTag) {
+		
+		UUID objectID = insuredObject==null ? null : insuredObject.getKey();
+		
+		// Tries to get the values associated with the object and the exercise
+		for ( int u = 0; u < policyValues.length; u++ ) {
+			if (policyValues[u].GetTax().GetTag() != null && 
+					policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverage.GetCoverage().getKey()) &&
+					policyValues[u].GetTax().GetTag().equals(valueTag) &&
+					(policyValues[u].GetObjectID() == null && objectID == null ||
+					(objectID != null && objectID.equals(policyValues[u].GetObjectID()))) &&
+					(policyValues[u].GetExerciseID() == null && currentExercise == null ||
+					(currentExercise != null && currentExercise.equals(policyValues[u].GetExerciseID()))) &&
+					policyValues[u].GetValue() != null) {
+				return policyValues[u].GetValue();
+			}
+		}
+		
+		// It was not inserted, so it checks if it could get the value associated with only the exercise, or only the object
+		if (objectID==null && currentExercise != null) {
+			for ( int u = 0; u < policyValues.length; u++ ) {
+				if (policyValues[u].GetTax().GetTag() != null && 
+						policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverage.GetCoverage().getKey()) &&
+						policyValues[u].GetTax().GetTag().equals(valueTag) &&
+						policyValues[u].GetObjectID() == null &&
+						(currentExercise.equals(policyValues[u].GetExerciseID())) &&
+						policyValues[u].GetValue() != null) {
+					return policyValues[u].GetValue();
+				}
+			}
+		}
+		if (objectID!=null && currentExercise == null) {
+			for ( int u = 0; u < policyValues.length; u++ ) {
+				if (policyValues[u].GetTax().GetTag() != null && 
+						policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverage.GetCoverage().getKey()) &&
+						policyValues[u].GetTax().GetTag().equals(valueTag) &&
+						objectID.equals(policyValues[u].GetObjectID()) &&
+						policyValues[u].GetExerciseID() == null &&
+						policyValues[u].GetValue() != null) {
+					return policyValues[u].GetValue();
+				}
+			}
+		}
+		
+		// Iterates the values and gets the insured values' ones
+		for ( int u = policyValues.length-1; u >=0; u-- ) {
+			if (policyValues[u].GetTax().GetTag() != null && 
+					policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverage.GetCoverage().getKey()) &&
+					policyValues[u].GetTax().GetTag().equals(valueTag) &&
+					policyValues[u].GetValue() != null) {
+				return policyValues[u].GetValue();
+			}
+		}
+		
+		return " ";
+	}
+	
+	
+	
+	public TD safeBuildCell(java.lang.Object pobjValue, UUID pidType) {
+		if (pobjValue == null) {
+			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+		}
+		return ReportBuilder.buildCell(pobjValue, pidType);
 	}
 	
 	
