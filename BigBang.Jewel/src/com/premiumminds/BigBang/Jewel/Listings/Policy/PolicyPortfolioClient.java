@@ -1086,7 +1086,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			}
 		}
 		
-		// Iterates the values and gets the insured values' ones
+		// Iterates the values and gets the insured values' ones, not associated with the object or the exercise
 		for ( int u = policyValues.length-1; u >=0; u-- ) {
 			if (policyValues[u].GetTax().GetTag() != null && 
 					policyValues[u].GetTax().GetCoverage().getKey().equals(policyCoverage.GetCoverage().getKey()) &&
@@ -1100,7 +1100,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	}
 	
 	
-	
+	/** 
+	 * Builds a cell in a "safe way", meaning that if the value is null, the cell is built simply
+	 * with a whitespace, preventing cells with the '?' character
+	 */
 	public TD safeBuildCell(java.lang.Object pobjValue, UUID pidType) {
 		if (pobjValue == null) {
 			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
