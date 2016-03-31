@@ -347,7 +347,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 
-		setWidths(cells, reportParams);
+		setWidths(cells, reportParams, true);
 
 		return cells;
 	}
@@ -384,14 +384,24 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		PolicyObject[] policyObjects;
 		HashMap<UUID, CoverageData> valuesByObject;
 		
+		ArrayList<String> policyParams = new ArrayList<String>();
+		Collections.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 5));
+		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 10, 12)));
+		
+		String[] objectParams = Arrays.copyOfRange(reportParams, 5, 10);
+		
 		// Gets the number of columns to initialize the TD's array
-		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
+		int cellNumber = Collections.frequency(policyParams, "1");
+		int nrInnerTDs = Collections.frequency(Arrays.asList(objectParams), "1");
+		if (nrInnerTDs > 0) {
+			cellNumber++;
+		}
 		TD[] dataCells = new TD[cellNumber];
 		
 		// Variables used to know which parameter is being checked for display, and which 
 		// cell is being built
 		cellNumber = 0;
-		int paramCheck = 2;
+		int paramCheck = 0;
 		
 		company = policy.GetCompany();
 		
@@ -413,26 +423,66 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 		
 		// Policy Number
-		if (reportParams[paramCheck++].equals("1")) {
+		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(policy.getLabel(), TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
 		// Insurance Company
-		if (reportParams[paramCheck++].equals("1")) {
+		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(company.getAt(Company.I.NAME), TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
 		// Maturity
-		if (reportParams[paramCheck++].equals("1")) {
+		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(maturity, TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
 		}
 		
+		if (nrInnerTDs > 0) {
+			dataCells[cellNumber] = buildInnerObjectsTable(policy, objectParams,
+					policyObjects, valuesByObject);
+			dataCells[cellNumber].setStyle("border-top:1px solid #3f6d9d;");
+			dataCells[cellNumber++].setColSpan(5);
+		}
+		
+		// Total Premium
+		if (policyParams.get(paramCheck++).equals("1")) {
+			dataCells[cellNumber] = safeBuildCell(policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+		}
+		
+		// Notes - intentionally left blank
+		if (policyParams.get(paramCheck++).equals("1")) {
+			dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+		}
+		
+		setWidths(dataCells, reportParams, false);
+
+		return dataCells;
+	}
+
+	private TD buildInnerObjectsTable(Policy policy, String[] reportParams,
+			PolicyObject[] policyObjects, HashMap<UUID, CoverageData> valuesByObject) {
+		
+		// Gets the number of columns to initialize the TD's array
+		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
+		
+		Table table;
+		int nrRows = policyObjects.length!=0 ? policyObjects.length : 1;
+		TR[] tableRows  = new TR[nrRows];
+		nrRows = 0;
+		
 		// Iterates the objects (if any, otherwise it makes a "forced iteration") and builds the row
 		// corresponding to a given object
 		for (int i=0; i<=policyObjects.length; i++) {
+			
+			TD[] dataCells = new TD[cellNumber];
+			
+			int currentCell = 0;
+			int paramCheck = 0;
 			
 			// If there are no objects, uses a "faux" key to retrieve the coverages, insured values, 
 			// risk site and taxes
@@ -442,103 +492,120 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			} else {
 				objectKey = fauxId;
 			}
-			
+					
 			// Needed to guarantee that the following code is executed when there are no objects, and 
 			// to prevent a java.lang.ArrayIndexOutOfBoundsException
 			if (policyObjects.length == 0 || policyObjects.length > i) {
-			
+				
 				// Policy Object's Name
 				if (reportParams[paramCheck++].equals("1")) {
 					String objectName = (policyObjects.length==0) ? " " : getObjectName(policy, policyObjects[i]);
-					dataCells[cellNumber] = safeBuildCell(objectName, TypeDefGUIDs.T_String);
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+					dataCells[currentCell] = safeBuildCell(objectName, TypeDefGUIDs.T_String);
+					dataCells[currentCell].setWidth(280);
+					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
 				}
 				
 				// Risk Site
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = buildValuesTable(splitValue(valuesByObject.get(objectKey).getRiskSite()));
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+					dataCells[currentCell] = buildValuesTable(splitValue(valuesByObject.get(objectKey).getRiskSite()));
+					dataCells[currentCell].setWidth(280);
+					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
 				}
 				
 				// Policy Coverages
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getCoverages());
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getCoverages());
+					dataCells[currentCell].setWidth(120);
+					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
 				}
 					
 				// Insured Value
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getInsuredValues());
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getInsuredValues());
+					dataCells[currentCell].setWidth(120);
+					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
 				}
 					
 				// Tax
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[cellNumber] = buildValuesTable(valuesByObject.get(objectKey).getTaxes());
-					ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getTaxes());
+					dataCells[currentCell].setWidth(120);
+					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
 				}
+				
+				tableRows[nrRows++] = ReportBuilder.buildRow(dataCells);
 			}
 		}
-		
-		// Total Premium
-		if (reportParams[paramCheck++].equals("1")) {
-			dataCells[cellNumber] = safeBuildCell(policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-		}
-		
-		// Notes - intentionally left blank
-		if (reportParams[paramCheck++].equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
-		}
-		
-		setWidths(dataCells, reportParams);
-
-		return dataCells;
+		table = ReportBuilder.buildTable(tableRows);
+		return new TD(table);
 	}
-	
+		
 
 	/** 
 	 * The method which defines the width for the columns
 	 */
-	protected void setWidths(TD[] cells, String[] reportParams) {
+	protected void setWidths(TD[] cells, String[] reportParams, boolean isHeader) {
 		
 		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
-		double multiplier = cellNumber / 10;
+		int innerValue = 0;
 
 		cellNumber = 0;
 		
 		int paramCheck = 2;
 
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (130 * multiplier));
+			cells[cellNumber++].setWidth(130);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (250 * multiplier));
+			cells[cellNumber++].setWidth(250);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (100 * multiplier));
+			cells[cellNumber++].setWidth(100);
+		}
+		
+		if (isHeader) {
+			if (reportParams[paramCheck++].equals("1")) {
+				cells[cellNumber++].setWidth(250);
+			}
+			if (reportParams[paramCheck++].equals("1")) {
+				cells[cellNumber++].setWidth(250);
+			}
+			if (reportParams[paramCheck++].equals("1")) {
+				cells[cellNumber++].setWidth(90);
+			}
+			if (reportParams[paramCheck++].equals("1")) {
+				cells[cellNumber++].setWidth(90);
+			}
+			if (reportParams[paramCheck++].equals("1")) {
+				cells[cellNumber++].setWidth(90);
+			}
+		} else {
+			// Inner
+			if (reportParams[paramCheck++].equals("1")) {
+				innerValue += 250;
+			}
+			if (reportParams[paramCheck++].equals("1")) {
+				innerValue += 250;
+			}
+			if (reportParams[paramCheck++].equals("1")) {
+				innerValue += 90;
+			}
+			if (reportParams[paramCheck++].equals("1")) {
+				innerValue += 90;
+			}
+			if (reportParams[paramCheck++].equals("1")) {
+				innerValue += 90;
+			}
+			if (innerValue > 0) {
+				cells[cellNumber++].setWidth(innerValue);
+			}
+		}
+		
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth(90);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (250 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (250 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
-		}
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth((int) (90 * multiplier));
+			cells[cellNumber++].setWidth(90);
 		}
 	}
 	
