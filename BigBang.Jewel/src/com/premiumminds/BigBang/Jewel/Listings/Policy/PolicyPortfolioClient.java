@@ -548,29 +548,29 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				
 				// Risk Site
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[currentCell] = buildValuesTable(splitValue(valuesByObject.get(objectKey).getRiskSite()));
-					dataCells[currentCell].setWidth(280);
+					dataCells[currentCell] = buildValuesTable(splitValue(valuesByObject.get(objectKey).getRiskSite()), 250);
+					dataCells[currentCell].setWidth(250);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine, true);
 				}
 				
 				// Policy Coverages
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getCoverages());
-					dataCells[currentCell].setWidth(120);
+					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getCoverages(), 250);
+					dataCells[currentCell].setWidth(250);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine, true);
 				}
 					
 				// Insured Value
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getInsuredValues());
-					dataCells[currentCell].setWidth(120);
+					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getInsuredValues(), 100);
+					dataCells[currentCell].setWidth(100);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine, true);
 				}
 					
 				// Tax
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getTaxes());
-					dataCells[currentCell].setWidth(120);
+					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getTaxes(), 100);
+					dataCells[currentCell].setWidth(100);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine, true);
 				}
 				setInnerWidths(dataCells, reportParams);
@@ -601,23 +601,23 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			cells[cellNumber++].setWidth("80");
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth("350");
+			cells[cellNumber++].setWidth("250");
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth("100");
+			cells[cellNumber++].setWidth("75");
 		}
 		
 		if (reportParams[paramCheck++].equals("1")) {
-			innerWidth += 320;
+			innerWidth += 220;
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			innerWidth += 350;
+			innerWidth += 250;
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			innerWidth += 350;
+			innerWidth += 250;
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			innerWidth += 130;
+			innerWidth += 100;
 		}
 		if (reportParams[paramCheck++].equals("1")) {
 			innerWidth += 100;
@@ -642,16 +642,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		int paramCheck = 0;
 
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth("320");
+			cells[cellNumber++].setWidth("220");
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth("350");
+			cells[cellNumber++].setWidth("250");
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth("350");
+			cells[cellNumber++].setWidth("250");
 		}		
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth("130");
+			cells[cellNumber++].setWidth("100");
 		}
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth("100");
@@ -672,7 +672,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		int switchCode = 1;
 		for (int i = 0; i<split.length; i++) {
 			tmp = tmp + " " + split[i];
-			if ((tmp.length() / 40) >= switchCode) {
+			if ((tmp.length() / 30) >= switchCode) {
 				result.add(tmp);
 				tmp = "";
 			} else if (i+1 == split.length) {
@@ -759,7 +759,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * This method returns a TD containing a value or a table of values, 
 	 * contained in an ArrayList
 	 */
-	private TD buildValuesTable(ArrayList<String> data) {
+	private TD buildValuesTable(ArrayList<String> data, int width) {
 
 		TD content;
 
@@ -773,6 +773,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Builds a "simple" TD or a table with a TD with each value
 		if (data.size() == 1) {
 			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String);
+			content.setWidth(width);
 			ReportBuilder.styleCell(content, false, false);
 			ReportBuilder.styleInnerContainer(content);
 		} else {
@@ -785,6 +786,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				TD[] coverage = new TD[1];
 				
 				coverage[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String);
+				coverage[0].setWidth(width);
 				ReportBuilder.styleCell(coverage[0], false, false);
 					
 				tableRows[i] = ReportBuilder.buildRow(coverage);
@@ -794,7 +796,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			table = ReportBuilder.buildTable(tableRows);
 			ReportBuilder.styleTable(table, true);
 			
-			content.addElement(new Div().addElement(table));
+			content.addElement(new Div().addElement(table).setStyle("width:inherit;"));
 			ReportBuilder.styleInnerContainer(content);
 		}
 		
