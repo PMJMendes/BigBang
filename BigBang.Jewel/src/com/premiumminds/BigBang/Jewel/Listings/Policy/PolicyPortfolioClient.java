@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.ecs.GenericElement;
+import org.apache.ecs.html.Div;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
@@ -262,7 +263,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		int rowNum= 0;
 		
 		// Builds the row with the column names
-		tableRows[rowNum++] = ReportBuilder.buildRow(buildInnerHeaderRow(reportParams));
+		tableRows[rowNum++] = ReportBuilder.buildRow(buildOuterHeaderRow(reportParams));
 		ReportBuilder.styleRow(tableRows[0], true);
 		
 		// Iterates the hashmap with the several policies by "ramo", and creates a line 
@@ -287,72 +288,104 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	/** 
 	 * The method responsible for getting columns' titles
 	 */
-	protected TD[] buildInnerHeaderRow(String[] reportParams) {
+	protected TD[] buildOuterHeaderRow(String[] reportParams) {
 
 		TD[] cells;
-
-		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
+		
+		ArrayList<String> policyParams = new ArrayList<String>();
+		Collections.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 5));
+		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 10, 12)));
+		
+		String[] objectParams = Arrays.copyOfRange(reportParams, 5, 10);
+		
+		int innerObjs = Collections.frequency(Arrays.asList(objectParams), "1");
+		
+		int cellNumber = Collections.frequency(policyParams, "1");
+		if (objectParams.length > 0) {
+			cellNumber++;
+		}
 		cells = new TD[cellNumber];
-		int paramCheck = 2;
+		int paramCheck = 0;
 
 		cellNumber = 0;
 
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Apólice");
+		if (policyParams.get(paramCheck++).equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Apólice", TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Companhia");
+		if (policyParams.get(paramCheck++).equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Companhia", TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Venc. (M/D)");
+		if (policyParams.get(paramCheck++).equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Venc. (M/D)", TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Pessoas/Bens Seguros");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		if (innerObjs > 0) {
+			cells[cellNumber++] = buildInnerHeaderRow(objectParams);
 		}
-		
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Local de Risco");
+
+		if (policyParams.get(paramCheck++).equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Prémio Total Anual", TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Coberturas");
+		if (policyParams.get(paramCheck++).equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Observações", TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Capital");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Taxa");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Prémio Total Anual");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildHeaderCell("Observações");
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
-		}
-
-		setWidths(cells, reportParams, true);
+		setOuterWidths(cells, reportParams);
 
 		return cells;
 	}
 	
 	
+	private TD buildInnerHeaderRow(String[] reportParams) {
+		
+		Table table;
+		TR[] tableRows  = new TR[1];
+		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
+		TD[] cells = new TD[cellNumber];
+		cellNumber = 0;
+		int paramCheck = 0;
+		
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Pessoas/Bens Seguros", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Local de Risco", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Coberturas", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Capital", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Taxa", TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+		
+		setInnerWidths(cells, reportParams);
+		
+		tableRows[0] = ReportBuilder.buildRow(cells);
+		
+		ReportBuilder.styleRow(tableRows[0], true);
+		
+		table = ReportBuilder.buildTable(tableRows);
+		ReportBuilder.styleTable(table, true);
+		return new TD(table);
+	}
+
+
 	/** 
 	 * This method builds the row with the information about the preceding policies' "ramo"
 	 */
@@ -403,6 +436,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		cellNumber = 0;
 		int paramCheck = 0;
 		
+		boolean leftLine = false;
+		
 		company = policy.GetCompany();
 		
 		maturity = ((policy.getAt(Policy.I.MATURITYMONTH) == null) || 
@@ -425,41 +460,45 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Policy Number
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(policy.getLabel(), TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
+			leftLine = true;
 		}
 		
 		// Insurance Company
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(company.getAt(Company.I.NAME), TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
+			leftLine = true;
 		}
 		
 		// Maturity
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(maturity, TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
+			leftLine = true;
 		}
 		
 		if (nrInnerTDs > 0) {
 			dataCells[cellNumber] = buildInnerObjectsTable(policy, objectParams,
 					policyObjects, valuesByObject);
-			dataCells[cellNumber].setStyle("border-top:1px solid #3f6d9d;");
-			dataCells[cellNumber++].setColSpan(5);
+			dataCells[cellNumber++].setStyle("border-top:1px solid #3f6d9d;");
 		}
 		
 		// Total Premium
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
+			leftLine = true;
 		}
 		
 		// Notes - intentionally left blank
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(dataCells[cellNumber++], true, true);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
+			leftLine = true;
 		}
 		
-		setWidths(dataCells, reportParams, false);
+		setOuterWidths(dataCells, reportParams);
 
 		return dataCells;
 	}
@@ -484,6 +523,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			int currentCell = 0;
 			int paramCheck = 0;
 			
+			boolean topLine = (i!=0);
+			
 			// If there are no objects, uses a "faux" key to retrieve the coverages, insured values, 
 			// risk site and taxes
 			UUID objectKey;
@@ -502,41 +543,43 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					String objectName = (policyObjects.length==0) ? " " : getObjectName(policy, policyObjects[i]);
 					dataCells[currentCell] = safeBuildCell(objectName, TypeDefGUIDs.T_String);
 					dataCells[currentCell].setWidth(280);
-					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
+					ReportBuilder.styleCell(dataCells[currentCell++], topLine, true);
 				}
 				
 				// Risk Site
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(splitValue(valuesByObject.get(objectKey).getRiskSite()));
 					dataCells[currentCell].setWidth(280);
-					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
+					ReportBuilder.styleCell(dataCells[currentCell++], topLine, true);
 				}
 				
 				// Policy Coverages
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getCoverages());
 					dataCells[currentCell].setWidth(120);
-					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
+					ReportBuilder.styleCell(dataCells[currentCell++], topLine, true);
 				}
 					
 				// Insured Value
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getInsuredValues());
 					dataCells[currentCell].setWidth(120);
-					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
+					ReportBuilder.styleCell(dataCells[currentCell++], topLine, true);
 				}
 					
 				// Tax
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject.get(objectKey).getTaxes());
 					dataCells[currentCell].setWidth(120);
-					ReportBuilder.styleCell(dataCells[currentCell++], false, true);
+					ReportBuilder.styleCell(dataCells[currentCell++], topLine, true);
 				}
-				
-				tableRows[nrRows++] = ReportBuilder.buildRow(dataCells);
+				setInnerWidths(dataCells, reportParams);
+				tableRows[nrRows] = ReportBuilder.buildRow(dataCells);
+				ReportBuilder.styleRow(tableRows[nrRows++], false);
 			}
 		}
 		table = ReportBuilder.buildTable(tableRows);
+		ReportBuilder.styleTable(table, true);
 		return new TD(table);
 	}
 		
@@ -544,68 +587,74 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	/** 
 	 * The method which defines the width for the columns
 	 */
-	protected void setWidths(TD[] cells, String[] reportParams, boolean isHeader) {
+	protected void setOuterWidths(TD[] cells, String[] reportParams) {
 		
 		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
-		int innerValue = 0;
-
+		
 		cellNumber = 0;
 		
 		int paramCheck = 2;
+		
+		int innerWidth = 0; 
 
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth(130);
+			cells[cellNumber++].setWidth("80");
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth(250);
+			cells[cellNumber++].setWidth("350");
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth(100);
-		}
-		
-		if (isHeader) {
-			if (reportParams[paramCheck++].equals("1")) {
-				cells[cellNumber++].setWidth(250);
-			}
-			if (reportParams[paramCheck++].equals("1")) {
-				cells[cellNumber++].setWidth(250);
-			}
-			if (reportParams[paramCheck++].equals("1")) {
-				cells[cellNumber++].setWidth(90);
-			}
-			if (reportParams[paramCheck++].equals("1")) {
-				cells[cellNumber++].setWidth(90);
-			}
-			if (reportParams[paramCheck++].equals("1")) {
-				cells[cellNumber++].setWidth(90);
-			}
-		} else {
-			// Inner
-			if (reportParams[paramCheck++].equals("1")) {
-				innerValue += 250;
-			}
-			if (reportParams[paramCheck++].equals("1")) {
-				innerValue += 250;
-			}
-			if (reportParams[paramCheck++].equals("1")) {
-				innerValue += 90;
-			}
-			if (reportParams[paramCheck++].equals("1")) {
-				innerValue += 90;
-			}
-			if (reportParams[paramCheck++].equals("1")) {
-				innerValue += 90;
-			}
-			if (innerValue > 0) {
-				cells[cellNumber++].setWidth(innerValue);
-			}
+			cells[cellNumber++].setWidth("100");
 		}
 		
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth(90);
+			innerWidth += 320;
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber++].setWidth(90);
+			innerWidth += 350;
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			innerWidth += 350;
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			innerWidth += 130;
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			innerWidth += 100;
+		}
+		if (innerWidth>0) {
+			cells[cellNumber++].setWidth(innerWidth);
+		}
+		
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth("120");
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth("82");
+		}
+	}
+	
+	protected void setInnerWidths(TD[] cells, String[] reportParams) {
+		
+		int cellNumber = Collections.frequency(Arrays.asList(reportParams), "1");
+		
+		cellNumber = 0;
+		int paramCheck = 0;
+
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth("320");
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth("350");
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth("350");
+		}		
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth("130");
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth("100");
 		}
 	}
 	
@@ -745,7 +794,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			table = ReportBuilder.buildTable(tableRows);
 			ReportBuilder.styleTable(table, true);
 			
-			content.addElement(table);
+			content.addElement(new Div().addElement(table));
 			ReportBuilder.styleInnerContainer(content);
 		}
 		
