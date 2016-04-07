@@ -76,6 +76,8 @@ public class Lusitania
 	    public static final UUID Code_7_InternalError   = UUID.fromString("C8E3D6D7-D3DE-45A7-AB40-A0A700F9FADE");
 	}
 
+	private UUID[] marrCompanies = null;
+	
 	public UUID GetStatusTable()
 		throws BigBangJewelException
 	{
@@ -186,7 +188,7 @@ public class Lusitania
 
 		try
 		{
-			lobjPolicy = FindPolicy(parrData[Fields.POLICY].getData(), true);
+			lobjPolicy = FindPolicy(parrData[Fields.POLICY].getData());
 			if ( lobjPolicy == null )
 			{
 				createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_3_NoPolicy, null);
@@ -260,20 +262,43 @@ public class Lusitania
 		createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_0_Ok, lopCR.mobjData.mid);
 	}
 
-	private Policy FindPolicy(String pstrNumber, boolean pbRetry)
+	private Policy FindPolicy(String pstrNumber) throws BigBangJewelException {
+		if (marrCompanies == null) {
+			InitCompanies();
+		}
+
+		for (int i = 0; i < marrCompanies.length; i++) {
+			Policy policy = FindPolicy(pstrNumber, marrCompanies[i], true);
+			if (policy != null) {
+				return policy;
+			}
+		}
+
+		return null;
+	}
+
+	private void InitCompanies() throws BigBangJewelException {
+		String larrCompNames[] = new String[] { "LUS", "LUSAM" };
+
+		marrCompanies = new UUID[larrCompNames.length];
+
+		for (int i = 0; i < larrCompNames.length; i++) {
+			marrCompanies[i] = Company.FindCompany(Engine.getCurrentNameSpace(), larrCompNames[i]);
+			if (marrCompanies[i] == null) {
+				throw new BigBangJewelException("Inesperado: Cia.Seg. Lusitânia não encontrada.");
+			}
+		}
+	}
+	
+	private Policy FindPolicy(String pstrNumber, UUID midCompany, boolean pbRetry)
 		throws BigBangJewelException
 	{
-		UUID midCompany;
 		String lstrNumberAux;
 		IEntity lrefPolicies;
         MasterDB ldb;
         ResultSet lrsPolicies;
 		Policy lobjResult;
 		int llngFound;
-
-		midCompany = Company.FindCompany(Engine.getCurrentNameSpace(), "LUS");
-		if ( midCompany == null )
-			throw new BigBangJewelException("Inesperado: Lusitânia não encontrada.");
 
 		lstrNumberAux = "!" + ( pbRetry ? pstrNumber.replaceFirst("^0+(?!$)", "") : pstrNumber );
 		lobjResult = null;
@@ -334,7 +359,7 @@ public class Lusitania
 		}
 
 		if ( pbRetry && (llngFound == 0)  )
-			lobjResult = FindPolicy(pstrNumber, false);
+			lobjResult = FindPolicy(pstrNumber, midCompany, false);
 
 		if ( llngFound > 1 )
 			return null;

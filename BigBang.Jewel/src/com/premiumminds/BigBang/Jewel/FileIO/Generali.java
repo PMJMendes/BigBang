@@ -60,6 +60,9 @@ public class Generali extends FileIOBase {
 	    public static final UUID Code_7_SalesPremError  = UUID.fromString("267F8473-FAEC-483F-8624-FEF3680CEC8C");
 	}
 	
+	// Array with the GUIDs from the two possible companies (Generali and Generali(AM))
+	private UUID[] possibleCompanies = null;
+	
 	public UUID GetStatusTable() throws BigBangJewelException {
 		return ObjID_ImportStatus;
 	}
@@ -176,7 +179,7 @@ public class Generali extends FileIOBase {
 			// Gets the policy to which the receipt is associated, and if it does not exist, logs an error
 			policyNumber = lineData[Fields.POLICY].getData().trim()
 					.replaceFirst("\\d{4}-", "").replaceAll("-.*", "");
-			receiptPolicy = FindPolicy(policyNumber, true);
+			receiptPolicy = FindPolicy(policyNumber);
 			if ( receiptPolicy == null ) {
 				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_1_NoPolicy, null);
 				return;
@@ -264,26 +267,57 @@ public class Generali extends FileIOBase {
 		createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_0_Ok, createdReceipt.mobjData.mid);
 	}	
 	
+	/** 
+	 * This method initializes the possible companies' array, and tries to 
+	 * find the policy with a given number to each of those companies
+	 * (returning as soon as it is found)
+	 */
+	private Policy FindPolicy(String policyNumber) throws BigBangJewelException {
+		
+		if (possibleCompanies == null) {
+			InitCompanies();
+		}
+
+		for (int i = 0; i < possibleCompanies.length; i++) {
+			Policy policy = FindPolicy(policyNumber, possibleCompanies[i], true);
+			if (policy != null) {
+				return policy;
+			}
+		}
+
+		return null;
+	}
+
+	/** 
+	 * This method initializes the possible companies' array
+	 */
+	private void InitCompanies() throws BigBangJewelException {
+		
+		String companiesShortName[] = new String[] { "GEN", "GENAM" };
+
+		possibleCompanies = new UUID[companiesShortName.length];
+
+		for (int i = 0; i < companiesShortName.length; i++) {
+			possibleCompanies[i] = Company.FindCompany(Engine.getCurrentNameSpace(), companiesShortName[i]);
+			if (possibleCompanies[i] == null) {
+				throw new BigBangJewelException("Inesperado: Companhia de Seguros Generali não encontrada.");
+			}
+		}
+	}
+
 	/**
 	 * This method tries to get the policy from the DB, corresponding to the policy number associated
 	 * with a receipt read from the file
 	 */
-	private Policy FindPolicy(String policyNumber, boolean shouldRetry)
+	private Policy FindPolicy(String policyNumber, UUID companyId, boolean shouldRetry)
 		throws BigBangJewelException {
 		
-		UUID companyGuid;
 		String policyNumberAux;
 		Policy fetchedPolicy;
 		int policiesFound;
 		MasterDB ldb;
 		IEntity policyEntity;
 		ResultSet fetchedPolicies;
-		
-		// Gets the GUID representing the company in the DB, and if it doesn't exists, throws an exception 
-		companyGuid = Company.FindCompany(Engine.getCurrentNameSpace(), "GEN");
-		if (companyGuid == null) {
-			throw new BigBangJewelException("Inesperado: Companhia de Seguros Generali não encontrada.");
-		}
 		
 		// In case it is the first call (meaning it is not recursive), it removes the white spaces from the policy number
 		// It also includes the character '!' which later will be changed to the character 'N', indicating it is in UNICODE,
@@ -304,7 +338,7 @@ public class Generali extends FileIOBase {
 		// Gets the policies from that company, with a given number (it should return 1)
 		try {
 			fetchedPolicies = policyEntity.SelectByMembers(ldb, new int[] {0, 2}, 
-					new java.lang.Object[] {policyNumberAux, companyGuid}, new int[0]);
+					new java.lang.Object[] {policyNumberAux, companyId}, new int[0]);
 		} catch (Throwable e) {
 			try { 
 				ldb.Disconnect(); 
@@ -342,7 +376,7 @@ public class Generali extends FileIOBase {
 		// If it wasn't possible to get the policy, and it was the first try, 
 		// it tries again
 		if (shouldRetry && (policiesFound == 0)) {
-			fetchedPolicy = FindPolicy(policyNumber, false);
+			fetchedPolicy = FindPolicy(policyNumber, companyId, false);
 		}
 				
 		// If there is more than one policy found (which is an error, for there should only 
