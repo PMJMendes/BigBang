@@ -811,7 +811,6 @@ public class Constants
 	// Policy's Coverages' TAGS
 	public static class PolicyCoveragesTags {
 		public static final String LEGAL				= "LEGAL";
-		public static final String HEADER				= "H";
 	}
 	
 	// Values' Retrieval TAGS

@@ -432,7 +432,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		cells = new TD[cellNumber];
 		int paramCheck = 0;
 		cellNumber = 0;
-		
+
 		boolean leftLine = false;
 
 		// Creates the header row
@@ -467,7 +467,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			cells[cellNumber] = ReportBuilder.buildCell("Observações",
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
-			leftLine = true;;
+			leftLine = true;
 		}
 
 		setOuterWidths(cells, reportParams);
@@ -1190,11 +1190,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			String valueWithTags = getValueWithTags(policyValues,
 					insuredObject, currentExercise,
 					Constants.PolicyCoveragesTags.LEGAL,
-					Constants.PolicyValuesTags.TEMPORARY_VALUE);
+					Constants.PolicyValuesTags.TEMPORARY_VALUE, false);
 			if (valueWithTags == null || valueWithTags.length() == 0) {
 				valueWithTags = getValueWithTags(policyValues, insuredObject,
 						currentExercise, Constants.PolicyCoveragesTags.LEGAL,
-						Constants.PolicyValuesTags.VALUE);
+						Constants.PolicyValuesTags.VALUE, false);
 			}
 			result.add(valueWithTags);
 			return result;
@@ -1202,8 +1202,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// For Responsibility policies, the value comes from the insured
 			// value in the policy header
 			result.add(getValueWithTags(policyValues, insuredObject,
-					currentExercise, Constants.PolicyCoveragesTags.HEADER,
-					Constants.PolicyValuesTags.VALUE));
+					currentExercise, null, Constants.PolicyValuesTags.VALUE,
+					true));
 			return result;
 		}
 
@@ -1248,15 +1248,15 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// If the policy is in the work accidents or life categories, the
 			// tax corresponds to the sales tax from the policy header
 			result.add(getValueWithTags(policyValues, insuredObject,
-					currentExercise, Constants.PolicyCoveragesTags.HEADER,
-					Constants.PolicyValuesTags.SALES_TAX));
+					currentExercise, null,
+					Constants.PolicyValuesTags.SALES_TAX, true));
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			// If the policy is a responsibility policy, the tax is the
 			// "hitting rate"
 			result.add(getValueWithTags(policyValues, insuredObject,
-					currentExercise, Constants.PolicyCoveragesTags.HEADER,
-					Constants.PolicyValuesTags.HITTING_RATE));
+					currentExercise, null,
+					Constants.PolicyValuesTags.HITTING_RATE, true));
 			return result;
 		}
 
@@ -1292,7 +1292,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private String getValueWithTags(PolicyValue[] policyValues,
 			PolicyObject insuredObject, UUID exerciseId, String coverageTag,
-			String taxTag) {
+			String taxTag, boolean isHeader) {
 
 		UUID objectID = insuredObject == null ? null : insuredObject.getKey();
 
@@ -1302,7 +1302,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// no coverage to compare
 			if (coverageTag == null
 					|| coverageTag.equals(policyValues[i].GetTax()
-							.GetCoverage().GetTag())) {
+							.GetCoverage().GetTag())
+							|| (isHeader && policyValues[i].GetTax().GetCoverage()
+									.IsHeader())) {
 				// The value is either associated to a given tax, or there is
 				// no tax to compare
 				if (taxTag == null
@@ -1338,7 +1340,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// is no coverage to compare
 				if (coverageTag == null
 						|| coverageTag.equals(policyValues[i].GetTax()
-								.GetCoverage().GetTag())) {
+								.GetCoverage().GetTag())
+								|| (isHeader && policyValues[i].GetTax().GetCoverage()
+										.IsHeader())) {
 					// The value is either associated to a given tax, or there
 					// is no tax to compare
 					if (taxTag == null
@@ -1359,7 +1363,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// is no coverage to compare
 				if (coverageTag == null
 						|| coverageTag.equals(policyValues[i].GetTax()
-								.GetCoverage().GetTag())) {
+								.GetCoverage().GetTag())
+								|| (isHeader && policyValues[i].GetTax().GetCoverage()
+										.IsHeader())) {
 					// The value is either associated to a given tax, or there
 					// is no tax to compare
 					if (taxTag == null
@@ -1379,7 +1385,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// no coverage to compare
 			if (coverageTag == null
 					|| coverageTag.equals(policyValues[i].GetTax()
-							.GetCoverage().GetTag())) {
+							.GetCoverage().GetTag())
+							|| (isHeader && policyValues[i].GetTax().GetCoverage()
+									.IsHeader())) {
 				// The value is either associated to a given tax, or there is
 				// no tax to compare
 				if (taxTag == null
