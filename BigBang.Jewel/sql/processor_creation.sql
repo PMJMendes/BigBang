@@ -1,5 +1,4 @@
 -- Creates the translators and file processors
-
 /*-- -Insert(s): [bigbang].[tblBBFileProcessers] */
 INSERT INTO [bigbang].[tblBBFileProcessers] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKFormat],[ProcesserClass]) VALUES('220cbce9-7bd8-42c4-b932-a5e201009acd','2016-04-08T15:34:16.163','2016-04-08T15:34:16.163','648cb5a9-3abb-4995-b5fa-a0a600edf739','14adae21-c09f-443b-bc2d-a5e200c7e2e0',N'com.premiumminds.BigBang.Jewel.FileIO.Liberty');
 
@@ -41,3 +40,88 @@ INSERT INTO [bigbang].[tblFileSections] ([PK],[_TSCreate],[_TSUpdate],[FKType],[
 
 /*-- -Insert(s): [bigbang].[tblFileSpecs] */
 INSERT INTO [bigbang].[tblFileSpecs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FSpecName],[FKFormat],[Encoding]) VALUES('14adae21-c09f-443b-bc2d-a5e200c7e2e0','2016-04-08T12:07:45.820','2016-04-08T12:07:45.820','5514358c-2fcf-4769-981f-3c11bb25ba76',N'Recibos Liberty','0e635595-f993-4abe-884e-3d2784d59f96',N'UTF-8');
+
+
+--  Creates the type translator table for liberty's receipt's import
+CREATE TABLE [bigbang].[tblLibertyTranslator]
+(
+	[PK] [uniqueidentifier] ROWGUIDCOL NOT NULL,
+	[_VER] [timestamp] NOT NULL,
+	[_TSCreate] [datetime] NOT NULL,
+	[_TSUpdate] [datetime] NOT NULL,
+	[FKType] [uniqueidentifier] NOT NULL,
+	[TInput] [nvarchar](1) COLLATE SQL_Latin1_General_CP1_CI_AI NOT NULL,
+	[FKReceiptType] [uniqueidentifier] NOT NULL
+)
+
+ALTER TABLE [bigbang].[tblLibertyTranslator] ADD CONSTRAINT [DF__tblLibert__FKTyp__273C368E] DEFAULT ('c42eef38-c2b4-45be-ae86-a5e600bad859') FOR [FKType]
+
+ALTER TABLE [bigbang].[tblLibertyTranslator] ADD CONSTRAINT [DF__tblLibert___TSCr__2553EE1C] DEFAULT (getdate()) FOR [_TSCreate]
+
+ALTER TABLE [bigbang].[tblLibertyTranslator] ADD CONSTRAINT [DF__tblLibert___TSUp__26481255] DEFAULT (getdate()) FOR [_TSUpdate]
+
+ALTER TABLE [bigbang].[tblLibertyTranslator] ADD CONSTRAINT [PK__tblLiber__321507871DB2CC54] PRIMARY KEY CLUSTERED
+(
+	[PK] ASC
+)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+ALTER TABLE [bigbang].[tblLibertyTranslator] ADD CONSTRAINT [UQ__tblLiber__4434E839208F38FF] UNIQUE NONCLUSTERED
+(
+	[FKReceiptType] ASC
+)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+
+ALTER TABLE [bigbang].[tblLibertyTranslator] ADD CONSTRAINT [UQ__tblLiber__FB362692236BA5AA] UNIQUE NONCLUSTERED
+(
+	[TInput] ASC
+)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+
+ALTER TABLE [bigbang].[tblLibertyTranslator] WITH CHECK ADD CONSTRAINT [FK__tblLibert__FKRec__29247F00] FOREIGN KEY
+(
+	[FKReceiptType]
+)
+REFERENCES [bigbang].[tblReceiptTypes]
+(
+	[PK]
+)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+ALTER TABLE [bigbang].[tblLibertyTranslator] WITH CHECK ADD CONSTRAINT [FK__tblLibert__FKTyp__28305AC7] FOREIGN KEY
+(
+	[FKType]
+)
+REFERENCES [madds].[tblObjects]
+(
+	[PK]
+)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+
+/*-- -Insert(s): [madds].[tblDDLLogs] */
+INSERT INTO [madds].[tblDDLLogs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNSpace],[DDLText]) VALUES('9e05c621-f8a1-408e-ac26-6be1cacc9314','2016-04-12T11:28:21.590','2016-04-12T11:28:21.590','f57bcb6b-ec2d-4828-bbc9-3ef660ecb900','c37b81f0-860f-4868-9177-9e15008b3efd',N'CREATE TABLE [bigbang].[tblLibertyTranslator] ([PK] uniqueidentifier ROWGUIDCOL NOT NULL PRIMARY KEY, [_VER] rowversion, [_TSCreate] datetime DEFAULT GETDATE() NOT NULL, [_TSUpdate] datetime DEFAULT GETDATE() NOT NULL, [FKType] uniqueidentifier DEFAULT ''c42eef38-c2b4-45be-ae86-a5e600bad859'' NOT NULL REFERENCES [madds].[tblObjects] ([PK]), [TInput] nvarchar(1) UNIQUE NOT NULL, [FKReceiptType] uniqueidentifier UNIQUE NOT NULL FOREIGN KEY REFERENCES [bigbang].[tblReceiptTypes] ([PK]))');
+
+/*-- -Insert(s): [madds].[tblEntities] */
+INSERT INTO [madds].[tblEntities] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNameSpace],[FKObject]) VALUES('7128ab07-dc2e-4806-92f3-a5e600bd1012','2016-04-12T11:28:21.397','2016-04-12T11:28:21.397','94ab0a6d-25a1-11da-91c2-000b6abc6ae9','c37b81f0-860f-4868-9177-9e15008b3efd','c42eef38-c2b4-45be-ae86-a5e600bad859');
+
+/*-- -Insert(s): [madds].[tblObjectMembers] */
+INSERT INTO [madds].[tblObjectMembers] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKObject],[NOrder],[MemberName],[MemberComments],[FKTypeDef],[Size],[FKRefersTo],[Nullable],[Unique],[TableColumn],[Precision]) VALUES('bf82a958-6acb-4f04-93f4-a5e600bc00fe','2016-04-12T11:24:30.083','2016-04-12T11:24:30.083','94ab0a6f-25a1-11da-91c2-000b6abc6ae9','c42eef38-c2b4-45be-ae86-a5e600bad859',1,N'Input',N'The type as it exists in the receipts'' file','94ab0a78-25a1-11da-91c2-000b6abc6ae9',1,null,0,1,N'TInput',null);
+INSERT INTO [madds].[tblObjectMembers] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKObject],[NOrder],[MemberName],[MemberComments],[FKTypeDef],[Size],[FKRefersTo],[Nullable],[Unique],[TableColumn],[Precision]) VALUES('a0d3cdf8-c491-4772-a4ef-a5e600bc78f0','2016-04-12T11:26:12.430','2016-04-12T11:26:12.430','94ab0a6f-25a1-11da-91c2-000b6abc6ae9','c42eef38-c2b4-45be-ae86-a5e600bad859',2,N'Receipt Type',N'The type of BB''s receipt associated with th input','94ab0a77-25a1-11da-91c2-000b6abc6ae9',null,'afe7cc47-b44f-442d-8cf4-9f8a00db2637',0,1,N'FKReceiptType',null);
+
+/*-- -Insert(s): [madds].[tblObjects] */
+INSERT INTO [madds].[tblObjects] ([PK],[_TSCreate],[_TSUpdate],[FKType],[ObjName],[ObjComments],[MainTable],[ClassName],[FKApplication]) VALUES('c42eef38-c2b4-45be-ae86-a5e600bad859','2016-04-12T11:20:17.180','2016-04-12T11:26:17.953','94ab0a6b-25a1-11da-91c2-000b6abc6ae9',N'Liberty Translator',N'Receipt type Translator for Liberty',N'tblLibertyTranslator',null,'9003fda0-e35b-4c2c-85f8-9e15008b262c');
+
+-- Inserts the rows in the Liberty translator
+INSERT INTO bigbang.tblLibertyTranslator([PK],[TInput],[FKReceiptType])
+     VALUES(NEWID(), 'N', '36564F0F-2180-4794-B0EC-9F900111D2A8');
+           
+INSERT INTO bigbang.tblLibertyTranslator([PK],[TInput],[FKReceiptType])
+     VALUES(NEWID(), 'C', '6B91D626-4CAD-4F53-8FD6-9F900111C39F');        
+
+INSERT INTO bigbang.tblLibertyTranslator([PK],[TInput],[FKReceiptType])
+     VALUES(NEWID(), 'E', 'BFC1AE6D-53E8-41AF-84BE-9F900111D967');        
+ 
+INSERT INTO bigbang.tblLibertyTranslator([PK],[TInput],[FKReceiptType])
+     VALUES(NEWID(), 'M', '3B127029-C133-4EB4-AD1E-9F900111EF2A');      
