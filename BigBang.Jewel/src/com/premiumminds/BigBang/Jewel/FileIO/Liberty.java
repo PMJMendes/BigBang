@@ -15,15 +15,19 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileFieldData;
 import Jewel.Engine.SysObjects.FileSectionData;
+import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Interfaces.IStep;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
-import com.premiumminds.BigBang.Jewel.FileIO.Generali.StatusCodes;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerForceShortCircuit;
 import com.premiumminds.BigBang.Jewel.SysObjects.FileIOBase;
 
 /**
@@ -35,8 +39,10 @@ public class Liberty extends FileIOBase {
 	public static final UUID RDef_Imports = UUID.fromString("8D11763D-4B0B-44EF-8779-A0A701270881");
 	public static final UUID FormatID_Liberty = UUID.fromString("14ADAE21-C09F-443B-BC2D-A5E200C7E2E0");
 	public static final UUID ObjID_ImportStatus = UUID.fromString("EE1BF5D6-4116-410F-9A9B-A0A700F4F569");
+	public static final UUID FKPaymentType = UUID.fromString("A44F6D02-83A2-4D96-BF5F-A02200EB6857"); // paid to the insurance company
 
 	public static class Fields {
+		public static final int AGENT = 0;
 		public static final int POLICY = 3;
 		public static final int RECEIPT = 6;
 		public static final int STARTDATE = 7;
@@ -47,7 +53,6 @@ public class Liberty extends FileIOBase {
 		public static final int SALESPREMIUM = 16;
 		public static final int COMMISSIONSIGN = 18;
 		public static final int COMMISSION = 19;
-		public static final int CHANNEL = 23;
 		public static final int STATE = 24;
 		public static final int RECEIPTTYPE = 27;
 		public static final int COLLECTIONMETHOD = 29;
@@ -62,6 +67,15 @@ public class Liberty extends FileIOBase {
 		public static final UUID Code_5_InternalError   = UUID.fromString("C8E3D6D7-D3DE-45A7-AB40-A0A700F9FADE");
 		public static final UUID Code_6_TotalPremError  = UUID.fromString("7F96CF04-665A-46BF-B7B7-F823D64FF2D8");
 		public static final UUID Code_7_SalesPremError  = UUID.fromString("267F8473-FAEC-483F-8624-FEF3680CEC8C");
+		public static final UUID Code_8_WrongAgent		= UUID.fromString("23D38AAF-742A-4CD4-8951-3398FD37031E");
+		public static final UUID Code_9_PaymentCreated	= UUID.fromString("9F9F36CF-4A94-421E-84ED-4E1811053160");
+		public static final UUID Code_10_PaymentNotPossible  = UUID.fromString("D1EBB3D3-6A6F-446A-99BB-A127012367F1");
+	}
+
+	public static class AllowedAgentsCodes {
+		public static String Credite 		= "15296";
+		public static String Moscavide 		= "20711";
+		public static String Network 		= "22253";
 	}
 
 	// Array with the GUIDs from the two possible companies (Generali and Generali(AM))
@@ -166,6 +180,7 @@ public class Liberty extends FileIOBase {
 					throws BigBangJewelException {
 
 		String lineToParse;
+		String agentCode; 
 		String policyNumber;
 		Policy receiptPolicy;
 		String receiptNumber;
@@ -174,109 +189,163 @@ public class Liberty extends FileIOBase {
 		BigDecimal totalPremium; // Built with the total premium + total premium sign fields
 		BigDecimal salesPremium; // Built with the sales premium + sales premium sign fields
 		BigDecimal commission; // Built with the commission + commission sign fields
-		String channel; // TODO: não tenho a certeza que seja usado... e pode ser necessário data de pagamento...
 		String state;
 		UUID receiptTypeGuid;
 		String collectionMethod;
 		CreateReceipt createdReceipt;
+		boolean possibleInsert = true;
 
 		// Policy and receipt number, used to report import problems/success
 		lineToParse = lineData[Fields.POLICY].getData() + lineData[Fields.RECEIPT].getData();
 
 		try {
 
-			// Gets the policy to which the receipt is associated, and if it does not exist, logs an error
-			policyNumber = lineData[Fields.POLICY].getData().trim().replaceFirst("^0+(?!$)", "");
-			receiptPolicy = FindPolicy(policyNumber);
-			if (receiptPolicy == null) {
-				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_1_NoPolicy, null);
-				return;
-			}
-
-			// Gets the receipt number, and if it was previously processed, logs an error
-			receiptNumber = lineData[Fields.RECEIPT].getData().trim().replaceFirst("^0+(?!$)", "");
-			if (parsedReceipts.contains(receiptNumber)) {
-				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_2_RepeatedReceipt, null);
-				return;
-			}
-
-			// Checks if the receipt exists in the database, and if it exists, logs an error
-			if (FindReceipt(receiptNumber, receiptPolicy.GetProcessID())) {
-				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_3_ExistingReceipt, null);
-				return;
-			}
-
-			// Gets the receipt type from the input file, and checks if it corresponds to a parametrized type in 
-			// BigBang. If it doesn't, logs an error
-			receiptTypeGuid = ProcessReceiptType(lineData[Fields.RECEIPTTYPE].getData().trim());
-			if (receiptTypeGuid == null) {
-				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_4_UnknownType, null);
-				return;
-			}
-
-			// Checks the total premium, and if it equal to 0, logs an error.
-			totalPremium = BuildDecimal(lineData[Fields.TOTALPREMIUMSIGN].getData(), lineData[Fields.TOTALPREMIUM].getData());
-			if (totalPremium.compareTo(BigDecimal.ZERO) == 0) {
-				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_6_TotalPremError, null);
-				return;
-			}
-
-			// Checks the sales premium, and if it equal to 0, logs an error.
-			salesPremium = BuildDecimal(lineData[Fields.SALESPREMIUMSIGN].getData(), lineData[Fields.SALESPREMIUM].getData());	
-			if (salesPremium.compareTo(BigDecimal.ZERO) == 0) {
-				createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_7_SalesPremError, null);
-				return;
-			}
-
-			// Adds the receipt to the parsed ones
-			parsedReceipts.add(receiptNumber);
-
-			// Gets the values needed to create a receipt, and creates it
-			startDate = BuildDate(lineData[Fields.STARTDATE].getData().trim());
-			endDate = BuildDate(lineData[Fields.ENDDATE].getData().trim());
-			commission = BuildDecimal(lineData[Fields.COMMISSIONSIGN].getData(), lineData[Fields.COMMISSION].getData());
-			channel = lineData[Fields.CHANNEL].getData().trim();
 			state = lineData[Fields.STATE].getData().trim();
 			collectionMethod = lineData[Fields.COLLECTIONMETHOD].getData().trim();
-			createdReceipt = new CreateReceipt(receiptPolicy.GetProcessID());
 
-			// Sets the new recipe with the (possible) values and stores it
-			createdReceipt.mobjData = new ReceiptData();
+			// It only tries to insert receipts in two states
+			if (" ".equals(state) || "C".equals(state)) {
 
-			createdReceipt.mobjData.mstrNumber = receiptNumber;
-			createdReceipt.mobjData.midType = receiptTypeGuid;
-			createdReceipt.mobjData.mdblTotal = totalPremium;
-			createdReceipt.mobjData.mdblCommercial = salesPremium;
-			createdReceipt.mobjData.mdblCommissions = commission;
-			createdReceipt.mobjData.mdblRetrocessions = null;
-			createdReceipt.mobjData.mdblFAT = null;
-			createdReceipt.mobjData.mdblBonusMalus = null;
-			createdReceipt.mobjData.mbIsMalus = null;
-			createdReceipt.mobjData.mdtIssue = null;
-			createdReceipt.mobjData.mdtMaturity = startDate;
-			createdReceipt.mobjData.mdtEnd = endDate;
-			createdReceipt.mobjData.mdtDue = null;
-			createdReceipt.mobjData.midMediator = null;
-			createdReceipt.mobjData.mstrNotes = null;
-			createdReceipt.mobjData.mstrDescription = null;
+				// Gets the agent code, and if it doesn't correspond to Crédite or to the Sales Network, logs an error
+				agentCode = lineData[Fields.AGENT].getData().trim().replaceFirst("^0+(?!$)", "");
+				if (!AllowedAgentsCodes.Credite.equals(agentCode) && !AllowedAgentsCodes.Moscavide.equals(agentCode) &&
+						!AllowedAgentsCodes.Network.equals(agentCode)) {
+					createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_8_WrongAgent, null);
+					return;
+				}
 
-			createdReceipt.mobjImage = null;
-			createdReceipt.mobjContactOps = null;
-			createdReceipt.mobjDocOps = null;
+				// It only tries to insert the receipts whose agent corresponds to the one associated with the current 
+				// user's namespace (chosen at login)
+				if (isAgentLogged(agentCode)) {
 
-			createdReceipt.Execute(pdb);
+					// Gets the policy to which the receipt is associated, and if it does not exist, logs an error
+					policyNumber = lineData[Fields.POLICY].getData().trim().replaceFirst("^0+(?!$)", "");
+					receiptPolicy = FindPolicy(policyNumber);
+					if (receiptPolicy == null) {
+						createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_1_NoPolicy, null);
+						return;
+					}
 
-			// If the receipt can be paid, it does...
-			if (isPaidReceipt(state, collectionMethod)) {
-				payReceipt(receiptNumber);
+					// Gets the receipt number, and if it was previously processed, logs an error
+					receiptNumber = lineData[Fields.RECEIPT].getData().trim().replaceFirst("^0+(?!$)", "");
+					if (parsedReceipts.contains(receiptNumber)) {
+						createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_2_RepeatedReceipt, null);
+						return;
+					}
+
+					// Checks if the receipt exists in the database, and if it exists, logs an error
+					// An already charged receipt may exist in the database
+					if (FindReceipt(receiptNumber, receiptPolicy.GetProcessID())) {
+						if ("C".equals(state)) {
+							possibleInsert = false;
+						} else {
+							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_3_ExistingReceipt, null);
+							return;
+						}
+					}
+					
+					createdReceipt = new CreateReceipt(receiptPolicy.GetProcessID());
+
+					// A receipt corresponding to a payment does not logs an error if already exists, but should
+					// not be inserted
+					if (possibleInsert) {
+						// Gets the receipt type from the input file, and checks if it corresponds to a parametrized type in 
+						// BigBang. If it doesn't, logs an error
+						receiptTypeGuid = ProcessReceiptType(lineData[Fields.RECEIPTTYPE].getData().trim());
+						if (receiptTypeGuid == null) {
+							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_4_UnknownType, null);
+							return;
+						}
+
+						// Checks the total premium, and if it equal to 0, logs an error.
+						totalPremium = BuildDecimal(lineData[Fields.TOTALPREMIUMSIGN].getData(), lineData[Fields.TOTALPREMIUM].getData());
+						if (totalPremium.compareTo(BigDecimal.ZERO) == 0) {
+							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_6_TotalPremError, null);
+							return;
+						}
+
+						// Checks the sales premium, and if it equal to 0, logs an error.
+						salesPremium = BuildDecimal(lineData[Fields.SALESPREMIUMSIGN].getData(), lineData[Fields.SALESPREMIUM].getData());	
+						if (salesPremium.compareTo(BigDecimal.ZERO) == 0) {
+							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_7_SalesPremError, null);
+							return;
+						}
+
+						// Adds the receipt to the parsed ones
+						parsedReceipts.add(receiptNumber);
+
+						// Gets the values needed to create a receipt, and creates it
+						startDate = BuildDate(lineData[Fields.STARTDATE].getData().trim());
+						endDate = BuildDate(lineData[Fields.ENDDATE].getData().trim());
+						commission = BuildDecimal(lineData[Fields.COMMISSIONSIGN].getData(), lineData[Fields.COMMISSION].getData());
+
+						// Sets the new recipe with the (possible) values and stores it
+						createdReceipt.mobjData = new ReceiptData();
+
+						createdReceipt.mobjData.mstrNumber = receiptNumber;
+						createdReceipt.mobjData.midType = receiptTypeGuid;
+						createdReceipt.mobjData.mdblTotal = totalPremium;
+						createdReceipt.mobjData.mdblCommercial = salesPremium;
+						createdReceipt.mobjData.mdblCommissions = commission;
+						createdReceipt.mobjData.mdblRetrocessions = null;
+						createdReceipt.mobjData.mdblFAT = null;
+						createdReceipt.mobjData.mdblBonusMalus = null;
+						createdReceipt.mobjData.mbIsMalus = null;
+						createdReceipt.mobjData.mdtIssue = null;
+						createdReceipt.mobjData.mdtMaturity = startDate;
+						createdReceipt.mobjData.mdtEnd = endDate;
+						createdReceipt.mobjData.mdtDue = null;
+						createdReceipt.mobjData.midMediator = null;
+						createdReceipt.mobjData.mstrNotes = null;
+						createdReceipt.mobjData.mstrDescription = null;
+
+						createdReceipt.mobjImage = null;
+						createdReceipt.mobjContactOps = null;
+						createdReceipt.mobjDocOps = null;
+
+						createdReceipt.Execute(pdb);
+
+					}
+
+					// If the receipt can be paid, it does...
+					if (isPaidReceipt(state, collectionMethod)) {
+						if (!payReceipt(Receipt.GetInstance(Engine.getCurrentNameSpace(), createdReceipt.mobjData.mid), pdb)) {
+							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_10_PaymentNotPossible, null);
+							return;
+						} else {
+							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_9_PaymentCreated, null);
+						}
+					}
+					
+					createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_0_Ok, createdReceipt.mobjData.mid);
+					
+				}
 			}
 
 		} catch (Throwable e) {
 			createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_5_InternalError, null);
 			return;
 		}
-		
-		createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_0_Ok, createdReceipt.mobjData.mid);
+	}
+
+	/** 
+	 * This method returns true if the logged agent corresponds to the one associated 
+	 * with the current user's namespace (chosen at login)
+	 */
+	private boolean isAgentLogged(String agentCode) {
+
+		if ((AllowedAgentsCodes.Credite.equals(agentCode) || 
+				AllowedAgentsCodes.Moscavide.equals(agentCode)) &&
+				Constants.NSID_CredEGS.equals(Engine.getCurrentNameSpace())) {
+			return true;
+		}
+
+		if (AllowedAgentsCodes.Network.equals(agentCode) &&
+				Constants.NSID_RedeCom.equals(Engine.getCurrentNameSpace())) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/** 
@@ -390,7 +459,7 @@ public class Liberty extends FileIOBase {
 	/**
 	 * This method tries to get the receipt with a given number from the DB
 	 */
-	private boolean FindReceipt(String receiptNumber, UUID receiptGuid) 
+	private boolean FindReceipt(String receiptNumber, UUID policyId) 
 			throws BigBangJewelException {
 
 		Receipt fetchedReceipt;
@@ -425,7 +494,7 @@ public class Liberty extends FileIOBase {
 		try {
 			while (fetchedReceipts.next()) {
 				fetchedReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), fetchedReceipts);
-				if (receiptGuid.equals(fetchedReceipt.getProcess().GetParent().getKey())) {
+				if (policyId.equals(fetchedReceipt.getProcess().GetParent().getKey())) {
 					wasReceiptFound = true;
 					break;
 				}
@@ -551,8 +620,6 @@ public class Liberty extends FileIOBase {
 	 * This method checks if it is possible to set the receipt as paid
 	 */
 	private boolean isPaidReceipt(String state, String collectionMethod) {
-		// TODO: Confirmar se são estes os métodos a considerar, e se nenhuma destas datas não
-		// consideradas deve ser guardada (data de cobrança)
 		HashSet<String> possibleMethods = new HashSet<String>(Arrays.asList("02", "03", "04", "08"));
 
 		if(state != null && state.equals("C") && possibleMethods.contains(collectionMethod)) {
@@ -561,8 +628,36 @@ public class Liberty extends FileIOBase {
 		return false;
 	}
 
-	private void payReceipt(String receiptNumber) {
-		// TODO Auto-generated method stub
+	/** 
+	 * This method tries to pay the receipt automatically 
+	 */
+	private boolean payReceipt(Receipt receipt, SQLServer pdb) 
+			throws BigBangJewelException {
+		
+		IProcess receiptProcess;
+		Payment payment;
+
+		// Creates a payment to the receipt and marks the receipt as paid
+		try {
+			receiptProcess = receipt.getProcess();
+
+			if ( receiptProcess.GetLiveLog(Constants.OPID_Receipt_Payment, pdb) != null )
+				return true;
+			
+			// Checks if the receipt is not paid already, and if it is in a state
+			// that allows it to be paid
+			if ( !AdvanceReceipt(receipt, pdb) )
+				return false;
+
+			payment = new Payment(receipt.getKey());
+			payment.marrData = new PaymentData[] {new PaymentData()};
+			payment.marrData[0].midPaymentType = FKPaymentType;
+			payment.Execute(pdb);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return true;
 	}
 
 	/** 
@@ -582,4 +677,36 @@ public class Liberty extends FileIOBase {
 		}
 	}
 
+	/** 
+	 * As seen on com.premiumminds.BigBang.Jewel.FileIO.Axa.java
+	 * This method checks if a receipt may have an associated payment
+	 */
+	private boolean AdvanceReceipt(Receipt pobjReceipt, SQLServer pdb)
+			throws BigBangJewelException {
+		IProcess lrefRecProc;
+		IStep lobjStep;
+		TriggerForceShortCircuit lopEFSC;
+
+		try {
+			// Gets the receipt associated process
+			lrefRecProc = pobjReceipt.getProcess();
+
+			// Checks if the process allows the payment operation
+			lobjStep = lrefRecProc.GetValidOperation(Constants.OPID_Receipt_Payment);
+			if ( lobjStep == null ) {
+				// if it was not possible, changes the process "state" and tries it again
+				lobjStep = lrefRecProc.GetValidOperation(Constants.OPID_Receipt_TriggerForceShortCircuit);
+				if ( lobjStep == null ) {
+					return false;
+				}
+				lopEFSC = new TriggerForceShortCircuit(lrefRecProc.getKey());
+				lopEFSC.Execute(pdb);
+				lobjStep = lrefRecProc.GetValidOperation(Constants.OPID_Receipt_Payment);
+			}
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return (lobjStep != null);
+	}
 }
