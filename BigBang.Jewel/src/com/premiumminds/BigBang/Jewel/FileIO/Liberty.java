@@ -17,6 +17,7 @@ import Jewel.Engine.SysObjects.FileFieldData;
 import Jewel.Engine.SysObjects.FileSectionData;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
+import Jewel.Petri.SysObjects.JewelPetriException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -78,7 +79,7 @@ public class Liberty extends FileIOBase {
 		public static String Network 		= "22253";
 	}
 
-	// Array with the GUIDs from the two possible companies (Generali and Generali(AM))
+	// Array with the GUIDs from the two possible companies (Liberty and Liberty(AM))
 	private UUID[] possibleCompanies = null;
 
 	public UUID GetStatusTable() throws BigBangJewelException {
@@ -90,7 +91,7 @@ public class Liberty extends FileIOBase {
 	 */
 	public void Parse() throws BigBangJewelException {
 
-		MasterDB ldb;
+		MasterDB data, report;
 		HashSet<String> parsedReceipts;
 		FileSectionData[] receiptsArray;
 		FileFieldData[] lineData;
@@ -98,15 +99,18 @@ public class Liberty extends FileIOBase {
 
 		// Gets a reference to the DB and creates a connection
 		try {
-			ldb = new MasterDB();
+			data = new MasterDB();
+			report = new MasterDB();
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 		try {
-			createSession(ldb);
+			createSession(data);
+			createSession(report);
 		} catch (BigBangJewelException e) {
 			try {
-				ldb.Disconnect();
+				data.Disconnect();
+				report.Disconnect();
 			} catch (SQLException e1) {
 
 			}
@@ -120,45 +124,28 @@ public class Liberty extends FileIOBase {
 		receiptsArray = mobjData.getData()[0];
 
 		for (i = 0; i < receiptsArray.length; i++) {
-			try {
-				ldb.BeginTrans();
-			} catch (Throwable e) {
-				try {
-					ldb.Disconnect();
-				} catch (SQLException e1) {
-
-				}
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
+			// Begins a DB transaction
+			beginTransaction(report);
 
 			try {
 				lineData = receiptsArray[i].getData();
-				ParseReceipt(i, lineData, parsedReceipts, ldb);
+				ParseReceipt(i, lineData, parsedReceipts, data, report);
 			} catch (Throwable e) {
 
 			}
-
-			// Commits the new created receipt
-			try {
-				ldb.Commit();
-			} catch (Throwable e) {
-				try {
-					ldb.Disconnect();
-				} catch (SQLException e1) {
-
-				}
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
+			
+			// Commits the DB where the report info is being stored
+			commitTransaction(report);
 		}
 
-		// Creates a new entry in the database, with the information about the
-		// processing
+		// Creates a report with the information about the processing
 		try {
-			createReport(ldb, "Importação Liberty", RDef_Imports,
+			createReport(report, "Importação Liberty", RDef_Imports,
 					FormatID_Liberty.toString() + "|" + midSession.toString());
 		} catch (BigBangJewelException e) {
 			try {
-				ldb.Disconnect();
+				data.Disconnect();
+				report.Disconnect();
 			} catch (SQLException e1) {
 
 			}
@@ -166,17 +153,34 @@ public class Liberty extends FileIOBase {
 		}
 
 		try {
-			ldb.Disconnect();
+			data.Disconnect();
+			report.Disconnect();
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
+	
+	/**
+	 * This method begins a DB transaction
+	 */
+	private void beginTransaction(SQLServer pdb) throws BigBangJewelException {
+		try {
+			pdb.BeginTrans();
+		} catch (Throwable e) {
+			try {
+				pdb.Disconnect();
+			} catch (SQLException e1) {
 
+			}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+	
 	/**
 	 * The method responsible for parsing a given receipt (entry from the File)
 	 */
 	private void ParseReceipt(int fileReceiptIndex, FileFieldData[] lineData,
-			HashSet<String> parsedReceipts, SQLServer pdb)
+			HashSet<String> parsedReceipts, SQLServer data, SQLServer report)
 					throws BigBangJewelException {
 
 		String lineToParse;
@@ -194,6 +198,7 @@ public class Liberty extends FileIOBase {
 		String collectionMethod;
 		CreateReceipt createdReceipt;
 		boolean possibleInsert = true;
+		Receipt fetchedReceipt = null;
 
 		// Policy and receipt number, used to report import problems/success
 		lineToParse = lineData[Fields.POLICY].getData() + lineData[Fields.RECEIPT].getData();
@@ -210,7 +215,7 @@ public class Liberty extends FileIOBase {
 				agentCode = lineData[Fields.AGENT].getData().trim().replaceFirst("^0+(?!$)", "");
 				if (!AllowedAgentsCodes.Credite.equals(agentCode) && !AllowedAgentsCodes.Moscavide.equals(agentCode) &&
 						!AllowedAgentsCodes.Network.equals(agentCode)) {
-					createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_8_WrongAgent, null);
+					createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_8_WrongAgent, null);
 					return;
 				}
 
@@ -222,24 +227,25 @@ public class Liberty extends FileIOBase {
 					policyNumber = lineData[Fields.POLICY].getData().trim().replaceFirst("^0+(?!$)", "");
 					receiptPolicy = FindPolicy(policyNumber);
 					if (receiptPolicy == null) {
-						createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_1_NoPolicy, null);
+						createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_1_NoPolicy, null);
 						return;
 					}
 
 					// Gets the receipt number, and if it was previously processed, logs an error
 					receiptNumber = lineData[Fields.RECEIPT].getData().trim().replaceFirst("^0+(?!$)", "");
 					if (parsedReceipts.contains(receiptNumber)) {
-						createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_2_RepeatedReceipt, null);
+						createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_2_RepeatedReceipt, null);
 						return;
 					}
 
 					// Checks if the receipt exists in the database, and if it exists, logs an error
 					// An already charged receipt may exist in the database
-					if (FindReceipt(receiptNumber, receiptPolicy.GetProcessID())) {
+					fetchedReceipt = FindReceipt(receiptNumber, receiptPolicy.GetProcessID());
+					if (fetchedReceipt != null) {
 						if ("C".equals(state)) {
 							possibleInsert = false;
 						} else {
-							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_3_ExistingReceipt, null);
+							createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_3_ExistingReceipt, null);
 							return;
 						}
 					}
@@ -253,81 +259,75 @@ public class Liberty extends FileIOBase {
 						// BigBang. If it doesn't, logs an error
 						receiptTypeGuid = ProcessReceiptType(lineData[Fields.RECEIPTTYPE].getData().trim());
 						if (receiptTypeGuid == null) {
-							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_4_UnknownType, null);
+							createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_4_UnknownType, null);
 							return;
 						}
 
 						// Checks the total premium, and if it equal to 0, logs an error.
 						totalPremium = BuildDecimal(lineData[Fields.TOTALPREMIUMSIGN].getData(), lineData[Fields.TOTALPREMIUM].getData());
 						if (totalPremium.compareTo(BigDecimal.ZERO) == 0) {
-							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_6_TotalPremError, null);
+							createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_6_TotalPremError, null);
 							return;
 						}
 
 						// Checks the sales premium, and if it equal to 0, logs an error.
 						salesPremium = BuildDecimal(lineData[Fields.SALESPREMIUMSIGN].getData(), lineData[Fields.SALESPREMIUM].getData());	
 						if (salesPremium.compareTo(BigDecimal.ZERO) == 0) {
-							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_7_SalesPremError, null);
+							createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_7_SalesPremError, null);
 							return;
 						}
-
-						// Adds the receipt to the parsed ones
-						parsedReceipts.add(receiptNumber);
 
 						// Gets the values needed to create a receipt, and creates it
 						startDate = BuildDate(lineData[Fields.STARTDATE].getData().trim());
 						endDate = BuildDate(lineData[Fields.ENDDATE].getData().trim());
 						commission = BuildDecimal(lineData[Fields.COMMISSIONSIGN].getData(), lineData[Fields.COMMISSION].getData());
 
-						// Sets the new recipe with the (possible) values and stores it
-						createdReceipt.mobjData = new ReceiptData();
-
-						createdReceipt.mobjData.mstrNumber = receiptNumber;
-						createdReceipt.mobjData.midType = receiptTypeGuid;
-						createdReceipt.mobjData.mdblTotal = totalPremium;
-						createdReceipt.mobjData.mdblCommercial = salesPremium;
-						createdReceipt.mobjData.mdblCommissions = commission;
-						createdReceipt.mobjData.mdblRetrocessions = null;
-						createdReceipt.mobjData.mdblFAT = null;
-						createdReceipt.mobjData.mdblBonusMalus = null;
-						createdReceipt.mobjData.mbIsMalus = null;
-						createdReceipt.mobjData.mdtIssue = null;
-						createdReceipt.mobjData.mdtMaturity = startDate;
-						createdReceipt.mobjData.mdtEnd = endDate;
-						createdReceipt.mobjData.mdtDue = null;
-						createdReceipt.mobjData.midMediator = null;
-						createdReceipt.mobjData.mstrNotes = null;
-						createdReceipt.mobjData.mstrDescription = null;
-
-						createdReceipt.mobjImage = null;
-						createdReceipt.mobjContactOps = null;
-						createdReceipt.mobjDocOps = null;
-
-						createdReceipt.Execute(pdb);
-
+						createReceipt(data, receiptNumber, startDate, endDate, totalPremium, salesPremium, commission,
+								receiptTypeGuid, createdReceipt);
 					}
+					
+					// Adds the receipt to the parsed ones
+					parsedReceipts.add(receiptNumber);
 
 					// If the receipt can be paid, it does...
-					if (isPaidReceipt(state, collectionMethod)) {
-						if (!payReceipt(Receipt.GetInstance(Engine.getCurrentNameSpace(), createdReceipt.mobjData.mid), pdb)) {
-							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_10_PaymentNotPossible, null);
+					if (isPayableReceipt(state, collectionMethod)) {
+						Receipt receiptToPay = fetchedReceipt==null? 
+								Receipt.GetInstance(Engine.getCurrentNameSpace(), createdReceipt.mobjData.mid) 
+								: fetchedReceipt;
+						if (!payReceipt(receiptToPay, data)) {
+							createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_10_PaymentNotPossible, null);
 							return;
 						} else {
-							createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_9_PaymentCreated, null);
+							createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_9_PaymentCreated, null);
 						}
 					}
-					
-					createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_0_Ok, createdReceipt.mobjData.mid);
-					
+					createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_0_Ok, createdReceipt.mobjData.mid);
 				}
 			}
 
 		} catch (Throwable e) {
-			createDetail(pdb, lineToParse, fileReceiptIndex, StatusCodes.Code_5_InternalError, null);
+			createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_5_InternalError, null);
 			return;
 		}
 	}
+	
+	/**
+	 * This method commits to a DB
+	 */
+	private void commitTransaction (SQLServer pdb) throws BigBangJewelException {
+		// Commits the new created receipt
+		try {
+			pdb.Commit();
+		} catch (Throwable e) {
+			try {
+				pdb.Disconnect();
+			} catch (SQLException e1) {
 
+			}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+	
 	/** 
 	 * This method returns true if the logged agent corresponds to the one associated 
 	 * with the current user's namespace (chosen at login)
@@ -347,7 +347,7 @@ public class Liberty extends FileIOBase {
 
 		return false;
 	}
-
+	
 	/** 
 	 * This method initializes the possible companies' array, and tries to 
 	 * find the policy with a given number to each of those companies
@@ -455,21 +455,19 @@ public class Liberty extends FileIOBase {
 
 		return fetchedPolicy;
 	}
-
+	
 	/**
 	 * This method tries to get the receipt with a given number from the DB
 	 */
-	private boolean FindReceipt(String receiptNumber, UUID policyId) 
+	private Receipt FindReceipt(String receiptNumber, UUID policyId) 
 			throws BigBangJewelException {
 
 		Receipt fetchedReceipt;
-		boolean wasReceiptFound;
 		IEntity receiptEntity;
 		MasterDB ldb;
 		ResultSet fetchedReceipts;
 
 		fetchedReceipt = null;
-		wasReceiptFound = false;
 
 		// Gets the entity responsible for fetching and manipulating receipts
 		try {
@@ -495,7 +493,6 @@ public class Liberty extends FileIOBase {
 			while (fetchedReceipts.next()) {
 				fetchedReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), fetchedReceipts);
 				if (policyId.equals(fetchedReceipt.getProcess().GetParent().getKey())) {
-					wasReceiptFound = true;
 					break;
 				}
 			}
@@ -525,9 +522,9 @@ public class Liberty extends FileIOBase {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return wasReceiptFound;
+		return fetchedReceipt;
 	}
-
+	
 	/**
 	 * This method tries to get the receipt's type's GUID from the DB
 	 */
@@ -594,7 +591,7 @@ public class Liberty extends FileIOBase {
 
 		return receiptGuid;
 	}
-
+	
 	/** 
 	 * This method transforms the strings with a sign and a value into a BigDecimal
 	 * It also divides the value by 100
@@ -615,11 +612,51 @@ public class Liberty extends FileIOBase {
 		dateString = stringBuilder.insert(dateString.length()-5, "-").toString();
 		return Timestamp.valueOf(dateString + " 00:00:00.0");
 	}
+	
+	/** 
+	 * This method defines the values in a created receipt and stores it in the database
+	 */
+	private void createReceipt(SQLServer pdb, String receiptNumber,
+			Timestamp startDate, Timestamp endDate, BigDecimal totalPremium,
+			BigDecimal salesPremium, BigDecimal commission,
+			UUID receiptTypeGuid, CreateReceipt createdReceipt)
+			throws JewelPetriException, BigBangJewelException {
+		
+		beginTransaction(pdb);
+		
+		// Sets the new recipe with the (possible) values and stores it
+		createdReceipt.mobjData = new ReceiptData();
 
+		createdReceipt.mobjData.mstrNumber = receiptNumber;
+		createdReceipt.mobjData.midType = receiptTypeGuid;
+		createdReceipt.mobjData.mdblTotal = totalPremium;
+		createdReceipt.mobjData.mdblCommercial = salesPremium;
+		createdReceipt.mobjData.mdblCommissions = commission;
+		createdReceipt.mobjData.mdblRetrocessions = null;
+		createdReceipt.mobjData.mdblFAT = null;
+		createdReceipt.mobjData.mdblBonusMalus = null;
+		createdReceipt.mobjData.mbIsMalus = null;
+		createdReceipt.mobjData.mdtIssue = null;
+		createdReceipt.mobjData.mdtMaturity = startDate;
+		createdReceipt.mobjData.mdtEnd = endDate;
+		createdReceipt.mobjData.mdtDue = null;
+		createdReceipt.mobjData.midMediator = null;
+		createdReceipt.mobjData.mstrNotes = null;
+		createdReceipt.mobjData.mstrDescription = null;
+
+		createdReceipt.mobjImage = null;
+		createdReceipt.mobjContactOps = null;
+		createdReceipt.mobjDocOps = null;
+
+		createdReceipt.Execute(pdb);
+		
+		commitTransaction(pdb);
+	}
+	
 	/**
 	 * This method checks if it is possible to set the receipt as paid
 	 */
-	private boolean isPaidReceipt(String state, String collectionMethod) {
+	private boolean isPayableReceipt(String state, String collectionMethod) {
 		HashSet<String> possibleMethods = new HashSet<String>(Arrays.asList("02", "03", "04", "08"));
 
 		if(state != null && state.equals("C") && possibleMethods.contains(collectionMethod)) {
@@ -627,7 +664,7 @@ public class Liberty extends FileIOBase {
 		}
 		return false;
 	}
-
+	
 	/** 
 	 * This method tries to pay the receipt automatically 
 	 */
@@ -649,17 +686,22 @@ public class Liberty extends FileIOBase {
 			if ( !AdvanceReceipt(receipt, pdb) )
 				return false;
 
-			payment = new Payment(receipt.getKey());
+			beginTransaction(pdb);
+			
+			payment = new Payment(receiptProcess.getKey());
 			payment.marrData = new PaymentData[] {new PaymentData()};
 			payment.marrData[0].midPaymentType = FKPaymentType;
 			payment.Execute(pdb);
+			
+			commitTransaction(pdb);
+			
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		return true;
 	}
-
+	
 	/** 
 	 * This method initializes the possible companies' array
 	 */
