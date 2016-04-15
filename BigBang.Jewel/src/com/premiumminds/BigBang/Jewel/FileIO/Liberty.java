@@ -60,17 +60,18 @@ public class Liberty extends FileIOBase {
 	}
 
 	public static class StatusCodes {
-		public static final UUID Code_0_Ok 				= UUID.fromString("611B2744-6880-4204-BED3-A0A700F5FC10");
-		public static final UUID Code_1_NoPolicy        = UUID.fromString("B54E8992-42B1-4C00-8831-A0A700F5FC10");
-		public static final UUID Code_2_RepeatedReceipt = UUID.fromString("20C24636-8F0D-4B28-B117-A0A700F5FC10");
-		public static final UUID Code_3_ExistingReceipt = UUID.fromString("81FCAFAE-31F4-481C-9431-A0A700F5FC10");
-		public static final UUID Code_4_UnknownType     = UUID.fromString("FD82165C-492B-460A-8CE0-A0A700F5FC10");
-		public static final UUID Code_5_InternalError   = UUID.fromString("C8E3D6D7-D3DE-45A7-AB40-A0A700F9FADE");
-		public static final UUID Code_6_TotalPremError  = UUID.fromString("7F96CF04-665A-46BF-B7B7-F823D64FF2D8");
-		public static final UUID Code_7_SalesPremError  = UUID.fromString("267F8473-FAEC-483F-8624-FEF3680CEC8C");
-		public static final UUID Code_8_WrongAgent		= UUID.fromString("23D38AAF-742A-4CD4-8951-3398FD37031E");
-		public static final UUID Code_9_PaymentCreated	= UUID.fromString("9F9F36CF-4A94-421E-84ED-4E1811053160");
-		public static final UUID Code_10_PaymentNotPossible  = UUID.fromString("D1EBB3D3-6A6F-446A-99BB-A127012367F1");
+		public static final UUID Code_0_Ok 					= UUID.fromString("611B2744-6880-4204-BED3-A0A700F5FC10");
+		public static final UUID Code_1_NoPolicy        	= UUID.fromString("B54E8992-42B1-4C00-8831-A0A700F5FC10");
+		public static final UUID Code_2_RepeatedReceipt 	= UUID.fromString("20C24636-8F0D-4B28-B117-A0A700F5FC10");
+		public static final UUID Code_3_ExistingReceipt 	= UUID.fromString("81FCAFAE-31F4-481C-9431-A0A700F5FC10");
+		public static final UUID Code_4_UnknownType     	= UUID.fromString("FD82165C-492B-460A-8CE0-A0A700F5FC10");
+		public static final UUID Code_5_InternalError   	= UUID.fromString("C8E3D6D7-D3DE-45A7-AB40-A0A700F9FADE");
+		public static final UUID Code_6_TotalPremError  	= UUID.fromString("7F96CF04-665A-46BF-B7B7-F823D64FF2D8");
+		public static final UUID Code_7_SalesPremError  	= UUID.fromString("267F8473-FAEC-483F-8624-FEF3680CEC8C");
+		public static final UUID Code_8_WrongAgent			= UUID.fromString("23D38AAF-742A-4CD4-8951-3398FD37031E");
+		public static final UUID Code_9_PaymentCreated		= UUID.fromString("9F9F36CF-4A94-421E-84ED-4E1811053160");
+		public static final UUID Code_10_PaymentNotPossible = UUID.fromString("D1EBB3D3-6A6F-446A-99BB-A127012367F1");
+		public static final UUID Code_11_PaymentExisted  	= UUID.fromString("CD9F9F90-8315-4EF5-86FA-63B889EAA332");
 	}
 
 	public static class AllowedAgentsCodes {
@@ -242,10 +243,10 @@ public class Liberty extends FileIOBase {
 					// An already charged receipt may exist in the database
 					fetchedReceipt = FindReceipt(receiptNumber, receiptPolicy.GetProcessID());
 					if (fetchedReceipt != null) {
-						if ("C".equals(state)) {
+						createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_3_ExistingReceipt, null);
+						if (isPayableReceipt(state, collectionMethod)) {
 							possibleInsert = false;
 						} else {
-							createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_3_ExistingReceipt, null);
 							return;
 						}
 					}
@@ -294,14 +295,20 @@ public class Liberty extends FileIOBase {
 						Receipt receiptToPay = fetchedReceipt==null? 
 								Receipt.GetInstance(Engine.getCurrentNameSpace(), createdReceipt.mobjData.mid) 
 								: fetchedReceipt;
-						if (!payReceipt(receiptToPay, data)) {
-							createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_10_PaymentNotPossible, null);
-							return;
-						} else {
-							createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_9_PaymentCreated, null);
+						int paymentResult = payReceipt(receiptToPay, data);
+						switch (paymentResult) {
+							case 0:	createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_10_PaymentNotPossible, null);
+									return;
+							case 1:	createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_11_PaymentExisted, null);
+									return;
+							case 2:	createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_9_PaymentCreated, null);
 						}
 					}
-					createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_0_Ok, createdReceipt.mobjData.mid);
+
+					// If the receipt was created, it reports it
+					if (fetchedReceipt == null) {
+						createDetail(report, lineToParse, fileReceiptIndex, StatusCodes.Code_0_Ok, createdReceipt.mobjData.mid);
+					}
 				}
 			}
 
@@ -667,8 +674,11 @@ public class Liberty extends FileIOBase {
 	
 	/** 
 	 * This method tries to pay the receipt automatically 
+	 * @returns 0 if it is not possible to create a payment
+	 * 			1 if the payment already exists
+	 * 			2 if the payment was created
 	 */
-	private boolean payReceipt(Receipt receipt, SQLServer pdb) 
+	private int payReceipt(Receipt receipt, SQLServer pdb) 
 			throws BigBangJewelException {
 		
 		IProcess receiptProcess;
@@ -679,12 +689,12 @@ public class Liberty extends FileIOBase {
 			receiptProcess = receipt.getProcess();
 
 			if ( receiptProcess.GetLiveLog(Constants.OPID_Receipt_Payment, pdb) != null )
-				return true;
+				return 1;
 			
 			// Checks if the receipt is not paid already, and if it is in a state
 			// that allows it to be paid
 			if ( !AdvanceReceipt(receipt, pdb) )
-				return false;
+				return 0;
 
 			beginTransaction(pdb);
 			
@@ -699,7 +709,7 @@ public class Liberty extends FileIOBase {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return true;
+		return 2;
 	}
 	
 	/** 

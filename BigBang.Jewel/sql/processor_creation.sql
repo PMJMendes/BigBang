@@ -125,3 +125,9 @@ INSERT INTO bigbang.tblLibertyTranslator([PK],[TInput],[FKReceiptType])
  
 INSERT INTO bigbang.tblLibertyTranslator([PK],[TInput],[FKReceiptType])
      VALUES(NEWID(), 'M', '3B127029-C133-4EB4-AD1E-9F900111EF2A');      
+     
+/*-- -Insert(s): [bigbang].[tblBBReceiptImportStatus] */
+INSERT INTO [bigbang].[tblBBReceiptImportStatus] ([PK],[_TSCreate],[_TSUpdate],[FKType],[StatusText]) VALUES('23d38aaf-742a-4cd4-8951-3398fd37031e','2016-04-13T16:39:16.617','2016-04-13T16:39:16.617','ee1bf5d6-4116-410f-9a9b-a0a700f4f569',N'Código de Agente incorrecto');
+INSERT INTO [bigbang].[tblBBReceiptImportStatus] ([PK],[_TSCreate],[_TSUpdate],[FKType],[StatusText]) VALUES('9f9f36cf-4a94-421e-84ed-4e1811053160','2016-04-14T11:30:29.573','2016-04-14T11:30:29.573','ee1bf5d6-4116-410f-9a9b-a0a700f4f569',N'Pagamento Criado');
+INSERT INTO [bigbang].[tblBBReceiptImportStatus] ([PK],[_TSCreate],[_TSUpdate],[FKType],[StatusText]) VALUES('cd9f9f90-8315-4ef5-86fa-63b889eaa332','2016-04-15T16:36:12.803','2016-04-15T16:36:12.803','ee1bf5d6-4116-410f-9a9b-a0a700f4f569',N'Pagamento já existente');
+     
