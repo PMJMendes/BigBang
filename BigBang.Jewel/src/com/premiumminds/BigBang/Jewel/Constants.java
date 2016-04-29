@@ -783,6 +783,48 @@ public class Constants
 
 	// Transport Channels
 	public static final UUID ChannelID_Accounting = UUID.fromString("6D99EBAF-0DB7-42CD-8856-A172010A38BF");
+	
+	// Policy Categories
+	public static class PolicyCategories {
+		public static final UUID WORK_ACCIDENTS   		= UUID.fromString("53DB03E7-F423-4656-A23A-9EE9010A5B87");
+		public static final UUID PERSONAL_ACCIDENTS   	= UUID.fromString("BB3646B1-BE20-4ED1-B3C2-9EE9010A641D");
+		public static final UUID DISEASE			   	= UUID.fromString("F04EBBD0-45BD-4921-931F-9EE9010A6B0E");
+		public static final UUID FIRE				   	= UUID.fromString("56A359A3-33DF-40E5-B004-9EE9010A726A");
+		public static final UUID MULTIRISK   			= UUID.fromString("ECFD23D7-2D15-43F3-B92F-9EE9010A7B34");
+		public static final UUID OTHER_DAMAGES			= UUID.fromString("787B047E-7B15-4DA6-992D-9EE9010A857F");
+		public static final UUID CONSTRUCTION_ASSEMBLY	= UUID.fromString("6DB46133-2789-4B5E-B8FF-9EE9010A8E9D");
+		public static final UUID AGRICULTURAL  			= UUID.fromString("A3F44708-4666-425C-AA70-9EE9010A9E0D");
+		public static final UUID AUTOMOBILE   			= UUID.fromString("7F5F77EB-8348-4914-8525-9EE9010AB1C6");
+		public static final UUID RESPONSIBILITY			= UUID.fromString("2442DD02-F525-4CE3-9CFF-9EE9010ABC44");
+		public static final UUID TRANSPORTED_GOODS		= UUID.fromString("E2732D85-E204-4A71-A5D4-9EE9010AC7B1");
+		public static final UUID MARINE_VESSELS			= UUID.fromString("00960D0F-F31F-4A9E-AE7E-9EE9010AD157");
+		public static final UUID RAIL_VEHICLES			= UUID.fromString("370DE151-6ABF-4561-A8BD-9EE9010ADC2A");
+		public static final UUID AIRCRAFTS				= UUID.fromString("C81B00E0-1BC2-48E6-B8FE-9EE9010AE3A2");
+		public static final UUID DIVERS					= UUID.fromString("73410713-03BD-4247-84A7-9EE9010AECB7");
+		public static final UUID LIFE					= UUID.fromString("537C3D97-02C9-41EE-A5DE-9EE9010AF1BB");
+		public static final UUID RETIREMENT_FUND		= UUID.fromString("696A51D8-B21A-4DA8-B8E9-9EE901153338");
+	}
+	
+	// Policy Sublines
+	public static class PolicySubLines {
+		public static final UUID AUTO_INDIVIDUAL   		= UUID.fromString("22FE8580-E680-4EC7-9ABB-9EE9011AA269");
+		public static final UUID AUTO_FLEET		  		= UUID.fromString("E08BDBD3-4F59-45B9-975E-9EE9011AA8AC");
+	}
+	
+	// Policy's Coverages' TAGS
+	public static class PolicyCoveragesTags {
+		public static final String LEGAL				= "LEGAL";
+	}
+	
+	// Values' Retrieval TAGS
+	public static class PolicyValuesTags {
+		public static final String TERRITORIAL_SCOPE	= "AMBT";
+		public static final String CONTRACT_NAME		= "NEMP";
+		public static final String TEMPORARY_VALUE		= "CPROV";
+		public static final String VALUE				= "CAP";
+		public static final String SALES_TAX			= "TCOM";
+		public static final String HITTING_RATE			= "TXACE";
+	}
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;
