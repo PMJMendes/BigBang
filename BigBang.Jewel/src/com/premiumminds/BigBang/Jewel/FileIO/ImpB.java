@@ -290,10 +290,6 @@ public class ImpB
 		Policy lobjResult;
 		int llngFound;
 
-		midCompany = Company.FindCompany(Engine.getCurrentNameSpace(), "IMP");
-		if ( midCompany == null )
-			throw new BigBangJewelException("Inesperado: Império-Bonança não encontrada.");
-
 		lstrNumberAux = "!" + ( pbRetry ? pstrNumber.replaceFirst("^0+(?!$)", "") : pstrNumber );
 		lobjResult = null;
 		llngFound = 0;

@@ -256,7 +256,7 @@ public class Axa
 	}
 	
 	private void InitCompanies() throws BigBangJewelException {
-		String larrCompNames[] = new String[] { "AXA", "AXAM" };
+		String larrCompNames[] = new String[] { "AXA", "AXAAM" };
 		
 		marrCompanies = new UUID[larrCompNames.length];
 	
