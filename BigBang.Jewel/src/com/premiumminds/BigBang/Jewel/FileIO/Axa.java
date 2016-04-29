@@ -73,6 +73,8 @@ public class Axa
 	    public static final UUID Code_9_PaymentNotPossible  = UUID.fromString("D1EBB3D3-6A6F-446A-99BB-A127012367F1");
 	    public static final UUID Code_10_AdvanceNotPossible = UUID.fromString("BBCCBC9B-BB3F-4FBD-990C-A127012CF8EC");
 	}
+	
+	UUID[] marrCompanies;
 
 	public UUID GetStatusTable()
 		throws BigBangJewelException
@@ -183,7 +185,7 @@ public class Axa
 				return;
 			}
 
-			lobjPolicy = FindPolicy(parrData[Fields.POLICY].getData().trim(), true);
+			lobjPolicy = FindPolicy(parrData[Fields.POLICY].getData().trim());
 			if ( lobjPolicy == null )
 			{
 				createDetail(pdb, lstrLineText, plngLine, StatusCodes.Code_3_NoPolicy, null);
@@ -238,20 +240,43 @@ public class Axa
 		}
 	}
 
-	private Policy FindPolicy(String pstrNumber, boolean pbRetry)
+	private Policy FindPolicy(String pstrNumber) throws BigBangJewelException {
+		if (marrCompanies == null) {
+			InitCompanies();
+		}
+		
+		for (int i = 0; i < marrCompanies.length; i++) {
+			Policy policy = FindPolicy(pstrNumber, marrCompanies[i], true);
+			if (policy != null) {
+				return policy;
+			}
+		}
+		
+		return null;
+	}
+	
+	private void InitCompanies() throws BigBangJewelException {
+		String larrCompNames[] = new String[] { "AXA", "AXAAM" };
+		
+		marrCompanies = new UUID[larrCompNames.length];
+	
+		for (int i = 0; i < larrCompNames.length; i++) {
+			marrCompanies[i] = Company.FindCompany(Engine.getCurrentNameSpace(), larrCompNames[i]);
+			if (marrCompanies[i] == null) {
+				throw new BigBangJewelException("Inesperado: AXA Seguros Portugal não encontrada.");
+			}
+		}
+	}
+	
+	private Policy FindPolicy(String pstrNumber, UUID midCompany, boolean pbRetry)
 		throws BigBangJewelException
 	{
-		UUID lidCompany;
 		String lstrNumberAux;
 		IEntity lrefPolicies;
         MasterDB ldb;
         ResultSet lrsPolicies;
 		Policy lobjResult;
 		int llngFound;
-
-		lidCompany = Company.FindCompany(Engine.getCurrentNameSpace(), "AXA");
-		if ( lidCompany == null )
-			throw new BigBangJewelException("Inesperado: AXA Seguros Portugal não encontrada.");
 
 		lstrNumberAux = "!" + ( pbRetry ? pstrNumber.replaceFirst("^0+(?!$)", "") : pstrNumber );
 		lobjResult = null;
@@ -269,7 +294,7 @@ public class Axa
 
         try
         {
-        	lrsPolicies = lrefPolicies.SelectByMembers(ldb, new int[] {0, 2}, new java.lang.Object[] {lstrNumberAux, lidCompany}, new int[0]);
+        	lrsPolicies = lrefPolicies.SelectByMembers(ldb, new int[] {0, 2}, new java.lang.Object[] {lstrNumberAux, midCompany}, new int[0]);
 		}
 		catch (Throwable e)
 		{
@@ -312,7 +337,7 @@ public class Axa
 		}
 
 		if ( pbRetry && (llngFound == 0)  )
-			lobjResult = FindPolicy(pstrNumber, false);
+			lobjResult = FindPolicy(pstrNumber, midCompany, false);
 
 		if ( llngFound > 1 )
 			return null;
