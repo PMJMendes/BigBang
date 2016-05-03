@@ -19,7 +19,6 @@ import com.premiumminds.BigBang.Jewel.Data.AccountingData;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Objects.AccountingEntry;
 import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
-import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
@@ -32,9 +31,6 @@ public class Payment
 	private UUID midReceipt;
 	private UUID midPrevStatus;
 	private AccountingData[] marrAccounting;
-	
-	public BigDecimal prevPremium;
-	public BigDecimal prevTotalPremium;
 
 	public Payment(UUID pidProcess)
 	{
@@ -77,13 +73,7 @@ public class Payment
 				lstrBuilder.append(pstrLineBreak);
 			}
 		}
-
-		if ((prevPremium != null) || (prevTotalPremium != null)) {
-			lstrBuilder.append(pstrLineBreak)
-				.append("Foram actualizados os prémios total e comercial da apólice.")
-				.append(pstrLineBreak);
-		}
-
+		
 		return lstrBuilder.toString();
 	}
 
@@ -233,12 +223,6 @@ public class Payment
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
-		
-		try {
-			UpdatePremium(pdb, lobjReceipt);
-		} catch (BigBangJewelException e) {
-			throw new JewelPetriException(e.getMessage(), e);
-		} 
 	}
 	
 	public String UndoDesc(String pstrLineBreak)
@@ -296,13 +280,7 @@ public class Payment
 				lstrBuilder.append(pstrLineBreak);
 			}
 		}
-
-		if ((prevPremium != null) || (prevTotalPremium != null)) {
-			lstrBuilder.append(pstrLineBreak)
-				.append("Foram repostos os valores anteriores para os prémios total e comercial da apólice.")
-				.append(pstrLineBreak);
-		}
-
+		
 		return lstrBuilder.toString();
 	}
 
@@ -382,12 +360,6 @@ public class Payment
 				throw new JewelPetriException(e.getMessage(), e);
 			}
 		}
-		
-		try {
-			UnUpdatePremium(pdb, lobjReceipt);
-		} catch (BigBangJewelException e) {
-			throw new JewelPetriException(e.getMessage(), e);
-		} 
 	}
 
 	public UndoSet[] GetSets()
@@ -677,46 +649,5 @@ public class Payment
 		}
 
 		return larrResult.toArray(new AccountingData[larrResult.size()]);
-	}
-
-	private void UpdatePremium(SQLServer pdb, Receipt lobjReceipt) 
-			throws BigBangJewelException {
-		prevPremium = null;
-		prevTotalPremium = null;
-
-		if ( lobjReceipt.getAt(Receipt.I.TYPE).equals(Constants.RecType_Continuing) ) {
-			Policy policy = lobjReceipt.getDirectPolicy();
-			if (policy != null) {
-				// JMMM - These functions already return NULL when the values don't change
-				BigDecimal newPremium = policy.CheckSalesPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.COMMERCIALPREMIUM));
-				BigDecimal newTotalPr = policy.CheckTotalPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.TOTALPREMIUM));
-
-				if ((newPremium != null) || (newTotalPr != null)) {
-					prevPremium = (BigDecimal)policy.getAt(Policy.I.PREMIUM);
-					prevTotalPremium = (BigDecimal)policy.getAt(Policy.I.TOTALPREMIUM);
-					try {
-						policy.setAt(Policy.I.PREMIUM, newPremium);
-						policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
-						policy.SaveToDb(pdb);
-					} catch(Throwable e) {
-						throw new BigBangJewelException(e.getMessage(), e);
-					}
-				}
-			}
-		}
-	}
-
-	private void UnUpdatePremium(SQLServer pdb, Receipt lobjReceipt) 
-			throws BigBangJewelException {
-		if ((prevPremium != null) || (prevTotalPremium != null)) {
-			Policy policy = lobjReceipt.getDirectPolicy();
-			try {
-				policy.setAt(Policy.I.PREMIUM, prevPremium);
-				policy.setAt(Policy.I.TOTALPREMIUM, prevTotalPremium);
-				policy.SaveToDb(pdb);
-			} catch (Throwable e) {
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-		}
 	}
 }
