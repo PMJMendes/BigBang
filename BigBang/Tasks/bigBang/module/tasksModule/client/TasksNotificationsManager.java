@@ -34,7 +34,6 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 	protected TasksBroker broker;
 	protected int currentCount = 0;
 	protected String lastTimestamp = null;
-	protected boolean running = false;
 
 	public TasksNotificationsManager(){
 		this.eventBus = EventBus.getInstance();
@@ -43,7 +42,6 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 	}
 
 	public void run() {
-		this.running = true;
 //		updatePendingTasksCount();
 		this.schedule(this.DELAY);
 	}
@@ -129,9 +127,9 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 		}, true);
 	}
 	
-	public boolean isRunning(){
-		return this.running;
-	}
+//	public boolean isRunning(){
+//		return this.running;
+//	}
 	
 	private void bindToEvents(){
 		EventBus.getInstance().addHandler(OperationWasExecutedEvent.TYPE, new OperationWasExecutedEventHandler() {
