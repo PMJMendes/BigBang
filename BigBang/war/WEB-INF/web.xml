@@ -1,20 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE web-app
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-    "http://java.sun.com/dtd/web-app_2_3.dtd"
-    [ 
-    	<!ENTITY  loginServices SYSTEM "loginServices.xml" >
-    	<!ENTITY  libraryServices SYSTEM "libraryServices.xml" >
-    	<!ENTITY  taskServices SYSTEM "taskServices.xml" >
-    	<!ENTITY  generalSystemServices SYSTEM "generalSystemServices.xml" >
-    	<!ENTITY  clientServices SYSTEM "clientServices.xml" >
-    	<!ENTITY  quoteRequestServices SYSTEM "quoteRequestServices.xml" >
-    	<!ENTITY  insurancePolicyServices SYSTEM "insurancePolicyServices.xml" >
-    	<!ENTITY  receiptServices SYSTEM "receiptServices.xml" >
-    	<!ENTITY  casualtyServices SYSTEM "casualtyServices.xml" >
-    	<!ENTITY  expenseServices SYSTEM "expenseServices.xml" >
-    	<!ENTITY  jewelWebServices SYSTEM "jewelWebServices.xml" >
-    ]  >
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
 	<!-- Log4J -->
@@ -48,17 +35,502 @@
 	</listener>
 
 	<!-- Servlets -->
-	&loginServices;
-	&libraryServices;
-	&taskServices;
-	&generalSystemServices;
-	&clientServices;
-	&quoteRequestServices;
-	&insurancePolicyServices;
-	&receiptServices;
-	&casualtyServices;
-	&expenseServices;
-	&jewelWebServices;
+	
+	<!-- loginServices.xml content -->
+	<servlet>
+		<servlet-name>AuthenticationService</servlet-name>
+		<servlet-class>bigBang.module.loginModule.server.AuthenticationServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AuthenticationService</servlet-name>
+		<url-pattern>/bigbang/AuthenticationService</url-pattern>
+	</servlet-mapping>
+	
+	<!-- libraryServices.xml content -->
+	<servlet>
+		<servlet-name>BigBangPermissionService</servlet-name>
+		<servlet-class>bigBang.library.server.BigBangPermissionServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>TipifiedListService</servlet-name>
+		<servlet-class>bigBang.library.server.TipifiedListServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>TypifiedTextService</servlet-name>
+		<servlet-class>bigBang.library.server.TypifiedTextServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ContactsService</servlet-name>
+		<servlet-class>bigBang.library.server.ContactsServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DocumentService</servlet-name>
+		<servlet-class>bigBang.library.server.DocumentServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DocuShareService</servlet-name>
+		<servlet-class>bigBang.library.server.DocuShareServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ScanItemService</servlet-name>
+		<servlet-class>bigBang.library.server.ScanItemServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ExchangeService</servlet-name>
+		<servlet-class>bigBang.library.server.ExchangeServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ZipCodeService</servlet-name>
+		<servlet-class>bigBang.library.server.ZipCodeServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>BBFileService</servlet-name>
+		<servlet-class>bigBang.library.server.FileServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>BigBangProcessService</servlet-name>
+		<servlet-class>bigBang.library.server.BigBangProcessServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>HistoryService</servlet-name>
+		<servlet-class>bigBang.library.server.HistoryServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>TransferManagerService</servlet-name>
+		<servlet-class>bigBang.library.server.TransferManagerServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ConversationService</servlet-name>
+		<servlet-class>bigBang.library.server.ConversationServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ReportService</servlet-name>
+		<servlet-class>bigBang.library.server.ReportServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>PrintService</servlet-name>
+		<servlet-class>bigBang.library.server.PrintServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>BigBangPermissionService</servlet-name>
+		<url-pattern>/bigbang/BigBangPermissionService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TipifiedListService</servlet-name>
+		<url-pattern>/bigbang/TipifiedListService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TypifiedTextService</servlet-name>
+		<url-pattern>/bigbang/TypifiedTextService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ContactsService</servlet-name>
+		<url-pattern>/bigbang/ContactsService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DocumentService</servlet-name>
+		<url-pattern>/bigbang/DocumentService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DocuShareService</servlet-name>
+		<url-pattern>/bigbang/DocuShareService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ScanItemService</servlet-name>
+		<url-pattern>/bigbang/ScanItemService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ExchangeService</servlet-name>
+		<url-pattern>/bigbang/ExchangeService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ZipCodeService</servlet-name>
+		<url-pattern>/bigbang/ZipCodeService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>BBFileService</servlet-name>
+		<url-pattern>/bigbang/bbfile</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>BigBangProcessService</servlet-name>
+		<url-pattern>/bigbang/BigBangProcessService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>HistoryService</servlet-name>
+		<url-pattern>/bigbang/HistoryService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TransferManagerService</servlet-name>
+		<url-pattern>/bigbang/TransferManagerService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ConversationService</servlet-name>
+		<url-pattern>/bigbang/ConversationService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ReportService</servlet-name>
+		<url-pattern>/bigbang/ReportService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PrintService</servlet-name>
+		<url-pattern>/bigbang/PrintService</url-pattern>
+	</servlet-mapping>
+	
+	<!-- taskServices.xml content -->
+	<servlet>
+		<servlet-name>TasksService</servlet-name>
+		<servlet-class>bigBang.module.tasksModule.server.TasksServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>TasksService</servlet-name>
+		<url-pattern>/bigbang/TasksService</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- generalSystemServices.xml content -->
+	<servlet>
+		<servlet-name>CostCenterService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.CostCenterServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>UserService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.UserServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>MediatorService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.MediatorServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>InsuranceAgencyService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.InsuranceAgencyServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>GeneralSystemService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.GeneralSystemServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>CoveragesService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.CoveragesServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ClientGroupService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.ClientGroupServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>OtherEntityService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.OtherEntityServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>CostCenterService</servlet-name>
+		<url-pattern>/bigbang/CostCenterService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserService</servlet-name>
+		<url-pattern>/bigbang/UserService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MediatorService</servlet-name>
+		<url-pattern>/bigbang/MediatorService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>InsuranceAgencyService</servlet-name>
+		<url-pattern>/bigbang/InsuranceAgencyService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GeneralSystemService</servlet-name>
+		<url-pattern>/bigbang/GeneralSystemService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CoveragesService</servlet-name>
+		<url-pattern>/bigbang/CoveragesService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ClientGroupService</servlet-name>
+		<url-pattern>/bigbang/ClientGroupService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>OtherEntityService</servlet-name>
+		<url-pattern>/bigbang/OtherEntityService</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- clientServices.xml content -->
+	<servlet>
+		<servlet-name>ClientService</servlet-name>
+		<servlet-class>bigBang.module.clientModule.server.ClientServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ClientService</servlet-name>
+		<url-pattern>/bigbang/ClientService</url-pattern>
+	</servlet-mapping>
+	
+	<!-- quoteRequestServices.xml content -->
+	<servlet>
+		<servlet-name>QuoteRequestService</servlet-name>
+		<servlet-class>bigBang.module.quoteRequestModule.server.QuoteRequestServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>QuoteRequestObjectService</servlet-name>
+		<servlet-class>bigBang.module.quoteRequestModule.server.QuoteRequestObjectServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>NegotiationService</servlet-name>
+		<servlet-class>bigBang.module.quoteRequestModule.server.NegotiationServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>QuoteRequestService</servlet-name>
+		<url-pattern>/bigbang/QuoteRequestService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>QuoteRequestObjectService</servlet-name>
+		<url-pattern>/bigbang/QuoteRequestObjectService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>NegotiationService</servlet-name>
+		<url-pattern>/bigbang/NegotiationService</url-pattern>
+	</servlet-mapping>
+	
+	
+	<!-- insurancePolicyServices.xml content -->
+	<servlet>
+		<servlet-name>InsurancePolicyService</servlet-name>
+		<servlet-class>bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>PolicyObjectService</servlet-name>
+		<servlet-class>bigBang.module.insurancePolicyModule.server.PolicyObjectServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>SubPolicyService</servlet-name>
+		<servlet-class>bigBang.module.insurancePolicyModule.server.SubPolicyServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>SubPolicyObjectService</servlet-name>
+		<servlet-class>bigBang.module.insurancePolicyModule.server.SubPolicyObjectServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>InsurancePolicyService</servlet-name>
+		<url-pattern>/bigbang/InsurancePolicyService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>PolicyObjectService</servlet-name>
+		<url-pattern>/bigbang/PolicyObjectService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>SubPolicyService</servlet-name>
+		<url-pattern>/bigbang/SubPolicyService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>SubPolicyObjectService</servlet-name>
+		<url-pattern>/bigbang/SubPolicyObjectService</url-pattern>
+	</servlet-mapping>
+
+	<!-- receiptServices.xml content -->
+	<servlet>
+		<servlet-name>ReceiptService</servlet-name>
+		<servlet-class>bigBang.module.receiptModule.server.ReceiptServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>SignatureRequestService</servlet-name>
+		<servlet-class>bigBang.module.receiptModule.server.SignatureRequestServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DASRequestService</servlet-name>
+		<servlet-class>bigBang.module.receiptModule.server.DASRequestServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ReceiptService</servlet-name>
+		<url-pattern>/bigbang/ReceiptService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SignatureRequestService</servlet-name>
+		<url-pattern>/bigbang/SignatureRequestService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DASRequestService</servlet-name>
+		<url-pattern>/bigbang/DASRequestService</url-pattern>
+	</servlet-mapping>
+	
+	
+	<!-- casualtyServices.xml content -->
+	<servlet>
+		<servlet-name>CasualtyService</servlet-name>
+		<servlet-class>bigBang.module.casualtyModule.server.CasualtyServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>SubCasualtyService</servlet-name>
+		<servlet-class>bigBang.module.casualtyModule.server.SubCasualtyServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>AssessmentService</servlet-name>
+		<servlet-class>bigBang.module.casualtyModule.server.AssessmentServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>MedicalFileService</servlet-name>
+		<servlet-class>bigBang.module.casualtyModule.server.MedicalFileServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>TotalLossService</servlet-name>
+		<servlet-class>bigBang.module.casualtyModule.server.TotalLossServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>CasualtyService</servlet-name>
+		<url-pattern>/bigbang/CasualtyService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SubCasualtyService</servlet-name>
+		<url-pattern>/bigbang/SubCasualtyService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AssessmentService</servlet-name>
+		<url-pattern>/bigbang/AssessmentService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MedicalFileService</servlet-name>
+		<url-pattern>/bigbang/MedicalFileService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TotalLossService</servlet-name>
+		<url-pattern>/bigbang/TotalLossService</url-pattern>
+	</servlet-mapping>
+	
+	<!-- expenseServices.xml content -->
+	<servlet>
+		<servlet-name>ExpenseService</servlet-name>
+		<servlet-class>bigBang.module.expenseModule.server.ExpenseServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ExpenseService</servlet-name>
+		<url-pattern>/bigbang/ExpenseService</url-pattern>
+	</servlet-mapping>
+	
+	<!-- jewelWebServices.xml content -->
+	<servlet>
+		<servlet-name>LoginServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.LoginServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>TreeServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.TreeServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DynaFormServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.DynaFormServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DynaFormActiveServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.DynaFormActiveServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DynaSearchServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.DynaSearchServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DynaGridServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.DynaGridServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DynaViewServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.DynaViewServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>LookupServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.LookupServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ValueServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.ValueServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+	    <servlet-name>FileServiceImpls</servlet-name>
+	    <servlet-class>Jewel.Web.server.FileServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DynaReportServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.DynaReportServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ReportServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.ReportServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>TypifiedListServiceImpls</servlet-name>
+		<servlet-class>Jewel.Web.server.TypifiedListServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>LoginServiceImpls</servlet-name>
+		<url-pattern>/bigbang/login</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TreeServiceImpls</servlet-name>
+		<url-pattern>/bigbang/tree</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DynaFormServiceImpls</servlet-name>
+		<url-pattern>/bigbang/dynaform</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DynaFormActiveServiceImpls</servlet-name>
+		<url-pattern>/bigbang/dynaformactive</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DynaSearchServiceImpls</servlet-name>
+		<url-pattern>/bigbang/dynasearch</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DynaGridServiceImpls</servlet-name>
+		<url-pattern>/bigbang/dynagrid</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DynaViewServiceImpls</servlet-name>
+		<url-pattern>/bigbang/dynaview</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>LookupServiceImpls</servlet-name>
+		<url-pattern>/bigbang/lookup</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ValueServiceImpls</servlet-name>
+		<url-pattern>/bigbang/value</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+	  <servlet-name>FileServiceImpls</servlet-name>
+	  <url-pattern>/bigbang/file</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DynaReportServiceImpls</servlet-name>
+		<url-pattern>/bigbang/dynareport</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ReportServiceImpls</servlet-name>
+		<url-pattern>/bigbang/report</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TypifiedListServiceImpls</servlet-name>
+		<url-pattern>/jewel_web/list</url-pattern>
+	</servlet-mapping>
+	
 
 	<servlet>
 		<servlet-name>remoteLoggingServiceImpl</servlet-name>
