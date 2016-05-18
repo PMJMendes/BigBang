@@ -103,7 +103,7 @@ public class ConversationServiceImpl
 
 		try
 		{
-			lobjDoc = MailConnector.DoGetAttachment(pstrEmailId, (String)pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID));
+			lobjDoc = MailConnector.getAttachment(pstrEmailId, (String)pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID));
 		}
 		catch (BigBangJewelException e)
 		{
@@ -182,7 +182,7 @@ public class ConversationServiceImpl
 	private static Message sGetXchMessage(com.premiumminds.BigBang.Jewel.Objects.Message pobjMsg, boolean pbFilterOwners)
 		throws BigBangException
 	{
-		Item lobjItem;
+		javax.mail.Message lobjItem;
 		MessageAddress[] larrAddrs;
 		MessageAttachment[] larrAtts;
 		Message lobjResult;
@@ -200,12 +200,11 @@ public class ConversationServiceImpl
 
 		try
 		{
-			lobjItem = MailConnector.DoGetItem((String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID));
-			lobjItem.load();
+			lobjItem = MailConnector.getMessage((String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID), null);
 
-			lobjResult.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getDateTimeSent());
+			lobjResult.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getSentDate());
 			lobjResult.subject = lobjItem.getSubject();
-			lobjResult.text = lobjItem.getBody().toString();
+			lobjResult.text = lobjItem.getContent().toString();
 
 			larrAddrs = pobjMsg.GetAddresses();
 			larrAtts = pobjMsg.GetAttachments();

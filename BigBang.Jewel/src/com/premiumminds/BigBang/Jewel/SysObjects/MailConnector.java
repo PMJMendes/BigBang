@@ -1,22 +1,25 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
+import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
@@ -31,14 +34,23 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.FlagTerm;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.poi.util.IOUtils;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.Security.Password;
 import Jewel.Engine.SysObjects.FileXfer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
+import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
+import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
 /**
@@ -52,7 +64,7 @@ public class MailConnector {
 	/**
 	 *	This method sends an email, receiving all the "usual" content on an email message.
 	 */
-	public void sendMail(String[] to, String[] cc, String[] bcc, String subject, String body, 
+	public static void sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, String subject, String body, 
 			FileXfer[] attachments) throws BigBangJewelException {
 
 		Session session;
@@ -72,13 +84,19 @@ public class MailConnector {
 		try {
 			// Sets FROM
 			mailMsg.setFrom(new InternetAddress(session.getProperty("mail.from")));
+			
+			// Sets REPLY TO
+			addresses = buildAddresses(replyTo);
+			if (addresses != null) {
+				mailMsg.setReplyTo(addresses);
+			}
 
 			// Sets TO
 			addresses = buildAddresses(to);
 			if (addresses != null) {
 				mailMsg.setRecipients(Message.RecipientType.TO, addresses);
 			}
-
+			
 			// Sets CC
 			addresses = buildAddresses(cc);
 			if (addresses != null) {
@@ -135,10 +153,67 @@ public class MailConnector {
 		}
 	}
 
+	public static void sendMail(OutgoingMessageData message, SQLServer sqlServer) throws BigBangJewelException {
+		
+		String[] to;
+		String[] replyTo;
+		ResultSet usersSet;
+		IEntity decorationEntity;
+		FileXfer[] attachments;
+		Document document;
+		
+		if (message.marrContactInfos == null) {
+			to = null;
+		} else {
+			to = new String[message.marrContactInfos.length];
+			for (int i=0; i<message.marrContactInfos.length; i++) {
+				to[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
+						message.marrContactInfos[i]).getAt(2);
+			}
+		}
+		
+		if (to != null) {
+			usersSet = null;
+			try {
+				decorationEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
+				replyTo = new String[message.marrUsers.length];
+				for (int i=0; i<message.marrUsers.length; i++) {
+					usersSet = decorationEntity.SelectByMembers(sqlServer, new int[] {0}, new java.lang.Object[] {message.marrUsers[i]}, new int[0]);
+				    if (usersSet.next())
+				    	replyTo[i] = (String)UserDecoration.GetInstance(Engine.getCurrentNameSpace(), usersSet).getAt(1);
+				    else
+				    	replyTo[i] = null;
+				    usersSet.close();
+				}
+			} catch (Throwable e) {
+				if (usersSet != null) {
+					try { 
+						usersSet.close(); 
+					} catch (Throwable e1) {
+						// do nothing
+					}
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			if (message.marrAttachments == null) {
+				attachments = null;
+			} else {
+				attachments = new FileXfer[message.marrAttachments.length];
+				for (int i=0; i<attachments.length; i++) {
+					document = Document.GetInstance(Engine.getCurrentNameSpace(), message.marrAttachments[i]);
+					attachments[i] = document.getFile();
+				}
+			}
+			sendMail(replyTo, to, message.marrCCs, message.marrBCCs,
+					message.mstrSubject, message.mstrBody, attachments);
+		}
+	}
+	
 	/**
 	 *	This method lists all the folders inside a given folder, or inside the default folder
 	 */
-	private Folder[] listFolders(String parentFolder) throws BigBangJewelException {
+	private static Folder[] listFolders(String parentFolder) throws BigBangJewelException {
 
 		Session session;
 		Store store;
@@ -173,7 +248,7 @@ public class MailConnector {
 	 *	This method gets all the mails in a given folder, or from the inbox folder if no folder is specified.
 	 *	The mails may be filtered, returning only those which are unread.
 	 */
-	private Message[] getMails(String folderId, boolean filterUnseen) throws BigBangJewelException {
+	public static Message[] getMails(String folderId, boolean filterUnseen) throws BigBangJewelException {
 
 		Message[] fetchedMails = null;
 		Session session;
@@ -247,7 +322,7 @@ public class MailConnector {
 	/**
 	 *	This method returns a message identified by a given ID, as it exists in the message header
 	 */
-	private static Message getMessage(String msgId, String folderId) throws BigBangJewelException {
+	public static Message getMessage(String msgId, String folderId) throws BigBangJewelException {
 
 		Message fetchedMessage = null;
 
@@ -304,12 +379,12 @@ public class MailConnector {
 	 *	This method gets all attachments on a message. It calls the method which returns
 	 * 	a map with attachmentId / Attachment content, and extracts only the contents 
 	 */
-	private static List<InputStream> getAttachments(Message message) throws Exception {
+	public static List<BodyPart> getAttachments(Message message) throws Exception {
 
-		Map<String, InputStream> attachmentsMap = getAttachmentsMap(message);
+		Map<String, BodyPart> attachmentsMap = getAttachmentsMap(message);
 
 		if (attachmentsMap.size() > 0) {
-			List<InputStream> result = new ArrayList<InputStream>();
+			List<BodyPart> result = new ArrayList<BodyPart>();
 			for (String key: attachmentsMap.keySet()) {
 				result.add(attachmentsMap.get(key));
 			}
@@ -324,20 +399,25 @@ public class MailConnector {
 	 *	This method gets all attachments on a message. It calls a recursive method for all 
 	 *	the body parts of the Message parameter, for parts can be encapsulated, with attachments
 	 */
-	private static Map<String, InputStream> getAttachmentsMap(Message message) throws Exception {
-		Object content = message.getContent();
-		if (content instanceof String)
-			return null;        
+	public static Map<String, BodyPart> getAttachmentsMap(Message message) throws BigBangJewelException {
+		Object content;
+		try {
+			content = message.getContent();
+			if (content instanceof String)
+				return null;        
 
-		if (content instanceof Multipart) {
-			Multipart multipart = (Multipart) content;
-			Map<String, InputStream> result = new HashMap<String, InputStream>();
+			if (content instanceof Multipart) {
+				Multipart multipart = (Multipart) content;
+				Map<String, BodyPart> result = new HashMap<String, BodyPart>();
 
-			for (int i = 0; i < multipart.getCount(); i++) {
-				result.putAll(getAttachmentsMap(multipart.getBodyPart(i)));
+				for (int i = 0; i < multipart.getCount(); i++) {
+					result.putAll(getAttachmentsMap(multipart.getBodyPart(i)));
+				}
+				return result;
+
 			}
-			return result;
-
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 		return null;
 	}
@@ -345,22 +425,22 @@ public class MailConnector {
 	/**
 	 *	This is a recursive method to get all attachments in a body part. 
 	 */
-	private static Map<String, InputStream> getAttachmentsMap(BodyPart part) throws Exception {
-		Map<String, InputStream> result = new HashMap<String, InputStream>();
+	private static Map<String, BodyPart> getAttachmentsMap(BodyPart part) throws Exception {
+		Map<String, BodyPart> result = new HashMap<String, BodyPart>();
 		Object content = part.getContent();
 		if (content instanceof InputStream || content instanceof String) {
 			if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition()) || part.getFileName()!=null ) {
 				Enumeration<?> headers = part.getAllHeaders();
 				while (headers.hasMoreElements()) {
 					Header h = (Header) headers.nextElement();
-					if(h.getName().equals("id")) {
-						result.put(h.getValue(), part.getInputStream());
+					if(h.getName().equals("id")) { // TODO: e se nao tiver ID?
+						result.put(h.getValue(), part);
 						break;
 					}
 				}
 				return result;
 			} else {
-				return new HashMap<String, InputStream>();
+				return new HashMap<String, BodyPart>();
 			}
 		}
 
@@ -374,7 +454,11 @@ public class MailConnector {
 		return result;
 	}
 
-	public static Map<String, String> DoProcessItem(String pstrUniqueID, UUID pidTag, Date pdtRef) throws BigBangJewelException {
+	/**
+	 *	This method fetches a given email and creates (and returns) a Map with 
+	 *	{(<_>, <mail_Id>), (<attachmentId_1>, <mail_Id>), (...), (<attachmentId_n>, <mail_Id>)}  
+	 */
+	public static Map<String, String> processItem(String pstrUniqueID, UUID pidTag, Date pdtRef) throws BigBangJewelException {
 
 		Map<String, String> processed = null;
 		Message fetchedItem = null; 
@@ -387,7 +471,7 @@ public class MailConnector {
 
 			processed.put("_", pstrUniqueID);
 
-			Map<String, InputStream> mailAttachments;
+			Map<String, BodyPart> mailAttachments;
 
 			try {
 				mailAttachments = getAttachmentsMap(fetchedItem);
@@ -396,17 +480,233 @@ public class MailConnector {
 			}
 
 			if (mailAttachments.size() > 0) {
-				for (Map.Entry<String, InputStream> entry : mailAttachments.entrySet()) {
+				for (Map.Entry<String, BodyPart> entry : mailAttachments.entrySet()) {
 					processed.put(entry.getKey(), pstrUniqueID);
 				}			
 			}
 		}
 
-		// Se tem atts, vai colocando nos results
-
-
 		return processed;
 	}
+	
+	public static void DoUnprocessItem(String pstrUniqueID)
+			throws BigBangJewelException
+		{
+			// TODO Dummy method, it would change EWS's ITEM's changes made in processItem... not being made now...
+		}
+	
+	/**
+	 *	This methods gets a MessageData object, and manipulates it, extracting
+	 *	the needed information to call the sendData's method 
+	 */
+	public static void sendFromData(MessageData message) throws BigBangJewelException {
+		
+		int countTo = 0;
+		int countCC = 0;
+		int countBCC = 0;
+		int countReplyTo = 0;
+		
+		String[] to;
+		String[] cc;
+		String[] bcc;
+		String[] replyTo;
+		
+		Document document;
+		FileXfer[] attachments;
+		
+		if ( message.marrAddresses == null ){
+			return;
+		}
+		
+		for (int i=0; i<message.marrAddresses.length; i++) {
+			if (Constants.UsageID_To.equals(message.marrAddresses[i].midUsage)) {
+				countTo++;
+			} else if (Constants.UsageID_CC.equals(message.marrAddresses[i].midUsage)) {
+				countCC++;
+			} else if ( Constants.UsageID_BCC.equals(message.marrAddresses[i].midUsage)) {
+				countBCC++;
+			} else if ( Constants.UsageID_ReplyTo.equals(message.marrAddresses[i].midUsage)) {
+				countReplyTo++;
+			}
+		}
+		
+		to = new String[countTo];
+		cc = new String[countCC];
+		bcc = new String[countBCC];
+		replyTo = new String[countReplyTo];
+		
+		countTo = 0;
+		countCC = 0;
+		countBCC = 0;
+		countReplyTo = 0;
+		
+		for (int i=0; i<message.marrAddresses.length; i++) {
+			if (Constants.UsageID_To.equals(message.marrAddresses[i].midUsage)) {
+				to[countTo] = message.marrAddresses[i].mstrAddress;
+				countTo++;
+			} else if (Constants.UsageID_CC.equals(message.marrAddresses[i].midUsage)) {
+				cc[countCC] = message.marrAddresses[i].mstrAddress;
+				countCC++;
+			} else if (Constants.UsageID_BCC.equals(message.marrAddresses[i].midUsage)) {
+				bcc[countBCC] = message.marrAddresses[i].mstrAddress;
+				countBCC++;
+			} else if (Constants.UsageID_ReplyTo.equals(message.marrAddresses[i].midUsage)) {
+				replyTo[countReplyTo] = message.marrAddresses[i].mstrAddress;
+				countReplyTo++;
+			}
+		}
+		
+		if (message.marrAttachments == null) {
+			attachments = null;
+		} else {
+			attachments = new FileXfer[message.marrAttachments.length];
+			for (int i=0; i<attachments.length; i++) {
+				document = Document.GetInstance(Engine.getCurrentNameSpace(), message.marrAttachments[i].midDocument);
+				attachments[i] = document.getFile();
+			}
+		}
+			
+		sendMail(replyTo, to, cc, bcc, message.mstrSubject, message.mstrBody, attachments);
+	}
+	
+	public static MessageData getAsData(String pstrUniqueID) throws BigBangJewelException {
+		
+		MessageData result = new MessageData();
+		
+		String from;
+		Address[] to, cc, bcc, replyTo;
+		int addLength;
+		int i;
+		
+		Message fetchedMessage = getMessage(pstrUniqueID, null);
+		
+		if (fetchedMessage != null) {
+			
+			Address[] fromAddress = null;
+			
+			try {
+				result.mstrSubject = fetchedMessage.getSubject();
+				result.midOwner = null;
+				result.mlngNumber = -1;
+				result.mbIsEmail = true;
+				result.mdtDate = new Timestamp(fetchedMessage.getSentDate().getTime());
+				result.mstrBody = fetchedMessage.getContent().toString();
+		
+				fromAddress = fetchedMessage.getFrom();
+				from = fromAddress==null ? null : fromAddress[0].toString();
+				to = fetchedMessage.getRecipients(RecipientType.TO);
+				cc = fetchedMessage.getRecipients(RecipientType.CC);
+				bcc = fetchedMessage.getRecipients(RecipientType.BCC);
+				replyTo = fetchedMessage.getReplyTo();
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+	
+			result.midDirection = ( getUserEmail().equalsIgnoreCase(from) ?
+						Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming );
+			
+			addLength = ( from == null ? 0 : 1) + (to == null ? 0 : to.length) + (cc == null ? 0 : cc.length) +
+					(bcc == null ? 0 : bcc.length) + (replyTo == null ? 0 : replyTo.length);
+			
+			if ( addLength < 1) {
+				result.marrAddresses = null;
+			} else {
+				result.marrAddresses = new MessageAddressData[addLength];
+				i = 0;
+				if (from != null) {
+					result.marrAddresses[i] = getAddress(null, fromAddress[0], Constants.UsageID_From);
+					i++;
+				}
+				if (to != null) {
+					for (Address addr : to) {
+						result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_To);
+						i++;
+					}
+				}
+				if (cc != null) {
+					for (Address addr : cc) {
+						result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_CC);
+						i++;
+					}
+				}
+				if (bcc != null) {
+					for (Address addr : bcc) {
+						result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_BCC);
+						i++;
+					}
+				}
+				if (replyTo != null) {
+					for (Address addr : replyTo) {
+						result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_ReplyTo);
+						i++;
+					}
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	public static MessageAddressData getAddress(String displayName, Address address, UUID usageGuid) {
+		
+		MessageAddressData result;
+
+		result = new MessageAddressData();
+		result.mstrAddress = address.toString();
+		result.midOwner = null;
+		result.midUsage = usageGuid;
+		result.midUser = null;
+		result.midInfo = null;
+		result.mstrDisplay = displayName==null ? address.toString() : displayName;
+
+		return result;
+	}
+	
+	/**
+	 *	This method returns an attachment, giving a message ID and and attachment ID
+	 *	It calls the methods to retrieve a message, and that message's attachments. 
+	 */
+	public static FileXfer getAttachment(String msgId, String attachmentId) throws BigBangJewelException {
+		
+		// Gets a message from a given folder, with a given ID
+		Message message = getMessage(msgId, null);
+		
+		Map<String, BodyPart> messageAttachments = getAttachmentsMap(message);
+		
+		InputStream attachmentStream;
+		try {
+			attachmentStream = messageAttachments.get(msgId).getInputStream();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+		
+		if (attachmentStream != null) {
+			try {
+				byte[] bytes = IOUtils.toByteArray(attachmentStream);
+				FileXfer attachment = new FileXfer(bytes);
+				return attachment;
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+		return null;		
+	}
+	
+	public static InternetAddress buildAddress(MessageAddressData pobjSource)
+			throws BigBangJewelException
+		{
+			try
+			{
+				if ( pobjSource.mstrDisplay == null )
+					return new InternetAddress(pobjSource.mstrAddress);
+				else
+					return new InternetAddress(pobjSource.mstrAddress, pobjSource.mstrDisplay);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
 
 	/**
 		}
@@ -431,7 +731,7 @@ public class MailConnector {
 	 *	This method, giving an array of strings representing email addresses, builds an array
 	 *	of Internet Addresses
 	 */
-	private InternetAddress[] buildAddresses(String[] mailArray) throws AddressException {
+	private static InternetAddress[] buildAddresses(String[] mailArray) throws AddressException {
 
 		InternetAddress[] addresses = null;
 
@@ -526,5 +826,41 @@ public class MailConnector {
 		}
 
 		return (String) userDeco.getAt(UserDecoration.I.EMAIL);
+	}
+
+	/**
+	 *	This method gets all the messages inside the sent or inbox folder, according 
+	 *	to a parameter
+	 */
+	public static Message[] getSentOrReceived(boolean sent) throws BigBangJewelException {
+		
+		Message[] result = null;
+		
+		if (sent) {
+			result = getMails("sent", false);
+		} else {
+			result = getMails("Inbox", false);
+		}
+
+		return result;
+	}
+	
+	public static Folder getFolder(String folderID) throws BigBangJewelException {
+	
+		Folder[] allFolders = listFolders(null);
+		Folder result = null; 
+		
+		if (allFolders == null) {
+			return null;
+		}
+		
+		for (int i=0; i<allFolders.length; i++) {
+			result = allFolders[i];
+			if (result.getName().equals(folderID)) {
+				break;
+			}
+		}
+		
+		return result;
 	}
 }

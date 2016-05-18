@@ -2,20 +2,13 @@ package bigBang.library.server;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
-import microsoft.exchange.webservices.data.core.PropertySet;
-import microsoft.exchange.webservices.data.core.service.ServiceObject;
-import microsoft.exchange.webservices.data.core.service.folder.Folder;
-import microsoft.exchange.webservices.data.core.service.item.EmailMessage;
-import microsoft.exchange.webservices.data.core.service.item.Item;
-import microsoft.exchange.webservices.data.enumeration.BasePropertySet;
-import microsoft.exchange.webservices.data.enumeration.BodyType;
-import microsoft.exchange.webservices.data.property.complex.Attachment;
-import microsoft.exchange.webservices.data.property.complex.EmailAddress;
-import microsoft.exchange.webservices.data.property.complex.FileAttachment;
-import microsoft.exchange.webservices.data.property.complex.ItemAttachment;
-import microsoft.exchange.webservices.data.property.complex.MessageBody;
+import javax.mail.Address;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.internet.MimeMessage;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -36,20 +29,19 @@ public class ExchangeServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	private static ExchangeItemStub[] sToClient(ServiceObject[] parrSource)
-		throws BigBangException
-	{
+	private static ExchangeItemStub[] sToClient(Message[] parrSource)
+			throws BigBangException {
+
 		String lstrEmail;
 		ExchangeItemStub[] larrResults;
 		int i;
-		PropertySet lobjPropSet;
-		EmailAddress lobjFrom;
-		MessageBody lobjBody;
+		Address[] lobjFrom;
+		String lobjBody;
 		String lstrBody;
 
 		try
 		{
-			lstrEmail = MailConnector.getLoggedEmail();
+			lstrEmail = MailConnector.getUserEmail();
 		}
 		catch (Throwable e)
 		{
@@ -57,99 +49,94 @@ public class ExchangeServiceImpl
 		}
 
 		larrResults = new ExchangeItemStub[parrSource.length];
-		lobjPropSet = new PropertySet(BasePropertySet.FirstClassProperties);
-		lobjPropSet.setRequestedBodyType(BodyType.Text);
 
 		for ( i = 0; i < larrResults.length; i++ )
 		{
 			larrResults[i] = new ExchangeItemStub();
-			try
-			{
-				if ( parrSource[i] instanceof Item )
-				{
-					larrResults[i].id = ((Item)parrSource[i]).getId().getUniqueId();
-					larrResults[i].isFolder = false;
-					larrResults[i].subject = ((Item)parrSource[i]).getSubject();
-					if ( parrSource[i] instanceof EmailMessage )
-					{
-						lobjFrom = ((EmailMessage)parrSource[i]).getFrom();
-						larrResults[i].from = ( lobjFrom == null ? null :
-								(lobjFrom.getName() == null ? lobjFrom.getAddress() : lobjFrom.getName()) );
-					}
-					else
-					{
-						lobjFrom = null;
-						larrResults[i].from = null;
-					}
-					try
-					{
-						larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(((Item)parrSource[i]).getDateTimeSent());
-					}
-					catch (Throwable e)
-					{
-						larrResults[i].timestamp = null;
-					}
 
-					lobjPropSet = new PropertySet(BasePropertySet.FirstClassProperties);
-					lobjPropSet.setRequestedBodyType(BodyType.Text);
-					try
-					{
-						parrSource[i].load(lobjPropSet);
-						if ((lobjFrom != null) && (lstrEmail != null))
-							larrResults[i].isFromMe = lstrEmail.equalsIgnoreCase(lobjFrom.getAddress());
-						else
-							larrResults[i].isFromMe = false;
-						larrResults[i].attachmentCount = ((Item)parrSource[i]).getAttachments().getCount();
-						lobjBody = ((Item)parrSource[i]).getBody();
-						if ( lobjBody == null )
-							larrResults[i].bodyPreview = "_";
-						else
-						{
-							lstrBody = lobjBody.toString();
-							if ( lstrBody.length() > 200 )
-								larrResults[i].bodyPreview = lstrBody.substring(0, 200);
-							else
-								larrResults[i].bodyPreview = lstrBody;
-						}
-					}
-					catch (Throwable e)
-					{
-						larrResults[i].bodyPreview = "(Erro interno do servidor de Exchange.)";
-					}
+			try {
+
+				larrResults[i].id = "" + parrSource[i].getMessageNumber();
+				larrResults[i].isFolder = false;
+				larrResults[i].subject = parrSource[i].getSubject();
+
+				lobjFrom = parrSource[i].getFrom();
+				larrResults[i].from = (String) ( lobjFrom == null ? null :
+					(lobjFrom[0] == null ? "" : lobjFrom[0]) );
+
+				try
+				{
+					larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(parrSource[i].getSentDate());
 				}
-
-				if ( parrSource[i] instanceof Folder )
+				catch (Throwable e)
 				{
-					larrResults[i].id = ((Folder)parrSource[i]).getId().getUniqueId();
-					larrResults[i].isFolder = true;
-					larrResults[i].isFromMe = false;
-					larrResults[i].subject = ((Folder)parrSource[i]).getDisplayName();
-					larrResults[i].from = null;
 					larrResults[i].timestamp = null;
-					larrResults[i].attachmentCount = -1;
-					larrResults[i].bodyPreview = null;
 				}
-			}
-			catch (Throwable e)
-			{
+
+				if ((lobjFrom != null) && (lstrEmail != null))
+					larrResults[i].isFromMe = lstrEmail.equalsIgnoreCase(lobjFrom[0].toString());
+				else
+					larrResults[i].isFromMe = false;
+
+				larrResults[i].attachmentCount = MailConnector.getAttachments(parrSource[i]).size();
+				lobjBody = parrSource[i].getContent().toString();
+				if ( lobjBody == null )
+					larrResults[i].bodyPreview = "_";
+				else
+				{
+					lstrBody = lobjBody.toString();
+					if ( lstrBody.length() > 200 )
+						larrResults[i].bodyPreview = lstrBody.substring(0, 200);
+					else
+						larrResults[i].bodyPreview = lstrBody;
+				}
+			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
 		}
 
 		return larrResults;
 	}
+	
+	private static ExchangeItemStub[] sToClient(javax.mail.Folder folder)
+			throws BigBangException { 
+		
+		ExchangeItemStub[] larrResults = null;
+		
+		if (folder == null) {
+			return null;
+		}
+		
+		try {
+			larrResults = new ExchangeItemStub[1];
+			
+			larrResults[0].id = folder.getName(); //TODO ver folder.getURLName() e folder.getFullName() e mudar nos outros sitios onde usas a folder (o fetch) para ver se esta a ir buscar bem por noome
+			larrResults[0].isFolder = true;
+			larrResults[0].isFromMe = false;
+			larrResults[0].subject = folder.getName();
+			larrResults[0].from = null;
+			larrResults[0].timestamp = null;
+			larrResults[0].attachmentCount = -1;
+			larrResults[0].bodyPreview = null;
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
+		
+		return larrResults;
+	}
 
 	public ExchangeItemStub[] getItems(boolean sent)
 		throws SessionExpiredException, BigBangException
 	{
-		ServiceObject[] larrItems;
+		Message[] larrItems;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			larrItems = MailConnector.DoGetMail(sent);
+			//larrItems = MailConnector.DoGetMail(sent);
+			larrItems = MailConnector.getMails(null, false);
 		}
 		catch (Throwable e)
 		{
@@ -162,14 +149,14 @@ public class ExchangeServiceImpl
 	public ExchangeItemStub[] getItemsAll(boolean sent)
 		throws SessionExpiredException, BigBangException
 	{
-		ServiceObject[] larrItems;
+		Message[] larrItems;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			larrItems = MailConnector.DoGetMailAll(sent);
+			larrItems = MailConnector.getSentOrReceived(sent);
 		}
 		catch (Throwable e)
 		{
@@ -182,14 +169,14 @@ public class ExchangeServiceImpl
 	public ExchangeItemStub[] getFolder(String id)
 		throws SessionExpiredException, BigBangException
 	{
-		ServiceObject[] larrItems;
+		javax.mail.Folder larrItems;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			larrItems = MailConnector.DoGetFolder(id);
+			larrItems = MailConnector.getFolder(id);
 		}
 		catch (Throwable e)
 		{
@@ -202,72 +189,52 @@ public class ExchangeServiceImpl
 	public ExchangeItem getItem(String id)
 		throws SessionExpiredException, BigBangException
 	{
-		Item lobjItem;
+		MimeMessage lobjItem;
 		ExchangeItem lobjResult;
-		EmailAddress lobjFrom;
+		Address[] lobjFrom;
 		ArrayList<AttachmentStub> larrStubs;
 		AttachmentStub lobjAttStub;
-		PropertySet lobjPropSet;
 		String lstrBody;
+		Map<String, BodyPart> attachmentsMap = null;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			lobjItem = MailConnector.DoGetItem(id);
-			lobjItem.load();
+			lobjItem = (MimeMessage) MailConnector.getMessage(id, null);
 
 			lobjResult = new ExchangeItem();
-			lobjResult.id = lobjItem.getId().getUniqueId();
+			lobjResult.id = lobjItem.getMessageID();
 			lobjResult.isFolder = false;
 			lobjResult.subject = lobjItem.getSubject();
-			if ( lobjItem instanceof EmailMessage )
-			{
-				lobjFrom = ((EmailMessage)lobjItem).getFrom(); 
-				lobjResult.from = ( lobjFrom.getName() == null ? lobjFrom.getAddress() : lobjFrom.getName() );
-				lobjResult.isFromMe = MailConnector.getLoggedEmail().equalsIgnoreCase(lobjFrom.getAddress());
-			}
-			else
-			{
-				lobjResult.from = null;
-				lobjResult.isFromMe = false;
-			}
-			lobjResult.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getDateTimeSent());
-			lobjResult.attachmentCount = lobjItem.getAttachments().getCount();
-			lobjResult.body = lobjItem.getBody().toString();
+			lobjFrom = lobjItem.getFrom();
+			lobjResult.from = lobjFrom != null ? lobjFrom[0].toString() : null;
+			lobjResult.isFromMe = (lobjResult.from != null && lobjFrom[0].toString().equals(MailConnector.getUserEmail()));
+			
+			lobjResult.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getSentDate());
+			
+			attachmentsMap = MailConnector.getAttachmentsMap(lobjItem);
+			
+			lobjResult.attachmentCount = attachmentsMap.size();
+			lobjResult.body = lobjItem.getContent().toString();
 			larrStubs = new ArrayList<AttachmentStub>();
-			for ( Attachment lobjAtt: lobjItem.getAttachments() )
-			{
-				if ( lobjAtt instanceof FileAttachment )
-				{
-					lobjAttStub = new AttachmentStub();
-					((FileAttachment)lobjAtt).load();
-					lobjAttStub.id = lobjAtt.getId();
-					lobjAttStub.fileName = ((FileAttachment)lobjAtt).getName();
-					lobjAttStub.mimeType = ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() );
-					lobjAttStub.size = ((FileAttachment)lobjAtt).getContent().length;
-					larrStubs.add(lobjAttStub);
-				}
-				else if ( lobjAtt instanceof ItemAttachment )
-				{
-					lobjAttStub = new AttachmentStub();
-					((ItemAttachment)lobjAtt).load();
-					lobjAttStub.id = lobjAtt.getId();
-					lobjAttStub.fileName = ((ItemAttachment)lobjAtt).getName();
-					lobjAttStub.mimeType = ( lobjAtt.getContentType() == null ? "application/octet-stream" : lobjAtt.getContentType() );
-					lobjAttStub.size = 0;
-					larrStubs.add(lobjAttStub);
-				}
+			
+			for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
+			    System.out.println(entry.getKey() + "/" + entry.getValue());
+			    lobjAttStub = new AttachmentStub();
+			    lobjAttStub.id = entry.getKey();
+				lobjAttStub.fileName = entry.getValue().getFileName();
+				lobjAttStub.mimeType = entry.getValue().getContentType();
+				lobjAttStub.size = entry.getValue().getSize();
+				larrStubs.add(lobjAttStub);
 			}
+			
 			lobjResult.attachments = larrStubs.toArray(new AttachmentStub[larrStubs.size()]);
 
 			try
 			{
-				lobjPropSet = new PropertySet(BasePropertySet.FirstClassProperties);
-				lobjPropSet.setRequestedBodyType(BodyType.Text);
-				lobjItem.load(lobjPropSet);
-				lstrBody = lobjItem.getBody().toString();
+				lstrBody = lobjItem.getContent().toString();
 				if ( lstrBody.length() > 200 )
 					lobjResult.bodyPreview = lstrBody.substring(0, 200);
 				else
@@ -298,7 +265,7 @@ public class ExchangeServiceImpl
 
 		try
 		{
-			lobjFile = MailConnector.DoGetAttachment(emailId, attachmentId);
+			lobjFile = MailConnector.getAttachment(emailId, attachmentId);
 		}
 		catch (Throwable e)
 		{

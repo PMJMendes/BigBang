@@ -277,7 +277,7 @@ public abstract class CreateConversationBase
 			{
 				if ( mobjData.marrMessages[0].mstrEmailID != null )
 				{
-					larrAttTrans = MailConnector.DoProcessItem(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mid,
+					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mid,
 							mobjData.marrMessages[0].mdtDate);
 					mobjData.marrMessages[0].mstrEmailID = larrAttTrans.get("_");
 					mobjData.marrMessages[0].mstrBody = null;
@@ -297,7 +297,7 @@ public abstract class CreateConversationBase
 				}
 				else
 				{
-					MailConnector.SendFromData(mobjData.marrMessages[0]);
+					MailConnector.sendFromData(mobjData.marrMessages[0]);
 				}
 			}
 			catch (Throwable e)

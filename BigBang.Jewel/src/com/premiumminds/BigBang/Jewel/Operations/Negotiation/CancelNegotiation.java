@@ -190,7 +190,7 @@ public class CancelNegotiation
 		{
 			try
 			{
-				MailConnector.DoSendMail(mobjMessage, pdb);
+				MailConnector.sendMail(mobjMessage, pdb);
 			}
 			catch (Throwable e)
 			{

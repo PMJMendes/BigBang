@@ -206,7 +206,7 @@ public class SendGrant
 
 		try
 		{
-			MailConnector.DoSendMail(mobjMessage, pdb);
+			MailConnector.sendMail(mobjMessage, pdb);
 		}
 		catch (Throwable e)
 		{

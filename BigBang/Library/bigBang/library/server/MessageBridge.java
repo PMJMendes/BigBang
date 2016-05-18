@@ -256,7 +256,7 @@ public class MessageBridge
 			{
 				try
 				{
-					lobjAux = MailConnector.GetAsData(lobjResult.mstrEmailID);
+					lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID);
 				}
 				catch (Throwable e)
 				{
@@ -520,7 +520,7 @@ public class MessageBridge
 						{
 							try
 							{
-								lobjResult.marrCreate2[j].mobjFile = MailConnector.DoGetAttachment(pobjMsg.mstrEmailID,
+								lobjResult.marrCreate2[j].mobjFile = MailConnector.getAttachment(pobjMsg.mstrEmailID,
 										parrAttachments[i].attachmentId).GetVarData();
 							}
 							catch (Throwable e)

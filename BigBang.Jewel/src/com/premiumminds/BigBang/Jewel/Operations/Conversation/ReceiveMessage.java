@@ -265,7 +265,7 @@ public class ReceiveMessage
 		{
 			try
 			{
-				larrAttTrans = MailConnector.DoProcessItem(mobjData.mstrEmailID, mobjData.mid, mobjData.mdtDate);
+				larrAttTrans = MailConnector.processItem(mobjData.mstrEmailID, mobjData.mid, mobjData.mdtDate);
 				mobjData.mstrEmailID = larrAttTrans.get("_");
 				mobjData.mstrBody = null;
 				mobjData.ToObject(lobjMessage);
