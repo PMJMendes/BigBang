@@ -110,7 +110,8 @@ public class ExchangeServiceImpl
 		try {
 			larrResults = new ExchangeItemStub[1];
 			
-			larrResults[0].id = folder.getName(); //TODO ver folder.getURLName() e folder.getFullName() e mudar nos outros sitios onde usas a folder (o fetch) para ver se esta a ir buscar bem por noome
+			//TODO ver folder.getURLName() e folder.getFullName() e mudar nos outros sitios onde usas a folder (o fetch) para ver se esta a ir buscar bem por noome
+			larrResults[0].id = folder.getName(); 
 			larrResults[0].isFolder = true;
 			larrResults[0].isFromMe = false;
 			larrResults[0].subject = folder.getName();

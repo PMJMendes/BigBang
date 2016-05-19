@@ -9,8 +9,6 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
 
-import microsoft.exchange.webservices.data.core.service.item.Item;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
