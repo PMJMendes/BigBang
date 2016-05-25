@@ -270,6 +270,7 @@ public class MailConnector {
 
 		try {
 			session = getSession();
+			session.setDebug(true);
 			store = getStore(session);
 
 			if (folderId != null && folderId.length() > 0) {
@@ -747,8 +748,8 @@ public class MailConnector {
 
 		Store store = null; 
 
-		try {
-			store = session.getStore("smtp");
+		try { 
+			store = session.getStore("imap"); // pop3? smtp? imaps? pop3s? smtps?
 			store.connect(session.getProperty("mail.host"), 
 					getUserName(), getUserPassword());
 		} catch (Throwable e) {
@@ -793,7 +794,7 @@ public class MailConnector {
 
 		String mailServer;
 		JewelAuthenticator authenticator;
-		Properties mailProps = new Properties();
+		Properties mailProps = System.getProperties(); //new Properties();
 
 		mailServer = (String)Engine.getUserData().get("MailServer");
 		authenticator = new JewelAuthenticator(getUserName(), getUserPassword());
@@ -805,7 +806,8 @@ public class MailConnector {
 		mailProps.put("mail.smtp.host", mailServer);
 		mailProps.put("mail.smtp.port", "25");
 		mailProps.put("mail.mime.charset", "utf-8");
-
+		mailProps.setProperty("mail.store.protocol","imap");
+		
 		return Session.getInstance(mailProps, authenticator);
 	}
 
