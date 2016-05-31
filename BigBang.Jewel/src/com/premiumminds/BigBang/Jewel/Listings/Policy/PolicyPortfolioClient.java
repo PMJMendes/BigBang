@@ -5,14 +5,20 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.apache.ecs.AlignType;
 import org.apache.ecs.GenericElement;
 import org.apache.ecs.html.Div;
+import org.apache.ecs.html.IMG;
+import org.apache.ecs.html.Strong;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
@@ -144,8 +150,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Creates the report (this one only has one section)
 		reportResult = new GenericElement[1];
-		reportResult[0] = buildClientPortfolioTable(
-				"Relatório de Carteira de Clientes", policies, reportParams);
+		reportResult[0] = buildClientPortfolio(policies, reportParams);
 
 		return reportResult;
 	}
@@ -256,40 +261,98 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		return policies.toArray(new Policy[policies.size()]);
 	}
+	
+	/**
+	 * The method responsible for printing the report including the header
+	 * Calls the method which prints the policies' info
+	 */
+	private Table buildClientPortfolio(Policy[] policies, String[] reportParams)
+					throws BigBangJewelException {
+
+		Table table;
+		TR[] tableRows = new TR[2];
+		
+		// Builds the header row
+		TD headerContent = new TD();
+		headerContent.addElement(buildHeader(reportParams));
+		tableRows[0] = ReportBuilder.buildRow(new TD[] { headerContent });
+		
+		// Builds the row with the policy info
+		TD infoContent = new TD();
+		infoContent.addElement(buildClientPortfolioTable(policies, reportParams));
+		tableRows[1] = ReportBuilder.buildRow(new TD[] { infoContent });
+
+		table = ReportBuilder.buildTable(tableRows);
+		
+		return table;
+	}
+
+	/**
+	 * This method builds the report's header, with a credite's logo, the report's title
+	 * and the date the report was extracted
+	 */
+	private Table buildHeader(String[] reportParams) throws BigBangJewelException {
+		
+		Table table;
+		TR[] tableRows = new TR[1];
+		TD[] cells = new TD[3];
+		
+		String clientOrGroupTitle = getClientOrGroup(reportParams);
+		
+		// Builds the cell with the header image
+		TD imageContent = new TD();
+		imageContent.addElement(getImage());
+		imageContent.setAlign(AlignType.left);
+		imageContent.setStyle("width:10%; padding-bottom:15px;");
+		cells[0] = imageContent;
+			
+		// Builds the cell with the report title and client name
+		TD title = new TD();
+		Strong titleStrong = new Strong("Carteira de Seguros de " + clientOrGroupTitle);
+		titleStrong.setStyle("font-size: 20px;");
+		title.addElement(titleStrong);
+		title.setAlign(AlignType.middle);
+		title.setStyle("padding-top:30px;");
+		cells[1] = title;		
+				
+		// Builds the cell with the date the report was extracted
+		TD dateTd = new TD();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		dateTd.addElement(dateFormat.format(date).toString());
+		dateTd.setAlign(AlignType.right);
+		dateTd.setStyle("width:10%; padding-top:80px;");
+		cells[2] = dateTd;	
+		
+		tableRows[0] = ReportBuilder.buildRow(cells);
+		tableRows[0].setStyle("height:135px; font-weight:bold;");
+		
+		table = ReportBuilder.buildTable(tableRows);
+		table.setStyle("width:100%;");
+		
+		return table;
+	}
 
 	/**
 	 * The method responsible for printing the table corresponding to a client's
 	 * portfolio
 	 */
-	private Table buildClientPortfolioTable(String headerTitle,
-			Policy[] policies, String[] reportParams)
+	private Table buildClientPortfolioTable(Policy[] policies, 
+			String[] reportParams)
 					throws BigBangJewelException {
 
 		Table table;
 		TR[] tableRows;
 		TD mainContent;
 		int rowNum = 0;
-		String clientOrGroupTitle;
 		HashMap<String, ArrayList<Policy>> policiesMap;
 
-		tableRows = new TR[5];
+		tableRows = new TR[3];
 		premiumTotal = BigDecimal.ZERO;
 		fauxId = UUID.randomUUID();
 
 		// Creates a map with the policies separated by "ramo"
 		policiesMap = getPoliciesMap(policies);
-
-		// Gets the table row with the report's name
-		tableRows[rowNum++] = ReportBuilder
-				.constructDualHeaderRowCell(headerTitle);
-
-		// Gets the client's or group's name (if any) and creates the
-		// corresponding row
-		clientOrGroupTitle = getClientOrGroup(reportParams);
-		if (clientOrGroupTitle != null) {
-			tableRows[rowNum++] = ReportBuilder
-					.constructDualIntermediateRowCell(clientOrGroupTitle);
-		}
 
 		// Builds the row corresponding to the "real content" of the report -
 		// meaning... the values from the policies
@@ -1470,5 +1533,22 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 
 		return " ";
+	}
+	
+	/**
+	 * This method gets and configures the Crédite-EGS' logo to display
+	 * ate the top of the report
+	 */
+	private IMG getImage() {
+		
+		IMG result = new IMG();
+		
+		result.setSrc("/images/logo.png");
+		result.setID("credite_logo");
+		result.setBorder(0);
+		result.setHeight(116);
+		result.setWidth(180);
+		
+		return result;
 	}
 }
