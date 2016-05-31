@@ -21,13 +21,14 @@ public class Document
 {
 	public static class I
 	{
-		public static int NAME      = 0;
-		public static int OWNERTYPE = 1;
-		public static int OWNER     = 2;
-		public static int TYPE      = 3;
-		public static int TEXT      = 4;
-		public static int FILE      = 5;
-		public static int DATE      = 6;
+		public static int NAME      		= 0;
+		public static int OWNERTYPE 		= 1;
+		public static int OWNER     		= 2;
+		public static int TYPE      		= 3;
+		public static int TEXT      		= 4;
+		public static int FILE      		= 5;
+		public static int DATE      		= 6;
+		public static int DISPLAYATPORTAL 	= 7;
 	}
 
     public static Document GetInstance(UUID pidNameSpace, UUID pidKey)
