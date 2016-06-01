@@ -198,6 +198,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (reportParams[1] != null) {
 			filterByClientGroup(strSQL, UUID.fromString(reportParams[1]));
 		}
+		
+		// Filters the temporary policies
+		if (reportParams[12].equals("0")) {
+			filterOngoingPolicies(strSQL);
+		}
 
 		// If the current user is an "agent", he only sees the corresponding
 		// policies
@@ -262,6 +267,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		return policies.toArray(new Policy[policies.size()]);
 	}
 	
+	/**
+	 * This method adds a clause to filter only the ongoing policies
+	 */
+	private void filterOngoingPolicies(StringBuilder strSQL) {
+		strSQL.append(" AND [DURATION] ='" + Constants.DurID_Ongoing + "'");		
+	}
+
 	/**
 	 * The method responsible for printing the report including the header
 	 * Calls the method which prints the policies' info
