@@ -321,7 +321,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Builds the cell with the report title and client name
 		TD title = new TD();
 		Strong titleStrong = new Strong("Carteira de Seguros de " + clientOrGroupTitle);
-		titleStrong.setStyle("font-size: 20px;");
+		titleStrong.setStyle("font-size: 15px;");
 		title.addElement(titleStrong);
 		title.setAlign(AlignType.middle);
 		title.setStyle("padding-top:30px;");
@@ -331,7 +331,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		TD dateTd = new TD();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
-		dateTd.addElement(dateFormat.format(date).toString());
+		Strong dateStrong = new Strong(dateFormat.format(date).toString());
+		dateStrong.setStyle("font-size: 15px;");
+		dateTd.addElement(dateStrong);
 		dateTd.setAlign(AlignType.right);
 		dateTd.setStyle("width:10%; padding-top:80px;");
 		cells[2] = dateTd;	
