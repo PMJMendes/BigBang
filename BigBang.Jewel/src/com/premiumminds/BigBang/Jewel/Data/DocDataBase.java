@@ -120,13 +120,9 @@ public class DocDataBase
 			pstrBuilder.append(pstrLineBreak);
 		}
 		
-		if ( mbDisplayAtPortal != null )
-		{
-			pstrBuilder.append("Mostrar no Portal?:");
-			pstrBuilder.append(pstrLineBreak);
-			pstrBuilder.append(mbDisplayAtPortal);
-			pstrBuilder.append(pstrLineBreak);
-		}
+		pstrBuilder.append("Mostrar no Portal?: ");
+		pstrBuilder.append(mbDisplayAtPortal);
+		pstrBuilder.append(pstrLineBreak);
 
 		if ( marrInfo != null )
 		{
