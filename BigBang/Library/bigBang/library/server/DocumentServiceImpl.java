@@ -52,6 +52,7 @@ public class DocumentServiceImpl
 		pobjDest.midDocType = (pobjSource.docTypeId == null ? null : UUID.fromString(pobjSource.docTypeId));
 		pobjDest.mdtRefDate = (pobjSource.creationDate == null ? null :
 				Timestamp.valueOf(pobjSource.creationDate + " 00:00:00.0"));
+		pobjDest.mbDisplayAtPortal = pobjSource.displayAtPortal;
 
 		if ( pobjSource.source != null )
 		{
@@ -430,6 +431,7 @@ public class DocumentServiceImpl
 		lobjAux.docTypeLabel = lobjType.getLabel();
 		lobjAux.creationDate = (pobjDocument.getAt(6) == null ? null : ((Timestamp)pobjDocument.getAt(6)).toString().substring(0, 10));
 		lobjAux.text = (String)pobjDocument.getAt(4);
+		lobjAux.displayAtPortal = pobjDocument.getAt(7) == null  ? false : (Boolean)pobjDocument.getAt(7);
 		if ( pbForList )
 		{
 			lobjAux.hasFile = (pobjDocument.getAt(5) != null);

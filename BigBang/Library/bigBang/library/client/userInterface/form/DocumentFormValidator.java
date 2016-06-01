@@ -26,6 +26,10 @@ public class DocumentFormValidator extends FormValidator<DocumentForm> {
 	private boolean validateType() {
 		return validateGuid(form.docType, false);
 	}
+	
+	private boolean validateCaseStudy() {
+		return form.displayAtPortal.getValue() != null;
+	}
 
 	private boolean validateInfoList() {
 		boolean valid = true;

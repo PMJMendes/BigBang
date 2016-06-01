@@ -23,6 +23,7 @@ public class Document
 	public String exchangeEmailId; //Attached document helper tag, client-side only.
 	public String exchangeAttId; //Attached document helper tag, client-side only.
 	public DocInfo[] parameters;
+	public boolean displayAtPortal;
 
 	public Document()
 	{

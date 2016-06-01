@@ -23,6 +23,7 @@ public class DocDataBase
 	public String mstrText;
 	public Timestamp mdtRefDate;
 	public DocInfoData[] marrInfo;
+	public Boolean mbDisplayAtPortal;
 
 	public DSBridgeData mobjDSBridge;
 
@@ -37,6 +38,7 @@ public class DocDataBase
 		this.mdtRefDate = pobjSource.mdtRefDate;
 		this.marrInfo = pobjSource.marrInfo;
 		this.mobjDSBridge = pobjSource.mobjDSBridge;
+		this.mbDisplayAtPortal = pobjSource.mbDisplayAtPortal;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
@@ -49,6 +51,7 @@ public class DocDataBase
 		midDocType = (UUID)pobjSource.getAt(3);
 		mstrText = (String)pobjSource.getAt(4);
 		mdtRefDate = (Timestamp)pobjSource.getAt(6);
+		mbDisplayAtPortal = (Boolean) pobjSource.getAt(7);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -62,6 +65,7 @@ public class DocDataBase
 			pobjDest.setAt(3, midDocType);
 			pobjDest.setAt(4, mstrText);
 			pobjDest.setAt(6, mdtRefDate);
+			pobjDest.setAt(7, mbDisplayAtPortal);
 		}
 		catch (Throwable e)
 		{
@@ -115,6 +119,10 @@ public class DocDataBase
 			pstrBuilder.append(mstrText);
 			pstrBuilder.append(pstrLineBreak);
 		}
+		
+		pstrBuilder.append("Mostrar no Portal?: ");
+		pstrBuilder.append(mbDisplayAtPortal);
+		pstrBuilder.append(pstrLineBreak);
 
 		if ( marrInfo != null )
 		{

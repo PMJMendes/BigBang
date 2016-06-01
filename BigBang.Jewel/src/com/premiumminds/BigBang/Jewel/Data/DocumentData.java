@@ -25,6 +25,7 @@ public class DocumentData
 	public byte[] mobjFile;
 	public Timestamp mdtRefDate;
 	public DocInfoData[] marrInfo;
+	public Boolean mbDisplayAtPortal;
 
 	public DocumentData mobjPrevValues;
 
@@ -44,6 +45,7 @@ public class DocumentData
 		else
 			mobjFile = (byte [])pobjSource.getAt(5);
 		mdtRefDate = (Timestamp)pobjSource.getAt(6);
+		mbDisplayAtPortal = (Boolean)pobjSource.getAt(7);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -58,6 +60,7 @@ public class DocumentData
 			pobjDest.setAt(4, mstrText);
 			pobjDest.setAt(5, mobjFile);
 			pobjDest.setAt(6, mdtRefDate);
+			pobjDest.setAt(7, mbDisplayAtPortal);
 		}
 		catch (Throwable e)
 		{
@@ -117,5 +120,8 @@ public class DocumentData
 			for ( i = 0; i < marrInfo.length; i++ )
 				marrInfo[i].Describe(pstrBuilder, pstrLineBreak);
 		}
+		
+		if ( (mbDisplayAtPortal != null) && (boolean)mbDisplayAtPortal )
+			pstrBuilder.append("Should Display at Portal!").append(pstrLineBreak);
 	}
 }

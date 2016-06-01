@@ -9,6 +9,7 @@ import bigBang.definitions.shared.Document;
 import bigBang.library.client.event.ContentChangedEvent;
 import bigBang.library.client.event.ContentChangedEventHandler;
 import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
@@ -180,6 +181,7 @@ public abstract class DocumentForm extends FormView<Document>{
 	private boolean hasFile;
 	protected String mimeType;
 	protected ScanHandle scanHandle;
+	protected CheckBoxFormField displayAtPortal;
 
 
 	public DocumentForm(){
@@ -190,10 +192,12 @@ public abstract class DocumentForm extends FormView<Document>{
 		docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo");
 		docType.setMandatory(true);
 		docType.allowEdition(false);
+		displayAtPortal = new CheckBoxFormField("Mostrar no Portal");
 		name.setWidth("390px");
 		name.setFieldWidth("390px");
 		addFormField(name);
 		addFormField(docType);
+		addFormField(displayAtPortal);
 
 		//HANDLERS
 
@@ -406,6 +410,7 @@ public abstract class DocumentForm extends FormView<Document>{
 		newDoc.fileStorageId = fileStorageId;
 		newDoc.hasFile = hasFile;
 		newDoc.mimeType = mimeType;
+		newDoc.displayAtPortal = displayAtPortal.getValue();
 
 		Iterator<ListEntry<DocInfo>> iterator = details.iterator();
 		ListEntry<DocInfo> temp;
@@ -448,6 +453,8 @@ public abstract class DocumentForm extends FormView<Document>{
 		hasFile = info.hasFile;
 		mimeType = info.mimeType;
 		scanHandle = info.source;
+		
+		displayAtPortal.setValue(info.displayAtPortal);
 
 	}
 
