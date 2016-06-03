@@ -127,12 +127,15 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private static final int POLICY_WIDTH = 140;
 	private static final int COMPANY_WIDTH = 220;
 	private static final int DATE_WIDTH = 40;
+	private static final int FRACTIONING_WIDTH = 1;
 	private static final int OBJECT_WIDTH = 230;
 	private static final int RISK_SITE_WIDTH = 230;
 	private static final int COVERAGES_WIDTH = 330;
 	private static final int VALUE_WIDTH = 102;
 	private static final int TAX_WIDTH = 40;
+	private static final int FRANCHISE_WIDTH = 1;
 	private static final int PREMIUM_WIDTH = 120;
+	private static final int METHOD_WIDTH = 1;
 	private static final int OBSERVATIONS_WIDTH = 80;
 	private static final int STRING_BREAK_POINT = 40;
 	
@@ -336,7 +339,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 		
 		// Filters the temporary policies
-		if (reportParams[12].equals("0")) {
+		if (reportParams[15].equals("0")) {
 			filterOngoingPolicies(strSQL);
 		}
 
@@ -693,10 +696,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// insured object
 		ArrayList<String> policyParams = new ArrayList<String>();
 		Collections
-		.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 5));
-		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 10,
-				12)));
-		String[] objectParams = Arrays.copyOfRange(reportParams, 5, 10);
+		.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 6));
+		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 12,
+				15)));
+		String[] objectParams = Arrays.copyOfRange(reportParams, 6, 12);
 
 		// Counts the number of columns related with the policy and the insured
 		// object which should be displayed
@@ -731,11 +734,23 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
+		if (policyParams.get(paramCheck++).equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Fraccionamento",
+					TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			leftLine = true;
+		}
 		if (innerObjs > 0) {
 			cells[cellNumber++] = buildInnerHeaderRow(objectParams);
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Prémio Total Anual",
+					TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			leftLine = true;
+		}
+		if (policyParams.get(paramCheck++).equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Modalidade de Pagamento",
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
@@ -789,12 +804,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Gets the report parameters related to the policy information
 		ArrayList<String> policyParams = new ArrayList<String>();
 		Collections
-		.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 5));
-		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 10,
-				12)));
+		.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 6));
+		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 12,
+				15)));
 
-		String[] objectParams = Arrays.copyOfRange(reportParams, 5, 10);
-
+		String[] objectParams = Arrays.copyOfRange(reportParams, 6, 12);
+		
 		// Splits the report params in those referring to the values associated
 		// with a policy, and those referring to the values associated with the
 		// insured object
@@ -865,6 +880,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
 		}
+		
+		// Fractioning
+		if (policyParams.get(paramCheck++).equals("1")) {
+			dataCells[cellNumber] = safeBuildCell("fraccionamento",
+					TypeDefGUIDs.T_String, false, false);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
+			leftLine = true;
+		}
 
 		// If there are columns related with a given insured object to
 		// display...
@@ -882,6 +905,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			leftLine = true;
 		}
 
+		// Payment Method
+		if (policyParams.get(paramCheck++).equals("1")) {
+			dataCells[cellNumber] = ReportBuilder.buildCell("método pagamento",
+					TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
+			leftLine = true;
+		}
+				
 		// Notes - intentionally left blank
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = ReportBuilder.buildCell(" ",
@@ -934,6 +965,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Franquia",
+					TypeDefGUIDs.T_String);
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
 
 		setInnerWidths(cells, reportParams);
 
@@ -969,6 +1005,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth(DATE_WIDTH);
 		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth(FRACTIONING_WIDTH);
+		}
 
 		// The column holding the inner-table (insured objects' values)
 		if (reportParams[paramCheck++].equals("1")) {
@@ -986,12 +1025,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (reportParams[paramCheck++].equals("1")) {
 			innerWidth += TAX_WIDTH;
 		}
+		if (reportParams[paramCheck++].equals("1")) {
+			innerWidth += FRANCHISE_WIDTH;
+		}
 		if (innerWidth > 0) {
 			cells[cellNumber++].setWidth(innerWidth);
 		}
 
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth(PREMIUM_WIDTH);
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth(METHOD_WIDTH);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth(OBSERVATIONS_WIDTH);
@@ -1239,6 +1284,15 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
+				
+				// Franchise TODO
+				if (reportParams[paramCheck++].equals("1")) {
+					dataCells[currentCell] = safeBuildCell("franquia",
+							TypeDefGUIDs.T_String, false, false);;
+					dataCells[currentCell].setWidth(FRANCHISE_WIDTH);
+					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
+							true);
+				}
 
 				setInnerWidths(dataCells, reportParams);
 				tableRows[nrRows] = ReportBuilder.buildRow(dataCells);
@@ -1273,6 +1327,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth(TAX_WIDTH);
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth(FRANCHISE_WIDTH);
 		}
 	}
 
