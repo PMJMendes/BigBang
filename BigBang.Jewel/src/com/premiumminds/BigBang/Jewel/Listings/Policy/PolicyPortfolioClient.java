@@ -135,6 +135,142 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private static final int PREMIUM_WIDTH = 120;
 	private static final int OBSERVATIONS_WIDTH = 80;
 	private static final int STRING_BREAK_POINT = 40;
+	
+	/*
+	 * This Matrix represents the order to display the policies, as well as the way to group them.
+	 * Here's how it works:
+	 * 		- Each position in the array has an array defining what policies should be displayed in that section in the report.
+	 * 		- This grouping can consider the policy category, line or subline.
+	 * 		- When creating an hashmap with the policies (method getPoliciesMap(Policy[] policies)), we try to 
+	 * 		insert the policies with subline+line+category. If it is not possible, we include subline+line.
+	 * 		If it is still not possile, the policy is included with a key with only the category.
+	 * 		- When creating the report, this matrix is iterated, and gets the policies with the key as described here, hence 
+	 * 		displaying them with this order.
+	 */
+	private static final String[][] ORDERED_SUBLINES = {
+			{ Constants.PolicyCategories.WORK_ACCIDENTS.toString() }, // "Acidentes de Trabalho"
+			{ Constants.PolicyCategories.PERSONAL_ACCIDENTS.toString() }, // "Acidentes Pessoais"
+			{ Constants.PolicyCategories.DISEASE.toString() }, // "Saúde"
+			{ Constants.PolicyCategories.DIVERS.toString()
+					+ Constants.PolicyLines.DIVERS_ASSISTANCE.toString() }, // "Assistência"
+			{ Constants.PolicyCategories.LIFE.toString() }, // "Vida"
+			{ Constants.PolicyCategories.DIVERS.toString() }, // "Diversos"
+			{ Constants.PolicyCategories.AUTOMOBILE.toString() }, // "Automóvel e Frota"
+			{ Constants.PolicyCategories.MULTIRISK.toString() }, // "Multirriscos"
+			{ Constants.PolicyCategories.MULTIRISK.toString()
+					+ Constants.PolicyLines.MULTIRISK_ALLRISKS.toString() }, // "All Risks"
+			{
+					Constants.PolicyCategories.OTHER_DAMAGES.toString()
+							+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN,
+					Constants.PolicyCategories.OTHER_DAMAGES.toString()
+							+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL,
+					Constants.PolicyCategories.OTHER_DAMAGES.toString()
+							+ Constants.PolicyLines.OTHER_DAMAGES_CEASING
+							+ Constants.PolicySubLines.OTHER_DAMAGES_CEASING_MACHINES }, // "Máquinas , Avaria de Máquinas e Máquinas de Casco"
+			{ Constants.PolicyCategories.OTHER_DAMAGES.toString() }, // "Outras
+																		// perdas
+			{ Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY.toString() }, // "Obras e Montagens"
+			{ Constants.PolicyCategories.OTHER_DAMAGES.toString()
+					+ Constants.PolicyLines.OTHER_DAMAGES_LEASING.toString() }, // "Bens em Leasing"
+			{ Constants.PolicyCategories.TRANSPORTED_GOODS.toString() }, // "Mercadorias Transportadas"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_GENERAL.toString() }, // "Responsabilidade Civil Geral"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_HUNTERS.toString() }, // "Rep. Civil Caçador"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_FAMILY.toString() }, // "Resp. Civil Familiar"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL
+							.toString() }, // "Responsabilidade Ambiental"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_PRODUCTS.toString() }, // "Resp. Civil Produtos"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_PROFESSIONAL
+							.toString() }, // "Resp. Civil Profissional"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_EXPLORATION
+							.toString() }, // "Resp. Civil Exploração"
+			/*
+			 * From this point forward are the ones not defined by EGS, so there
+			 * is no special order
+			 */
+			{ Constants.PolicyCategories.FIRE.toString() }, // "Incêndio"
+			{ Constants.PolicyCategories.AGRICULTURAL.toString() }, // "Agrícola"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString() }, // "Responsabilidade"
+			{ Constants.PolicyCategories.MARINE_VESSELS.toString() }, // "Embarcações Marítimas"
+			{ Constants.PolicyCategories.RAIL_VEHICLES.toString() }, // "Veículos Ferroviários"
+			{ Constants.PolicyCategories.AIRCRAFTS.toString() }, // "Aeronaves"
+			{ Constants.PolicyCategories.RETIREMENT_FUND.toString() } // "Fundo de Pensões"
+	};
+	
+	/*
+	 * This HashMap is used to allow the translation for the title of the groupings displayed at the report.
+	 * It can use as key a concatenation of Category, Subline and Line or Category and Line. Or simply Category.
+	 * If one key is not represented in this Hashmap, it means that we should display the Category's label.
+	 */
+	private static final HashMap<String, String> CATEGORY_TRANSLATOR;
+	static {
+		CATEGORY_TRANSLATOR = new HashMap<String, String>();
+		CATEGORY_TRANSLATOR.put(Constants.PolicyCategories.DISEASE.toString(),
+				"Saúde");
+		CATEGORY_TRANSLATOR.put(Constants.PolicyCategories.DIVERS.toString()
+				+ Constants.PolicyLines.DIVERS_ASSISTANCE.toString(),
+				"Assistência");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.AUTOMOBILE.toString(),
+				"Automóvel e Frota");
+		CATEGORY_TRANSLATOR.put(Constants.PolicyCategories.MULTIRISK.toString()
+				+ Constants.PolicyLines.MULTIRISK_ALLRISKS.toString(),
+				"All Risks");
+		CATEGORY_TRANSLATOR
+				.put(Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN,
+						"Máquinas , Avaria de Máquinas e Máquinas de Casco");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL,
+				"Máquinas , Avaria de Máquinas e Máquinas de Casco");
+		CATEGORY_TRANSLATOR
+				.put(Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_CEASING
+						+ Constants.PolicySubLines.OTHER_DAMAGES_CEASING_MACHINES,
+						"Máquinas , Avaria de Máquinas e Máquinas de Casco");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.OTHER_DAMAGES.toString(),
+				"Outras perdas");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_LEASING
+								.toString(), "Bens em Leasing");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_GENERAL
+								.toString(), "Responsabilidade Civil Geral");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_HUNTERS
+								.toString(), "Rep. Civil Caçador");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_FAMILY
+								.toString(), "Resp. Civil Familiar");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL
+								.toString(), "Responsabilidade Ambiental");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_PRODUCTS
+								.toString(), "Resp. Civil Produtos");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_PROFESSIONAL
+								.toString(), "Resp. Civil Profissional");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_EXPLORATION
+								.toString(), "Resp. Civil Exploração");
+	}
 
 	/**
 	 * The method responsible for creating the report
@@ -400,18 +536,54 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private HashMap<String, ArrayList<Policy>> getPoliciesMap(Policy[] policies) {
 
 		HashMap<String, ArrayList<Policy>> policiesMap;
-		String policySubline;
+		String policyKey;
 		policiesMap = new HashMap<String, ArrayList<Policy>>();
 
 		for (int i = 0; i < policies.length; i++) {
-			policySubline = policies[i].GetSubLine().getDescription();
-			if (policiesMap.get(policySubline) == null) {
-				policiesMap.put(policySubline, new ArrayList<Policy>());
+			policyKey = getPolicyKey(policies[i]);
+			if (policiesMap.get(policyKey) == null) {
+				policiesMap.put(policyKey, new ArrayList<Policy>());
 			}
-			policiesMap.get(policySubline).add(policies[i]);
+			policiesMap.get(policyKey).add(policies[i]);
 		}
 
 		return policiesMap;
+	}
+
+	/**
+	 * This method gets the key used to insert the policy in the policies' hash map.
+	 * This method takes into consideration the ordering defined in ORDERED_SUBLINES' array.
+	 * It tries to group the policies with category + subline + line. If not possible, tries with
+	 * category + subline. If it is still not possible, it inserts the policy considering only 
+	 * category.
+	 */
+	private String getPolicyKey(Policy policy) {
+		
+		String policyCategoryKey = policy.GetSubLine().getLine().getCategory().getKey().toString();
+		String policyLineKey = policyCategoryKey + policy.GetSubLine().getLine().getKey().toString();
+		String policySubLineKey = policyLineKey + policy.GetSubLine().getKey().toString();
+		String result = policy.GetSubLine().getLine().getCategory().getKey().toString();
+		
+		// Iterates to check if the String with the Category, Line and Subline GUIDS is contained in 
+		// the ordering array
+		for (int i=0; i < ORDERED_SUBLINES.length; i++) {
+			String[] temp = ORDERED_SUBLINES[i];
+			if (Arrays.asList(temp).contains(policySubLineKey)) {
+				return policySubLineKey;
+			}
+		}
+		
+		// Iterates to check if the String with the Category and Line GUIDS is contained in 
+		// the ordering array
+		for (int i=0; i < ORDERED_SUBLINES.length; i++) {
+			String[] temp = ORDERED_SUBLINES[i];
+			if (Arrays.asList(temp).contains(policyLineKey)) {
+				return policyLineKey;
+			}
+		}
+		
+		// So, this is one of those policies which will be grouped and displayed by Category alone
+		return result;
 	}
 
 	/**
@@ -463,14 +635,42 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// a line
 		// with the name of that "ramo", followed by the information about the
 		// policies
-		for (String subline : policiesMap.keySet()) {
-			tableRows[rowNum++] = buildSublineRow(subline);
-			Object[] policies = policiesMap.get(subline).toArray();
-
-			for (int i = 0; i < policies.length; i++) {
-				tableRows[rowNum] = ReportBuilder.buildRow(buildRow(
-						(Policy) policies[i], reportParams));
-				ReportBuilder.styleRow(tableRows[rowNum++], false);
+		for (int i=0; i<ORDERED_SUBLINES.length; i++) {
+			String [] sublineTemp = ORDERED_SUBLINES[i];
+			String titleTemp = CATEGORY_TRANSLATOR.get(sublineTemp[0]);
+			
+			ArrayList<Policy> policies = policiesMap.get(sublineTemp[0]);
+			
+			if (sublineTemp.length > 1) {
+				for (int u=1; u<sublineTemp.length; u++) {
+					ArrayList<Policy> sublineTempElement = policiesMap.get(sublineTemp[u]);
+					if (sublineTempElement != null) {
+						policies.addAll(sublineTempElement);
+					}
+				}
+			}
+			
+			if (policies != null) {
+				Policy [] policyArray = policies.toArray(new Policy[0]);
+				
+				if (titleTemp == null) {
+					titleTemp = CATEGORY_TRANSLATOR.get(policyArray[0]
+							.GetSubLine().getLine().getCategory().getKey()
+							.toString());
+					if (titleTemp == null) {
+						titleTemp = policyArray[0].GetSubLine().getLine()
+								.getCategory().getLabel();
+					}
+				}
+				
+				tableRows[rowNum++] = buildSublineRow(titleTemp);
+				
+	
+				for (int u = 0; u < policyArray.length; u++) {
+					tableRows[rowNum] = ReportBuilder.buildRow(buildRow(
+							(Policy) policyArray[u], reportParams));
+					ReportBuilder.styleRow(tableRows[rowNum++], false);
+				}
 			}
 		}
 
@@ -1096,7 +1296,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// In case of an Automobile / Fleet policy, and only one policy object,
 		// it should read "Diversos"
 		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
-				&& policySubLine.equals(Constants.PolicySubLines.AUTO_FLEET)
+				&& policySubLine.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET)
 				&& policy.GetCurrentObjects().length == 1) {
 			coverageData.setCoverages("Diversos");
 		} else {
@@ -1145,7 +1345,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// otherwise, it's the policy object's name
 		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
 				&& policySubLine
-				.equals(Constants.PolicySubLines.AUTO_INDIVIDUAL)) {
+				.equals(Constants.PolicySubLines.AUTO_AUTO_INDIVIDUAL)) {
 			return (String) policyObject.getAt(PolicyObject.I.MAKEANDMODEL);
 		} else {
 			return (String) policyObject.getAt(PolicyObject.I.NAME);
@@ -1255,7 +1455,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		 * Special Cases
 		 */
 		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
-				&& policySubLine.equals(Constants.PolicySubLines.AUTO_FLEET)
+				&& policySubLine.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET)
 				&& policy.GetCurrentObjects().length == 1) {
 			// For an automobile / Fleet with only one insured object, it should
 			// read "Diversos"
