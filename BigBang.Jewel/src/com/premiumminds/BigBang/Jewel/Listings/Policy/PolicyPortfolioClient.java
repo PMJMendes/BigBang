@@ -769,7 +769,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Builds the TR encapsulating the TD
 		row = ReportBuilder.buildRow(new TD[] { rowContent });
-		row.setStyle("height:35px; font-weight:bold;");
+		row.setStyle("height:35px;background:#e2f2ff;font-weight:bold;");
 
 		return row;
 	}
