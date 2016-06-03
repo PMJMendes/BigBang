@@ -830,14 +830,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Increases the value for the total premium
 		if (policy.getAt(Policy.I.TOTALPREMIUM) != null) {
-			premiumTotal = premiumTotal.add((BigDecimal) policy
-					.getAt(Policy.I.TOTALPREMIUM));
+			premiumTotal = premiumTotal.add((BigDecimal) policy.getAt(Policy.I.TOTALPREMIUM));
 		}
 
 		// Policy Number
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(policy.getLabel(),
-					TypeDefGUIDs.T_String);
+					TypeDefGUIDs.T_String, false, false);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
 		}
@@ -850,10 +849,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				ArrayList<String> objectNameArray = new ArrayList<String>();
 				objectNameArray.add(companyName);
 				dataCells[cellNumber] = buildValuesTable(
-						splitValue(objectNameArray), OBJECT_WIDTH);
+						splitValue(objectNameArray), OBJECT_WIDTH, false, false);
 			} else {
 				dataCells[cellNumber] = safeBuildCell(companyName,
-						TypeDefGUIDs.T_String);
+						TypeDefGUIDs.T_String, false, false);
 			}
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
@@ -862,7 +861,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Maturity
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(maturity,
-					TypeDefGUIDs.T_String);
+					TypeDefGUIDs.T_String, false, false);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
 		}
@@ -877,8 +876,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Total Premium
 		if (policyParams.get(paramCheck++).equals("1")) {
-			dataCells[cellNumber] = safeBuildCell(
-					policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
+			dataCells[cellNumber] = safeBuildCell( policy.getAt(Policy.I.TOTALPREMIUM), 
+					TypeDefGUIDs.T_Decimal, true, true);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
 		}
@@ -1052,11 +1051,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * cell is built simply with a whitespace, preventing cells with the '?'
 	 * character
 	 */
-	private TD safeBuildCell(java.lang.Object pobjValue, UUID pidType) {
-		if (pobjValue == null) {
+	private TD safeBuildCell(java.lang.Object pobjValue, UUID pidType, 
+			boolean addEuro, boolean alignRight) {
+		if (pobjValue == null || pobjValue.toString().trim().length() == 0) {
 			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
 		}
-		return ReportBuilder.buildCell(pobjValue, pidType);
+		if (addEuro) {
+			String valueString = pobjValue + " €";
+			return safeBuildCell(valueString, TypeDefGUIDs.T_String, false, alignRight);
+		}
+		return ReportBuilder.buildCell(pobjValue, pidType, alignRight);
 	}
 
 	/**
@@ -1090,7 +1094,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * contained in an ArrayList. It's used to build tables to display inside a
 	 * TD.
 	 */
-	private TD buildValuesTable(ArrayList<String> data, int width) {
+	private TD buildValuesTable(ArrayList<String> data, int width,
+			boolean addEuro, boolean alignRight) {
 
 		TD content;
 
@@ -1103,7 +1108,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Builds a "simple" TD or a table with a TD with each value
 		if (data.size() == 1) {
-			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String);
+			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String, addEuro, alignRight);
 			content.setWidth(width);
 			ReportBuilder.styleCell(content, false, false);
 			ReportBuilder.styleInnerContainer(content);
@@ -1116,7 +1121,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			for (int i = 0; i < data.size(); i++) {
 				TD[] cell = new TD[1];
 
-				cell[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String);
+				cell[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String, addEuro, alignRight);
 				cell[0].setWidth(width);
 				cell[0].setStyle("overflow:hidden;white-space:nowrap");
 
@@ -1188,10 +1193,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						ArrayList<String> objectNameArray = new ArrayList<String>();
 						objectNameArray.add(objectName);
 						dataCells[currentCell] = buildValuesTable(
-								splitValue(objectNameArray), OBJECT_WIDTH);
+								splitValue(objectNameArray), OBJECT_WIDTH, false, false);
 					} else {
 						dataCells[currentCell] = safeBuildCell(objectName,
-								TypeDefGUIDs.T_String);
+								TypeDefGUIDs.T_String, false, false);
 					}
 					dataCells[currentCell].setWidth(OBJECT_WIDTH);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
@@ -1202,7 +1207,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(
 							splitValue(valuesByObject.get(objectKey)
-									.getRiskSite()), RISK_SITE_WIDTH);
+									.getRiskSite()), RISK_SITE_WIDTH, false, false);
 					dataCells[currentCell].setWidth(RISK_SITE_WIDTH);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
@@ -1211,7 +1216,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// Policy Coverages
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
-							.get(objectKey).getCoverages(), COVERAGES_WIDTH);
+							.get(objectKey).getCoverages(), COVERAGES_WIDTH, false, false);
 					dataCells[currentCell].setWidth(COVERAGES_WIDTH);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
@@ -1220,7 +1225,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// Insured Value
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
-							.get(objectKey).getInsuredValues(), VALUE_WIDTH);
+							.get(objectKey).getInsuredValues(), VALUE_WIDTH, true, true);
 					dataCells[currentCell].setWidth(VALUE_WIDTH);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
@@ -1229,7 +1234,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// Tax
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
-							.get(objectKey).getTaxes(), TAX_WIDTH);
+							.get(objectKey).getTaxes(), TAX_WIDTH, false, true);
 					dataCells[currentCell].setWidth(TAX_WIDTH);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
