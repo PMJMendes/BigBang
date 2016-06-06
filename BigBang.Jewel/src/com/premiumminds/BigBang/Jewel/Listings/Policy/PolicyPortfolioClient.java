@@ -62,12 +62,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		private ArrayList<String> insuredValues;
 		private ArrayList<String> riskSite;
 		private ArrayList<String> taxes;
+		private ArrayList<String> franchises;
 
 		CoverageData() {
 			coverages = new ArrayList<String>();
 			insuredValues = new ArrayList<String>();
 			riskSite = new ArrayList<String>();
 			taxes = new ArrayList<String>();
+			franchises = new ArrayList<String>();
 		}
 
 		public ArrayList<String> getCoverages() {
@@ -85,6 +87,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		public ArrayList<String> getTaxes() {
 			return taxes;
 		}
+		
+		public ArrayList<String> getFranchises() {
+			return franchises;
+		}
 
 		public void setCoverages(PolicyCoverage[] policyCoverages) {
 
@@ -93,7 +99,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			}
 			for (int i = 0; i < policyCoverages.length; i++) {
 				// Only inserts the coverages present at the policy
-				if (policyCoverages[i].IsPresent()) {
+				if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
 					coverages.add((String) policyCoverages[i].GetCoverage()
 							.getAt(Coverage.I.NAME));
 				}
@@ -115,6 +121,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		public void setTaxes(ArrayList<String> taxesList) {
 			taxes = taxesList;
 		}
+		
+		public void setFranchises(ArrayList<String> franchisesList) {
+			franchises = franchisesList;
+		}
 	}
 
 	// The total premium to display in the report
@@ -124,20 +134,32 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private UUID fauxId;
 
 	// Width Constants
-	private static final int POLICY_WIDTH = 140;
-	private static final int COMPANY_WIDTH = 220;
+	private static final int POLICY_WIDTH = 100;
+	private static final int COMPANY_WIDTH = 200;
 	private static final int DATE_WIDTH = 40;
-	private static final int FRACTIONING_WIDTH = 1;
+	private static final int FRACTIONING_WIDTH = 60;
 	private static final int OBJECT_WIDTH = 230;
 	private static final int RISK_SITE_WIDTH = 230;
-	private static final int COVERAGES_WIDTH = 330;
-	private static final int VALUE_WIDTH = 102;
+	private static final int COVERAGES_WIDTH = 230;
+	private static final int VALUE_WIDTH = 92;
 	private static final int TAX_WIDTH = 40;
-	private static final int FRANCHISE_WIDTH = 1;
-	private static final int PREMIUM_WIDTH = 120;
-	private static final int METHOD_WIDTH = 1;
+	private static final int FRANCHISE_WIDTH = 40;
+	private static final int PREMIUM_WIDTH = 92;
+	private static final int METHOD_WIDTH = 70;
 	private static final int OBSERVATIONS_WIDTH = 80;
 	private static final int STRING_BREAK_POINT = 40;
+	
+	// Payment Methods
+	private static final String DIRECT_PAYMENT = "Débito Directo";
+	private static final String BROKER_PAYMENT = "Pagamento ao Corretor";
+	
+	// Fractioning
+	public static final String FRAC_YEAR     	= "Anual";
+	public static final String FRAC_SEMESTER 	= "Semestral";
+	public static final String FRAC_TRIMESTER  	= "Trimestral";
+	public static final String FRAC_MONTH    	= "Mensal";
+	public static final String FRAC_UNIQUE  	= "Única";
+	public static final String FRAC_FRACTIONED 	= "Fraccionada";
 	
 	/*
 	 * This Matrix represents the order to display the policies, as well as the way to group them.
@@ -883,7 +905,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		
 		// Fractioning
 		if (policyParams.get(paramCheck++).equals("1")) {
-			dataCells[cellNumber] = safeBuildCell("fraccionamento",
+			dataCells[cellNumber] = safeBuildCell(getFractioning(policy),
 					TypeDefGUIDs.T_String, false, false);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
@@ -907,7 +929,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Payment Method
 		if (policyParams.get(paramCheck++).equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell("método pagamento",
+			dataCells[cellNumber] = ReportBuilder.buildCell(getPaymentMethod(policy),
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
@@ -924,6 +946,50 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		setOuterWidths(dataCells, reportParams);
 
 		return dataCells;
+	}
+
+	/**
+	 * This method returns the fractioning textual description
+	 */
+	private String getFractioning(Policy policy) {
+
+		UUID fractioningID = (UUID) policy.getAt(Policy.I.FRACTIONING);
+		
+		if (fractioningID.equals(Constants.FracID_Year)) {
+			return FRAC_YEAR;
+		} else if (fractioningID.equals(Constants.FracID_Semester)) {
+			return FRAC_SEMESTER;
+		} else if (fractioningID.equals(Constants.FracID_Quarter)) {
+			return FRAC_TRIMESTER;
+		} else if (fractioningID.equals(Constants.FracID_Month)) {
+			return FRAC_MONTH;
+		} else if (fractioningID.equals(Constants.FracID_Single)) {
+			return FRAC_UNIQUE;
+		} else if (fractioningID.equals(Constants.FracID_Variable)) {
+			return FRAC_FRACTIONED;
+		}
+		return null;
+	}
+
+	/**
+	 * This method returns the payment Method according to the type of the policy's profile
+	 */
+	private String getPaymentMethod(Policy policy) throws BigBangJewelException {
+
+		UUID profile = policy.getProfile();
+		
+		if (profile == null) {
+			profile = policy.GetClient().getProfile();
+		}
+		if (profile == null) {
+			return null;
+		}
+		
+		if (profile.equals(Constants.ProfID_External)) {
+			return DIRECT_PAYMENT;
+		} else {
+			return BROKER_PAYMENT;
+		}
 	}
 
 	/**
@@ -1285,10 +1351,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 							true);
 				}
 				
-				// Franchise TODO
+				// Franchise
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[currentCell] = safeBuildCell("franquia",
-							TypeDefGUIDs.T_String, false, false);;
+					dataCells[currentCell] = buildValuesTable(valuesByObject
+							.get(objectKey).getFranchises(), FRANCHISE_WIDTH, false, true);
 					dataCells[currentCell].setWidth(FRANCHISE_WIDTH);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
@@ -1386,6 +1452,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		 * Policy Taxes' set
 		 */
 		coverageData.setTaxes(getTaxes(policy, insuredObject, currentExercise,
+				policyValues, policyCoverages));
+		
+		/*
+		 * Policy Franchise's set
+		 */
+		coverageData.setFranchises(getFranchises(policy, insuredObject, currentExercise,
 				policyValues, policyCoverages));
 
 		return coverageData;
@@ -1551,7 +1623,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		 */
 		for (int i = 0; i < policyCoverages.length; i++) {
 			// Only lists the values for the coverages present at the policy
-			if (policyCoverages[i].IsPresent()) {
+			if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
 				result.add(getCoverageValues(insuredObject, currentExercise,
 						policyValues, policyCoverages[i],
 						Constants.PolicyValuesTags.VALUE));
@@ -1611,7 +1683,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			for (int i = 0; i < policyCoverages.length; i++) {
 
 				// Only lists the values for the coverages present at the policy
-				if (policyCoverages[i].IsPresent()) {
+				if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
 
 					result.add(getCoverageValues(insuredObject,
 							currentExercise, policyValues, policyCoverages[i],
@@ -1809,6 +1881,37 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 
 		return " ";
+	}
+	
+	/**
+	 * This method gets the taxes according to the category. If they are related
+	 * with the coverages, they are returned in the same order than the
+	 * coverages, with a white space when the value does not exist for a given
+	 * coverage Note that there are some categories without an associated tax
+	 */
+	private ArrayList<String> getFranchises(Policy policy,
+			PolicyObject insuredObject, UUID currentExercise,
+			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) {
+
+		ArrayList<String> result = new ArrayList<String>();
+
+		for (int i = 0; i < policyCoverages.length; i++) {
+
+			// Only lists the values for the coverages present at the policy
+			if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
+
+				result.add(getCoverageValues(insuredObject,
+						currentExercise, policyValues, policyCoverages[i],
+						Constants.PolicyValuesTags.FRANCHISE));
+			}
+		}
+		
+		if (result.size() == 0) {
+			// Default - no tax
+			return new ArrayList<String>(Arrays.asList("-"));
+		}
+		
+		return result;
 	}
 	
 	/**

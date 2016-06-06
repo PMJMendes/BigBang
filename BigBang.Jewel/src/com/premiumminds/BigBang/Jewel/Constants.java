@@ -842,6 +842,7 @@ public class Constants
 		public static final String VALUE				= "CAP";
 		public static final String SALES_TAX			= "TCOM";
 		public static final String HITTING_RATE			= "TXACE";
+		public static final String FRANCHISE			= "FRANQ";
 	}
 
 	// FK Constants
