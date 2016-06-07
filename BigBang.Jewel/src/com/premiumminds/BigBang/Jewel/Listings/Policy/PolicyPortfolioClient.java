@@ -137,17 +137,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private static final int POLICY_WIDTH = 100;
 	private static final int COMPANY_WIDTH = 200;
 	private static final int DATE_WIDTH = 40;
-	private static final int FRACTIONING_WIDTH = 60;
-	private static final int OBJECT_WIDTH = 230;
+	private static final int FRACTIONING_WIDTH = 70;
+	private static final int OBJECT_WIDTH = 200;
 	private static final int RISK_SITE_WIDTH = 230;
 	private static final int COVERAGES_WIDTH = 230;
 	private static final int VALUE_WIDTH = 92;
 	private static final int TAX_WIDTH = 40;
 	private static final int FRANCHISE_WIDTH = 40;
 	private static final int PREMIUM_WIDTH = 92;
-	private static final int METHOD_WIDTH = 70;
+	private static final int METHOD_WIDTH = 90;
 	private static final int OBSERVATIONS_WIDTH = 80;
-	private static final int STRING_BREAK_POINT = 40;
+	private static final int STRING_BREAK_POINT = 30;
+	private static final int METHOD_BREAK_POINT = 18;
 	
 	// Payment Methods
 	private static final String DIRECT_PAYMENT = "Débito Directo";
@@ -745,19 +746,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Companhia",
+			cells[cellNumber] = ReportBuilder.buildCell("Segurador",
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Até",
-					TypeDefGUIDs.T_String);
+			cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Venc.", "(M / D)"));
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Fraccionamento",
+			cells[cellNumber] = ReportBuilder.buildCell("Frac.",
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
@@ -766,14 +766,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			cells[cellNumber++] = buildInnerHeaderRow(objectParams);
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Prémio Total Anual",
-					TypeDefGUIDs.T_String);
+			cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Prémio Total", "Anual"));
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Modalidade de Pagamento",
-					TypeDefGUIDs.T_String);
+			cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Modalidade de", "Pagamento"));
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
@@ -886,7 +884,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				ArrayList<String> objectNameArray = new ArrayList<String>();
 				objectNameArray.add(companyName);
 				dataCells[cellNumber] = buildValuesTable(
-						splitValue(objectNameArray), OBJECT_WIDTH, false, false);
+						splitValue(objectNameArray, STRING_BREAK_POINT), OBJECT_WIDTH, false, false);
 			} else {
 				dataCells[cellNumber] = safeBuildCell(companyName,
 						TypeDefGUIDs.T_String, false, false);
@@ -929,8 +927,17 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Payment Method
 		if (policyParams.get(paramCheck++).equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(getPaymentMethod(policy),
-					TypeDefGUIDs.T_String);
+			String method = getPaymentMethod(policy);
+			
+			if (method==null) {
+				dataCells[cellNumber] = safeBuildCell(method,
+						TypeDefGUIDs.T_String, false, false);
+			} else {
+				ArrayList<String> methodArray = new ArrayList<String>();
+				methodArray.add(method);
+				dataCells[cellNumber] = buildValuesTable(
+						splitValue(methodArray, METHOD_BREAK_POINT), OBJECT_WIDTH, false, false);
+			}
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
 		}
@@ -1027,12 +1034,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Taxa",
-					TypeDefGUIDs.T_String);
+			cells[cellNumber] = cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Taxa", "Com."));
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Franquia",
+			cells[cellNumber] = ReportBuilder.buildCell("Franq.",
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
@@ -1180,16 +1186,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * element (the string) for it is the way it is represented in the
 	 * CoverageData's class.
 	 */
-	private ArrayList<String> splitValue(ArrayList<String> riskSite) {
+	private ArrayList<String> splitValue(ArrayList<String> stringToSplit, int breakPosition) {
 
 		ArrayList<String> result = new ArrayList<String>();
-		String[] split = riskSite.get(0).split("\\s+");
+		String[] split = stringToSplit.get(0).split("\\s+");
 		String tmp = "";
 
 		// Splits when it occupies more than (approximately) one row's length
 		for (int i = 0; i < split.length; i++) {
 			tmp = tmp + " " + split[i];
-			if ((tmp.length() / (STRING_BREAK_POINT - 5)) >= 1) {
+			if ((tmp.length() / (breakPosition - 6)) >= 1) {
 				result.add(tmp);
 				tmp = "";
 			} else if (i + 1 == split.length) {
@@ -1197,7 +1203,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			}
 		}
 
-		return (result.size() == 0 ? riskSite : result);
+		return (result.size() == 0 ? stringToSplit : result);
 	}
 
 	/**
@@ -1304,7 +1310,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						ArrayList<String> objectNameArray = new ArrayList<String>();
 						objectNameArray.add(objectName);
 						dataCells[currentCell] = buildValuesTable(
-								splitValue(objectNameArray), OBJECT_WIDTH, false, false);
+								splitValue(objectNameArray, STRING_BREAK_POINT), OBJECT_WIDTH, false, false);
 					} else {
 						dataCells[currentCell] = safeBuildCell(objectName,
 								TypeDefGUIDs.T_String, false, false);
@@ -1318,7 +1324,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(
 							splitValue(valuesByObject.get(objectKey)
-									.getRiskSite()), RISK_SITE_WIDTH, false, false);
+									.getRiskSite(), STRING_BREAK_POINT), RISK_SITE_WIDTH, false, false);
 					dataCells[currentCell].setWidth(RISK_SITE_WIDTH);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
@@ -1362,7 +1368,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 				setInnerWidths(dataCells, reportParams);
 				tableRows[nrRows] = ReportBuilder.buildRow(dataCells);
-				tableRows[nrRows++].setStyle("height:70px;");
+				tableRows[nrRows++].setStyle("height:80px;");
 			}
 		}
 		table = ReportBuilder.buildTable(tableRows);
@@ -1912,6 +1918,31 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Builds a dual-row table to use in the table header, for longer column names
+	 */
+	public Table buildDoubleHeaderTitle (String lineOne, String lineTwo) {
+		
+		Table table;
+		TR[] tableRows = new TR[2];
+		TD[] tdOne = new TD[1];
+		TD[] tdTwo = new TD[1];
+		
+		tdOne[0] = ReportBuilder.buildCell(lineOne, TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(tdOne[0], false, false);
+		
+		tdTwo[0] = ReportBuilder.buildCell(lineTwo, TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(tdTwo[0], false, false);
+		
+		tableRows[0] = ReportBuilder.buildRow(tdOne);
+		tableRows[0].setStyle("font-weight:bold;");
+		tableRows[1] = ReportBuilder.buildRow(tdTwo);
+		tableRows[1].setStyle("font-weight:bold;");
+		
+		table = ReportBuilder.buildTable(tableRows);
+		return table;
 	}
 	
 	/**
