@@ -543,13 +543,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		tableRows[rowNum++] = ReportBuilder.buildRow(new TD[] { mainContent });
 
 		// Builds the row with the total number of policies
-		tableRows[rowNum++] = ReportBuilder.constructDualRow("Nº de Apólices",
+		tableRows[rowNum++] = constructSummaryRow("Nº de Apólices:",
 				policies.length, TypeDefGUIDs.T_Integer, false);
 
 		// Build the row with the total prize
 		if (reportParams[10].equals("1")) {
-			tableRows[rowNum++] = ReportBuilder.constructDualRow(
-					"Total de Prémios", premiumTotal, TypeDefGUIDs.T_Decimal,
+			tableRows[rowNum++] = constructSummaryRow(
+					"Total de Prémios:", premiumTotal, TypeDefGUIDs.T_Decimal,
 					false);
 		}
 
@@ -557,6 +557,32 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		ReportBuilder.styleTable(table, false);
 
 		return table;
+	}
+	
+	/**
+	 * This method builds a "summary row" with info to display at the end of the report.
+	 * It is (REALLY) similar to ReportBuilder's constructDualRow method, but without the 
+	 * left line. Eventually new changes will be made to this method, thus motivating this
+	 * "branching"
+	 */
+	private TR constructSummaryRow(String text, 
+			Object value, UUID typeGUID, boolean rightAlign) {
+		
+		TD[] cells = new TD[2];
+		TR row;
+
+		cells[0] = ReportBuilder.buildHeaderCell(text);
+		cells[0].setWidth("1px");
+		ReportBuilder.styleCell(cells[0], true, false);
+		cells[1] = ReportBuilder.buildCell(value, typeGUID);
+		ReportBuilder.styleCell(cells[1], true, false);
+		if (rightAlign) {
+			cells[1].setAlign("right");
+		}
+		row = ReportBuilder.buildRow(cells);
+		ReportBuilder.styleRow(row, false);
+
+		return row;
 	}
 
 	/**
