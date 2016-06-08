@@ -150,6 +150,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private static final int STRING_BREAK_POINT = 30;
 	private static final int METHOD_BREAK_POINT = 18;
 	
+	// Height
+	private static final int INNER_HEIGHT = 70;
+	
 	// Payment Methods
 	private static final String DIRECT_PAYMENT = "Débito Directo";
 	private static final String BROKER_PAYMENT = "Pagamento ao Corretor";
@@ -1316,6 +1319,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								TypeDefGUIDs.T_String, false, false);
 					}
 					dataCells[currentCell].setWidth(OBJECT_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
@@ -1326,6 +1330,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 							splitValue(valuesByObject.get(objectKey)
 									.getRiskSite(), STRING_BREAK_POINT), RISK_SITE_WIDTH, false, false);
 					dataCells[currentCell].setWidth(RISK_SITE_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
@@ -1335,6 +1340,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
 							.get(objectKey).getCoverages(), COVERAGES_WIDTH, false, false);
 					dataCells[currentCell].setWidth(COVERAGES_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
@@ -1344,15 +1350,17 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
 							.get(objectKey).getInsuredValues(), VALUE_WIDTH, true, true);
 					dataCells[currentCell].setWidth(VALUE_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
 
-				// Tax
+				// Sales' Tax
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
 							.get(objectKey).getTaxes(), TAX_WIDTH, false, true);
 					dataCells[currentCell].setWidth(TAX_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
@@ -1362,13 +1370,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
 							.get(objectKey).getFranchises(), FRANCHISE_WIDTH, false, true);
 					dataCells[currentCell].setWidth(FRANCHISE_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
 
 				setInnerWidths(dataCells, reportParams);
-				tableRows[nrRows] = ReportBuilder.buildRow(dataCells);
-				tableRows[nrRows++].setStyle("height:80px;");
+				tableRows[nrRows++] = ReportBuilder.buildRow(dataCells);
 			}
 		}
 		table = ReportBuilder.buildTable(tableRows);
