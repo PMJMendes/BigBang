@@ -447,7 +447,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					throws BigBangJewelException {
 
 		Table table;
-		TR[] tableRows = new TR[2];
+		TR[] tableRows = new TR[3];
 		
 		// Builds the header row
 		TD headerContent = new TD();
@@ -459,6 +459,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		infoContent.addElement(buildClientPortfolioTable(policies, reportParams));
 		tableRows[1] = ReportBuilder.buildRow(new TD[] { infoContent });
 
+		// Builds the row with the policy info
+		TD notes = new TD();
+		notes.addElement(buildNotesTable(reportParams));
+		tableRows[2] = ReportBuilder.buildRow(new TD[] { notes });
+		
 		table = ReportBuilder.buildTable(tableRows);
 		
 		return table;
@@ -513,6 +518,57 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	}
 
 	/**
+	 * This method builds the report section with the labels corresponding
+	 * to the column's names
+	 */
+	private Table buildNotesTable(String[] reportParams) throws BigBangJewelException {
+		
+		Table table;
+		TR[] tableRows;
+		
+		int paramCount = 0;
+		String[] columnLabels = new String[4];
+		String[] columnFull = new String[4];
+		
+		if (reportParams[4].equals("1")) {
+			columnLabels[paramCount] = "Venc. (M / D)";
+			columnFull[paramCount++] = "Vencimento (Mês / Dia)";
+		}
+		if (reportParams[5].equals("1")) {
+			columnLabels[paramCount] = "Frac.";
+			columnFull[paramCount++] = "Fraccionamento";
+		}
+		if (reportParams[10].equals("1")) {
+			columnLabels[paramCount] = "Taxa Com.";
+			columnFull[paramCount++] = "Taxa Comercial";
+		}
+		if (reportParams[11].equals("1")) {
+			columnLabels[paramCount] = "Franq.";
+			columnFull[paramCount++] = "Franquia";
+		}
+		
+		tableRows = new TR[paramCount+1];
+		
+		if (paramCount>0) {
+			TD[] notesHeader = new TD[1];
+			notesHeader[0] = ReportBuilder.buildCell("Notas", TypeDefGUIDs.T_String, false);
+			notesHeader[0].setStyle("padding-top:20px;padding-left:5px;width:100px;");
+			tableRows[0] = ReportBuilder.buildRow(notesHeader);
+			tableRows[0].setStyle("height:50px;font-weight:bold;");
+		}
+		
+		for (int i=0; i<paramCount; i++) {
+			tableRows[i+1] = constructSummaryRow(columnLabels[i],
+					columnFull[i], TypeDefGUIDs.T_String, false, false);
+		}
+		
+		table = ReportBuilder.buildTable(tableRows);
+		table.setStyle("width:100%;");
+		
+		return table;
+	}
+	
+	/**
 	 * The method responsible for printing the table corresponding to a client's
 	 * portfolio
 	 */
@@ -544,13 +600,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Builds the row with the total number of policies
 		tableRows[rowNum++] = constructSummaryRow("Nº de Apólices:",
-				policies.length, TypeDefGUIDs.T_Integer, false);
+				policies.length, TypeDefGUIDs.T_Integer, true, false);
 
 		// Build the row with the total prize
 		if (reportParams[10].equals("1")) {
 			tableRows[rowNum++] = constructSummaryRow(
 					"Total de Prémios:", premiumTotal, TypeDefGUIDs.T_Decimal,
-					false);
+					true, false);
 		}
 
 		table = ReportBuilder.buildTable(tableRows);
@@ -566,16 +622,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * "branching"
 	 */
 	private TR constructSummaryRow(String text, 
-			Object value, UUID typeGUID, boolean rightAlign) {
+			Object value, UUID typeGUID, boolean topRow, boolean rightAlign) {
 		
 		TD[] cells = new TD[2];
 		TR row;
 
 		cells[0] = ReportBuilder.buildHeaderCell(text);
 		cells[0].setWidth("1px");
-		ReportBuilder.styleCell(cells[0], true, false);
+		ReportBuilder.styleCell(cells[0], topRow, false);
 		cells[1] = ReportBuilder.buildCell(value, typeGUID);
-		ReportBuilder.styleCell(cells[1], true, false);
+		ReportBuilder.styleCell(cells[1], topRow, false);
 		if (rightAlign) {
 			cells[1].setAlign("right");
 		}
