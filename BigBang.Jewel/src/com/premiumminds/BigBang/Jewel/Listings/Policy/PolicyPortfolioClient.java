@@ -332,6 +332,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		MasterDB ldb;
 		ResultSet fetchedPolicies;
 		UUID guidAgent;
+		
+		// Filters by client (if defined in the interface)
+		if (reportParams[0] == null && reportParams[1] == null) {
+			throw new BigBangJewelException("Deve definir-se o Cliente ou Grupo de Clientes a que o relatório se refere");
+		}
 
 		try {
 
