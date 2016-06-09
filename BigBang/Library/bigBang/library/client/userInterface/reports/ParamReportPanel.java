@@ -57,6 +57,9 @@ public class ParamReportPanel extends View {
 			switch(parameters[i].type){
 			case BOOLEAN:
 				fields[i] = new CheckBoxFormField(parameters[i].label);
+				if (parameters[i].defaultValue.equals("true")) {
+					((CheckBoxFormField) fields[i]).setValue(true, false);
+				}
 				break;
 			case DATE:
 				fields[i] = new DatePickerFormField(parameters[i].label);

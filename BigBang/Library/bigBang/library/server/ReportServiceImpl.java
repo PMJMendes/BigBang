@@ -684,6 +684,8 @@ public class ReportServiceImpl
 		lobjResult.type = GetParamTypeByID((UUID)pobjParam.getAt(com.premiumminds.BigBang.Jewel.Objects.ReportParam.I.TYPE));
 		lobjResult.unitsLabel = (String)pobjParam.getAt(com.premiumminds.BigBang.Jewel.Objects.ReportParam.I.UNITS);
 		lobjResult.refersToId = (lidAux == null ? null : lidAux.toString());
+		lobjResult.refersToId = (lidAux == null ? null : lidAux.toString());
+		lobjResult.defaultValue = (String)pobjParam.getAt(com.premiumminds.BigBang.Jewel.Objects.ReportParam.I.DEFAULTVALUE);
 
 		return lobjResult;
 	}
