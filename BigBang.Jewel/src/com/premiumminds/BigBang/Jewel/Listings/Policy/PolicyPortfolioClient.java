@@ -1398,16 +1398,28 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				if (reportParams[paramCheck++].equals("1")) {
 					String objectName = (policyObjects.length == 0) ? " "
 							: getObjectName(policy, policyObjects[i]);
-					if (objectName != null
+					if (objectName.contains(ESCAPE_CHARACTER)) {
+						// If it has an escape character, it means it is a Auto-Individual, and must be treated differently
+						ArrayList<String> objectNameArray = new ArrayList<String>(Arrays.asList(objectName.split(Pattern.quote(ESCAPE_CHARACTER))));
+						if (objectNameArray.get(1).length() > STRING_BREAK_POINT) {
+							// If the car model is larger than the column, it must be split. 
+							ArrayList<String> tmpArray = new ArrayList<String>();
+							tmpArray.add(objectNameArray.get(1));
+							tmpArray = splitValue(tmpArray, STRING_BREAK_POINT);
+							objectNameArray.remove(1);
+							for (int u=0; u<tmpArray.size(); u++) {
+								objectNameArray.add(tmpArray.get(u));
+							}
+						}
+						
+						dataCells[currentCell] = buildValuesTable(
+								objectNameArray, OBJECT_WIDTH, false, false);
+					} else if (objectName != null
 							&& objectName.length() > STRING_BREAK_POINT) {
 						ArrayList<String> objectNameArray = new ArrayList<String>();
 						objectNameArray.add(objectName);
 						dataCells[currentCell] = buildValuesTable(
 								splitValue(objectNameArray, STRING_BREAK_POINT), OBJECT_WIDTH, false, false);
-					} else if (objectName.contains(ESCAPE_CHARACTER)) {
-						ArrayList<String> objectNameArray = new ArrayList<String>(Arrays.asList(objectName.split(Pattern.quote(ESCAPE_CHARACTER))));
-						dataCells[currentCell] = buildValuesTable(
-								objectNameArray, OBJECT_WIDTH, false, false);
 					} else {
 						dataCells[currentCell] = safeBuildCell(objectName,
 								TypeDefGUIDs.T_String, false, false);
