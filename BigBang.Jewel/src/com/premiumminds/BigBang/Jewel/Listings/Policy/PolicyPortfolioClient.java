@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.apache.ecs.AlignType;
 import org.apache.ecs.GenericElement;
@@ -164,6 +165,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	public static final String FRAC_MONTH    	= "Mensal";
 	public static final String FRAC_UNIQUE  	= "Única";
 	public static final String FRAC_FRACTIONED 	= "Fraccionada";
+	
+	public static final String ESCAPE_CHARACTER = "|_|_|";
 	
 	/*
 	 * This Matrix represents the order to display the policies, as well as the way to group them.
@@ -1401,6 +1404,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						objectNameArray.add(objectName);
 						dataCells[currentCell] = buildValuesTable(
 								splitValue(objectNameArray, STRING_BREAK_POINT), OBJECT_WIDTH, false, false);
+					} else if (objectName.contains(ESCAPE_CHARACTER)) {
+						ArrayList<String> objectNameArray = new ArrayList<String>(Arrays.asList(objectName.split(Pattern.quote(ESCAPE_CHARACTER))));
+						dataCells[currentCell] = buildValuesTable(
+								objectNameArray, OBJECT_WIDTH, false, false);
 					} else {
 						dataCells[currentCell] = safeBuildCell(objectName,
 								TypeDefGUIDs.T_String, false, false);
@@ -1581,7 +1588,15 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
 				&& policySubLine
 				.equals(Constants.PolicySubLines.AUTO_AUTO_INDIVIDUAL)) {
-			return (String) policyObject.getAt(PolicyObject.I.MAKEANDMODEL);
+			String objName = "";
+			objName = policyObject.getAt(PolicyObject.I.NAME)!=null ? objName + policyObject.getAt(PolicyObject.I.NAME) :
+				objName;
+			objName = (objName.length()!=0 && policyObject.getAt(PolicyObject.I.MAKEANDMODEL)!=null) ? 
+					objName + ESCAPE_CHARACTER : objName;
+			objName = policyObject.getAt(PolicyObject.I.MAKEANDMODEL)!=null ? objName// Escape character 
+				+ policyObject.getAt(PolicyObject.I.MAKEANDMODEL) :
+				objName;
+			return objName;
 		} else {
 			return (String) policyObject.getAt(PolicyObject.I.NAME);
 		}
