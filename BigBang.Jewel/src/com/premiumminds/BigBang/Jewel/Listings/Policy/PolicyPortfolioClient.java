@@ -1357,7 +1357,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private TD buildInnerObjectsTable(Policy policy, String[] reportParams,
 			PolicyObject[] policyObjects,
-			HashMap<UUID, CoverageData> valuesByObject) {
+			HashMap<UUID, CoverageData> valuesByObject) throws BigBangJewelException {
 
 		// Gets the number of columns to initialize the TD's array
 		int cellNumber = Collections
@@ -1574,7 +1574,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	/**
 	 * This method gets the object name according to the policy's category
 	 */
-	private String getObjectName(Policy policy, PolicyObject policyObject) {
+	private String getObjectName(Policy policy, PolicyObject policyObject) throws BigBangJewelException {
 
 		if (policyObject == null) {
 			return " ";
@@ -1597,6 +1597,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				+ policyObject.getAt(PolicyObject.I.MAKEANDMODEL) :
 				objName;
 			return objName;
+		} else if (policyCat.equals(Constants.PolicyCategories.FIRE)) {
+			return getObjectAddress(policyObject);			
 		} else {
 			return (String) policyObject.getAt(PolicyObject.I.NAME);
 		}
@@ -1626,7 +1628,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private String getRiskSite(Policy policy, PolicyObject insuredObject,
 			PolicyValue[] policyValues) throws InvocationTargetException,
-			JewelEngineException {
+			JewelEngineException, BigBangJewelException {
 
 		if (policyValues == null) {
 			return " ";
@@ -1637,22 +1639,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// If policy is MULTIRRISK
 		if (policyCat.equals(Constants.PolicyCategories.MULTIRISK)
 				&& insuredObject != null) {
-			String address = (String) (insuredObject
-					.getAt(PolicyObject.I.ADDRESS1) == null ? ""
-							: insuredObject.getAt(PolicyObject.I.ADDRESS1));
-			address = (String) (insuredObject.getAt(PolicyObject.I.ADDRESS2) == null ? address
-					: address + " "
-					+ insuredObject.getAt(PolicyObject.I.ADDRESS2));
-			UUID zipGUID = (UUID) insuredObject.getAt(PolicyObject.I.ZIPCODE);
-			if (zipGUID != null) {
-				ObjectBase zipCode = Engine.GetWorkInstance(
-						Engine.FindEntity(Engine.getCurrentNameSpace(),
-								ObjectGUIDs.O_PostalCode), zipGUID);
-				address = address + " " + zipCode.getAt(0);
-				address = address + " " + zipCode.getAt(1);
-			}
-
-			return address;
+			return getObjectAddress(insuredObject);
 		}
 
 		// If policy is RESPONSABILITY or CONSTRUCTION_ASSEMBLY, the risk site
@@ -1683,6 +1670,38 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 
 		return "-";
+	}
+
+	/**
+	 * This method returns a built and ready to display address as associated with 
+	 * a given insured object
+	 */
+	private String getObjectAddress(PolicyObject insuredObject) 
+			throws BigBangJewelException {
+		
+		String address = (String) (insuredObject
+				.getAt(PolicyObject.I.ADDRESS1) == null ? ""
+						: insuredObject.getAt(PolicyObject.I.ADDRESS1));
+		address = (String) (insuredObject.getAt(PolicyObject.I.ADDRESS2) == null ? address
+				: address + " "
+				+ insuredObject.getAt(PolicyObject.I.ADDRESS2));
+		
+		UUID zipGUID = (UUID) insuredObject.getAt(PolicyObject.I.ZIPCODE);
+		
+		try { 
+			if (zipGUID != null) {
+		
+				ObjectBase zipCode = Engine.GetWorkInstance(
+						Engine.FindEntity(Engine.getCurrentNameSpace(),
+								ObjectGUIDs.O_PostalCode), zipGUID);
+				address = address + " " + zipCode.getAt(0);
+				address = address + " " + zipCode.getAt(1);
+			}
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+			
+		return address;
 	}
 
 	/**
