@@ -763,6 +763,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				for (int u=1; u<sublineTemp.length; u++) {
 					ArrayList<Policy> sublineTempElement = policiesMap.get(sublineTemp[u]);
 					if (sublineTempElement != null) {
+						if (policies == null) {
+							policies = new ArrayList<Policy>();
+						}
 						policies.addAll(sublineTempElement);
 					}
 				}
