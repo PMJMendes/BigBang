@@ -1711,6 +1711,15 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// read "Diversos"
 			result.add("Diversos");
 			return result;
+		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
+				&& ((policySubLine
+						.equals(Constants.PolicySubLines.WORK_ACCIDENTS_OTHERS_FIXED_PREMIUM)) || (policySubLine
+						.equals(Constants.PolicySubLines.WORK_ACCIDENTS_CGA_FIXED_PREMIUM)))) {
+			// For Work accidents with fixed premium, the value comes from the yearly salary
+			result.add(getValueWithTags(policyValues, insuredObject,
+					currentExercise, null, Constants.PolicyValuesTags.YEARLY_SALARY,
+					true));
+			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
 			// For Work Accidents, the insured value corresponds to the
 			// temporary value from the legal coverage

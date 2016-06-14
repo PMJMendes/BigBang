@@ -824,9 +824,11 @@ public class Constants
 	
 	// Policy Sublines
 	public static class PolicySubLines {
-		public static final UUID AUTO_AUTO_INDIVIDUAL				= UUID.fromString("22FE8580-E680-4EC7-9ABB-9EE9011AA269");
-		public static final UUID AUTO_AUTO_FLEET		  			= UUID.fromString("E08BDBD3-4F59-45B9-975E-9EE9011AA8AC");
-		public static final UUID OTHER_DAMAGES_CEASING_MACHINES		= UUID.fromString("DBFA4951-59CF-4008-98A5-9EE9011A0F30");
+		public static final UUID AUTO_AUTO_INDIVIDUAL					= UUID.fromString("22FE8580-E680-4EC7-9ABB-9EE9011AA269");
+		public static final UUID AUTO_AUTO_FLEET		  				= UUID.fromString("E08BDBD3-4F59-45B9-975E-9EE9011AA8AC");
+		public static final UUID OTHER_DAMAGES_CEASING_MACHINES			= UUID.fromString("DBFA4951-59CF-4008-98A5-9EE9011A0F30");
+		public static final UUID WORK_ACCIDENTS_OTHERS_FIXED_PREMIUM	= UUID.fromString("CA6EC5CA-FF4E-4E2C-BCF9-9EE901189BE9");
+		public static final UUID WORK_ACCIDENTS_CGA_FIXED_PREMIUM		= UUID.fromString("BB0E78F2-3817-45C6-94C7-9EE90118BA82");
 	}
 	
 	// Policy's Coverages' TAGS
@@ -843,6 +845,7 @@ public class Constants
 		public static final String SALES_TAX			= "TCOM";
 		public static final String HITTING_RATE			= "TXACE";
 		public static final String FRANCHISE			= "FRANQ";
+		public static final String YEARLY_SALARY		= "SALANU";
 	}
 
 	// FK Constants
