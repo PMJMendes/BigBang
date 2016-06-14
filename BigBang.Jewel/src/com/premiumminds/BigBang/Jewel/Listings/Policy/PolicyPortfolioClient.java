@@ -603,7 +603,6 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		mainContent.setColSpan(2);
 		mainContent.addElement(buildReportInfo(policiesMap, policies.length,
 				reportParams));
-		ReportBuilder.styleInnerContainer(mainContent);
 		tableRows[rowNum++] = ReportBuilder.buildRow(new TD[] { mainContent });
 
 		// Builds the row with the total number of policies
