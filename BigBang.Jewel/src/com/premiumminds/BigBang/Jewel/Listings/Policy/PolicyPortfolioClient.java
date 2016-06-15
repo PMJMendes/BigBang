@@ -318,7 +318,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Creates the report (this one only has one section)
 		reportResult = new GenericElement[1];
-		reportResult[0] = buildClientPortfolio(policies, reportParams);
+		
+		// Builds the table with the report. This "table with one TR with one TD" is needed
+		// to export to Excel
+		Table table;
+		TR[] tableRows = new TR[1];
+		TD mainContent = new TD();
+		mainContent.addElement(buildClientPortfolio(policies, reportParams));
+		tableRows[0] = ReportBuilder.buildRow(new TD[] { mainContent });
+		
+		table = ReportBuilder.buildTable(tableRows);
+		
+		reportResult[0] = table;
 
 		return reportResult;
 	}
