@@ -291,8 +291,8 @@ public class MailConnector {
 				fetchedMails = folder.getMessages();
 			}
 
-			folder.close(false);
-			store.close();
+	//		folder.close(false);
+	//		store.close();
 
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
@@ -381,8 +381,8 @@ public class MailConnector {
 				}
 			}
 
-			folder.close(false);
-			store.close();
+		//	folder.close(false);
+		//	store.close();
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -398,7 +398,7 @@ public class MailConnector {
 
 		Map<String, BodyPart> attachmentsMap = getAttachmentsMap(message);
 
-		if (attachmentsMap.size() > 0) {
+		if (attachmentsMap != null && attachmentsMap.size() > 0) {
 			List<BodyPart> result = new ArrayList<BodyPart>();
 			for (String key: attachmentsMap.keySet()) {
 				result.add(attachmentsMap.get(key));
@@ -798,6 +798,7 @@ public class MailConnector {
 
 		mailServer = (String)Engine.getUserData().get("MailServer");
 		authenticator = new JewelAuthenticator(getUserName(), getUserPassword());
+		mailServer = "192.168.0.8"; //TODO
 
 		mailProps.put("mail.host", mailServer);
 		mailProps.put("mail.from", getUserEmail());

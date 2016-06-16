@@ -2,6 +2,7 @@ package bigBang.library.server;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -56,13 +57,13 @@ public class ExchangeServiceImpl
 
 			try {
 
-				larrResults[i].id = "" + parrSource[i].getMessageNumber();
+				larrResults[i].id = "" + parrSource[i].getHeader("Message-Id")[0];
 				larrResults[i].isFolder = false;
 				larrResults[i].subject = parrSource[i].getSubject();
 
 				lobjFrom = parrSource[i].getFrom();
 				larrResults[i].from = (String) ( lobjFrom == null ? null :
-					(lobjFrom[0] == null ? "" : lobjFrom[0]) );
+					(lobjFrom[0] == null ? "" : lobjFrom[0].toString()) );
 
 				try
 				{
@@ -78,7 +79,8 @@ public class ExchangeServiceImpl
 				else
 					larrResults[i].isFromMe = false;
 
-				larrResults[i].attachmentCount = MailConnector.getAttachments(parrSource[i]).size();
+				List<BodyPart> attachmentsMap = MailConnector.getAttachments(parrSource[i]);
+				larrResults[i].attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
 				lobjBody = parrSource[i].getContent().toString();
 				if ( lobjBody == null )
 					larrResults[i].bodyPreview = "_";
