@@ -451,14 +451,17 @@ public class MailConnector {
 				Enumeration<?> headers = part.getAllHeaders();
 				
 				while (headers.hasMoreElements()) {
-					Header h = (Header) headers.nextElement();
-					if(h.getName().equals("id")) { // TODO: e se nao tiver ID?
-						result.put(h.getValue(), part);
+					
+					String attId = part.getHeader("Content-Id")[0];
+
+					if(attId != null) { // TODO: e se nao tiver ID?
+						result.put(attId, part);
 						break;
 					}
 				}
-				
 				return result;
+			} else if (part.getContentType().contains("text/plain") || part.getContentType().contains("text/html")) { 
+				result.put("main", part);
 			} else {
 				return new HashMap<String, BodyPart>();
 			}

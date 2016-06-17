@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 
 import Jewel.Engine.Engine;
@@ -219,29 +220,37 @@ public class ExchangeServiceImpl
 			
 			attachmentsMap = MailConnector.getAttachmentsMap(lobjItem);
 			
-			lobjResult.attachmentCount = attachmentsMap.size();
-			lobjResult.body = lobjItem.getContent().toString();
+			lobjResult.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
+			Object content = lobjItem.getContent();
+			lobjResult.body = content.toString();
 			larrStubs = new ArrayList<AttachmentStub>();
 			
-			for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
-			    System.out.println(entry.getKey() + "/" + entry.getValue());
-			    lobjAttStub = new AttachmentStub();
-			    lobjAttStub.id = entry.getKey();
-				lobjAttStub.fileName = entry.getValue().getFileName();
-				lobjAttStub.mimeType = entry.getValue().getContentType();
-				lobjAttStub.size = entry.getValue().getSize();
-				larrStubs.add(lobjAttStub);
+			if (attachmentsMap != null) {
+				for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
+				    System.out.println(entry.getKey() + "/" + entry.getValue());
+				    lobjAttStub = new AttachmentStub();
+				    lobjAttStub.id = entry.getKey();
+					lobjAttStub.fileName = entry.getValue().getFileName();
+					lobjAttStub.mimeType = entry.getValue().getContentType();
+					lobjAttStub.size = entry.getValue().getSize();
+					larrStubs.add(lobjAttStub);
+				}
+				
+				lobjResult.attachments = larrStubs.toArray(new AttachmentStub[larrStubs.size()]);
 			}
-			
-			lobjResult.attachments = larrStubs.toArray(new AttachmentStub[larrStubs.size()]);
 
 			try
 			{
-				lstrBody = lobjItem.getContent().toString();
-				if ( lstrBody.length() > 200 )
-					lobjResult.bodyPreview = lstrBody.substring(0, 200);
-				else
-					lobjResult.bodyPreview = lstrBody;
+				if (content instanceof Multipart && attachmentsMap != null) {
+					lstrBody = attachmentsMap.get("main").getContent().toString();
+					lobjResult.body = lstrBody;
+				} else {
+					lstrBody = content.toString();
+					if ( lstrBody.length() > 200 )
+						lobjResult.bodyPreview = lstrBody.substring(0, 200);
+					else
+						lobjResult.bodyPreview = lstrBody;
+				}
 			}
 			catch (Throwable e)
 			{
