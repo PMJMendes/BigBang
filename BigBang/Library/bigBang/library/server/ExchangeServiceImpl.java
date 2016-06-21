@@ -1,16 +1,23 @@
 package bigBang.library.server;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -24,6 +31,7 @@ import bigBang.library.shared.ExchangeItemStub;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+
 
 public class ExchangeServiceImpl
 	extends EngineImplementor
@@ -113,7 +121,8 @@ public class ExchangeServiceImpl
 		try {
 			larrResults = new ExchangeItemStub[1];
 			
-			//TODO ver folder.getURLName() e folder.getFullName() e mudar nos outros sitios onde usas a folder (o fetch) para ver se esta a ir buscar bem por noome
+			// TODO ver folder.getURLName() e folder.getFullName() e mudar nos outros sitios onde usas a 
+			// folder (o fetch) para ver se esta a ir buscar bem por noome
 			larrResults[0].id = folder.getName(); 
 			larrResults[0].isFolder = true;
 			larrResults[0].isFromMe = false;
@@ -225,24 +234,11 @@ public class ExchangeServiceImpl
 			lobjResult.body = content.toString();
 			larrStubs = new ArrayList<AttachmentStub>();
 			
-			if (attachmentsMap != null) {
-				for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
-				    System.out.println(entry.getKey() + "/" + entry.getValue());
-				    lobjAttStub = new AttachmentStub();
-				    lobjAttStub.id = entry.getKey();
-					lobjAttStub.fileName = entry.getValue().getFileName();
-					lobjAttStub.mimeType = entry.getValue().getContentType();
-					lobjAttStub.size = entry.getValue().getSize();
-					larrStubs.add(lobjAttStub);
-				}
-				
-				lobjResult.attachments = larrStubs.toArray(new AttachmentStub[larrStubs.size()]);
-			}
-
 			try
 			{
 				if (content instanceof Multipart && attachmentsMap != null) {
 					lstrBody = attachmentsMap.get("main").getContent().toString();
+					lstrBody = prepareBodyInline(lstrBody, attachmentsMap);
 					lobjResult.body = lstrBody;
 				} else {
 					lstrBody = content.toString();
@@ -256,6 +252,20 @@ public class ExchangeServiceImpl
 			{
 				lobjResult.bodyPreview = "(Erro interno do servidor de Exchange.)";
 			}
+			
+			if (attachmentsMap != null) {
+				for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
+				    System.out.println(entry.getKey() + "/" + entry.getValue());
+				    lobjAttStub = new AttachmentStub();
+				    lobjAttStub.id = entry.getKey();
+					lobjAttStub.fileName = entry.getValue().getFileName();
+					lobjAttStub.mimeType = entry.getValue().getContentType();
+					lobjAttStub.size = entry.getValue().getSize();
+					larrStubs.add(lobjAttStub);
+				}
+				
+				lobjResult.attachments = larrStubs.toArray(new AttachmentStub[larrStubs.size()]);
+			}
 		}
 		catch (Throwable e)
 		{
@@ -263,6 +273,53 @@ public class ExchangeServiceImpl
 		}
 
 		return lobjResult;
+	}
+
+	/** 
+	 * This method replaces the images in the body of an email with the equivalent
+	 * Base-64 converted string. Removes those images and the main text from the
+	 * mail attachments
+	 */
+	private String prepareBodyInline(String lstrBody, Map<String, BodyPart> attachmentsMap) throws BigBangException {
+		
+		// Uses a Regular Expression to find "IMG" tags in html
+		final String regex = "src\\s*=\\s*([\"'])?([^\"']*)";
+		final Pattern p = Pattern.compile(regex);
+        final Matcher m = p.matcher(lstrBody);
+		
+        // Iterates the found images
+        while (m.find()) {
+        	// Gets the image's name from html, and adapts it to use as a key to fetch the 
+        	// image from the attachments' map
+        	String originalHtml = m.group();
+			String prevImg = "<" + originalHtml.substring(9, originalHtml.length()) + ">";
+			BodyPart imageBodyPart = attachmentsMap.get(prevImg);
+			if (imageBodyPart!=null) {
+				
+				// Gets the encoded base-64 String, ready to be used in HTML's IMG's SRC
+				try {
+					byte[] binaryData = IOUtils.toByteArray(imageBodyPart.getInputStream());
+					String encodedString = Base64.encodeBase64String(binaryData);
+					String dataType = imageBodyPart.getContentType();
+					String[] splittedType = dataType.split(";");
+					dataType = "data:" + splittedType[0] + ";base64,"; 
+					
+					// Changes HTML's IMG tag
+					lstrBody = lstrBody.replaceAll(originalHtml, "src=\"" + dataType + encodedString);
+					
+					// Removes the inline image from the attachments
+					attachmentsMap.remove(prevImg);
+					
+					// Removes the mail's text from the attachments
+					attachmentsMap.remove("main");
+					
+				} catch (Throwable e) {
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+        }
+		
+		return lstrBody;
 	}
 
 	public Document getAttAsDoc(String emailId, String attachmentId)
