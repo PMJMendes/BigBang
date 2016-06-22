@@ -452,8 +452,16 @@ public class MailConnector {
 				
 				while (headers.hasMoreElements()) {
 					
-					String attId = part.getHeader("Content-Id")[0];
-
+					String attId = "";
+					
+					if(part.getHeader("Content-Id") != null) {
+						attId = part.getHeader("Content-Id")[0];
+					} else if(part.getHeader("Content-Description") != null) {
+						attId = part.getHeader("Content-Description")[0];
+					} else {
+						attId = part.getFileName();
+					}
+					
 					if(attId != null) { // TODO: e se nao tiver ID?
 						result.put(attId, part);
 						break;

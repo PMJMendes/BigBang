@@ -1,6 +1,5 @@
 package bigBang.library.server;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.regex.Pattern;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 
@@ -254,6 +252,10 @@ public class ExchangeServiceImpl
 			}
 			
 			if (attachmentsMap != null) {
+
+				// Removes the mail's text from the attachments
+				attachmentsMap.remove("main");
+				
 				for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
 				    System.out.println(entry.getKey() + "/" + entry.getValue());
 				    lobjAttStub = new AttachmentStub();
@@ -309,10 +311,7 @@ public class ExchangeServiceImpl
 					
 					// Removes the inline image from the attachments
 					attachmentsMap.remove(prevImg);
-					
-					// Removes the mail's text from the attachments
-					attachmentsMap.remove("main");
-					
+										
 				} catch (Throwable e) {
 					throw new BigBangException(e.getMessage(), e);
 				}
