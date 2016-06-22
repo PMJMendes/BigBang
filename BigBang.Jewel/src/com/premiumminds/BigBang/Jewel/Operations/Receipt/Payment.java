@@ -32,6 +32,14 @@ public class Payment
 	private UUID midPrevStatus;
 	private AccountingData[] marrAccounting;
 
+	// TODO: When changing the way the premiums are updated upon receipt validation
+	// remember it is also mandatory to change the 
+	// class com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerAutoValidate and
+	// class com.premiumminds.BigBang.Jewel.Operations.Receipt.ValidateReceipt
+	// Source related with this functionality is marked as /* premium_update */
+	public BigDecimal prevPremium;
+	public BigDecimal prevTotalPremium;
+		
 	public Payment(UUID pidProcess)
 	{
 		super(pidProcess);
@@ -73,6 +81,13 @@ public class Payment
 				lstrBuilder.append(pstrLineBreak);
 			}
 		}
+		
+		/* premium_update */
+		if ((prevPremium != null) || (prevTotalPremium != null)) {
+			lstrBuilder.append(pstrLineBreak)
+				.append("Foram actualizados os prémios total e comercial da apólice.")
+				.append(pstrLineBreak);
+		}	
 		
 		return lstrBuilder.toString();
 	}
@@ -223,6 +238,17 @@ public class Payment
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+		
+		/* premium_update */
+		try {
+			BigDecimal[] prevPremiums = lobjReceipt.UpdatePremium(pdb);
+			if (prevPremiums != null) {
+				prevPremium = prevPremiums[0];
+				prevTotalPremium = prevPremiums[1];
+			}	
+		} catch (BigBangJewelException e) {
+			throw new JewelPetriException(e.getMessage(), e);
+		} 
 	}
 	
 	public String UndoDesc(String pstrLineBreak)
@@ -279,6 +305,13 @@ public class Payment
 				marrAccounting[i].Describe(lstrBuilder, pstrLineBreak);
 				lstrBuilder.append(pstrLineBreak);
 			}
+		}
+		
+		/* premium_update */
+		if ((prevPremium != null) || (prevTotalPremium != null)) {
+			lstrBuilder.append(pstrLineBreak)
+				.append("Foram repostos os valores anteriores para os prémios total e comercial da apólice.")
+				.append(pstrLineBreak);
 		}
 		
 		return lstrBuilder.toString();
@@ -360,6 +393,13 @@ public class Payment
 				throw new JewelPetriException(e.getMessage(), e);
 			}
 		}
+		
+		/* premium_update */
+		try {
+			lobjReceipt.UnUpdatePremium(pdb, prevPremium, prevTotalPremium);
+		} catch (BigBangJewelException e) {
+			throw new JewelPetriException(e.getMessage(), e);
+		} 
 	}
 
 	public UndoSet[] GetSets()

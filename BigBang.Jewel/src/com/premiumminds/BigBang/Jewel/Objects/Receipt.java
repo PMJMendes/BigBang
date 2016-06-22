@@ -1077,4 +1077,51 @@ public class Receipt
 
 		return llngResult;
 	}
+	
+	/* premium_update */
+	public BigDecimal[] UpdatePremium(SQLServer pdb) 
+			throws BigBangJewelException {
+
+		if ( this.getAt(Receipt.I.TYPE).equals(Constants.RecType_Continuing) ) {
+			Policy policy = this.getDirectPolicy();
+			if (policy != null) {
+				// JMMM - These functions already return NULL when the values don't change
+				BigDecimal newPremium = policy.CheckSalesPremium((BigDecimal)this.getAt(Receipt.I.COMMERCIALPREMIUM));
+				BigDecimal newTotalPr = policy.CheckTotalPremium((BigDecimal)this.getAt(Receipt.I.TOTALPREMIUM));
+
+				if ((newPremium != null) || (newTotalPr != null)) {
+					
+					BigDecimal[] prevPremiums = new BigDecimal[2];
+					
+					prevPremiums[0] = (BigDecimal)policy.getAt(Policy.I.PREMIUM);
+					prevPremiums[1] = (BigDecimal)policy.getAt(Policy.I.TOTALPREMIUM);
+					try {
+						policy.setAt(Policy.I.PREMIUM, newPremium);
+						policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
+						policy.SaveToDb(pdb);
+						
+						return prevPremiums;						
+					} catch(Throwable e) {
+						throw new BigBangJewelException(e.getMessage(), e);
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/* premium_update */
+	public void UnUpdatePremium(SQLServer pdb, BigDecimal prevPremium, BigDecimal prevTotalPremium) 
+			throws BigBangJewelException {
+		if ((prevPremium != null) || (prevTotalPremium != null)) {
+			Policy policy = this.getDirectPolicy();
+			try {
+				policy.setAt(Policy.I.PREMIUM, prevPremium);
+				policy.setAt(Policy.I.TOTALPREMIUM, prevTotalPremium);
+				policy.SaveToDb(pdb);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
 }

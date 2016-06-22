@@ -21,7 +21,6 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
-import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -39,7 +38,8 @@ public class ValidateReceipt
 	
 	// TODO: When changing the way the premiums are updated upon receipt validation
 	// remember it is also mandatory to change the 
-	// class com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerAutoValidate
+	// class com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerAutoValidate and
+	// class com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment
 	// Source related with this functionality is marked as /* premium_update */
 	public BigDecimal prevPremium;
 	public BigDecimal prevTotalPremium;
@@ -184,7 +184,11 @@ public class ValidateReceipt
 		
 		/* premium_update */
 		try {
-			UpdatePremium(pdb, lobjRec);
+			BigDecimal[] prevPremiums = lobjRec.UpdatePremium(pdb);
+			if (prevPremiums != null) {
+				prevPremium = prevPremiums[0];
+				prevTotalPremium = prevPremiums[1];
+			}			
 		} catch (BigBangJewelException e) {
 			throw new JewelPetriException(e.getMessage(), e);
 		} 
@@ -328,7 +332,7 @@ public class ValidateReceipt
 		
 		/* premium_update */
 		try {
-			UnUpdatePremium(pdb, lobjRec);
+			lobjRec.UnUpdatePremium(pdb, prevPremium, prevTotalPremium);
 		} catch (BigBangJewelException e) {
 			throw new JewelPetriException(e.getMessage(), e);
 		} 
@@ -343,48 +347,5 @@ public class ValidateReceipt
 		lobjSet.marrChanged = new UUID[]{midReceipt};
 
 		return new UndoSet[]{lobjSet};
-	}
-	
-	/* premium_update */
-	private void UpdatePremium(SQLServer pdb, Receipt lobjReceipt) 
-			throws BigBangJewelException {
-		prevPremium = null;
-		prevTotalPremium = null;
-
-		if ( lobjReceipt.getAt(Receipt.I.TYPE).equals(Constants.RecType_Continuing) ) {
-			Policy policy = lobjReceipt.getDirectPolicy();
-			if (policy != null) {
-				// JMMM - These functions already return NULL when the values don't change
-				BigDecimal newPremium = policy.CheckSalesPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.COMMERCIALPREMIUM));
-				BigDecimal newTotalPr = policy.CheckTotalPremium((BigDecimal)lobjReceipt.getAt(Receipt.I.TOTALPREMIUM));
-
-				if ((newPremium != null) || (newTotalPr != null)) {
-					prevPremium = (BigDecimal)policy.getAt(Policy.I.PREMIUM);
-					prevTotalPremium = (BigDecimal)policy.getAt(Policy.I.TOTALPREMIUM);
-					try {
-						policy.setAt(Policy.I.PREMIUM, newPremium);
-						policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
-						policy.SaveToDb(pdb);
-					} catch(Throwable e) {
-						throw new BigBangJewelException(e.getMessage(), e);
-					}
-				}
-			}
-		}
-	}
-
-	/* premium_update */
-	private void UnUpdatePremium(SQLServer pdb, Receipt lobjReceipt) 
-			throws BigBangJewelException {
-		if ((prevPremium != null) || (prevTotalPremium != null)) {
-			Policy policy = lobjReceipt.getDirectPolicy();
-			try {
-				policy.setAt(Policy.I.PREMIUM, prevPremium);
-				policy.setAt(Policy.I.TOTALPREMIUM, prevTotalPremium);
-				policy.SaveToDb(pdb);
-			} catch (Throwable e) {
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-		}
 	}
 }
