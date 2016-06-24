@@ -2,16 +2,15 @@ package bigBang.library.server;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Multipart;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.codec.binary.Base64;
@@ -43,8 +42,7 @@ public class ExchangeServiceImpl
 		String lstrEmail;
 		ExchangeItemStub[] larrResults;
 		int i;
-		Address[] lobjFrom;
-		String lobjBody;
+		String lstrFrom;
 		String lstrBody;
 
 		try
@@ -68,9 +66,9 @@ public class ExchangeServiceImpl
 				larrResults[i].isFolder = false;
 				larrResults[i].subject = parrSource[i].getSubject();
 
-				lobjFrom = parrSource[i].getFrom();
-				larrResults[i].from = (String) ( lobjFrom == null ? null :
-					(lobjFrom[0] == null ? "" : lobjFrom[0].toString()) );
+				InternetAddress address = (InternetAddress) (parrSource[i].getFrom() == null ? null : parrSource[i].getFrom()[0]);
+				lstrFrom = address == null ? "" : address.getAddress();
+				larrResults[i].from = lstrFrom;
 
 				try
 				{
@@ -81,23 +79,30 @@ public class ExchangeServiceImpl
 					larrResults[i].timestamp = null;
 				}
 
-				if ((lobjFrom != null) && (lstrEmail != null))
-					larrResults[i].isFromMe = lstrEmail.equalsIgnoreCase(lobjFrom[0].toString());
+				if ((lstrFrom.length() > 0) && (lstrEmail != null))
+					larrResults[i].isFromMe = lstrEmail.equalsIgnoreCase(lstrFrom);
 				else
 					larrResults[i].isFromMe = false;
 
-				List<BodyPart> attachmentsMap = MailConnector.getAttachments(parrSource[i]);
+				Map<String, BodyPart> attachmentsMap = MailConnector.getAttachmentsMap (parrSource[i]);
 				larrResults[i].attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
-				lobjBody = parrSource[i].getContent().toString();
-				if ( lobjBody == null )
+				
+				Object content = parrSource[i].getContent();
+				
+				if ( content.toString() == null )
 					larrResults[i].bodyPreview = "_";
 				else
 				{
-					lstrBody = lobjBody.toString();
-					if ( lstrBody.length() > 200 )
-						larrResults[i].bodyPreview = lstrBody.substring(0, 200);
-					else
-						larrResults[i].bodyPreview = lstrBody;
+					if (content instanceof Multipart && attachmentsMap != null) {
+						lstrBody = attachmentsMap.get("main").getContent().toString();
+						lstrBody = prepareBodyInline(lstrBody, attachmentsMap);
+					} else {
+						lstrBody = content.toString();
+					}
+					lstrBody = removeHtml(lstrBody);
+					if ( lstrBody.length() > 170 ) {
+						larrResults[i].bodyPreview = lstrBody.substring(0, 170);
+					}
 				}
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
@@ -202,7 +207,7 @@ public class ExchangeServiceImpl
 	{
 		MimeMessage lobjItem;
 		ExchangeItem lobjResult;
-		Address[] lobjFrom;
+		String lstrFrom;
 		ArrayList<AttachmentStub> larrStubs;
 		AttachmentStub lobjAttStub;
 		String lstrBody;
@@ -219,9 +224,10 @@ public class ExchangeServiceImpl
 			lobjResult.id = lobjItem.getMessageID();
 			lobjResult.isFolder = false;
 			lobjResult.subject = lobjItem.getSubject();
-			lobjFrom = lobjItem.getFrom();
-			lobjResult.from = lobjFrom != null ? lobjFrom[0].toString() : null;
-			lobjResult.isFromMe = (lobjResult.from != null && lobjFrom[0].toString().equals(MailConnector.getUserEmail()));
+			InternetAddress address = (InternetAddress) (lobjItem.getFrom() == null ? null : lobjItem.getFrom()[0]);
+			lstrFrom = address == null ? "" : address.getAddress();
+			lobjResult.from = lstrFrom.length()>0 ? lstrFrom : null;
+			lobjResult.isFromMe = (lstrFrom.length()>0 && lstrFrom.equals(MailConnector.getUserEmail()));
 			
 			lobjResult.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getSentDate());
 			
@@ -229,7 +235,6 @@ public class ExchangeServiceImpl
 			
 			lobjResult.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
 			Object content = lobjItem.getContent();
-			lobjResult.body = content.toString();
 			larrStubs = new ArrayList<AttachmentStub>();
 			
 			try
@@ -238,12 +243,14 @@ public class ExchangeServiceImpl
 					lstrBody = attachmentsMap.get("main").getContent().toString();
 					lstrBody = prepareBodyInline(lstrBody, attachmentsMap);
 					lobjResult.body = lstrBody;
+					lobjResult.bodyPreview = lobjResult.subject;
 				} else {
 					lstrBody = content.toString();
-					if ( lstrBody.length() > 200 )
-						lobjResult.bodyPreview = lstrBody.substring(0, 200);
-					else
-						lobjResult.bodyPreview = lstrBody;
+					lobjResult.body = prepareSimpleBody(lstrBody);
+				}
+				lstrBody = removeHtml(lstrBody);
+				if ( lstrBody.length() > 170 ) {
+					lobjResult.bodyPreview = lstrBody.substring(0, 170);
 				}
 			}
 			catch (Throwable e)
@@ -278,11 +285,30 @@ public class ExchangeServiceImpl
 	}
 
 	/** 
+	 * This method removes html tags to display the mail's body preview
+	 * correctly.
+	 */
+	private static String removeHtml(String lstrBody) {
+		return lstrBody.replaceAll("\\<.*?>","");
+	}
+
+	/** 
+	 * This method changes "string only" mail bodies to html in order to display
+	 * them with the correct formatting.
+	 */
+	private String prepareSimpleBody(String string) {
+		String result = "<div>";
+		result = result + string.replaceAll("(\r\n|\n)", "<br />");
+		result = result + "</div>";
+		return result;
+	}
+
+	/** 
 	 * This method replaces the images in the body of an email with the equivalent
 	 * Base-64 converted string. Removes those images and the main text from the
 	 * mail attachments
 	 */
-	private String prepareBodyInline(String lstrBody, Map<String, BodyPart> attachmentsMap) throws BigBangException {
+	private static String prepareBodyInline(String lstrBody, Map<String, BodyPart> attachmentsMap) throws BigBangException {
 		
 		// Uses a Regular Expression to find "IMG" tags in html
 		final String regex = "src\\s*=\\s*([\"'])?([^\"']*)";
