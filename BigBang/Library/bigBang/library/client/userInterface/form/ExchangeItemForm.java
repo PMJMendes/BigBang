@@ -17,6 +17,7 @@ public class ExchangeItemForm extends FormView<ExchangeItem>{
 		
 		from = new TextBoxFormField("De");
 		subject = new TextBoxFormField("Assunto");
+		subject.getNativeField().setWidth("600px");
 		timestamp = new TextBoxFormField("Data");
 		body = new RichTextAreaFormField("Corpo da Mensagem");
 		body.getNativeField().setSize("600px", "310px");
