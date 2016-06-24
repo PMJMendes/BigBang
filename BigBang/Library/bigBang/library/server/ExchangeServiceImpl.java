@@ -268,7 +268,8 @@ public class ExchangeServiceImpl
 				    lobjAttStub = new AttachmentStub();
 				    lobjAttStub.id = entry.getKey();
 					lobjAttStub.fileName = entry.getValue().getFileName();
-					lobjAttStub.mimeType = entry.getValue().getContentType();
+					String contentType = entry.getValue().getContentType();
+					lobjAttStub.mimeType = contentType!=null ? contentType.split(";")[0] : null;
 					lobjAttStub.size = entry.getValue().getSize();
 					larrStubs.add(lobjAttStub);
 				}
