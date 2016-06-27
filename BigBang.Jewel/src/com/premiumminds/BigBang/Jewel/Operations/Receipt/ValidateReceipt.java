@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -16,6 +17,7 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
@@ -33,7 +35,15 @@ public class ValidateReceipt
 	private UUID midPrevManager;
 	private Timestamp mdtPrevLimit;
 	private boolean mbShort;
-
+	
+	// TODO: When changing the way the premiums are updated upon receipt validation
+	// remember it is also mandatory to change the 
+	// class com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerAutoValidate and
+	// class com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment
+	// Source related with this functionality is marked as /* premium_update */
+	public BigDecimal prevPremium;
+	public BigDecimal prevTotalPremium;
+	
 	public ValidateReceipt(UUID pidProcess)
 	{
 		super(pidProcess);
@@ -65,6 +75,13 @@ public class ValidateReceipt
 
 		if ( mobjDocOps != null )
 			mobjDocOps.LongDesc(lstrBuilder, pstrLineBreak);
+		
+		/* premium_update */
+		if ((prevPremium != null) || (prevTotalPremium != null)) {
+			lstrBuilder.append(pstrLineBreak)
+				.append("Foram actualizados os prémios total e comercial da apólice.")
+				.append(pstrLineBreak);
+		}	
 
 		return lstrBuilder.toString();
 	}
@@ -164,6 +181,17 @@ public class ValidateReceipt
 			mbShort = true;
 			TriggerOp(new TriggerForceShortCircuit(lobjProc.getKey()), pdb);
 		}
+		
+		/* premium_update */
+		try {
+			BigDecimal[] prevPremiums = lobjRec.UpdatePremium(pdb);
+			if (prevPremiums != null) {
+				prevPremium = prevPremiums[0];
+				prevTotalPremium = prevPremiums[1];
+			}			
+		} catch (BigBangJewelException e) {
+			throw new JewelPetriException(e.getMessage(), e);
+		} 
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -202,6 +230,13 @@ public class ValidateReceipt
 
 		if ( mobjDocOps != null )
 			mobjDocOps.UndoLongDesc(lstrBuilder, pstrLineBreak);
+		
+		/* premium_update */
+		if ((prevPremium != null) || (prevTotalPremium != null)) {
+			lstrBuilder.append(pstrLineBreak)
+				.append("Foram repostos os valores anteriores para os prémios total e comercial da apólice.")
+				.append(pstrLineBreak);
+		}
 
 		return lstrBuilder.toString();
 	}
@@ -214,7 +249,9 @@ public class ValidateReceipt
 		AgendaItem lobjItem;
 		Timestamp ldtNow;
 		Calendar ldtAux2;
-
+		
+		Receipt lobjRec;
+		
 		if ( mobjData != null )
 		{
 			try
@@ -289,6 +326,16 @@ public class ValidateReceipt
 
 		if ( mbShort )
 			TriggerOp(new TriggerUndoShortCircuit(lobjProc.getKey()), pdb);
+		
+		
+		lobjRec = (Receipt)lobjProc.GetData();
+		
+		/* premium_update */
+		try {
+			lobjRec.UnUpdatePremium(pdb, prevPremium, prevTotalPremium);
+		} catch (BigBangJewelException e) {
+			throw new JewelPetriException(e.getMessage(), e);
+		} 
 	}
 
 	public UndoSet[] GetSets()

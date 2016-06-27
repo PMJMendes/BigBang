@@ -1118,8 +1118,8 @@ public class Policy
 	 * of the policy
 	 */
     private BigDecimal calculateValueWithFractioning(BigDecimal premium) {
-    	if ((getAt(I.FRACTIONING) == null) || (getAt(I.FRACTIONING).equals(Constants.FracID_Single)) ||
-    			(getAt(I.FRACTIONING).equals(Constants.FracID_Variable)) || (premium == null)) {
+    	if ((getAt(I.FRACTIONING) == null) || (getAt(I.FRACTIONING).equals(Constants.FracID_Variable)) 
+    			|| (premium == null)) {
     		return null;
     	}
 
