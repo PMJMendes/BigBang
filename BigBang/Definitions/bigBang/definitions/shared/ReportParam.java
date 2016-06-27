@@ -22,4 +22,5 @@ public class ReportParam
 	public ParamType type;
 	public String unitsLabel;
 	public String refersToId;
+	public String defaultValue;
 }

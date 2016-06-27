@@ -5,14 +5,21 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
+import org.apache.ecs.AlignType;
 import org.apache.ecs.GenericElement;
 import org.apache.ecs.html.Div;
+import org.apache.ecs.html.IMG;
+import org.apache.ecs.html.Strong;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
@@ -56,12 +63,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		private ArrayList<String> insuredValues;
 		private ArrayList<String> riskSite;
 		private ArrayList<String> taxes;
+		private ArrayList<String> franchises;
 
 		CoverageData() {
 			coverages = new ArrayList<String>();
 			insuredValues = new ArrayList<String>();
 			riskSite = new ArrayList<String>();
 			taxes = new ArrayList<String>();
+			franchises = new ArrayList<String>();
 		}
 
 		public ArrayList<String> getCoverages() {
@@ -79,6 +88,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		public ArrayList<String> getTaxes() {
 			return taxes;
 		}
+		
+		public ArrayList<String> getFranchises() {
+			return franchises;
+		}
 
 		public void setCoverages(PolicyCoverage[] policyCoverages) {
 
@@ -87,7 +100,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			}
 			for (int i = 0; i < policyCoverages.length; i++) {
 				// Only inserts the coverages present at the policy
-				if (policyCoverages[i].IsPresent()) {
+				if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
 					coverages.add((String) policyCoverages[i].GetCoverage()
 							.getAt(Coverage.I.NAME));
 				}
@@ -109,6 +122,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		public void setTaxes(ArrayList<String> taxesList) {
 			taxes = taxesList;
 		}
+		
+		public void setFranchises(ArrayList<String> franchisesList) {
+			franchises = franchisesList;
+		}
 	}
 
 	// The total premium to display in the report
@@ -118,17 +135,174 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private UUID fauxId;
 
 	// Width Constants
-	private static final int POLICY_WIDTH = 140;
-	private static final int COMPANY_WIDTH = 220;
+	private static final int POLICY_WIDTH = 100;
+	private static final int COMPANY_WIDTH = 200;
 	private static final int DATE_WIDTH = 40;
-	private static final int OBJECT_WIDTH = 230;
+	private static final int FRACTIONING_WIDTH = 70;
+	private static final int OBJECT_WIDTH = 200;
 	private static final int RISK_SITE_WIDTH = 230;
-	private static final int COVERAGES_WIDTH = 330;
-	private static final int VALUE_WIDTH = 102;
+	private static final int COVERAGES_WIDTH = 230;
+	private static final int VALUE_WIDTH = 92;
 	private static final int TAX_WIDTH = 40;
-	private static final int PREMIUM_WIDTH = 120;
+	private static final int FRANCHISE_WIDTH = 40;
+	private static final int PREMIUM_WIDTH = 92;
+	private static final int METHOD_WIDTH = 90;
 	private static final int OBSERVATIONS_WIDTH = 80;
-	private static final int STRING_BREAK_POINT = 40;
+	private static final int STRING_BREAK_POINT = 30;
+	private static final int METHOD_BREAK_POINT = 18;
+	
+	// Height
+	private static final int INNER_HEIGHT = 70;
+	
+	// Payment Methods
+	private static final String DIRECT_PAYMENT = "Débito Directo";
+	private static final String BROKER_PAYMENT = "Pagamento ao Corretor";
+	
+	// Fractioning
+	public static final String FRAC_YEAR     	= "Anual";
+	public static final String FRAC_SEMESTER 	= "Semestral";
+	public static final String FRAC_TRIMESTER  	= "Trimestral";
+	public static final String FRAC_MONTH    	= "Mensal";
+	public static final String FRAC_UNIQUE  	= "Única";
+	public static final String FRAC_FRACTIONED 	= "Fraccionada";
+	
+	public static final String ESCAPE_CHARACTER = "|_|_|";
+	
+	/*
+	 * This Matrix represents the order to display the policies, as well as the way to group them.
+	 * Here's how it works:
+	 * 		- Each position in the array has an array defining what policies should be displayed in that section in the report.
+	 * 		- This grouping can consider the policy category, line or subline.
+	 * 		- When creating an hashmap with the policies (method getPoliciesMap(Policy[] policies)), we try to 
+	 * 		insert the policies with subline+line+category. If it is not possible, we include subline+line.
+	 * 		If it is still not possile, the policy is included with a key with only the category.
+	 * 		- When creating the report, this matrix is iterated, and gets the policies with the key as described here, hence 
+	 * 		displaying them with this order.
+	 */
+	private static final String[][] ORDERED_SUBLINES = {
+			{ Constants.PolicyCategories.WORK_ACCIDENTS.toString() }, // "Acidentes de Trabalho"
+			{ Constants.PolicyCategories.PERSONAL_ACCIDENTS.toString() }, // "Acidentes Pessoais"
+			{ Constants.PolicyCategories.DISEASE.toString() }, // "Saúde"
+			{ Constants.PolicyCategories.DIVERS.toString()
+					+ Constants.PolicyLines.DIVERS_ASSISTANCE.toString() }, // "Assistência"
+			{ Constants.PolicyCategories.LIFE.toString() }, // "Vida"
+			{ Constants.PolicyCategories.DIVERS.toString() }, // "Diversos"
+			{ Constants.PolicyCategories.AUTOMOBILE.toString() }, // "Automóvel e Frota"
+			{ Constants.PolicyCategories.MULTIRISK.toString() }, // "Multirriscos"
+			{ Constants.PolicyCategories.MULTIRISK.toString()
+					+ Constants.PolicyLines.MULTIRISK_ALLRISKS.toString() }, // "All Risks"
+			{
+					Constants.PolicyCategories.OTHER_DAMAGES.toString()
+							+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN,
+					Constants.PolicyCategories.OTHER_DAMAGES.toString()
+							+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL,
+					Constants.PolicyCategories.OTHER_DAMAGES.toString()
+							+ Constants.PolicyLines.OTHER_DAMAGES_CEASING
+							+ Constants.PolicySubLines.OTHER_DAMAGES_CEASING_MACHINES }, // "Máquinas , Avaria de Máquinas e Máquinas de Casco"
+			{ Constants.PolicyCategories.OTHER_DAMAGES.toString() }, // "Outras
+																		// perdas
+			{ Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY.toString() }, // "Obras e Montagens"
+			{ Constants.PolicyCategories.OTHER_DAMAGES.toString()
+					+ Constants.PolicyLines.OTHER_DAMAGES_LEASING.toString() }, // "Bens em Leasing"
+			{ Constants.PolicyCategories.TRANSPORTED_GOODS.toString() }, // "Mercadorias Transportadas"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_GENERAL.toString() }, // "Responsabilidade Civil Geral"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_HUNTERS.toString() }, // "Rep. Civil Caçador"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_FAMILY.toString() }, // "Resp. Civil Familiar"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL
+							.toString() }, // "Responsabilidade Ambiental"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_PRODUCTS.toString() }, // "Resp. Civil Produtos"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_PROFESSIONAL
+							.toString() }, // "Resp. Civil Profissional"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
+					+ Constants.PolicyLines.RESPONSIBILITY_EXPLORATION
+							.toString() }, // "Resp. Civil Exploração"
+			/*
+			 * From this point forward are the ones not defined by EGS, so there
+			 * is no special order
+			 */
+			{ Constants.PolicyCategories.FIRE.toString() }, // "Incêndio"
+			{ Constants.PolicyCategories.AGRICULTURAL.toString() }, // "Agrícola"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString() }, // "Responsabilidade"
+			{ Constants.PolicyCategories.MARINE_VESSELS.toString() }, // "Embarcações Marítimas"
+			{ Constants.PolicyCategories.RAIL_VEHICLES.toString() }, // "Veículos Ferroviários"
+			{ Constants.PolicyCategories.AIRCRAFTS.toString() }, // "Aeronaves"
+			{ Constants.PolicyCategories.RETIREMENT_FUND.toString() } // "Fundo de Pensões"
+	};
+	
+	/*
+	 * This HashMap is used to allow the translation for the title of the groupings displayed at the report.
+	 * It can use as key a concatenation of Category, Subline and Line or Category and Line. Or simply Category.
+	 * If one key is not represented in this Hashmap, it means that we should display the Category's label.
+	 */
+	private static final HashMap<String, String> CATEGORY_TRANSLATOR;
+	static {
+		CATEGORY_TRANSLATOR = new HashMap<String, String>();
+		CATEGORY_TRANSLATOR.put(Constants.PolicyCategories.DISEASE.toString(),
+				"Saúde");
+		CATEGORY_TRANSLATOR.put(Constants.PolicyCategories.DIVERS.toString()
+				+ Constants.PolicyLines.DIVERS_ASSISTANCE.toString(),
+				"Assistência");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.AUTOMOBILE.toString(),
+				"Automóvel e Frota");
+		CATEGORY_TRANSLATOR.put(Constants.PolicyCategories.MULTIRISK.toString()
+				+ Constants.PolicyLines.MULTIRISK_ALLRISKS.toString(),
+				"All Risks");
+		CATEGORY_TRANSLATOR
+				.put(Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN,
+						"Máquinas , Avaria de Máquinas e Máquinas de Casco");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL,
+				"Máquinas , Avaria de Máquinas e Máquinas de Casco");
+		CATEGORY_TRANSLATOR
+				.put(Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_CEASING
+						+ Constants.PolicySubLines.OTHER_DAMAGES_CEASING_MACHINES,
+						"Máquinas , Avaria de Máquinas e Máquinas de Casco");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.OTHER_DAMAGES.toString(),
+				"Outras perdas");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_LEASING
+								.toString(), "Bens em Leasing");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_GENERAL
+								.toString(), "Responsabilidade Civil Geral");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_HUNTERS
+								.toString(), "Rep. Civil Caçador");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_FAMILY
+								.toString(), "Resp. Civil Familiar");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL
+								.toString(), "Responsabilidade Ambiental");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_PRODUCTS
+								.toString(), "Resp. Civil Produtos");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_PROFESSIONAL
+								.toString(), "Resp. Civil Profissional");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.RESPONSIBILITY.toString()
+						+ Constants.PolicyLines.RESPONSIBILITY_EXPLORATION
+								.toString(), "Resp. Civil Exploração");
+	}
 
 	/**
 	 * The method responsible for creating the report
@@ -144,8 +318,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Creates the report (this one only has one section)
 		reportResult = new GenericElement[1];
-		reportResult[0] = buildClientPortfolioTable(
-				"Relatório de Carteira de Clientes", policies, reportParams);
+		
+		// Builds the table with the report. This "table with one TR with one TD" is needed
+		// to export to Excel
+		Table table;
+		TR[] tableRows = new TR[1];
+		TD mainContent = new TD();
+		mainContent.addElement(buildClientPortfolio(policies, reportParams));
+		tableRows[0] = ReportBuilder.buildRow(new TD[] { mainContent });
+		
+		table = ReportBuilder.buildTable(tableRows);
+		
+		reportResult[0] = table;
 
 		return reportResult;
 	}
@@ -162,6 +346,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		MasterDB ldb;
 		ResultSet fetchedPolicies;
 		UUID guidAgent;
+		
+		// Filters by client (if defined in the interface)
+		if (reportParams[0] == null && reportParams[1] == null) {
+			throw new BigBangJewelException("Deve definir-se o Cliente ou Grupo de Clientes a que o relatório se refere");
+		}
 
 		try {
 
@@ -192,6 +381,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Filters by client group (if defined in the interface)
 		if (reportParams[1] != null) {
 			filterByClientGroup(strSQL, UUID.fromString(reportParams[1]));
+		}
+		
+		// Filters the temporary policies
+		if (reportParams[15].equals("0")) {
+			filterOngoingPolicies(strSQL);
 		}
 
 		// If the current user is an "agent", he only sees the corresponding
@@ -256,40 +450,163 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		return policies.toArray(new Policy[policies.size()]);
 	}
+	
+	/**
+	 * This method adds a clause to filter only the ongoing policies
+	 */
+	private void filterOngoingPolicies(StringBuilder strSQL) {
+		strSQL.append(" AND [DURATION] ='" + Constants.DurID_Ongoing + "'");		
+	}
 
+	/**
+	 * The method responsible for printing the report including the header
+	 * Calls the method which prints the policies' info
+	 */
+	private Table buildClientPortfolio(Policy[] policies, String[] reportParams)
+					throws BigBangJewelException {
+
+		Table table;
+		TR[] tableRows = new TR[3];
+		
+		// Builds the header row
+		TD headerContent = new TD();
+		headerContent.addElement(buildHeader(reportParams));
+		tableRows[0] = ReportBuilder.buildRow(new TD[] { headerContent });
+		
+		// Builds the row with the policy info
+		TD infoContent = new TD();
+		infoContent.addElement(buildClientPortfolioTable(policies, reportParams));
+		tableRows[1] = ReportBuilder.buildRow(new TD[] { infoContent });
+
+		// Builds the row with the policy info
+		TD notes = new TD();
+		notes.addElement(buildNotesTable(reportParams));
+		tableRows[2] = ReportBuilder.buildRow(new TD[] { notes });
+		
+		table = ReportBuilder.buildTable(tableRows);
+		
+		return table;
+	}
+
+	/**
+	 * This method builds the report's header, with a credite's logo, the report's title
+	 * and the date the report was extracted
+	 */
+	private Table buildHeader(String[] reportParams) throws BigBangJewelException {
+		
+		Table table;
+		TR[] tableRows = new TR[1];
+		TD[] cells = new TD[3];
+		
+		String clientOrGroupTitle = getClientOrGroup(reportParams);
+		
+		// Builds the cell with the header image
+		TD imageContent = new TD();
+		imageContent.addElement(getImage());
+		imageContent.setAlign(AlignType.left);
+		imageContent.setStyle("width:10%; padding-bottom:15px;");
+		cells[0] = imageContent;
+			
+		// Builds the cell with the report title and client name
+		TD title = new TD();
+		Strong titleStrong = new Strong("Carteira de Seguros de " + clientOrGroupTitle);
+		titleStrong.setStyle("font-size: 15px;");
+		title.addElement(titleStrong);
+		title.setAlign(AlignType.middle);
+		title.setStyle("padding-top:30px;");
+		cells[1] = title;		
+				
+		// Builds the cell with the date the report was extracted
+		TD dateTd = new TD();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		Strong dateStrong = new Strong(dateFormat.format(date).toString());
+		dateStrong.setStyle("font-size: 15px;");
+		dateTd.addElement(dateStrong);
+		dateTd.setAlign(AlignType.right);
+		dateTd.setStyle("width:10%; padding-top:80px;");
+		cells[2] = dateTd;	
+		
+		tableRows[0] = ReportBuilder.buildRow(cells);
+		tableRows[0].setStyle("height:135px; font-weight:bold;");
+		
+		table = ReportBuilder.buildTable(tableRows);
+		table.setStyle("width:100%;");
+		
+		return table;
+	}
+
+	/**
+	 * This method builds the report section with the labels corresponding
+	 * to the column's names
+	 */
+	private Table buildNotesTable(String[] reportParams) throws BigBangJewelException {
+		
+		Table table;
+		TR[] tableRows;
+		
+		int paramCount = 0;
+		String[] columnLabels = new String[4];
+		String[] columnFull = new String[4];
+		
+		if (reportParams[4].equals("1")) {
+			columnLabels[paramCount] = "Venc. (M / D)";
+			columnFull[paramCount++] = "Vencimento (Mês / Dia)";
+		}
+		if (reportParams[5].equals("1")) {
+			columnLabels[paramCount] = "Frac.";
+			columnFull[paramCount++] = "Fraccionamento";
+		}
+		if (reportParams[10].equals("1")) {
+			columnLabels[paramCount] = "Taxa Com.";
+			columnFull[paramCount++] = "Taxa Comercial";
+		}
+		if (reportParams[11].equals("1")) {
+			columnLabels[paramCount] = "Franq.";
+			columnFull[paramCount++] = "Franquia";
+		}
+		
+		tableRows = new TR[paramCount+1];
+		
+		if (paramCount>0) {
+			TD[] notesHeader = new TD[1];
+			notesHeader[0] = ReportBuilder.buildCell("Notas", TypeDefGUIDs.T_String, false);
+			notesHeader[0].setStyle("padding-top:20px;padding-left:5px;width:100px;");
+			tableRows[0] = ReportBuilder.buildRow(notesHeader);
+			tableRows[0].setStyle("height:50px;font-weight:bold;");
+		}
+		
+		for (int i=0; i<paramCount; i++) {
+			tableRows[i+1] = constructSummaryRow(columnLabels[i],
+					columnFull[i], TypeDefGUIDs.T_String, false, false);
+		}
+		
+		table = ReportBuilder.buildTable(tableRows);
+		table.setStyle("width:100%;");
+		
+		return table;
+	}
+	
 	/**
 	 * The method responsible for printing the table corresponding to a client's
 	 * portfolio
 	 */
-	private Table buildClientPortfolioTable(String headerTitle,
-			Policy[] policies, String[] reportParams)
+	private Table buildClientPortfolioTable(Policy[] policies, 
+			String[] reportParams)
 					throws BigBangJewelException {
 
 		Table table;
 		TR[] tableRows;
 		TD mainContent;
 		int rowNum = 0;
-		String clientOrGroupTitle;
 		HashMap<String, ArrayList<Policy>> policiesMap;
 
-		tableRows = new TR[5];
+		tableRows = new TR[3];
 		premiumTotal = BigDecimal.ZERO;
 		fauxId = UUID.randomUUID();
 
 		// Creates a map with the policies separated by "ramo"
 		policiesMap = getPoliciesMap(policies);
-
-		// Gets the table row with the report's name
-		tableRows[rowNum++] = ReportBuilder
-				.constructDualHeaderRowCell(headerTitle);
-
-		// Gets the client's or group's name (if any) and creates the
-		// corresponding row
-		clientOrGroupTitle = getClientOrGroup(reportParams);
-		if (clientOrGroupTitle != null) {
-			tableRows[rowNum++] = ReportBuilder
-					.constructDualIntermediateRowCell(clientOrGroupTitle);
-		}
 
 		// Builds the row corresponding to the "real content" of the report -
 		// meaning... the values from the policies
@@ -297,24 +614,49 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		mainContent.setColSpan(2);
 		mainContent.addElement(buildReportInfo(policiesMap, policies.length,
 				reportParams));
-		ReportBuilder.styleInnerContainer(mainContent);
 		tableRows[rowNum++] = ReportBuilder.buildRow(new TD[] { mainContent });
 
 		// Builds the row with the total number of policies
-		tableRows[rowNum++] = ReportBuilder.constructDualRow("Nº de Apólices",
-				policies.length, TypeDefGUIDs.T_Integer, false);
+		tableRows[rowNum++] = constructSummaryRow("Nº de Apólices:",
+				policies.length, TypeDefGUIDs.T_Integer, true, false);
 
 		// Build the row with the total prize
 		if (reportParams[10].equals("1")) {
-			tableRows[rowNum++] = ReportBuilder.constructDualRow(
-					"Total de Prémios", premiumTotal, TypeDefGUIDs.T_Decimal,
-					false);
+			tableRows[rowNum++] = constructSummaryRow(
+					"Total de Prémios:", premiumTotal, TypeDefGUIDs.T_Decimal,
+					true, false);
 		}
 
 		table = ReportBuilder.buildTable(tableRows);
 		ReportBuilder.styleTable(table, false);
 
 		return table;
+	}
+	
+	/**
+	 * This method builds a "summary row" with info to display at the end of the report.
+	 * It is (REALLY) similar to ReportBuilder's constructDualRow method, but without the 
+	 * left line. Eventually new changes will be made to this method, thus motivating this
+	 * "branching"
+	 */
+	private TR constructSummaryRow(String text, 
+			Object value, UUID typeGUID, boolean topRow, boolean rightAlign) {
+		
+		TD[] cells = new TD[2];
+		TR row;
+
+		cells[0] = ReportBuilder.buildHeaderCell(text);
+		cells[0].setWidth("1px");
+		ReportBuilder.styleCell(cells[0], topRow, false);
+		cells[1] = ReportBuilder.buildCell(value, typeGUID);
+		ReportBuilder.styleCell(cells[1], topRow, false);
+		if (rightAlign) {
+			cells[1].setAlign("right");
+		}
+		row = ReportBuilder.buildRow(cells);
+		ReportBuilder.styleRow(row, false);
+
+		return row;
 	}
 
 	/**
@@ -323,18 +665,54 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private HashMap<String, ArrayList<Policy>> getPoliciesMap(Policy[] policies) {
 
 		HashMap<String, ArrayList<Policy>> policiesMap;
-		String policySubline;
+		String policyKey;
 		policiesMap = new HashMap<String, ArrayList<Policy>>();
 
 		for (int i = 0; i < policies.length; i++) {
-			policySubline = policies[i].GetSubLine().getDescription();
-			if (policiesMap.get(policySubline) == null) {
-				policiesMap.put(policySubline, new ArrayList<Policy>());
+			policyKey = getPolicyKey(policies[i]);
+			if (policiesMap.get(policyKey) == null) {
+				policiesMap.put(policyKey, new ArrayList<Policy>());
 			}
-			policiesMap.get(policySubline).add(policies[i]);
+			policiesMap.get(policyKey).add(policies[i]);
 		}
 
 		return policiesMap;
+	}
+
+	/**
+	 * This method gets the key used to insert the policy in the policies' hash map.
+	 * This method takes into consideration the ordering defined in ORDERED_SUBLINES' array.
+	 * It tries to group the policies with category + subline + line. If not possible, tries with
+	 * category + subline. If it is still not possible, it inserts the policy considering only 
+	 * category.
+	 */
+	private String getPolicyKey(Policy policy) {
+		
+		String policyCategoryKey = policy.GetSubLine().getLine().getCategory().getKey().toString();
+		String policyLineKey = policyCategoryKey + policy.GetSubLine().getLine().getKey().toString();
+		String policySubLineKey = policyLineKey + policy.GetSubLine().getKey().toString();
+		String result = policy.GetSubLine().getLine().getCategory().getKey().toString();
+		
+		// Iterates to check if the String with the Category, Line and Subline GUIDS is contained in 
+		// the ordering array
+		for (int i=0; i < ORDERED_SUBLINES.length; i++) {
+			String[] temp = ORDERED_SUBLINES[i];
+			if (Arrays.asList(temp).contains(policySubLineKey)) {
+				return policySubLineKey;
+			}
+		}
+		
+		// Iterates to check if the String with the Category and Line GUIDS is contained in 
+		// the ordering array
+		for (int i=0; i < ORDERED_SUBLINES.length; i++) {
+			String[] temp = ORDERED_SUBLINES[i];
+			if (Arrays.asList(temp).contains(policyLineKey)) {
+				return policyLineKey;
+			}
+		}
+		
+		// So, this is one of those policies which will be grouped and displayed by Category alone
+		return result;
 	}
 
 	/**
@@ -386,14 +764,45 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// a line
 		// with the name of that "ramo", followed by the information about the
 		// policies
-		for (String subline : policiesMap.keySet()) {
-			tableRows[rowNum++] = buildSublineRow(subline);
-			Object[] policies = policiesMap.get(subline).toArray();
-
-			for (int i = 0; i < policies.length; i++) {
-				tableRows[rowNum] = ReportBuilder.buildRow(buildRow(
-						(Policy) policies[i], reportParams));
-				ReportBuilder.styleRow(tableRows[rowNum++], false);
+		for (int i=0; i<ORDERED_SUBLINES.length; i++) {
+			String [] sublineTemp = ORDERED_SUBLINES[i];
+			String titleTemp = CATEGORY_TRANSLATOR.get(sublineTemp[0]);
+			
+			ArrayList<Policy> policies = policiesMap.get(sublineTemp[0]);
+			
+			if (sublineTemp.length > 1) {
+				for (int u=1; u<sublineTemp.length; u++) {
+					ArrayList<Policy> sublineTempElement = policiesMap.get(sublineTemp[u]);
+					if (sublineTempElement != null) {
+						if (policies == null) {
+							policies = new ArrayList<Policy>();
+						}
+						policies.addAll(sublineTempElement);
+					}
+				}
+			}
+			
+			if (policies != null) {
+				Policy [] policyArray = policies.toArray(new Policy[0]);
+				
+				if (titleTemp == null) {
+					titleTemp = CATEGORY_TRANSLATOR.get(policyArray[0]
+							.GetSubLine().getLine().getCategory().getKey()
+							.toString());
+					if (titleTemp == null) {
+						titleTemp = policyArray[0].GetSubLine().getLine()
+								.getCategory().getLabel();
+					}
+				}
+				
+				tableRows[rowNum++] = buildSublineRow(titleTemp);
+				
+	
+				for (int u = 0; u < policyArray.length; u++) {
+					tableRows[rowNum] = ReportBuilder.buildRow(buildRow(
+							(Policy) policyArray[u], reportParams));
+					ReportBuilder.styleRow(tableRows[rowNum++], false);
+				}
 			}
 		}
 
@@ -416,10 +825,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// insured object
 		ArrayList<String> policyParams = new ArrayList<String>();
 		Collections
-		.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 5));
-		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 10,
-				12)));
-		String[] objectParams = Arrays.copyOfRange(reportParams, 5, 10);
+		.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 6));
+		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 12,
+				15)));
+		String[] objectParams = Arrays.copyOfRange(reportParams, 6, 12);
 
 		// Counts the number of columns related with the policy and the insured
 		// object which should be displayed
@@ -443,13 +852,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Companhia",
+			cells[cellNumber] = ReportBuilder.buildCell("Segurador",
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Até",
+			cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Venc.", "(M / D)"));
+			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			leftLine = true;
+		}
+		if (policyParams.get(paramCheck++).equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Frac.",
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
@@ -458,8 +872,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			cells[cellNumber++] = buildInnerHeaderRow(objectParams);
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Prémio Total Anual",
-					TypeDefGUIDs.T_String);
+			cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Prémio Total", "Anual"));
+			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			leftLine = true;
+		}
+		if (policyParams.get(paramCheck++).equals("1")) {
+			cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Modalidade de", "Pagamento"));
 			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
@@ -492,7 +910,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Builds the TR encapsulating the TD
 		row = ReportBuilder.buildRow(new TD[] { rowContent });
-		row.setStyle("height:35px; font-weight:bold;");
+		row.setStyle("height:35px;background:#e2f2ff;font-weight:bold;");
 
 		return row;
 	}
@@ -512,12 +930,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Gets the report parameters related to the policy information
 		ArrayList<String> policyParams = new ArrayList<String>();
 		Collections
-		.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 5));
-		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 10,
-				12)));
+		.addAll(policyParams, Arrays.copyOfRange(reportParams, 2, 6));
+		policyParams.addAll(Arrays.asList(Arrays.copyOfRange(reportParams, 12,
+				15)));
 
-		String[] objectParams = Arrays.copyOfRange(reportParams, 5, 10);
-
+		String[] objectParams = Arrays.copyOfRange(reportParams, 6, 12);
+		
 		// Splits the report params in those referring to the values associated
 		// with a policy, and those referring to the values associated with the
 		// insured object
@@ -553,14 +971,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Increases the value for the total premium
 		if (policy.getAt(Policy.I.TOTALPREMIUM) != null) {
-			premiumTotal = premiumTotal.add((BigDecimal) policy
-					.getAt(Policy.I.TOTALPREMIUM));
+			premiumTotal = premiumTotal.add((BigDecimal) policy.getAt(Policy.I.TOTALPREMIUM));
 		}
 
 		// Policy Number
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(policy.getLabel(),
-					TypeDefGUIDs.T_String);
+					TypeDefGUIDs.T_String, false, false);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
 		}
@@ -573,10 +990,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				ArrayList<String> objectNameArray = new ArrayList<String>();
 				objectNameArray.add(companyName);
 				dataCells[cellNumber] = buildValuesTable(
-						splitValue(objectNameArray), OBJECT_WIDTH);
+						splitValue(objectNameArray, STRING_BREAK_POINT), OBJECT_WIDTH, false, false);
 			} else {
 				dataCells[cellNumber] = safeBuildCell(companyName,
-						TypeDefGUIDs.T_String);
+						TypeDefGUIDs.T_String, false, false);
 			}
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
@@ -585,7 +1002,15 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Maturity
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = safeBuildCell(maturity,
-					TypeDefGUIDs.T_String);
+					TypeDefGUIDs.T_String, false, false);
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
+			leftLine = true;
+		}
+		
+		// Fractioning
+		if (policyParams.get(paramCheck++).equals("1")) {
+			dataCells[cellNumber] = safeBuildCell(getFractioning(policy),
+					TypeDefGUIDs.T_String, false, false);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
 		}
@@ -600,12 +1025,29 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Total Premium
 		if (policyParams.get(paramCheck++).equals("1")) {
-			dataCells[cellNumber] = safeBuildCell(
-					policy.getAt(Policy.I.TOTALPREMIUM), TypeDefGUIDs.T_Decimal);
+			dataCells[cellNumber] = safeBuildCell( policy.getAt(Policy.I.TOTALPREMIUM), 
+					TypeDefGUIDs.T_Decimal, true, true);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
 		}
 
+		// Payment Method
+		if (policyParams.get(paramCheck++).equals("1")) {
+			String method = getPaymentMethod(policy);
+			
+			if (method==null) {
+				dataCells[cellNumber] = safeBuildCell(method,
+						TypeDefGUIDs.T_String, false, false);
+			} else {
+				ArrayList<String> methodArray = new ArrayList<String>();
+				methodArray.add(method);
+				dataCells[cellNumber] = buildValuesTable(
+						splitValue(methodArray, METHOD_BREAK_POINT), OBJECT_WIDTH, false, false);
+			}
+			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
+			leftLine = true;
+		}
+				
 		// Notes - intentionally left blank
 		if (policyParams.get(paramCheck++).equals("1")) {
 			dataCells[cellNumber] = ReportBuilder.buildCell(" ",
@@ -617,6 +1059,50 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		setOuterWidths(dataCells, reportParams);
 
 		return dataCells;
+	}
+
+	/**
+	 * This method returns the fractioning textual description
+	 */
+	private String getFractioning(Policy policy) {
+
+		UUID fractioningID = (UUID) policy.getAt(Policy.I.FRACTIONING);
+		
+		if (fractioningID.equals(Constants.FracID_Year)) {
+			return FRAC_YEAR;
+		} else if (fractioningID.equals(Constants.FracID_Semester)) {
+			return FRAC_SEMESTER;
+		} else if (fractioningID.equals(Constants.FracID_Quarter)) {
+			return FRAC_TRIMESTER;
+		} else if (fractioningID.equals(Constants.FracID_Month)) {
+			return FRAC_MONTH;
+		} else if (fractioningID.equals(Constants.FracID_Single)) {
+			return FRAC_UNIQUE;
+		} else if (fractioningID.equals(Constants.FracID_Variable)) {
+			return FRAC_FRACTIONED;
+		}
+		return null;
+	}
+
+	/**
+	 * This method returns the payment Method according to the type of the policy's profile
+	 */
+	private String getPaymentMethod(Policy policy) throws BigBangJewelException {
+
+		UUID profile = policy.getProfile();
+		
+		if (profile == null) {
+			profile = policy.GetClient().getProfile();
+		}
+		if (profile == null) {
+			return null;
+		}
+		
+		if (profile.equals(Constants.ProfID_External)) {
+			return DIRECT_PAYMENT;
+		} else {
+			return BROKER_PAYMENT;
+		}
 	}
 
 	/**
@@ -654,7 +1140,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = ReportBuilder.buildCell("Taxa",
+			cells[cellNumber] = cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Taxa", "Com."));
+			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber] = ReportBuilder.buildCell("Franq.",
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(cells[cellNumber++], false, true);
 		}
@@ -693,6 +1183,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth(DATE_WIDTH);
 		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth(FRACTIONING_WIDTH);
+		}
 
 		// The column holding the inner-table (insured objects' values)
 		if (reportParams[paramCheck++].equals("1")) {
@@ -710,12 +1203,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (reportParams[paramCheck++].equals("1")) {
 			innerWidth += TAX_WIDTH;
 		}
+		if (reportParams[paramCheck++].equals("1")) {
+			innerWidth += FRANCHISE_WIDTH;
+		}
 		if (innerWidth > 0) {
 			cells[cellNumber++].setWidth(innerWidth);
 		}
 
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth(PREMIUM_WIDTH);
+		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth(METHOD_WIDTH);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth(OBSERVATIONS_WIDTH);
@@ -775,11 +1274,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * cell is built simply with a whitespace, preventing cells with the '?'
 	 * character
 	 */
-	private TD safeBuildCell(java.lang.Object pobjValue, UUID pidType) {
-		if (pobjValue == null) {
+	private TD safeBuildCell(java.lang.Object pobjValue, UUID pidType, 
+			boolean addEuro, boolean alignRight) {
+		if (pobjValue == null || pobjValue.toString().trim().length() == 0) {
 			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
 		}
-		return ReportBuilder.buildCell(pobjValue, pidType);
+		if (addEuro) {
+			String valueString = pobjValue + " €";
+			return safeBuildCell(valueString, TypeDefGUIDs.T_String, false, alignRight);
+		}
+		return ReportBuilder.buildCell(pobjValue, pidType, alignRight);
 	}
 
 	/**
@@ -788,16 +1292,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * element (the string) for it is the way it is represented in the
 	 * CoverageData's class.
 	 */
-	private ArrayList<String> splitValue(ArrayList<String> riskSite) {
+	private ArrayList<String> splitValue(ArrayList<String> stringToSplit, int breakPosition) {
 
 		ArrayList<String> result = new ArrayList<String>();
-		String[] split = riskSite.get(0).split("\\s+");
+		String[] split = stringToSplit.get(0).split("\\s+");
 		String tmp = "";
 
 		// Splits when it occupies more than (approximately) one row's length
 		for (int i = 0; i < split.length; i++) {
 			tmp = tmp + " " + split[i];
-			if ((tmp.length() / (STRING_BREAK_POINT - 5)) >= 1) {
+			if ((tmp.length() / (breakPosition - 6)) >= 1) {
 				result.add(tmp);
 				tmp = "";
 			} else if (i + 1 == split.length) {
@@ -805,7 +1309,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			}
 		}
 
-		return (result.size() == 0 ? riskSite : result);
+		return (result.size() == 0 ? stringToSplit : result);
 	}
 
 	/**
@@ -813,7 +1317,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * contained in an ArrayList. It's used to build tables to display inside a
 	 * TD.
 	 */
-	private TD buildValuesTable(ArrayList<String> data, int width) {
+	private TD buildValuesTable(ArrayList<String> data, int width,
+			boolean addEuro, boolean alignRight) {
 
 		TD content;
 
@@ -826,7 +1331,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// Builds a "simple" TD or a table with a TD with each value
 		if (data.size() == 1) {
-			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String);
+			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String, addEuro, alignRight);
 			content.setWidth(width);
 			ReportBuilder.styleCell(content, false, false);
 			ReportBuilder.styleInnerContainer(content);
@@ -839,7 +1344,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			for (int i = 0; i < data.size(); i++) {
 				TD[] cell = new TD[1];
 
-				cell[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String);
+				cell[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String, addEuro, alignRight);
 				cell[0].setWidth(width);
 				cell[0].setStyle("overflow:hidden;white-space:nowrap");
 
@@ -865,7 +1370,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private TD buildInnerObjectsTable(Policy policy, String[] reportParams,
 			PolicyObject[] policyObjects,
-			HashMap<UUID, CoverageData> valuesByObject) {
+			HashMap<UUID, CoverageData> valuesByObject) throws BigBangJewelException {
 
 		// Gets the number of columns to initialize the TD's array
 		int cellNumber = Collections
@@ -906,17 +1411,34 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				if (reportParams[paramCheck++].equals("1")) {
 					String objectName = (policyObjects.length == 0) ? " "
 							: getObjectName(policy, policyObjects[i]);
-					if (objectName != null
+					if (objectName.contains(ESCAPE_CHARACTER)) {
+						// If it has an escape character, it means it is a Auto-Individual, and must be treated differently
+						ArrayList<String> objectNameArray = new ArrayList<String>(Arrays.asList(objectName.split(Pattern.quote(ESCAPE_CHARACTER))));
+						if (objectNameArray.get(1).length() > STRING_BREAK_POINT) {
+							// If the car model is larger than the column, it must be split. 
+							ArrayList<String> tmpArray = new ArrayList<String>();
+							tmpArray.add(objectNameArray.get(1));
+							tmpArray = splitValue(tmpArray, STRING_BREAK_POINT);
+							objectNameArray.remove(1);
+							for (int u=0; u<tmpArray.size(); u++) {
+								objectNameArray.add(tmpArray.get(u));
+							}
+						}
+						
+						dataCells[currentCell] = buildValuesTable(
+								objectNameArray, OBJECT_WIDTH, false, false);
+					} else if (objectName != null
 							&& objectName.length() > STRING_BREAK_POINT) {
 						ArrayList<String> objectNameArray = new ArrayList<String>();
 						objectNameArray.add(objectName);
 						dataCells[currentCell] = buildValuesTable(
-								splitValue(objectNameArray), OBJECT_WIDTH);
+								splitValue(objectNameArray, STRING_BREAK_POINT), OBJECT_WIDTH, false, false);
 					} else {
 						dataCells[currentCell] = safeBuildCell(objectName,
-								TypeDefGUIDs.T_String);
+								TypeDefGUIDs.T_String, false, false);
 					}
 					dataCells[currentCell].setWidth(OBJECT_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
@@ -925,8 +1447,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(
 							splitValue(valuesByObject.get(objectKey)
-									.getRiskSite()), RISK_SITE_WIDTH);
+									.getRiskSite(), STRING_BREAK_POINT), RISK_SITE_WIDTH, false, false);
 					dataCells[currentCell].setWidth(RISK_SITE_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
@@ -934,8 +1457,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// Policy Coverages
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
-							.get(objectKey).getCoverages(), COVERAGES_WIDTH);
+							.get(objectKey).getCoverages(), COVERAGES_WIDTH, false, false);
 					dataCells[currentCell].setWidth(COVERAGES_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
@@ -943,24 +1467,35 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// Insured Value
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
-							.get(objectKey).getInsuredValues(), VALUE_WIDTH);
+							.get(objectKey).getInsuredValues(), VALUE_WIDTH, true, true);
 					dataCells[currentCell].setWidth(VALUE_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
 
-				// Tax
+				// Sales' Tax
 				if (reportParams[paramCheck++].equals("1")) {
 					dataCells[currentCell] = buildValuesTable(valuesByObject
-							.get(objectKey).getTaxes(), TAX_WIDTH);
+							.get(objectKey).getTaxes(), TAX_WIDTH, false, true);
 					dataCells[currentCell].setWidth(TAX_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
+					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
+							true);
+				}
+				
+				// Franchise
+				if (reportParams[paramCheck++].equals("1")) {
+					dataCells[currentCell] = buildValuesTable(valuesByObject
+							.get(objectKey).getFranchises(), FRANCHISE_WIDTH, false, true);
+					dataCells[currentCell].setWidth(FRANCHISE_WIDTH);
+					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
 							true);
 				}
 
 				setInnerWidths(dataCells, reportParams);
-				tableRows[nrRows] = ReportBuilder.buildRow(dataCells);
-				tableRows[nrRows++].setStyle("height:70px;");
+				tableRows[nrRows++] = ReportBuilder.buildRow(dataCells);
 			}
 		}
 		table = ReportBuilder.buildTable(tableRows);
@@ -992,6 +1527,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber++].setWidth(TAX_WIDTH);
 		}
+		if (reportParams[paramCheck++].equals("1")) {
+			cells[cellNumber++].setWidth(FRANCHISE_WIDTH);
+		}
 	}
 
 	/**
@@ -1019,7 +1557,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// In case of an Automobile / Fleet policy, and only one policy object,
 		// it should read "Diversos"
 		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
-				&& policySubLine.equals(Constants.PolicySubLines.AUTO_FLEET)
+				&& policySubLine.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET)
 				&& policy.GetCurrentObjects().length == 1) {
 			coverageData.setCoverages("Diversos");
 		} else {
@@ -1048,6 +1586,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		 */
 		coverageData.setTaxes(getTaxes(policy, insuredObject, currentExercise,
 				policyValues, policyCoverages));
+		
+		/*
+		 * Policy Franchise's set
+		 */
+		coverageData.setFranchises(getFranchises(policy, insuredObject, currentExercise,
+				policyValues, policyCoverages));
 
 		return coverageData;
 	}
@@ -1055,7 +1599,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	/**
 	 * This method gets the object name according to the policy's category
 	 */
-	private String getObjectName(Policy policy, PolicyObject policyObject) {
+	private String getObjectName(Policy policy, PolicyObject policyObject) throws BigBangJewelException {
 
 		if (policyObject == null) {
 			return " ";
@@ -1068,8 +1612,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// otherwise, it's the policy object's name
 		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
 				&& policySubLine
-				.equals(Constants.PolicySubLines.AUTO_INDIVIDUAL)) {
-			return (String) policyObject.getAt(PolicyObject.I.MAKEANDMODEL);
+				.equals(Constants.PolicySubLines.AUTO_AUTO_INDIVIDUAL)) {
+			String objName = "";
+			objName = policyObject.getAt(PolicyObject.I.NAME)!=null ? objName + policyObject.getAt(PolicyObject.I.NAME) :
+				objName;
+			objName = (objName.length()!=0 && policyObject.getAt(PolicyObject.I.MAKEANDMODEL)!=null) ? 
+					objName + ESCAPE_CHARACTER : objName;
+			objName = policyObject.getAt(PolicyObject.I.MAKEANDMODEL)!=null ? objName// Escape character 
+				+ policyObject.getAt(PolicyObject.I.MAKEANDMODEL) :
+				objName;
+			return objName;
+		} else if (policyCat.equals(Constants.PolicyCategories.FIRE)) {
+			return getObjectAddress(policyObject);			
 		} else {
 			return (String) policyObject.getAt(PolicyObject.I.NAME);
 		}
@@ -1099,7 +1653,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private String getRiskSite(Policy policy, PolicyObject insuredObject,
 			PolicyValue[] policyValues) throws InvocationTargetException,
-			JewelEngineException {
+			JewelEngineException, BigBangJewelException {
 
 		if (policyValues == null) {
 			return " ";
@@ -1110,22 +1664,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// If policy is MULTIRRISK
 		if (policyCat.equals(Constants.PolicyCategories.MULTIRISK)
 				&& insuredObject != null) {
-			String address = (String) (insuredObject
-					.getAt(PolicyObject.I.ADDRESS1) == null ? ""
-							: insuredObject.getAt(PolicyObject.I.ADDRESS1));
-			address = (String) (insuredObject.getAt(PolicyObject.I.ADDRESS2) == null ? address
-					: address + " "
-					+ insuredObject.getAt(PolicyObject.I.ADDRESS2));
-			UUID zipGUID = (UUID) insuredObject.getAt(PolicyObject.I.ZIPCODE);
-			if (zipGUID != null) {
-				ObjectBase zipCode = Engine.GetWorkInstance(
-						Engine.FindEntity(Engine.getCurrentNameSpace(),
-								ObjectGUIDs.O_PostalCode), zipGUID);
-				address = address + " " + zipCode.getAt(0);
-				address = address + " " + zipCode.getAt(1);
-			}
-
-			return address;
+			return getObjectAddress(insuredObject);
 		}
 
 		// If policy is RESPONSABILITY or CONSTRUCTION_ASSEMBLY, the risk site
@@ -1159,6 +1698,38 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	}
 
 	/**
+	 * This method returns a built and ready to display address as associated with 
+	 * a given insured object
+	 */
+	private String getObjectAddress(PolicyObject insuredObject) 
+			throws BigBangJewelException {
+		
+		String address = (String) (insuredObject
+				.getAt(PolicyObject.I.ADDRESS1) == null ? ""
+						: insuredObject.getAt(PolicyObject.I.ADDRESS1));
+		address = (String) (insuredObject.getAt(PolicyObject.I.ADDRESS2) == null ? address
+				: address + " "
+				+ insuredObject.getAt(PolicyObject.I.ADDRESS2));
+		
+		UUID zipGUID = (UUID) insuredObject.getAt(PolicyObject.I.ZIPCODE);
+		
+		try { 
+			if (zipGUID != null) {
+		
+				ObjectBase zipCode = Engine.GetWorkInstance(
+						Engine.FindEntity(Engine.getCurrentNameSpace(),
+								ObjectGUIDs.O_PostalCode), zipGUID);
+				address = address + " " + zipCode.getAt(0);
+				address = address + " " + zipCode.getAt(1);
+			}
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+			
+		return address;
+	}
+
+	/**
 	 * This method gets the insured values according to the category. If they
 	 * are related with the coverages, they are returned in the same order than
 	 * the coverages, with a white space when the value does not exist for a
@@ -1178,11 +1749,20 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		 * Special Cases
 		 */
 		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
-				&& policySubLine.equals(Constants.PolicySubLines.AUTO_FLEET)
+				&& policySubLine.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET)
 				&& policy.GetCurrentObjects().length == 1) {
 			// For an automobile / Fleet with only one insured object, it should
 			// read "Diversos"
 			result.add("Diversos");
+			return result;
+		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
+				&& ((policySubLine
+						.equals(Constants.PolicySubLines.WORK_ACCIDENTS_OTHERS_FIXED_PREMIUM)) || (policySubLine
+						.equals(Constants.PolicySubLines.WORK_ACCIDENTS_CGA_FIXED_PREMIUM)))) {
+			// For Work accidents with fixed premium, the value comes from the yearly salary
+			result.add(getValueWithTags(policyValues, insuredObject,
+					currentExercise, null, Constants.PolicyValuesTags.YEARLY_SALARY,
+					true));
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
 			// For Work Accidents, the insured value corresponds to the
@@ -1212,7 +1792,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		 */
 		for (int i = 0; i < policyCoverages.length; i++) {
 			// Only lists the values for the coverages present at the policy
-			if (policyCoverages[i].IsPresent()) {
+			if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
 				result.add(getCoverageValues(insuredObject, currentExercise,
 						policyValues, policyCoverages[i],
 						Constants.PolicyValuesTags.VALUE));
@@ -1272,7 +1852,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			for (int i = 0; i < policyCoverages.length; i++) {
 
 				// Only lists the values for the coverages present at the policy
-				if (policyCoverages[i].IsPresent()) {
+				if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
 
 					result.add(getCoverageValues(insuredObject,
 							currentExercise, policyValues, policyCoverages[i],
@@ -1470,5 +2050,78 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 
 		return " ";
+	}
+	
+	/**
+	 * This method gets the taxes according to the category. If they are related
+	 * with the coverages, they are returned in the same order than the
+	 * coverages, with a white space when the value does not exist for a given
+	 * coverage Note that there are some categories without an associated tax
+	 */
+	private ArrayList<String> getFranchises(Policy policy,
+			PolicyObject insuredObject, UUID currentExercise,
+			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) {
+
+		ArrayList<String> result = new ArrayList<String>();
+
+		for (int i = 0; i < policyCoverages.length; i++) {
+
+			// Only lists the values for the coverages present at the policy
+			if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
+
+				result.add(getCoverageValues(insuredObject,
+						currentExercise, policyValues, policyCoverages[i],
+						Constants.PolicyValuesTags.FRANCHISE));
+			}
+		}
+		
+		if (result.size() == 0) {
+			// Default - no tax
+			return new ArrayList<String>(Arrays.asList("-"));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Builds a dual-row table to use in the table header, for longer column names
+	 */
+	public Table buildDoubleHeaderTitle (String lineOne, String lineTwo) {
+		
+		Table table;
+		TR[] tableRows = new TR[2];
+		TD[] tdOne = new TD[1];
+		TD[] tdTwo = new TD[1];
+		
+		tdOne[0] = ReportBuilder.buildCell(lineOne, TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(tdOne[0], false, false);
+		
+		tdTwo[0] = ReportBuilder.buildCell(lineTwo, TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(tdTwo[0], false, false);
+		
+		tableRows[0] = ReportBuilder.buildRow(tdOne);
+		tableRows[0].setStyle("font-weight:bold;");
+		tableRows[1] = ReportBuilder.buildRow(tdTwo);
+		tableRows[1].setStyle("font-weight:bold;");
+		
+		table = ReportBuilder.buildTable(tableRows);
+		return table;
+	}
+	
+	/**
+	 * This method gets and configures the Crédite-EGS' logo to display
+	 * ate the top of the report
+	 */
+	private IMG getImage() {
+		
+		IMG result = new IMG();
+		
+		result.setSrc("/images/logo.png");
+		result.setID("credite_logo");
+		result.setBorder(0);
+		result.setHeight(116);
+		result.setWidth(180);
+		
+		return result;
 	}
 }

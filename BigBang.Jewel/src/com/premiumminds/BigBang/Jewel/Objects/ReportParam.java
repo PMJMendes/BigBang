@@ -15,12 +15,13 @@ public class ReportParam
 {
 	public static class I
 	{
-		public static int LABEL       = 0;
-		public static int ORDER       = 1;
-		public static int OWNER       = 2;
-		public static int TYPE        = 3;
-		public static int UNITS       = 4;
-		public static int REFERENCETO = 5;
+		public static int LABEL       	= 0;
+		public static int ORDER       	= 1;
+		public static int OWNER       	= 2;
+		public static int TYPE        	= 3;
+		public static int UNITS       	= 4;
+		public static int REFERENCETO 	= 5;
+		public static int DEFAULTVALUE	= 6;
 	}
 
     public static ReportParam GetInstance(UUID pidNameSpace, UUID pidKey)
