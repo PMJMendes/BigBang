@@ -512,7 +512,7 @@ public class MailConnector {
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
-			if (mailAttachments.size() > 0) {
+			if (mailAttachments!=null && mailAttachments.size() > 0) {
 				for (Map.Entry<String, BodyPart> entry : mailAttachments.entrySet()) {
 					processed.put(entry.getKey(), pstrUniqueID);
 				}			
@@ -719,7 +719,7 @@ public class MailConnector {
 
 		InputStream attachmentStream;
 		try {
-			attachmentStream = messageAttachments.get(msgId).getInputStream();
+			attachmentStream = messageAttachments.get(attachmentId).getInputStream();
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
