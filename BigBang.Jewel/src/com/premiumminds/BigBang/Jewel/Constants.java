@@ -733,6 +733,7 @@ public class Constants
 	public static final UUID TID_Stamp               = UUID.fromString("BE3106A1-9C31-40D3-ACC2-A0B300D3E585");
 	public static final UUID TID_Logo                = UUID.fromString("73297AD9-2741-4EFC-87D7-A0FA011A93F5");
 	public static final UUID TID_Signature           = UUID.fromString("214AF6B1-B5F1-418A-9206-A24600BE6DD9");
+	//public static final UUID TID_ReportLogo          = UUID.fromString("C9939421-32DF-4F13-9DDF-C32730377B03");
 
 	// Contact Types
 	public static final UUID CtTypeID_General        = UUID.fromString("04F6BC3C-0283-47F0-9670-9EEE013350D9");
