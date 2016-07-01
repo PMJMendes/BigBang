@@ -180,7 +180,7 @@ public class ConversationServiceImpl
 	private static Message sGetXchMessage(com.premiumminds.BigBang.Jewel.Objects.Message pobjMsg, boolean pbFilterOwners)
 		throws BigBangException
 	{
-		javax.mail.Message lobjItem;
+		MessageData lobjItem;
 		MessageAddress[] larrAddrs;
 		MessageAttachment[] larrAtts;
 		Message lobjResult;
@@ -198,11 +198,11 @@ public class ConversationServiceImpl
 
 		try
 		{
-			lobjItem = MailConnector.getMessage((String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID), null);
+			lobjItem = MailConnector.getAsData((String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID));
 
-			lobjResult.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getSentDate());
-			lobjResult.subject = lobjItem.getSubject();
-			lobjResult.text = lobjItem.getContent().toString();
+			lobjResult.date = lobjItem.mdtDate.toString();
+			lobjResult.subject = lobjItem.mstrSubject;
+			lobjResult.text = lobjItem.mstrBody;
 
 			larrAddrs = pobjMsg.GetAddresses();
 			larrAtts = pobjMsg.GetAttachments();
@@ -1357,7 +1357,7 @@ public class ConversationServiceImpl
 			try { lrsDecos.close(); } catch (SQLException e1) {}
 			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangException(e.getMessage(), e);
-		}
+		} 
 
 		try
 		{

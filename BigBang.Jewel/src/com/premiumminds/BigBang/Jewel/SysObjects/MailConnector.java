@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
 import javax.mail.Address;
@@ -34,6 +36,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.FlagTerm;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.util.IOUtils;
 
 import Jewel.Engine.Engine;
@@ -621,8 +624,8 @@ public class MailConnector {
 		Message fetchedMessage = getMessage(pstrUniqueID, null);
 
 		if (fetchedMessage != null) {
-
-			Address[] fromAddress = null;
+			
+			InternetAddress fromAddress = null;
 
 			// Builds the MessageData with the existing Message's fields
 			try {
@@ -631,10 +634,23 @@ public class MailConnector {
 				result.mlngNumber = -1;
 				result.mbIsEmail = true;
 				result.mdtDate = new Timestamp(fetchedMessage.getSentDate().getTime());
-				result.mstrBody = fetchedMessage.getContent().toString();
-
-				fromAddress = fetchedMessage.getFrom();
-				from = fromAddress==null ? null : fromAddress[0].toString();
+				
+				Object content = fetchedMessage.getContent();
+				
+				if (content instanceof Multipart) {
+					
+					Map<String, BodyPart> attachmentsMap = getAttachmentsMap(fetchedMessage);
+					
+					result.mstrBody = attachmentsMap.get("main").getContent().toString();
+					result.mstrBody = prepareBodyInline(result.mstrBody, attachmentsMap);
+				} else {
+					result.mstrBody = content.toString();
+					result.mstrBody = prepareSimpleBody(result.mstrBody);
+				}
+				
+				fromAddress = (InternetAddress) (fetchedMessage.getFrom() == null ? null : fetchedMessage.getFrom()[0]);
+				from = fromAddress == null ? "" : fromAddress.getAddress();
+				
 				to = fetchedMessage.getRecipients(RecipientType.TO);
 				cc = fetchedMessage.getRecipients(RecipientType.CC);
 				bcc = fetchedMessage.getRecipients(RecipientType.BCC);
@@ -655,7 +671,7 @@ public class MailConnector {
 				result.marrAddresses = new MessageAddressData[addLength];
 				i = 0;
 				if (from != null) {
-					result.marrAddresses[i] = getAddress(null, fromAddress[0], Constants.UsageID_From);
+					result.marrAddresses[i] = getAddress(null, fromAddress, Constants.UsageID_From);
 					i++;
 				}
 				if (to != null) {
@@ -688,6 +704,61 @@ public class MailConnector {
 		return result;
 	}
 
+	/** 
+	 * This method changes "string only" mail bodies to html in order to display
+	 * them with the correct formatting.
+	 */
+	private static String prepareSimpleBody(String string) {
+		String result = "<div>";
+		result = result + string.replaceAll("(\r\n|\n)", "<br />");
+		result = result + "</div>";
+		return result;
+	}
+	
+	/** 
+	 * This method replaces the images in the body of an email with the equivalent
+	 * Base-64 converted string. Removes those images and the main text from the
+	 * mail attachments
+	 */
+	private static String prepareBodyInline(String lstrBody, Map<String, BodyPart> attachmentsMap) throws BigBangJewelException {
+		
+		// Uses a Regular Expression to find "IMG" tags in html
+		final String regex = "src\\s*=\\s*([\"'])?([^\"']*)";
+		final Pattern p = Pattern.compile(regex);
+        final Matcher m = p.matcher(lstrBody);
+		
+        // Iterates the found images
+        while (m.find()) {
+        	// Gets the image's name from html, and adapts it to use as a key to fetch the 
+        	// image from the attachments' map
+        	String originalHtml = m.group();
+			String prevImg = "<" + originalHtml.substring(9, originalHtml.length()) + ">";
+			BodyPart imageBodyPart = attachmentsMap.get(prevImg);
+			if (imageBodyPart!=null) {
+				
+				// Gets the encoded base-64 String, ready to be used in HTML's IMG's SRC
+				try {
+					byte[] binaryData = IOUtils.toByteArray(imageBodyPart.getInputStream());
+					String encodedString = Base64.encodeBase64String(binaryData);
+					String dataType = imageBodyPart.getContentType();
+					String[] splittedType = dataType.split(";");
+					dataType = "data:" + splittedType[0] + ";base64,"; 
+					
+					// Changes HTML's IMG tag
+					lstrBody = lstrBody.replaceAll(originalHtml, "src=\"" + dataType + encodedString);
+					
+					// Removes the inline image from the attachments
+					attachmentsMap.remove(prevImg);
+										
+				} catch (Throwable e) {
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
+        }
+		
+		return lstrBody;
+	}
+	
 	/**
 	 *	This method creates a MessageAddressData given a userName, a user email and a usageGuid (income/outcome)
 	 */
@@ -696,7 +767,7 @@ public class MailConnector {
 		MessageAddressData result;
 
 		result = new MessageAddressData();
-		result.mstrAddress = address.toString();
+		result.mstrAddress = (address instanceof InternetAddress) ? ((InternetAddress) address).getAddress() : address.toString();
 		result.midOwner = null;
 		result.midUsage = usageGuid;
 		result.midUser = null;
@@ -716,19 +787,23 @@ public class MailConnector {
 		Message message = getMessage(msgId, null);
 
 		Map<String, BodyPart> messageAttachments = getAttachmentsMap(message);
+		BodyPart attachment; 
 
 		InputStream attachmentStream;
 		try {
-			attachmentStream = messageAttachments.get(attachmentId).getInputStream();
+			attachment = messageAttachments.get(attachmentId);
+			attachmentStream = attachment.getInputStream();
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		if (attachmentStream != null) {
 			try {
-				byte[] bytes = IOUtils.toByteArray(attachmentStream);
-				FileXfer attachment = new FileXfer(bytes);
-				return attachment;
+				String contentType = attachment.getContentType();
+				String mimeType = contentType!=null ? contentType.split(";")[0] : null;
+				FileXfer attachmentXFer = new FileXfer(attachment.getSize(), mimeType, 
+						attachment.getFileName(), attachmentStream);
+				return attachmentXFer;
 			} catch (Throwable e) {
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
