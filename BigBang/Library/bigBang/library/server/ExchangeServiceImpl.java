@@ -4,17 +4,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -95,11 +90,11 @@ public class ExchangeServiceImpl
 				{
 					if (content instanceof Multipart && attachmentsMap != null) {
 						lstrBody = attachmentsMap.get("main").getContent().toString();
-						lstrBody = prepareBodyInline(lstrBody, attachmentsMap);
+						lstrBody = MailConnector.prepareBodyInline(lstrBody, attachmentsMap);
 					} else {
 						lstrBody = content.toString();
 					}
-					lstrBody = removeHtml(lstrBody);
+					lstrBody = MailConnector.removeHtml(lstrBody);
 					if ( lstrBody.length() > 170 ) {
 						larrResults[i].bodyPreview = lstrBody.substring(0, 170);
 					}
@@ -241,14 +236,14 @@ public class ExchangeServiceImpl
 			{
 				if (content instanceof Multipart && attachmentsMap != null) {
 					lstrBody = attachmentsMap.get("main").getContent().toString();
-					lstrBody = prepareBodyInline(lstrBody, attachmentsMap);
+					lstrBody = MailConnector.prepareBodyInline(lstrBody, attachmentsMap);
 					lobjResult.body = lstrBody;
 					lobjResult.bodyPreview = lobjResult.subject;
 				} else {
 					lstrBody = content.toString();
-					lobjResult.body = prepareSimpleBody(lstrBody);
+					lobjResult.body = MailConnector.prepareSimpleBody(lstrBody);
 				}
-				lstrBody = removeHtml(lstrBody);
+				lstrBody = MailConnector.removeHtml(lstrBody);
 				if ( lstrBody.length() > 170 ) {
 					lobjResult.bodyPreview = lstrBody.substring(0, 170);
 				}
@@ -283,69 +278,6 @@ public class ExchangeServiceImpl
 		}
 
 		return lobjResult;
-	}
-
-	/** 
-	 * This method removes html tags to display the mail's body preview
-	 * correctly.
-	 */
-	private static String removeHtml(String lstrBody) {
-		return lstrBody.replaceAll("\\<.*?>","");
-	}
-
-	/** 
-	 * This method changes "string only" mail bodies to html in order to display
-	 * them with the correct formatting.
-	 */
-	private String prepareSimpleBody(String string) {
-		String result = "<div>";
-		result = result + string.replaceAll("(\r\n|\n)", "<br />");
-		result = result + "</div>";
-		return result;
-	}
-
-	/** 
-	 * This method replaces the images in the body of an email with the equivalent
-	 * Base-64 converted string. Removes those images and the main text from the
-	 * mail attachments
-	 */
-	private static String prepareBodyInline(String lstrBody, Map<String, BodyPart> attachmentsMap) throws BigBangException {
-		
-		// Uses a Regular Expression to find "IMG" tags in html
-		final String regex = "src\\s*=\\s*([\"'])?([^\"']*)";
-		final Pattern p = Pattern.compile(regex);
-        final Matcher m = p.matcher(lstrBody);
-		
-        // Iterates the found images
-        while (m.find()) {
-        	// Gets the image's name from html, and adapts it to use as a key to fetch the 
-        	// image from the attachments' map
-        	String originalHtml = m.group();
-			String prevImg = "<" + originalHtml.substring(9, originalHtml.length()) + ">";
-			BodyPart imageBodyPart = attachmentsMap.get(prevImg);
-			if (imageBodyPart!=null) {
-				
-				// Gets the encoded base-64 String, ready to be used in HTML's IMG's SRC
-				try {
-					byte[] binaryData = IOUtils.toByteArray(imageBodyPart.getInputStream());
-					String encodedString = Base64.encodeBase64String(binaryData);
-					String dataType = imageBodyPart.getContentType();
-					String[] splittedType = dataType.split(";");
-					dataType = "data:" + splittedType[0] + ";base64,"; 
-					
-					// Changes HTML's IMG tag
-					lstrBody = lstrBody.replaceAll(originalHtml, "src=\"" + dataType + encodedString);
-					
-					// Removes the inline image from the attachments
-					attachmentsMap.remove(prevImg);
-										
-				} catch (Throwable e) {
-					throw new BigBangException(e.getMessage(), e);
-				}
-			}
-        }
-		
-		return lstrBody;
 	}
 
 	public Document getAttAsDoc(String emailId, String attachmentId)

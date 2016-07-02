@@ -708,7 +708,7 @@ public class MailConnector {
 	 * This method changes "string only" mail bodies to html in order to display
 	 * them with the correct formatting.
 	 */
-	private static String prepareSimpleBody(String string) {
+	public static String prepareSimpleBody(String string) {
 		String result = "<div>";
 		result = result + string.replaceAll("(\r\n|\n)", "<br />");
 		result = result + "</div>";
@@ -720,7 +720,7 @@ public class MailConnector {
 	 * Base-64 converted string. Removes those images and the main text from the
 	 * mail attachments
 	 */
-	private static String prepareBodyInline(String lstrBody, Map<String, BodyPart> attachmentsMap) throws BigBangJewelException {
+	public static String prepareBodyInline(String lstrBody, Map<String, BodyPart> attachmentsMap) throws BigBangJewelException {
 		
 		// Uses a Regular Expression to find "IMG" tags in html
 		final String regex = "src\\s*=\\s*([\"'])?([^\"']*)";
@@ -757,6 +757,14 @@ public class MailConnector {
         }
 		
 		return lstrBody;
+	}
+	
+	/** 
+	 * This method removes html tags to display the mail's body preview
+	 * correctly.
+	 */
+	public static String removeHtml(String lstrBody) {
+		return lstrBody.replaceAll("\\<.*?>","");
 	}
 	
 	/**
