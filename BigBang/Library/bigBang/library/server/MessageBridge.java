@@ -14,6 +14,7 @@ import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.Message.Attachment;
 import bigBang.definitions.shared.OutgoingMessage;
 import bigBang.library.shared.BigBangException;
 
@@ -298,14 +299,16 @@ public class MessageBridge
 			}
 		}
 
+		Attachment[] promotedAttachments = filterPromotedAttachments(pobjMessage.attachments);
+		
 		if ( !lobjResult.mbIsEmail || (pobjMessage.attachments == null) )
 		{
 			lobjResult.marrAttachments = null;
 		}
 		else
 		{
-			lobjResult.marrAttachments = new MessageAttachmentData[pobjMessage.attachments.length];
-			for ( i = 0; i < pobjMessage.attachments.length; i++ )
+			lobjResult.marrAttachments = new MessageAttachmentData[promotedAttachments.length];
+			for ( i = 0; i < promotedAttachments.length; i++ )
 			{
 				lobjResult.marrAttachments[i] = new MessageAttachmentData();
 				lobjResult.marrAttachments[i].mstrAttId = pobjMessage.attachments[i].attachmentId;
@@ -315,9 +318,29 @@ public class MessageBridge
 		}
 
 		lobjResult.mobjContactOps = handleAddresses(lobjResult.marrAddresses, pidParentType, pidParentID);
-		lobjResult.mobjDocOps = handleAttachments(lobjResult, pobjMessage.attachments, pidParentType, pidParentID);
+		lobjResult.mobjDocOps = handleAttachments(lobjResult, promotedAttachments, pidParentType, pidParentID);
 
 		return lobjResult;
+	}
+
+	private static Attachment[] filterPromotedAttachments(
+			Attachment[] attachments) {
+
+		Attachment[] temp = new Attachment[attachments.length];
+		int count = 0;
+				
+		for (int i = 0; i < attachments.length; i++ )
+		{
+			if (attachments[i].promote) {
+				temp[count++] = attachments[i];
+			}
+		}
+		
+		Attachment[] result = new Attachment[count];
+		
+		System.arraycopy(temp, 0, result, 0, count);
+		
+		return result;
 	}
 
 	private static ContactOps handleAddresses(MessageAddressData[] parrAddresses, UUID pidParentType, UUID pidParentID)
