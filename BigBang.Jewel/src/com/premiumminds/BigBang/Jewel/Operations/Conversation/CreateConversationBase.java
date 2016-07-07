@@ -288,7 +288,6 @@ public abstract class CreateConversationBase
 					{
 						for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ )
 						{
-							mobjData.marrMessages[0].marrAttachments[i].mstrAttId = larrAttTrans.get(mobjData.marrMessages[0].marrAttachments[i].mstrAttId);
 							lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrMessages[0].marrAttachments[i].mid);
 							mobjData.marrMessages[0].marrAttachments[i].ToObject(lobjAttachment);
 							lobjAttachment.SaveToDb(pdb);

@@ -84,7 +84,7 @@ public class ConversationServiceImpl
 		lobjResult.ownerId = lobjDoc.getOwnerID().toString();
 
 		lobjResult.name = lobjDoc.getLabel();
-		lobjResult.attachmentId = null;
+		lobjResult.attachmentId = null; // pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID).toString();
 		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();
 		lobjResult.storageId = null;
 		lobjResult.date = pdtMsg.toString().substring(0, 10);
@@ -92,6 +92,10 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
+	// TODO: No novo "paradigma", os attachments que não foram promovidos não estão registados na BD. 
+	// Para já este método fica por aqui, porque eventualmente vou criar uma forma de ir buscar attachments 
+	// não promovidos
+	@SuppressWarnings("unused")
 	private static Message.Attachment sGetXchAttachment(String pstrEmailId, MessageAttachment pobjAttachment, Timestamp pdtMsg)
 		throws BigBangException
 	{
@@ -168,14 +172,22 @@ public class ConversationServiceImpl
 		else
 		{
 			lobjResult.attachments = new Message.Attachment[larrAtts.length];
-			for ( i = 0; i < larrAtts.length; i++ )
+			for ( i = 0; i < larrAtts.length; i++ ) {
 				lobjResult.attachments[i] = sGetAttachment(lobjResult.emailId, larrAtts[i].getKey(),
 						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
+
+				//lobjResult.attachments[i] = sGetAttachment(larrAtts[i].getAt(MessageAttachment.I.ATTACHMENTID).toString(), larrAtts[i].getKey(),
+				//		(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
+			}
 		}
 
 		return lobjResult;
 	}
 
+	// TODO: No novo "paradigma", os attachments que não foram promovidos não estão registados na BD. 
+	// Para já este método fica por aqui, porque eventualmente vou criar uma forma de ir buscar attachments 
+	// não promovidos
+	@SuppressWarnings("unused")
 	private static Message sGetXchMessage(com.premiumminds.BigBang.Jewel.Objects.Message pobjMsg, boolean pbFilterOwners)
 		throws BigBangException
 	{
@@ -228,6 +240,8 @@ public class ConversationServiceImpl
 			for ( i = 0; i < larrAtts.length; i++ )
 				lobjResult.attachments[i] = sGetAttachment(lobjResult.emailId, larrAtts[i].getKey(),
 						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
+			//	lobjResult.attachments[i] = sGetAttachment(larrAtts[i].getAt(MessageAttachment.I.ATTACHMENTID).toString(), larrAtts[i].getKey(),
+			//			(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
 		}
 
 		return lobjResult;
@@ -323,17 +337,6 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		if ( lobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID) != null )
-		{
-			try
-			{
-				return sGetXchAttachment(pstrEmailId, lobjAttachment, pdtMsg);
-			}
-			catch (BigBangException e)
-			{
-			}
-		}
-
 		if ( lobjAttachment.getAt(MessageAttachment.I.DOCUMENT) != null )
 			return sGetDBAttachment(lobjAttachment, pdtMsg);
 
@@ -360,7 +363,7 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		if ( lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
+	/*	if ( lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
 		{
 			try
 			{
@@ -369,7 +372,7 @@ public class ConversationServiceImpl
 			catch (BigBangException e)
 			{
 			}
-		}
+		} */
 
 		return sGetDBMessage(lobjMsg, pbFilterOwners);
 	}
