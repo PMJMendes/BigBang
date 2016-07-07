@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -157,7 +156,7 @@ public class ReceiveQuote
 					lobjItem = MailConnector.getMessage(mobjMessage.mstrEmailID, null);
 					mobjMessage.mstrSubject = lobjItem.getSubject();
 					mobjMessage.mstrBody = lobjItem.getContent().toString();
-					mstrNewEmailID = MailConnector.processItem(mobjMessage.mstrEmailID, GetProcess().GetDataKey(), new Date()).get("_");
+					mstrNewEmailID = MailConnector.processItem(mobjMessage.mstrEmailID, lobjItem, null).get("_");
 				}
 				catch (Throwable e)
 				{

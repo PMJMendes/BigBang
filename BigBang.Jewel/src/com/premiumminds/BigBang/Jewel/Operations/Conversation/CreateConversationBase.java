@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.mail.BodyPart;
+import javax.mail.Multipart;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
@@ -277,10 +280,20 @@ public abstract class CreateConversationBase
 			{
 				if ( mobjData.marrMessages[0].mstrEmailID != null )
 				{
-					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mid,
-							mobjData.marrMessages[0].mdtDate);
+					javax.mail.Message mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, null);
+					Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
+					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mailMsg,
+							mailAttachments);
 					mobjData.marrMessages[0].mstrEmailID = larrAttTrans.get("_");
-					mobjData.marrMessages[0].mstrBody = null;
+					String tmpBody = mailAttachments.get("main").getContent().toString();
+					Object content = mailMsg.getContent();
+					if (content instanceof Multipart && mailAttachments != null) {
+						tmpBody = MailConnector.prepareBodyInline(tmpBody, mailAttachments);
+					} else {
+						tmpBody = content.toString();
+						tmpBody = MailConnector.prepareSimpleBody(tmpBody);
+					}
+					mobjData.marrMessages[0].mstrBody = tmpBody;
 					mobjData.marrMessages[0].ToObject(lobjMessage);
 					lobjMessage.SaveToDb(pdb);
 

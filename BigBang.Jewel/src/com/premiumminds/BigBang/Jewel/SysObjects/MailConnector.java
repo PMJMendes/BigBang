@@ -493,33 +493,30 @@ public class MailConnector {
 	 *	This method fetches a given email and creates (and returns) a Map with 
 	 *	{(<_>, <mail_Id>), (<attachmentId_1>, <mail_Id>), (...), (<attachmentId_n>, <mail_Id>)}  
 	 */
-	public static Map<String, String> processItem(String pstrUniqueID, UUID pidTag, 
-			Date pdtRef) throws BigBangJewelException {
+	public static Map<String, String> processItem(String pstrUniqueID, Message fetchedItem, Map<String, BodyPart> mailAttachments) throws BigBangJewelException {
 
 		Map<String, String> processed = null;
-		Message fetchedItem = null; 
 
-		fetchedItem = getMessage(pstrUniqueID, null);
+		if (fetchedItem == null) {
+			fetchedItem = getMessage(pstrUniqueID, null);
+		}
 
-		if (fetchedItem != null) {
+		processed = new HashMap<String, String>();
 
-			processed = new HashMap<String, String>();
+		processed.put("_", pstrUniqueID);
 
-			processed.put("_", pstrUniqueID);
-
-			Map<String, BodyPart> mailAttachments;
-
-			try {
+		try {
+			if (mailAttachments == null) {
 				mailAttachments = getAttachmentsMap(fetchedItem);
-			} catch (Exception e) {
-				throw new BigBangJewelException(e.getMessage(), e);
 			}
+		} catch (Exception e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 
-			if (mailAttachments!=null && mailAttachments.size() > 0) {
-				for (Map.Entry<String, BodyPart> entry : mailAttachments.entrySet()) {
-					processed.put(entry.getKey(), pstrUniqueID);
-				}			
-			}
+		if (mailAttachments!=null && mailAttachments.size() > 0) {
+			for (Map.Entry<String, BodyPart> entry : mailAttachments.entrySet()) {
+				processed.put(entry.getKey(), pstrUniqueID);
+			}			
 		}
 
 		return processed;
