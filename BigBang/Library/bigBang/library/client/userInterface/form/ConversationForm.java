@@ -94,7 +94,7 @@ public class ConversationForm extends FormView<Conversation> implements Document
 		text = new RichTextAreaFormField();
 		text.setEditable(false);
 		text.getNativeField().setSize("98%", "600px");
-
+		
 		emailAndAttachmentsWrapper = new HorizontalPanel();
 		attachments = new List<Document>();
 
@@ -130,6 +130,7 @@ public class ConversationForm extends FormView<Conversation> implements Document
 
 		innerWrapper.add(messageSubject);
 		innerWrapper.add(text);
+		innerWrapper.setSize("100%", "100%");
 
 		emailAndAttachmentsWrapper.add(innerWrapper);
 		emailAndAttachmentsWrapper.add(attachments);
