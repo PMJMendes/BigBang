@@ -178,7 +178,7 @@ HasValue<Message> {
 		view.enableGetAll(false);
 		view.enableRefresh(false);
 		
-		service.getItems(false, new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
 			public void onResponseSuccess(ExchangeItemStub[] result) {
@@ -205,7 +205,7 @@ HasValue<Message> {
 		view.enableGetAll(false);
 		view.enableRefresh(false);
 		
-		service.getItemsAll(false, new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItemsAll(new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
 			public void onResponseSuccess(ExchangeItemStub[] result) {

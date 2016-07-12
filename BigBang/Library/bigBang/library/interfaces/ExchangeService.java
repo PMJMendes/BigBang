@@ -27,8 +27,8 @@ public interface ExchangeService
 		}
 	}
 
-	ExchangeItemStub[] getItems(boolean sent) throws SessionExpiredException, BigBangException;
-	ExchangeItemStub[] getItemsAll(boolean sent) throws SessionExpiredException, BigBangException;
+	ExchangeItemStub[] getItems() throws SessionExpiredException, BigBangException;
+	ExchangeItemStub[] getItemsAll() throws SessionExpiredException, BigBangException;
 	ExchangeItemStub[] getFolder(String id) throws SessionExpiredException, BigBangException;
 	ExchangeItem getItem(String id) throws SessionExpiredException, BigBangException;
 	Document getAttAsDoc(String emailId, String attachmentId) throws SessionExpiredException, BigBangException;

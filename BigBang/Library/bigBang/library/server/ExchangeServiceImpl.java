@@ -6,10 +6,13 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.BodyPart;
+import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -107,36 +110,42 @@ public class ExchangeServiceImpl
 		return larrResults;
 	}
 	
-	private static ExchangeItemStub[] sToClient(javax.mail.Folder folder)
+	private static ExchangeItemStub[] sToClient(javax.mail.Folder[] folders)
 			throws BigBangException { 
 		
 		ExchangeItemStub[] larrResults = null;
 		
-		if (folder == null) {
+		if (folders == null) {
 			return null;
 		}
 		
-		try {
-			larrResults = new ExchangeItemStub[1];
+		larrResults = new ExchangeItemStub[folders.length];
+		
+		for (int i = 0; i < larrResults.length; i++ ) {
 			
-			// TODO ver folder.getURLName() e folder.getFullName() e mudar nos outros sitios onde usas a 
-			// folder (o fetch) para ver se esta a ir buscar bem por noome
-			larrResults[0].id = folder.getName(); 
-			larrResults[0].isFolder = true;
-			larrResults[0].isFromMe = false;
-			larrResults[0].subject = folder.getName();
-			larrResults[0].from = null;
-			larrResults[0].timestamp = null;
-			larrResults[0].attachmentCount = -1;
-			larrResults[0].bodyPreview = null;
-		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			larrResults[i] = new ExchangeItemStub();
+			
+			try {
+				
+				// TODO ver folder.getURLName() e folder.getFullName() e mudar nos outros sitios onde usas a 
+				// folder (o fetch) para ver se esta a ir buscar bem por nome
+				larrResults[i].id = folders[i].getName(); 
+				larrResults[i].isFolder = true;
+				larrResults[i].isFromMe = false;
+				larrResults[i].subject = folders[i].getName();
+				larrResults[i].from = null;
+				larrResults[i].timestamp = null;
+				larrResults[i].attachmentCount = -1;
+				larrResults[i].bodyPreview = null;
+			} catch (Throwable e) {
+				throw new BigBangException(e.getMessage(), e);
+			}
 		}
 		
 		return larrResults;
 	}
 
-	public ExchangeItemStub[] getItems(boolean sent)
+	public ExchangeItemStub[] getItems()
 		throws SessionExpiredException, BigBangException
 	{
 		Message[] larrItems;
@@ -144,57 +153,50 @@ public class ExchangeServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		try
-		{
-			//larrItems = MailConnector.DoGetMail(sent);
+		try {
 			larrItems = MailConnector.getMails(null, false);
 		}
-		catch (Throwable e)
-		{
+		catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
 
 		return sToClient(larrItems);
 	}
 
-	public ExchangeItemStub[] getItemsAll(boolean sent)
+	public ExchangeItemStub[] getItemsAll()
 		throws SessionExpiredException, BigBangException
 	{
-		Message[] larrItems;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			larrItems = MailConnector.getSentOrReceived(sent);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return sToClient(larrItems);
+		
+		return getItemsAll(null);
 	}
+	
+	private ExchangeItemStub[] getItemsAll(String folderId)
+			throws SessionExpiredException, BigBangException
+		{
+			Message[] items;
+			Folder[] folders;
 
+			if ( Engine.getCurrentUser() == null )
+				throw new SessionExpiredException();
+
+			try {
+				items = MailConnector.getMails(folderId, false);
+				folders = MailConnector.getFolders(folderId);
+			}
+			catch (Throwable e) {
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			ExchangeItemStub[] mailItems = items==null ? null : sToClient(items);
+			ExchangeItemStub[] folderItems = folders==null ? null : sToClient(folders);
+			
+			return ArrayUtils.addAll(mailItems, folderItems);
+		}
+	
+	@Override
 	public ExchangeItemStub[] getFolder(String id)
-		throws SessionExpiredException, BigBangException
-	{
-		javax.mail.Folder larrItems;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			larrItems = MailConnector.getFolder(id);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return sToClient(larrItems);
+			throws SessionExpiredException, BigBangException {
+		return getItemsAll(id);
 	}
 
 	public ExchangeItem getItem(String id)

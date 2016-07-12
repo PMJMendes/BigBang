@@ -9,8 +9,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ExchangeServiceAsync
 	extends Service
 {
-	void getItems(boolean sent, AsyncCallback<ExchangeItemStub[]> callback);
-	void getItemsAll(boolean sent, AsyncCallback<ExchangeItemStub[]> callback);
+	void getItems(AsyncCallback<ExchangeItemStub[]> callback);
+	void getItemsAll(AsyncCallback<ExchangeItemStub[]> callback);
 	void getFolder(String id, AsyncCallback<ExchangeItemStub[]> callback);
 	void getItem(String id, AsyncCallback<ExchangeItem> callback);
 	void getAttAsDoc(String emailId, String attachmentId, AsyncCallback<Document> callback);

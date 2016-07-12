@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -294,13 +296,12 @@ public class MailConnector {
 				fetchedMails = folder.getMessages();
 			}
 
-	//		folder.close(false);
-	//		store.close();
-
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		Collections.reverse(Arrays.asList(fetchedMails));
+		
 		return fetchedMails;		
 	}
 
@@ -962,9 +963,36 @@ public class MailConnector {
 		Message[] result = null;
 
 		if (sent) {
-			result = getMails("sent", false);
+			result = getMails("Itens Enviados", false);
 		} else {
 			result = getMails("Inbox", false);
+		}
+
+		return result;
+	}
+	
+	/**
+	 *	This method gets all "first level" folders, or all folders inside a folder
+	 */
+	public static Folder[] getFolders(String folderId) throws BigBangJewelException {
+
+		Folder[] result = null;
+		Session session;
+		Store store;
+		
+		try {
+			session = getSession();
+			session.setDebug(true);
+			store = getStore(session);
+			
+			if (folderId == null) {
+				result = store.getDefaultFolder().list();
+			} else {
+				result = store.getFolder(folderId).list();
+			}
+
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		return result;
