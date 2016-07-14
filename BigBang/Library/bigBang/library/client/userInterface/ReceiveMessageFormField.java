@@ -180,7 +180,7 @@ public class ReceiveMessageFormField extends FormField<Message>{
 		noteOrEmailRadioButton.setValue(value.kind != null ? value.kind.toString() : Kind.NOTE.toString());
 		if(value.emailId != null){
 			attachList.setVisible(true);
-			service.getItem(value.emailId, new BigBangAsyncCallback<ExchangeItem>() {
+			service.getItem(value.folderId, value.emailId, new BigBangAsyncCallback<ExchangeItem>() {
 
 				@Override
 				public void onResponseSuccess(ExchangeItem result) {

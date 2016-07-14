@@ -113,6 +113,7 @@ public class ConversationForm extends FormView<Conversation> implements Document
 					params.setParameter("ownertypeid",doc.ownerTypeId);
 					params.setParameter("documentid", doc.id);
 					params.setParameter("emailId", doc.exchangeEmailId);
+					params.setParameter("folderId", doc.exchangeFolderId);
 					params.setParameter("attId", doc.exchangeAttId);
 					popup = new PopupPanel();
 
@@ -167,10 +168,10 @@ public class ConversationForm extends FormView<Conversation> implements Document
 		replyLimit.setValue(info.replylimit != null ? info.replylimit.doubleValue() : null);
 		pendingAction.setValue(ConversationStub.Direction.INCOMING.equals(info.pendingDir) ? "Receber Mensagem" : "Enviar Mensagem");
 
-		setAttachments(info.messages[0].attachments);
+		setAttachments(info.messages[0].attachments, info.messages[0].folderId);
 	}
 
-	private void setAttachments(Attachment[] info) {
+	private void setAttachments(Attachment[] info, String folderId) {
 		boolean b = true;
 		
 		attachments.clear();
@@ -205,6 +206,7 @@ public class ConversationForm extends FormView<Conversation> implements Document
 					doc.creationDate = att.date;
 					doc.exchangeAttId = att.attachmentId;
 					doc.exchangeEmailId = att.emailId;
+					doc.exchangeFolderId = folderId;
 					addAttachment(new DocumentsList.Entry(doc));
 				}
 			}
@@ -229,7 +231,7 @@ public class ConversationForm extends FormView<Conversation> implements Document
 		text.setValue(info.text);
 		messageSubject.setValue(info.subject);
 		messageSection.setVisible(true);
-		setAttachments(info.attachments);
+		setAttachments(info.attachments, info.folderId);
 	}
 
 	public Message getMessage() {

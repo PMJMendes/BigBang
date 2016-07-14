@@ -247,6 +247,7 @@ public class MessageBridge
 				(ConversationStub.Direction.OUTGOING.equals(pobjMessage.direction) ? Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming) );
 		if ( lobjResult.mbIsEmail )
 		{
+			lobjResult.mstrFolderID = pobjMessage.folderId;
 			lobjResult.mstrEmailID = pobjMessage.emailId;
 			if ( lobjResult.mstrEmailID == null )
 			{
@@ -257,7 +258,7 @@ public class MessageBridge
 			{
 				try
 				{
-					lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID);
+					lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID, lobjResult.mstrFolderID);
 				}
 				catch (Throwable e)
 				{
@@ -273,6 +274,7 @@ public class MessageBridge
 		else
 		{
 			lobjResult.mstrEmailID = null;
+			lobjResult.mstrFolderID = null;
 			lobjResult.mstrSubject = ( pobjMessage.subject == null ?
 					(pobjMessage.text.length() > 100 ? pobjMessage.text.substring(0, 100) : pobjMessage.text) : pobjMessage.subject );
 			lobjResult.mstrBody = pobjMessage.text;
@@ -544,7 +546,7 @@ public class MessageBridge
 							try
 							{
 								lobjResult.marrCreate2[j].mobjFile = MailConnector.getAttachment(pobjMsg.mstrEmailID,
-										parrAttachments[i].attachmentId).GetVarData();
+										pobjMsg.mstrFolderID, parrAttachments[i].attachmentId).GetVarData();
 							}
 							catch (Throwable e)
 							{

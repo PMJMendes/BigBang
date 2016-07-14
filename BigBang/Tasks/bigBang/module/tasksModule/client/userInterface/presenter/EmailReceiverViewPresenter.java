@@ -127,7 +127,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 						view.enableGetAll(false);
 						view.enableRefresh(false);
 						
-						service.getFolder(stub.id, new BigBangAsyncCallback<ExchangeItemStub[]>() {
+						service.getFolder(stub.folderId, new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 							@Override
 							public void onResponseSuccess(ExchangeItemStub[] result) {
@@ -146,7 +146,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 					}
 					else
 					{
-						service.getItem(stub.id, new BigBangAsyncCallback<ExchangeItem>() {
+						service.getItem(stub.folderId, stub.id, new BigBangAsyncCallback<ExchangeItem>() {
 
 							@Override
 							public void onResponseSuccess(ExchangeItem result) {
@@ -234,6 +234,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 			conversation.id = conversation.messages[0].conversationId;
 			
 			conversation.messages[0].emailId = item.id;
+			conversation.messages[0].folderId = item.folderId;
 			conversation.messages[0].attachments = view.getChecked();
 			conversation.messages[0].direction = ( view.getForm().getValue().isFromMe ?
 					ConversationStub.Direction.OUTGOING : ConversationStub.Direction.INCOMING );

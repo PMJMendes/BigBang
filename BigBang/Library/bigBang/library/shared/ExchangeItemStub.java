@@ -15,4 +15,5 @@ public class ExchangeItemStub
 	public String timestamp;
 	public int attachmentCount;
 	public String bodyPreview;
+	public String folderId;
 }

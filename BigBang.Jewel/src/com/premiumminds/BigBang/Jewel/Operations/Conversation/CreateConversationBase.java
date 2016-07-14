@@ -280,7 +280,7 @@ public abstract class CreateConversationBase
 			{
 				if ( mobjData.marrMessages[0].mstrEmailID != null )
 				{
-					javax.mail.Message mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, null);
+					javax.mail.Message mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID);
 					Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
 					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mailMsg,
 							mailAttachments);

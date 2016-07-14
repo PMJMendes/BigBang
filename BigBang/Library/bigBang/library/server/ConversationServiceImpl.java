@@ -96,7 +96,7 @@ public class ConversationServiceImpl
 	// Para já este método fica por aqui, porque eventualmente vou criar uma forma de ir buscar attachments 
 	// não promovidos
 	@SuppressWarnings("unused")
-	private static Message.Attachment sGetXchAttachment(String pstrEmailId, MessageAttachment pobjAttachment, Timestamp pdtMsg)
+	private static Message.Attachment sGetXchAttachment(String pstrEmailId, String pstrFolderId, MessageAttachment pobjAttachment, Timestamp pdtMsg)
 		throws BigBangException
 	{
 		FileXfer lobjDoc;
@@ -104,7 +104,7 @@ public class ConversationServiceImpl
 
 		try
 		{
-			lobjDoc = MailConnector.getAttachment(pstrEmailId, (String)pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID));
+			lobjDoc = MailConnector.getAttachment(pstrEmailId, pstrFolderId, (String)pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID));
 		}
 		catch (BigBangJewelException e)
 		{
@@ -157,6 +157,7 @@ public class ConversationServiceImpl
 		lobjResult.subject = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.SUBJECT);
 		lobjResult.text = pobjMsg.getText();
 		lobjResult.emailId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID);
+		lobjResult.folderId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.FOLDERID);
 
 		if ( larrAddrs == null )
 			lobjResult.addresses = null;
@@ -206,10 +207,12 @@ public class ConversationServiceImpl
 		lobjResult.kind = ( ((Boolean)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.ISEMAIL)) ?
 				Message.Kind.EMAIL : Message.Kind.NOTE );
 		lobjResult.emailId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID);
+		lobjResult.folderId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.FOLDERID);
 
 		try
 		{
-			lobjItem = MailConnector.getAsData((String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID));
+			lobjItem = MailConnector.getAsData((String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID), 
+					(String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.FOLDERID));
 
 			lobjResult.date = lobjItem.mdtDate.toString();
 			lobjResult.subject = lobjItem.mstrSubject;
@@ -717,6 +720,7 @@ public class ConversationServiceImpl
 		lobjResult.text = getSignature() + "<br><bigbang:original:bb>";
 		lobjResult.attachments = new Message.Attachment[0];
 		lobjResult.addresses = new Message.MsgAddress[0];
+		lobjResult.folderId = null;
 
 		return lobjResult;
 	}
@@ -740,6 +744,7 @@ public class ConversationServiceImpl
 		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
 		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
 		lobjResult.emailId = null;
+		lobjResult.folderId = null;
 		lobjResult.attachments = new Message.Attachment[0];
 		if ( lobjResult.addresses != null )
 		{
@@ -798,6 +803,7 @@ public class ConversationServiceImpl
 		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
 		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
 		lobjResult.emailId = null;
+		lobjResult.folderId = null;
 		lobjResult.attachments = new Message.Attachment[0];
 		if ( lobjResult.addresses != null )
 		{
@@ -853,6 +859,7 @@ public class ConversationServiceImpl
 		lobjResult.subject = (lobjResult.subject == null ? "Fw:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Fw: " + lobjResult.subject));
 		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
 		lobjResult.emailId = null;
+		lobjResult.folderId = null;
 		lobjResult.addresses = new Message.MsgAddress[0];
 		if ( lobjResult.attachments == null )
 			lobjResult.attachments = new Message.Attachment[0];
@@ -875,6 +882,7 @@ public class ConversationServiceImpl
 		lobjResult.date = null;
 		lobjResult.text = lobjResult.text + "<bigbang:signature:bb><bigbang:original:bb>";
 		lobjResult.emailId = null;
+		lobjResult.folderId = null;
 		if ( lobjResult.attachments == null )
 			lobjResult.addresses = new Message.MsgAddress[0];
 		if ( lobjResult.attachments == null )

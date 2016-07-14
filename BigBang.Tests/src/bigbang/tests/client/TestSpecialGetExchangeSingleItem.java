@@ -27,6 +27,6 @@ public class TestSpecialGetExchangeSingleItem
 		};
 
 		Services.exchangeService.getItem("AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwAfB8bLbZT3Q6D4HtPpCBWKAAAAAKnCAACY2siwYA8YR7NHNtCOoGdcAAAQVuGRAAA=",
-				callback);
+				null, callback);
 	}
 }

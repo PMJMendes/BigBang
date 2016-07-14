@@ -609,7 +609,7 @@ public class MailConnector {
 	 *	This methods gets a Message, and creates (and returns) a MessageData object with that 
 	 *	Message's information
 	 */
-	public static MessageData getAsData(String pstrUniqueID) throws BigBangJewelException {
+	public static MessageData getAsData(String pstrUniqueID, String folderId) throws BigBangJewelException {
 
 		MessageData result = new MessageData();
 
@@ -619,7 +619,7 @@ public class MailConnector {
 		int i;
 
 		// Gets the message with a given ID
-		Message fetchedMessage = getMessage(pstrUniqueID, null);
+		Message fetchedMessage = getMessage(pstrUniqueID, folderId);
 
 		if (fetchedMessage != null) {
 			
@@ -787,7 +787,7 @@ public class MailConnector {
 	 *	This method returns an attachment, giving a message ID and an attachment ID
 	 *	It calls the methods to retrieve a message, and that message's attachments. 
 	 */
-	public static FileXfer getAttachment(String msgId, String attachmentId) throws BigBangJewelException {
+	public static FileXfer getAttachment(String msgId, String folderId, String attachmentId) throws BigBangJewelException {
 
 		// Gets a message from a given folder, with a given ID
 		Message message = getMessage(msgId, null);

@@ -45,6 +45,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private String ownerTypeId;
 	private String emailId;
 	private String attId;
+	private String folderId;
 	protected boolean allow = true;
 
 	public static enum Action {
@@ -111,6 +112,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		ownerTypeId = parameterHolder.getParameter("ownertypeid");
 		emailId = parameterHolder.getParameter("emailId");
 		attId = parameterHolder.getParameter("attId");
+		folderId = parameterHolder.getParameter("folderId");
 		boolean hasPermissions = true; //TODO PERMISSIONS
 
 		if(ownerId == null){
@@ -123,7 +125,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		}
 
 		if ( documentId == null ) {
-			ExchangeService.Util.getInstance().getAttAsDoc(emailId, attId, new BigBangAsyncCallback<Document>() {
+			ExchangeService.Util.getInstance().getAttAsDoc(emailId, folderId, attId, new BigBangAsyncCallback<Document>() {
 				@Override
 				public void onResponseSuccess(Document response) {
 					view.getForm().setValue(response);

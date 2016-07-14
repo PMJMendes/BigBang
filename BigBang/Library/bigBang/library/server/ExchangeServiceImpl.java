@@ -63,6 +63,7 @@ public class ExchangeServiceImpl
 				larrResults[i].id = "" + parrSource[i].getHeader("Message-Id")[0];
 				larrResults[i].isFolder = false;
 				larrResults[i].subject = parrSource[i].getSubject();
+				larrResults[i].folderId = parrSource[i].getFolder().getFullName();
 
 				InternetAddress address = (InternetAddress) (parrSource[i].getFrom() == null ? null : parrSource[i].getFrom()[0]);
 				lstrFrom = address == null ? "" : address.getAddress();
@@ -137,6 +138,7 @@ public class ExchangeServiceImpl
 				larrResults[i].timestamp = null;
 				larrResults[i].attachmentCount = -1;
 				larrResults[i].bodyPreview = null;
+				larrResults[i].folderId = folders[i].getFullName();
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
@@ -190,7 +192,7 @@ public class ExchangeServiceImpl
 			ExchangeItemStub[] mailItems = items==null ? null : sToClient(items);
 			ExchangeItemStub[] folderItems = folders==null ? null : sToClient(folders);
 			
-			return ArrayUtils.addAll(mailItems, folderItems);
+			return ArrayUtils.addAll(folderItems, mailItems);
 		}
 	
 	@Override
@@ -199,7 +201,7 @@ public class ExchangeServiceImpl
 		return getItemsAll(id);
 	}
 
-	public ExchangeItem getItem(String id)
+	public ExchangeItem getItem(String folderId, String id)
 		throws SessionExpiredException, BigBangException
 	{
 		MimeMessage lobjItem;
@@ -215,7 +217,7 @@ public class ExchangeServiceImpl
 
 		try
 		{
-			lobjItem = (MimeMessage) MailConnector.getMessage(id, null);
+			lobjItem = (MimeMessage) MailConnector.getMessage(id, folderId);
 
 			lobjResult = new ExchangeItem();
 			lobjResult.id = lobjItem.getMessageID();
@@ -282,7 +284,7 @@ public class ExchangeServiceImpl
 		return lobjResult;
 	}
 
-	public Document getAttAsDoc(String emailId, String attachmentId)
+	public Document getAttAsDoc(String emailId, String folderId, String attachmentId)
 		throws SessionExpiredException, BigBangException
 	{
 		Document lobjResult;
@@ -294,7 +296,7 @@ public class ExchangeServiceImpl
 
 		try
 		{
-			lobjFile = MailConnector.getAttachment(emailId, attachmentId);
+			lobjFile = MailConnector.getAttachment(emailId, folderId, attachmentId);
 		}
 		catch (Throwable e)
 		{

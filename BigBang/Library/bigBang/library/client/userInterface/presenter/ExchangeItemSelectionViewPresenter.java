@@ -101,7 +101,7 @@ HasValue<Message> {
 						view.enableGetAll(false);
 						view.enableRefresh(false);
 						
-						service.getFolder(stub.id, new BigBangAsyncCallback<ExchangeItemStub[]>() {
+						service.getFolder(stub.folderId, new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 							@Override
 							public void onResponseSuccess(ExchangeItemStub[] result) {
@@ -120,7 +120,7 @@ HasValue<Message> {
 					}
 					else
 					{
-						service.getItem(stub.id, new BigBangAsyncCallback<ExchangeItem>() {
+						service.getItem(stub.folderId, stub.id, new BigBangAsyncCallback<ExchangeItem>() {
 
 							@Override
 							public void onResponseSuccess(ExchangeItem result) {
@@ -254,6 +254,7 @@ HasValue<Message> {
 		Message newMessage = new Message();
 
 		newMessage.emailId = view.getForm().getValue().id;
+		newMessage.folderId = view.getForm().getValue().folderId;
 		newMessage.kind = Message.Kind.EMAIL;
 		newMessage.text = null;
 		newMessage.attachments = view.getChecked();
