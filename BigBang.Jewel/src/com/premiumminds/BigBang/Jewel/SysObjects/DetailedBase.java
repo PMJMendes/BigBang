@@ -709,44 +709,48 @@ public abstract class DetailedBase
 		throws BigBangJewelException
 	{
 		int i;
-		HashMap<UUID, UUID> larrTrueCoverages;
+		HashMap<UUID, UUID> larrTrueSubCoverages;
 
-		larrTrueCoverages = new HashMap<UUID, UUID>();
-		for ( i = 0; i < marrCoverages.length; i++ )
-		{
-			if ( marrCoverages[i].GetCoverage().IsHeader() ||
-					((marrCoverages[i].IsPresent() != null) && marrCoverages[i].IsPresent()) )
+		if (marrSubCoverages==null || marrSubValues==null) {
+			pstrBuilder.append("Erro interno na validação de valores de coberturas de Apólice de Adesão.\n");
+		} else {
+			larrTrueSubCoverages = new HashMap<UUID, UUID>();
+			for ( i = 0; i < marrSubCoverages.length; i++ )
 			{
-				larrTrueCoverages.put(marrCoverages[i].GetCoverage().getKey(), marrCoverages[i].getKey());
-
-				ResetSubDeductibles(i, pdb);
-			}
-
-			if ( marrCoverages[i].GetCoverage().IsHeader() )
-				continue;
-			if ( marrCoverages[i].IsPresent() == null )
-				pstrBuilder.append("O indicador de presença da cobertura '").append(marrCoverages[i].GetCoverage().getLabel()).
-						append("' não está preenchido.\n");
-			else if ( marrCoverages[i].GetCoverage().IsMandatory() && !marrCoverages[i].IsPresent())
-				pstrBuilder.append("A cobertura '").append(marrCoverages[i].GetCoverage().getLabel()).
-						append("' é obrigatória mas não está presente.\n");
-		}
-
-		for ( i = 0; i < marrSubValues.length; i++ )
-		{
-			if ( larrTrueCoverages.get(marrSubValues[i].GetTax().GetCoverage().getKey()) == null )
-				continue;
-
-			if ( marrSubValues[i].GetValue() == null )
-			{
-				if ( marrSubValues[i].GetTax().IsMandatory() )
+				if ( marrSubCoverages[i].GetCoverage().IsHeader() ||
+						((marrSubCoverages[i].IsPresent() != null) && marrSubCoverages[i].IsPresent()) )
 				{
-					AppendSubTag(pstrBuilder, marrSubValues[i]);
-					pstrBuilder.append("é de preenchimento obrigatório, mas não está preenchido.\n");
+					larrTrueSubCoverages.put(marrSubCoverages[i].GetCoverage().getKey(), marrSubCoverages[i].getKey());
+
+					ResetSubDeductibles(i, pdb);
 				}
+
+				if ( marrSubCoverages[i].GetCoverage().IsHeader() )
+					continue;
+				if ( marrSubCoverages[i].IsPresent() == null )
+					pstrBuilder.append("O indicador de presença da cobertura '").append(marrCoverages[i].GetCoverage().getLabel()).
+							append("' não está preenchido.\n");
+				else if ( marrSubCoverages[i].GetCoverage().IsMandatory() && !marrSubCoverages[i].IsPresent())
+					pstrBuilder.append("A cobertura '").append(marrCoverages[i].GetCoverage().getLabel()).
+							append("' é obrigatória mas não está presente.\n");
 			}
-			else
-				CheckSubFormat(pstrBuilder, marrSubValues[i], true);
+
+			for ( i = 0; i < marrSubValues.length; i++ )
+			{
+				if ( larrTrueSubCoverages.get(marrSubValues[i].GetTax().GetCoverage().getKey()) == null )
+					continue;
+
+				if ( marrSubValues[i].GetValue() == null )
+				{
+					if ( marrSubValues[i].GetTax().IsMandatory() )
+					{
+						AppendSubTag(pstrBuilder, marrSubValues[i]);
+						pstrBuilder.append("é de preenchimento obrigatório, mas não está preenchido.\n");
+					}
+				}
+				else
+					CheckSubFormat(pstrBuilder, marrSubValues[i], true);
+			}
 		}
 	}
 
