@@ -790,7 +790,7 @@ public class MailConnector {
 	public static FileXfer getAttachment(String msgId, String folderId, String attachmentId) throws BigBangJewelException {
 
 		// Gets a message from a given folder, with a given ID
-		Message message = getMessage(msgId, null);
+		Message message = getMessage(msgId, folderId);
 
 		Map<String, BodyPart> messageAttachments = getAttachmentsMap(message);
 		BodyPart attachment; 

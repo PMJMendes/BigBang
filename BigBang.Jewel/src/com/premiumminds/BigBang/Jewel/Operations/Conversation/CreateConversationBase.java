@@ -285,14 +285,16 @@ public abstract class CreateConversationBase
 					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mailMsg,
 							mailAttachments);
 					mobjData.marrMessages[0].mstrEmailID = larrAttTrans.get("_");
-					String tmpBody = mailAttachments.get("main").getContent().toString();
 					Object content = mailMsg.getContent();
+					String tmpBody;
 					if (content instanceof Multipart && mailAttachments != null) {
+						tmpBody = mailAttachments.get("main").getContent().toString();
 						tmpBody = MailConnector.prepareBodyInline(tmpBody, mailAttachments);
 					} else {
 						tmpBody = content.toString();
 						tmpBody = MailConnector.prepareSimpleBody(tmpBody);
-					}
+					}					
+					
 					mobjData.marrMessages[0].mstrBody = tmpBody;
 					mobjData.marrMessages[0].ToObject(lobjMessage);
 					lobjMessage.SaveToDb(pdb);

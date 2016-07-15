@@ -220,6 +220,7 @@ public class ExchangeServiceImpl
 			lobjItem = (MimeMessage) MailConnector.getMessage(id, folderId);
 
 			lobjResult = new ExchangeItem();
+			lobjResult.folderId = lobjItem.getFolder().getFullName();
 			lobjResult.id = lobjItem.getMessageID();
 			lobjResult.isFolder = false;
 			lobjResult.subject = lobjItem.getSubject();
