@@ -252,7 +252,7 @@ public class AuthenticationServiceImpl
 
 			if ( (lobjUser == null) && (larrParams[1] != null) )
 			{
-				((Password)larrParams[1]).setShort(password);
+				((Password)larrParams[1]).setWrong(password);
 				lrs = lrefUser.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
 				if (lrs.next())
 				{
