@@ -392,8 +392,10 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 	@Override
 	public void setAttachments(AttachmentStub[] attachments) {
 		this.attachments.clear();
-		for(int i = 0; i<attachments.length; i++){
-			this.attachments.add(new AttachmentEntry(attachments[i]));
+		if (attachments != null) {
+			for(int i = 0; i<attachments.length; i++){
+				this.attachments.add(new AttachmentEntry(attachments[i]));
+			}
 		}
 	}
 

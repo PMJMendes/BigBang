@@ -157,8 +157,10 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 	public void setAttachments(AttachmentStub[] attachments) {
 		this.attachments.clear();
 		
-		for(AttachmentStub b : attachments){
-			this.attachments.add(new ExchangeItemSelectionView.AttachmentEntry(b));
+		if (attachments!=null) {
+			for(AttachmentStub b : attachments){
+				this.attachments.add(new ExchangeItemSelectionView.AttachmentEntry(b));
+			}
 		}
 	}
 
