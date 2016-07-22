@@ -15,6 +15,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Message.Attachment;
+import bigBang.definitions.shared.Message.MsgAddress;
 import bigBang.definitions.shared.OutgoingMessage;
 import bigBang.library.shared.BigBangException;
 
@@ -249,26 +250,47 @@ public class MessageBridge
 		{
 			lobjResult.mstrFolderID = pobjMessage.folderId;
 			lobjResult.mstrEmailID = pobjMessage.emailId;
-			if ( lobjResult.mstrEmailID == null )
+			if ( lobjResult.mstrEmailID == null && lobjResult.midDirection.equals(Constants.MsgDir_Incoming ))
 			{
 				lobjResult.mbIsEmail = false;
 				lobjResult.marrAddresses = null;
 			}
 			else
 			{
-				try
-				{
-					lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID, lobjResult.mstrFolderID);
+				if (lobjResult.midDirection.equals(Constants.MsgDir_Incoming )) {
+					try
+					{
+						lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID, lobjResult.mstrFolderID);
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangException(e.getMessage(), e);
+					}
+					lobjResult.mstrSubject = lobjAux.mstrSubject;
+					lobjResult.marrAddresses = lobjAux.marrAddresses;
+					lobjResult.mstrBody = lobjAux.mstrBody;
+				} else {
+					lobjResult.mstrSubject = pobjMessage.subject;
+					lobjResult.mstrBody = pobjMessage.text;
+					if(pobjMessage.addresses!=null) {
+						MessageAddressData[] addresses = new MessageAddressData[pobjMessage.addresses.length];
+						for (int u=0; u<pobjMessage.addresses.length; u++) {
+							MessageAddressData tmpData = new MessageAddressData();
+							MsgAddress tmpAddr = pobjMessage.addresses[u];
+							tmpData.mid = tmpAddr.id==null ? null : UUID.fromString(tmpAddr.id); 
+							tmpData.mstrAddress = tmpAddr.address==null ? tmpAddr.address : tmpAddr.address;
+							tmpData.midOwner    = tmpAddr.ownerId==null ? null : UUID.fromString(tmpAddr.ownerId);
+							tmpData.midUsage    = sGetUsage(tmpAddr.usage);
+							tmpData.midUser     = tmpAddr.userId== null ? null : UUID.fromString(tmpAddr.userId);
+							tmpData.midInfo     = tmpAddr.contactInfoId==null ? null : UUID.fromString(tmpAddr.contactInfoId);
+							tmpData.mstrDisplay = tmpAddr.display;
+							addresses[u] = tmpData;
+						}
+						lobjResult.marrAddresses = addresses;
+					}
 				}
-				catch (Throwable e)
-				{
-					throw new BigBangException(e.getMessage(), e);
-				}
-				lobjResult.mstrSubject = lobjAux.mstrSubject;
 				if ( (lobjResult.mstrSubject != null) && (lobjResult.mstrSubject.length() > 250) )
 					lobjResult.mstrSubject = lobjResult.mstrSubject.substring(0, 250);
-				lobjResult.mstrBody = lobjAux.mstrBody;
-				lobjResult.marrAddresses = lobjAux.marrAddresses;
 			}
 		}
 		else
@@ -303,7 +325,7 @@ public class MessageBridge
 
 		Attachment[] promotedAttachments = filterPromotedAttachments(pobjMessage.attachments);
 		
-		if ( !lobjResult.mbIsEmail || (pobjMessage.attachments == null) )
+		if ( !lobjResult.mbIsEmail || pobjMessage.attachments == null || pobjMessage.attachments.length==0 )
 		{
 			lobjResult.marrAttachments = null;
 		}

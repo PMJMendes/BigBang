@@ -77,6 +77,7 @@ public class MailConnector {
 
 		try {
 			session = getSession();
+			session.setDebug(true);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -92,25 +93,25 @@ public class MailConnector {
 
 			// Sets REPLY TO
 			addresses = buildAddresses(replyTo);
-			if (addresses != null) {
+			if (addresses != null && addresses.length != 0) {
 				mailMsg.setReplyTo(addresses);
 			}
 
 			// Sets TO
 			addresses = buildAddresses(to);
-			if (addresses != null) {
+			if (addresses != null && addresses.length != 0) {
 				mailMsg.setRecipients(Message.RecipientType.TO, addresses);
 			}
 
 			// Sets CC
 			addresses = buildAddresses(cc);
-			if (addresses != null) {
+			if (addresses != null && addresses.length != 0) {
 				mailMsg.setRecipients(Message.RecipientType.CC, addresses);
 			}
 
 			// Sets BCC
 			addresses = buildAddresses(bcc);
-			if (addresses != null) {
+			if (addresses != null && addresses.length != 0) {
 				mailMsg.setRecipients(Message.RecipientType.BCC, addresses);
 			}
 

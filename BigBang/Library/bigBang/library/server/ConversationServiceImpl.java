@@ -724,30 +724,46 @@ public class ConversationServiceImpl
 
 		return lobjResult;
 	}
-
-	public Message getForReply(String messageId)
-		throws SessionExpiredException, BigBangException
-	{
+	
+	public Message getCommonSend(String messageId, String typeString) 
+			throws SessionExpiredException, BigBangException {
+		
 		Message lobjResult;
-		ArrayList<Message.MsgAddress> larrAddrs;
-		Message.MsgAddress.Usage lobjUsage;
-		int i;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
-
+			
 		lobjResult = sGetMessage(UUID.fromString(messageId), false);
 		lobjResult.id = null;
 		lobjResult.order = null;
 		lobjResult.direction = ConversationStub.Direction.OUTGOING;
 		lobjResult.date = null;
-		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
-		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
+		if (typeString != null) {
+			lobjResult.subject = (lobjResult.subject == null ? 
+									typeString : 
+									(lobjResult.subject.startsWith(typeString) ? 
+											lobjResult.subject : 
+											typeString + lobjResult.subject));
+		}
+		lobjResult.text = typeString==null ? lobjResult.text : getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
 		lobjResult.emailId = null;
 		lobjResult.folderId = null;
+
+		return lobjResult;
+	}
+
+	public Message getForReply(String messageId)
+		throws SessionExpiredException, BigBangException {
+		
+		Message lobjResult;
+		ArrayList<Message.MsgAddress> larrAddrs;
+		Message.MsgAddress.Usage lobjUsage;
+		int i;
+
+		lobjResult = getCommonSend(messageId, "Re:");
 		lobjResult.attachments = new Message.Attachment[0];
-		if ( lobjResult.addresses != null )
-		{
+		
+		if ( lobjResult.addresses != null ) {
 			larrAddrs = new ArrayList<Message.MsgAddress>();
 			lobjUsage = Message.MsgAddress.Usage.FROM;
 			for ( i = 0; i < lobjResult.addresses.length; i++ )
@@ -767,46 +783,32 @@ public class ConversationServiceImpl
 				}
 			}
 			lobjResult.addresses = larrAddrs.toArray(new Message.MsgAddress[larrAddrs.size()]);
-		}
-		else
+		} else {
 			lobjResult.addresses = new Message.MsgAddress[0];
+		}
 
 		return lobjResult;
 	}
 
 	public Message getForReplyAll(String messageId)
-		throws SessionExpiredException, BigBangException
-	{
+		throws SessionExpiredException, BigBangException {
+		
 		Message lobjResult;
 		ArrayList<Message.MsgAddress> larrAddrs;
 		Message.MsgAddress.Usage lobjUsage;
 		String lstrEmail;
 		int i;
 
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
+		try {
 			lstrEmail = MailConnector.getUserEmail();
-		}
-		catch (Throwable e)
-		{
+		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
-
-		lobjResult = sGetMessage(UUID.fromString(messageId), false);
-		lobjResult.id = null;
-		lobjResult.order = null;
-		lobjResult.direction = ConversationStub.Direction.OUTGOING;
-		lobjResult.date = null;
-		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
-		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
-		lobjResult.emailId = null;
-		lobjResult.folderId = null;
+		
+		lobjResult = getCommonSend(messageId, "Re:");
 		lobjResult.attachments = new Message.Attachment[0];
-		if ( lobjResult.addresses != null )
-		{
+		
+		if ( lobjResult.addresses != null ) {
 			larrAddrs = new ArrayList<Message.MsgAddress>();
 			lobjUsage = Message.MsgAddress.Usage.FROM;
 			for ( i = 0; i < lobjResult.addresses.length; i++ )
@@ -836,9 +838,9 @@ public class ConversationServiceImpl
 				}
 			}
 			lobjResult.addresses = larrAddrs.toArray(new Message.MsgAddress[larrAddrs.size()]);
-		}
-		else
+		} else {
 			lobjResult.addresses = new Message.MsgAddress[0];
+		}
 
 		return lobjResult;
 	}
@@ -846,20 +848,8 @@ public class ConversationServiceImpl
 	public Message getForForward(String messageId)
 		throws SessionExpiredException, BigBangException
 	{
-		Message lobjResult;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		lobjResult = sGetMessage(UUID.fromString(messageId), false);
-		lobjResult.id = null;
-		lobjResult.order = null;
-		lobjResult.direction = ConversationStub.Direction.OUTGOING;
-		lobjResult.date = null;
-		lobjResult.subject = (lobjResult.subject == null ? "Fw:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Fw: " + lobjResult.subject));
-		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
-		lobjResult.emailId = null;
-		lobjResult.folderId = null;
+		Message lobjResult = getCommonSend(messageId, "Fw:");
+		
 		lobjResult.addresses = new Message.MsgAddress[0];
 		if ( lobjResult.attachments == null )
 			lobjResult.attachments = new Message.Attachment[0];
@@ -870,19 +860,10 @@ public class ConversationServiceImpl
 	public Message getForRepeat(String messageId)
 		throws SessionExpiredException, BigBangException
 	{
-		Message lobjResult;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		lobjResult = sGetMessage(UUID.fromString(messageId), false);
-		lobjResult.id = null;
-		lobjResult.order = null;
-		lobjResult.direction = ConversationStub.Direction.OUTGOING;
-		lobjResult.date = null;
+		Message lobjResult = getCommonSend(messageId, null);
+		
 		lobjResult.text = lobjResult.text + "<bigbang:signature:bb><bigbang:original:bb>";
-		lobjResult.emailId = null;
-		lobjResult.folderId = null;
+		
 		if ( lobjResult.attachments == null )
 			lobjResult.addresses = new Message.MsgAddress[0];
 		if ( lobjResult.attachments == null )
