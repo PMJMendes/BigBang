@@ -92,7 +92,7 @@ public class ExchangeServiceImpl
 					larrResults[i].bodyPreview = "_";
 				else
 				{
-					if (content instanceof Multipart && attachmentsMap != null) {
+				if (content instanceof Multipart && attachmentsMap != null && attachmentsMap.size() != 0) {
 						lstrBody = attachmentsMap.get("main").getContent().toString();
 						lstrBody = MailConnector.prepareBodyInline(lstrBody, attachmentsMap);
 					} else {

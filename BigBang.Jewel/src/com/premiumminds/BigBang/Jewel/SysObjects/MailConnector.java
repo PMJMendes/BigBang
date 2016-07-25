@@ -473,7 +473,7 @@ public class MailConnector {
 					}
 				}
 				return result;
-			} else if (part.getContentType().contains("text/plain") || part.getContentType().contains("text/html")) { 
+			} else if (part.getContentType().contains("TEXT/PLAIN") || part.getContentType().contains("TEXT/HTML")) { 
 				result.put("main", part);
 			} else {
 				return new HashMap<String, BodyPart>();
@@ -842,9 +842,9 @@ public class MailConnector {
 		Store store = null; 
 
 		try { 
-			store = session.getStore("imap"); // pop3? smtp? imaps? pop3s? smtps?
+			store = session.getStore("imaps");
 			store.connect(session.getProperty("mail.host"), 
-					getUserName(), getUserPassword());
+					getUserEmail(), getUserPassword());
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -887,37 +887,15 @@ public class MailConnector {
 
 		String mailServer;
 		JewelAuthenticator authenticator;
-		Properties mailProps = System.getProperties(); //new Properties();
-
-		mailServer = (String)Engine.getUserData().get("MailServer");
-		authenticator = new JewelAuthenticator(getUserName(), getUserPassword());
-		mailServer = "192.168.0.8"; //TODO
-
+		Properties mailProps = System.getProperties();
+		
+		mailServer = "imap.gmail.com"; //TODO - mudar para a BD
+		authenticator = new JewelAuthenticator(getUserEmail(), getUserPassword());
+		
+		mailProps.setProperty("mail.store.protocol", "imaps");
 		mailProps.put("mail.host", mailServer);
-		mailProps.put("mail.from", getUserEmail());
-		mailProps.put("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
-		mailProps.put("mail.smtp.auth", "true");
-		mailProps.put("mail.smtp.host", mailServer);
-		mailProps.put("mail.smtp.port", "25");
-		mailProps.put("mail.mime.charset", "utf-8");
-		mailProps.setProperty("mail.store.protocol","imap");
 		
 		return Session.getInstance(mailProps, authenticator);
-	}
-
-	/**
-	 *	This method gets the user name for the user in session
-	 */
-	private static String getUserName() throws BigBangJewelException {
-
-		User user;
-
-		try {
-			user = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
-			return user.getUserName();
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
 	}
 
 	/**
