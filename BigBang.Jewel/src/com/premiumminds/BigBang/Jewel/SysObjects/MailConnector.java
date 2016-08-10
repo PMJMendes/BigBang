@@ -58,6 +58,8 @@ import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
+import com.premiumminds.BigBang.Jewel.Security.OAuthHandler;
+
 /**
  *	Class responsible for implementing the needed functionalities relating 
  *	with mails, namely the interaction between BigBang and Microsoft exchange.
@@ -270,14 +272,12 @@ public class MailConnector {
 	public static Message[] getMails(String folderId, boolean filterUnseen) throws BigBangJewelException {
 
 		Message[] fetchedMails = null;
-		Session session;
 		Store store;
 		Folder folder = null;
-
+		
 		try {
-			session = getSession();
-			session.setDebug(true);
-			store = getStore(session);
+			OAuthHandler.initialize();
+			store = OAuthHandler.getImapStore(getUserEmail()); 
 
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);
