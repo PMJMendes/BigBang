@@ -62,7 +62,7 @@ import com.premiumminds.BigBang.Jewel.Security.OAuthHandler;
 
 /**
  *	Class responsible for implementing the needed functionalities relating 
- *	with mails, namely the interaction between BigBang and Microsoft exchange.
+ *	with mails, namely the interaction between BigBang and the mail server.
  *	It provides the implementation to all the "common" functionalities (send, receive, etc) 
  *	as well as auxiliary methods.
  */
@@ -236,14 +236,13 @@ public class MailConnector {
 	 */
 	private static Folder[] listFolders(String parentFolder) throws BigBangJewelException {
 
-		Session session;
 		Store store;
 		Folder[] listingFolders = null;
 		Folder start;
 
 		try {
-			session = getSession();
-			store = getStore(session);
+			OAuthHandler.initialize();
+			store = OAuthHandler.getImapStore(getUserEmail()); 
 
 			if (parentFolder != null && parentFolder.length() > 0) {
 				start = store.getFolder(parentFolder);
@@ -314,14 +313,14 @@ public class MailConnector {
 
 		Message fetchedMessage = null;
 
-		Session session;
 		Store store;
 		Folder folder = null;
 
-		session = getSession();
-		store = getStore(session);
+		OAuthHandler.initialize();
 
 		try {
+			store = OAuthHandler.getImapStore(getUserEmail()); 
+			
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);
 			} else {
@@ -346,14 +345,14 @@ public class MailConnector {
 
 		Message fetchedMessage = null;
 
-		Session session;
 		Store store;
 		Folder folder = null;
 
-		session = getSession();
-		store = getStore(session);
+		OAuthHandler.initialize();
 
 		try {
+			store = OAuthHandler.getImapStore(getUserEmail()); 
+			
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);
 			} else {
@@ -386,8 +385,6 @@ public class MailConnector {
 				}
 			}
 
-		//	folder.close(false);
-		//	store.close();
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -956,16 +953,22 @@ public class MailConnector {
 	public static Folder[] getFolders(String folderId) throws BigBangJewelException {
 
 		Folder[] result = null;
-		Session session;
 		Store store;
 		
 		try {
-			session = getSession();
-			session.setDebug(true);
-			store = getStore(session);
+			OAuthHandler.initialize();
+			store = OAuthHandler.getImapStore(getUserEmail()); 
 			
 			if (folderId == null) {
 				result = store.getDefaultFolder().list();
+				
+				// In Gmail, when accessing through imap, it returns the [Gmail] folder, which must be filtered 
+				int sysFolderIdx = getSystemFolderIndex(result);
+				if (sysFolderIdx != -1) {
+					ArrayList <Folder> resultsList = new ArrayList<Folder>(Arrays.asList(result));
+					resultsList.remove(sysFolderIdx);
+					result = resultsList.toArray(new Folder[resultsList.size()]);
+				}
 			} else {
 				result = store.getFolder(folderId).list();
 			}
@@ -975,6 +978,26 @@ public class MailConnector {
 		}
 
 		return result;
+	}
+	
+	/**
+	 *	This method returns the index for the [Gmail] folder in a Folder's array.
+	 *	That folder should not be listed to the user.
+	 */
+	public static int getSystemFolderIndex(Folder[] folders) {
+		
+		if (folders==null) {
+			return -1;
+		}
+		
+		for (int i=0; i<folders.length; i++) {
+			if (folders[i].getFullName().equals("[Gmail]") ||
+					folders[i].getFullName().equals("[Google Mail]")) {
+				return i;
+			}
+		}
+		
+		return -1;
 	}
 
 	/**
