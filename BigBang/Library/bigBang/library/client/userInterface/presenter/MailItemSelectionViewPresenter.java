@@ -14,12 +14,12 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.view.ExchangeItemSelectionView.EmailEntry;
-import bigBang.library.interfaces.ExchangeService;
-import bigBang.library.interfaces.ExchangeServiceAsync;
+import bigBang.library.client.userInterface.view.MailItemSelectionView.EmailEntry;
+import bigBang.library.interfaces.MailService;
+import bigBang.library.interfaces.MailServiceAsync;
 import bigBang.library.shared.AttachmentStub;
-import bigBang.library.shared.ExchangeItem;
-import bigBang.library.shared.ExchangeItemStub;
+import bigBang.library.shared.MailItem;
+import bigBang.library.shared.MailItemStub;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
+public class MailItemSelectionViewPresenter implements ViewPresenter,
 HasValue<Message> {
 
 	public enum Action{
@@ -42,16 +42,16 @@ HasValue<Message> {
 	HandlerManager manager;
 	protected Display view;
 	private boolean bound = false;
-	ExchangeServiceAsync service;
+	MailServiceAsync service;
 
 	public static interface Display{
 
 		Widget asWidget();
 
-		void addEmailEntry(ExchangeItemStub email);
-		HasValueSelectables<ExchangeItemStub> getEmailList();
+		void addEmailEntry(MailItemStub email);
+		HasValueSelectables<MailItemStub> getEmailList();
 		void clear();
-		HasValue<ExchangeItem> getForm();
+		HasValue<MailItem> getForm();
 
 		HasValueSelectables<AttachmentStub> getAttachmentList();
 
@@ -70,10 +70,10 @@ HasValue<Message> {
 
 	}
 
-	public ExchangeItemSelectionViewPresenter(Display view){
+	public MailItemSelectionViewPresenter(Display view){
 		setView((UIObject)view);
 		manager = new HandlerManager(this);
-		service = ExchangeService.Util.getInstance();
+		service = MailService.Util.getInstance();
 	}
 	@Override
 	public void setView(UIObject view) {
@@ -93,7 +93,7 @@ HasValue<Message> {
 			public void onSelectionChanged(SelectionChangedEvent event) {
 
 				if(view.getEmailList().getSelected().size() > 0){
-					ExchangeItemStub stub = ((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue();
+					MailItemStub stub = ((EmailEntry) ((HasValueSelectables<MailItemStub>)event.getSource()).getSelected().toArray()[0]).getValue();
 					if ( stub.isFolder )
 					{
 						view.clear();
@@ -101,10 +101,10 @@ HasValue<Message> {
 						view.enableGetAll(false);
 						view.enableRefresh(false);
 						
-						service.getFolder(stub.folderId, new BigBangAsyncCallback<ExchangeItemStub[]>() {
+						service.getFolder(stub.folderId, new BigBangAsyncCallback<MailItemStub[]>() {
 
 							@Override
-							public void onResponseSuccess(ExchangeItemStub[] result) {
+							public void onResponseSuccess(MailItemStub[] result) {
 								for(int i=0; i<result.length; i++){
 									view.addEmailEntry(result[i]);
 								}
@@ -120,10 +120,10 @@ HasValue<Message> {
 					}
 					else
 					{
-						service.getItem(stub.folderId, stub.id, new BigBangAsyncCallback<ExchangeItem>() {
+						service.getItem(stub.folderId, stub.id, new BigBangAsyncCallback<MailItem>() {
 
 							@Override
-							public void onResponseSuccess(ExchangeItem result) {
+							public void onResponseSuccess(MailItem result) {
 								view.getForm().setValue(result);
 								view.setAttachments(result.attachments);
 							}
@@ -138,13 +138,13 @@ HasValue<Message> {
 			}
 		});
 
-		view.registerActionHandler(new ActionInvokedEventHandler<ExchangeItemSelectionViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<MailItemSelectionViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case CANCEL:{
-					ValueChangeEvent.fire(ExchangeItemSelectionViewPresenter.this, null);
+					ValueChangeEvent.fire(MailItemSelectionViewPresenter.this, null);
 					break;
 				}
 				case CONFIRM:{
@@ -157,7 +157,7 @@ HasValue<Message> {
 						}
 					}
 
-					ValueChangeEvent.fire(ExchangeItemSelectionViewPresenter.this, getValue());
+					ValueChangeEvent.fire(MailItemSelectionViewPresenter.this, getValue());
 					break;
 				}
 				case GET_ALL_EMAILS:
@@ -178,10 +178,10 @@ HasValue<Message> {
 		view.enableGetAll(false);
 		view.enableRefresh(false);
 		
-		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItems(new BigBangAsyncCallback<MailItemStub[]>() {
 
 			@Override
-			public void onResponseSuccess(ExchangeItemStub[] result) {
+			public void onResponseSuccess(MailItemStub[] result) {
 
 				for(int i=0; i<result.length; i++){
 					view.addEmailEntry(result[i]);
@@ -205,10 +205,10 @@ HasValue<Message> {
 		view.enableGetAll(false);
 		view.enableRefresh(false);
 		
-		service.getItemsAll(new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItemsAll(new BigBangAsyncCallback<MailItemStub[]>() {
 
 			@Override
-			public void onResponseSuccess(ExchangeItemStub[] result) {
+			public void onResponseSuccess(MailItemStub[] result) {
 
 				for(int i=0; i<result.length; i++){
 					view.addEmailEntry(result[i]);

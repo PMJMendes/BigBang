@@ -1,10 +1,10 @@
 package bigbang.tests.client;
 
-import bigBang.library.shared.ExchangeItemStub;
+import bigBang.library.shared.MailItemStub;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestSpecialGetExchangeItems
+public class TestSpecialGetMailItems
 {
 	public static void DoTest()
 	{
@@ -13,20 +13,20 @@ public class TestSpecialGetExchangeItems
 
 	private static void DoStep1()
 	{
-		AsyncCallback<ExchangeItemStub[]> callback = new AsyncCallback<ExchangeItemStub[]>()
+		AsyncCallback<MailItemStub[]> callback = new AsyncCallback<MailItemStub[]>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(ExchangeItemStub[] result)
+			public void onSuccess(MailItemStub[] result)
 			{
 				DoStep2();
 			}
 		};
 
-		Services.exchangeService.getItems(callback);
+		Services.mailService.getItems(callback);
 	}
 
 	private static void DoStep2()

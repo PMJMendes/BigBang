@@ -3,9 +3,9 @@ package bigBang.library.client.userInterface;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
-public abstract class ExchangeItemSelectionToolbar extends BigBangOperationsToolBar{
+public abstract class MailItemSelectionToolbar extends BigBangOperationsToolBar{
 
-	public ExchangeItemSelectionToolbar(){
+	public MailItemSelectionToolbar(){
 		MenuItem confirm = new MenuItem("Confirmar", new Command() {
 
 			@Override

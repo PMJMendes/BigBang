@@ -7,12 +7,12 @@ import bigBang.definitions.shared.Message.Attachment;
 import bigBang.definitions.shared.Message.Kind;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.FormField;
-import bigBang.library.client.userInterface.presenter.ExchangeItemSelectionViewPresenter;
-import bigBang.library.client.userInterface.view.ExchangeItemSelectionView;
+import bigBang.library.client.userInterface.presenter.MailItemSelectionViewPresenter;
+import bigBang.library.client.userInterface.view.MailItemSelectionView;
 import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.library.interfaces.ExchangeService;
-import bigBang.library.interfaces.ExchangeServiceAsync;
-import bigBang.library.shared.ExchangeItem;
+import bigBang.library.interfaces.MailService;
+import bigBang.library.interfaces.MailServiceAsync;
+import bigBang.library.shared.MailItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -40,14 +40,14 @@ public class ReceiveMessageFormField extends FormField<Message>{
 
 	PopupPanel popup = new PopupPanel();
 	private boolean readOnly;
-	private ExchangeServiceAsync service;
-	private ExchangeItemSelectionViewPresenter presenter;
+	private MailServiceAsync service;
+	private MailItemSelectionViewPresenter presenter;
 	protected boolean firstTime = true;
 
 	public ReceiveMessageFormField(){
 
 		message = new Message();
-		service = ExchangeService.Util.getInstance();
+		service = MailService.Util.getInstance();
 		//POSITIONING
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
@@ -122,8 +122,8 @@ public class ReceiveMessageFormField extends FormField<Message>{
 		wrapper.add(noteOrEmail);
 
 		popup = new PopupPanel();
-		ExchangeItemSelectionView itemView = (ExchangeItemSelectionView) GWT.create(ExchangeItemSelectionView.class);
-		presenter = new ExchangeItemSelectionViewPresenter(itemView);
+		MailItemSelectionView itemView = (MailItemSelectionView) GWT.create(MailItemSelectionView.class);
+		presenter = new MailItemSelectionViewPresenter(itemView);
 		presenter.go(popup);
 
 
@@ -180,10 +180,10 @@ public class ReceiveMessageFormField extends FormField<Message>{
 		noteOrEmailRadioButton.setValue(value.kind != null ? value.kind.toString() : Kind.NOTE.toString());
 		if(value.emailId != null){
 			attachList.setVisible(true);
-			service.getItem(value.folderId, value.emailId, new BigBangAsyncCallback<ExchangeItem>() {
+			service.getItem(value.folderId, value.emailId, new BigBangAsyncCallback<MailItem>() {
 
 				@Override
-				public void onResponseSuccess(ExchangeItem result) {
+				public void onResponseSuccess(MailItem result) {
 
 					from.setValue(result.from);
 					subject.setValue(result.subject);

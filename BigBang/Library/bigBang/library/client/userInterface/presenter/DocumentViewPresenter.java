@@ -23,7 +23,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.ScanItemService;
 import bigBang.library.interfaces.ScanItemServiceAsync;
-import bigBang.library.interfaces.ExchangeService;
+import bigBang.library.interfaces.MailService;
 import bigBang.library.shared.ScanItem;
 
 import com.google.gwt.core.client.GWT;
@@ -125,7 +125,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		}
 
 		if ( documentId == null ) {
-			ExchangeService.Util.getInstance().getAttAsDoc(emailId, folderId, attId, new BigBangAsyncCallback<Document>() {
+			MailService.Util.getInstance().getAttAsDoc(emailId, folderId, attId, new BigBangAsyncCallback<Document>() {
 				@Override
 				public void onResponseSuccess(Document response) {
 					view.getForm().setValue(response);

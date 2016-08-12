@@ -20,9 +20,9 @@ public class Document
 	public String fileName;
 	public String fileStorageId;
 	public ScanHandle source;
-	public String exchangeEmailId; //Attached document helper tag, client-side only.
-	public String exchangeAttId; //Attached document helper tag, client-side only.
-	public String exchangeFolderId; //Attached document helper tag, client-side only.
+	public String emailId; //Attached document helper tag, client-side only.
+	public String emailAttId; //Attached document helper tag, client-side only.
+	public String emailFolderId; //Attached document helper tag, client-side only.
 	public DocInfo[] parameters;
 
 	public Document()
@@ -48,7 +48,7 @@ public class Document
 		this.fileName = orig.fileName;
 		this.fileStorageId = orig.fileStorageId;
 		this.source = orig.source;
-		this.exchangeAttId = orig.exchangeAttId;
+		this.emailAttId = orig.emailAttId;
 
 		if ( orig.parameters == null )
 			this.parameters = null;

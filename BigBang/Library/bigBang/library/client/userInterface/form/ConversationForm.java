@@ -112,9 +112,9 @@ public class ConversationForm extends FormView<Conversation> implements Document
 					params.setParameter("ownerid", doc.ownerId);
 					params.setParameter("ownertypeid",doc.ownerTypeId);
 					params.setParameter("documentid", doc.id);
-					params.setParameter("emailId", doc.exchangeEmailId);
-					params.setParameter("folderId", doc.exchangeFolderId);
-					params.setParameter("attId", doc.exchangeAttId);
+					params.setParameter("emailId", doc.emailId);
+					params.setParameter("folderId", doc.emailFolderId);
+					params.setParameter("attId", doc.emailAttId);
 					popup = new PopupPanel();
 
 					documentViewPresenter.setParameters(params);
@@ -204,9 +204,9 @@ public class ConversationForm extends FormView<Conversation> implements Document
 					doc.name = att.name;
 					doc.docTypeLabel = "";
 					doc.creationDate = att.date;
-					doc.exchangeAttId = att.attachmentId;
-					doc.exchangeEmailId = att.emailId;
-					doc.exchangeFolderId = folderId;
+					doc.emailAttId = att.attachmentId;
+					doc.emailId = att.emailId;
+					doc.emailFolderId = folderId;
 					addAttachment(new DocumentsList.Entry(doc));
 				}
 			}

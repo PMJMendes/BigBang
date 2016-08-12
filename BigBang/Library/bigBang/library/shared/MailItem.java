@@ -1,7 +1,7 @@
 package bigBang.library.shared;
 
-public class ExchangeItem
-	extends ExchangeItemStub
+public class MailItem
+	extends MailItemStub
 {
 	private static final long serialVersionUID = 1L;
 

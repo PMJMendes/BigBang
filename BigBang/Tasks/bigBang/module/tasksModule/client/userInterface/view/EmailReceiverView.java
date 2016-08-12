@@ -13,14 +13,14 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.ReceiveMessageToolbar;
-import bigBang.library.client.userInterface.form.ExchangeItemForm;
-import bigBang.library.client.userInterface.view.ExchangeItemSelectionView;
-import bigBang.library.client.userInterface.view.ExchangeItemSelectionView.AttachmentEntry;
-import bigBang.library.client.userInterface.view.ExchangeItemSelectionView.EmailEntry;
+import bigBang.library.client.userInterface.form.MailItemForm;
+import bigBang.library.client.userInterface.view.MailItemSelectionView;
+import bigBang.library.client.userInterface.view.MailItemSelectionView.AttachmentEntry;
+import bigBang.library.client.userInterface.view.MailItemSelectionView.EmailEntry;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.shared.AttachmentStub;
-import bigBang.library.shared.ExchangeItem;
-import bigBang.library.shared.ExchangeItemStub;
+import bigBang.library.shared.MailItem;
+import bigBang.library.shared.MailItemStub;
 import bigBang.module.tasksModule.client.userInterface.form.EmailReceiverForm;
 import bigBang.module.tasksModule.client.userInterface.presenter.EmailReceiverViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.presenter.EmailReceiverViewPresenter.Action;
@@ -33,9 +33,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class EmailReceiverView extends View implements EmailReceiverViewPresenter.Display{
 
 
-	FilterableList<ExchangeItemStub> emails;
+	FilterableList<MailItemStub> emails;
 	FilterableList<AttachmentStub> attachments;
-	ExchangeItemForm centerForm;
+	MailItemForm centerForm;
 	EmailReceiverForm form;
 	ReceiveMessageToolbar toolbar;
 	
@@ -70,7 +70,7 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 				actionHandler.onActionInvoked(new ActionInvokedEvent<EmailReceiverViewPresenter.Action>(EmailReceiverViewPresenter.Action.REFRESH));
 			}
 		});
-		emails = new FilterableList<ExchangeItemStub>();
+		emails = new FilterableList<MailItemStub>();
 		emails.setHeaderWidget(header);
 		emails.showFilterField(false);
 		leftWrapper.add(emails);
@@ -109,7 +109,7 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 		insideWrapper.addEast(rightWrapper, 600);
 
 		//CENTER
-		centerForm = new ExchangeItemForm();
+		centerForm = new MailItemForm();
 		centerForm.setSize("100%", "100%");
 		centerForm.setReadOnly(true);
 		centerForm.setTextBoxSize("98%", "600px");
@@ -142,13 +142,13 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 
 
 	@Override
-	public HasSelectables<ValueSelectable<ExchangeItemStub>> getEmailList() {
+	public HasSelectables<ValueSelectable<MailItemStub>> getEmailList() {
 		return emails;
 	}
 
 
 	@Override
-	public HasEditableValue<ExchangeItem> getForm() {
+	public HasEditableValue<MailItem> getForm() {
 		return centerForm;
 	}
 
@@ -159,7 +159,7 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 		
 		if (attachments!=null) {
 			for(AttachmentStub b : attachments){
-				this.attachments.add(new ExchangeItemSelectionView.AttachmentEntry(b));
+				this.attachments.add(new MailItemSelectionView.AttachmentEntry(b));
 			}
 		}
 	}
@@ -177,7 +177,7 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 	}
 	
 	@Override
-	public void addEmailEntry(ExchangeItemStub email){
+	public void addEmailEntry(MailItemStub email){
 		EmailEntry entry = new EmailEntry(email);
 		emails.add(entry);
 	}
@@ -233,7 +233,7 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 
 	@Override
 	public void removeSelected() {
-		for(ValueSelectable<ExchangeItemStub>  email: emails.getSelected()){
+		for(ValueSelectable<MailItemStub>  email: emails.getSelected()){
 			emails.remove(email);
 			break;
 		}

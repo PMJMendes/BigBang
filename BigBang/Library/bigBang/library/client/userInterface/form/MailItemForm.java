@@ -3,9 +3,9 @@ package bigBang.library.client.userInterface.form;
 import bigBang.library.client.userInterface.RichTextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.library.shared.ExchangeItem;
+import bigBang.library.shared.MailItem;
 
-public class ExchangeItemForm extends FormView<ExchangeItem>{
+public class MailItemForm extends FormView<MailItem>{
 
 	protected TextBoxFormField from;
 	protected TextBoxFormField timestamp;
@@ -13,7 +13,7 @@ public class ExchangeItemForm extends FormView<ExchangeItem>{
 	protected RichTextAreaFormField body;
 	
 	
-	public ExchangeItemForm() {
+	public MailItemForm() {
 		
 		from = new TextBoxFormField("De");
 		subject = new TextBoxFormField("Assunto");
@@ -31,8 +31,8 @@ public class ExchangeItemForm extends FormView<ExchangeItem>{
 	}
 	
 	@Override
-	public ExchangeItem getInfo() {
-		ExchangeItem newItem = value;
+	public MailItem getInfo() {
+		MailItem newItem = value;
 		
 		newItem.body = body.getValue();
 		newItem.subject = subject.getValue();
@@ -43,7 +43,7 @@ public class ExchangeItemForm extends FormView<ExchangeItem>{
 	}
 
 	@Override
-	public void setInfo(ExchangeItem info) {
+	public void setInfo(MailItem info) {
 
 		value = info;
 		from.setValue(info.from);

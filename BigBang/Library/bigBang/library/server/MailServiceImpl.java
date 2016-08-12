@@ -18,27 +18,27 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
-import bigBang.library.interfaces.ExchangeService;
+import bigBang.library.interfaces.MailService;
 import bigBang.library.shared.AttachmentStub;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.ExchangeItem;
-import bigBang.library.shared.ExchangeItemStub;
+import bigBang.library.shared.MailItem;
+import bigBang.library.shared.MailItemStub;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 
-public class ExchangeServiceImpl
+public class MailServiceImpl
 	extends EngineImplementor
-	implements ExchangeService
+	implements MailService
 {
 	private static final long serialVersionUID = 1L;
 
-	private static ExchangeItemStub[] sToClient(Message[] parrSource)
+	private static MailItemStub[] sToClient(Message[] parrSource)
 			throws BigBangException {
 
 		String lstrEmail;
-		ExchangeItemStub[] larrResults;
+		MailItemStub[] larrResults;
 		int i;
 		String lstrFrom;
 		String lstrBody;
@@ -52,11 +52,11 @@ public class ExchangeServiceImpl
 			lstrEmail = null;
 		}
 
-		larrResults = new ExchangeItemStub[parrSource.length];
+		larrResults = new MailItemStub[parrSource.length];
 
 		for ( i = 0; i < larrResults.length; i++ )
 		{
-			larrResults[i] = new ExchangeItemStub();
+			larrResults[i] = new MailItemStub();
 
 			try {
 
@@ -111,20 +111,20 @@ public class ExchangeServiceImpl
 		return larrResults;
 	}
 	
-	private static ExchangeItemStub[] sToClient(javax.mail.Folder[] folders)
+	private static MailItemStub[] sToClient(javax.mail.Folder[] folders)
 			throws BigBangException { 
 		
-		ExchangeItemStub[] larrResults = null;
+		MailItemStub[] larrResults = null;
 		
 		if (folders == null) {
 			return null;
 		}
 		
-		larrResults = new ExchangeItemStub[folders.length];
+		larrResults = new MailItemStub[folders.length];
 		
 		for (int i = 0; i < larrResults.length; i++ ) {
 			
-			larrResults[i] = new ExchangeItemStub();
+			larrResults[i] = new MailItemStub();
 			
 			try {
 				
@@ -147,7 +147,7 @@ public class ExchangeServiceImpl
 		return larrResults;
 	}
 
-	public ExchangeItemStub[] getItems()
+	public MailItemStub[] getItems()
 		throws SessionExpiredException, BigBangException
 	{
 		Message[] larrItems;
@@ -165,14 +165,14 @@ public class ExchangeServiceImpl
 		return sToClient(larrItems);
 	}
 
-	public ExchangeItemStub[] getItemsAll()
+	public MailItemStub[] getItemsAll()
 		throws SessionExpiredException, BigBangException
 	{
 		
 		return getItemsAll(null);
 	}
 	
-	private ExchangeItemStub[] getItemsAll(String folderId)
+	private MailItemStub[] getItemsAll(String folderId)
 			throws SessionExpiredException, BigBangException
 		{
 			Message[] items;
@@ -189,23 +189,23 @@ public class ExchangeServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			ExchangeItemStub[] mailItems = items==null ? null : sToClient(items);
-			ExchangeItemStub[] folderItems = folders==null ? null : sToClient(folders);
+			MailItemStub[] mailItems = items==null ? null : sToClient(items);
+			MailItemStub[] folderItems = folders==null ? null : sToClient(folders);
 			
 			return ArrayUtils.addAll(folderItems, mailItems);
 		}
 	
 	@Override
-	public ExchangeItemStub[] getFolder(String id)
+	public MailItemStub[] getFolder(String id)
 			throws SessionExpiredException, BigBangException {
 		return getItemsAll(id);
 	}
 
-	public ExchangeItem getItem(String folderId, String id)
+	public MailItem getItem(String folderId, String id)
 		throws SessionExpiredException, BigBangException
 	{
 		MimeMessage lobjItem;
-		ExchangeItem lobjResult;
+		MailItem lobjResult;
 		String lstrFrom;
 		ArrayList<AttachmentStub> larrStubs;
 		AttachmentStub lobjAttStub;
@@ -219,7 +219,7 @@ public class ExchangeServiceImpl
 		{
 			lobjItem = (MimeMessage) MailConnector.getMessage(id, folderId);
 
-			lobjResult = new ExchangeItem();
+			lobjResult = new MailItem();
 			lobjResult.folderId = lobjItem.getFolder().getFullName();
 			lobjResult.id = lobjItem.getMessageID();
 			lobjResult.isFolder = false;
@@ -255,7 +255,7 @@ public class ExchangeServiceImpl
 			}
 			catch (Throwable e)
 			{
-				lobjResult.bodyPreview = "(Erro interno do servidor de Exchange.)";
+				lobjResult.bodyPreview = "(Erro interno do servidor de Email.)";
 			}
 			
 			if (attachmentsMap != null) {
