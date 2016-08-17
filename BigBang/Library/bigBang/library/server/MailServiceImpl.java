@@ -111,34 +111,48 @@ public class MailServiceImpl
 		return larrResults;
 	}
 	
-	private static MailItemStub[] sToClient(javax.mail.Folder[] folders)
+	private static MailItemStub[] sToClient(MailItemStub current, javax.mail.Folder[] folders)
 			throws BigBangException { 
 		
 		MailItemStub[] larrResults = null;
 		
-		if (folders == null) {
-			return null;
+		int arrSize = (folders==null && current==null) ? 0 : 
+			folders == null ? 1 : 
+			(current == null || (current.isParentFolder && current.parentFolderId==null)) ? folders.length : folders.length + 1; 
+		
+		int start = 0;
+		
+		larrResults = new MailItemStub[arrSize];
+		
+		// sets the parent folder, used to allow a back
+		if (current != null && (!current.isParentFolder || current.parentFolderId!=null)) {
+			larrResults[0] = current; 
+			larrResults[0].isParentFolder = true;
+			larrResults[0].id = "Voltar";
+			larrResults[0].subject = "Voltar";
+			larrResults[0].parentFolderId = current.parentFolderId;
+			start++;
 		}
 		
-		larrResults = new MailItemStub[folders.length];
-		
-		for (int i = 0; i < larrResults.length; i++ ) {
+		for (int u=0; start < larrResults.length; start++, u++) {
 			
-			larrResults[i] = new MailItemStub();
+			larrResults[start] = new MailItemStub();
 			
 			try {
 				
 				// TODO ver folder.getURLName() e folder.getFullName() e mudar nos outros sitios onde usas a 
 				// folder (o fetch) para ver se esta a ir buscar bem por nome
-				larrResults[i].id = folders[i].getName(); 
-				larrResults[i].isFolder = true;
-				larrResults[i].isFromMe = false;
-				larrResults[i].subject = folders[i].getName();
-				larrResults[i].from = null;
-				larrResults[i].timestamp = null;
-				larrResults[i].attachmentCount = -1;
-				larrResults[i].bodyPreview = null;
-				larrResults[i].folderId = folders[i].getFullName();
+				larrResults[start].id = folders[u].getName(); 
+				larrResults[start].isFolder = true;
+				larrResults[start].isFromMe = false;
+				larrResults[start].subject = folders[u].getName();
+				larrResults[start].from = null;
+				larrResults[start].timestamp = null;
+				larrResults[start].attachmentCount = -1;
+				larrResults[start].bodyPreview = null;
+				larrResults[start].folderId = folders[u].getFullName();
+				larrResults[start].isParentFolder = false; 
+				larrResults[start].parentFolderId = current == null ? null : current.folderId;
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
@@ -172,11 +186,14 @@ public class MailServiceImpl
 		return getItemsAll(null);
 	}
 	
-	private MailItemStub[] getItemsAll(String folderId)
+	private MailItemStub[] getItemsAll(MailItemStub current)
 			throws SessionExpiredException, BigBangException
 		{
 			Message[] items;
 			Folder[] folders;
+			
+			String folderId = current == null ? null : 
+				current.isParentFolder ? current.parentFolderId : current.folderId;
 
 			if ( Engine.getCurrentUser() == null )
 				throw new SessionExpiredException();
@@ -190,15 +207,14 @@ public class MailServiceImpl
 			}
 
 			MailItemStub[] mailItems = items==null ? null : sToClient(items);
-			MailItemStub[] folderItems = folders==null ? null : sToClient(folders);
+			MailItemStub[] folderItems = folders==null ? null : sToClient(current, folders);
 			
 			return ArrayUtils.addAll(folderItems, mailItems);
 		}
 	
 	@Override
-	public MailItemStub[] getFolder(String id)
-			throws SessionExpiredException, BigBangException {
-		return getItemsAll(id);
+	public MailItemStub[] getFolder(MailItemStub current) throws SessionExpiredException, BigBangException {
+		return getItemsAll(current);
 	}
 
 	public MailItem getItem(String folderId, String id)

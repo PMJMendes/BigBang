@@ -234,7 +234,7 @@ public class MailConnector {
 	/**
 	 *	This method lists all the folders inside a given folder, or inside the default folder
 	 */
-	private static Folder[] listFolders(String parentFolder) throws BigBangJewelException {
+	private static Folder[] listFolders(String folderID) throws BigBangJewelException {
 
 		Store store;
 		Folder[] listingFolders = null;
@@ -244,8 +244,8 @@ public class MailConnector {
 			OAuthHandler.initialize();
 			store = OAuthHandler.getImapStore(getUserEmail()); 
 
-			if (parentFolder != null && parentFolder.length() > 0) {
-				start = store.getFolder(parentFolder);
+			if (folderID != null && folderID.length() > 0) {
+				start = store.getFolder(folderID);
 			} else {
 				start = store.getDefaultFolder();
 			}
@@ -829,24 +829,6 @@ public class MailConnector {
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-	}
-
-	/**
-	 *	This method returns a Store initialized with the smtp protocol, with a connection already set
-	 */
-	private static Store getStore(Session session) throws BigBangJewelException {
-
-		Store store = null; 
-
-		try { 
-			store = session.getStore("imaps");
-			store.connect(session.getProperty("mail.host"), 
-					getUserEmail(), getUserPassword());
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return store;
 	}
 
 	/**

@@ -29,7 +29,7 @@ public interface MailService
 
 	MailItemStub[] getItems() throws SessionExpiredException, BigBangException;
 	MailItemStub[] getItemsAll() throws SessionExpiredException, BigBangException;
-	MailItemStub[] getFolder(String id) throws SessionExpiredException, BigBangException;
+	MailItemStub[] getFolder(MailItemStub current) throws SessionExpiredException, BigBangException;
 	MailItem getItem(String folderId, String id) throws SessionExpiredException, BigBangException;
 	Document getAttAsDoc(String emailId, String folderId, String attachmentId) throws SessionExpiredException, BigBangException;
 }

@@ -11,7 +11,7 @@ public interface MailServiceAsync
 {
 	void getItems(AsyncCallback<MailItemStub[]> callback);
 	void getItemsAll(AsyncCallback<MailItemStub[]> callback);
-	void getFolder(String id, AsyncCallback<MailItemStub[]> callback);
+	void getFolder(MailItemStub current, AsyncCallback<MailItemStub[]> callback);
 	void getItem(String folderId, String id, AsyncCallback<MailItem> callback);
 	void getAttAsDoc(String emailId, String folderId, String attachmentId, AsyncCallback<Document> callback);
 }

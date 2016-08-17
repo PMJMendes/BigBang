@@ -101,7 +101,7 @@ HasValue<Message> {
 						view.enableGetAll(false);
 						view.enableRefresh(false);
 						
-						service.getFolder(stub.folderId, new BigBangAsyncCallback<MailItemStub[]>() {
+						service.getFolder(stub, new BigBangAsyncCallback<MailItemStub[]>() {
 
 							@Override
 							public void onResponseSuccess(MailItemStub[] result) {

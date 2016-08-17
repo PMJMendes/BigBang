@@ -16,4 +16,6 @@ public class MailItemStub
 	public int attachmentCount;
 	public String bodyPreview;
 	public String folderId;
+	public String parentFolderId; 
+	public boolean isParentFolder; 
 }
