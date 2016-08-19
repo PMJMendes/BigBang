@@ -201,7 +201,15 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 				HorizontalPanel top = new HorizontalPanel();
 				top.add(from);
 				top.add(timestamp);
-				if(item.attachmentCount > 0){
+				if (item.isFolder) {
+					Resources resources = GWT.create(Resources.class);
+					if (item.isParentFolder) {
+						hasAttachments = new Image(resources.mail_back());
+					} else {
+						hasAttachments = new Image(resources.mail_folder());
+					}
+					top.add(hasAttachments);
+				} else if(item.attachmentCount > 0){
 					Resources resources = GWT.create(Resources.class);
 					hasAttachments = new Image(resources.icon_attachment());
 					top.add(hasAttachments);
