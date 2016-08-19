@@ -114,23 +114,33 @@ public class MailServiceImpl
 	private static MailItemStub[] sToClient(MailItemStub current, javax.mail.Folder[] folders)
 			throws BigBangException { 
 		
-		MailItemStub[] larrResults = null;
+		MailItemStub[] larrResults = null; 
 		
 		int arrSize = (folders==null && current==null) ? 0 : 
 			folders == null ? 1 : 
-			(current == null || (current.isParentFolder && current.parentFolderId==null)) ? folders.length : folders.length + 1; 
+			(current == null || (current.isParentFolder && (current.parentFolderId==null || current.parentFolderId.length()==0))) ? folders.length : folders.length + 1; 
 		
 		int start = 0;
 		
 		larrResults = new MailItemStub[arrSize];
 		
 		// sets the parent folder, used to allow a back
-		if (current != null && (!current.isParentFolder || current.parentFolderId!=null)) {
-			larrResults[0] = current; 
+		if (current != null && (!current.isParentFolder || (current.parentFolderId!=null && current.parentFolderId.length() > 0))) {
+			larrResults[0] = new MailItemStub();
+			
 			larrResults[0].isParentFolder = true;
 			larrResults[0].id = "Voltar";
+			larrResults[0].isFolder = true;
+			larrResults[0].isFromMe = false;
 			larrResults[0].subject = "Voltar";
-			larrResults[0].parentFolderId = current.parentFolderId;
+			larrResults[0].from = null;
+			larrResults[0].timestamp = null;
+			larrResults[0].attachmentCount = -1;
+			larrResults[0].bodyPreview = null;
+			larrResults[0].folderId = null;
+			larrResults[0].isParentFolder = true; 
+			larrResults[0].parentFolderId = current.isParentFolder ? getBackFolder(current.parentFolderId) : current.parentFolderId;
+			
 			start++;
 		}
 		
@@ -152,13 +162,35 @@ public class MailServiceImpl
 				larrResults[start].bodyPreview = null;
 				larrResults[start].folderId = folders[u].getFullName();
 				larrResults[start].isParentFolder = false; 
-				larrResults[start].parentFolderId = current == null ? null : current.folderId;
+				larrResults[start].parentFolderId = 
+						(current == null || (current.isParentFolder && current.parentFolderId==null)) ? null : 
+						(current.isParentFolder && current.parentFolderId!=null) ? current.parentFolderId : current.folderId;
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
 		}
 		
 		return larrResults;
+	}
+
+	private static String getBackFolder(String parentFolderId) {
+		
+		String[] parts = parentFolderId.split("/");
+		
+		String result = "";
+		
+		for (int i=0;i<parts.length - 1;i++) {
+			if (result.length() > 0) {
+				result = result + "/";
+			}
+			result = result + parts[i];
+		}
+		
+		if (result.length() == 0) {
+			return null;
+		}
+		
+		return result;
 	}
 
 	public MailItemStub[] getItems()
@@ -207,7 +239,7 @@ public class MailServiceImpl
 			}
 
 			MailItemStub[] mailItems = items==null ? null : sToClient(items);
-			MailItemStub[] folderItems = folders==null ? null : sToClient(current, folders);
+			MailItemStub[] folderItems = (folders==null && current == null) ? null : sToClient(current, folders);
 			
 			return ArrayUtils.addAll(folderItems, mailItems);
 		}

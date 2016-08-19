@@ -941,11 +941,18 @@ public class MailConnector {
 			OAuthHandler.initialize();
 			store = OAuthHandler.getImapStore(getUserEmail()); 
 			
-			if (folderId == null) {
+			if (folderId == null || folderId.length()==0) {
 				result = store.getDefaultFolder().list();
 				
 				// In Gmail, when accessing through imap, it returns the [Gmail] folder, which must be filtered 
-				int sysFolderIdx = getSystemFolderIndex(result);
+				int sysFolderIdx = getSystemFolderIndex(result, true);
+				if (sysFolderIdx != -1) {
+					ArrayList <Folder> resultsList = new ArrayList<Folder>(Arrays.asList(result));
+					resultsList.remove(sysFolderIdx);
+					result = resultsList.toArray(new Folder[resultsList.size()]);
+				}
+				// Also removes "Inbox" folder...
+				sysFolderIdx = getSystemFolderIndex(result, false);
 				if (sysFolderIdx != -1) {
 					ArrayList <Folder> resultsList = new ArrayList<Folder>(Arrays.asList(result));
 					resultsList.remove(sysFolderIdx);
@@ -966,16 +973,22 @@ public class MailConnector {
 	 *	This method returns the index for the [Gmail] folder in a Folder's array.
 	 *	That folder should not be listed to the user.
 	 */
-	public static int getSystemFolderIndex(Folder[] folders) {
+	public static int getSystemFolderIndex(Folder[] folders, boolean isCheckingGmail) {
 		
 		if (folders==null) {
 			return -1;
 		}
 		
 		for (int i=0; i<folders.length; i++) {
-			if (folders[i].getFullName().equals("[Gmail]") ||
+			if (isCheckingGmail) {
+				if (folders[i].getFullName().equals("[Gmail]") ||
 					folders[i].getFullName().equals("[Google Mail]")) {
-				return i;
+					return i;
+				}
+			} else {
+				if (folders[i].getFullName().equals("INBOX")) {
+					return i;
+				}
 			}
 		}
 		
