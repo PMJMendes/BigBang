@@ -268,7 +268,7 @@ public class FidM
 	}
 
 	private void InitCompanies() throws BigBangJewelException {
-		String larrCompNames[] = new String[] { "MCO", "MCOAM" };
+		String larrCompNames[] = new String[] { "FID", "FIDAM" };
 
 		marrCompanies = new UUID[larrCompNames.length];
 
