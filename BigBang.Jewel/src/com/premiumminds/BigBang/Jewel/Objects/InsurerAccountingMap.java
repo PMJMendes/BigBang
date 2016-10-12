@@ -73,6 +73,8 @@ public class InsurerAccountingMap
 		}
 	}
 
+    private Company mrefCompany;
+
     private transient DocOps mobjDoc;
     private transient BigDecimal mdblTotal;
     private transient Timestamp mdtToday;
@@ -81,7 +83,19 @@ public class InsurerAccountingMap
 		throws JewelEngineException
 	{
 		super.Initialize();
+
+		try {
+			mrefCompany = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)getAt(I.OWNER));
+		} catch (Throwable e) {
+			throw new JewelEngineException(e.getMessage(), e);
+		}
+
 		mobjDoc = null;
+	}
+
+	public Company getCompany()
+	{
+		return mrefCompany;
 	}
 
 	public UUID getParentType()

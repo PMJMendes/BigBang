@@ -156,6 +156,11 @@ public class Company
 		return "72113" + lstrCode + "1";
 	}
 
+	public Boolean getTaxRetention()
+	{
+		return (Boolean)getAt(I.TAXRETENTION);
+	}
+
     public Contact[] GetCurrentContacts()
     	throws BigBangJewelException
     {
