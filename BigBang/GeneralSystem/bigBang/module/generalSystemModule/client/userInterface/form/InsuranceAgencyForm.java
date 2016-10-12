@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.userInterface.AddressFormField;
+import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
@@ -17,6 +18,7 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 	protected TextBoxFormField taxNumber;
 	protected TextBoxFormField NIB;
 	protected TextBoxFormField acctCode;
+	protected CheckBoxFormField taxRetention;
 	protected AddressFormField address;
 	
 	protected FormViewSection ownMediatorCodeSection;
@@ -34,6 +36,7 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		acctCode = new TextBoxFormField("Terminação (72113 XXX 1)");
 		acctCode.setFieldWidth("100px");
 		NIB = new TextBoxFormField("NIB");
+		taxRetention = new CheckBoxFormField("Faz retenção na fonte");
 		address = new AddressFormField();
 
 		addSection("Informação Geral");
@@ -44,7 +47,8 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		addFormField(ISPNumber);
 		addFormField(acctCode);
 		addFormField(NIB);
-		
+		addFormField(taxRetention);
+
 		ownMediatorCodeSection = new FormViewSection("Códigos de Mediador");
 		addSection(ownMediatorCodeSection);
 		
@@ -64,8 +68,8 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		info.ISPNumber = ISPNumber.getValue();
 		info.taxNumber = taxNumber.getValue();
 		info.accountingCode = acctCode.getValue();
-		info.address = address.getValue();
 		info.NIB = NIB.getValue();
+		info.taxRetention = taxRetention.getValue();
 		info.address = address.getValue();
 		info.ownMediatorCodes = new String[this.ownMediatorCodeList.size()];
 		for(int i = 0; i < info.ownMediatorCodes.length; i++)
@@ -84,10 +88,10 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		ISPNumber.setValue(info.ISPNumber);
 		taxNumber.setValue(info.taxNumber);
 		acctCode.setValue(info.accountingCode);
-		address.setValue(info.address);
 		NIB.setValue(info.NIB);
+		taxRetention.setValue(info.taxRetention);
 		address.setValue(info.address);
-		
+
 		this.ownMediatorCodeSection.clear();
 		this.ownMediatorCodeList.clear();
 		

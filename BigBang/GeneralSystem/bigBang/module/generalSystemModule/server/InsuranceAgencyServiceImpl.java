@@ -20,6 +20,7 @@ import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyService;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -77,17 +78,19 @@ public class InsuranceAgencyServiceImpl
 	        	lobjZipCode = Engine.GetWorkInstance(lidZipCodes, (UUID)lobjAux.getAt(8));
 	        	lobjTmp = new InsuranceAgency();
 	        	lobjTmp.id = lobjAux.getKey().toString();
-	        	lobjTmp.name = (String)lobjAux.getAt(0);
-	        	lobjTmp.acronym = (String)lobjAux.getAt(1);
-	        	lobjTmp.ISPNumber = (String)lobjAux.getAt(2);
+	        	lobjTmp.name = (String)lobjAux.getAt(Company.I.NAME);
+	        	lobjTmp.acronym = (String)lobjAux.getAt(Company.I.ACRONYM);
+	        	lobjTmp.ISPNumber = (String)lobjAux.getAt(Company.I.ISPNUMBER);
 	        	lobjTmp.ownMediatorCodes = new String[1];
-	        	lobjTmp.ownMediatorCodes[0] = (String)lobjAux.getAt(3);
-	        	lobjTmp.taxNumber = (String)lobjAux.getAt(4);
-	        	lobjTmp.NIB = (String)lobjAux.getAt(5);
-	        	lobjTmp.accountingCode = (String)lobjAux.getAt(10);
+	        	lobjTmp.ownMediatorCodes[0] = (String)lobjAux.getAt(Company.I.MEDIATORCODE);
+	        	lobjTmp.taxNumber = (String)lobjAux.getAt(Company.I.FISCALNUMBER);
+	        	lobjTmp.NIB = (String)lobjAux.getAt(Company.I.BANKINGID);
+	        	lobjTmp.accountingCode = (String)lobjAux.getAt(Company.I.ACCTCODE);
+	        	lobjTmp.taxRetention = (Boolean)lobjAux.getAt(Company.I.TAXRETENTION);
 	        	lobjTmp.address = new Address();
-	        	lobjTmp.address.street1 = (String)lobjAux.getAt(6);
-	        	lobjTmp.address.street2 = (String)lobjAux.getAt(7);
+	        	lobjTmp.address.street1 = (String)lobjAux.getAt(Company.I.ADDRESS1);
+	        	lobjTmp.address.street2 = (String)lobjAux.getAt(Company.I.ADDRESS2);
+	        	lobjTmp.address.street3 = (String)lobjAux.getAt(Company.I.ADDRESS2);
 	        	lobjTmp.address.zipCode = new ZipCode();
 	        	lobjTmp.address.zipCode.code = (String)lobjZipCode.getAt(0);
 	        	lobjTmp.address.zipCode.city = (String)lobjZipCode.getAt(1);
@@ -150,10 +153,12 @@ public class InsuranceAgencyServiceImpl
 				lopMIC.marrCreate[0].mstrMedCode = null;
 			lopMIC.marrCreate[0].mstrFiscalNumber = agency.taxNumber;
 			lopMIC.marrCreate[0].mstrBankID = agency.NIB;
+			lopMIC.marrCreate[0].mbTaxRetention = agency.taxRetention;
 			if ( agency.address != null )
 			{
 				lopMIC.marrCreate[0].mstrAddress1 = agency.address.street1;
 				lopMIC.marrCreate[0].mstrAddress2 = agency.address.street2;
+				lopMIC.marrCreate[0].mstrAddress3 = agency.address.street3;
 				if ( agency.address.zipCode != null )
 					lopMIC.marrCreate[0].midZipCode = ZipCodeBridge.GetZipCode(agency.address.zipCode.code,
 							agency.address.zipCode.city, agency.address.zipCode.county, agency.address.zipCode.district,
@@ -165,6 +170,7 @@ public class InsuranceAgencyServiceImpl
 			{
 				lopMIC.marrCreate[0].mstrAddress1 = null;
 				lopMIC.marrCreate[0].mstrAddress2 = null;
+				lopMIC.marrCreate[0].mstrAddress3 = null;
 				lopMIC.marrCreate[0].midZipCode = null;
 			}
 			if ( (agency.contacts != null) && (agency.contacts.length > 0) )
@@ -226,10 +232,12 @@ public class InsuranceAgencyServiceImpl
 				lopMIC.marrModify[0].mstrMedCode = null;
 			lopMIC.marrModify[0].mstrFiscalNumber = agency.taxNumber;
 			lopMIC.marrModify[0].mstrBankID = agency.NIB;
+			lopMIC.marrModify[0].mbTaxRetention = agency.taxRetention;
 			if ( agency.address != null )
 			{
 				lopMIC.marrModify[0].mstrAddress1 = agency.address.street1;
 				lopMIC.marrModify[0].mstrAddress2 = agency.address.street2;
+				lopMIC.marrModify[0].mstrAddress3 = agency.address.street3;
 				if ( agency.address.zipCode != null )
 					lopMIC.marrModify[0].midZipCode = ZipCodeBridge.GetZipCode(agency.address.zipCode.code,
 							agency.address.zipCode.city, agency.address.zipCode.county, agency.address.zipCode.district,
@@ -241,6 +249,7 @@ public class InsuranceAgencyServiceImpl
 			{
 				lopMIC.marrModify[0].mstrAddress1 = null;
 				lopMIC.marrModify[0].mstrAddress2 = null;
+				lopMIC.marrModify[0].mstrAddress3 = null;
 				lopMIC.marrModify[0].midZipCode = null;
 			}
 			lopMIC.marrCreate = null;
@@ -275,11 +284,14 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.marrDelete[0].mstrName = null;
 			lopMIC.marrDelete[0].mstrAcronym = null;
 			lopMIC.marrDelete[0].mstrISPNumber = null;
+			lopMIC.marrDelete[0].mstrAcctCode = null;
 			lopMIC.marrDelete[0].mstrMedCode = null;
 			lopMIC.marrDelete[0].mstrFiscalNumber = null;
 			lopMIC.marrDelete[0].mstrBankID = null;
+			lopMIC.marrDelete[0].mbTaxRetention = null;
 			lopMIC.marrDelete[0].mstrAddress1 = null;
 			lopMIC.marrDelete[0].mstrAddress2 = null;
+			lopMIC.marrDelete[0].mstrAddress3 = null;
 			lopMIC.marrDelete[0].midZipCode = null;
 			lopMIC.marrCreate = null;
 			lopMIC.marrModify = null;

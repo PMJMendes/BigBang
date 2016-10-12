@@ -16,6 +16,7 @@ public class InsuranceAgency
 	public String NIB;
 	public Address address;
 	public String accountingCode;
+	public boolean taxRetention;
 	public Contact[] contacts;
 	public Document[] documents;
 
@@ -36,6 +37,7 @@ public class InsuranceAgency
 		this.NIB = original.NIB;
 		this.address = original.address;
 		this.accountingCode = original.accountingCode;
+		this.taxRetention = original.taxRetention;
 		this.contacts = original.contacts;
 		this.documents = original.documents;
 	}
