@@ -175,10 +175,17 @@ public class InsurerAccountingReport
 		mdblPayables = ldblTotalPremiums.subtract(ldblDirectPremiums);
 		mdblTaxableComms = mdblTotalComms.subtract(ldblLifeComms);
 
-		ldblTaxCoeff = Utils.getCommissionsTax();
-		ldblTaxCoeff = ldblTaxCoeff.add(new BigDecimal(100)).setScale(10);
-		ldblTaxCoeff = Utils.getCommissionsTax().setScale(10).divide(ldblTaxCoeff, RoundingMode.HALF_UP);
-		mdblTax = mdblTaxableComms.multiply(ldblTaxCoeff).setScale(2, RoundingMode.HALF_UP);
+		if (lobjMap.getCompany().getTaxRetention())
+		{
+			ldblTaxCoeff = Utils.getCommissionsTax();
+			ldblTaxCoeff = ldblTaxCoeff.add(new BigDecimal(100)).setScale(10);
+			ldblTaxCoeff = Utils.getCommissionsTax().setScale(10).divide(ldblTaxCoeff, RoundingMode.HALF_UP);
+			mdblTax = mdblTaxableComms.multiply(ldblTaxCoeff).setScale(2, RoundingMode.HALF_UP);
+		}
+		else
+		{
+			mdblTax = BigDecimal.ZERO;
+		}
 
 		mdblPreTax = mdblPayables.subtract(mdblTotalComms);
 		if ( lbSubtract )

@@ -30,6 +30,8 @@ public class Company
 		public static int ZIPCODE      =  8;
 		public static int MIGRATIONID  =  9;
 		public static int ACCTCODE     = 10;
+		public static int ADDRESS3     = 11;
+		public static int TAXRETENTION = 12;
 	}
 
     public static Company GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -152,6 +154,11 @@ public class Company
 			return null;
 
 		return "72113" + lstrCode + "1";
+	}
+
+	public Boolean getTaxRetention()
+	{
+		return (Boolean)getAt(I.TAXRETENTION);
 	}
 
     public Contact[] GetCurrentContacts()
