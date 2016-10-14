@@ -31,6 +31,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
 public abstract class CreateConversationBase
 	extends UndoableOperation
@@ -308,6 +309,10 @@ public abstract class CreateConversationBase
 							lobjAttachment.SaveToDb(pdb);
 						}
 					}
+
+					// Calls the method responsble for updating the message to google storage.
+					StorageConnector.uploadMailMessage(mailMsg, mobjData.marrMessages[0].mstrEmailID);
+					
 				}
 				else
 				{
