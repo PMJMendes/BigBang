@@ -66,6 +66,9 @@ public class ConversationServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Gets an attachment from the database, associated with a message exchange, and promoted to document
+	 */
 	private static Message.Attachment sGetDBAttachment(MessageAttachment pobjAttachment, Timestamp pdtMsg)
 		throws BigBangException
 	{
@@ -97,9 +100,8 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
-	// TODO: No novo "paradigma", os attachments que não foram promovidos não estão registados na BD. 
-	// Para já este método fica por aqui, porque eventualmente vou criar uma forma de ir buscar attachments 
-	// não promovidos
+	// TODO: Actualmente, pela forma como está na storage, vai buscar a mensagem com todos os attachments, pelo que este método não é utilizado.
+	// Se se justificar, deverá ser adaptado do Exchange para a storage. Eventualmente poderá ser apagado
 	@SuppressWarnings("unused")
 	private static Message.Attachment sGetXchAttachment(String pstrEmailId, String pstrFolderId, MessageAttachment pobjAttachment, Timestamp pdtMsg)
 		throws BigBangException
@@ -132,6 +134,9 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
+	/**
+	 * Gets a Message from the database
+	 */
 	private static Message sGetDBMessage(com.premiumminds.BigBang.Jewel.Objects.Message pobjMsg, boolean pbFilterOwners)
 		throws BigBangException
 	{
@@ -181,9 +186,6 @@ public class ConversationServiceImpl
 			for ( i = 0; i < larrAtts.length; i++ ) {
 				lobjResult.attachments[i] = sGetAttachment(lobjResult.emailId, larrAtts[i].getKey(),
 						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
-
-				//lobjResult.attachments[i] = sGetAttachment(larrAtts[i].getAt(MessageAttachment.I.ATTACHMENTID).toString(), larrAtts[i].getKey(),
-				//		(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
 			}
 		}
 
@@ -191,27 +193,23 @@ public class ConversationServiceImpl
 	}
 
 	/**
-	 * Gets a Message with the info existent at a stored Email
+	 * Gets a Message from Google storage
 	 */
 	private static Message sGetStgMessage(com.premiumminds.BigBang.Jewel.Objects.Message bdMessage, boolean filterOwners)
 		throws BigBangException {
 		
-		// Obtém o Id do objecto Mensagem
 		String storageId = bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID).toString();
 		
 		MessageData mailData = null;
 		
-		// Chama o storage para obter o eml AS DATA
 		try {
 			mailData = StorageConnector.getAsData(storageId);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
 		
-		// Cria o objecto a retornar, de acordo com a data
 		Message result = new Message();
 		
-		// Preenche o objecto
 		result.id = bdMessage.getKey().toString();
 
 		result.conversationId = ((UUID)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.OWNER)).toString();
@@ -220,7 +218,7 @@ public class ConversationServiceImpl
 		result.kind = ( ((Boolean)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.ISEMAIL)) ?
 				Message.Kind.EMAIL : Message.Kind.NOTE );
 		result.emailId = (String)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID);
-		result.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailData.mdtDate);
+		result.date = ((Timestamp)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE)).toString().substring(0, 10);
 		result.subject = mailData.mstrSubject;
 		result.text = mailData.mstrBody;
 		
@@ -232,11 +230,12 @@ public class ConversationServiceImpl
 			result.attachments = fillMessageAttachments(filterOwners, mailData);
 		}
 		
-		// Devolve o objecto
 		return result;
-				
 	}
 
+	/**
+	 * Fills an array with message attachments
+	 */
 	private static Attachment[] fillMessageAttachments(boolean filterOwners,
 			MessageData mailData) throws BigBangException {
 		
@@ -266,6 +265,9 @@ public class ConversationServiceImpl
 		return attachments;
 	}
 
+	/**
+	 * Fills an array withh message addresses
+	 */
 	protected static MsgAddress[] fillMessageAddresses(boolean filterOwners,
 			MessageData mailData) throws BigBangException {
 		MsgAddress[] addresses = new MsgAddress[mailData.marrAddresses.length];
@@ -303,6 +305,9 @@ public class ConversationServiceImpl
 		return addresses;
 	}
 
+	/**
+	 * Returns conversation directio (IN/OUT)
+	 */
 	public static ConversationStub.Direction sGetDirection(UUID pid)
 	{
 		if (Constants.MsgDir_Incoming.equals(pid) )
@@ -314,6 +319,9 @@ public class ConversationServiceImpl
 		return null;
 	}
 
+	/**
+	 * Gets address usage according to its GUID
+	 */
 	public static Message.MsgAddress.Usage sGetUsage(UUID pid)
 	{
 		if ( Constants.UsageID_From.equals(pid) )
@@ -334,6 +342,9 @@ public class ConversationServiceImpl
 		return null;
 	}
 
+	/**
+	 * Gets an address from the DB
+	 */
 	public static Message.MsgAddress sGetAddress(UUID pid, boolean pbFilterOwners)
 		throws BigBangException
 	{
@@ -378,6 +389,9 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
+	/**
+	 * Gets an attachment from the DB
+	 */
 	public static Message.Attachment sGetAttachment(String pstrEmailId, UUID pid, Timestamp pdtMsg)
 		throws BigBangException
 	{
@@ -405,6 +419,9 @@ public class ConversationServiceImpl
 		return lobjEmpty;
 	}
 
+	/**
+	 * Gets an message from the DB or storage
+	 */
 	public static Message sGetMessage(UUID pid, boolean pbFilterOwners)
 		throws BigBangException
 	{
@@ -434,6 +451,9 @@ public class ConversationServiceImpl
 		return sGetDBMessage(lobjMsg, pbFilterOwners);
 	}
 
+	/**
+	 * Gets aconversatio from the DB
+	 */
 	public static Conversation sGetConversation(UUID pid)
 		throws BigBangException
 	{

@@ -45,7 +45,6 @@ public class StorageConnector {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		// Limpa o file que se enviou para o storage
 		if (tempEmlFile != null) {
 			tempEmlFile.delete();
 		}
@@ -64,8 +63,6 @@ public class StorageConnector {
 
 	/**
 	 * Gets a message stored in Google Storage
-	 * 
-	 * @throws BigBangJewelException
 	 */
 	private static File getMessage(String id) throws BigBangJewelException {
 
