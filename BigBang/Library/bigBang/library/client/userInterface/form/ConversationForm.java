@@ -176,7 +176,7 @@ public class ConversationForm extends FormView<Conversation> implements Document
 		
 		attachments.clear();
 		
-		if(info.length > 0){
+		if(info != null && info.length > 0){
 
 			for(Message.Attachment att : info){
 				if ( att.ownerId != null ){

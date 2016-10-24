@@ -3,6 +3,7 @@ package bigBang.library.server;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -21,11 +22,13 @@ import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.Message.Attachment;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.definitions.shared.Message.MsgAddress;
 import bigBang.library.interfaces.ConversationService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.ConversationSearchParameter;
@@ -36,6 +39,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
+import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
@@ -54,6 +58,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReopenProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.SendMessage;
 import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
 public class ConversationServiceImpl
 	extends SearchServiceBase
@@ -185,69 +190,117 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
-	// TODO: No novo "paradigma", os attachments que não foram promovidos não estão registados na BD. 
-	// Para já este método fica por aqui, porque eventualmente vou criar uma forma de ir buscar attachments 
-	// não promovidos
-	@SuppressWarnings("unused")
-	private static Message sGetXchMessage(com.premiumminds.BigBang.Jewel.Objects.Message pobjMsg, boolean pbFilterOwners)
-		throws BigBangException
-	{
-		MessageData lobjItem;
-		MessageAddress[] larrAddrs;
-		MessageAttachment[] larrAtts;
-		Message lobjResult;
-		int i;
-
-		lobjResult = new Message();
-		lobjResult.id = pobjMsg.getKey().toString();
-
-		lobjResult.conversationId = ((UUID)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.OWNER)).toString();
-		lobjResult.order = (Integer)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.NUMBER);
-		lobjResult.direction = sGetDirection((UUID)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DIRECTION));
-		lobjResult.kind = ( ((Boolean)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.ISEMAIL)) ?
-				Message.Kind.EMAIL : Message.Kind.NOTE );
-		lobjResult.emailId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID);
-		lobjResult.folderId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.FOLDERID);
-
-		try
-		{
-			lobjItem = MailConnector.getAsData((String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID), 
-					(String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.FOLDERID));
-
-			lobjResult.date = lobjItem.mdtDate.toString();
-			lobjResult.subject = lobjItem.mstrSubject;
-			lobjResult.text = lobjItem.mstrBody;
-
-			larrAddrs = pobjMsg.GetAddresses();
-			larrAtts = pobjMsg.GetAttachments();
-		}
-		catch (Throwable e)
-		{
+	/**
+	 * Gets a Message with the info existent at a stored Email
+	 */
+	private static Message sGetStgMessage(com.premiumminds.BigBang.Jewel.Objects.Message bdMessage, boolean filterOwners)
+		throws BigBangException {
+		
+		// Obtém o Id do objecto Mensagem
+		String storageId = bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID).toString();
+		
+		MessageData mailData = null;
+		
+		// Chama o storage para obter o eml AS DATA
+		try {
+			mailData = StorageConnector.getAsData(storageId);
+		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
+		
+		// Cria o objecto a retornar, de acordo com a data
+		Message result = new Message();
+		
+		// Preenche o objecto
+		result.id = bdMessage.getKey().toString();
 
-		if ( larrAddrs == null )
-			lobjResult.addresses = null;
-		else
-		{
-			lobjResult.addresses = new Message.MsgAddress[larrAddrs.length];
-			for ( i = 0; i < larrAddrs.length; i++ )
-				lobjResult.addresses[i] = sGetAddress(larrAddrs[i].getKey(), pbFilterOwners);
+		result.conversationId = ((UUID)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.OWNER)).toString();
+		result.order = (Integer)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.NUMBER);
+		result.direction = sGetDirection((UUID)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DIRECTION));
+		result.kind = ( ((Boolean)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.ISEMAIL)) ?
+				Message.Kind.EMAIL : Message.Kind.NOTE );
+		result.emailId = (String)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID);
+		result.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailData.mdtDate);
+		result.subject = mailData.mstrSubject;
+		result.text = mailData.mstrBody;
+		
+		if (mailData.marrAddresses != null) {
+			result.addresses = fillMessageAddresses(filterOwners, mailData);
 		}
-
-		if ( larrAtts == null )
-			lobjResult.attachments = null;
-		else
-		{
-			lobjResult.attachments = new Message.Attachment[larrAtts.length];
-			for ( i = 0; i < larrAtts.length; i++ )
-				lobjResult.attachments[i] = sGetAttachment(lobjResult.emailId, larrAtts[i].getKey(),
-						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
-			//	lobjResult.attachments[i] = sGetAttachment(larrAtts[i].getAt(MessageAttachment.I.ATTACHMENTID).toString(), larrAtts[i].getKey(),
-			//			(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
+		
+		if (mailData.marrAttachments != null) {
+			result.attachments = fillMessageAttachments(filterOwners, mailData);
 		}
+		
+		// Devolve o objecto
+		return result;
+				
+	}
 
-		return lobjResult;
+	private static Attachment[] fillMessageAttachments(boolean filterOwners,
+			MessageData mailData) throws BigBangException {
+		
+		Attachment[] attachments = new Attachment[mailData.marrAttachments.length];
+		
+		for (int i=0; i<mailData.marrAttachments.length; i++) {
+			MessageAttachmentData tmp = mailData.marrAttachments[i];
+			MessageAttachment messageAttachment = null;
+			Message.Attachment attachment = null;
+			
+			try {
+				messageAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), tmp.mid);
+			} catch (Throwable e) {
+				throw new BigBangException(e.getMessage(), e);
+			}
+			
+			attachment = new Message.Attachment();
+			attachment.id = messageAttachment.getKey().toString();
+			attachment.attachmentId = (String)messageAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
+			attachment.emailId = mailData.mstrEmailID;
+			attachment.name = "(Erro)";
+			attachment.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailData.mdtDate);
+			
+			attachments[i] = attachment;
+		}
+		
+		return attachments;
+	}
+
+	protected static MsgAddress[] fillMessageAddresses(boolean filterOwners,
+			MessageData mailData) throws BigBangException {
+		MsgAddress[] addresses = new MsgAddress[mailData.marrAddresses.length];
+		for (int i=0; i<mailData.marrAddresses.length; i++) {
+			MessageAddressData tmp = mailData.marrAddresses[i];
+			Message.MsgAddress addr = new Message.MsgAddress();
+			Contact contact = null;
+			ContactInfo contactInfo = null;
+			MessageAddress msgAddr = null;
+			try {
+				msgAddr = MessageAddress.GetInstance(Engine.getCurrentNameSpace(), tmp.mid);
+				contactInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
+					(UUID)msgAddr.getAt(MessageAddress.I.CONTACTINFO));
+				
+				if ( (contactInfo != null) && (!filterOwners || Constants.UsageID_To.equals(tmp.midUsage))) {
+					contact = ( contactInfo == null ? null : contactInfo.getOwner() );
+				}
+				
+			} catch (Throwable e) {
+				throw new BigBangException(e.getMessage(), e);
+			}
+			
+			addr.id = tmp.mid==null ? null : tmp.mid.toString();
+			addr.address = tmp.mstrAddress==null ? null : tmp.mstrAddress;
+			addr.usage = tmp.midUsage==null ? null : sGetUsage(tmp.midUsage);
+			addr.userId = tmp.midUser==null ? null : tmp.midUser.toString(); 
+			addr.contactInfoId = contactInfo.getKey()==null ? null : contactInfo.getKey().toString();
+			addr.display = (String)msgAddr.getAt(MessageAddress.I.DISPLAYNAME);
+			if (contact != null) {
+				addr.ownerTypeId = contact.getOwnerType()==null ? null : contact.getOwnerType().toString();
+				addr.ownerId = contact.getOwnerID()==null ? null : contact.getOwnerID().toString();
+			}
+			addresses[i] = addr;
+		}
+		return addresses;
 	}
 
 	public static ConversationStub.Direction sGetDirection(UUID pid)
@@ -366,16 +419,17 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-	/*	if ( lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
+		if ( lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
 		{
 			try
 			{
-				return sGetXchMessage(lobjMsg, pbFilterOwners);
+				return sGetStgMessage(lobjMsg, pbFilterOwners);
 			}
 			catch (BigBangException e)
 			{
+				System.out.println("terá dado coiso?");
 			}
-		} */
+		}
 
 		return sGetDBMessage(lobjMsg, pbFilterOwners);
 	}

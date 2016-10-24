@@ -169,64 +169,7 @@ public class MessageBridge
 
 		return lobjResult;
 	}
-
-//	public static IncomingMessageData incomingToServer(IncomingMessage lobMessage, UUID pidDocOwnerType)
-//		throws BigBangException
-//	{
-//		IncomingMessageData lobjResult;
-//		int i;
-//		UUID lidFile;
-//
-//		lobjResult = new IncomingMessageData();
-//
-//		lobjResult.mstrSubject = null;
-//		lobjResult.mstrBody = lobMessage.notes;
-//		lobjResult.mstrEmailID = lobMessage.emailId;
-//
-//		if ( lobMessage.upgrades == null )
-//			lobjResult.mobjDocOps = null;
-//		else
-//		{
-//			lobjResult.mobjDocOps = new DocOps();
-//			lobjResult.mobjDocOps.marrModify = null;
-//			lobjResult.mobjDocOps.marrDelete = null;
-//			lobjResult.mobjDocOps.marrCreate = new DocumentData[lobMessage.upgrades.length];
-//			for ( i = 0; i < lobMessage.upgrades.length; i++ )
-//			{
-//				lobjResult.mobjDocOps.marrCreate[i] = new DocumentData();
-//				lobjResult.mobjDocOps.marrCreate[i].mstrName = lobMessage.upgrades[i].name;
-//				lobjResult.mobjDocOps.marrCreate[i].midOwnerType = pidDocOwnerType;
-//				lobjResult.mobjDocOps.marrCreate[i].midOwnerId = null;
-//				lobjResult.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(lobMessage.upgrades[i].docTypeId);
-//				lobjResult.mobjDocOps.marrCreate[i].mstrText = null;
-//
-//				if ( lobMessage.upgrades[i].storageId != null )
-//				{
-//					lidFile = lobMessage.upgrades[i].storageId == null ? null : UUID.fromString(lobMessage.upgrades[i].storageId);
-//					lobjResult.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
-//					FileServiceImpl.GetFileXferStorage().remove(lidFile);
-//				}
-//				else if ( lobMessage.upgrades[i].attachmentId != null )
-//				{
-//					try
-//					{
-//						lobjResult.mobjDocOps.marrCreate[i].mobjFile = MailConnector.DoGetAttachment(lobMessage.emailId,
-//								lobMessage.upgrades[i].attachmentId).GetVarData();
-//					}
-//					catch (Throwable e)
-//					{
-//						throw new BigBangException(e.getMessage(), e);
-//					}
-//				}
-//
-//				lobjResult.mobjDocOps.marrCreate[i].marrInfo = null;
-//				lobjResult.mobjDocOps.marrCreate[i].mobjPrevValues = null;
-//			}
-//		}
-//
-//		return lobjResult;
-//	}
-
+	
 	public static MessageData clientToServer(Message pobjMessage, UUID pidParentType, UUID pidParentID, UUID pidDefaultDir)
 		throws BigBangException
 	{

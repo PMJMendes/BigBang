@@ -470,7 +470,8 @@ public class MailConnector {
 					}
 				}
 				return result;
-			} else if (part.getContentType().contains("TEXT/PLAIN") || part.getContentType().contains("TEXT/HTML")) { 
+			} else if (part.getContentType().contains("TEXT/PLAIN") || part.getContentType().contains("TEXT/HTML")
+					|| part.getContentType().contains("text/plain") || part.getContentType().contains("text/html")) { 
 				result.put("main", part);
 			} else {
 				return new HashMap<String, BodyPart>();
@@ -609,94 +610,104 @@ public class MailConnector {
 	 */
 	public static MessageData getAsData(String pstrUniqueID, String folderId) throws BigBangJewelException {
 
-		MessageData result = new MessageData();
-
-		String from;
-		Address[] to, cc, bcc, replyTo;
-		int addLength;
-		int i;
-
 		// Gets the message with a given ID
 		Message fetchedMessage = getMessage(pstrUniqueID, folderId);
 
 		if (fetchedMessage != null) {
 			
-			InternetAddress fromAddress = null;
+			return messageToData(fetchedMessage);
+		}
 
-			// Builds the MessageData with the existing Message's fields
-			try {
-				result.mstrSubject = fetchedMessage.getSubject();
-				result.midOwner = null;
-				result.mlngNumber = -1;
-				result.mbIsEmail = true;
-				result.mdtDate = new Timestamp(fetchedMessage.getSentDate().getTime());
-				
-				Object content = fetchedMessage.getContent();
-				
-				if (content instanceof Multipart) {
-					
-					Map<String, BodyPart> attachmentsMap = getAttachmentsMap(fetchedMessage);
-					
-					result.mstrBody = attachmentsMap.get("main").getContent().toString();
-					result.mstrBody = prepareBodyInline(result.mstrBody, attachmentsMap);
-				} else {
-					result.mstrBody = content.toString();
-					result.mstrBody = prepareSimpleBody(result.mstrBody);
-				}
-				
-				fromAddress = (InternetAddress) (fetchedMessage.getFrom() == null ? null : fetchedMessage.getFrom()[0]);
-				from = fromAddress == null ? "" : fromAddress.getAddress();
-				
-				to = fetchedMessage.getRecipients(RecipientType.TO);
-				cc = fetchedMessage.getRecipients(RecipientType.CC);
-				bcc = fetchedMessage.getRecipients(RecipientType.BCC);
-				replyTo = fetchedMessage.getReplyTo();
-			} catch (Throwable e) {
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
+		return null;
+	}
 
-			result.midDirection = ( getUserEmail().equalsIgnoreCase(from) ?
-					Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming );
+	/**
+	 *	Auxiliary method which converts a javax Message to MessageData
+	 */
+	protected static MessageData messageToData(Message fetchedMessage)
+			throws BigBangJewelException {
+		
+		MessageData result = new MessageData();
+		
+		InternetAddress fromAddress = null;
+		String from;
+		Address[] to, cc, bcc, replyTo;
+		int addLength;
+		int i;
 
-			addLength = ( from == null ? 0 : 1) + (to == null ? 0 : to.length) + (cc == null ? 0 : cc.length) +
-					(bcc == null ? 0 : bcc.length) + (replyTo == null ? 0 : replyTo.length);
-
-			if ( addLength < 1) {
-				result.marrAddresses = null;
+		// Builds the MessageData with the existing Message's fields
+		try {
+			result.mstrSubject = fetchedMessage.getSubject();
+			result.midOwner = null;
+			result.mlngNumber = -1;
+			result.mbIsEmail = true;
+			result.mdtDate = new Timestamp(fetchedMessage.getSentDate().getTime());
+			
+			Object content = fetchedMessage.getContent();
+			
+			if (content instanceof Multipart) {
+				
+				Map<String, BodyPart> attachmentsMap = getAttachmentsMap(fetchedMessage);
+				
+				result.mstrBody = attachmentsMap.get("main").getContent().toString();
+				result.mstrBody = prepareBodyInline(result.mstrBody, attachmentsMap);
 			} else {
-				result.marrAddresses = new MessageAddressData[addLength];
-				i = 0;
-				if (from != null) {
-					result.marrAddresses[i] = getAddress(null, fromAddress, Constants.UsageID_From);
+				result.mstrBody = content.toString();
+				result.mstrBody = prepareSimpleBody(result.mstrBody);
+			}
+			
+			fromAddress = (InternetAddress) (fetchedMessage.getFrom() == null ? null : fetchedMessage.getFrom()[0]);
+			from = fromAddress == null ? "" : fromAddress.getAddress();
+			
+			to = fetchedMessage.getRecipients(RecipientType.TO);
+			cc = fetchedMessage.getRecipients(RecipientType.CC);
+			bcc = fetchedMessage.getRecipients(RecipientType.BCC);
+			replyTo = fetchedMessage.getReplyTo();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		result.midDirection = ( getUserEmail().equalsIgnoreCase(from) ?
+				Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming );
+
+		addLength = ( from == null ? 0 : 1) + (to == null ? 0 : to.length) + (cc == null ? 0 : cc.length) +
+				(bcc == null ? 0 : bcc.length) + (replyTo == null ? 0 : replyTo.length);
+
+		if ( addLength < 1) {
+			result.marrAddresses = null;
+		} else {
+			result.marrAddresses = new MessageAddressData[addLength];
+			i = 0;
+			if (from != null) {
+				result.marrAddresses[i] = getAddress(null, fromAddress, Constants.UsageID_From);
+				i++;
+			}
+			if (to != null) {
+				for (Address addr : to) {
+					result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_To);
 					i++;
 				}
-				if (to != null) {
-					for (Address addr : to) {
-						result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_To);
-						i++;
-					}
+			}
+			if (cc != null) {
+				for (Address addr : cc) {
+					result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_CC);
+					i++;
 				}
-				if (cc != null) {
-					for (Address addr : cc) {
-						result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_CC);
-						i++;
-					}
+			}
+			if (bcc != null) {
+				for (Address addr : bcc) {
+					result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_BCC);
+					i++;
 				}
-				if (bcc != null) {
-					for (Address addr : bcc) {
-						result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_BCC);
-						i++;
-					}
-				}
-				if (replyTo != null) {
-					for (Address addr : replyTo) {
-						result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_ReplyTo);
-						i++;
-					}
+			}
+			if (replyTo != null) {
+				for (Address addr : replyTo) {
+					result.marrAddresses[i] = getAddress(null, addr, Constants.UsageID_ReplyTo);
+					i++;
 				}
 			}
 		}
-
+		
 		return result;
 	}
 
