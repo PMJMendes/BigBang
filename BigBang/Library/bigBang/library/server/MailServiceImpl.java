@@ -312,7 +312,6 @@ public class MailServiceImpl
 				attachmentsMap.remove("main");
 				
 				for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
-				    System.out.println(entry.getKey() + "/" + entry.getValue());
 				    lobjAttStub = new AttachmentStub();
 				    lobjAttStub.id = entry.getKey();
 					lobjAttStub.fileName = entry.getValue().getFileName();

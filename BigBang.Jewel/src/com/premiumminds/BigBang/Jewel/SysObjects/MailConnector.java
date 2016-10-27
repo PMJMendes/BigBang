@@ -52,6 +52,7 @@ import Jewel.Engine.SysObjects.FileXfer;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
+import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
@@ -641,7 +642,6 @@ public class MailConnector {
 			result.midOwner = null;
 			result.mlngNumber = -1;
 			result.mbIsEmail = true;
-			result.mdtDate = new Timestamp(fetchedMessage.getSentDate().getTime());
 			
 			Object content = fetchedMessage.getContent();
 			
@@ -651,6 +651,23 @@ public class MailConnector {
 				
 				result.mstrBody = attachmentsMap.get("main").getContent().toString();
 				result.mstrBody = prepareBodyInline(result.mstrBody, attachmentsMap);
+				
+				if (attachmentsMap != null) {
+					// Removes the mail's text from the attachments
+					attachmentsMap.remove("main");
+					MessageAttachmentData[] atts = new MessageAttachmentData[attachmentsMap.size()];
+					int u=0;
+					for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
+						MessageAttachmentData tmp = new MessageAttachmentData();
+						tmp.mid = null;
+						tmp.midOwner = null;
+						tmp.midDocument = null;
+						tmp.mstrAttId = entry.getKey();
+						atts[u] = tmp;
+						u++;
+					}
+					result.marrAttachments = atts;
+				}
 			} else {
 				result.mstrBody = content.toString();
 				result.mstrBody = prepareSimpleBody(result.mstrBody);
@@ -663,12 +680,21 @@ public class MailConnector {
 			cc = fetchedMessage.getRecipients(RecipientType.CC);
 			bcc = fetchedMessage.getRecipients(RecipientType.BCC);
 			replyTo = fetchedMessage.getReplyTo();
+			
+			result.midDirection = ( getUserEmail().equalsIgnoreCase(from) ?
+					Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming );
+			
+			if (result.midDirection.equals(Constants.MsgDir_Outgoing) && fetchedMessage.getSentDate() != null) {
+				result.mdtDate = new Timestamp(fetchedMessage.getSentDate().getTime());
+			} else if (result.midDirection.equals(Constants.MsgDir_Incoming) && fetchedMessage.getReceivedDate() != null) {
+				result.mdtDate = new Timestamp(fetchedMessage.getReceivedDate().getTime());
+			} else {
+				result.mdtDate = null;
+			}
+			
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-
-		result.midDirection = ( getUserEmail().equalsIgnoreCase(from) ?
-				Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming );
 
 		addLength = ( from == null ? 0 : 1) + (to == null ? 0 : to.length) + (cc == null ? 0 : cc.length) +
 				(bcc == null ? 0 : bcc.length) + (replyTo == null ? 0 : replyTo.length);

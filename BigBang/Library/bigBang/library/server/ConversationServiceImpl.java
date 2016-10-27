@@ -65,11 +65,13 @@ public class ConversationServiceImpl
 	implements ConversationService
 {
 	private static final long serialVersionUID = 1L;
+	
+	
 
 	/**
 	 * Gets an attachment from the database, associated with a message exchange, and promoted to document
 	 */
-	private static Message.Attachment sGetDBAttachment(MessageAttachment pobjAttachment, Timestamp pdtMsg)
+	private static Message.Attachment sGetDBDocument(MessageAttachment pobjAttachment, Timestamp pdtMsg)
 		throws BigBangException
 	{
 		Document lobjDoc;
@@ -100,10 +102,10 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
-	// TODO: Actualmente, pela forma como está na storage, vai buscar a mensagem com todos os attachments, pelo que este método não é utilizado.
-	// Se se justificar, deverá ser adaptado do Exchange para a storage. Eventualmente poderá ser apagado
-	@SuppressWarnings("unused")
-	private static Message.Attachment sGetXchAttachment(String pstrEmailId, String pstrFolderId, MessageAttachment pobjAttachment, Timestamp pdtMsg)
+	/**
+	 * This method
+	 */
+	private static Attachment[] sGetStgAttachments(String storageMailId, Timestamp msgDate) 
 		throws BigBangException
 	{
 		FileXfer lobjDoc;
@@ -183,8 +185,21 @@ public class ConversationServiceImpl
 		else
 		{
 			lobjResult.attachments = new Message.Attachment[larrAtts.length];
+			
+			boolean getFromStg = false;
+			
 			for ( i = 0; i < larrAtts.length; i++ ) {
-				lobjResult.attachments[i] = sGetAttachment(lobjResult.emailId, larrAtts[i].getKey(),
+				Attachment tmpAtt = sGetDBAttachment(lobjResult.emailId, larrAtts[i].getKey(),
+						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
+				if (tmpAtt == null) {
+					getFromStg = true;
+					break;
+				}
+				lobjResult.attachments[i] = tmpAtt;
+			}
+			
+			if (getFromStg) {
+				lobjResult.attachments = sGetStgAttachments(pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID), 
 						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
 			}
 		}
@@ -192,6 +207,7 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
+	
 	/**
 	 * Gets a Message from Google storage
 	 */
@@ -253,10 +269,10 @@ public class ConversationServiceImpl
 			}
 			
 			attachment = new Message.Attachment();
-			attachment.id = messageAttachment.getKey().toString();
+			attachment.id = null;
 			attachment.attachmentId = (String)messageAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
 			attachment.emailId = mailData.mstrEmailID;
-			attachment.name = "(Erro)";
+			attachment.name = (String)messageAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
 			attachment.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailData.mdtDate);
 			
 			attachments[i] = attachment;
@@ -390,14 +406,15 @@ public class ConversationServiceImpl
 	}
 
 	/**
-	 * Gets an attachment from the DB
+	 * Gets an attachment from the DB, returning null if the attachment does not correspond to a document in the DB
 	 */
-	public static Message.Attachment sGetAttachment(String pstrEmailId, UUID pid, Timestamp pdtMsg)
+	public static Message.Attachment sGetDBAttachment(String pstrEmailId, UUID pid, Timestamp pdtMsg)
 		throws BigBangException
 	{
 		MessageAttachment lobjAttachment;
-		Message.Attachment lobjEmpty;
+		Attachment dbAttachment = null;
 
+		// Gets the attachment's entity
 		try
 		{
 			lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), pid);
@@ -407,16 +424,17 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		if ( lobjAttachment.getAt(MessageAttachment.I.DOCUMENT) != null )
-			return sGetDBAttachment(lobjAttachment, pdtMsg);
-
-		lobjEmpty = new Message.Attachment();
-		lobjEmpty.id = lobjAttachment.getKey().toString();
-		lobjEmpty.attachmentId = (String)lobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
-		lobjEmpty.emailId = pstrEmailId;
-		lobjEmpty.name = "(Erro)";
-		lobjEmpty.date = pdtMsg.toString().substring(0, 10);
-		return lobjEmpty;
+		// If the attachment corresponds to an existent document, tries to get that document
+		if ( lobjAttachment.getAt(MessageAttachment.I.DOCUMENT) != null ) {
+			dbAttachment = sGetDBDocument(lobjAttachment, pdtMsg);
+		}
+		
+		if (dbAttachment == null) {
+			// If unable to get the attachment from the DB, or if the attachment does not correspond to a document returns null
+			return null;
+		} else {
+			return dbAttachment;
+		}
 	}
 
 	/**
@@ -435,8 +453,12 @@ public class ConversationServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+		
+		// Tries to get the message from the DB
+		Message result = sGetDBMessage(lobjMsg, pbFilterOwners);
 
-		if ( lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
+		// If unable to get from DB, tries to get from storage...
+		if ( result == null && lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
 		{
 			try
 			{
@@ -444,11 +466,10 @@ public class ConversationServiceImpl
 			}
 			catch (BigBangException e)
 			{
-				System.out.println("terá dado coiso?");
 			}
 		}
 
-		return sGetDBMessage(lobjMsg, pbFilterOwners);
+		return result;
 	}
 
 	/**

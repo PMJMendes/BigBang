@@ -266,7 +266,8 @@ public class MessageBridge
 			}
 		}
 
-		Attachment[] promotedAttachments = filterPromotedAttachments(pobjMessage.attachments);
+		//Attachment[] promotedAttachments = filterPromotedAttachments(pobjMessage.attachments);
+		Attachment[] promotedAttachments = pobjMessage.attachments;
 		
 		if ( !lobjResult.mbIsEmail || pobjMessage.attachments == null || pobjMessage.attachments.length==0 )
 		{
@@ -279,8 +280,12 @@ public class MessageBridge
 			{
 				lobjResult.marrAttachments[i] = new MessageAttachmentData();
 				lobjResult.marrAttachments[i].mstrAttId = pobjMessage.attachments[i].attachmentId;
-				lobjResult.marrAttachments[i].midDocument = ( pobjMessage.attachments[i].docId == null ? null :
+				if (promotedAttachments[i].promote) {
+					lobjResult.marrAttachments[i].midDocument = ( pobjMessage.attachments[i].docId == null ? null :
 						UUID.fromString(pobjMessage.attachments[i].docId) );
+				} else {
+					lobjResult.marrAttachments[i].midDocument = null;
+				}
 			}
 		}
 
