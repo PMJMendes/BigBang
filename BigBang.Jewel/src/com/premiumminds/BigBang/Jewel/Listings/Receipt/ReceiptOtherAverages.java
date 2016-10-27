@@ -112,12 +112,15 @@ public class ReceiptOtherAverages
 
 		if ( parrParams[1] != null )
 			lstrSQL.append(" AND [Timestamp] < DATEADD(d, 1, '").append(parrParams[1]).append("')");
-
+		
 		lstrSQL.append(")");
 
 		lidAgent = Utils.getCurrentAgent();
 		if ( lidAgent != null )
 			filterByAgent(lstrSQL, lidAgent);
+		
+		if ( parrParams[2].equals("1") )
+			lstrSQL.append(" AND [Is Internal] = '").append(parrParams[2]).append("'");
 
 		larrAux = new ArrayList<Receipt>();
 
