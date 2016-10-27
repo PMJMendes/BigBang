@@ -119,9 +119,6 @@ public class ReceiptOtherAverages
 		if ( lidAgent != null )
 			filterByAgent(lstrSQL, lidAgent);
 		
-		if ( parrParams[2].equals("1") )
-			lstrSQL.append(" AND [Is Internal] = '").append(parrParams[2]).append("'");
-
 		larrAux = new ArrayList<Receipt>();
 
 		try
@@ -145,8 +142,18 @@ public class ReceiptOtherAverages
 
 		try
 		{
-			while ( lrsPolicies.next() )
-				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsPolicies));
+			while ( lrsPolicies.next() ) {
+				Receipt rec = Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsPolicies);
+
+				// External receipts are not included in the result.
+				if ( parrParams[2].equals("1") ) {
+					if (Constants.ProfID_External.equals(rec.getProfile())) {
+						continue;
+					}
+				}
+				
+				larrAux.add(rec);
+			}
 		}
 		catch (Throwable e)
 		{
