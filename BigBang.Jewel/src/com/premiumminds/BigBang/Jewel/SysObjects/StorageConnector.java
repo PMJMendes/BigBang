@@ -1,14 +1,22 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
+import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
+
+import org.apache.poi.util.IOUtils;
+
+import Jewel.Engine.SysObjects.FileXfer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -116,6 +124,77 @@ public class StorageConnector {
 		}
 		
 		return MailConnector.messageToData(fetchedMessage);
+	}
+	
+	/**
+	 * This methods gets a File stored in Google storage, and creates (and
+	 * returns) a MimeMessage
+	 */
+	private static MimeMessage getMimeMessage(String fileId)
+			throws BigBangJewelException {
+
+		Message fetchedMessage = null;
+
+		// Gets the file with the given Id and converts it to a MimeMessage
+		File downloadedFile = getMessage(fileId);
+		try {
+			
+			InputStream inStream = new FileInputStream(downloadedFile);
+			fetchedMessage = new MimeMessage(null, inStream);
+			return (MimeMessage) fetchedMessage;
+			
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * This methods gets a File stored in Google storage, and creates (and
+	 * returns) an array of FileXfer objects, representing the mails'
+	 * attachments
+	 */
+	public static FileXfer[] getAttachmentsAsFileXfer(String fileId)
+			throws BigBangJewelException {
+
+		// Gets the storage file
+		MimeMessage storageMessage = getMimeMessage(fileId);
+
+		// Gets the message's attachments
+		Object content = null;
+		try {
+			content = storageMessage.getContent();
+		}  catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+			
+		if (content == null || !(content instanceof Multipart)) {
+			return null;
+		}
+
+		Map<String, BodyPart> attachmentsMap = MailConnector.getAttachmentsMap(storageMessage);
+			
+		if (attachmentsMap == null) {
+			return null;
+		}
+
+		// Removes the mail's text from the attachments
+		attachmentsMap.remove("main");
+		
+		// Creates the array to return
+		FileXfer[] result = new FileXfer[attachmentsMap.size()];
+		int u=0;
+		for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
+			try {
+				byte[] binaryData = IOUtils.toByteArray(entry.getValue().getInputStream());
+				String contentType = entry.getValue().getContentType().split(";")[0];
+				FileXfer tmp = new FileXfer(binaryData.length, contentType, entry.getKey(), new ByteArrayInputStream(binaryData));
+				result[u++] = tmp;
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}	
+		}
+		
+		return result;
 	}
 
 }

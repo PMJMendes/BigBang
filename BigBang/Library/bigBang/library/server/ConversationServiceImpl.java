@@ -23,12 +23,12 @@ import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.Message.Attachment;
+import bigBang.definitions.shared.Message.MsgAddress;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
-import bigBang.definitions.shared.Message.MsgAddress;
 import bigBang.library.interfaces.ConversationService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.ConversationSearchParameter;
@@ -108,32 +108,32 @@ public class ConversationServiceImpl
 	private static Attachment[] sGetStgAttachments(String storageMailId, Timestamp msgDate) 
 		throws BigBangException
 	{
-		FileXfer lobjDoc;
-		Message.Attachment lobjResult;
-
-		try
-		{
-			lobjDoc = MailConnector.getAttachment(pstrEmailId, pstrFolderId, (String)pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID));
-		}
-		catch (BigBangJewelException e)
-		{
+		
+		FileXfer[] files;
+		try {
+			files = StorageConnector.getAttachmentsAsFileXfer(storageMailId);
+		} catch (BigBangJewelException e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lobjResult = new Message.Attachment();
-		lobjResult.id = pobjAttachment.getKey().toString();
+		Message.Attachment[] result = new Message.Attachment[files.length];
 
-		lobjResult.name = lobjDoc.getFileName();
-		lobjResult.attachmentId = (String)pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
-		lobjResult.emailId = pstrEmailId;
-		lobjResult.docTypeId = lobjDoc.getContentType();
-		lobjResult.storageId = null;
-		lobjResult.date = pdtMsg.toString().substring(0, 10);
-
-		lobjResult.docId = null;
-		lobjResult.ownerId = null;
-
-		return lobjResult;
+		for (int i=0; i<files.length; i++) {
+			Message.Attachment tempAtt = new Message.Attachment();
+			FileXfer tmpFile = files[i];
+			tempAtt.id = null;
+			tempAtt.docId = null;
+			tempAtt.ownerId = null;
+			tempAtt.name = tmpFile.getFileName();
+			tempAtt.attachmentId = null;
+			tempAtt.docTypeId = null;
+			tempAtt.storageId = storageMailId;
+			tempAtt.date = msgDate.toString().substring(0, 10);
+			tempAtt.emailId = storageMailId;
+			result[i] = tempAtt;
+		}
+		
+		return result;
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class ConversationServiceImpl
 		lobjResult.emailId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID);
 		lobjResult.folderId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.FOLDERID);
 
-		if ( larrAddrs == null )
+		if ( larrAddrs == null || larrAddrs.length==0 )
 			lobjResult.addresses = null;
 		else
 		{
@@ -199,7 +199,7 @@ public class ConversationServiceImpl
 			}
 			
 			if (getFromStg) {
-				lobjResult.attachments = sGetStgAttachments(pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID), 
+				lobjResult.attachments = sGetStgAttachments(pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID).toString(), 
 						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
 			}
 		}
