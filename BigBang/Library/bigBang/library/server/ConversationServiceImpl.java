@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -76,6 +78,10 @@ public class ConversationServiceImpl
 	{
 		Document lobjDoc;
 		Message.Attachment lobjResult;
+		
+		if (pobjAttachment.getAt(MessageAttachment.I.DOCUMENT) == null) {
+			return null;
+		}			
 
 		try
 		{
@@ -86,28 +92,27 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		if (lobjDoc == null) {
+			return null;
+		}
+		
 		lobjResult = new Message.Attachment();
-		lobjResult.id = pobjAttachment.getKey().toString();
-
+		
 		lobjResult.docId = lobjDoc.getKey().toString();
-
-		lobjResult.ownerId = lobjDoc.getOwnerID().toString();
-
 		lobjResult.name = lobjDoc.getLabel();
-		lobjResult.attachmentId = null; // pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID).toString();
-		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();
-		lobjResult.storageId = null;
-		lobjResult.date = pdtMsg.toString().substring(0, 10);
+		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();	
+		lobjResult.promote = true;
+		lobjResult.ownerId = lobjDoc.getAt(Document.I.OWNER).toString();
 
 		return lobjResult;
 	}
 
 	/**
 	 * This method
+	 * @param foundAtts 
 	 */
-	private static Attachment[] sGetStgAttachments(String storageMailId, Timestamp msgDate) 
-		throws BigBangException
-	{
+	private static Attachment[] sGetStgAttachments(String storageMailId, Timestamp msgDate, Map<String, String>bdAtts) 
+		throws BigBangException {
 		
 		FileXfer[] files;
 		try {
@@ -115,6 +120,8 @@ public class ConversationServiceImpl
 		} catch (BigBangJewelException e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
+		
+		Set<String> existingAttsNames = bdAtts.keySet();
 
 		Message.Attachment[] result = new Message.Attachment[files.length];
 
@@ -130,6 +137,11 @@ public class ConversationServiceImpl
 			tempAtt.storageId = storageMailId;
 			tempAtt.date = msgDate.toString().substring(0, 10);
 			tempAtt.emailId = storageMailId;
+			
+			if (existingAttsNames.contains(tempAtt.name)) {
+				tempAtt.docId = bdAtts.get(tempAtt.name);
+			}
+			
 			result[i] = tempAtt;
 		}
 		
@@ -146,6 +158,7 @@ public class ConversationServiceImpl
 		MessageAttachment[] larrAtts;
 		Message lobjResult;
 		int i;
+		//Map<String, String> foundAtts = null;
 
 		try
 		{
@@ -186,20 +199,8 @@ public class ConversationServiceImpl
 		{
 			lobjResult.attachments = new Message.Attachment[larrAtts.length];
 			
-			boolean getFromStg = false;
-			
 			for ( i = 0; i < larrAtts.length; i++ ) {
-				Attachment tmpAtt = sGetDBAttachment(lobjResult.emailId, larrAtts[i].getKey(),
-						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
-				if (tmpAtt == null) {
-					getFromStg = true;
-					break;
-				}
-				lobjResult.attachments[i] = tmpAtt;
-			}
-			
-			if (getFromStg) {
-				lobjResult.attachments = sGetStgAttachments(pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID).toString(), 
+				lobjResult.attachments[i] = sGetDBAttachment(lobjResult.emailId, larrAtts[i].getKey(),
 						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
 			}
 		}
@@ -282,7 +283,7 @@ public class ConversationServiceImpl
 	}
 
 	/**
-	 * Fills an array withh message addresses
+	 * Fills an array with message addresses
 	 */
 	protected static MsgAddress[] fillMessageAddresses(boolean filterOwners,
 			MessageData mailData) throws BigBangException {
@@ -322,7 +323,7 @@ public class ConversationServiceImpl
 	}
 
 	/**
-	 * Returns conversation directio (IN/OUT)
+	 * Returns conversation direction (IN/OUT)
 	 */
 	public static ConversationStub.Direction sGetDirection(UUID pid)
 	{
@@ -406,7 +407,7 @@ public class ConversationServiceImpl
 	}
 
 	/**
-	 * Gets an attachment from the DB, returning null if the attachment does not correspond to a document in the DB
+	 * Gets an attachment from the DB
 	 */
 	public static Message.Attachment sGetDBAttachment(String pstrEmailId, UUID pid, Timestamp pdtMsg)
 		throws BigBangException
@@ -424,17 +425,23 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		// If the attachment corresponds to an existent document, tries to get that document
-		if ( lobjAttachment.getAt(MessageAttachment.I.DOCUMENT) != null ) {
-			dbAttachment = sGetDBDocument(lobjAttachment, pdtMsg);
+		dbAttachment = sGetDBDocument(lobjAttachment, pdtMsg);
+			
+		// If the attachment is null, it means there is no corresponding document in the DB.
+		// In this case, a new attachment must be created here, to hold only the attachment info
+		if (dbAttachment == null) {
+			dbAttachment = new Message.Attachment();
+			dbAttachment.promote = false;
 		}
 		
-		if (dbAttachment == null) {
-			// If unable to get the attachment from the DB, or if the attachment does not correspond to a document returns null
-			return null;
-		} else {
-			return dbAttachment;
-		}
+		// Fills the attachment with the possible info
+		dbAttachment.attachmentId = (String) lobjAttachment.getAt(2);
+		dbAttachment.date = pdtMsg.toString().substring(0, 10);
+		dbAttachment.emailId = pstrEmailId;
+		dbAttachment.id = pid.toString();
+		dbAttachment.storageId = pstrEmailId;
+		
+		return dbAttachment;
 	}
 
 	/**
@@ -458,6 +465,8 @@ public class ConversationServiceImpl
 		Message result = sGetDBMessage(lobjMsg, pbFilterOwners);
 
 		// If unable to get from DB, tries to get from storage...
+		// It should be able to get from the DB, for a conversation has messages.
+		// This is only a "last try before an error"
 		if ( result == null && lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
 		{
 			try
@@ -473,7 +482,7 @@ public class ConversationServiceImpl
 	}
 
 	/**
-	 * Gets aconversatio from the DB
+	 * Gets a conversation from the DB
 	 */
 	public static Conversation sGetConversation(UUID pid)
 		throws BigBangException

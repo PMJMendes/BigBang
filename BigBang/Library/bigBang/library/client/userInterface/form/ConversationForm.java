@@ -198,10 +198,10 @@ public class ConversationForm extends FormView<Conversation> implements Document
 								return;
 							}
 						});
-					}
+					} 
 				}else{
 					Document doc = new Document();
-					doc.name = att.name;
+					doc.name = att.attachmentId;
 					doc.docTypeLabel = "";
 					doc.creationDate = att.date;
 					doc.emailAttId = att.attachmentId;
@@ -214,9 +214,10 @@ public class ConversationForm extends FormView<Conversation> implements Document
 	}
 
 	protected void addAttachment(DocumentsList.Entry entry) {
+		
 		if(entry.getValue().id != null){ 
 			for(ListEntry<Document>  document: attachments){
-				if(document.getValue().id.equalsIgnoreCase(entry.getValue().id)){
+				if(document.getValue().id != null && document.getValue().id.equalsIgnoreCase(entry.getValue().id)){
 					return;
 				}
 			}

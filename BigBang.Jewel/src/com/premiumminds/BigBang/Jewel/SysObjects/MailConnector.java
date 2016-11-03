@@ -833,7 +833,7 @@ public class MailConnector {
 		InputStream attachmentStream;
 		try {
 			attachment = messageAttachments.get(attachmentId);
-			attachmentStream = attachment.getInputStream();
+			attachmentStream = attachment==null ? null : attachment.getInputStream();
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
