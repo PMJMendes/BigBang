@@ -14,4 +14,5 @@ public interface MailServiceAsync
 	void getFolder(MailItemStub current, AsyncCallback<MailItemStub[]> callback);
 	void getItem(String folderId, String id, AsyncCallback<MailItem> callback);
 	void getAttAsDoc(String emailId, String folderId, String attachmentId, AsyncCallback<Document> callback);
+	void getAttAsDocFromStorage(String storageId, String attachmentId, AsyncCallback<Document> callback);
 }

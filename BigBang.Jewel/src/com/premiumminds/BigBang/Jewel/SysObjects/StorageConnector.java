@@ -156,22 +156,7 @@ public class StorageConnector {
 	public static FileXfer[] getAttachmentsAsFileXfer(String fileId)
 			throws BigBangJewelException {
 
-		// Gets the storage file
-		MimeMessage storageMessage = getMimeMessage(fileId);
-
-		// Gets the message's attachments
-		Object content = null;
-		try {
-			content = storageMessage.getContent();
-		}  catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-			
-		if (content == null || !(content instanceof Multipart)) {
-			return null;
-		}
-
-		Map<String, BodyPart> attachmentsMap = MailConnector.getAttachmentsMap(storageMessage);
+		Map<String, BodyPart> attachmentsMap = getAttsMapFromStorage(fileId);
 			
 		if (attachmentsMap == null) {
 			return null;
@@ -192,6 +177,63 @@ public class StorageConnector {
 			} catch (Throwable e) {
 				throw new BigBangJewelException(e.getMessage(), e);
 			}	
+		}
+		
+		return result;
+	}
+
+	protected static Map<String, BodyPart> getAttsMapFromStorage(String fileId)
+			throws BigBangJewelException {
+		// Gets the storage file
+		MimeMessage storageMessage = getMimeMessage(fileId);
+
+		// Gets the message's attachments
+		Object content = null;
+		try {
+			content = storageMessage.getContent();
+		}  catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+			
+		if (content == null || !(content instanceof Multipart)) {
+			return null;
+		}
+
+		Map<String, BodyPart> attachmentsMap = MailConnector.getAttachmentsMap(storageMessage);
+		return attachmentsMap;
+	}
+	
+	/**
+	 * This methods gets a File stored in Google storage, and creates (and
+	 * returns) an array of FileXfer objects, representing the mails'
+	 * attachments
+	 */
+	public static FileXfer getAttachmentAsFileXfer(String fileId, String attachmentId)
+			throws BigBangJewelException {
+
+		Map<String, BodyPart> attachmentsMap = getAttsMapFromStorage(fileId);
+			
+		if (attachmentsMap == null) {
+			return null;
+		}
+
+		// Removes the mail's text from the attachments
+		attachmentsMap.remove("main");
+		
+		// Creates the array to return
+		FileXfer result = null;
+		
+		for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
+			if (entry.getKey().equals(attachmentId)) { 
+				try {
+					byte[] binaryData = IOUtils.toByteArray(entry.getValue().getInputStream());
+					String contentType = entry.getValue().getContentType().split(";")[0];
+					result = new FileXfer(binaryData.length, contentType, entry.getKey(), new ByteArrayInputStream(binaryData));
+				} catch (Throwable e) {
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+				break;
+			}
 		}
 		
 		return result;

@@ -26,6 +26,7 @@ import bigBang.library.shared.MailItemStub;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
 
 public class MailServiceImpl
@@ -345,6 +346,46 @@ public class MailServiceImpl
 		try
 		{
 			lobjFile = MailConnector.getAttachment(emailId, folderId, attachmentId);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new Document();
+
+		lobjResult.id = null;
+		lobjResult.name = lobjFile.getFileName();
+		lobjResult.ownerTypeId = null;
+		lobjResult.ownerId = null;
+		lobjResult.docTypeId = null;
+		lobjResult.docTypeLabel = "(Anexo)";
+		lobjResult.creationDate = null;
+		lobjResult.text = null;
+		lobjResult.hasFile = true;
+    	lidKey = UUID.randomUUID();
+    	FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
+    	lobjResult.mimeType = lobjFile.getContentType();
+    	lobjResult.fileName = lobjFile.getFileName();
+    	lobjResult.fileStorageId = lidKey.toString();
+
+		lobjResult.parameters = new DocInfo[0];
+
+		return lobjResult;
+	}
+	
+	public Document getAttAsDocFromStorage(String storageId, String attachmentId) throws BigBangException, SessionExpiredException {
+		
+		Document lobjResult;
+		FileXfer lobjFile;
+		UUID lidKey;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjFile = StorageConnector.getAttachmentAsFileXfer(storageId, attachmentId);
 		}
 		catch (Throwable e)
 		{

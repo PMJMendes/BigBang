@@ -125,7 +125,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		}
 
 		if ( documentId == null ) {
-			MailService.Util.getInstance().getAttAsDoc(emailId, folderId, attId, new BigBangAsyncCallback<Document>() {
+			MailService.Util.getInstance().getAttAsDocFromStorage(emailId, attId, new BigBangAsyncCallback<Document>() {
 				@Override
 				public void onResponseSuccess(Document response) {
 					view.getForm().setValue(response);
