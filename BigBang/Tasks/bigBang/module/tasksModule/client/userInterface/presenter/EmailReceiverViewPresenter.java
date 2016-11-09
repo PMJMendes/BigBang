@@ -11,6 +11,7 @@ import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.Message.Attachment;
+import bigBang.definitions.shared.Message.MsgAddress;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -238,6 +239,19 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 			conversation.messages[0].attachments = view.getChecked();
 			conversation.messages[0].direction = ( view.getForm().getValue().isFromMe ?
 					ConversationStub.Direction.OUTGOING : ConversationStub.Direction.INCOMING );
+			conversation.messages[0].subject = view.getForm().getValue().subject;
+			
+			String [] addresses = item.from.split(";");
+			if (addresses.length>0) {
+				conversation.messages[0].addresses = new Message.MsgAddress[addresses.length];
+			}
+			for (int u=0; u<addresses.length; u++) {
+				Message.MsgAddress tmp = new Message.MsgAddress();
+				tmp.address = addresses[u];
+				tmp.display = addresses[u];
+				conversation.messages[0].addresses[u] = tmp;
+				conversation.messages[0].addresses[u].usage = MsgAddress.Usage.FROM;
+			}
 
 			if(conversation.id == null){
 
