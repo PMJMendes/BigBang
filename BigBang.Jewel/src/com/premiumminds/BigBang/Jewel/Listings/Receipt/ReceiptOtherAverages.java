@@ -112,13 +112,13 @@ public class ReceiptOtherAverages
 
 		if ( parrParams[1] != null )
 			lstrSQL.append(" AND [Timestamp] < DATEADD(d, 1, '").append(parrParams[1]).append("')");
-
+		
 		lstrSQL.append(")");
 
 		lidAgent = Utils.getCurrentAgent();
 		if ( lidAgent != null )
 			filterByAgent(lstrSQL, lidAgent);
-
+		
 		larrAux = new ArrayList<Receipt>();
 
 		try
@@ -142,8 +142,18 @@ public class ReceiptOtherAverages
 
 		try
 		{
-			while ( lrsPolicies.next() )
-				larrAux.add(Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsPolicies));
+			while ( lrsPolicies.next() ) {
+				Receipt rec = Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsPolicies);
+
+				// External receipts are not included in the result.
+				if ( parrParams[2].equals("1") ) {
+					if (Constants.ProfID_External.equals(rec.getProfile())) {
+						continue;
+					}
+				}
+				
+				larrAux.add(rec);
+			}
 		}
 		catch (Throwable e)
 		{
