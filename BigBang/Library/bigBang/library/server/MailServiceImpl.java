@@ -391,6 +391,10 @@ public class MailServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+		
+		if (lobjFile == null) {
+			throw new BigBangException("Não foi possível obter o attachment da storage");
+		}
 
 		lobjResult = new Document();
 

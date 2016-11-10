@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 import javax.mail.BodyPart;
@@ -212,7 +214,7 @@ public class StorageConnector {
 			throws BigBangJewelException {
 
 		Map<String, BodyPart> attachmentsMap = getAttsMapFromStorage(fileId);
-			
+		
 		if (attachmentsMap == null) {
 			return null;
 		}
