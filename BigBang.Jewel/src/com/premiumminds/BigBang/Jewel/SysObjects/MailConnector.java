@@ -58,7 +58,6 @@ import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
-
 import com.premiumminds.BigBang.Jewel.Security.OAuthHandler;
 
 /**
@@ -69,6 +68,19 @@ import com.premiumminds.BigBang.Jewel.Security.OAuthHandler;
  */
 public class MailConnector {
 
+	static Store store; 
+	
+	private static void initializeStore() throws BigBangJewelException {
+		try {
+			if (store == null || !store.isConnected()) {
+				store = OAuthHandler.getImapStore(getUserEmail());
+			}
+			
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+	
 	/**
 	 *	This method sends an email, receiving all the "usual" content on an email message.
 	 */
@@ -237,13 +249,13 @@ public class MailConnector {
 	 */
 	private static Folder[] listFolders(String folderID) throws BigBangJewelException {
 
-		Store store;
+		
 		Folder[] listingFolders = null;
 		Folder start;
 
 		try {
 			OAuthHandler.initialize();
-			store = OAuthHandler.getImapStore(getUserEmail()); 
+			initializeStore();
 
 			if (folderID != null && folderID.length() > 0) {
 				start = store.getFolder(folderID);
@@ -272,12 +284,11 @@ public class MailConnector {
 	public static Message[] getMails(String folderId, boolean filterUnseen) throws BigBangJewelException {
 
 		Message[] fetchedMails = null;
-		Store store;
 		Folder folder = null;
 		
 		try {
 			OAuthHandler.initialize();
-			store = OAuthHandler.getImapStore(getUserEmail()); 
+			initializeStore();
 
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);
@@ -314,13 +325,12 @@ public class MailConnector {
 
 		Message fetchedMessage = null;
 
-		Store store;
 		Folder folder = null;
 
 		OAuthHandler.initialize();
+		initializeStore();
 
 		try {
-			store = OAuthHandler.getImapStore(getUserEmail()); 
 			
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);
@@ -346,13 +356,12 @@ public class MailConnector {
 
 		Message fetchedMessage = null;
 
-		Store store;
 		Folder folder = null;
 
 		OAuthHandler.initialize();
+		initializeStore();
 
 		try {
-			store = OAuthHandler.getImapStore(getUserEmail()); 
 			
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);
@@ -972,11 +981,10 @@ public class MailConnector {
 	public static Folder[] getFolders(String folderId) throws BigBangJewelException {
 
 		Folder[] result = null;
-		Store store;
 		
 		try {
 			OAuthHandler.initialize();
-			store = OAuthHandler.getImapStore(getUserEmail()); 
+			initializeStore();
 			
 			if (folderId == null || folderId.length()==0) {
 				result = store.getDefaultFolder().list();
