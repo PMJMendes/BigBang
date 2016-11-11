@@ -70,6 +70,10 @@ public class MailConnector {
 
 	static Store store; 
 	
+	/**
+	 *	This method initializes the store, if needed.
+	 *	Avoids "too much connections" error
+	 */
 	private static void initializeStore() throws BigBangJewelException {
 		try {
 			if (store == null || !store.isConnected()) {
@@ -97,9 +101,7 @@ public class MailConnector {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		/*
-		 *  Creates a message and sends the mail
-		 */
+		//Creates a message and sends the mail
 		MimeMessage mailMsg = new MimeMessage(session);
 
 		try {

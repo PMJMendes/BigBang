@@ -35,6 +35,9 @@ public class MailServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Prepares the data from a mail list in an intelligible way to to the client
+	 */
 	private static MailItemStub[] sToClient(Message[] parrSource)
 			throws BigBangException {
 
@@ -112,6 +115,9 @@ public class MailServiceImpl
 		return larrResults;
 	}
 	
+	/**
+	 * Prepares the data from a mail in an intelligible way to to the client
+	 */
 	private static MailItemStub[] sToClient(MailItemStub current, javax.mail.Folder[] folders)
 			throws BigBangException { 
 		
@@ -151,8 +157,6 @@ public class MailServiceImpl
 			
 			try {
 				
-				// TODO ver folder.getURLName() e folder.getFullName() e mudar nos outros sitios onde usas a 
-				// folder (o fetch) para ver se esta a ir buscar bem por nome
 				larrResults[start].id = folders[u].getName(); 
 				larrResults[start].isFolder = true;
 				larrResults[start].isFromMe = false;
@@ -174,6 +178,9 @@ public class MailServiceImpl
 		return larrResults;
 	}
 
+	/**
+	 * This method gets the "back" folder, when navigating in the mail folders
+	 */
 	private static String getBackFolder(String parentFolderId) {
 		
 		String[] parts = parentFolderId.split("/");
@@ -194,6 +201,9 @@ public class MailServiceImpl
 		return result;
 	}
 
+	/**
+	 * Gets the initial items in a mailbox (corresponding to inbox)
+	 */
 	public MailItemStub[] getItems()
 		throws SessionExpiredException, BigBangException
 	{
@@ -219,6 +229,9 @@ public class MailServiceImpl
 		return getItemsAll(null);
 	}
 	
+	/**
+	 * Gets all items and folders in root
+	 */
 	private MailItemStub[] getItemsAll(MailItemStub current)
 			throws SessionExpiredException, BigBangException
 		{
@@ -250,6 +263,9 @@ public class MailServiceImpl
 		return getItemsAll(current);
 	}
 
+	/**
+	 * Gets a given item in a given folder
+	 */
 	public MailItem getItem(String folderId, String id)
 		throws SessionExpiredException, BigBangException
 	{
@@ -333,6 +349,9 @@ public class MailServiceImpl
 		return lobjResult;
 	}
 
+	/**
+	 * Gets an attachment from the email as a doc
+	 */
 	public Document getAttAsDoc(String emailId, String folderId, String attachmentId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -374,6 +393,9 @@ public class MailServiceImpl
 		return lobjResult;
 	}
 	
+	/**
+	 * Gets an attachment from the email in the storage as a doc
+	 */
 	public Document getAttAsDocFromStorage(String storageId, String attachmentId) throws BigBangException, SessionExpiredException {
 		
 		Document lobjResult;

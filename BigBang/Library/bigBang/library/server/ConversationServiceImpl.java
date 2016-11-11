@@ -7,8 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -68,8 +66,6 @@ public class ConversationServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 	
-	
-
 	/**
 	 * Gets an attachment from the database, associated with a message exchange, and promoted to document
 	 */
@@ -108,47 +104,6 @@ public class ConversationServiceImpl
 	}
 
 	/**
-	 * This method
-	 * @param foundAtts 
-	 */
-	private static Attachment[] sGetStgAttachments(String storageMailId, Timestamp msgDate, Map<String, String>bdAtts) 
-		throws BigBangException {
-		
-		FileXfer[] files;
-		try {
-			files = StorageConnector.getAttachmentsAsFileXfer(storageMailId);
-		} catch (BigBangJewelException e) {
-			throw new BigBangException(e.getMessage(), e);
-		}
-		
-		Set<String> existingAttsNames = bdAtts.keySet();
-
-		Message.Attachment[] result = new Message.Attachment[files.length];
-
-		for (int i=0; i<files.length; i++) {
-			Message.Attachment tempAtt = new Message.Attachment();
-			FileXfer tmpFile = files[i];
-			tempAtt.id = null;
-			tempAtt.docId = null;
-			tempAtt.ownerId = null;
-			tempAtt.name = tmpFile.getFileName();
-			tempAtt.attachmentId = null;
-			tempAtt.docTypeId = null;
-			tempAtt.storageId = storageMailId;
-			tempAtt.date = msgDate.toString().substring(0, 10);
-			tempAtt.emailId = storageMailId;
-			
-			if (existingAttsNames.contains(tempAtt.name)) {
-				tempAtt.docId = bdAtts.get(tempAtt.name);
-			}
-			
-			result[i] = tempAtt;
-		}
-		
-		return result;
-	}
-
-	/**
 	 * Gets a Message from the database
 	 */
 	private static Message sGetDBMessage(com.premiumminds.BigBang.Jewel.Objects.Message pobjMsg, boolean pbFilterOwners)
@@ -158,7 +113,6 @@ public class ConversationServiceImpl
 		MessageAttachment[] larrAtts;
 		Message lobjResult;
 		int i;
-		//Map<String, String> foundAtts = null;
 
 		try
 		{
@@ -547,6 +501,9 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
+	/**
+	 * Gets the "selectable" conversations' list to display in a page.
+	 */
 	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -637,6 +594,9 @@ public class ConversationServiceImpl
 		return larrAux.toArray(new TipifiedListItem[larrAux.size()]);
 	}
 
+	/**
+	 * Gets aa conversation with a given id
+	 */
 	public Conversation getConversation(String id)
 		throws SessionExpiredException, BigBangException
 	{
@@ -646,6 +606,9 @@ public class ConversationServiceImpl
 		return sGetConversation(UUID.fromString(id));
 	}
 
+	/**
+	 * Gets a conversation and corresponding messages to print
+	 */
 	public String getForPrinting(String id)
 		throws SessionExpiredException, BigBangException
 	{
@@ -709,6 +672,9 @@ public class ConversationServiceImpl
 		return lidAux.toString();
 	}
 
+	/**
+	 * Creates a new conversation from an email
+	 */
 	public Conversation createFromEmail(Conversation conversation)
 		throws SessionExpiredException, BigBangException
 	{
@@ -764,6 +730,9 @@ public class ConversationServiceImpl
 		return sGetConversation(lopCCB.mobjData.mid);
 	}
 
+	/**
+	 * saves an edited conversation
+	 */
 	public Conversation saveConversation(Conversation conversation)
 		throws SessionExpiredException, BigBangException
 	{
@@ -810,6 +779,9 @@ public class ConversationServiceImpl
 		return sGetConversation(lopMD.mobjData.mid);
 	}
 
+	/**
+	 * Gets an empty conversation
+	 */
 	public Message getEmpty()
 		throws SessionExpiredException, BigBangException
 	{
@@ -829,6 +801,9 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 	
+	/**
+	 * Gets an attachment from the database, associated with a message exchange, and promoted to document
+	 */
 	public Message getCommonSend(String messageId, String typeString) 
 			throws SessionExpiredException, BigBangException {
 		
