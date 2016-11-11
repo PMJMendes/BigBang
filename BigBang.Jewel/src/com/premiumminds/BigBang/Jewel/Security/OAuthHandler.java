@@ -77,7 +77,7 @@ public class OAuthHandler {
 		props.put(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, oauthToken);
 
 		Session session = Session.getInstance(props, null);
-		session.setDebug(true);
+		session.setDebug(false); // TODO: Para alterar para ter debug na consola, em desenvolvimento
 
 		Security.addProvider(new OAuth2Provider());
 		

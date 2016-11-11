@@ -92,7 +92,7 @@ public class MailConnector {
 
 		try {
 			session = getSession();
-			session.setDebug(true);
+			session.setDebug(false); // TODO: Para alterar para ter debug na consola, em desenvolvimento
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
