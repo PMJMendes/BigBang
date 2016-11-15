@@ -65,7 +65,6 @@ public class OAuthHandler {
 		/*
 		 * TODO HELP 5: Chama o método que devolve a token usada para autenticação
 		 */
-
 		Properties props = new Properties();
 		props.put("mail.imaps.ssl.enable", "true");
 		props.put("mail.imaps.sasl.enable", "true");
@@ -135,12 +134,24 @@ public class OAuthHandler {
 				.getResourceAsStream("/resources/bigbang-google-apps-1fcf817841a6.p12");
 
 		File tempFile = null;
-		try {			
+		try {
 			tempFile = File.createTempFile(PREFIX, SUFFIX);
 			outputStream = new FileOutputStream(tempFile);
 			while ((read = inputStream.read(bytes)) != -1) {
 				outputStream.write(bytes, 0, read);
 			}
+			/*
+			 * TODO HELP 7: Ok, afinal agora é isto... 
+			 * O que me parece é que não posso incluir (ou estou a incluir mal) o ficheiro p12 no jar
+			 * A pergunta que fica é: como conseguir obter o ficheiro nesta camada? Qual a melhor maneira?
+			 * Vou precisar de ler o ficheiro para conseguir logar-me com OAuthentication 2
+			 * PS: Claro que depois vou ter que limpar estes comentários todos e pôr o código deste bocado melhor...
+			 */
+		} catch (Throwable e) {
+			throw new BigBangJewelException("afinal é isto? " + e.getClass() + e.getMessage(), e.getCause());
+		}
+		try {			
+			
 			credential = new GoogleCredential.Builder()
 					.setJsonFactory(new JacksonFactory())
 					.setTransport(new NetHttpTransport())
@@ -156,12 +167,14 @@ public class OAuthHandler {
 			 * Sei que noutra zona do código também se queixa de com/google/api/client/http/AbstractInputStreamContent
 			 * mas acho que o problema é o mesmo: não encontra as classes dos jars que adicionei
 			 */
-
+			
 			credential.refreshToken();
 			accessToken = credential.getAccessToken();
 			outputStream.close();
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+		}  catch (NoClassDefFoundError e) {
+			throw new BigBangJewelException("foi um destes " + e.getMessage(), e.getCause());
+		}catch (Throwable e) {
+			throw new BigBangJewelException("foi daqui, o maroto " + e.getClass() + e.getMessage() , e.getCause());
 		}
 
 		return accessToken;
