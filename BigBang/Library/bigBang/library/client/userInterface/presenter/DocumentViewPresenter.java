@@ -45,7 +45,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private String ownerTypeId;
 	private String emailId;
 	private String attId;
-	private String folderId;
 	protected boolean allow = true;
 
 	public static enum Action {
@@ -112,7 +111,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		ownerTypeId = parameterHolder.getParameter("ownertypeid");
 		emailId = parameterHolder.getParameter("emailId");
 		attId = parameterHolder.getParameter("attId");
-		folderId = parameterHolder.getParameter("folderId");
 		boolean hasPermissions = true; //TODO PERMISSIONS
 
 		if(ownerId == null){

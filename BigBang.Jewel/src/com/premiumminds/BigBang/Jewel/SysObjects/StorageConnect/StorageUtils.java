@@ -12,11 +12,9 @@ import java.util.Collections;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Security.OAuthHandler;
 
 public class StorageUtils {
 
@@ -38,7 +36,11 @@ public class StorageUtils {
 
 	public static GoogleCredential getCredential() {
 
-		InputStream inputStream = OAuthHandler.class
+		/*InputStream inputStream = OAuthHandler.class
+				.getResourceAsStream("/resources/bigbang-google-apps-1fcf817841a6.p12"); */
+		
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		InputStream inputStream = loader
 				.getResourceAsStream("/resources/bigbang-google-apps-1fcf817841a6.p12");
 
 		final String PREFIX = "stream2file";
@@ -71,7 +73,6 @@ public class StorageUtils {
 			e1.printStackTrace();
 		}
 
-		JsonFactory fac = new JacksonFactory();
 		GoogleCredential credential = null;
 
 		try {
@@ -80,7 +81,7 @@ public class StorageUtils {
 
 			credential = new GoogleCredential.Builder()
 					.setTransport(transport)
-					.setJsonFactory(fac)
+					.setJsonFactory(new JacksonFactory())
 					.setServiceAccountId(Constants.StorageConstants.SERVICE_ACCOUNT_ID)
 					.setServiceAccountScopes(
 							Collections.singleton(Constants.StorageConstants.STORAGE_SCOPE))

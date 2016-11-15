@@ -10,18 +10,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.api.client.http.InputStreamContent;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.model.Bucket;
+import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.api.services.storage.model.Objects;
-import com.google.api.services.storage.model.StorageObject;
 
 public class StorageMethods {
 
 	/** Global instance of the JSON factory. */
-	static final JsonFactory JSON_FACTORY = new JacksonFactory();
+	//static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
 	/**
 	 * Fetches the metadata for the given bucket.

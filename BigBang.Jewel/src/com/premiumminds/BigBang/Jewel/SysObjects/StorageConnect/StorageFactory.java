@@ -23,7 +23,6 @@ import java.util.Collection;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.StorageScopes;
@@ -47,8 +46,6 @@ public class StorageFactory {
 	private static Storage buildService() throws IOException,
 			GeneralSecurityException {
 		HttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
-		JsonFactory jsonFactory = new JacksonFactory();
-
 		GoogleCredential credential = StorageUtils.getCredential();
 
 		if (credential.createScopedRequired()) {
@@ -56,7 +53,7 @@ public class StorageFactory {
 			credential = credential.createScoped(scopes);
 		}
 
-		return new Storage.Builder(transport, jsonFactory, credential)
+		return new Storage.Builder(transport, new JacksonFactory(), credential)
 				.setApplicationName(Constants.StorageConstants.APP_NAME).build();
 	}
 }

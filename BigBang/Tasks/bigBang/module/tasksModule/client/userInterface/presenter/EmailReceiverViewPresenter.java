@@ -337,7 +337,14 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os emails."), TYPE.ALERT_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os emails." + caught.getMessage()), TYPE.ALERT_NOTIFICATION));
+				/*
+				 * TODO HELP 1: Aqui é que o erro é lançado. Como está actualmente, o caught.getMessage() escreve null no ecrã.
+				 * Quando não tinha as bibliotecas carregadas no BigBang, dava org/codehaus/jackson/JsonFactory ou com/google/api/client/http/HttpTransport
+				 * de acordo com a ordem de chamada de .setJsonFactory(new JacksonFactory()) e .setTransport(new NetHttpTransport()) ao criar a credencial
+				 * no OauthHandler.java (já lá chegas).
+				 * Para já, este erro dá porque houve um erro no MailServiceImpl.java
+				 */
 				view.enableRefresh(true);
 				super.onResponseFailure(caught);
 			}

@@ -3,12 +3,12 @@ package com.premiumminds.BigBang.Jewel.Objects;
 import java.sql.ResultSet;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 
 public class MessageAttachment
 	extends ObjectBase

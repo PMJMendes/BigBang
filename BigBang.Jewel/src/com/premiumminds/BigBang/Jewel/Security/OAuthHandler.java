@@ -15,7 +15,6 @@ import javax.mail.URLName;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.sun.mail.smtp.SMTPTransport;
@@ -63,6 +62,9 @@ public class OAuthHandler {
 	public static Store getImapStore(String userEmail) throws Exception {
 				
 		String oauthToken = (String) getOauthToken();
+		/*
+		 * TODO HELP 5: Chama o método que devolve a token usada para autenticação
+		 */
 
 		Properties props = new Properties();
 		props.put("mail.imaps.ssl.enable", "true");
@@ -124,30 +126,36 @@ public class OAuthHandler {
 		final String SUFFIX = ".tmp";
 		OutputStream outputStream = null;
 		int read = 0;
-		byte[] bytes = new byte[1024];
-		JsonFactory fac = new JacksonFactory();
+		byte[] bytes = new byte[1024];		
 		GoogleCredential credential;
 		String accessToken = null;
 
-		InputStream inputStream = OAuthHandler.class
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		InputStream inputStream = loader
 				.getResourceAsStream("/resources/bigbang-google-apps-1fcf817841a6.p12");
 
 		File tempFile = null;
-		try {
+		try {			
 			tempFile = File.createTempFile(PREFIX, SUFFIX);
 			outputStream = new FileOutputStream(tempFile);
 			while ((read = inputStream.read(bytes)) != -1) {
 				outputStream.write(bytes, 0, read);
 			}
 			credential = new GoogleCredential.Builder()
+					.setJsonFactory(new JacksonFactory())
 					.setTransport(new NetHttpTransport())
-					.setJsonFactory(fac)
 					.setServiceAccountId(
 							"bigbang-access-account@tidy-campaign-139313.iam.gserviceaccount.com")
 					.setServiceAccountScopes(
 							Collections.singleton("https://mail.google.com/"))
 					.setServiceAccountPrivateKeyFromP12File(tempFile)
 					.setServiceAccountUser("joaocamilo@credite-egs.pt").build();
+			/*
+			 * TODO HELP 6: É daqui que sai o erro. Se puser o setJsonFactory primeiro queixa-se de org/codehaus/jackson/JsonFactory
+			 * se puser o setTransport primeiro, queixa-se de com/google/api/client/http/HttpTransport
+			 * Sei que noutra zona do código também se queixa de com/google/api/client/http/AbstractInputStreamContent
+			 * mas acho que o problema é o mesmo: não encontra as classes dos jars que adicionei
+			 */
 
 			credential.refreshToken();
 			accessToken = credential.getAccessToken();
