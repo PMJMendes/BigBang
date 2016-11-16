@@ -17,6 +17,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 import com.sun.mail.smtp.SMTPTransport;
 
 
@@ -140,12 +141,11 @@ public class OAuthHandler {
 			credential = new GoogleCredential.Builder()
 					.setJsonFactory(new JacksonFactory())
 					.setTransport(new NetHttpTransport())
-					.setServiceAccountId(
-							"bigbang-access-account@tidy-campaign-139313.iam.gserviceaccount.com")
+					.setServiceAccountId(Constants.GoogleAppsConstants.ACCOUNT_ID)
 					.setServiceAccountScopes(
 							Collections.singleton("https://mail.google.com/"))
 					.setServiceAccountPrivateKeyFromP12File(tempFile)
-					.setServiceAccountUser("joaocamilo@credite-egs.pt").build();
+					.setServiceAccountUser(Constants.GoogleAppsConstants.ACCOUNT_USER).build();
 			
 			credential.refreshToken();
 			accessToken = credential.getAccessToken();
@@ -161,7 +161,10 @@ public class OAuthHandler {
 
 
 	public static InputStream getInputStreamForP12File() {
-		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/bigbang-google-apps-1fcf817841a6.p12");
+		InputStream inputStream = Thread
+				.currentThread()
+				.getContextClassLoader()
+				.getResourceAsStream(Constants.GoogleAppsConstants.P12_FILE_URL);
 		return inputStream;
 	}
 
