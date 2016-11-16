@@ -62,9 +62,7 @@ public class OAuthHandler {
 	public static Store getImapStore(String userEmail) throws Exception {
 				
 		String oauthToken = (String) getOauthToken();
-		/*
-		 * TODO HELP 5: Chama o método que devolve a token usada para autenticação
-		 */
+		
 		Properties props = new Properties();
 		props.put("mail.imaps.ssl.enable", "true");
 		props.put("mail.imaps.sasl.enable", "true");
@@ -128,29 +126,16 @@ public class OAuthHandler {
 		byte[] bytes = new byte[1024];		
 		GoogleCredential credential;
 		String accessToken = null;
-
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		InputStream inputStream = loader
-				.getResourceAsStream("/resources/bigbang-google-apps-1fcf817841a6.p12");
-
-		File tempFile = null;
-		try {
+		
+		InputStream inputStream = getInputStreamForP12File();
+		
+		try {			
+			File tempFile = null;
 			tempFile = File.createTempFile(PREFIX, SUFFIX);
 			outputStream = new FileOutputStream(tempFile);
 			while ((read = inputStream.read(bytes)) != -1) {
 				outputStream.write(bytes, 0, read);
 			}
-			/*
-			 * TODO HELP 7: Ok, afinal agora é isto... 
-			 * O que me parece é que não posso incluir (ou estou a incluir mal) o ficheiro p12 no jar
-			 * A pergunta que fica é: como conseguir obter o ficheiro nesta camada? Qual a melhor maneira?
-			 * Vou precisar de ler o ficheiro para conseguir logar-me com OAuthentication 2
-			 * PS: Claro que depois vou ter que limpar estes comentários todos e pôr o código deste bocado melhor...
-			 */
-		} catch (Throwable e) {
-			throw new BigBangJewelException("afinal é isto? " + e.getClass() + e.getMessage(), e.getCause());
-		}
-		try {			
 			
 			credential = new GoogleCredential.Builder()
 					.setJsonFactory(new JacksonFactory())
@@ -161,12 +146,6 @@ public class OAuthHandler {
 							Collections.singleton("https://mail.google.com/"))
 					.setServiceAccountPrivateKeyFromP12File(tempFile)
 					.setServiceAccountUser("joaocamilo@credite-egs.pt").build();
-			/*
-			 * TODO HELP 6: É daqui que sai o erro. Se puser o setJsonFactory primeiro queixa-se de org/codehaus/jackson/JsonFactory
-			 * se puser o setTransport primeiro, queixa-se de com/google/api/client/http/HttpTransport
-			 * Sei que noutra zona do código também se queixa de com/google/api/client/http/AbstractInputStreamContent
-			 * mas acho que o problema é o mesmo: não encontra as classes dos jars que adicionei
-			 */
 			
 			credential.refreshToken();
 			accessToken = credential.getAccessToken();
@@ -178,6 +157,12 @@ public class OAuthHandler {
 		}
 
 		return accessToken;
+	}
+
+
+	public static InputStream getInputStreamForP12File() {
+		InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("resources/bigbang-google-apps-1fcf817841a6.p12");
+		return inputStream;
 	}
 
 }

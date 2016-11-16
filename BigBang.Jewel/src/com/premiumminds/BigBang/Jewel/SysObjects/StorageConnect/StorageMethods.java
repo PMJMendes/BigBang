@@ -18,9 +18,6 @@ import com.google.api.services.storage.model.Objects;
 
 public class StorageMethods {
 
-	/** Global instance of the JSON factory. */
-	//static final JsonFactory JSON_FACTORY = new JacksonFactory();
-
 	/**
 	 * Fetches the metadata for the given bucket.
 	 * 

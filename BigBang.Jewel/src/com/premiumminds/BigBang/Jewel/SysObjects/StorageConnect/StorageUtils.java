@@ -15,6 +15,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Security.OAuthHandler;
 
 public class StorageUtils {
 
@@ -36,12 +37,7 @@ public class StorageUtils {
 
 	public static GoogleCredential getCredential() {
 
-		/*InputStream inputStream = OAuthHandler.class
-				.getResourceAsStream("/resources/bigbang-google-apps-1fcf817841a6.p12"); */
-		
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		InputStream inputStream = loader
-				.getResourceAsStream("/resources/bigbang-google-apps-1fcf817841a6.p12");
+		InputStream inputStream = OAuthHandler.getInputStreamForP12File();
 
 		final String PREFIX = "stream2file";
 		final String SUFFIX = ".tmp";

@@ -78,9 +78,6 @@ public class MailConnector {
 		try {
 			if (store == null || !store.isConnected()) {
 				store = OAuthHandler.getImapStore(getUserEmail());
-				/*
-				 * TODO HELP 4: Aqui o erro surge na chamada ao método da classe que lida com a autenticação nos serviços google
-				 */
 			}
 			
 		} catch (Throwable e) {
@@ -294,9 +291,6 @@ public class MailConnector {
 		try {
 			OAuthHandler.initialize();
 			initializeStore();
-			/*
-			 * TODO HELP 3: Aqui, o erro acontece neste método que vai inicializar a store se não estiver inicializada
-			 */
 
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);

@@ -214,9 +214,6 @@ public class MailServiceImpl
 
 		try {
 			larrItems = MailConnector.getMails(null, false);
-			/*
-			 * TODO HELP 2: Aqui, só chama o getMails do MailConnector sem indicar uma folder, e sem filtrar só os não vistos
-			 */
 		}
 		catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
