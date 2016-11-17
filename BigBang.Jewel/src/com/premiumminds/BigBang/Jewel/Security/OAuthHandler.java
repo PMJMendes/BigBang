@@ -18,6 +18,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import com.sun.mail.smtp.SMTPTransport;
 
 
@@ -145,15 +146,13 @@ public class OAuthHandler {
 					.setServiceAccountScopes(
 							Collections.singleton("https://mail.google.com/"))
 					.setServiceAccountPrivateKeyFromP12File(tempFile)
-					.setServiceAccountUser(Constants.GoogleAppsConstants.ACCOUNT_USER).build();
+					.setServiceAccountUser(MailConnector.getUserEmail()).build();
 			
 			credential.refreshToken();
 			accessToken = credential.getAccessToken();
 			outputStream.close();
-		}  catch (NoClassDefFoundError e) {
-			throw new BigBangJewelException("foi um destes " + e.getMessage(), e.getCause());
-		}catch (Throwable e) {
-			throw new BigBangJewelException("foi daqui, o maroto " + e.getClass() + e.getMessage() , e.getCause());
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		return accessToken;

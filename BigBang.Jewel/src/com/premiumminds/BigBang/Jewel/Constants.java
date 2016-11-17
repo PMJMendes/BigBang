@@ -879,6 +879,5 @@ public class Constants
 		public static final String TMP_FILE_PREFIX 			= "tempFile";
 		public static final String P12_FILE_URL 			= "resources/bigbang-google-apps-1fcf817841a6.p12";
 		public static final String ACCOUNT_ID	 			= "bigbang-access-account@tidy-campaign-139313.iam.gserviceaccount.com";
-		public static final String ACCOUNT_USER	 			= "joaocamilo@credite-egs.pt";
 	}
 }
