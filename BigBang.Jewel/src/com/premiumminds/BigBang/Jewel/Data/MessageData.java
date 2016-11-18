@@ -30,6 +30,7 @@ public class MessageData
 	public MessageAttachmentData[] marrAttachments;
 
 	public String mstrEmailID;
+	public String mstrFolderID;
 
 	public DocOps mobjDocOps;
 	public ContactOps mobjContactOps;
@@ -45,6 +46,7 @@ public class MessageData
 		mbIsEmail =  (Boolean)pobjSource.getAt(Message.I.ISEMAIL);
 		mdtDate =  (Timestamp)pobjSource.getAt(Message.I.DATE);
 		mstrEmailID = (String)pobjSource.getAt(Message.I.EMAILID);
+		mstrFolderID = (String)pobjSource.getAt(Message.I.FOLDERID);
 		mstrBody = ((Message)pobjSource).getText();
 	}
 
@@ -60,6 +62,7 @@ public class MessageData
 			pobjDest.setAt(Message.I.ISEMAIL,   mbIsEmail);
 			pobjDest.setAt(Message.I.DATE,      mdtDate);
 			pobjDest.setAt(Message.I.EMAILID,   mstrEmailID);
+			pobjDest.setAt(Message.I.FOLDERID,  mstrFolderID);
 			((Message)pobjDest).setText(mstrBody);
 		}
 		catch (Throwable e)

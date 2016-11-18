@@ -77,8 +77,8 @@
 		<servlet-class>bigBang.library.server.ScanItemServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>ExchangeService</servlet-name>
-		<servlet-class>bigBang.library.server.ExchangeServiceImpl</servlet-class>
+		<servlet-name>MailService</servlet-name>
+		<servlet-class>bigBang.library.server.MailServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>ZipCodeService</servlet-name>
@@ -142,8 +142,8 @@
 		<url-pattern>/bigbang/ScanItemService</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ExchangeService</servlet-name>
-		<url-pattern>/bigbang/ExchangeService</url-pattern>
+		<servlet-name>MailService</servlet-name>
+		<url-pattern>/bigbang/MailService</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ZipCodeService</servlet-name>

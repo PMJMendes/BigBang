@@ -8,18 +8,18 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.CheckedStateChangedEvent;
 import bigBang.library.client.event.CheckedStateChangedEventHandler;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.ExchangeItemSelectionToolbar;
+import bigBang.library.client.userInterface.MailItemSelectionToolbar;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.TextBoxFormField;
-import bigBang.library.client.userInterface.form.ExchangeItemForm;
-import bigBang.library.client.userInterface.presenter.ExchangeItemSelectionViewPresenter;
-import bigBang.library.client.userInterface.presenter.ExchangeItemSelectionViewPresenter.Action;
+import bigBang.library.client.userInterface.form.MailItemForm;
+import bigBang.library.client.userInterface.presenter.MailItemSelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.MailItemSelectionViewPresenter.Action;
 import bigBang.library.shared.AttachmentStub;
-import bigBang.library.shared.ExchangeItem;
-import bigBang.library.shared.ExchangeItemStub;
+import bigBang.library.shared.MailItem;
+import bigBang.library.shared.MailItemStub;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
@@ -36,14 +36,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ExchangeItemSelectionView extends View implements ExchangeItemSelectionViewPresenter.Display{
+public class MailItemSelectionView extends View implements MailItemSelectionViewPresenter.Display{
 
-	FilterableList<ExchangeItemStub> emails;
+	FilterableList<MailItemStub> emails;
 	FilterableList<AttachmentStub> attachments;
-	ExchangeItemForm centerForm;
+	MailItemForm centerForm;
 	private ActionInvokedEventHandler<Action> actionHandler;
 
-	private ExchangeItemSelectionToolbar toolbar;
+	private MailItemSelectionToolbar toolbar;
 	private ListHeader header;
 
 	public static class AttachmentEntry extends ListEntry<AttachmentStub>{
@@ -177,7 +177,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 
 	}
 
-	public static class EmailEntry extends ListEntry<ExchangeItemStub>{
+	public static class EmailEntry extends ListEntry<MailItemStub>{
 
 		protected Label from;
 		protected Label timestamp;
@@ -186,13 +186,13 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		protected Label bodyPreview;
 		protected boolean initialized = false;
 
-		public EmailEntry(ExchangeItemStub value) {
+		public EmailEntry(MailItemStub value) {
 			super(value);
 			setInfo(value);
 			setHeight("70px");
 		}
 
-		public void setInfo(ExchangeItemStub item){
+		public void setInfo(MailItemStub item){
 			if(!initialized){
 				from = getFormatedLabel();
 				from.setWordWrap(false);
@@ -201,7 +201,15 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 				HorizontalPanel top = new HorizontalPanel();
 				top.add(from);
 				top.add(timestamp);
-				if(item.attachmentCount > 0){
+				if (item.isFolder) {
+					Resources resources = GWT.create(Resources.class);
+					if (item.isParentFolder) {
+						hasAttachments = new Image(resources.mail_back());
+					} else {
+						hasAttachments = new Image(resources.mail_folder());
+					}
+					top.add(hasAttachments);
+				} else if(item.attachmentCount > 0){
 					Resources resources = GWT.create(Resources.class);
 					hasAttachments = new Image(resources.icon_attachment());
 					top.add(hasAttachments);
@@ -250,7 +258,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 	}
 
 
-	public ExchangeItemSelectionView(){
+	public MailItemSelectionView(){
 
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
@@ -267,7 +275,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ExchangeItemSelectionViewPresenter.Action>(ExchangeItemSelectionViewPresenter.Action.GET_ALL_EMAILS));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<MailItemSelectionViewPresenter.Action>(MailItemSelectionViewPresenter.Action.GET_ALL_EMAILS));
 			}
 		});
 
@@ -275,10 +283,10 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ExchangeItemSelectionViewPresenter.Action>(ExchangeItemSelectionViewPresenter.Action.REFRESH));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<MailItemSelectionViewPresenter.Action>(MailItemSelectionViewPresenter.Action.REFRESH));
 			}
 		});
-		emails = new FilterableList<ExchangeItemStub>();
+		emails = new FilterableList<MailItemStub>();
 		emails.setHeaderWidget(header);
 		emails.showFilterField(false);
 		leftWrapper.add(emails);
@@ -303,7 +311,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		//CENTER
 		VerticalPanel centerWrapper = new VerticalPanel();
 		centerWrapper.setSize("100%", "100%");
-		centerForm = new ExchangeItemForm();
+		centerForm = new MailItemForm();
 		centerForm.setSize("100%", "100%");
 		centerWrapper.add(centerForm);
 		centerWrapper.setCellHeight(centerForm, "100%");
@@ -317,7 +325,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 
 		insideVerticalWrapper.add(centerHeader);
 		//TOOLBAR
-		toolbar = new ExchangeItemSelectionToolbar(){
+		toolbar = new MailItemSelectionToolbar(){
 
 			@Override
 			public void onCancelRequest() {
@@ -354,7 +362,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 	}
 
 	@Override
-	public void addEmailEntry(ExchangeItemStub email){
+	public void addEmailEntry(MailItemStub email){
 		EmailEntry entry = new EmailEntry(email);
 		emails.add(entry);
 	}
@@ -375,12 +383,12 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 	}
 
 	@Override
-	public HasValueSelectables<ExchangeItemStub> getEmailList() {
+	public HasValueSelectables<MailItemStub> getEmailList() {
 		return emails;
 	}
 
 	@Override
-	public HasValue<ExchangeItem> getForm() {
+	public HasValue<MailItem> getForm() {
 		return centerForm;
 	}
 
@@ -392,8 +400,10 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 	@Override
 	public void setAttachments(AttachmentStub[] attachments) {
 		this.attachments.clear();
-		for(int i = 0; i<attachments.length; i++){
-			this.attachments.add(new AttachmentEntry(attachments[i]));
+		if (attachments != null) {
+			for(int i = 0; i<attachments.length; i++){
+				this.attachments.add(new AttachmentEntry(attachments[i]));
+			}
 		}
 	}
 

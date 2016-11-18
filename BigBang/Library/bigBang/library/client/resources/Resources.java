@@ -53,6 +53,12 @@ public interface Resources extends ClientBundle {
 	@Source("images/icon_attachment.gif")
 	ImageResource icon_attachment();
 	
+	@Source("images/mail_folder.png")
+	ImageResource mail_folder();
+	
+	@Source("images/mail_back.png")
+	ImageResource mail_back();
+	
 	@Source("images/problem.png")
 	ImageResource problem();
 	

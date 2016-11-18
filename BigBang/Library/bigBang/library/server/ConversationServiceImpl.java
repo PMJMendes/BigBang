@@ -9,8 +9,6 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.UUID;
 
-import microsoft.exchange.webservices.data.core.service.item.Item;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -24,6 +22,8 @@ import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.Message.Attachment;
+import bigBang.definitions.shared.Message.MsgAddress;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
@@ -39,6 +39,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageAddressData;
+import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
@@ -57,18 +58,26 @@ import com.premiumminds.BigBang.Jewel.Operations.Conversation.ReopenProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Conversation.SendMessage;
 import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
 public class ConversationServiceImpl
 	extends SearchServiceBase
 	implements ConversationService
 {
 	private static final long serialVersionUID = 1L;
-
-	private static Message.Attachment sGetDBAttachment(MessageAttachment pobjAttachment, Timestamp pdtMsg)
+	
+	/**
+	 * Gets an attachment from the database, associated with a message exchange, and promoted to document
+	 */
+	private static Message.Attachment sGetDBDocument(MessageAttachment pobjAttachment, Timestamp pdtMsg)
 		throws BigBangException
 	{
 		Document lobjDoc;
 		Message.Attachment lobjResult;
+		
+		if (pobjAttachment.getAt(MessageAttachment.I.DOCUMENT) == null) {
+			return null;
+		}			
 
 		try
 		{
@@ -79,53 +88,24 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		if (lobjDoc == null) {
+			return null;
+		}
+		
 		lobjResult = new Message.Attachment();
-		lobjResult.id = pobjAttachment.getKey().toString();
-
+		
 		lobjResult.docId = lobjDoc.getKey().toString();
-
-		lobjResult.ownerId = lobjDoc.getOwnerID().toString();
-
 		lobjResult.name = lobjDoc.getLabel();
-		lobjResult.attachmentId = null;
-		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();
-		lobjResult.storageId = null;
-		lobjResult.date = pdtMsg.toString().substring(0, 10);
+		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();	
+		lobjResult.promote = true;
+		lobjResult.ownerId = lobjDoc.getAt(Document.I.OWNER).toString();
 
 		return lobjResult;
 	}
 
-	private static Message.Attachment sGetXchAttachment(String pstrEmailId, MessageAttachment pobjAttachment, Timestamp pdtMsg)
-		throws BigBangException
-	{
-		FileXfer lobjDoc;
-		Message.Attachment lobjResult;
-
-		try
-		{
-			lobjDoc = MailConnector.DoGetAttachment(pstrEmailId, (String)pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID));
-		}
-		catch (BigBangJewelException e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjResult = new Message.Attachment();
-		lobjResult.id = pobjAttachment.getKey().toString();
-
-		lobjResult.name = lobjDoc.getFileName();
-		lobjResult.attachmentId = (String)pobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
-		lobjResult.emailId = pstrEmailId;
-		lobjResult.docTypeId = lobjDoc.getContentType();
-		lobjResult.storageId = null;
-		lobjResult.date = pdtMsg.toString().substring(0, 10);
-
-		lobjResult.docId = null;
-		lobjResult.ownerId = null;
-
-		return lobjResult;
-	}
-
+	/**
+	 * Gets a Message from the database
+	 */
 	private static Message sGetDBMessage(com.premiumminds.BigBang.Jewel.Objects.Message pobjMsg, boolean pbFilterOwners)
 		throws BigBangException
 	{
@@ -156,8 +136,9 @@ public class ConversationServiceImpl
 		lobjResult.subject = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.SUBJECT);
 		lobjResult.text = pobjMsg.getText();
 		lobjResult.emailId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID);
+		lobjResult.folderId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.FOLDERID);
 
-		if ( larrAddrs == null )
+		if ( larrAddrs == null || larrAddrs.length==0 )
 			lobjResult.addresses = null;
 		else
 		{
@@ -171,72 +152,133 @@ public class ConversationServiceImpl
 		else
 		{
 			lobjResult.attachments = new Message.Attachment[larrAtts.length];
-			for ( i = 0; i < larrAtts.length; i++ )
-				lobjResult.attachments[i] = sGetAttachment(lobjResult.emailId, larrAtts[i].getKey(),
+			
+			for ( i = 0; i < larrAtts.length; i++ ) {
+				lobjResult.attachments[i] = sGetDBAttachment(lobjResult.emailId, larrAtts[i].getKey(),
 						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
+			}
 		}
 
 		return lobjResult;
 	}
 
-	private static Message sGetXchMessage(com.premiumminds.BigBang.Jewel.Objects.Message pobjMsg, boolean pbFilterOwners)
-		throws BigBangException
-	{
-		Item lobjItem;
-		MessageAddress[] larrAddrs;
-		MessageAttachment[] larrAtts;
-		Message lobjResult;
-		int i;
-
-		lobjResult = new Message();
-		lobjResult.id = pobjMsg.getKey().toString();
-
-		lobjResult.conversationId = ((UUID)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.OWNER)).toString();
-		lobjResult.order = (Integer)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.NUMBER);
-		lobjResult.direction = sGetDirection((UUID)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DIRECTION));
-		lobjResult.kind = ( ((Boolean)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.ISEMAIL)) ?
-				Message.Kind.EMAIL : Message.Kind.NOTE );
-		lobjResult.emailId = (String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID);
-
-		try
-		{
-			lobjItem = MailConnector.DoGetItem((String)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID));
-			lobjItem.load();
-
-			lobjResult.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getDateTimeSent());
-			lobjResult.subject = lobjItem.getSubject();
-			lobjResult.text = lobjItem.getBody().toString();
-
-			larrAddrs = pobjMsg.GetAddresses();
-			larrAtts = pobjMsg.GetAttachments();
-		}
-		catch (Throwable e)
-		{
+	
+	/**
+	 * Gets a Message from Google storage
+	 */
+	private static Message sGetStgMessage(com.premiumminds.BigBang.Jewel.Objects.Message bdMessage, boolean filterOwners)
+		throws BigBangException {
+		
+		String storageId = bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID).toString();
+		
+		MessageData mailData = null;
+		
+		try {
+			mailData = StorageConnector.getAsData(storageId);
+		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
+		
+		Message result = new Message();
+		
+		result.id = bdMessage.getKey().toString();
 
-		if ( larrAddrs == null )
-			lobjResult.addresses = null;
-		else
-		{
-			lobjResult.addresses = new Message.MsgAddress[larrAddrs.length];
-			for ( i = 0; i < larrAddrs.length; i++ )
-				lobjResult.addresses[i] = sGetAddress(larrAddrs[i].getKey(), pbFilterOwners);
+		result.conversationId = ((UUID)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.OWNER)).toString();
+		result.order = (Integer)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.NUMBER);
+		result.direction = sGetDirection((UUID)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DIRECTION));
+		result.kind = ( ((Boolean)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.ISEMAIL)) ?
+				Message.Kind.EMAIL : Message.Kind.NOTE );
+		result.emailId = (String)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID);
+		result.date = ((Timestamp)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE)).toString().substring(0, 10);
+		result.subject = mailData.mstrSubject;
+		result.text = mailData.mstrBody;
+		
+		if (mailData.marrAddresses != null) {
+			result.addresses = fillMessageAddresses(filterOwners, mailData);
 		}
-
-		if ( larrAtts == null )
-			lobjResult.attachments = null;
-		else
-		{
-			lobjResult.attachments = new Message.Attachment[larrAtts.length];
-			for ( i = 0; i < larrAtts.length; i++ )
-				lobjResult.attachments[i] = sGetAttachment(lobjResult.emailId, larrAtts[i].getKey(),
-						(Timestamp)pobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE));
+		
+		if (mailData.marrAttachments != null) {
+			result.attachments = fillMessageAttachments(filterOwners, mailData);
 		}
-
-		return lobjResult;
+		
+		return result;
 	}
 
+	/**
+	 * Fills an array with message attachments
+	 */
+	private static Attachment[] fillMessageAttachments(boolean filterOwners,
+			MessageData mailData) throws BigBangException {
+		
+		Attachment[] attachments = new Attachment[mailData.marrAttachments.length];
+		
+		for (int i=0; i<mailData.marrAttachments.length; i++) {
+			MessageAttachmentData tmp = mailData.marrAttachments[i];
+			MessageAttachment messageAttachment = null;
+			Message.Attachment attachment = null;
+			
+			try {
+				messageAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), tmp.mid);
+			} catch (Throwable e) {
+				throw new BigBangException(e.getMessage(), e);
+			}
+			
+			attachment = new Message.Attachment();
+			attachment.id = null;
+			attachment.attachmentId = (String)messageAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
+			attachment.emailId = mailData.mstrEmailID;
+			attachment.name = (String)messageAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
+			attachment.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailData.mdtDate);
+			
+			attachments[i] = attachment;
+		}
+		
+		return attachments;
+	}
+
+	/**
+	 * Fills an array with message addresses
+	 */
+	protected static MsgAddress[] fillMessageAddresses(boolean filterOwners,
+			MessageData mailData) throws BigBangException {
+		MsgAddress[] addresses = new MsgAddress[mailData.marrAddresses.length];
+		for (int i=0; i<mailData.marrAddresses.length; i++) {
+			MessageAddressData tmp = mailData.marrAddresses[i];
+			Message.MsgAddress addr = new Message.MsgAddress();
+			Contact contact = null;
+			ContactInfo contactInfo = null;
+			MessageAddress msgAddr = null;
+			try {
+				msgAddr = MessageAddress.GetInstance(Engine.getCurrentNameSpace(), tmp.mid);
+				contactInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
+					(UUID)msgAddr.getAt(MessageAddress.I.CONTACTINFO));
+				
+				if ( (contactInfo != null) && (!filterOwners || Constants.UsageID_To.equals(tmp.midUsage))) {
+					contact = ( contactInfo == null ? null : contactInfo.getOwner() );
+				}
+				
+			} catch (Throwable e) {
+				throw new BigBangException(e.getMessage(), e);
+			}
+			
+			addr.id = tmp.mid==null ? null : tmp.mid.toString();
+			addr.address = tmp.mstrAddress==null ? null : tmp.mstrAddress;
+			addr.usage = tmp.midUsage==null ? null : sGetUsage(tmp.midUsage);
+			addr.userId = tmp.midUser==null ? null : tmp.midUser.toString(); 
+			addr.contactInfoId = contactInfo.getKey()==null ? null : contactInfo.getKey().toString();
+			addr.display = (String)msgAddr.getAt(MessageAddress.I.DISPLAYNAME);
+			if (contact != null) {
+				addr.ownerTypeId = contact.getOwnerType()==null ? null : contact.getOwnerType().toString();
+				addr.ownerId = contact.getOwnerID()==null ? null : contact.getOwnerID().toString();
+			}
+			addresses[i] = addr;
+		}
+		return addresses;
+	}
+
+	/**
+	 * Returns conversation direction (IN/OUT)
+	 */
 	public static ConversationStub.Direction sGetDirection(UUID pid)
 	{
 		if (Constants.MsgDir_Incoming.equals(pid) )
@@ -248,6 +290,9 @@ public class ConversationServiceImpl
 		return null;
 	}
 
+	/**
+	 * Gets address usage according to its GUID
+	 */
 	public static Message.MsgAddress.Usage sGetUsage(UUID pid)
 	{
 		if ( Constants.UsageID_From.equals(pid) )
@@ -268,6 +313,9 @@ public class ConversationServiceImpl
 		return null;
 	}
 
+	/**
+	 * Gets an address from the DB
+	 */
 	public static Message.MsgAddress sGetAddress(UUID pid, boolean pbFilterOwners)
 		throws BigBangException
 	{
@@ -312,12 +360,16 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
-	public static Message.Attachment sGetAttachment(String pstrEmailId, UUID pid, Timestamp pdtMsg)
+	/**
+	 * Gets an attachment from the DB
+	 */
+	public static Message.Attachment sGetDBAttachment(String pstrEmailId, UUID pid, Timestamp pdtMsg)
 		throws BigBangException
 	{
 		MessageAttachment lobjAttachment;
-		Message.Attachment lobjEmpty;
+		Attachment dbAttachment = null;
 
+		// Gets the attachment's entity
 		try
 		{
 			lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), pid);
@@ -327,29 +379,28 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		if ( lobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID) != null )
-		{
-			try
-			{
-				return sGetXchAttachment(pstrEmailId, lobjAttachment, pdtMsg);
-			}
-			catch (BigBangException e)
-			{
-			}
+		dbAttachment = sGetDBDocument(lobjAttachment, pdtMsg);
+			
+		// If the attachment is null, it means there is no corresponding document in the DB.
+		// In this case, a new attachment must be created here, to hold only the attachment info
+		if (dbAttachment == null) {
+			dbAttachment = new Message.Attachment();
+			dbAttachment.promote = false;
 		}
-
-		if ( lobjAttachment.getAt(MessageAttachment.I.DOCUMENT) != null )
-			return sGetDBAttachment(lobjAttachment, pdtMsg);
-
-		lobjEmpty = new Message.Attachment();
-		lobjEmpty.id = lobjAttachment.getKey().toString();
-		lobjEmpty.attachmentId = (String)lobjAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
-		lobjEmpty.emailId = pstrEmailId;
-		lobjEmpty.name = "(Erro)";
-		lobjEmpty.date = pdtMsg.toString().substring(0, 10);
-		return lobjEmpty;
+		
+		// Fills the attachment with the possible info
+		dbAttachment.attachmentId = (String) lobjAttachment.getAt(2);
+		dbAttachment.date = pdtMsg.toString().substring(0, 10);
+		dbAttachment.emailId = pstrEmailId;
+		dbAttachment.id = pid.toString();
+		dbAttachment.storageId = pstrEmailId;
+		
+		return dbAttachment;
 	}
 
+	/**
+	 * Gets an message from the DB or storage
+	 */
 	public static Message sGetMessage(UUID pid, boolean pbFilterOwners)
 		throws BigBangException
 	{
@@ -363,21 +414,30 @@ public class ConversationServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+		
+		// Tries to get the message from the DB
+		Message result = sGetDBMessage(lobjMsg, pbFilterOwners);
 
-		if ( lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
+		// If unable to get from DB, tries to get from storage...
+		// It should be able to get from the DB, for a conversation has messages.
+		// This is only a "last try before an error"
+		if ( result == null && lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
 		{
 			try
 			{
-				return sGetXchMessage(lobjMsg, pbFilterOwners);
+				return sGetStgMessage(lobjMsg, pbFilterOwners);
 			}
 			catch (BigBangException e)
 			{
 			}
 		}
 
-		return sGetDBMessage(lobjMsg, pbFilterOwners);
+		return result;
 	}
 
+	/**
+	 * Gets a conversation from the DB
+	 */
 	public static Conversation sGetConversation(UUID pid)
 		throws BigBangException
 	{
@@ -441,6 +501,9 @@ public class ConversationServiceImpl
 		return lobjResult;
 	}
 
+	/**
+	 * Gets the "selectable" conversations' list to display in a page.
+	 */
 	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -531,6 +594,9 @@ public class ConversationServiceImpl
 		return larrAux.toArray(new TipifiedListItem[larrAux.size()]);
 	}
 
+	/**
+	 * Gets aa conversation with a given id
+	 */
 	public Conversation getConversation(String id)
 		throws SessionExpiredException, BigBangException
 	{
@@ -540,6 +606,9 @@ public class ConversationServiceImpl
 		return sGetConversation(UUID.fromString(id));
 	}
 
+	/**
+	 * Gets a conversation and corresponding messages to print
+	 */
 	public String getForPrinting(String id)
 		throws SessionExpiredException, BigBangException
 	{
@@ -603,6 +672,9 @@ public class ConversationServiceImpl
 		return lidAux.toString();
 	}
 
+	/**
+	 * Creates a new conversation from an email
+	 */
 	public Conversation createFromEmail(Conversation conversation)
 		throws SessionExpiredException, BigBangException
 	{
@@ -658,6 +730,9 @@ public class ConversationServiceImpl
 		return sGetConversation(lopCCB.mobjData.mid);
 	}
 
+	/**
+	 * saves an edited conversation
+	 */
 	public Conversation saveConversation(Conversation conversation)
 		throws SessionExpiredException, BigBangException
 	{
@@ -704,6 +779,9 @@ public class ConversationServiceImpl
 		return sGetConversation(lopMD.mobjData.mid);
 	}
 
+	/**
+	 * Gets an empty conversation
+	 */
 	public Message getEmpty()
 		throws SessionExpiredException, BigBangException
 	{
@@ -718,32 +796,53 @@ public class ConversationServiceImpl
 		lobjResult.text = getSignature() + "<br><bigbang:original:bb>";
 		lobjResult.attachments = new Message.Attachment[0];
 		lobjResult.addresses = new Message.MsgAddress[0];
+		lobjResult.folderId = null;
 
 		return lobjResult;
 	}
-
-	public Message getForReply(String messageId)
-		throws SessionExpiredException, BigBangException
-	{
+	
+	/**
+	 * Gets an attachment from the database, associated with a message exchange, and promoted to document
+	 */
+	public Message getCommonSend(String messageId, String typeString) 
+			throws SessionExpiredException, BigBangException {
+		
 		Message lobjResult;
-		ArrayList<Message.MsgAddress> larrAddrs;
-		Message.MsgAddress.Usage lobjUsage;
-		int i;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
-
+			
 		lobjResult = sGetMessage(UUID.fromString(messageId), false);
 		lobjResult.id = null;
 		lobjResult.order = null;
 		lobjResult.direction = ConversationStub.Direction.OUTGOING;
 		lobjResult.date = null;
-		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
-		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
+		if (typeString != null) {
+			lobjResult.subject = (lobjResult.subject == null ? 
+									typeString : 
+									(lobjResult.subject.startsWith(typeString) ? 
+											lobjResult.subject : 
+											typeString + lobjResult.subject));
+		}
+		lobjResult.text = typeString==null ? lobjResult.text : getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
 		lobjResult.emailId = null;
+		lobjResult.folderId = null;
+
+		return lobjResult;
+	}
+
+	public Message getForReply(String messageId)
+		throws SessionExpiredException, BigBangException {
+		
+		Message lobjResult;
+		ArrayList<Message.MsgAddress> larrAddrs;
+		Message.MsgAddress.Usage lobjUsage;
+		int i;
+
+		lobjResult = getCommonSend(messageId, "Re:");
 		lobjResult.attachments = new Message.Attachment[0];
-		if ( lobjResult.addresses != null )
-		{
+		
+		if ( lobjResult.addresses != null ) {
 			larrAddrs = new ArrayList<Message.MsgAddress>();
 			lobjUsage = Message.MsgAddress.Usage.FROM;
 			for ( i = 0; i < lobjResult.addresses.length; i++ )
@@ -763,45 +862,32 @@ public class ConversationServiceImpl
 				}
 			}
 			lobjResult.addresses = larrAddrs.toArray(new Message.MsgAddress[larrAddrs.size()]);
-		}
-		else
+		} else {
 			lobjResult.addresses = new Message.MsgAddress[0];
+		}
 
 		return lobjResult;
 	}
 
 	public Message getForReplyAll(String messageId)
-		throws SessionExpiredException, BigBangException
-	{
+		throws SessionExpiredException, BigBangException {
+		
 		Message lobjResult;
 		ArrayList<Message.MsgAddress> larrAddrs;
 		Message.MsgAddress.Usage lobjUsage;
 		String lstrEmail;
 		int i;
 
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
+		try {
 			lstrEmail = MailConnector.getUserEmail();
-		}
-		catch (Throwable e)
-		{
+		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
-
-		lobjResult = sGetMessage(UUID.fromString(messageId), false);
-		lobjResult.id = null;
-		lobjResult.order = null;
-		lobjResult.direction = ConversationStub.Direction.OUTGOING;
-		lobjResult.date = null;
-		lobjResult.subject = (lobjResult.subject == null ? "Re:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Re: " + lobjResult.subject));
-		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
-		lobjResult.emailId = null;
+		
+		lobjResult = getCommonSend(messageId, "Re:");
 		lobjResult.attachments = new Message.Attachment[0];
-		if ( lobjResult.addresses != null )
-		{
+		
+		if ( lobjResult.addresses != null ) {
 			larrAddrs = new ArrayList<Message.MsgAddress>();
 			lobjUsage = Message.MsgAddress.Usage.FROM;
 			for ( i = 0; i < lobjResult.addresses.length; i++ )
@@ -831,9 +917,9 @@ public class ConversationServiceImpl
 				}
 			}
 			lobjResult.addresses = larrAddrs.toArray(new Message.MsgAddress[larrAddrs.size()]);
-		}
-		else
+		} else {
 			lobjResult.addresses = new Message.MsgAddress[0];
+		}
 
 		return lobjResult;
 	}
@@ -841,19 +927,8 @@ public class ConversationServiceImpl
 	public Message getForForward(String messageId)
 		throws SessionExpiredException, BigBangException
 	{
-		Message lobjResult;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		lobjResult = sGetMessage(UUID.fromString(messageId), false);
-		lobjResult.id = null;
-		lobjResult.order = null;
-		lobjResult.direction = ConversationStub.Direction.OUTGOING;
-		lobjResult.date = null;
-		lobjResult.subject = (lobjResult.subject == null ? "Fw:" : (lobjResult.subject.startsWith("Re:") ? lobjResult.subject : "Fw: " + lobjResult.subject));
-		lobjResult.text = getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
-		lobjResult.emailId = null;
+		Message lobjResult = getCommonSend(messageId, "Fw:");
+		
 		lobjResult.addresses = new Message.MsgAddress[0];
 		if ( lobjResult.attachments == null )
 			lobjResult.attachments = new Message.Attachment[0];
@@ -864,18 +939,10 @@ public class ConversationServiceImpl
 	public Message getForRepeat(String messageId)
 		throws SessionExpiredException, BigBangException
 	{
-		Message lobjResult;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		lobjResult = sGetMessage(UUID.fromString(messageId), false);
-		lobjResult.id = null;
-		lobjResult.order = null;
-		lobjResult.direction = ConversationStub.Direction.OUTGOING;
-		lobjResult.date = null;
+		Message lobjResult = getCommonSend(messageId, null);
+		
 		lobjResult.text = lobjResult.text + "<bigbang:signature:bb><bigbang:original:bb>";
-		lobjResult.emailId = null;
+		
 		if ( lobjResult.attachments == null )
 			lobjResult.addresses = new Message.MsgAddress[0];
 		if ( lobjResult.attachments == null )
@@ -1360,7 +1427,7 @@ public class ConversationServiceImpl
 			try { lrsDecos.close(); } catch (SQLException e1) {}
 			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangException(e.getMessage(), e);
-		}
+		} 
 
 		try
 		{

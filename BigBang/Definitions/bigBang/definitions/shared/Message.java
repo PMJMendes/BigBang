@@ -71,8 +71,10 @@ public class Message
 	public String subject; //Só pode vir a null se tiver emailId.
 	public String text; //Só pode vir a null se tiver emailId.
 	public String emailId; //Se fôr incoming e kind=EMAIL, obrigatório. Se não, tem que vir a null.
-
+	public String folderId;
+	
 	public Attachment[] attachments;
 
 	public MsgAddress[] addresses;
+
 }
