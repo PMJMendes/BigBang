@@ -76,9 +76,9 @@ public class MailConnector {
 	 */
 	private static void initializeStore() throws BigBangJewelException {
 		try {
-			if (store == null || !store.isConnected()) {
+		//	if (store == null || !store.isConnected()) {
 				store = OAuthHandler.getImapStore(getUserEmail());
-			}
+		//	}
 			
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
@@ -307,14 +307,19 @@ public class MailConnector {
 				FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
 				fetchedMails = folder.search(unseenFlagTerm);
 			} else {
-				fetchedMails = folder.getMessages();
+				int nrItems = folder.getMessageCount();
+				if (nrItems > 30) {
+					fetchedMails = folder.getMessages(nrItems-30, nrItems);
+				} else {
+					fetchedMails = folder.getMessages();
+				}
 			}
 
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		Collections.reverse(Arrays.asList(fetchedMails));
+	//	Collections.reverse(Arrays.asList(fetchedMails));
 		
 		return fetchedMails;		
 	}
