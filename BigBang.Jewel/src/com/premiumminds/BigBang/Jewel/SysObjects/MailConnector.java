@@ -319,7 +319,9 @@ public class MailConnector {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		Collections.reverse(Arrays.asList(fetchedMails));
+		List<Message> asList = Arrays.asList(fetchedMails);
+		Collections.reverse(asList);
+		fetchedMails = (Message[]) asList.toArray();
 		
 		return fetchedMails;		
 	}
