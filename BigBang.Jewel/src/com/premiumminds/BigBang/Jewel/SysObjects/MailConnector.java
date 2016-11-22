@@ -11,7 +11,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,12 +23,10 @@ import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -46,9 +43,7 @@ import org.apache.poi.util.IOUtils;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
-import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
-import Jewel.Engine.Security.Password;
 import Jewel.Engine.SysObjects.FileXfer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -61,6 +56,7 @@ import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Security.OAuthHandler;
+import com.sun.mail.smtp.SMTPTransport;
 
 /**
  *	Class responsible for implementing the needed functionalities relating 
@@ -89,26 +85,25 @@ public class MailConnector {
 	
 	/**
 	 *	This method sends an email, receiving all the "usual" content on an email message.
+	 * @param from 
 	 */
 	public static void sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
-			String subject, String body, FileXfer[] attachments) throws BigBangJewelException {
+			String[] from, String subject, String body, FileXfer[] attachments) throws BigBangJewelException {
 
-		Session session;
 		InternetAddress[] addresses;
 
 		try {
-			session = getSession();
-			session.setDebug(false); // TODO: Para alterar para ter debug na consola, em desenvolvimento
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		//Creates a message and sends the mail
-		MimeMessage mailMsg = new MimeMessage(session);
-
-		try {
+			
+			OAuthHandler.initialize();
+			
+			Session smptpSession = OAuthHandler.getSmtpSession(false);
+			SMTPTransport sendingConnection = OAuthHandler.getSmtpConnection("smtp.gmail.com", 587, getUserEmail(), smptpSession); 
+						
+			//Creates a message and sends the mail
+			MimeMessage mailMsg = new MimeMessage(smptpSession);
+			
 			// Sets FROM
-			mailMsg.setFrom(new InternetAddress(session.getProperty("mail.from")));
+			mailMsg.setFrom(buildAddresses(from)[0]);
 
 			// Sets REPLY TO
 			addresses = buildAddresses(replyTo);
@@ -148,7 +143,7 @@ public class MailConnector {
 				// If it has attachments, must set a multipart mail
 				MimeMultipart multipartMsg = new MimeMultipart();
 				MimeBodyPart bodyPart = new MimeBodyPart();
-				bodyPart.setText(body, "UTF-8");
+				bodyPart.setContent(body, "text/html; charset=utf-8");
 				multipartMsg.addBodyPart(bodyPart);
 
 				for (int i=0; i<attachments.length; i++) {
@@ -168,12 +163,13 @@ public class MailConnector {
 
 			mailMsg.addHeader("MIME-Version", "1.0");
 			mailMsg.saveChanges();
-
-			// Sends the message
-			Transport.send(mailMsg);
-
-		} catch (MessagingException e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			
+			sendingConnection.sendMessage(mailMsg, mailMsg.getAllRecipients());
+			
+			sendingConnection.close();
+			
+		} catch (Throwable e) {
+			throw new BigBangJewelException("Mensagem " + e.getMessage() + "\nClasse Erro " + e.getClass() + " MailConnector:170", e);
 		}
 	}
 
@@ -244,7 +240,7 @@ public class MailConnector {
 			
 			// Calls the method to send the message
 			sendMail(replyTo, to, message.marrCCs, message.marrBCCs,
-					message.mstrSubject, message.mstrBody, attachments);
+					null, message.mstrSubject, message.mstrBody, attachments);
 		}
 	}
 
@@ -589,11 +585,13 @@ public class MailConnector {
 		int countCC = 0;
 		int countBCC = 0;
 		int countReplyTo = 0;
+		int countFrom = 0;
 
 		String[] to;
 		String[] cc;
 		String[] bcc;
 		String[] replyTo;
+		String[] from;
 
 		Document document;
 		FileXfer[] attachments;
@@ -612,6 +610,8 @@ public class MailConnector {
 				countBCC++;
 			} else if ( Constants.UsageID_ReplyTo.equals(message.marrAddresses[i].midUsage)) {
 				countReplyTo++;
+			} else if ( Constants.UsageID_From.equals(message.marrAddresses[i].midUsage)) {
+				countFrom++;
 			}
 		}
 
@@ -619,11 +619,13 @@ public class MailConnector {
 		cc = new String[countCC];
 		bcc = new String[countBCC];
 		replyTo = new String[countReplyTo];
+		from = new String[countFrom];
 
 		countTo = 0;
 		countCC = 0;
 		countBCC = 0;
 		countReplyTo = 0;
+		countFrom = 0;
 
 		// Builds the arrays with the different types of addresses to send the message to
 		for (int i=0; i<message.marrAddresses.length; i++) {
@@ -639,6 +641,9 @@ public class MailConnector {
 			} else if (Constants.UsageID_ReplyTo.equals(message.marrAddresses[i].midUsage)) {
 				replyTo[countReplyTo] = message.marrAddresses[i].mstrAddress;
 				countReplyTo++;
+			} else if (Constants.UsageID_From.equals(message.marrAddresses[i].midUsage)) {
+				from[countFrom] = message.marrAddresses[i].mstrAddress;
+				countFrom++;
 			}
 		}
 
@@ -653,7 +658,7 @@ public class MailConnector {
 			}
 		}
 
-		sendMail(replyTo, to, cc, bcc, message.mstrSubject, message.mstrBody, attachments);
+		sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments);
 	}
 
 	/**
@@ -944,46 +949,6 @@ public class MailConnector {
 		}
 
 		return addresses;
-	}
-
-	/**
-	 *	This method sets a Properties object, representing the set of properties used by javax's email,
-	 * 	and creates and returns a javax's session
-	 */
-	private static Session getSession() throws BigBangJewelException {
-
-		String mailServer;
-		JewelAuthenticator authenticator;
-		Properties mailProps = System.getProperties();
-		
-		mailServer = "imap.gmail.com"; //TODO - mudar para a BD
-		authenticator = new JewelAuthenticator(getUserEmail(), getUserPassword());
-		
-		mailProps.setProperty("mail.store.protocol", "imaps");
-		mailProps.put("mail.host", mailServer);
-		
-		return Session.getInstance(mailProps, authenticator);
-	}
-
-	/**
-	 *	This method gets the password for the user in session
-	 */
-	private static String getUserPassword() throws BigBangJewelException {
-
-		User user;
-		Password pass;
-
-		try	{
-			user = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
-			if ( user.getAt(2) instanceof Password ) {
-				pass = (Password)user.getAt(2);
-			} else {
-				pass = new Password((String)user.getAt(2), true);
-			}
-			return pass.GetClear();
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
 	}
 
 	/**

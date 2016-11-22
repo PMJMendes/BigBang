@@ -478,7 +478,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not create the mass payment notice")
+						new String("Could not create the mass payment notice " + caught.getMessage())
 				});
 				super.onResponseFailure(caught);
 			}
@@ -1091,7 +1091,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
-						new String("Could not create the mass payment notice")
+						new String("Could not create the mass payment notice " + caught.getMessage())
 				});
 				super.onResponseFailure(caught);
 			}
