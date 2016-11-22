@@ -36,6 +36,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.FlagTerm;
+import javax.mail.search.MessageIDTerm;
+import javax.mail.search.SearchTerm;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.codec.binary.Base64;
@@ -262,7 +264,7 @@ public class MailConnector {
 			if (folderID != null && folderID.length() > 0) {
 				start = store.getFolder(folderID);
 			} else {
-				start = store.getDefaultFolder();
+				return store.getFolder("[Gmail]").list();
 			}
 
 			start.open(Folder.READ_WRITE);
@@ -308,8 +310,8 @@ public class MailConnector {
 				fetchedMails = folder.search(unseenFlagTerm);
 			} else {
 				int nrItems = folder.getMessageCount();
-				if (nrItems > 30) {
-					fetchedMails = folder.getMessages(nrItems-30, nrItems);
+				if (nrItems > Constants.GoogleAppsConstants.MAX_FETCHED_MAILS) {
+					fetchedMails = folder.getMessages(nrItems-Constants.GoogleAppsConstants.MAX_FETCHED_MAILS, nrItems);
 				} else {
 					fetchedMails = folder.getMessages();
 				}
@@ -379,13 +381,44 @@ public class MailConnector {
 				folder = store.getFolder("inbox");
 			}
 			folder.open(Folder.READ_ONLY);
+			
+			SearchTerm searchTerm = new MessageIDTerm(msgId);
+			Message[] messages = folder.search(searchTerm);
+			
+			boolean idFound = false;
+			
+			if (messages!=null && messages.length>0) {
+				for (int i=0; i<=messages.length; i++) {
+					Message tmp = messages[i];
+					
+					Enumeration<?> headers = tmp.getAllHeaders();
 
+					idFound = false;
+					while (headers.hasMoreElements()) {
+						Header h = (Header) headers.nextElement();         
+						String mID = h.getName();                
+						if(mID.contains("Message-ID") || mID.contains("Message-Id")) {
+							if (h.getValue().equals(msgId)) {
+								fetchedMessage = tmp;
+								idFound = true;
+								break;
+							}
+						}
+					}
+					
+					if (idFound) {
+						return fetchedMessage;
+					}
+				}
+			}
+			
+			
 			for (int i=1; i<=folder.getMessageCount(); i++) {
 
 				folder.getMessage(i).getHeader("Message-Id"); 
 				Enumeration<?> headers = folder.getMessage(i).getAllHeaders();
 
-				boolean idFound = false;
+				idFound = false;
 
 				while (headers.hasMoreElements()) {
 					Header h = (Header) headers.nextElement();         

@@ -8,7 +8,9 @@ import java.util.UUID;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -95,22 +97,24 @@ public class MailServiceImpl
 				
 				Object content = parrSource[i].getContent();
 				
-				if ( content.toString() == null )
+				larrResults[i].bodyPreview = "_";
+				
+				/*if ( content.toString() == null )
 					larrResults[i].bodyPreview = "_";
 				else
-				{
+				{ */
 					/*if (content instanceof Multipart && attachmentsMap != null && attachmentsMap.size() != 0) {
 						lstrBody = attachmentsMap.get("main").getContent().toString();
 						lstrBody = MailConnector.prepareBodyInline(lstrBody, attachmentsMap);
 					} else {
 						lstrBody = content.toString();
 					} */
-					lstrBody = getTextFromMessage(parrSource[i]);
+				/*	lstrBody = getTextFromMessage(parrSource[i]);
 					lstrBody = MailConnector.removeHtml(lstrBody);
 					if ( lstrBody.length() > 170 ) {
 						larrResults[i].bodyPreview = lstrBody.substring(0, 170);
 					}
-				}
+				} */
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
@@ -265,8 +269,34 @@ public class MailServiceImpl
 		catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
+		
+		MailItemStub[] mailItems = larrItems==null ? null : sToClient(larrItems);
+		Folder sent = null;
+		try {
+			sent = MailConnector.getFolder("Correio enviado");
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
+		
+		Folder [] foldArray = new Folder[1];
+		
+		foldArray[0] = sent;
+		
+		MailItemStub[] sentFolder = null;
+		
+		if (sent!=null) {
+			sentFolder = sToClient(null, foldArray);
+		}
+		
+		if (sentFolder != null) {
+			return ArrayUtils.addAll(sentFolder, mailItems);
+		}
+		
+		if (larrItems.length > 0) {
+			closeFolderAndStore((MimeMessage) larrItems[0]);
+		}
 
-		return sToClient(larrItems);
+		return mailItems;
 	}
 
 	public MailItemStub[] getItemsAll()
@@ -301,6 +331,10 @@ public class MailServiceImpl
 
 			MailItemStub[] mailItems = items==null ? null : sToClient(items);
 			MailItemStub[] folderItems = (folders==null && current == null) ? null : sToClient(current, folders);
+			
+			if (items.length > 0) {
+				closeFolderAndStore((MimeMessage) items[0]);
+			}
 			
 			return ArrayUtils.addAll(folderItems, mailItems);
 		}
@@ -386,7 +420,10 @@ public class MailServiceImpl
 				}
 				
 				lobjResult.attachments = larrStubs.toArray(new AttachmentStub[larrStubs.size()]);
+				
 			}
+			
+			closeFolderAndStore(lobjItem);
 		}
 		catch (Throwable e)
 		{
@@ -394,6 +431,17 @@ public class MailServiceImpl
 		}
 
 		return lobjResult;
+	}
+
+	protected void closeFolderAndStore(MimeMessage lobjItem)
+			throws BigBangException {
+		try {
+			Store storeRef = lobjItem.getFolder().getStore();
+			lobjItem.getFolder().close(false);
+			storeRef.close();
+		} catch (Throwable e){
+			throw new BigBangException(e.getMessage(), e);
+		}	
 	}
 
 	/**
