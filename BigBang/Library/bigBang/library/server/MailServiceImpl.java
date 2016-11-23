@@ -8,12 +8,10 @@ import java.util.UUID;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -48,7 +46,6 @@ public class MailServiceImpl
 		MailItemStub[] larrResults;
 		int i;
 		String lstrFrom;
-		String lstrBody;
 
 		try
 		{
@@ -90,68 +87,16 @@ public class MailServiceImpl
 				else
 					larrResults[i].isFromMe = false;
 
-				/*Map<String, BodyPart> attachmentsMap = MailConnector.getAttachmentsMap (parrSource[i]);
-				larrResults[i].attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();*/
-				
 				larrResults[i].attachmentCount = attachmentsNumber(parrSource[i]);
-				
-				Object content = parrSource[i].getContent();
 				
 				larrResults[i].bodyPreview = "_";
 				
-				/*if ( content.toString() == null )
-					larrResults[i].bodyPreview = "_";
-				else
-				{ */
-					/*if (content instanceof Multipart && attachmentsMap != null && attachmentsMap.size() != 0) {
-						lstrBody = attachmentsMap.get("main").getContent().toString();
-						lstrBody = MailConnector.prepareBodyInline(lstrBody, attachmentsMap);
-					} else {
-						lstrBody = content.toString();
-					} */
-				/*	lstrBody = getTextFromMessage(parrSource[i]);
-					lstrBody = MailConnector.removeHtml(lstrBody);
-					if ( lstrBody.length() > 170 ) {
-						larrResults[i].bodyPreview = lstrBody.substring(0, 170);
-					}
-				} */
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
 		}
 
 		return larrResults;
-	}
-	
-	private static String getTextFromMessage(Message message) throws Exception {
-	    String result = "";
-	    if (message.isMimeType("text/plain")) {
-	        result = message.getContent().toString();
-	    } else if (message.isMimeType("multipart/*")) {
-	        MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
-	        result = getTextFromMimeMultipart(mimeMultipart);
-	    }
-	    return result;
-	}
-
-	private static String getTextFromMimeMultipart(
-	        MimeMultipart mimeMultipart) throws Exception{
-	    String result = "";
-	    int count = mimeMultipart.getCount();
-	    for (int i = 0; i < count; i++) {
-	        BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-	        if (bodyPart.isMimeType("text/plain")) {
-	            result = result + "\n" + bodyPart.getContent();
-	            break; // without break same text appears twice in my tests
-	        } else if (bodyPart.isMimeType("text/html")) {
-	            String html = (String) bodyPart.getContent();
-	            //result = result + "\n" + org.jsoup.Jsoup.parse(html).text();
-	            result = html;
-	        } else if (bodyPart.getContent() instanceof MimeMultipart){
-	            result = result + getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
-	        }
-	    }
-	    return result;
 	}
 	
 	private static int attachmentsNumber(Message msg) throws BigBangException {
@@ -412,7 +357,7 @@ public class MailServiceImpl
 				for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
 				    lobjAttStub = new AttachmentStub();
 				    lobjAttStub.id = entry.getKey();
-					lobjAttStub.fileName = entry.getValue().getFileName();
+					lobjAttStub.fileName = entry.getKey();
 					String contentType = entry.getValue().getContentType();
 					lobjAttStub.mimeType = contentType!=null ? contentType.split(";")[0] : null;
 					lobjAttStub.size = entry.getValue().getSize();

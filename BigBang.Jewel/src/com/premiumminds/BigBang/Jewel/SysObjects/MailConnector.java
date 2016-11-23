@@ -32,6 +32,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.MessageIDTerm;
 import javax.mail.search.SearchTerm;
@@ -505,11 +506,11 @@ public class MailConnector {
 					String attId = "";
 					
 					if(part.getHeader("Content-Id") != null) {
-						attId = part.getHeader("Content-Id")[0];
+						attId = MimeUtility.decodeText(part.getHeader("Content-Id")[0]);
 					} else if(part.getHeader("Content-Description") != null) {
-						attId = part.getHeader("Content-Description")[0];
+						attId = MimeUtility.decodeText(part.getHeader("Content-Description")[0]);
 					} else {
-						attId = part.getFileName();
+						attId = MimeUtility.decodeText(part.getFileName());
 					}
 					
 					if(attId != null) { // TODO: e se nao tiver ID?
