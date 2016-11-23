@@ -295,26 +295,6 @@ public class MessageBridge
 		return lobjResult;
 	}
 
-	private static Attachment[] filterPromotedAttachments(
-			Attachment[] attachments) {
-
-		Attachment[] temp = new Attachment[attachments.length];
-		int count = 0;
-				
-		for (int i = 0; i < attachments.length; i++ )
-		{
-			if (attachments[i].promote) {
-				temp[count++] = attachments[i];
-			}
-		}
-		
-		Attachment[] result = new Attachment[count];
-		
-		System.arraycopy(temp, 0, result, 0, count);
-		
-		return result;
-	}
-
 	private static ContactOps handleAddresses(MessageAddressData[] parrAddresses, UUID pidParentType, UUID pidParentID)
 		throws BigBangException
 	{
