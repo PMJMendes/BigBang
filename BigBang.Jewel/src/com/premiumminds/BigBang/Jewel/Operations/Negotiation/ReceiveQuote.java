@@ -4,11 +4,10 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
-import microsoft.exchange.webservices.data.core.service.item.Item;
+import javax.mail.Message;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
@@ -82,7 +81,7 @@ public class ReceiveQuote
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
 		AgendaItem lobjNewAgendaItem;
-		Item lobjItem;
+		Message lobjItem;
 
 		larrItems = new HashMap<UUID, AgendaItem>();
 		lrs = null;
@@ -154,10 +153,10 @@ public class ReceiveQuote
 				mbFromEmail = true;
 				try
 				{
-					lobjItem = MailConnector.DoGetItem(mobjMessage.mstrEmailID);
+					lobjItem = MailConnector.getMessage(mobjMessage.mstrEmailID, null);
 					mobjMessage.mstrSubject = lobjItem.getSubject();
-					mobjMessage.mstrBody = lobjItem.getBody().toString();
-					mstrNewEmailID = MailConnector.DoProcessItem(mobjMessage.mstrEmailID, GetProcess().GetDataKey(), new Date()).get("_");
+					mobjMessage.mstrBody = lobjItem.getContent().toString();
+					mstrNewEmailID = MailConnector.processItem(mobjMessage.mstrEmailID, lobjItem, null).get("_");
 				}
 				catch (Throwable e)
 				{

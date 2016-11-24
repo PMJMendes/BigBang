@@ -20,8 +20,8 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.library.interfaces.ExchangeService;
-import bigBang.library.interfaces.ExchangeServiceAsync;
+import bigBang.library.interfaces.MailService;
+import bigBang.library.interfaces.MailServiceAsync;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -33,7 +33,7 @@ public class NegotiationResponseViewPresenter implements ViewPresenter {
 	private Display view;
 	private boolean bound;
 //	private int counter = 0;
-	ExchangeServiceAsync exchangeService;
+	MailServiceAsync mailService;
 	
 	public enum Action{
 		NEGOTIATION_RESPONSE,
@@ -55,7 +55,7 @@ public class NegotiationResponseViewPresenter implements ViewPresenter {
 	
 	public NegotiationResponseViewPresenter(Display view){
 		this.broker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
-		exchangeService = ExchangeService.Util.getInstance();
+		mailService = MailService.Util.getInstance();
 		setView((UIObject)view);
 	}
 	

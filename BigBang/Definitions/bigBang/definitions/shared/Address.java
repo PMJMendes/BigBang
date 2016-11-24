@@ -9,6 +9,7 @@ public class Address
 
 	public String street1;
 	public String street2;
+	public String street3;
 	public ZipCode zipCode;
 
 	public Address()
@@ -21,6 +22,7 @@ public class Address
 	{
 		this.street1 = orig.street1;
 		this.street2 = orig.street2;
+		this.street3 = orig.street3;
 		this.zipCode = (orig.zipCode == null ? null : new ZipCode(orig.zipCode));
 	}
 }

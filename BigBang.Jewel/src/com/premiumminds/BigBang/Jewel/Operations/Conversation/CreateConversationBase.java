@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.mail.BodyPart;
+import javax.mail.Multipart;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
@@ -28,6 +31,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
 public abstract class CreateConversationBase
 	extends UndoableOperation
@@ -277,10 +281,22 @@ public abstract class CreateConversationBase
 			{
 				if ( mobjData.marrMessages[0].mstrEmailID != null )
 				{
-					larrAttTrans = MailConnector.DoProcessItem(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mid,
-							mobjData.marrMessages[0].mdtDate);
+					javax.mail.Message mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID);
+					Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
+					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mailMsg,
+							mailAttachments);
 					mobjData.marrMessages[0].mstrEmailID = larrAttTrans.get("_");
-					mobjData.marrMessages[0].mstrBody = null;
+					Object content = mailMsg.getContent();
+					String tmpBody;
+					if (content instanceof Multipart && mailAttachments != null) {
+						tmpBody = mailAttachments.get("main").getContent().toString();
+						tmpBody = MailConnector.prepareBodyInline(tmpBody, mailAttachments);
+					} else {
+						tmpBody = content.toString();
+						tmpBody = MailConnector.prepareSimpleBody(tmpBody);
+					}					
+					
+					mobjData.marrMessages[0].mstrBody = tmpBody;
 					mobjData.marrMessages[0].ToObject(lobjMessage);
 					lobjMessage.SaveToDb(pdb);
 
@@ -288,16 +304,19 @@ public abstract class CreateConversationBase
 					{
 						for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ )
 						{
-							mobjData.marrMessages[0].marrAttachments[i].mstrAttId = larrAttTrans.get(mobjData.marrMessages[0].marrAttachments[i].mstrAttId);
 							lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrMessages[0].marrAttachments[i].mid);
 							mobjData.marrMessages[0].marrAttachments[i].ToObject(lobjAttachment);
 							lobjAttachment.SaveToDb(pdb);
 						}
 					}
+
+					// Calls the method responsble for updating the message to google storage.
+					StorageConnector.uploadMailMessage(mailMsg, mobjData.marrMessages[0].mstrEmailID);
+					
 				}
 				else
 				{
-					MailConnector.SendFromData(mobjData.marrMessages[0]);
+					MailConnector.sendFromData(mobjData.marrMessages[0]);
 				}
 			}
 			catch (Throwable e)

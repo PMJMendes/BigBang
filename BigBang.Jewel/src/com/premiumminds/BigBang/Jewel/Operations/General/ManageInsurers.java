@@ -43,7 +43,9 @@ public class ManageInsurers
 		public String mstrAcctCode;
 		public String mstrAddress1;
 		public String mstrAddress2;
+		public String mstrAddress3;
 		public UUID midZipCode;
+		public Boolean mbTaxRetention;
 		public ContactOps mobjContactOps;
 		public DocOps mobjDocOps;
 		public CompanyData mobjPrevValues;
@@ -219,16 +221,18 @@ public class ManageInsurers
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
 					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					lobjAux.setAt(0, marrCreate[i].mstrName);
-					lobjAux.setAt(1, marrCreate[i].mstrAcronym);
-					lobjAux.setAt(2, marrCreate[i].mstrISPNumber);
-					lobjAux.setAt(3, marrCreate[i].mstrMedCode);
-					lobjAux.setAt(4, marrCreate[i].mstrFiscalNumber);
-					lobjAux.setAt(5, marrCreate[i].mstrBankID);
-					lobjAux.setAt(6, marrCreate[i].mstrAddress1);
-					lobjAux.setAt(7, marrCreate[i].mstrAddress2);
-					lobjAux.setAt(8, marrCreate[i].midZipCode);
-					lobjAux.setAt(10,  marrCreate[i].mstrAcctCode);
+					lobjAux.setAt(Company.I.NAME,         marrCreate[i].mstrName);
+					lobjAux.setAt(Company.I.ACRONYM,      marrCreate[i].mstrAcronym);
+					lobjAux.setAt(Company.I.ISPNUMBER,    marrCreate[i].mstrISPNumber);
+					lobjAux.setAt(Company.I.MEDIATORCODE, marrCreate[i].mstrMedCode);
+					lobjAux.setAt(Company.I.FISCALNUMBER, marrCreate[i].mstrFiscalNumber);
+					lobjAux.setAt(Company.I.BANKINGID,    marrCreate[i].mstrBankID);
+					lobjAux.setAt(Company.I.ADDRESS1,     marrCreate[i].mstrAddress1);
+					lobjAux.setAt(Company.I.ADDRESS2,     marrCreate[i].mstrAddress2);
+					lobjAux.setAt(Company.I.ADDRESS3,     marrCreate[i].mstrAddress3);
+					lobjAux.setAt(Company.I.ZIPCODE,      marrCreate[i].midZipCode);
+					lobjAux.setAt(Company.I.ACCTCODE,     marrCreate[i].mstrAcctCode);
+					lobjAux.setAt(Company.I.TAXRETENTION, marrCreate[i].mbTaxRetention);
 					lobjAux.SaveToDb(pdb);
 					if ( marrCreate[i].mobjContactOps != null )
 						marrCreate[i].mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
@@ -246,28 +250,32 @@ public class ManageInsurers
 					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
 					marrModify[i].mobjPrevValues = new CompanyData();
 					marrModify[i].mobjPrevValues.mid = lobjAux.getKey();
-					marrModify[i].mobjPrevValues.mstrName = (String)lobjAux.getAt(0);
-					marrModify[i].mobjPrevValues.mstrAcronym = (String)lobjAux.getAt(1);
-					marrModify[i].mobjPrevValues.mstrISPNumber = (String)lobjAux.getAt(2);
-					marrModify[i].mobjPrevValues.mstrMedCode = (String)lobjAux.getAt(3);
-					marrModify[i].mobjPrevValues.mstrFiscalNumber = (String)lobjAux.getAt(4);
-					marrModify[i].mobjPrevValues.mstrBankID = (String)lobjAux.getAt(5);
-					marrModify[i].mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(6);
-					marrModify[i].mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(7);
-					marrModify[i].mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(8);
-					marrModify[i].mobjPrevValues.mstrAcctCode = (String)lobjAux.getAt(10);
+					marrModify[i].mobjPrevValues.mstrName         = (String) lobjAux.getAt(Company.I.NAME);
+					marrModify[i].mobjPrevValues.mstrAcronym      = (String) lobjAux.getAt(Company.I.ACRONYM);
+					marrModify[i].mobjPrevValues.mstrISPNumber    = (String) lobjAux.getAt(Company.I.ISPNUMBER);
+					marrModify[i].mobjPrevValues.mstrMedCode      = (String) lobjAux.getAt(Company.I.MEDIATORCODE);
+					marrModify[i].mobjPrevValues.mstrFiscalNumber = (String) lobjAux.getAt(Company.I.FISCALNUMBER);
+					marrModify[i].mobjPrevValues.mstrBankID       = (String) lobjAux.getAt(Company.I.BANKINGID);
+					marrModify[i].mobjPrevValues.mstrAddress1     = (String) lobjAux.getAt(Company.I.ADDRESS1);
+					marrModify[i].mobjPrevValues.mstrAddress2     = (String) lobjAux.getAt(Company.I.ADDRESS2);
+					marrModify[i].mobjPrevValues.mstrAddress3     = (String) lobjAux.getAt(Company.I.ADDRESS3);
+					marrModify[i].mobjPrevValues.midZipCode       = (UUID)   lobjAux.getAt(Company.I.ZIPCODE);
+					marrModify[i].mobjPrevValues.mstrAcctCode     = (String) lobjAux.getAt(Company.I.ACCTCODE);
+					marrModify[i].mobjPrevValues.mbTaxRetention   = (Boolean)lobjAux.getAt(Company.I.TAXRETENTION);
 					marrModify[i].mobjPrevValues.mobjContactOps = null;
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
-					lobjAux.setAt(0, marrModify[i].mstrName);
-					lobjAux.setAt(1, marrModify[i].mstrAcronym);
-					lobjAux.setAt(2, marrModify[i].mstrISPNumber);
-					lobjAux.setAt(3, marrModify[i].mstrMedCode);
-					lobjAux.setAt(4, marrModify[i].mstrFiscalNumber);
-					lobjAux.setAt(5, marrModify[i].mstrBankID);
-					lobjAux.setAt(6, marrModify[i].mstrAddress1);
-					lobjAux.setAt(7, marrModify[i].mstrAddress2);
-					lobjAux.setAt(8, marrModify[i].midZipCode);
-					lobjAux.setAt(10, marrModify[i].mstrAcctCode);
+					lobjAux.setAt(Company.I.NAME,         marrModify[i].mstrName);
+					lobjAux.setAt(Company.I.ACRONYM,      marrModify[i].mstrAcronym);
+					lobjAux.setAt(Company.I.ISPNUMBER,    marrModify[i].mstrISPNumber);
+					lobjAux.setAt(Company.I.MEDIATORCODE, marrModify[i].mstrMedCode);
+					lobjAux.setAt(Company.I.FISCALNUMBER, marrModify[i].mstrFiscalNumber);
+					lobjAux.setAt(Company.I.BANKINGID,    marrModify[i].mstrBankID);
+					lobjAux.setAt(Company.I.ADDRESS1,     marrModify[i].mstrAddress1);
+					lobjAux.setAt(Company.I.ADDRESS2,     marrModify[i].mstrAddress2);
+					lobjAux.setAt(Company.I.ADDRESS3,     marrModify[i].mstrAddress3);
+					lobjAux.setAt(Company.I.ZIPCODE,      marrModify[i].midZipCode);
+					lobjAux.setAt(Company.I.ACCTCODE,     marrModify[i].mstrAcctCode);
+					lobjAux.setAt(Company.I.TAXRETENTION, marrModify[i].mbTaxRetention);
 					lobjAux.SaveToDb(pdb);
 				}
 			}
@@ -280,16 +288,18 @@ public class ManageInsurers
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
 					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].mid);
-					marrDelete[i].mstrName = (String)lobjAux.getAt(0);
-					marrDelete[i].mstrAcronym = (String)lobjAux.getAt(1);
-					marrDelete[i].mstrISPNumber = (String)lobjAux.getAt(2);
-					marrDelete[i].mstrMedCode = (String)lobjAux.getAt(3);
-					marrDelete[i].mstrFiscalNumber = (String)lobjAux.getAt(4);
-					marrDelete[i].mstrBankID = (String)lobjAux.getAt(5);
-					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(6);
-					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(7);
-					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(8);
-					marrDelete[i].mstrAcctCode = (String)lobjAux.getAt(10);
+					marrDelete[i].mstrName         = (String) lobjAux.getAt(Company.I.NAME);
+					marrDelete[i].mstrAcronym      = (String) lobjAux.getAt(Company.I.ACRONYM);
+					marrDelete[i].mstrISPNumber    = (String) lobjAux.getAt(Company.I.ISPNUMBER);
+					marrDelete[i].mstrMedCode      = (String) lobjAux.getAt(Company.I.MEDIATORCODE);
+					marrDelete[i].mstrFiscalNumber = (String) lobjAux.getAt(Company.I.FISCALNUMBER);
+					marrDelete[i].mstrBankID       = (String) lobjAux.getAt(Company.I.BANKINGID);
+					marrDelete[i].mstrAddress1     = (String) lobjAux.getAt(Company.I.ADDRESS1);
+					marrDelete[i].mstrAddress2     = (String) lobjAux.getAt(Company.I.ADDRESS2);
+					marrDelete[i].mstrAddress3     = (String) lobjAux.getAt(Company.I.ADDRESS3);
+					marrDelete[i].midZipCode       = (UUID)   lobjAux.getAt(Company.I.ZIPCODE);
+					marrDelete[i].mstrAcctCode     = (String) lobjAux.getAt(Company.I.ACCTCODE);
+					marrDelete[i].mbTaxRetention   = (Boolean)lobjAux.getAt(Company.I.TAXRETENTION);
 					larrContacts = lobjAux.GetCurrentContacts();
 					if ( (larrContacts == null) || (larrContacts.length == 0) )
 						marrDelete[i].mobjContactOps = null;
@@ -555,16 +565,18 @@ public class ManageInsurers
 				for ( i = 0; i < marrModify.length; i++ )
 				{
 					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
-					lobjAux.setAt(0, marrModify[i].mobjPrevValues.mstrName);
-					lobjAux.setAt(1, marrModify[i].mobjPrevValues.mstrAcronym);
-					lobjAux.setAt(2, marrModify[i].mobjPrevValues.mstrISPNumber);
-					lobjAux.setAt(3, marrModify[i].mobjPrevValues.mstrMedCode);
-					lobjAux.setAt(4, marrModify[i].mobjPrevValues.mstrFiscalNumber);
-					lobjAux.setAt(5, marrModify[i].mobjPrevValues.mstrBankID);
-					lobjAux.setAt(6, marrModify[i].mobjPrevValues.mstrAddress1);
-					lobjAux.setAt(7, marrModify[i].mobjPrevValues.mstrAddress2);
-					lobjAux.setAt(8, marrModify[i].mobjPrevValues.midZipCode);
-					lobjAux.setAt(10, marrModify[i].mobjPrevValues.mstrAcctCode);
+					lobjAux.setAt(Company.I.NAME,         marrModify[i].mobjPrevValues.mstrName);
+					lobjAux.setAt(Company.I.ACRONYM,      marrModify[i].mobjPrevValues.mstrAcronym);
+					lobjAux.setAt(Company.I.ISPNUMBER,    marrModify[i].mobjPrevValues.mstrISPNumber);
+					lobjAux.setAt(Company.I.MEDIATORCODE, marrModify[i].mobjPrevValues.mstrMedCode);
+					lobjAux.setAt(Company.I.FISCALNUMBER, marrModify[i].mobjPrevValues.mstrFiscalNumber);
+					lobjAux.setAt(Company.I.BANKINGID,    marrModify[i].mobjPrevValues.mstrBankID);
+					lobjAux.setAt(Company.I.ADDRESS1,     marrModify[i].mobjPrevValues.mstrAddress1);
+					lobjAux.setAt(Company.I.ADDRESS2,     marrModify[i].mobjPrevValues.mstrAddress2);
+					lobjAux.setAt(Company.I.ADDRESS3,     marrModify[i].mobjPrevValues.mstrAddress3);
+					lobjAux.setAt(Company.I.ZIPCODE,      marrModify[i].mobjPrevValues.midZipCode);
+					lobjAux.setAt(Company.I.ACCTCODE,     marrModify[i].mobjPrevValues.mstrAcctCode);
+					lobjAux.setAt(Company.I.TAXRETENTION, marrModify[i].mobjPrevValues.mbTaxRetention);
 					lobjAux.SaveToDb(pdb);
 				}
 			}
@@ -574,16 +586,18 @@ public class ManageInsurers
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
 					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					lobjAux.setAt(0, marrDelete[i].mstrName);
-					lobjAux.setAt(1, marrDelete[i].mstrAcronym);
-					lobjAux.setAt(2, marrDelete[i].mstrISPNumber);
-					lobjAux.setAt(3, marrDelete[i].mstrMedCode);
-					lobjAux.setAt(4, marrDelete[i].mstrFiscalNumber);
-					lobjAux.setAt(5, marrDelete[i].mstrBankID);
-					lobjAux.setAt(6, marrDelete[i].mstrAddress1);
-					lobjAux.setAt(7, marrDelete[i].mstrAddress2);
-					lobjAux.setAt(8, marrDelete[i].midZipCode);
-					lobjAux.setAt(10,  marrDelete[i].mstrAcctCode);
+					lobjAux.setAt(Company.I.NAME,         marrDelete[i].mstrName);
+					lobjAux.setAt(Company.I.ACRONYM,      marrDelete[i].mstrAcronym);
+					lobjAux.setAt(Company.I.ISPNUMBER,    marrDelete[i].mstrISPNumber);
+					lobjAux.setAt(Company.I.MEDIATORCODE, marrDelete[i].mstrMedCode);
+					lobjAux.setAt(Company.I.FISCALNUMBER, marrDelete[i].mstrFiscalNumber);
+					lobjAux.setAt(Company.I.BANKINGID,    marrDelete[i].mstrBankID);
+					lobjAux.setAt(Company.I.ADDRESS1,     marrDelete[i].mstrAddress1);
+					lobjAux.setAt(Company.I.ADDRESS2,     marrDelete[i].mstrAddress2);
+					lobjAux.setAt(Company.I.ADDRESS3,     marrDelete[i].mstrAddress3);
+					lobjAux.setAt(Company.I.ZIPCODE,      marrDelete[i].midZipCode);
+					lobjAux.setAt(Company.I.ACCTCODE,     marrDelete[i].mstrAcctCode);
+					lobjAux.setAt(Company.I.TAXRETENTION, marrDelete[i].mbTaxRetention);
 					lobjAux.SaveToDb(pdb);
 					marrDelete[i].mid = lobjAux.getKey();
 					if ( marrDelete[i].mobjContactOps != null )
@@ -972,6 +986,9 @@ public class ManageInsurers
 		pstrString.append(pstrLineBreak);
 		pstrString.append("- ");
 		pstrString.append(pobjData.mstrAddress2);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+		pstrString.append(pobjData.mstrAddress3);
 		pstrString.append(pstrLineBreak);
 		pstrString.append("- ");
 

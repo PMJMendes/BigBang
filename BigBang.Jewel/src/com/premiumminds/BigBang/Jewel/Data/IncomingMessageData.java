@@ -12,6 +12,7 @@ public class IncomingMessageData
 	public String mstrSubject;
 	public String mstrBody;
 	public String mstrEmailID;
+	public String mstrFolderID;
 	public boolean mbFromSent;
 
 	public DocOps mobjDocOps;

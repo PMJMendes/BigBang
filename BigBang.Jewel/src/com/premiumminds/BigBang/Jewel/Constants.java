@@ -885,4 +885,22 @@ public class Constants
 	public static final int FKExercise_In_SubPolicyValue = 4;
 	public static final int FKProcess_In_DebitNote = 1;
 	public static final int FKReceipt_In_DebitNote = 6;
+	
+	// Constants used when connecting to google storage
+	public static class StorageConstants {
+		public static final String BUCKET_NAME 			= "tidy-campaign-139313.appspot.com";
+		public static final String SERVICE_ACCOUNT_ID 	= "bigbang-access-account@tidy-campaign-139313.iam.gserviceaccount.com";
+		public static final String STORAGE_SCOPE 		= "https://www.googleapis.com/auth/devstorage.read_write";
+		public static final String APP_NAME 			= "BigBang";
+	}
+	
+	// Constants used by google apps
+	public static class GoogleAppsConstants {
+		public static final String TMP_FILE_EXTENSION 		= ".eml";
+		public static final String TMP_FILE_CONTENT_TYPE 	= "message/rfc822";
+		public static final String TMP_FOLDER 				= "\\tempStorageMails";
+		public static final String TMP_FILE_PREFIX 			= "tempFile";
+		public static final String P12_FILE_URL 			= "resources/bigbang-google-apps-1fcf817841a6.p12";
+		public static final String ACCOUNT_ID	 			= "bigbang-access-account@tidy-campaign-139313.iam.gserviceaccount.com";
+	}
 }

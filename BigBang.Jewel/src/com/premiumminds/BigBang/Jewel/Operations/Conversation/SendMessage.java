@@ -201,7 +201,7 @@ public class SendMessage
 		{
 			try
 			{
-				MailConnector.SendFromData(mobjData);
+				MailConnector.sendFromData(mobjData);
 			}
 			catch (Throwable e)
 			{

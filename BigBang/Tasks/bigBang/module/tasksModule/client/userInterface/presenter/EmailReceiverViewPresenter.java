@@ -11,6 +11,7 @@ import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.Message.Attachment;
+import bigBang.definitions.shared.Message.MsgAddress;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -28,12 +29,12 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.library.client.userInterface.view.ExchangeItemSelectionView.EmailEntry;
-import bigBang.library.interfaces.ExchangeService;
-import bigBang.library.interfaces.ExchangeServiceAsync;
+import bigBang.library.client.userInterface.view.MailItemSelectionView.EmailEntry;
+import bigBang.library.interfaces.MailService;
+import bigBang.library.interfaces.MailServiceAsync;
 import bigBang.library.shared.AttachmentStub;
-import bigBang.library.shared.ExchangeItem;
-import bigBang.library.shared.ExchangeItemStub;
+import bigBang.library.shared.MailItem;
+import bigBang.library.shared.MailItemStub;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -47,9 +48,9 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 		void setTypifiedListItems(List<TipifiedListItem> conversations);
 
-		HasSelectables<ValueSelectable<ExchangeItemStub>> getEmailList();
+		HasSelectables<ValueSelectable<MailItemStub>> getEmailList();
 
-		HasEditableValue<ExchangeItem> getForm();
+		HasEditableValue<MailItem> getForm();
 
 		void setAttachments(AttachmentStub[] attachments);
 
@@ -58,7 +59,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 		void enableGetAll(boolean b);
 
-		void addEmailEntry(ExchangeItemStub email);
+		void addEmailEntry(MailItemStub email);
 
 		void clear();
 
@@ -86,13 +87,13 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 	private Display view;
 	private boolean bound = false;
 	private ConversationBroker broker;
-	ExchangeServiceAsync service;
+	MailServiceAsync service;
 
 
 	public EmailReceiverViewPresenter(Display view) {
 		setView((UIObject) view);
 		broker = (ConversationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CONVERSATION);
-		service = ExchangeService.Util.getInstance();
+		service = MailService.Util.getInstance();
 	}
 
 	@Override
@@ -119,7 +120,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 			public void onSelectionChanged(SelectionChangedEvent event) {
 
 				if(view.getEmailList().getSelected().size() > 0){
-					ExchangeItemStub stub = ((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue();
+					MailItemStub stub = ((EmailEntry) ((HasValueSelectables<MailItemStub>)event.getSource()).getSelected().toArray()[0]).getValue();
 					if ( stub.isFolder )
 					{
 						view.clear();
@@ -127,10 +128,10 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 						view.enableGetAll(false);
 						view.enableRefresh(false);
 						
-						service.getFolder(stub.id, new BigBangAsyncCallback<ExchangeItemStub[]>() {
+						service.getFolder(stub, new BigBangAsyncCallback<MailItemStub[]>() {
 
 							@Override
-							public void onResponseSuccess(ExchangeItemStub[] result) {
+							public void onResponseSuccess(MailItemStub[] result) {
 								for(int i=0; i<result.length; i++){
 									view.addEmailEntry(result[i]);
 								}
@@ -146,10 +147,10 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 					}
 					else
 					{
-						service.getItem(stub.id, new BigBangAsyncCallback<ExchangeItem>() {
+						service.getItem(stub.folderId, stub.id, new BigBangAsyncCallback<MailItem>() {
 
 							@Override
-							public void onResponseSuccess(ExchangeItem result) {
+							public void onResponseSuccess(MailItem result) {
 								view.getForm().setValue(result);
 								view.setAttachments(result.attachments);
 								view.getMessageForm().setReadOnly(false);
@@ -194,10 +195,10 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 		view.clear();
 		view.enableGetAll(false);
 		view.enableRefresh(false);
-		service.getItemsAll(false, new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItemsAll(new BigBangAsyncCallback<MailItemStub[]>() {
 
 			@Override
-			public void onResponseSuccess(ExchangeItemStub[] result) {
+			public void onResponseSuccess(MailItemStub[] result) {
 
 				for(int i=0; i<result.length; i++){
 					view.addEmailEntry(result[i]);
@@ -224,7 +225,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 			}
 		}	
 		if(view.getMessageForm().validate()){
-			ExchangeItem item = view.getForm().getInfo();
+			MailItem item = view.getForm().getInfo();
 
 			Conversation conversation = view.getConversationFields();
 			conversation.startDir = ( view.getForm().getValue().isFromMe ?
@@ -234,9 +235,23 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 			conversation.id = conversation.messages[0].conversationId;
 			
 			conversation.messages[0].emailId = item.id;
+			conversation.messages[0].folderId = item.folderId;
 			conversation.messages[0].attachments = view.getChecked();
 			conversation.messages[0].direction = ( view.getForm().getValue().isFromMe ?
 					ConversationStub.Direction.OUTGOING : ConversationStub.Direction.INCOMING );
+			conversation.messages[0].subject = view.getForm().getValue().subject;
+			
+			String [] addresses = item.from.split(";");
+			if (addresses.length>0) {
+				conversation.messages[0].addresses = new Message.MsgAddress[addresses.length];
+			}
+			for (int u=0; u<addresses.length; u++) {
+				Message.MsgAddress tmp = new Message.MsgAddress();
+				tmp.address = addresses[u];
+				tmp.display = addresses[u];
+				conversation.messages[0].addresses[u] = tmp;
+				conversation.messages[0].addresses[u].usage = MsgAddress.Usage.FROM;
+			}
 
 			if(conversation.id == null){
 
@@ -308,10 +323,10 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 		view.enableGetAll(false);
 		view.enableRefresh(false);
 
-		service.getItems(false, new BigBangAsyncCallback<ExchangeItemStub[]>() {
+		service.getItems(new BigBangAsyncCallback<MailItemStub[]>() {
 
 			@Override
-			public void onResponseSuccess(ExchangeItemStub[] result) {
+			public void onResponseSuccess(MailItemStub[] result) {
 
 				for(int i=0; i<result.length; i++){
 					view.addEmailEntry(result[i]);

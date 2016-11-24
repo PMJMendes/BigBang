@@ -14,6 +14,8 @@ import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.ConversationStub;
 import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.Message.Attachment;
+import bigBang.definitions.shared.Message.MsgAddress;
 import bigBang.definitions.shared.OutgoingMessage;
 import bigBang.library.shared.BigBangException;
 
@@ -167,64 +169,7 @@ public class MessageBridge
 
 		return lobjResult;
 	}
-
-//	public static IncomingMessageData incomingToServer(IncomingMessage lobMessage, UUID pidDocOwnerType)
-//		throws BigBangException
-//	{
-//		IncomingMessageData lobjResult;
-//		int i;
-//		UUID lidFile;
-//
-//		lobjResult = new IncomingMessageData();
-//
-//		lobjResult.mstrSubject = null;
-//		lobjResult.mstrBody = lobMessage.notes;
-//		lobjResult.mstrEmailID = lobMessage.emailId;
-//
-//		if ( lobMessage.upgrades == null )
-//			lobjResult.mobjDocOps = null;
-//		else
-//		{
-//			lobjResult.mobjDocOps = new DocOps();
-//			lobjResult.mobjDocOps.marrModify = null;
-//			lobjResult.mobjDocOps.marrDelete = null;
-//			lobjResult.mobjDocOps.marrCreate = new DocumentData[lobMessage.upgrades.length];
-//			for ( i = 0; i < lobMessage.upgrades.length; i++ )
-//			{
-//				lobjResult.mobjDocOps.marrCreate[i] = new DocumentData();
-//				lobjResult.mobjDocOps.marrCreate[i].mstrName = lobMessage.upgrades[i].name;
-//				lobjResult.mobjDocOps.marrCreate[i].midOwnerType = pidDocOwnerType;
-//				lobjResult.mobjDocOps.marrCreate[i].midOwnerId = null;
-//				lobjResult.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(lobMessage.upgrades[i].docTypeId);
-//				lobjResult.mobjDocOps.marrCreate[i].mstrText = null;
-//
-//				if ( lobMessage.upgrades[i].storageId != null )
-//				{
-//					lidFile = lobMessage.upgrades[i].storageId == null ? null : UUID.fromString(lobMessage.upgrades[i].storageId);
-//					lobjResult.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
-//					FileServiceImpl.GetFileXferStorage().remove(lidFile);
-//				}
-//				else if ( lobMessage.upgrades[i].attachmentId != null )
-//				{
-//					try
-//					{
-//						lobjResult.mobjDocOps.marrCreate[i].mobjFile = MailConnector.DoGetAttachment(lobMessage.emailId,
-//								lobMessage.upgrades[i].attachmentId).GetVarData();
-//					}
-//					catch (Throwable e)
-//					{
-//						throw new BigBangException(e.getMessage(), e);
-//					}
-//				}
-//
-//				lobjResult.mobjDocOps.marrCreate[i].marrInfo = null;
-//				lobjResult.mobjDocOps.marrCreate[i].mobjPrevValues = null;
-//			}
-//		}
-//
-//		return lobjResult;
-//	}
-
+	
 	public static MessageData clientToServer(Message pobjMessage, UUID pidParentType, UUID pidParentID, UUID pidDefaultDir)
 		throws BigBangException
 	{
@@ -246,32 +191,55 @@ public class MessageBridge
 				(ConversationStub.Direction.OUTGOING.equals(pobjMessage.direction) ? Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming) );
 		if ( lobjResult.mbIsEmail )
 		{
+			lobjResult.mstrFolderID = pobjMessage.folderId;
 			lobjResult.mstrEmailID = pobjMessage.emailId;
-			if ( lobjResult.mstrEmailID == null )
+			if ( lobjResult.mstrEmailID == null && lobjResult.midDirection.equals(Constants.MsgDir_Incoming ))
 			{
 				lobjResult.mbIsEmail = false;
 				lobjResult.marrAddresses = null;
 			}
 			else
 			{
-				try
-				{
-					lobjAux = MailConnector.GetAsData(lobjResult.mstrEmailID);
+				if (lobjResult.midDirection.equals(Constants.MsgDir_Incoming )) {
+					try
+					{
+						lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID, lobjResult.mstrFolderID);
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangException(e.getMessage(), e);
+					}
+					lobjResult.mstrSubject = lobjAux.mstrSubject;
+					lobjResult.marrAddresses = lobjAux.marrAddresses;
+					lobjResult.mstrBody = lobjAux.mstrBody;
+				} else {
+					lobjResult.mstrSubject = pobjMessage.subject;
+					lobjResult.mstrBody = pobjMessage.text;
+					if(pobjMessage.addresses!=null) {
+						MessageAddressData[] addresses = new MessageAddressData[pobjMessage.addresses.length];
+						for (int u=0; u<pobjMessage.addresses.length; u++) {
+							MessageAddressData tmpData = new MessageAddressData();
+							MsgAddress tmpAddr = pobjMessage.addresses[u];
+							tmpData.mid = tmpAddr.id==null ? null : UUID.fromString(tmpAddr.id); 
+							tmpData.mstrAddress = tmpAddr.address==null ? tmpAddr.address : tmpAddr.address;
+							tmpData.midOwner    = tmpAddr.ownerId==null ? null : UUID.fromString(tmpAddr.ownerId);
+							tmpData.midUsage    = sGetUsage(tmpAddr.usage);
+							tmpData.midUser     = tmpAddr.userId== null ? null : UUID.fromString(tmpAddr.userId);
+							tmpData.midInfo     = tmpAddr.contactInfoId==null ? null : UUID.fromString(tmpAddr.contactInfoId);
+							tmpData.mstrDisplay = tmpAddr.display;
+							addresses[u] = tmpData;
+						}
+						lobjResult.marrAddresses = addresses;
+					}
 				}
-				catch (Throwable e)
-				{
-					throw new BigBangException(e.getMessage(), e);
-				}
-				lobjResult.mstrSubject = lobjAux.mstrSubject;
 				if ( (lobjResult.mstrSubject != null) && (lobjResult.mstrSubject.length() > 250) )
 					lobjResult.mstrSubject = lobjResult.mstrSubject.substring(0, 250);
-				lobjResult.mstrBody = lobjAux.mstrBody;
-				lobjResult.marrAddresses = lobjAux.marrAddresses;
 			}
 		}
 		else
 		{
 			lobjResult.mstrEmailID = null;
+			lobjResult.mstrFolderID = null;
 			lobjResult.mstrSubject = ( pobjMessage.subject == null ?
 					(pobjMessage.text.length() > 100 ? pobjMessage.text.substring(0, 100) : pobjMessage.text) : pobjMessage.subject );
 			lobjResult.mstrBody = pobjMessage.text;
@@ -298,26 +266,53 @@ public class MessageBridge
 			}
 		}
 
-		if ( !lobjResult.mbIsEmail || (pobjMessage.attachments == null) )
+		//Attachment[] promotedAttachments = filterPromotedAttachments(pobjMessage.attachments);
+		Attachment[] promotedAttachments = pobjMessage.attachments;
+		
+		if ( !lobjResult.mbIsEmail || pobjMessage.attachments == null || pobjMessage.attachments.length==0 )
 		{
 			lobjResult.marrAttachments = null;
 		}
 		else
 		{
-			lobjResult.marrAttachments = new MessageAttachmentData[pobjMessage.attachments.length];
-			for ( i = 0; i < pobjMessage.attachments.length; i++ )
+			lobjResult.marrAttachments = new MessageAttachmentData[promotedAttachments.length];
+			for ( i = 0; i < promotedAttachments.length; i++ )
 			{
 				lobjResult.marrAttachments[i] = new MessageAttachmentData();
 				lobjResult.marrAttachments[i].mstrAttId = pobjMessage.attachments[i].attachmentId;
-				lobjResult.marrAttachments[i].midDocument = ( pobjMessage.attachments[i].docId == null ? null :
+				if (promotedAttachments[i].promote) {
+					lobjResult.marrAttachments[i].midDocument = ( pobjMessage.attachments[i].docId == null ? null :
 						UUID.fromString(pobjMessage.attachments[i].docId) );
+				} else {
+					lobjResult.marrAttachments[i].midDocument = null;
+				}
 			}
 		}
 
 		lobjResult.mobjContactOps = handleAddresses(lobjResult.marrAddresses, pidParentType, pidParentID);
-		lobjResult.mobjDocOps = handleAttachments(lobjResult, pobjMessage.attachments, pidParentType, pidParentID);
+		lobjResult.mobjDocOps = handleAttachments(lobjResult, promotedAttachments, pidParentType, pidParentID);
 
 		return lobjResult;
+	}
+
+	private static Attachment[] filterPromotedAttachments(
+			Attachment[] attachments) {
+
+		Attachment[] temp = new Attachment[attachments.length];
+		int count = 0;
+				
+		for (int i = 0; i < attachments.length; i++ )
+		{
+			if (attachments[i].promote) {
+				temp[count++] = attachments[i];
+			}
+		}
+		
+		Attachment[] result = new Attachment[count];
+		
+		System.arraycopy(temp, 0, result, 0, count);
+		
+		return result;
 	}
 
 	private static ContactOps handleAddresses(MessageAddressData[] parrAddresses, UUID pidParentType, UUID pidParentID)
@@ -520,8 +515,8 @@ public class MessageBridge
 						{
 							try
 							{
-								lobjResult.marrCreate2[j].mobjFile = MailConnector.DoGetAttachment(pobjMsg.mstrEmailID,
-										parrAttachments[i].attachmentId).GetVarData();
+								lobjResult.marrCreate2[j].mobjFile = MailConnector.getAttachment(pobjMsg.mstrEmailID,
+										pobjMsg.mstrFolderID, parrAttachments[i].attachmentId).GetVarData();
 							}
 							catch (Throwable e)
 							{

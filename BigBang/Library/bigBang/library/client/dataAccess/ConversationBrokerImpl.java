@@ -366,7 +366,7 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not create the conversation")
+						new String("Could not create the conversation " + caught.getMessage())
 				});
 				super.onResponseFailure(caught);
 			}
