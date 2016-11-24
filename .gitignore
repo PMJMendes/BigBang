@@ -3,7 +3,6 @@
 .settings
 .recommenders
 bin
-lib
 gwt-unitCache
 classes
 deploy
@@ -669,3 +668,4 @@ ews-java/src/test/java/microsoft/exchange/webservices/data/util/DateTimeUtilsTes
 ews-java/src/test/resources/logback-test.xml
 BigBang/war/WEB-INF/lib/bigBang.docuShare.jar
 BigBang/war/hs_err_pid7720.log
+BigBang.Tests/war/WEB-INF/lib
