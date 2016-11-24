@@ -1,6 +1,7 @@
 .metadata
 .project
 .settings
+.recommenders
 bin
 lib
 gwt-unitCache
