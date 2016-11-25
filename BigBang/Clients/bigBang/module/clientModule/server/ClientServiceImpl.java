@@ -412,7 +412,7 @@ public class ClientServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Client,
-				lobjClient.getKey(), Constants.MsgDir_Outgoing);
+				lobjClient.getKey(), Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -472,7 +472,7 @@ public class ClientServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Client,
-				lobjClient.getKey(), lopCC.mobjData.midStartDir);
+				lobjClient.getKey(), lopCC.mobjData.midStartDir, null);
 
 		try
 		{

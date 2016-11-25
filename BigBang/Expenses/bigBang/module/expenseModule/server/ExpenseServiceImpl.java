@@ -472,7 +472,7 @@ public class ExpenseServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Expense,
-				lobjExpense.getKey(), Constants.MsgDir_Outgoing);
+				lobjExpense.getKey(), Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -532,7 +532,7 @@ public class ExpenseServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Expense,
-				lobjExpense.getKey(), lopCC.mobjData.midStartDir);
+				lobjExpense.getKey(), lopCC.mobjData.midStartDir, null);
 
 		try
 		{

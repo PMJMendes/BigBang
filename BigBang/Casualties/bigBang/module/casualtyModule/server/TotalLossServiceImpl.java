@@ -210,7 +210,7 @@ public class TotalLossServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
-				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), Constants.MsgDir_Outgoing);
+				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -269,7 +269,7 @@ public class TotalLossServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
-				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), lopCC.mobjData.midStartDir);
+				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), lopCC.mobjData.midStartDir, null);
 
 		try
 		{

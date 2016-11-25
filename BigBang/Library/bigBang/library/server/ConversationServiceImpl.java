@@ -716,7 +716,7 @@ public class ConversationServiceImpl
 
 		lopCCB.mobjData.marrMessages = new MessageData[1];
 		lopCCB.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], lidParentType, lidParentID,
-				lopCCB.mobjData.midStartDir);
+				lopCCB.mobjData.midStartDir, null);
 
 		try
 		{
@@ -989,7 +989,7 @@ public class ConversationServiceImpl
 		try
 		{
 			lopSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentContainerType(), lobjConv.getParentContainer(),
-					Constants.MsgDir_Outgoing);
+					Constants.MsgDir_Outgoing, null);
 
 			lopSM.Execute();
 		}
@@ -1039,7 +1039,7 @@ public class ConversationServiceImpl
 		try
 		{
 			lopRSM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentContainerType(), lobjConv.getParentContainer(),
-					Constants.MsgDir_Outgoing);
+					Constants.MsgDir_Outgoing, null);
 
 			lopRSM.Execute();
 		}
@@ -1089,7 +1089,7 @@ public class ConversationServiceImpl
 		try
 		{
 			lopRM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentContainerType(), lobjConv.getParentContainer(),
-					Constants.MsgDir_Incoming);
+					Constants.MsgDir_Incoming, null);
 
 			lopRM.Execute();
 		}

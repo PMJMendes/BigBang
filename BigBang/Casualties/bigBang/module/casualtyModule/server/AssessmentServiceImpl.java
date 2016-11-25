@@ -199,7 +199,7 @@ public class AssessmentServiceImpl
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY),
-				Constants.MsgDir_Outgoing);
+				Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -260,7 +260,7 @@ public class AssessmentServiceImpl
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY),
-				lopCC.mobjData.midStartDir);
+				lopCC.mobjData.midStartDir, null);
 
 		try
 		{

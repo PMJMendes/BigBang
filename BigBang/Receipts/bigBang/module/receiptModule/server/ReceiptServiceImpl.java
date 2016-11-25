@@ -1480,7 +1480,7 @@ public class ReceiptServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Receipt,
-				lobjReceipt.getKey(), Constants.MsgDir_Outgoing);
+				lobjReceipt.getKey(), Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -1540,7 +1540,7 @@ public class ReceiptServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Receipt,
-				lobjReceipt.getKey(), lopCC.mobjData.midStartDir);
+				lobjReceipt.getKey(), lopCC.mobjData.midStartDir, null);
 
 		try
 		{

@@ -682,7 +682,7 @@ public class MailConnector {
 	/**
 	 *	Auxiliary method which converts a javax Message to MessageData
 	 */
-	protected static MessageData messageToData(Message fetchedMessage)
+	public static MessageData messageToData(Message fetchedMessage)
 			throws BigBangJewelException {
 		
 		MessageData result = new MessageData();

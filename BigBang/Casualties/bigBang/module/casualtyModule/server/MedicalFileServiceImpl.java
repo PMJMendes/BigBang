@@ -341,7 +341,7 @@ public class MedicalFileServiceImpl
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY),
-				Constants.MsgDir_Outgoing);
+				Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -402,7 +402,7 @@ public class MedicalFileServiceImpl
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY),
-				lopCC.mobjData.midStartDir);
+				lopCC.mobjData.midStartDir, null);
 
 		try
 		{

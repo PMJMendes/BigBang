@@ -172,7 +172,8 @@ public class MessageBridge
 		return lobjResult;
 	}
 	
-	public static MessageData clientToServer(Message pobjMessage, UUID pidParentType, UUID pidParentID, UUID pidDefaultDir)
+	public static MessageData clientToServer(Message pobjMessage, UUID pidParentType, UUID pidParentID, 
+			UUID pidDefaultDir, javax.mail.Message existingMailMessage)
 		throws BigBangException
 	{
 		MessageData lobjResult;
@@ -205,7 +206,11 @@ public class MessageBridge
 				if (lobjResult.midDirection.equals(Constants.MsgDir_Incoming )) {
 					try
 					{
-						lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID, lobjResult.mstrFolderID);
+						if (existingMailMessage == null) {
+							lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID, lobjResult.mstrFolderID);
+						} else {
+							lobjAux = MailConnector.messageToData(existingMailMessage);
+						}
 					}
 					catch (Throwable e)
 					{

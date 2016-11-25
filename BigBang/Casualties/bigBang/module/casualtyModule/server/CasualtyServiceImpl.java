@@ -241,7 +241,7 @@ public class CasualtyServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Casualty,
-				lobjCasualty.getKey(), Constants.MsgDir_Outgoing);
+				lobjCasualty.getKey(), Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -302,7 +302,7 @@ public class CasualtyServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Casualty,
-				lobjCasualty.getKey(), lopCC.mobjData.midStartDir);
+				lobjCasualty.getKey(), lopCC.mobjData.midStartDir, null);
 
 		try
 		{

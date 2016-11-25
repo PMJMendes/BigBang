@@ -521,7 +521,7 @@ public class InsurancePolicyServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Policy,
-				lobjPolicy.getKey(), Constants.MsgDir_Outgoing);
+				lobjPolicy.getKey(), Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -580,7 +580,7 @@ public class InsurancePolicyServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Policy,
-				lobjPolicy.getKey(), lopCC.mobjData.midStartDir);
+				lobjPolicy.getKey(), lopCC.mobjData.midStartDir, null);
 
 		try
 		{
