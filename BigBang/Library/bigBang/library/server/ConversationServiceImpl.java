@@ -405,6 +405,7 @@ public class ConversationServiceImpl
 		throws BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Message lobjMsg;
+		Message result = null;
 
 		try
 		{
@@ -415,23 +416,32 @@ public class ConversationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 		
-		// Tries to get the message from the DB
-		Message result = sGetDBMessage(lobjMsg, pbFilterOwners);
-
-		// If unable to get from DB, tries to get from storage...
-		// It should be able to get from the DB, for a conversation has messages.
-		// This is only a "last try before an error"
-		if ( result == null && lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null )
-		{
-			try
-			{
-				return sGetStgMessage(lobjMsg, pbFilterOwners);
-			}
-			catch (BigBangException e)
-			{
+		// Tests if the message has body, and if it doesn't, tries to fix it.
+		if (lobjMsg.getText() == null || lobjMsg.getText().length()==0) {
+			result = sGetStgMessage(lobjMsg, pbFilterOwners);
+			if (result.text != null && result.text.length() > 0) {
+				try {
+					lobjMsg.setText(result.text);
+					lobjMsg.SaveToDb(new MasterDB());
+				} catch (Throwable e) {
+					throw new BigBangException(e.getMessage(), e);
+				}
 			}
 		}
-
+		
+		if (result == null) {
+			
+			// Tries to get the message from the DB
+			result = sGetDBMessage(lobjMsg, pbFilterOwners);
+			
+			// If unable to get from DB, tries to get from storage...
+			// It should be able to get from the DB, for a conversation has messages.
+			// This is only a "last try before an error"
+			if ( result == null && lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null ) {
+				result = sGetStgMessage(lobjMsg, pbFilterOwners);
+			}
+		}
+		
 		return result;
 	}
 
