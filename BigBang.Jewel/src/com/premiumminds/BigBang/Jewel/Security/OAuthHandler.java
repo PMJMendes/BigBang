@@ -82,7 +82,7 @@ public class OAuthHandler {
 
 		Security.addProvider(new OAuth2Provider());
 		
-		Store store = session.getStore("imaps");
+		Store store = session.getStore("imaps"); // TODO é aqui que dá o toot manuy connections
 		store.connect("imap.gmail.com", IMAPS_PORT, userEmail, oauthToken);
 
 		return store;

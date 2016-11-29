@@ -26,6 +26,8 @@ import bigBang.library.shared.MailItem;
 import bigBang.library.shared.MailItemStub;
 import bigBang.library.shared.SessionExpiredException;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
@@ -35,6 +37,107 @@ public class MailServiceImpl
 	implements MailService
 {
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * Prepares the data from a mail list in an intelligible way to to the client
+	 */
+	private static MailItemStub[] sToClientLite(Message[] parrSource)
+			throws BigBangException {
+
+		String lstrEmail;
+		MailItemStub[] larrResults;
+		int i;
+		String lstrFrom;
+
+		long startTime = System.nanoTime();
+		
+		try {
+			lstrEmail = MailConnector.getUserEmail();
+		} catch (Throwable e) {
+			lstrEmail = null;
+		}
+
+		larrResults = new MailItemStub[parrSource.length];
+		
+		String folderId = parrSource[0].getFolder().getFullName();
+
+		for ( i = 0; i < larrResults.length; i++ )
+		{
+			larrResults[i] = new MailItemStub();
+
+			try {
+
+				Message message = parrSource[i];
+				
+				long startTime2 = System.nanoTime();
+				larrResults[i].id = "" + message.getHeader("Message-Id")[0];
+				
+				long endTime2 = System.nanoTime();
+				long duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
+				System.out.println("id " + duration2);
+				startTime2 = System.nanoTime();
+				larrResults[i].isFolder = false;
+				
+				endTime2 = System.nanoTime();
+				duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
+				System.out.println("isFolder " + duration2);
+				startTime2 = System.nanoTime();
+				larrResults[i].subject = message.getSubject();
+				
+				endTime2 = System.nanoTime();
+				duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
+				System.out.println("subject " + duration2);
+				startTime2 = System.nanoTime();
+				larrResults[i].folderId = folderId;
+				
+				endTime2 = System.nanoTime();
+				duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
+				System.out.println("folderId " + duration2);
+				startTime2 = System.nanoTime();
+				InternetAddress address = (InternetAddress) (message.getFrom() == null ? null : message.getFrom()[0]);
+				lstrFrom = address == null ? "" : address.getAddress();
+				larrResults[i].from = lstrFrom;
+				
+				endTime2 = System.nanoTime();
+				duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
+				System.out.println("from " + duration2);
+				startTime2 = System.nanoTime();
+				try
+				{
+					larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(message.getReceivedDate());
+				}
+				catch (Throwable e)
+				{
+					larrResults[i].timestamp = null;
+				}
+				endTime2 = System.nanoTime();
+				duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
+				System.out.println("timestamp " + duration2);
+				startTime2 = System.nanoTime();
+
+				if ((lstrFrom.length() > 0) && (lstrEmail != null))
+					larrResults[i].isFromMe = lstrEmail.equalsIgnoreCase(lstrFrom);
+				else
+					larrResults[i].isFromMe = false;
+				endTime2 = System.nanoTime();
+				duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
+				System.out.println("isFromMe " + duration2);
+
+				larrResults[i].attachmentCount = attachmentsNumber(parrSource[i]);
+				
+				larrResults[i].bodyPreview = "_";
+				
+			} catch (Throwable e) {
+				throw new BigBangException(e.getMessage(), e);
+			}
+		}
+		
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("método sToClientLite do MailServiceImpl levou " + duration);
+
+		return larrResults;
+	}
 
 	/**
 	 * Prepares the data from a mail list in an intelligible way to to the client
@@ -47,6 +150,8 @@ public class MailServiceImpl
 		int i;
 		String lstrFrom;
 
+		long startTime = System.nanoTime();
+		
 		try
 		{
 			lstrEmail = MailConnector.getUserEmail();
@@ -87,7 +192,7 @@ public class MailServiceImpl
 				else
 					larrResults[i].isFromMe = false;
 
-				larrResults[i].attachmentCount = attachmentsNumber(parrSource[i]);
+				larrResults[i].attachmentCount = 0; //attachmentsNumber(parrSource[i]);
 				
 				larrResults[i].bodyPreview = "_";
 				
@@ -95,15 +200,24 @@ public class MailServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 		}
+		
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("método sToClient do MailServiceImpl levou " + duration);
 
 		return larrResults;
 	}
 	
 	private static int attachmentsNumber(Message msg) throws BigBangException {
+		long startTime = System.nanoTime();
 		try {
 			if (msg.isMimeType("multipart/mixed")) {
 				Multipart mp = (Multipart)msg.getContent();
-			    return mp.getCount();
+				long endTime = System.nanoTime();
+				long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+				System.out.println("método attachmentsNumber do MailServiceImpl levou " + duration);
+			    
+				return mp.getCount();
 			}
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
@@ -112,12 +226,69 @@ public class MailServiceImpl
 	}
 	
 	/**
-	 * Prepares the data from a mail in an intelligible way to to the client
+	 * Prepares the data from a folders' list in an intelligible way to the client
 	 */
-	private static MailItemStub[] sToClient(MailItemStub current, javax.mail.Folder[] folders)
+	private static MailItemStub[] sToClient(javax.mail.Folder[] folders, boolean isInitial)
 			throws BigBangException { 
 		
 		MailItemStub[] larrResults = null; 
+		
+		int start = 0;
+		int arrSize = isInitial ? folders.length : folders.length + 1;
+		
+		larrResults = new MailItemStub[arrSize];
+		
+		// sets the parent folder, used to allow a back
+		if (!isInitial) {
+			larrResults[0] = new MailItemStub();
+			larrResults[0].isParentFolder = true;
+			larrResults[0].id = "Voltar";
+			larrResults[0].isFolder = true;
+			larrResults[0].isFromMe = false;
+			larrResults[0].subject = "Voltar";
+			larrResults[0].from = null;
+			larrResults[0].timestamp = null;
+			larrResults[0].attachmentCount = -1;
+			larrResults[0].bodyPreview = null;
+			larrResults[0].folderId = null;
+			larrResults[0].isParentFolder = true; 
+			larrResults[0].parentFolderId = isInitial ? null : "*";
+			start++;
+		}
+		
+		for (int u=0; start < larrResults.length; start++, u++) {
+			
+			larrResults[start] = new MailItemStub();
+			
+			try {
+				
+				Folder folder = folders[u];
+				String folderName = folder.getFullName();
+				larrResults[start].id = folderName; 
+				larrResults[start].isFolder = true;
+				larrResults[start].isFromMe = false;
+				larrResults[start].subject = folderName;
+				larrResults[start].from = null;
+				larrResults[start].timestamp = null;
+				larrResults[start].attachmentCount = -1;
+				larrResults[start].bodyPreview = null;
+				larrResults[start].folderId = folderName;
+				larrResults[start].isParentFolder = false; 
+				larrResults[start].parentFolderId = null;
+			} catch (Throwable e) {
+				throw new BigBangException(e.getMessage(), e);
+			}
+		}
+		
+		return larrResults;
+	}
+	/*
+	 private static MailItemStub[] sToClient(MailItemStub current, javax.mail.Folder[] folders)
+			throws BigBangException { 
+		
+		MailItemStub[] larrResults = null; 
+		
+		long startTime = System.nanoTime();
 		
 		int arrSize = (folders==null && current==null) ? 0 : 
 			folders == null ? 1 : 
@@ -171,8 +342,13 @@ public class MailServiceImpl
 			}
 		}
 		
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("método sToClient do MailServiceImpl levou " + duration);
+		
 		return larrResults;
 	}
+	 */
 
 	/**
 	 * This method gets the "back" folder, when navigating in the mail folders
@@ -203,23 +379,51 @@ public class MailServiceImpl
 	public MailItemStub[] getItems()
 		throws SessionExpiredException, BigBangException
 	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+		
+		Folder tmpFolder = null;
+		Folder [] foldArray = new Folder[Constants.GoogleAppsConstants.INITIAL_FOLDERS.length];
+		
+		// Iterates the folders defined as the ones to display in the initial
+		// page, and lists them
+		for (int i=0; i<Constants.GoogleAppsConstants.INITIAL_FOLDERS.length; i++) {
+			String tempFolderName = Constants.GoogleAppsConstants.INITIAL_FOLDERS[i];
+			try {
+				tmpFolder = MailConnector.getFolderById(tempFolderName);
+			} catch (Throwable e) {
+				throw new BigBangException(e.getMessage(), e);
+			}
+			
+			foldArray[i] = tmpFolder;
+		}
+		
+		return sToClient(foldArray, true);
+	}
+	/*
+	public MailItemStub[] getItems()
+		throws SessionExpiredException, BigBangException
+	{
 		Message[] larrItems;
+		
+		long startTime = System.nanoTime();
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try {
-			larrItems = MailConnector.getMails(null, false);
+			larrItems = MailConnector.getMailsFast(null, false);
 		}
 		catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
 		
-		MailItemStub[] mailItems = larrItems==null ? null : sToClient(larrItems);
+		MailItemStub[] mailItems = larrItems==null ? null : sToClientLite(larrItems);
 		Folder sent = null;
 		try {
 			sent = MailConnector.getFolder("Correio enviado");
 		} catch (Throwable e) {
+			System.out.println("erro aqui " + e.getMessage());
 			throw new BigBangException(e.getMessage(), e);
 		}
 		
@@ -234,20 +438,30 @@ public class MailServiceImpl
 		}
 		
 		if (sentFolder != null) {
+			System.out.println("Caminho 1");
+			long endTime = System.nanoTime();
+			long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+			System.out.println("método getItems do MailServiceImpl (return 1) levou " + duration);
+			
 			return ArrayUtils.addAll(sentFolder, mailItems);
 		}
 		
 		if (larrItems.length > 0) {
+			System.out.println("Caminho 2");
 			closeFolderAndStore((MimeMessage) larrItems[0]);
 		}
+		
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("método getItems do MailServiceImpl levou " + duration);
 
 		return mailItems;
 	}
+	 */
 
 	public MailItemStub[] getItemsAll()
 		throws SessionExpiredException, BigBangException
 	{
-		
 		return getItemsAll(null);
 	}
 	
@@ -275,7 +489,7 @@ public class MailServiceImpl
 			}
 
 			MailItemStub[] mailItems = items==null ? null : sToClient(items);
-			MailItemStub[] folderItems = (folders==null && current == null) ? null : sToClient(current, folders);
+			MailItemStub[] folderItems = (folders==null && current == null) ? null : sToClient(folders, false);
 			
 			if (items.length > 0) {
 				closeFolderAndStore((MimeMessage) items[0]);

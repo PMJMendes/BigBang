@@ -18,8 +18,10 @@ import java.util.regex.Pattern;
 import javax.activation.DataHandler;
 import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.FetchProfile;
 import javax.mail.Flags;
 import javax.mail.Folder;
+import javax.mail.FolderNotFoundException;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
@@ -57,6 +59,7 @@ import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Security.OAuthHandler;
+import com.sun.mail.imap.IMAPFolder.FetchProfileItem;
 import com.sun.mail.smtp.SMTPTransport;
 
 /**
@@ -250,6 +253,7 @@ public class MailConnector {
 	 */
 	private static Folder[] listFolders(String folderID) throws BigBangJewelException {
 
+		long startTime = System.nanoTime();
 		
 		Folder[] listingFolders = null;
 		Folder start;
@@ -261,7 +265,9 @@ public class MailConnector {
 			if (folderID != null && folderID.length() > 0) {
 				start = store.getFolder(folderID);
 			} else {
-				return store.getFolder("[Gmail]").list();
+				Folder[] gmailList = store.getFolder("[Gmail]").list();
+								
+				return gmailList;
 			}
 
 			start.open(Folder.READ_WRITE);
@@ -274,8 +280,45 @@ public class MailConnector {
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+		
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("método listFolders do MailConnector levou " + duration);
 
 		return listingFolders;
+	}
+	
+	/**
+	 *	This method lists all the folders inside a given folder, or inside the default folder
+	 */
+	public static Folder getFolderById(String folderId) throws BigBangJewelException {
+
+		Folder result = null;
+		
+		if (folderId == null) {
+			return null;
+		}
+
+		try {
+			OAuthHandler.initialize();
+			initializeStore();
+
+			result = store.getFolder(folderId);
+			
+			try {
+				result.open(Folder.READ_ONLY);
+			} catch (FolderNotFoundException fnf) {
+				result = store.getFolder("[Gmail]/" + folderId);
+				result.open(Folder.READ_ONLY);
+			}
+			
+			store.close();
+			
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return result;
 	}
 
 	/**
@@ -287,9 +330,13 @@ public class MailConnector {
 		Message[] fetchedMails = null;
 		Folder folder = null;
 		
+		long startTime = System.nanoTime();
+		
 		try {
 			OAuthHandler.initialize();
 			initializeStore();
+
+			long startTime2 = System.nanoTime();
 
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);
@@ -297,9 +344,15 @@ public class MailConnector {
 				// Default - Get inbox
 				folder = store.getFolder("inbox");
 			}
+			
+			long endTime2 = System.nanoTime();
+			long duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
+			System.out.println("inicialização de store do método getMails do MailConnector levou " + duration2);
 
 			folder.open(Folder.READ_ONLY);
 
+			long startTime3 = System.nanoTime();
+			
 			if (filterUnseen) {
 				// search for all "unseen" messages
 				Flags seen = new Flags(Flags.Flag.SEEN);
@@ -313,14 +366,108 @@ public class MailConnector {
 					fetchedMails = folder.getMessages();
 				}
 			}
+			
+			long endTime3 = System.nanoTime();
+			long duration3 = (endTime3 - startTime3) / 1000000;  //divide by 1000000 to get milliseconds.
+			System.out.println("fetching de mensagens do método getMails do MailConnector levou " + duration3);
 
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		long startTime3 = System.nanoTime();
+		
 		List<Message> asList = Arrays.asList(fetchedMails);
 		Collections.reverse(asList);
 		fetchedMails = (Message[]) asList.toArray();
+		
+		long endTime3 = System.nanoTime();
+		long duration3 = (endTime3 - startTime3) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("revert de lista do método getMails do MailConnector levou " + duration3);
+		
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("método getMails do MailConnector levou " + duration);
+		
+		return fetchedMails;		
+	}
+	
+	
+	/**
+	 *	This method gets all the mails in a given folder, or from the inbox folder if no folder is specified.
+	 *	The mails may be filtered, returning only those which are unread.
+	 */
+	public static Message[] getMailsFast(String folderId, boolean filterUnseen) throws BigBangJewelException {
+
+		Message[] fetchedMails = null;
+		Folder folder = null;
+		
+		long startTime = System.nanoTime();
+		
+		try {
+			OAuthHandler.initialize();
+			initializeStore();
+
+			long startTime2 = System.nanoTime();
+
+			if (folderId != null && folderId.length() > 0) {
+				folder = store.getFolder(folderId);
+			} else {
+				// Default - Get inbox
+				folder = store.getFolder("inbox");
+			}
+			
+			long endTime2 = System.nanoTime();
+			long duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
+			System.out.println("inicialização de store do método getMails do MailConnector levou " + duration2);
+
+			folder.open(Folder.READ_ONLY);
+
+			long startTime3 = System.nanoTime();
+			
+			if (filterUnseen) {
+				// search for all "unseen" messages
+				Flags seen = new Flags(Flags.Flag.SEEN);
+				FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
+				fetchedMails = folder.search(unseenFlagTerm);
+			} else {
+				int nrItems = folder.getMessageCount();
+				if (nrItems > Constants.GoogleAppsConstants.MAX_FETCHED_MAILS) {
+					fetchedMails = folder.getMessages(nrItems-Constants.GoogleAppsConstants.MAX_FETCHED_MAILS, nrItems);
+					
+					FetchProfile fp = new FetchProfile();
+				    fp.add(FetchProfile.Item.ENVELOPE);
+				    fp.add(FetchProfileItem.FLAGS);
+				    fp.add(FetchProfileItem.CONTENT_INFO);
+
+				    fp.add("X-mailer");
+				    folder.fetch(fetchedMails, fp);
+				} else {
+					fetchedMails = folder.getMessages();
+				}
+			}
+			
+			long endTime3 = System.nanoTime();
+			long duration3 = (endTime3 - startTime3) / 1000000;  //divide by 1000000 to get milliseconds.
+			System.out.println("fetching de mensagens do método getMails do MailConnector levou " + duration3);
+
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		long startTime3 = System.nanoTime();
+		
+		List<Message> asList = Arrays.asList(fetchedMails);
+		Collections.reverse(asList);
+		fetchedMails = (Message[]) asList.toArray();
+		
+		long endTime3 = System.nanoTime();
+		long duration3 = (endTime3 - startTime3) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("revert de lista do método getMails do MailConnector levou " + duration3);
+		
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("método getMails do MailConnector levou " + duration);
 		
 		return fetchedMails;		
 	}
@@ -1054,6 +1201,8 @@ public class MailConnector {
 	 */
 	public static Folder getFolder(String folderID) throws BigBangJewelException {
 
+		long startTime = System.nanoTime();
+		
 		Folder[] allFolders = listFolders(null);
 		Folder result = null; 
 
@@ -1067,6 +1216,10 @@ public class MailConnector {
 				break;
 			}
 		}
+		
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+		System.out.println("método getFolder do MailConnector levou " + duration);
 
 		return result;
 	}

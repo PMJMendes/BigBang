@@ -52,7 +52,8 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 
 		header = new ListHeader("Lista de E-mails");
 		header.showRefreshButton();
-		header.showNewButton("Obter todos (lento)");
+		//header.showNewButton("Obter todos (lento)");
+		header.showNewButton("Todas as Pastas");
 		header.getNewButton().setVisible(true);
 		header.getNewButton().setEnabled(false);
 		header.getNewButton().addClickHandler(new ClickHandler() {

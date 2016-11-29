@@ -267,7 +267,8 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 		VerticalPanel leftWrapper = new VerticalPanel();
 		leftWrapper.setSize("100%", "100%");
 		header = new ListHeader("Lista de E-mails");
-		header.showNewButton("Obter todos (lento)");
+		//header.showNewButton("Obter todos (lento)");
+		header.showNewButton("Todas as Pastas");
 		header.showRefreshButton();
 		header.getNewButton().setEnabled(false);
 		header.getNewButton().setVisible(true);		
