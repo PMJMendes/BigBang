@@ -904,5 +904,6 @@ public class Constants
 		public static final String 		ACCOUNT_ID	 			= "bigbang-access-account@tidy-campaign-139313.iam.gserviceaccount.com";
 		public static final int	   		MAX_FETCHED_MAILS		= 20;
 		public static final String[]	INITIAL_FOLDERS			= {"inbox", "Correio enviado"};
+		public static final String		GMAIL_FOLDER_NAME		= "[Gmail]";
 	}
 }

@@ -13,8 +13,6 @@ import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
 import bigBang.definitions.shared.DocInfo;
@@ -26,7 +24,6 @@ import bigBang.library.shared.MailItem;
 import bigBang.library.shared.MailItemStub;
 import bigBang.library.shared.SessionExpiredException;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
@@ -263,7 +260,7 @@ public class MailServiceImpl
 			try {
 				
 				Folder folder = folders[u];
-				String folderName = folder.getFullName();
+				String folderName = folder.getName();
 				larrResults[start].id = folderName; 
 				larrResults[start].isFolder = true;
 				larrResults[start].isFromMe = false;
@@ -272,7 +269,7 @@ public class MailServiceImpl
 				larrResults[start].timestamp = null;
 				larrResults[start].attachmentCount = -1;
 				larrResults[start].bodyPreview = null;
-				larrResults[start].folderId = folderName;
+				larrResults[start].folderId = folder.getFullName();
 				larrResults[start].isParentFolder = false; 
 				larrResults[start].parentFolderId = null;
 			} catch (Throwable e) {
@@ -382,23 +379,31 @@ public class MailServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 		
-		Folder tmpFolder = null;
-		Folder [] foldArray = new Folder[Constants.GoogleAppsConstants.INITIAL_FOLDERS.length];
+		MailItemStub[] result = new MailItemStub[Constants.GoogleAppsConstants.INITIAL_FOLDERS.length];
 		
 		// Iterates the folders defined as the ones to display in the initial
-		// page, and lists them
+		// page, and creates MailItemStubs for them
 		for (int i=0; i<Constants.GoogleAppsConstants.INITIAL_FOLDERS.length; i++) {
 			String tempFolderName = Constants.GoogleAppsConstants.INITIAL_FOLDERS[i];
-			try {
-				tmpFolder = MailConnector.getFolderById(tempFolderName);
-			} catch (Throwable e) {
-				throw new BigBangException(e.getMessage(), e);
+			String cleanName = tempFolderName;
+			if (tempFolderName.contains(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME)) {
+				cleanName = cleanName.substring(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME.length() + 1);
 			}
-			
-			foldArray[i] = tmpFolder;
+			result[i] = new MailItemStub();
+			result[i].id = cleanName; 
+			result[i].isFolder = true;
+			result[i].isFromMe = false;
+			result[i].subject = cleanName;
+			result[i].from = null;
+			result[i].timestamp = null;
+			result[i].attachmentCount = -1;
+			result[i].bodyPreview = null;
+			result[i].folderId = tempFolderName;
+			result[i].isParentFolder = false; 
+			result[i].parentFolderId = null;
 		}
 		
-		return sToClient(foldArray, true);
+		return result;
 	}
 	/*
 	public MailItemStub[] getItems()
@@ -472,30 +477,27 @@ public class MailServiceImpl
 			throws SessionExpiredException, BigBangException
 		{
 			Message[] items;
-			Folder[] folders;
 			
-			String folderId = current == null ? null : 
-				current.isParentFolder ? current.parentFolderId : current.folderId;
+			String folderId = current.folderId;
 
 			if ( Engine.getCurrentUser() == null )
 				throw new SessionExpiredException();
 
 			try {
-				items = MailConnector.getMails(folderId, false);
-				folders = MailConnector.getFolders(folderId);
+				items = MailConnector.getMailsFast(folderId, false);
 			}
 			catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			MailItemStub[] mailItems = items==null ? null : sToClient(items);
-			MailItemStub[] folderItems = (folders==null && current == null) ? null : sToClient(folders, false);
+			MailItemStub[] mailItems = null;
 			
-			if (items.length > 0) {
+			if (items != null && items.length > 0) {
 				closeFolderAndStore((MimeMessage) items[0]);
+				mailItems = sToClientLite(items);
 			}
 			
-			return ArrayUtils.addAll(folderItems, mailItems);
+			return mailItems;
 		}
 	
 	@Override
