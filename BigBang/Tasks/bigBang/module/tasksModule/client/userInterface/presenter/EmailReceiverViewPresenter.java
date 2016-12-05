@@ -123,27 +123,32 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 					MailItemStub stub = ((EmailEntry) ((HasValueSelectables<MailItemStub>)event.getSource()).getSelected().toArray()[0]).getValue();
 					if ( stub.isFolder )
 					{
-						view.clear();
-						view.clearList();
-						view.enableGetAll(false);
-						view.enableRefresh(false);
-						
-						service.getFolder(stub, new BigBangAsyncCallback<MailItemStub[]>() {
-
-							@Override
-							public void onResponseSuccess(MailItemStub[] result) {
-								for(int i=0; i<result.length; i++){
-									view.addEmailEntry(result[i]);
-								}
-								view.enableGetAll(true);
-								view.enableRefresh(true);
-							}
+						if (stub.parentFolderId != null) {
+							getBack();
+						} else {
+							view.clear();
 							
-							public void onResponseFailure(Throwable caught) {
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível o conteúdo da pasta."), TYPE.ERROR_NOTIFICATION));
-								view.enableRefresh(true);
-							};
-						});
+							view.clearList();
+							view.enableGetAll(false);
+							view.enableRefresh(false);
+							
+							service.getFolder(stub, new BigBangAsyncCallback<MailItemStub[]>() {
+
+								@Override
+								public void onResponseSuccess(MailItemStub[] result) {
+									for(int i=0; i<result.length; i++){
+										view.addEmailEntry(result[i]);
+									}
+									view.enableGetAll(true);
+									view.enableRefresh(true);
+								}
+								
+								public void onResponseFailure(Throwable caught) {
+									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível o conteúdo da pasta."), TYPE.ERROR_NOTIFICATION));
+									view.enableRefresh(true);
+								};
+							});
+						}
 					}
 					else
 					{
@@ -315,6 +320,34 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 		getConversations();
 		getEmails();
 
+	}
+	
+	protected void getBack() {
+		
+		view.clear();
+		view.clearList();
+		view.enableGetAll(false);
+		view.enableRefresh(false);
+
+		service.getStoredItems(new BigBangAsyncCallback<MailItemStub[]>() {
+
+			@Override
+			public void onResponseSuccess(MailItemStub[] result) {
+
+				for(int i=0; i<result.length; i++){
+					view.addEmailEntry(result[i]);
+				}
+				view.enableGetAll(true);		
+				view.enableRefresh(true);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os emails."), TYPE.ALERT_NOTIFICATION));
+				view.enableRefresh(true);
+				super.onResponseFailure(caught);
+			}
+		});		
 	}
 
 	private void getEmails() {

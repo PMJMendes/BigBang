@@ -74,6 +74,7 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 		emails = new FilterableList<MailItemStub>();
 		emails.setHeaderWidget(header);
 		emails.showFilterField(false);
+		
 		leftWrapper.add(emails);
 		leftWrapper.setCellHeight(emails, "100%");
 		wrapper.addWest(leftWrapper, 330);
@@ -128,7 +129,6 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 
 
 	}
-
 
 	@Override
 	protected void initializeView() {
@@ -212,7 +212,6 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 	public void clearList() {
 		emails.clear();
 	}
-
 
 	@Override
 	public HasEditableValue<Message> getMessageForm() {

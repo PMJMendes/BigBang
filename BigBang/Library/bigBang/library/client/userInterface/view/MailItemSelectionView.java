@@ -2,17 +2,21 @@ package bigBang.library.client.userInterface.view;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.Message;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.CheckedStateChangedEvent;
 import bigBang.library.client.event.CheckedStateChangedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.MailItemSelectionToolbar;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.MailItemSelectionToolbar;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.form.MailItemForm;
 import bigBang.library.client.userInterface.presenter.MailItemSelectionViewPresenter;
@@ -39,6 +43,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class MailItemSelectionView extends View implements MailItemSelectionViewPresenter.Display{
 
 	FilterableList<MailItemStub> emails;
+	FilterableList<MailItemStub> storedFolders;
 	FilterableList<AttachmentStub> attachments;
 	MailItemForm centerForm;
 	private ActionInvokedEventHandler<Action> actionHandler;
@@ -81,8 +86,6 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 				filename = getFormatedLabel();
 				filename.getElement().getStyle().setFontSize(11, Unit.PX);
 
-
-
 				VerticalPanel wrapper = new VerticalPanel();
 				this.setWidget(wrapper);
 
@@ -100,9 +103,6 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 						event.stopPropagation();
 					}
 				});
-
-
-
 
 				addCheckedStateChangedEventHandler(new CheckedStateChangedEventHandler() {
 
@@ -442,6 +442,4 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 	public void clearList() {
 		emails.clear();		
 	}
-
-
 }

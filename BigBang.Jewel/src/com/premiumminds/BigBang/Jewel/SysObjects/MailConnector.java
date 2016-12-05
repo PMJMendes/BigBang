@@ -378,13 +378,9 @@ public class MailConnector {
 		Message[] fetchedMails = null;
 		Folder folder = null;
 		
-		long startTime = System.nanoTime();
-		
 		try {
 			OAuthHandler.initialize();
 			initializeStore();
-
-			long startTime2 = System.nanoTime();
 
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);
@@ -392,14 +388,8 @@ public class MailConnector {
 				// Default - Get inbox
 				folder = store.getFolder("inbox");
 			}
-			
-			long endTime2 = System.nanoTime();
-			long duration2 = (endTime2 - startTime2) / 1000000;  //divide by 1000000 to get milliseconds.
-			System.out.println("inicialização de store do método getMails do MailConnector levou " + duration2);
 
 			folder.open(Folder.READ_ONLY);
-
-			long startTime3 = System.nanoTime();
 			
 			if (filterUnseen) {
 				// search for all "unseen" messages
@@ -422,28 +412,14 @@ public class MailConnector {
 					fetchedMails = folder.getMessages();
 				}
 			}
-			
-			long endTime3 = System.nanoTime();
-			long duration3 = (endTime3 - startTime3) / 1000000;  //divide by 1000000 to get milliseconds.
-			System.out.println("fetching de mensagens do método getMails do MailConnector levou " + duration3);
 
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-
-		long startTime3 = System.nanoTime();
 		
 		List<Message> asList = Arrays.asList(fetchedMails);
 		Collections.reverse(asList);
 		fetchedMails = (Message[]) asList.toArray();
-		
-		long endTime3 = System.nanoTime();
-		long duration3 = (endTime3 - startTime3) / 1000000;  //divide by 1000000 to get milliseconds.
-		System.out.println("revert de lista do método getMails do MailConnector levou " + duration3);
-		
-		long endTime = System.nanoTime();
-		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
-		System.out.println("método getMails do MailConnector levou " + duration);
 		
 		return fetchedMails;		
 	}
@@ -1137,6 +1113,26 @@ public class MailConnector {
 			} else {
 				result = store.getFolder(folderId).list();
 			}
+
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return result;
+	}
+	
+	/**
+	 *	This method gets all "first level" folders, or all folders inside a folder
+	 */
+	public static Folder[] getAllFolders() throws BigBangJewelException {
+
+		Folder[] result = null;
+		
+		try {
+			OAuthHandler.initialize();
+			initializeStore();
+			
+			result = store.getDefaultFolder().list("*");
 
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
