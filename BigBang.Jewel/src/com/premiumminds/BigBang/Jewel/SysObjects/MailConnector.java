@@ -21,7 +21,6 @@ import javax.mail.BodyPart;
 import javax.mail.FetchProfile;
 import javax.mail.Flags;
 import javax.mail.Folder;
-import javax.mail.FolderNotFoundException;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
@@ -91,7 +90,7 @@ public class MailConnector {
 	 *	This method sends an email, receiving all the "usual" content on an email message.
 	 * @param from 
 	 */
-	public static void sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
+	private static void sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
 			String[] from, String subject, String body, FileXfer[] attachments) throws BigBangJewelException {
 
 		InternetAddress[] addresses;
@@ -246,128 +245,7 @@ public class MailConnector {
 			sendMail(replyTo, to, message.marrCCs, message.marrBCCs,
 					null, message.mstrSubject, message.mstrBody, attachments);
 		}
-	}
-
-	/**
-	 *	This method lists all the folders inside a given folder, or inside the default folder
-	 */
-	private static Folder[] listFolders(String folderID) throws BigBangJewelException {
-
-		long startTime = System.nanoTime();
-		
-		Folder[] listingFolders = null;
-		Folder start;
-
-		try {
-			OAuthHandler.initialize();
-			initializeStore();
-
-			if (folderID != null && folderID.length() > 0) {
-				start = store.getFolder(folderID);
-			} else {
-				Folder[] gmailList = store.getFolder("[Gmail]").list();
-								
-				return gmailList;
-			}
-
-			start.open(Folder.READ_WRITE);
-
-			if (start.getType() == Folder.HOLDS_FOLDERS) {
-				listingFolders = start.list();
-			} 
-
-			store.close();
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-		
-		long endTime = System.nanoTime();
-		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
-		System.out.println("método listFolders do MailConnector levou " + duration);
-
-		return listingFolders;
-	}
-	
-	/**
-	 *	This method lists all the folders inside a given folder, or inside the default folder
-	 */
-	public static Folder getFolderById(String folderId) throws BigBangJewelException {
-
-		Folder result = null;
-		
-		if (folderId == null) {
-			return null;
-		}
-
-		try {
-			OAuthHandler.initialize();
-			initializeStore();
-
-			result = store.getFolder(folderId);
-			
-			try {
-				result.open(Folder.READ_ONLY);
-			} catch (FolderNotFoundException fnf) {
-				result = store.getFolder("[Gmail]/" + folderId);
-				result.open(Folder.READ_ONLY);
-			}
-			
-			store.close();
-			
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return result;
-	}
-
-	/**
-	 *	This method gets all the mails in a given folder, or from the inbox folder if no folder is specified.
-	 *	The mails may be filtered, returning only those which are unread.
-	 */
-	public static Message[] getMails(String folderId, boolean filterUnseen) throws BigBangJewelException {
-
-		Message[] fetchedMails = null;
-		Folder folder = null;
-		
-		try {
-			OAuthHandler.initialize();
-			initializeStore();
-
-			if (folderId != null && folderId.length() > 0) {
-				folder = store.getFolder(folderId);
-			} else {
-				// Default - Get inbox
-				folder = store.getFolder("inbox");
-			}
-
-			folder.open(Folder.READ_ONLY);
-			
-			if (filterUnseen) {
-				// search for all "unseen" messages
-				Flags seen = new Flags(Flags.Flag.SEEN);
-				FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
-				fetchedMails = folder.search(unseenFlagTerm);
-			} else {
-				int nrItems = folder.getMessageCount();
-				if (nrItems > Constants.GoogleAppsConstants.MAX_FETCHED_MAILS) {
-					fetchedMails = folder.getMessages(nrItems-Constants.GoogleAppsConstants.MAX_FETCHED_MAILS, nrItems);
-				} else {
-					fetchedMails = folder.getMessages();
-				}
-			}
-
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-		
-		List<Message> asList = Arrays.asList(fetchedMails);
-		Collections.reverse(asList);
-		fetchedMails = (Message[]) asList.toArray();
-		
-		return fetchedMails;		
-	}
-	
+	}	
 	
 	/**
 	 *	This method gets all the mails in a given folder, or from the inbox folder if no folder is specified.
@@ -425,38 +303,6 @@ public class MailConnector {
 	}
 
 	/**
-	 *	This method returns a message identified by a given number, inside a given folder
-	 */
-	@SuppressWarnings("unused")
-	private Message getMessage(int msgNumber, String folderId) throws BigBangJewelException {
-
-		Message fetchedMessage = null;
-
-		Folder folder = null;
-
-		OAuthHandler.initialize();
-		initializeStore();
-
-		try {
-			
-			if (folderId != null && folderId.length() > 0) {
-				folder = store.getFolder(folderId);
-			} else {
-				// Default - Get inbox
-				folder = store.getFolder("inbox");
-			}
-			folder.open(Folder.READ_ONLY);
-			fetchedMessage = folder.getMessage(msgNumber);
-			folder.close(false);
-			store.close();
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return fetchedMessage;
-	}
-
-	/**
 	 *	This method returns a message identified by a given ID, as it exists in the message header
 	 */
 	public static Message getMessage(String msgId, String folderId) throws BigBangJewelException {
@@ -470,6 +316,7 @@ public class MailConnector {
 
 		try {
 			
+			// Gets the folder with the argument's ID, and opens it
 			if (folderId != null && folderId.length() > 0) {
 				folder = store.getFolder(folderId);
 			} else {
@@ -478,6 +325,8 @@ public class MailConnector {
 			}
 			folder.open(Folder.READ_ONLY);
 			
+			// Uses the message ID as a search term to try to get the message from the 
+			// folder
 			SearchTerm searchTerm = new MessageIDTerm(msgId);
 			Message[] messages = folder.search(searchTerm);
 			
@@ -490,6 +339,15 @@ public class MailConnector {
 					Enumeration<?> headers = tmp.getAllHeaders();
 
 					idFound = false;
+					
+					// If it is a MimeMessage, gets its Id and checks if it
+					// matches the method's parameter
+					if (tmp instanceof MimeMessage) {
+						if (((MimeMessage)tmp).getMessageID().equals(msgId)) {
+							return tmp;
+						}
+					}
+					
 					while (headers.hasMoreElements()) {
 						Header h = (Header) headers.nextElement();         
 						String mID = h.getName();                
@@ -509,19 +367,31 @@ public class MailConnector {
 			}
 			
 			
+			// If for some reason it could not get the message searching for its id, 
+			// it fetches message-by-message in the folder until it gets it
+			// This is, of course... slow. Hopefully never used
 			for (int i=1; i<=folder.getMessageCount(); i++) {
 
-				folder.getMessage(i).getHeader("Message-Id"); 
-				Enumeration<?> headers = folder.getMessage(i).getAllHeaders();
+				Message tmp = folder.getMessage(i);
+				tmp.getHeader("Message-Id"); 
+				Enumeration<?> headers = tmp.getAllHeaders();
 
 				idFound = false;
+				
+				// If it is a MimeMessage, gets its Id and checks if it
+				// matches the method's parameter
+				if (tmp instanceof MimeMessage) {
+					if (((MimeMessage)tmp).getMessageID().equals(msgId)) {
+						return tmp;
+					}
+				}
 
 				while (headers.hasMoreElements()) {
 					Header h = (Header) headers.nextElement();         
 					String mID = h.getName();                
 					if(mID.contains("Message-ID") || mID.contains("Message-Id")) {
 						if (h.getValue().equals(msgId)) {
-							fetchedMessage = folder.getMessage(i);
+							fetchedMessage = tmp;
 							idFound = true;
 							break;
 						}
@@ -598,23 +468,41 @@ public class MailConnector {
 		// If it is an attachment, gets its id from the header and inserts it in the result's map
 		if (content instanceof InputStream || content instanceof String) {
 			if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition()) || part.getFileName()!=null ) {
-				Enumeration<?> headers = part.getAllHeaders();
 				
-				while (headers.hasMoreElements()) {
+				String attId = "";
+				
+				if (part instanceof MimeBodyPart) {
+					// If the part is a MimeBodyPart, tries to get the file name in a more direct way
+					MimeBodyPart mimePart = (MimeBodyPart) part;
 					
-					String attId = "";
-					
-					if(part.getHeader("Content-Id") != null) {
-						attId = MimeUtility.decodeText(part.getHeader("Content-Id")[0]);
-					} else if(part.getHeader("Content-Description") != null) {
-						attId = MimeUtility.decodeText(part.getHeader("Content-Description")[0]);
+					if(mimePart.getContentID() != null) {
+						attId = MimeUtility.decodeText(mimePart.getContentID());
 					} else {
-						attId = MimeUtility.decodeText(part.getFileName());
+						attId = MimeUtility.decodeText(mimePart.getFileName());
 					}
 					
-					if(attId != null) { // TODO: e se nao tiver ID?
+					if(attId != null) {
 						result.put(attId, part);
-						break;
+					}
+					
+				} else {
+					// If it is not possible, iterates the headers
+					Enumeration<?> headers = part.getAllHeaders();
+					
+					while (headers.hasMoreElements()) {
+						
+						if(part.getHeader("Content-Id") != null) {
+							attId = MimeUtility.decodeText(part.getHeader("Content-Id")[0]);
+						} else if(part.getHeader("Content-Description") != null) {
+							attId = MimeUtility.decodeText(part.getHeader("Content-Description")[0]);
+						} else {
+							attId = MimeUtility.decodeText(part.getFileName());
+						}
+						
+						if(attId != null) {
+							result.put(attId, part);
+							break;
+						}
 					}
 				}
 				return result;
@@ -909,12 +797,12 @@ public class MailConnector {
 	 * Base-64 converted string. Removes those images and the main text from the
 	 * mail attachments
 	 */
-	public static String prepareBodyInline(String lstrBody, Map<String, BodyPart> attachmentsMap) throws BigBangJewelException {
+	public static String prepareBodyInline(String body, Map<String, BodyPart> attachmentsMap) throws BigBangJewelException {
 		
 		// Uses a Regular Expression to find "IMG" tags in html
 		final String regex = "src\\s*=\\s*([\"'])?([^\"']*)";
 		final Pattern p = Pattern.compile(regex);
-        final Matcher m = p.matcher(lstrBody);
+        final Matcher m = p.matcher(body);
 		
         // Iterates the found images
         while (m.find()) {
@@ -934,7 +822,7 @@ public class MailConnector {
 					dataType = "data:" + splittedType[0] + ";base64,"; 
 					
 					// Changes HTML's IMG tag
-					lstrBody = lstrBody.replaceAll(originalHtml, "src=\"" + dataType + encodedString);
+					body = body.replaceAll(originalHtml, "src=\"" + dataType + encodedString);
 					
 					// Removes the inline image from the attachments
 					attachmentsMap.remove(prevImg);
@@ -945,7 +833,7 @@ public class MailConnector {
 			}
         }
 		
-		return lstrBody;
+		return body;
 	}
 	
 	/** 
@@ -1064,62 +952,6 @@ public class MailConnector {
 
 		return (String) userDeco.getAt(UserDecoration.I.EMAIL);
 	}
-
-	/**
-	 *	This method gets all the messages inside the sent or inbox folder, according 
-	 *	to a parameter
-	 */
-	public static Message[] getSentOrReceived(boolean sent) throws BigBangJewelException {
-
-		Message[] result = null;
-
-		if (sent) {
-			result = getMails("Itens Enviados", false);
-		} else {
-			result = getMails("Inbox", false);
-		}
-
-		return result;
-	}
-	
-	/**
-	 *	This method gets all "first level" folders, or all folders inside a folder
-	 */
-	public static Folder[] getFolders(String folderId) throws BigBangJewelException {
-
-		Folder[] result = null;
-		
-		try {
-			OAuthHandler.initialize();
-			initializeStore();
-			
-			if (folderId == null || folderId.length()==0) {
-				result = store.getDefaultFolder().list();
-				
-				// In Gmail, when accessing through imap, it returns the [Gmail] folder, which must be filtered 
-				int sysFolderIdx = getSystemFolderIndex(result, true);
-				if (sysFolderIdx != -1) {
-					ArrayList <Folder> resultsList = new ArrayList<Folder>(Arrays.asList(result));
-					resultsList.remove(sysFolderIdx);
-					result = resultsList.toArray(new Folder[resultsList.size()]);
-				}
-				// Also removes "Inbox" folder...
-				sysFolderIdx = getSystemFolderIndex(result, false);
-				if (sysFolderIdx != -1) {
-					ArrayList <Folder> resultsList = new ArrayList<Folder>(Arrays.asList(result));
-					resultsList.remove(sysFolderIdx);
-					result = resultsList.toArray(new Folder[resultsList.size()]);
-				}
-			} else {
-				result = store.getFolder(folderId).list();
-			}
-
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return result;
-	}
 	
 	/**
 	 *	This method gets all "first level" folders, or all folders inside a folder
@@ -1167,32 +999,4 @@ public class MailConnector {
 		return -1;
 	}
 
-	/**
-	 *	This method returns a given folder, identified by id.
-	 *	It calls the method to retrieve all folders, and iterates them
-	 */
-	public static Folder getFolder(String folderID) throws BigBangJewelException {
-
-		long startTime = System.nanoTime();
-		
-		Folder[] allFolders = listFolders(null);
-		Folder result = null; 
-
-		if (allFolders == null) {
-			return null;
-		}
-
-		for (int i=0; i<allFolders.length; i++) {
-			result = allFolders[i];
-			if (result.getName().equals(folderID)) {
-				break;
-			}
-		}
-		
-		long endTime = System.nanoTime();
-		long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
-		System.out.println("método getFolder do MailConnector levou " + duration);
-
-		return result;
-	}
 }

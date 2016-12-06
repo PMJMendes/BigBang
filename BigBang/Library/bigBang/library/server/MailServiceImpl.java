@@ -8,6 +8,7 @@ import java.util.UUID;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
@@ -155,7 +156,11 @@ public class MailServiceImpl
 				result[i].subject = cleanName;
 				result[i].from = null;
 				result[i].timestamp = null;
-				result[i].attachmentCount = isGmailFolder ? -1 : parrSource[i].getMessageCount();
+				try {
+					result[i].attachmentCount = isGmailFolder ? -1 : parrSource[i].getMessageCount();
+				} catch (MessagingException m) {
+					result[i].attachmentCount = -1;
+				}
 				result[i].bodyPreview = null;
 				result[i].folderId = tempFolderName;
 				result[i].isParentFolder = false; 
@@ -292,12 +297,12 @@ public class MailServiceImpl
 	public MailItem getItem(String folderId, String id)
 		throws SessionExpiredException, BigBangException
 	{
-		MimeMessage lobjItem;
-		MailItem lobjResult;
-		String lstrFrom;
-		ArrayList<AttachmentStub> larrStubs;
-		AttachmentStub lobjAttStub;
-		String lstrBody;
+		MimeMessage mailMessage;
+		MailItem result;
+		String from;
+		ArrayList<AttachmentStub> attStubsList;
+		AttachmentStub attachmentStub;
+		String body;
 		Map<String, BodyPart> attachmentsMap = null;
 
 		if ( Engine.getCurrentUser() == null )
@@ -305,45 +310,41 @@ public class MailServiceImpl
 
 		try
 		{
-			lobjItem = (MimeMessage) MailConnector.getMessage(id, folderId);
+			mailMessage = (MimeMessage) MailConnector.getMessage(id, folderId);
 
-			lobjResult = new MailItem();
-			lobjResult.folderId = lobjItem.getFolder().getFullName();
-			lobjResult.id = lobjItem.getMessageID();
-			lobjResult.isFolder = false;
-			lobjResult.subject = lobjItem.getSubject();
-			InternetAddress address = (InternetAddress) (lobjItem.getFrom() == null ? null : lobjItem.getFrom()[0]);
-			lstrFrom = address == null ? "" : address.getAddress();
-			lobjResult.from = lstrFrom.length()>0 ? lstrFrom : null;
-			lobjResult.isFromMe = (lstrFrom.length()>0 && lstrFrom.equals(MailConnector.getUserEmail()));
+			result = new MailItem();
+			result.folderId = mailMessage.getFolder().getFullName();
+			result.id = mailMessage.getMessageID();
+			result.isFolder = false;
+			result.subject = mailMessage.getSubject();
+			InternetAddress address = (InternetAddress) (mailMessage.getFrom() == null ? null : mailMessage.getFrom()[0]);
+			from = address == null ? "" : address.getAddress();
+			result.from = from.length()>0 ? from : null;
+			result.isFromMe = (from.length()>0 && from.equals(MailConnector.getUserEmail()));
 			
-			lobjResult.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getSentDate());
+			result.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailMessage.getSentDate());
 			
-			attachmentsMap = MailConnector.getAttachmentsMap(lobjItem);
+			attachmentsMap = MailConnector.getAttachmentsMap(mailMessage);
 			
-			lobjResult.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
-			Object content = lobjItem.getContent();
-			larrStubs = new ArrayList<AttachmentStub>();
+			result.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
+			Object content = mailMessage.getContent();
+			attStubsList = new ArrayList<AttachmentStub>();
 			
 			try
 			{
 				if (content instanceof Multipart && attachmentsMap != null) {
-					lstrBody = attachmentsMap.get("main").getContent().toString();
-					lstrBody = MailConnector.prepareBodyInline(lstrBody, attachmentsMap);
-					lobjResult.body = lstrBody;
-					lobjResult.bodyPreview = lobjResult.subject;
+					body = attachmentsMap.get("main").getContent().toString();
+					body = MailConnector.prepareBodyInline(body, attachmentsMap);
+					result.body = body;
 				} else {
-					lstrBody = content.toString();
-					lobjResult.body = MailConnector.prepareSimpleBody(lstrBody);
+					body = content.toString();
+					result.body = MailConnector.prepareSimpleBody(body);
 				}
-				lstrBody = MailConnector.removeHtml(lstrBody);
-				if ( lstrBody.length() > 170 ) {
-					lobjResult.bodyPreview = lstrBody.substring(0, 170);
-				}
+				body = MailConnector.removeHtml(body);
 			}
 			catch (Throwable e)
 			{
-				lobjResult.bodyPreview = "(Erro interno do servidor de Email.)";
+				result.bodyPreview = "(Erro interno do servidor de Email.)";
 			}
 			
 			if (attachmentsMap != null) {
@@ -352,27 +353,27 @@ public class MailServiceImpl
 				attachmentsMap.remove("main");
 				
 				for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
-				    lobjAttStub = new AttachmentStub();
-				    lobjAttStub.id = entry.getKey();
-					lobjAttStub.fileName = entry.getKey();
+				    attachmentStub = new AttachmentStub();
+				    attachmentStub.id = entry.getKey();
+					attachmentStub.fileName = entry.getKey();
 					String contentType = entry.getValue().getContentType();
-					lobjAttStub.mimeType = contentType!=null ? contentType.split(";")[0] : null;
-					lobjAttStub.size = entry.getValue().getSize();
-					larrStubs.add(lobjAttStub);
+					attachmentStub.mimeType = contentType!=null ? contentType.split(";")[0] : null;
+					attachmentStub.size = entry.getValue().getSize();
+					attStubsList.add(attachmentStub);
 				}
 				
-				lobjResult.attachments = larrStubs.toArray(new AttachmentStub[larrStubs.size()]);
+				result.attachments = attStubsList.toArray(new AttachmentStub[attStubsList.size()]);
 				
 			}
 			
-			closeFolderAndStore(lobjItem);
+			closeFolderAndStore(mailMessage);
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return lobjResult;
+		return result;
 	}
 
 	protected void closeFolderAndStore(MimeMessage lobjItem)
