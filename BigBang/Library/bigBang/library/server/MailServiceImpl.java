@@ -144,11 +144,6 @@ public class MailServiceImpl
 				
 				String tempFolderName = parrSource[i].getFullName();
 				String cleanName = tempFolderName;
-				boolean isGmailFolder = tempFolderName.equals(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME);
-				if (tempFolderName.contains(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME) &&
-					!isGmailFolder) {
-					cleanName = cleanName.substring(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME.length() + 1);
-				}
 				
 				result[i].id = tempFolderName; 
 				result[i].isFolder = true;
@@ -156,11 +151,6 @@ public class MailServiceImpl
 				result[i].subject = cleanName;
 				result[i].from = null;
 				result[i].timestamp = null;
-				try {
-					result[i].attachmentCount = isGmailFolder ? -1 : parrSource[i].getMessageCount();
-				} catch (MessagingException m) {
-					result[i].attachmentCount = -1;
-				}
 				result[i].bodyPreview = null;
 				result[i].folderId = tempFolderName;
 				result[i].isParentFolder = false; 
