@@ -280,7 +280,7 @@ public abstract class CreateConversationBase
 			try
 			{
 				if ( mobjData.marrMessages[0].mstrEmailID != null )
-				{
+				{	//TODO CHECK DAQUI PARA A FRENTE O QUE È NECESSÀRIO MESMO
 					javax.mail.Message mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID);
 					Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
 					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mailMsg,
@@ -296,7 +296,7 @@ public abstract class CreateConversationBase
 						tmpBody = MailConnector.prepareSimpleBody(tmpBody);
 					}					
 					
-					mobjData.marrMessages[0].mstrBody = tmpBody;
+					mobjData.marrMessages[0].mstrBody = tmpBody; // TODO é igual ao que já está... para que é que faço set?
 					mobjData.marrMessages[0].ToObject(lobjMessage);
 					lobjMessage.SaveToDb(pdb);
 
@@ -311,7 +311,7 @@ public abstract class CreateConversationBase
 					}
 
 					// Calls the method responsble for updating the message to google storage.
-					StorageConnector.uploadMailMessage(mailMsg, mobjData.marrMessages[0].mstrEmailID);
+					StorageConnector.uploadMailMessage(mailMsg, mobjData.marrMessages[0].mstrEmailID); //TODO aqui é que é necessário ter a mensagem, "caramba"
 					
 				}
 				else

@@ -33,5 +33,5 @@ public interface MailService
 	MailItem getItem(String folderId, String id) throws SessionExpiredException, BigBangException;
 	Document getAttAsDoc(String emailId, String folderId, String attachmentId) throws SessionExpiredException, BigBangException;
 	Document getAttAsDocFromStorage(String storageId, String attachmentId) throws SessionExpiredException, BigBangException;
-	MailItemStub[] getStoredItems();
+	MailItemStub[] getStoredItems() throws BigBangException, SessionExpiredException;
 }

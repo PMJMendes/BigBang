@@ -2,13 +2,13 @@ package bigBang.library.server;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
@@ -36,7 +36,7 @@ public class MailServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 	
-	private static MailItemStub[] storedFolders;
+	private static HashMap<String, MailItemStub[]> storedFoldersByUser;
 	
 	/**
 	 * Prepares the data from a mails' list to be displayed
@@ -161,7 +161,11 @@ public class MailServiceImpl
 			}
 		}
 
-		storedFolders = result;
+		try {
+			storeFolders(result);
+		} catch (SessionExpiredException e) {
+			// Unable to store... no problem
+		}
 		
 		return result;
 	}
@@ -217,7 +221,11 @@ public class MailServiceImpl
 			result[i].parentFolderId = null;
 		}
 		
-		storedFolders = result;
+		try {
+			storeFolders(result);
+		} catch (SessionExpiredException e) {
+			// Unable to store... no problem
+		}
 		
 		return result;
 	}
@@ -243,11 +251,6 @@ public class MailServiceImpl
 		}
 		
 		return folderItems;
-	}
-	
-	public MailItemStub[] getStoredItems() {
-		
-		return storedFolders;
 	}
 
 	/**
@@ -476,5 +479,54 @@ public class MailServiceImpl
 		lobjResult.parameters = new DocInfo[0];
 
 		return lobjResult;
+	}
+	
+	/**
+	 * This method "stores" in memory the users' folders list
+	 */
+	private static void storeFolders(MailItemStub[] folders) throws 
+		SessionExpiredException, BigBangException {
+		
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+		
+		if (storedFoldersByUser == null) {
+			storedFoldersByUser = new HashMap<String, MailItemStub[]>();
+		}
+		
+		try {
+			String userMail = MailConnector.getUserEmail();
+			storedFoldersByUser.put(userMail, folders);
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}		
+	}
+	
+	/**
+	 * This method returns the stored users' folders list
+	 */
+	public MailItemStub[] getStoredItems() throws BigBangException, SessionExpiredException {
+		
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+		
+		MailItemStub[] result = null; 
+				
+		try {
+			String userMail = MailConnector.getUserEmail();
+			result = storedFoldersByUser.get(userMail);
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
+		
+		if (storedFoldersByUser == null) {
+			storedFoldersByUser = new HashMap<String, MailItemStub[]>();
+		}
+		
+		if (result == null) {
+			return getItemsAll();
+		}
+		
+		return result;
 	}
 }
