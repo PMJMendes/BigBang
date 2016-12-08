@@ -69,7 +69,7 @@ import com.sun.mail.smtp.SMTPTransport;
  */
 public class MailConnector {
 
-	static Store store; 
+	private static HashMap<String, Store> storesByUser;
 	
 	/**
 	 *	This method initializes the store, if needed.
@@ -77,9 +77,19 @@ public class MailConnector {
 	 */
 	private static void initializeStore() throws BigBangJewelException {
 		try {
-		//	if (store == null || !store.isConnected()) {
+		
+			if (storesByUser == null) {
+				storesByUser = new HashMap<String, Store>();
+			}
+			
+			String userMail = MailConnector.getUserEmail();
+			
+			Store store = storesByUser.get(userMail);
+			
+			if (store == null || !store.isConnected()) {
 				store = OAuthHandler.getImapStore(getUserEmail());
-		//	}
+				storesByUser.put(userMail, store);
+			}
 			
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
@@ -260,11 +270,13 @@ public class MailConnector {
 			OAuthHandler.initialize();
 			initializeStore();
 
+			String userMail = MailConnector.getUserEmail();
+			
 			if (folderId != null && folderId.length() > 0) {
-				folder = store.getFolder(folderId);
+				folder = storesByUser.get(userMail).getFolder(folderId);
 			} else {
 				// Default - Get inbox
-				folder = store.getFolder("inbox");
+				folder = storesByUser.get(userMail).getFolder("inbox");
 			}
 
 			folder.open(Folder.READ_ONLY);
@@ -316,12 +328,14 @@ public class MailConnector {
 
 		try {
 			
+			String userMail = MailConnector.getUserEmail();
+			
 			// Gets the folder with the argument's ID, and opens it
 			if (folderId != null && folderId.length() > 0) {
-				folder = store.getFolder(folderId);
+				folder = storesByUser.get(userMail).getFolder(folderId);
 			} else {
 				// Default - Get inbox
-				folder = store.getFolder("inbox");
+				folder = storesByUser.get(userMail).getFolder("inbox");
 			}
 			folder.open(Folder.READ_ONLY);
 			
@@ -964,7 +978,8 @@ public class MailConnector {
 			OAuthHandler.initialize();
 			initializeStore();
 			
-			result = store.getDefaultFolder().list("*");
+			String userMail = MailConnector.getUserEmail();
+			result = storesByUser.get(userMail).getDefaultFolder().list("*");
 
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
