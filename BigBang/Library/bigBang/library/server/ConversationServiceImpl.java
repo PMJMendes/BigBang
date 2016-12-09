@@ -228,7 +228,7 @@ public class ConversationServiceImpl
 			attachment.attachmentId = (String)messageAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
 			attachment.emailId = mailData.mstrEmailID;
 			attachment.name = (String)messageAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
-			attachment.date = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailData.mdtDate);
+			attachment.date = mailData.mdtDate==null ? null : (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailData.mdtDate);
 			
 			attachments[i] = attachment;
 		}
@@ -726,7 +726,9 @@ public class ConversationServiceImpl
 
 		lopCCB.mobjData.marrMessages = new MessageData[1];
 		lopCCB.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], lidParentType, lidParentID,
-				lopCCB.mobjData.midStartDir, null); // TODO CHECK
+				lopCCB.mobjData.midStartDir, null); // TODO passar aqui a mensagem existente
+		
+		// TODO: PAssar mensagem existente para create converstionbase (e para o outro)
 
 		try
 		{
