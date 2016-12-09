@@ -304,6 +304,8 @@ public class MailServiceImpl
 		try
 		{
 			mailMessage = (MimeMessage) MailConnector.getMessage(id, folderId);
+			
+			MailConnector.storeLastMessage(mailMessage);
 
 			result = new MailItem();
 			result.folderId = mailMessage.getFolder().getFullName();
@@ -371,23 +373,23 @@ public class MailServiceImpl
 
 	protected void closeFolderAndStore(MimeMessage lobjItem)
 			throws BigBangException {
-		try {
+	/*	try {
 			Store storeRef = lobjItem.getFolder().getStore();
 			lobjItem.getFolder().close(false);
 			storeRef.close();
 		} catch (Throwable e){
 			throw new BigBangException(e.getMessage(), e);
-		}	
+		}	 */
 	}
 	
 	protected void closeFolderAndStore(Folder lobjItem)
 			throws BigBangException {
-		try {
+	/*	try {
 			Store storeRef = lobjItem.getStore();
 			storeRef.close();
 		} catch (Throwable e){
 			throw new BigBangException(e.getMessage(), e);
-		}	
+		}	*/
 	}
 
 	/**
@@ -505,24 +507,24 @@ public class MailServiceImpl
 	/**
 	 * This method returns the stored users' folders list
 	 */
-	public MailItemStub[] getStoredItems() throws BigBangException, SessionExpiredException {
+	public MailItemStub[] getStoredFolders() throws BigBangException, SessionExpiredException {
 		
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 		
 		MailItemStub[] result = null; 
 				
+		if (storedFoldersByUser == null) {
+			storedFoldersByUser = new HashMap<String, MailItemStub[]>();
+		}
+		
 		try {
 			String userMail = MailConnector.getUserEmail();
 			result = storedFoldersByUser.get(userMail);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
-		
-		if (storedFoldersByUser == null) {
-			storedFoldersByUser = new HashMap<String, MailItemStub[]>();
-		}
-		
+				
 		if (result == null) {
 			return getItemsAll();
 		}

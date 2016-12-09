@@ -71,6 +71,8 @@ public class MailConnector {
 
 	private static HashMap<String, Store> storesByUser;
 	
+	private static HashMap<String, Message> lastMessageUser;
+	
 	/**
 	 *	This method initializes the store, if needed.
 	 *	Avoids "too much connections" error
@@ -543,12 +545,12 @@ public class MailConnector {
 	 *	This method fetches a given email and creates (and returns) a Map with 
 	 *	{(<_>, <mail_Id>), (<attachmentId_1>, <mail_Id>), (...), (<attachmentId_n>, <mail_Id>)}  
 	 */
-	public static Map<String, String> processItem(String pstrUniqueID, Message fetchedItem, Map<String, BodyPart> mailAttachments) throws BigBangJewelException {
+	public static Map<String, String> processItem(String pstrUniqueID, String folderId, Message fetchedItem, Map<String, BodyPart> mailAttachments) throws BigBangJewelException {
 
 		Map<String, String> processed = null;
 
 		if (fetchedItem == null) {
-			fetchedItem = getMessage(pstrUniqueID, null);
+			fetchedItem = getMessage(pstrUniqueID, folderId);
 		}
 
 		processed = new HashMap<String, String>();
@@ -989,29 +991,41 @@ public class MailConnector {
 	}
 	
 	/**
-	 *	This method returns the index for the [Gmail] folder in a Folder's array.
-	 *	That folder should not be listed to the user.
+	 * This method "stores" in memory the users' folders list
+	 * @throws BigBangJewelException 
 	 */
-	public static int getSystemFolderIndex(Folder[] folders, boolean isCheckingGmail) {
+	public static void storeLastMessage(Message msg) throws BigBangJewelException {
 		
-		if (folders==null) {
-			return -1;
+		if (lastMessageUser == null) {
+			lastMessageUser = new HashMap<String, Message>();
 		}
 		
-		for (int i=0; i<folders.length; i++) {
-			if (isCheckingGmail) {
-				if (folders[i].getFullName().equals("[Gmail]") ||
-					folders[i].getFullName().equals("[Google Mail]")) {
-					return i;
-				}
-			} else {
-				if (folders[i].getFullName().equals("INBOX")) {
-					return i;
-				}
-			}
-		}
-		
-		return -1;
+		try {
+			String userMail = MailConnector.getUserEmail();
+			lastMessageUser.put(userMail, msg);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}		
 	}
-
+	
+	/**
+	 * This method returns the stored users' folders list
+	 */
+	public static Message getStoredMessage() throws BigBangJewelException {
+		
+		Message result = null; 
+				
+		if (lastMessageUser == null) {
+			lastMessageUser = new HashMap<String, Message>();
+		}
+		
+		try {
+			String userMail = MailConnector.getUserEmail();
+			result = lastMessageUser.get(userMail);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+		
+		return result;
+	}
 }

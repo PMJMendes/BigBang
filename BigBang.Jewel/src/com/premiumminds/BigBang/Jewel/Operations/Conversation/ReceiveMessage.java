@@ -269,7 +269,11 @@ public class ReceiveMessage
 		{
 			try
 			{
-				javax.mail.Message mailMsg = MailConnector.getMessage(mobjData.mstrEmailID, mobjData.mstrFolderID);
+				javax.mail.Message mailMsg = MailConnector.getStoredMessage(); 
+				if (mailMsg == null) {
+					mailMsg = MailConnector.getMessage(mobjData.mstrEmailID, mobjData.mstrFolderID);
+				}
+				
 				Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
 				Object content = mailMsg.getContent();
 				String tmpBody;
@@ -281,7 +285,7 @@ public class ReceiveMessage
 					tmpBody = MailConnector.prepareSimpleBody(tmpBody);
 				}		
 				
-				larrAttTrans = MailConnector.processItem(mobjData.mstrEmailID, null, null);
+				larrAttTrans = MailConnector.processItem(mobjData.mstrEmailID, mobjData.mstrFolderID, mailMsg, mailAttachments);
 				mobjData.mstrEmailID = larrAttTrans.get("_");
 				mobjData.mstrBody = tmpBody;
 				mobjData.ToObject(lobjMessage);

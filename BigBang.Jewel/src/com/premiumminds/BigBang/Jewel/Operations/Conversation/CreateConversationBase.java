@@ -279,12 +279,16 @@ public abstract class CreateConversationBase
 		{
 			try
 			{
-				if ( mobjData.marrMessages[0].mstrEmailID != null )
-				{	//TODO CHECK DAQUI PARA A FRENTE O QUE È NECESSÀRIO MESMO
-					javax.mail.Message mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID);
+				if ( mobjData.marrMessages[0].mstrEmailID != null ) {
+					
+					javax.mail.Message mailMsg = MailConnector.getStoredMessage(); 
+					if (mailMsg == null) {
+						mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID);
+					}
+					
 					Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
-					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mailMsg,
-							mailAttachments);
+					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID,
+							mailMsg, mailAttachments);
 					mobjData.marrMessages[0].mstrEmailID = larrAttTrans.get("_");
 					Object content = mailMsg.getContent();
 					String tmpBody;

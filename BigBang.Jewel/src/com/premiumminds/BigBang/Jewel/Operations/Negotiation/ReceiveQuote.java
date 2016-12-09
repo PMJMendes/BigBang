@@ -156,7 +156,7 @@ public class ReceiveQuote
 					lobjItem = MailConnector.getMessage(mobjMessage.mstrEmailID, null);
 					mobjMessage.mstrSubject = lobjItem.getSubject();
 					mobjMessage.mstrBody = lobjItem.getContent().toString();
-					mstrNewEmailID = MailConnector.processItem(mobjMessage.mstrEmailID, lobjItem, null).get("_");
+					mstrNewEmailID = MailConnector.processItem(mobjMessage.mstrEmailID, mobjMessage.mstrFolderID, lobjItem, null).get("_");
 				}
 				catch (Throwable e)
 				{

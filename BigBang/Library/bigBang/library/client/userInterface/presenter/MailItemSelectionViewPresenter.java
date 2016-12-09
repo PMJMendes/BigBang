@@ -233,7 +233,7 @@ HasValue<Message> {
 		view.enableGetAll(false);
 		view.enableRefresh(false);
 
-		service.getStoredItems(new BigBangAsyncCallback<MailItemStub[]>() {
+		service.getStoredFolders(new BigBangAsyncCallback<MailItemStub[]>() {
 
 			@Override
 			public void onResponseSuccess(MailItemStub[] result) {

@@ -725,10 +725,15 @@ public class ConversationServiceImpl
 		lopCCB.mobjData.mdtDueDate = ldtLimit;
 
 		lopCCB.mobjData.marrMessages = new MessageData[1];
-		lopCCB.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], lidParentType, lidParentID,
-				lopCCB.mobjData.midStartDir, null); // TODO passar aqui a mensagem existente
 		
-		// TODO: PAssar mensagem existente para create converstionbase (e para o outro)
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
+		lopCCB.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], lidParentType, lidParentID,
+				lopCCB.mobjData.midStartDir, storedMessage);
 
 		try
 		{
@@ -1100,8 +1105,9 @@ public class ConversationServiceImpl
 
 		try
 		{
+			javax.mail.Message storedMessage = MailConnector.getStoredMessage();
 			lopRM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentContainerType(), lobjConv.getParentContainer(),
-					Constants.MsgDir_Incoming, null);
+					Constants.MsgDir_Incoming, storedMessage);
 
 			lopRM.Execute();
 		}
