@@ -47,6 +47,7 @@ import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CreateNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.DeleteQuoteRequest;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class QuoteRequestServiceImpl
 	extends SearchServiceBase
@@ -315,8 +316,15 @@ public class QuoteRequestServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_QuoteRequest,
-				lobjQReq.getKey(), lopCC.mobjData.midStartDir, null);
+				lobjQReq.getKey(), lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{

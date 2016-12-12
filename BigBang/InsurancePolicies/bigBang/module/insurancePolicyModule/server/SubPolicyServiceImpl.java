@@ -66,6 +66,7 @@ import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ReactivateSubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.TransferToPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ValidateSubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.VoidSubPolicy;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class SubPolicyServiceImpl
 	extends SearchServiceBase
@@ -506,8 +507,15 @@ public class SubPolicyServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubPolicy,
-				lobjSubPol.getKey(), Constants.MsgDir_Outgoing, null);
+				lobjSubPol.getKey(), Constants.MsgDir_Outgoing, storedMessage);
 
 		try
 		{
@@ -566,8 +574,15 @@ public class SubPolicyServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubPolicy,
-				lobjSubPol.getKey(), lopCC.mobjData.midStartDir, null);
+				lobjSubPol.getKey(), lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{

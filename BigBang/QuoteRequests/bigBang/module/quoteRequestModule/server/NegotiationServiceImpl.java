@@ -46,6 +46,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Negotiation.DeleteNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ReceiveQuote;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.SendGrant;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class NegotiationServiceImpl
 	extends SearchServiceBase
@@ -386,8 +387,15 @@ public class NegotiationServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Negotiation,
-				lobjNeg.getKey(), lopCC.mobjData.midStartDir, null);
+				lobjNeg.getKey(), lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{

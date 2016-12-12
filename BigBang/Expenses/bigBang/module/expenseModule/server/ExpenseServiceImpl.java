@@ -64,6 +64,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Expense.ReceiveReception;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ReceiveReturn;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ReturnToClient;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.SendNotification;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class ExpenseServiceImpl
 	extends SearchServiceBase
@@ -531,8 +532,15 @@ public class ExpenseServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Expense,
-				lobjExpense.getKey(), lopCC.mobjData.midStartDir, null);
+				lobjExpense.getKey(), lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{

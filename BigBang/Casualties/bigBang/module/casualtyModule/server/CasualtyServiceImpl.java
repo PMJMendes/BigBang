@@ -49,6 +49,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Casualty.ExecMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ReopenProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ReopenSubCasualty;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class CasualtyServiceImpl
 	extends SearchServiceBase
@@ -301,8 +302,15 @@ public class CasualtyServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Casualty,
-				lobjCasualty.getKey(), lopCC.mobjData.midStartDir, null);
+				lobjCasualty.getKey(), lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{

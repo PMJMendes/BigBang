@@ -41,6 +41,7 @@ import com.premiumminds.BigBang.Jewel.Objects.TotalLoss;
 import com.premiumminds.BigBang.Jewel.Operations.TotalLoss.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.TotalLoss.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.TotalLoss.ManageData;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class TotalLossServiceImpl
 	extends SearchServiceBase
@@ -210,7 +211,7 @@ public class TotalLossServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
-				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), Constants.MsgDir_Outgoing, null);
+				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), Constants.MsgDir_Outgoing, storedMessage);
 
 		try
 		{
@@ -268,8 +269,15 @@ public class TotalLossServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
-				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), lopCC.mobjData.midStartDir, null);
+				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{

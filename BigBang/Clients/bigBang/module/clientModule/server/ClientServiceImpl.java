@@ -65,6 +65,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Client.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Client.MergeIntoAnother;
 import com.premiumminds.BigBang.Jewel.Operations.Client.SetInternational;
 import com.premiumminds.BigBang.Jewel.Operations.General.CreateClient;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class ClientServiceImpl
@@ -471,8 +472,15 @@ public class ClientServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Client,
-				lobjClient.getKey(), lopCC.mobjData.midStartDir, null);
+				lobjClient.getKey(), lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{

@@ -44,6 +44,7 @@ import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.ManageData;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class MedicalFileServiceImpl
 	extends SearchServiceBase
@@ -339,6 +340,7 @@ public class MedicalFileServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY),
 				Constants.MsgDir_Outgoing, null);
@@ -400,9 +402,16 @@ public class MedicalFileServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY),
-				lopCC.mobjData.midStartDir, null);
+				lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{
