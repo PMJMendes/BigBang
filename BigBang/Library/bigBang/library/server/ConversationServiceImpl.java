@@ -417,7 +417,7 @@ public class ConversationServiceImpl
 		}
 		
 		// Tests if the message has body, and if it doesn't, tries to fix it.
-		if (lobjMsg.getText() == null || lobjMsg.getText().length()==0) {
+		/*if (lobjMsg.getText() == null || lobjMsg.getText().length()==0) {
 			result = sGetStgMessage(lobjMsg, pbFilterOwners);
 			if (result.text != null && result.text.length() > 0) {
 				try {
@@ -427,7 +427,7 @@ public class ConversationServiceImpl
 					throw new BigBangException(e.getMessage(), e);
 				}
 			}
-		}
+		}*/
 		
 		if (result == null) {
 			
