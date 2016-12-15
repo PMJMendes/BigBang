@@ -124,7 +124,7 @@ public class StorageConnector {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 		
-		return MailConnector.messageToData(fetchedMessage);
+		return MailConnector.messageToData(fetchedMessage, fileId);
 	}
 	
 	/**

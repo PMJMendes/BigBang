@@ -3,9 +3,11 @@ package bigBang.library.server;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -226,8 +228,12 @@ public class ConversationServiceImpl
 			attachment = new Message.Attachment();
 			attachment.id = null;
 			attachment.attachmentId = (String)messageAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
+			if (attachment.attachmentId == null || attachment.attachmentId.length()==0) {
+				attachment.attachmentId = tmp.mstrAttId;
+			}
+			
 			attachment.emailId = mailData.mstrEmailID;
-			attachment.name = (String)messageAttachment.getAt(MessageAttachment.I.ATTACHMENTID);
+			attachment.name = attachment.attachmentId;
 			attachment.date = mailData.mdtDate==null ? null : (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailData.mdtDate);
 			
 			attachments[i] = attachment;
@@ -402,46 +408,53 @@ public class ConversationServiceImpl
 	 * Gets an message from the DB or storage
 	 */
 	public static Message sGetMessage(UUID pid, boolean pbFilterOwners)
-		throws BigBangException
-	{
+			throws BigBangException {
 		com.premiumminds.BigBang.Jewel.Objects.Message lobjMsg;
 		Message result = null;
 
-		try
-		{
-			lobjMsg = com.premiumminds.BigBang.Jewel.Objects.Message.GetInstance(Engine.getCurrentNameSpace(), pid);
-		}
-		catch (Throwable e)
-		{
+		try {
+			lobjMsg = com.premiumminds.BigBang.Jewel.Objects.Message
+					.GetInstance(Engine.getCurrentNameSpace(), pid);
+		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
-		
-		// Tests if the message has body, and if it doesn't, tries to fix it.
-		/*if (lobjMsg.getText() == null || lobjMsg.getText().length()==0) {
+
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:sss");
+		Date date = null;
+		Timestamp cutTimestamp = null;
+		try {
+			date = formatter
+					.parse(Constants.GoogleAppsConstants.MAIL_MIGRATION_DATE);
+			cutTimestamp = new Timestamp(date.getTime());
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if (cutTimestamp != null
+				&& ((Timestamp) lobjMsg
+						.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE))
+						.before(cutTimestamp)
+				&& lobjMsg
+						.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null) {
 			result = sGetStgMessage(lobjMsg, pbFilterOwners);
-			if (result.text != null && result.text.length() > 0) {
-				try {
-					lobjMsg.setText(result.text);
-					lobjMsg.SaveToDb(new MasterDB());
-				} catch (Throwable e) {
-					throw new BigBangException(e.getMessage(), e);
-				}
-			}
-		}*/
-		
+		}
+
 		if (result == null) {
-			
+
 			// Tries to get the message from the DB
 			result = sGetDBMessage(lobjMsg, pbFilterOwners);
-			
-			// If unable to get from DB, tries to get from storage...
-			// It should be able to get from the DB, for a conversation has messages.
+
+			// If unable to get from DB, tries to get from storage, even though it's a "newer" message.
+			// It should be able to get from the DB, for a conversation has
+			// messages.
 			// This is only a "last try before an error"
-			if ( result == null && lobjMsg.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null ) {
+			if (result == null
+					&& lobjMsg
+							.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.EMAILID) != null) {
 				result = sGetStgMessage(lobjMsg, pbFilterOwners);
 			}
 		}
-		
+
 		return result;
 	}
 

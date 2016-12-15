@@ -462,7 +462,27 @@ public class MailConnector {
 				Map<String, BodyPart> result = new HashMap<String, BodyPart>();
 
 				for (int i = 0; i < multipart.getCount(); i++) {
-					result.putAll(getAttachmentsMap(multipart.getBodyPart(i)));
+					Map<String, BodyPart> attachmentsMap = getAttachmentsMap(multipart.getBodyPart(i));
+					
+					for (String key : attachmentsMap.keySet()) {
+						BodyPart test = result.get(key);
+						if (test == null) {
+							result.put(key, attachmentsMap.get(key));
+						} else {
+							// Ups... duplicated key...
+							int z=1;
+							while (true) {
+								z++;
+								int lastDot = key.lastIndexOf('.');
+								String newKey = key.substring(0,lastDot) + "_" + z + key.substring(lastDot);
+								test = result.get(newKey);
+								if (test == null) {
+									result.put(newKey, attachmentsMap.get(key));
+									break;
+								}
+							}
+						}	
+					}
 				}
 				return result;
 
@@ -676,7 +696,7 @@ public class MailConnector {
 
 		if (fetchedMessage != null) {
 			
-			return messageToData(fetchedMessage);
+			return messageToData(fetchedMessage, pstrUniqueID);
 		}
 
 		return null;
@@ -685,7 +705,7 @@ public class MailConnector {
 	/**
 	 *	Auxiliary method which converts a javax Message to MessageData
 	 */
-	public static MessageData messageToData(Message fetchedMessage)
+	public static MessageData messageToData(Message fetchedMessage, String emailId)
 			throws BigBangJewelException {
 		
 		MessageData result = new MessageData();
@@ -702,6 +722,10 @@ public class MailConnector {
 			result.midOwner = null;
 			result.mlngNumber = -1;
 			result.mbIsEmail = true;
+			
+			if (emailId != null) {
+				result.mstrEmailID = emailId;
+			}
 			
 			Object content = fetchedMessage.getContent();
 			
@@ -741,8 +765,13 @@ public class MailConnector {
 			bcc = fetchedMessage.getRecipients(RecipientType.BCC);
 			replyTo = fetchedMessage.getReplyTo();
 			
-			result.midDirection = ( getUserEmail().equalsIgnoreCase(from) ?
-					Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming );
+			String userEmail = getUserEmail();
+			if (userEmail != null) {
+				result.midDirection = ( userEmail.equalsIgnoreCase(from) ?
+						Constants.MsgDir_Outgoing : Constants.MsgDir_Incoming );
+			} else {
+				result.midDirection = Constants.MsgDir_Outgoing;
+			}
 			
 			if (result.midDirection.equals(Constants.MsgDir_Outgoing) && fetchedMessage.getSentDate() != null) {
 				result.mdtDate = new Timestamp(fetchedMessage.getSentDate().getTime());
@@ -827,6 +856,11 @@ public class MailConnector {
         	String originalHtml = m.group();
 			String prevImg = "<" + originalHtml.substring(9, originalHtml.length()) + ">";
 			BodyPart imageBodyPart = attachmentsMap.get(prevImg);
+			if (imageBodyPart == null) {
+				// Trying to get for "weird" image names...
+				prevImg = prevImg.replaceAll(".(.*?(?:jpg|png|jpeg|gif|tif|tiff))|.*","$1");
+				imageBodyPart = attachmentsMap.get(prevImg);
+			}
 			if (imageBodyPart!=null) {
 				
 				// Gets the encoded base-64 String, ready to be used in HTML's IMG's SRC

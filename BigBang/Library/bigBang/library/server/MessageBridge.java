@@ -209,7 +209,7 @@ public class MessageBridge
 						if (existingMailMessage == null) {
 							lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID, lobjResult.mstrFolderID);
 						} else {
-							lobjAux = MailConnector.messageToData(existingMailMessage);
+							lobjAux = MailConnector.messageToData(existingMailMessage, lobjResult.mstrEmailID);
 						}
 					}
 					catch (Throwable e)

@@ -905,5 +905,6 @@ public class Constants
 		public static final int	   		MAX_FETCHED_MAILS		= 20;
 		public static final String[]	INITIAL_FOLDERS			= {"inbox", "[Gmail]/Correio enviado"};
 		public static final String		GMAIL_FOLDER_NAME		= "[Gmail]";
+		public static final String		MAIL_MIGRATION_DATE		= "2016-11-19 23:59:000";
 	}
 }
