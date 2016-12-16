@@ -184,7 +184,7 @@ public class ConversationServiceImpl
 		Message result = new Message();
 		
 		result.id = bdMessage.getKey().toString();
-
+		
 		result.conversationId = ((UUID)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.OWNER)).toString();
 		result.order = (Integer)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.NUMBER);
 		result.direction = sGetDirection((UUID)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DIRECTION));
@@ -194,6 +194,12 @@ public class ConversationServiceImpl
 		result.date = ((Timestamp)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE)).toString().substring(0, 10);
 		result.subject = mailData.mstrSubject;
 		result.text = mailData.mstrBody;
+		
+		mailData.mdtDate = (Timestamp)bdMessage.getAt(com.premiumminds.BigBang.Jewel.Objects.Message.I.DATE);
+		
+		if (mailData.marrAttachments != null) {
+			result.attachments = fillMessageAttachments(filterOwners, mailData);
+		}
 		
 		if (mailData.marrAddresses != null) {
 			result.addresses = fillMessageAddresses(filterOwners, mailData);

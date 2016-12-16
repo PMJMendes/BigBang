@@ -184,7 +184,7 @@ public class MailConnector {
 			sendingConnection.close();
 			
 		} catch (Throwable e) {
-			throw new BigBangJewelException("Mensagem " + e.getMessage() + "\nClasse Erro " + e.getClass() + " MailConnector:170", e);
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
 
@@ -381,7 +381,6 @@ public class MailConnector {
 					}
 				}
 			}
-			
 			
 			// If for some reason it could not get the message searching for its id, 
 			// it fetches message-by-message in the folder until it gets it
@@ -1043,7 +1042,7 @@ public class MailConnector {
 	}
 	
 	/**
-	 * This method returns the stored users' folders list
+	 * This method returns the stored users' message
 	 */
 	public static Message getStoredMessage() throws BigBangJewelException {
 		

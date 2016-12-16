@@ -153,7 +153,10 @@ public class ReceiveQuote
 				mbFromEmail = true;
 				try
 				{
-					lobjItem = MailConnector.getMessage(mobjMessage.mstrEmailID, null);
+					lobjItem = MailConnector.getStoredMessage();
+					if (lobjItem == null) {
+						lobjItem = MailConnector.getMessage(mobjMessage.mstrEmailID, mobjMessage.mstrFolderID);
+					}
 					mobjMessage.mstrSubject = lobjItem.getSubject();
 					mobjMessage.mstrBody = lobjItem.getContent().toString();
 					mstrNewEmailID = MailConnector.processItem(mobjMessage.mstrEmailID, mobjMessage.mstrFolderID, lobjItem, null).get("_");

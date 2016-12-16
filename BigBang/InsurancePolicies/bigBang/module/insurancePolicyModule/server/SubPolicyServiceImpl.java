@@ -508,14 +508,8 @@ public class SubPolicyServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		
-		javax.mail.Message storedMessage = null;
-		try {
-			storedMessage = MailConnector.getStoredMessage();
-		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
-		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubPolicy,
-				lobjSubPol.getKey(), Constants.MsgDir_Outgoing, storedMessage);
+				lobjSubPol.getKey(), Constants.MsgDir_Outgoing, null);
 
 		try
 		{

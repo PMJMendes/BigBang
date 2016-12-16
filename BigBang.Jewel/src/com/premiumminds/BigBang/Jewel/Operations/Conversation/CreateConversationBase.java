@@ -325,7 +325,7 @@ public abstract class CreateConversationBase
 			}
 			catch (Throwable e)
 			{
-				throw new JewelPetriException("Mensagem " + e.getMessage() + "\nClasse Erro " + e.getClass() + " CreateConversationBase:325", e);
+				throw new JewelPetriException(e.getMessage(), e);
 			}
 		}
 	}
