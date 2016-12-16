@@ -205,10 +205,6 @@ public class ConversationServiceImpl
 			result.addresses = fillMessageAddresses(filterOwners, mailData);
 		}
 		
-		if (mailData.marrAttachments != null) {
-			result.attachments = fillMessageAttachments(filterOwners, mailData);
-		}
-		
 		return result;
 	}
 

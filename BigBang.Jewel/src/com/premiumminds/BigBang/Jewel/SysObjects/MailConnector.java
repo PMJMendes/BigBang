@@ -510,11 +510,7 @@ public class MailConnector {
 					// If the part is a MimeBodyPart, tries to get the file name in a more direct way
 					MimeBodyPart mimePart = (MimeBodyPart) part;
 					
-					if(mimePart.getContentID() != null) {
-						attId = MimeUtility.decodeText(mimePart.getContentID());
-					} else {
-						attId = MimeUtility.decodeText(mimePart.getFileName());
-					}
+					attId = MimeUtility.decodeText(mimePart.getFileName());
 					
 					if(attId != null) {
 						result.put(attId, part);
