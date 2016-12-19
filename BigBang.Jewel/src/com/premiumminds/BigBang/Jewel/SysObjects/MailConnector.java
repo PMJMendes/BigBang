@@ -100,10 +100,9 @@ public class MailConnector {
 	
 	/**
 	 *	This method sends an email, receiving all the "usual" content on an email message.
-	 * @param from 
 	 */
 	private static void sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
-			String[] from, String subject, String body, FileXfer[] attachments) throws BigBangJewelException {
+			String[] from, String subject, String body, FileXfer[] attachments, boolean addFrom) throws BigBangJewelException {
 
 		InternetAddress[] addresses;
 
@@ -117,8 +116,10 @@ public class MailConnector {
 			//Creates a message and sends the mail
 			MimeMessage mailMsg = new MimeMessage(smptpSession);
 			
-			// Sets FROM
-			mailMsg.setFrom(buildAddresses(from)[0]);
+			if (addFrom) {
+				// Sets FROM
+				mailMsg.setFrom(buildAddresses(from)[0]);
+			}
 
 			// Sets REPLY TO
 			addresses = buildAddresses(replyTo);
@@ -255,7 +256,7 @@ public class MailConnector {
 			
 			// Calls the method to send the message
 			sendMail(replyTo, to, message.marrCCs, message.marrBCCs,
-					null, message.mstrSubject, message.mstrBody, attachments);
+					null, message.mstrSubject, message.mstrBody, attachments, false);
 		}
 	}	
 	
@@ -677,7 +678,7 @@ public class MailConnector {
 			}
 		}
 
-		sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments);
+		sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false);
 	}
 
 	/**
