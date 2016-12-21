@@ -62,10 +62,21 @@ public class ConversationData
 	{
 		ObjectBase lobjType;
 		int i;
+		
+		pstrBuilder.append("<style> html * {font-size: 1em !important;}</style>");
 
-		pstrBuilder.append("Assunto: ").append(mstrSubject).append(pstrLineBreak);
-
+		pstrBuilder.append("<div>");
+		pstrBuilder.append("<p><b>");
+		pstrBuilder.append("Assunto da troca de mensagens: ");
+		pstrBuilder.append("</b>");
+		pstrBuilder.append(mstrSubject);
+		pstrBuilder.append(pstrLineBreak);
+		pstrBuilder.append("</p>");
+		
+		pstrBuilder.append("<p><b>");
 		pstrBuilder.append("Tipo de Informação: ");
+		pstrBuilder.append("</b>");
+		
 		try
 		{
 			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_RequestType), midType);
@@ -75,27 +86,53 @@ public class ConversationData
 		{
 			pstrBuilder.append("(erro a obter o tipo de informação)");
 		}
-		pstrBuilder.append(pstrLineBreak);
+		pstrBuilder.append("</p>");
 
+		pstrBuilder.append("<p><b>");
 		if ( Constants.MsgDir_Incoming.equals(midStartDir) )
 			pstrBuilder.append("Iniciada por nós.");
 		else
 			pstrBuilder.append("Iniciada por eles.");
-		pstrBuilder.append(pstrLineBreak);
+		pstrBuilder.append("</b></p>");
 
 		if ( mdtDueDate != null )
 		{
+			pstrBuilder.append("<p><b>");
+			
 			if ( Constants.MsgDir_Incoming.equals(midPendingDir) )
 				pstrBuilder.append("Pendente de envio de nova mensagem, até ");
 			else
 				pstrBuilder.append("Pendente de recepção de nova mensagem, até ");
 			pstrBuilder.append(mdtDueDate.toString().substring(0, 10)).append(pstrLineBreak);
+			
+			pstrBuilder.append("</b></p>");
+			
 		}
+		
+		pstrBuilder.append(pstrLineBreak);
+		pstrBuilder.append(pstrLineBreak);
+		
+		pstrBuilder.append("</div>");
 
 		if ( marrMessages != null )
 		{
-			for ( i = 0; i < marrMessages.length; i++ )
+			pstrBuilder.append("<hr>");
+			
+			for ( i = 0; i < marrMessages.length; i++ ) {
+				
+				pstrBuilder.append("<div>");
+				
 				marrMessages[i].Describe(pstrBuilder, pstrLineBreak);
+				
+				pstrBuilder.append(pstrLineBreak);
+				pstrBuilder.append(pstrLineBreak);
+				pstrBuilder.append("</div>");
+				
+				if (i < marrMessages.length-1) {
+					pstrBuilder.append(pstrLineBreak);
+					pstrBuilder.append("<hr>");
+				}
+			}
 		}
 	}
 }

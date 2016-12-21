@@ -903,7 +903,7 @@ public class MailConnector {
 		result.midUsage = usageGuid;
 		result.midUser = null;
 		result.midInfo = null;
-		result.mstrDisplay = displayName==null ? address.toString() : displayName;
+		result.mstrDisplay = displayName==null ? result.mstrAddress : displayName;
 
 		return result;
 	}
