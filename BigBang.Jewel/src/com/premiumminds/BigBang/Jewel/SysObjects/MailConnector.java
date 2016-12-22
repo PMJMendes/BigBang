@@ -468,7 +468,7 @@ public class MailConnector {
 					
 					for (String key : attachmentsMap.keySet()) {
 						BodyPart test = result.get(key);
-						if (test == null) {
+						if (test == null || key.equals("main")) {
 							result.put(key, attachmentsMap.get(key));
 						} else {
 							// Ups... duplicated key...
