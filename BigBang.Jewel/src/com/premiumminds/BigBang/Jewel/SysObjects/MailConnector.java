@@ -60,6 +60,7 @@ import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Security.OAuthHandler;
 import com.sun.mail.imap.IMAPFolder.FetchProfileItem;
 import com.sun.mail.smtp.SMTPTransport;
+import com.sun.mail.util.DecodingException;
 
 /**
  *	Class responsible for implementing the needed functionalities relating 
@@ -453,7 +454,8 @@ public class MailConnector {
 	public static Map<String, BodyPart> getAttachmentsMap(Message message) throws BigBangJewelException {
 		Object content;
 		try {
-			content = message.getContent();
+			content = message.getContent(); 
+			
 			if (content instanceof String)
 				return null;        
 
@@ -499,7 +501,12 @@ public class MailConnector {
 	private static Map<String, BodyPart> getAttachmentsMap(BodyPart part) throws Exception {
 		
 		Map<String, BodyPart> result = new HashMap<String, BodyPart>();
-		Object content = part.getContent();
+		Object content = null;
+		try {
+			content = part.getContent();
+		} catch (DecodingException e) {
+			return result;
+		} 
 		
 		// If it is an attachment, gets its id from the header and inserts it in the result's map
 		if (content instanceof InputStream || content instanceof String) {
