@@ -371,7 +371,7 @@ public class NegotiationServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 374 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjNeg.GetProcessID());
@@ -392,7 +392,7 @@ public class NegotiationServiceImpl
 		try {
 			storedMessage = MailConnector.getStoredMessage();
 		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 395 ", e);
 		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Negotiation,
 				lobjNeg.getKey(), lopCC.mobjData.midStartDir, storedMessage);
@@ -403,7 +403,7 @@ public class NegotiationServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 406 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);

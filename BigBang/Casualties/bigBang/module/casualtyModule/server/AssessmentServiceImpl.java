@@ -243,7 +243,7 @@ public class AssessmentServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 246 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjAssessment.GetProcessID());
@@ -264,7 +264,7 @@ public class AssessmentServiceImpl
 		try {
 			storedMessage = MailConnector.getStoredMessage();
 		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 267 ", e);
 		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY),
@@ -276,7 +276,7 @@ public class AssessmentServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 278 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);

@@ -552,7 +552,7 @@ public class SubPolicyServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 555 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjSubPol.GetProcessID());
@@ -573,7 +573,7 @@ public class SubPolicyServiceImpl
 		try {
 			storedMessage = MailConnector.getStoredMessage();
 		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 576 ", e);
 		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubPolicy,
 				lobjSubPol.getKey(), lopCC.mobjData.midStartDir, storedMessage);
@@ -584,7 +584,7 @@ public class SubPolicyServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 587 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);

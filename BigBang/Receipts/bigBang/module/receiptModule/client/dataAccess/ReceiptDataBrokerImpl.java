@@ -1049,7 +1049,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				responseHandler.onError(new String[]{
-						new String("Could not receive the message")		
+						new String("Could not receive the message " + caught.getMessage() + " " + caught.getCause() + " " + caught.getClass())	
 				});	
 				super.onResponseFailure(caught);
 			}

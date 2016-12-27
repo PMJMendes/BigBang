@@ -485,7 +485,7 @@ public class ConversationServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 488 ", e);
 		}
 
 		lobjResult = new Conversation();
@@ -745,7 +745,7 @@ public class ConversationServiceImpl
 		try {
 			storedMessage = MailConnector.getStoredMessage();
 		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 748 ", e);
 		}
 		lopCCB.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], lidParentType, lidParentID,
 				lopCCB.mobjData.midStartDir, storedMessage);
@@ -756,7 +756,7 @@ public class ConversationServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 759 ", e);
 		}
 
 		return sGetConversation(lopCCB.mobjData.mid);
@@ -1101,7 +1101,7 @@ public class ConversationServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 1104 ", e);
 		}
 
 		if ( replylimit == null )
@@ -1128,7 +1128,7 @@ public class ConversationServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 1131 ", e);
 		}
 
 		return sGetConversation(lobjConv.getKey());

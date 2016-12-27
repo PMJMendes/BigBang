@@ -48,7 +48,11 @@ public class ClientReceiveMessageViewPresenter extends ReceiveMessageViewPresent
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onReceiveMessageFailed();
+				String error = "";
+				for (ResponseError tmp : errors) {
+					error = error + tmp.description;
+				}
+				onReceiveMessageFailed(error);;
 			}
 		});
 	}

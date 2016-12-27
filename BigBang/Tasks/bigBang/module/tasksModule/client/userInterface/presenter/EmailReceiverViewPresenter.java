@@ -272,7 +272,11 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem."), TYPE.ERROR_NOTIFICATION));
+						String error = "";
+						for (ResponseError tmp : errors) {
+							error = error + tmp.description;
+						}
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem. " + error), TYPE.ERROR_NOTIFICATION));
 					}
 				});
 
@@ -290,7 +294,11 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem"), TYPE.ALERT_NOTIFICATION));
+						String error = "";
+						for (ResponseError tmp : errors) {
+							error = error + tmp.description;
+						}
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a mensagem " + error), TYPE.ALERT_NOTIFICATION));
 
 					}
 				});

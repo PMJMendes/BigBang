@@ -253,7 +253,7 @@ public class TotalLossServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 256 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjFile.GetProcessID());
@@ -274,7 +274,7 @@ public class TotalLossServiceImpl
 		try {
 			storedMessage = MailConnector.getStoredMessage();
 		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 277 ", e);
 		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), lopCC.mobjData.midStartDir, storedMessage);
@@ -285,7 +285,7 @@ public class TotalLossServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 288 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);

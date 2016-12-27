@@ -111,7 +111,7 @@ public class ReceiveMessage
 		catch (Throwable e)
 		{
 			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + " 114 ", e);
 		}
 
 		try
@@ -124,7 +124,7 @@ public class ReceiveMessage
 		}
 		catch (Throwable e)
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + " 127 ", e);
 		}
 
 		lobjConv = (Conversation)GetProcess().GetData();
@@ -162,7 +162,7 @@ public class ReceiveMessage
 		}
 		catch (Throwable e)
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + "165 ", e);
 		}
 
 		if ( mobjData.mobjDocOps != null )
@@ -262,7 +262,7 @@ public class ReceiveMessage
 		}
 		catch (Throwable e)
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + " 265 ", e);
 		}
 
 		if ( mobjData.mstrEmailID != null )
@@ -306,7 +306,7 @@ public class ReceiveMessage
 			}
 			catch (Throwable e)
 			{
-				throw new JewelPetriException(e.getMessage(), e);
+				throw new JewelPetriException(e.getMessage() + " 309 ", e);
 			}
 		}
 	}

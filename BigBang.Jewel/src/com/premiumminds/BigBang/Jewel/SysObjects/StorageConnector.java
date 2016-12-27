@@ -51,7 +51,7 @@ public class StorageConnector {
 			outputStream.close();
 
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " 54 ", e);
 		}
 
 		if (tempEmlFile != null) {
@@ -63,8 +63,8 @@ public class StorageConnector {
 	 * Creates a temporary file
 	 */
 	private static File createTemporaryFile(String prefix, String suffix) {
-		String tempDir = System.getProperty("java.io.tmpdir")
-				+ Constants.GoogleAppsConstants.TMP_FOLDER;
+		String tempDir = System.getProperty("java.io.tmpdir");
+				//+ Constants.GoogleAppsConstants.TMP_FOLDER;
 		String fileName = (prefix != null ? prefix : "")
 				+ (suffix != null ? suffix : "");
 		return new File(tempDir, fileName);

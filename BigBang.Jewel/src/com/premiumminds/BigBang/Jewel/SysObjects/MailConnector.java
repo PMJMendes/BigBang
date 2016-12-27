@@ -95,7 +95,7 @@ public class MailConnector {
 			}
 			
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " 98 ", e);
 		}
 	}
 	
@@ -421,7 +421,7 @@ public class MailConnector {
 			}
 
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " 424 ", e);
 		}
 
 		return fetchedMessage;
@@ -490,7 +490,7 @@ public class MailConnector {
 
 			}
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " 493 ", e);
 		}
 		return null;
 	}
@@ -585,7 +585,7 @@ public class MailConnector {
 				mailAttachments = getAttachmentsMap(fetchedItem);
 			}
 		} catch (Exception e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " 588 ", e);
 		}
 
 		if (mailAttachments!=null && mailAttachments.size() > 0) {
@@ -881,7 +881,7 @@ public class MailConnector {
 					attachmentsMap.remove(prevImg);
 										
 				} catch (Throwable e) {
-					throw new BigBangJewelException(e.getMessage(), e);
+					throw new BigBangJewelException(e.getMessage() + " 884 ", e);
 				}
 			}
         }
@@ -1060,7 +1060,7 @@ public class MailConnector {
 			String userMail = MailConnector.getUserEmail();
 			result = lastMessageUser.get(userMail);
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " 1063 ", e);
 		}
 		
 		return result;

@@ -83,7 +83,7 @@ public abstract class CreateConversationBase
 		AgendaItem lobjAgendaItem;
 		Map<String, String> larrAttTrans;
 
-		if ( (mobjData.marrMessages == null) || (mobjData.marrMessages.length != 1) )
+		if ( (mobjData.marrMessages == null) || (mobjData.marrMessages.length != 1))
 			throw new JewelPetriException("Erro: Tem que indicar a mensagem inicial.");
 
 		if ( mobjData.mstrSubject == null )
@@ -230,7 +230,7 @@ public abstract class CreateConversationBase
 		}
 		catch (Throwable e)
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + " 233 ", e);
 		}
 
 		larrUsers = new HashSet<UUID>();
@@ -264,7 +264,7 @@ public abstract class CreateConversationBase
 				}
 				catch (Throwable e)
 				{
-					throw new JewelPetriException(e.getMessage(), e);
+					throw new JewelPetriException(e.getMessage() + " 267 ", e);
 				}
 	    	}
 		}

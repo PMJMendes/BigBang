@@ -556,7 +556,7 @@ public class SubCasualtyServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 559 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjSubCasualty.GetProcessID());
@@ -577,7 +577,7 @@ public class SubCasualtyServiceImpl
 		try {
 			storedMessage = MailConnector.getStoredMessage();
 		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() +  " 580 ", e);
 		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				lobjSubCasualty.getKey(), lopCC.mobjData.midStartDir, storedMessage);
@@ -588,7 +588,7 @@ public class SubCasualtyServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 591 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);

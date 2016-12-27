@@ -1524,7 +1524,7 @@ public class ReceiptServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 1527 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjReceipt.GetProcessID());
@@ -1545,7 +1545,7 @@ public class ReceiptServiceImpl
 		try {
 			storedMessage = MailConnector.getStoredMessage();
 		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 1548 ", e);
 		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Receipt,
 				lobjReceipt.getKey(), lopCC.mobjData.midStartDir, storedMessage);
@@ -1556,7 +1556,7 @@ public class ReceiptServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 1559 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);

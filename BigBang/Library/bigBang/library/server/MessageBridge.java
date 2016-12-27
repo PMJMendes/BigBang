@@ -214,7 +214,7 @@ public class MessageBridge
 					}
 					catch (Throwable e)
 					{
-						throw new BigBangException(e.getMessage(), e);
+						throw new BigBangException(e.getMessage() + " 217 ", e);
 					}
 					lobjResult.mstrSubject = lobjAux.mstrSubject;
 					lobjResult.marrAddresses = lobjAux.marrAddresses;
@@ -236,7 +236,7 @@ public class MessageBridge
 							try {
 								tmpData.mstrDisplay = MimeUtility.decodeText(tmpAddr.display);
 							} catch (Throwable e) {
-								throw new BigBangException(e.getMessage(), e);
+								throw new BigBangException(e.getMessage() + " 239 ", e);
 							}
 							addresses[u] = tmpData;
 						}
@@ -275,7 +275,7 @@ public class MessageBridge
 					try {
 						lobjResult.marrAddresses[i].mstrDisplay = pobjMessage.addresses[i].display;
 					} catch (Throwable e) {
-						throw new BigBangException(e.getMessage(), e);
+						throw new BigBangException(e.getMessage() + " 278 ", e);
 					}
 				}
 			}

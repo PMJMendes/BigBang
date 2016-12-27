@@ -300,7 +300,7 @@ public class QuoteRequestServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 303 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjQReq.GetProcessID());
@@ -321,7 +321,7 @@ public class QuoteRequestServiceImpl
 		try {
 			storedMessage = MailConnector.getStoredMessage();
 		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 324 ", e);
 		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_QuoteRequest,
 				lobjQReq.getKey(), lopCC.mobjData.midStartDir, storedMessage);
@@ -332,7 +332,7 @@ public class QuoteRequestServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 335 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);
