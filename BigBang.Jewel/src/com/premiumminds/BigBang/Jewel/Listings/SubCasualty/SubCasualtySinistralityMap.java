@@ -497,7 +497,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		TR[] tableRows;
 		int rowNum = 0;
 
-		tableRows = new TR[subCasualtiesNr + 1 + subCasualtiesMap.size()];
+		tableRows = new TR[subCasualtiesNr + 4 + subCasualtiesMap.size()];
 
 		// Builds the row with the column names
 		tableRows[rowNum++] = ReportBuilder.buildRow(buildHeaderRow());
@@ -547,11 +547,59 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				}
 			}
 		}
+		
+		// Builds the row with the total number of sub-casualties
+		tableRows[rowNum++] = constructSummaryRow("Nº de Sinistros:",
+				subCasualtiesNr, TypeDefGUIDs.T_Integer, true, false, false);
+
+		// Build the row with the total deductible
+		tableRows[rowNum++] = constructSummaryRow(
+					"Total de Franquias:", deductibleTotal, TypeDefGUIDs.T_Decimal,
+					true, false, true);
+		
+		// Build the row with the total settlement
+		tableRows[rowNum++] = constructSummaryRow(
+					"Total de Indemnizações:", deductibleTotal, TypeDefGUIDs.T_Decimal,
+					true, false, true);
 
 		table = ReportBuilder.buildTable(tableRows);
-		ReportBuilder.styleTable(table, true);
+		ReportBuilder.styleTable(table, false);
 
 		return table;
+	}
+	
+	/**
+	 * This method builds a "summary row" with info to display at the end of the report.
+	 * It is (REALLY) similar to ReportBuilder's constructDualRow method, but without the 
+	 * left line, and allowing to print a "money" value formatted properly.
+	 */
+	private TR constructSummaryRow(String text, 
+			Object value, UUID typeGUID, boolean topRow, boolean rightAlign, 
+			boolean isMoney) {
+		
+		TD[] cells = new TD[2];
+		TR row;
+
+		cells[0] = ReportBuilder.buildHeaderCell(text);
+		cells[0].setWidth("1px");
+		ReportBuilder.styleCell(cells[0], topRow, false);
+		if (!isMoney) {
+			cells[1] = ReportBuilder.buildCell(value, typeGUID);
+			ReportBuilder.styleCell(cells[1], topRow, false);
+			if (rightAlign) {
+				cells[1].setAlign("right");
+			}
+		} else {
+			cells[1] = safeBuildCell(value,
+					TypeDefGUIDs.T_String, true, rightAlign);
+			ReportBuilder.styleCell(cells[1], topRow, false);
+		}
+		cells[1].setColSpan(8);
+		
+		row = ReportBuilder.buildRow(cells);
+		ReportBuilder.styleRow(row, false);
+
+		return row;
 	}
 	
 	/**
