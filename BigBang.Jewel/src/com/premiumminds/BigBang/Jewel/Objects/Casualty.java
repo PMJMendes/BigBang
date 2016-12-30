@@ -26,6 +26,7 @@ import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyOtherClosi
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingAnything;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReport;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReview;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtySinistralityMap;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtySpecialShamir;
 
 public class Casualty
@@ -139,6 +140,12 @@ public class Casualty
 		throws BigBangJewelException
 	{
 		return new SubCasualtySpecialShamir().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportSinistralityMap(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtySinistralityMap().doReport(parrParams);
 	}
 
 	public void Initialize()
