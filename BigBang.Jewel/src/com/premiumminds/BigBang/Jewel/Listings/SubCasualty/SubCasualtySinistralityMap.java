@@ -11,8 +11,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.ecs.AlignType;
 import org.apache.ecs.GenericElement;
+import org.apache.ecs.html.Div;
 import org.apache.ecs.html.IMG;
 import org.apache.ecs.html.Strong;
 import org.apache.ecs.html.TD;
@@ -31,6 +33,8 @@ import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
@@ -49,6 +53,20 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 	// The total settlement to display in the report
 	private BigDecimal settlementTotal = BigDecimal.ZERO;
+	
+	// Width Constants
+	private static final int DATE_WIDTH = 72;
+	private static final int OBJECT_WIDTH = 160;
+	private static final int EGS_PROCESS_WIDTH = 90;
+	private static final int COMPANY_PROCESS_WIDTH = 130;
+	private static final int CASUALTY_DESCRIPTION_WIDTH = 380;
+	private static final int DEDUCTIBLE_WIDTH = 94;
+	private static final int SETTLEMENT_WIDTH = 88;
+	private static final int SUBCASUALTY_NOTES_WIDTH = 380;
+	private static final int IS_CLOSED_WIDTH = 54;
+	
+	private static final int DESCRIPTION_BREAK_POINT = 66;
+	private static final int OBJECT_BREAK_POINT = 23;
 
 	/*
 	 * This Matrix represents the order to display the policies, as well as the
@@ -308,7 +326,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			}
 			// Sets the sub-casualty's insured object, if possible
 			if (subCasualty.GetObjectName() != null) {
-				setInsuredObject(subCasualty.GetObjectName());
+				setInsuredObject(WordUtils.capitalizeFully(subCasualty.GetObjectName()));
 			}
 			// Sets the sub-casualty's internal process number, if possible
 			if (subCasualty.getAt(SubCasualty.I.NUMBER) != null) {
@@ -360,6 +378,17 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 						deductible = null;
 					}
 				}
+				
+				if (currentItems.length == 0) {
+					settlement = null;
+					deductible = null;
+				}
+				
+				// Special case to work accidents
+				if (subCasualty.GetSubLine().getLine().getCategory().equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+					settlement = getSettlementFromMedicalFiles(subCasualty);
+				}
+				
 				if (settlement == null) {
 					deductibleTotal = null;
 				}
@@ -381,6 +410,61 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					}
 				}
 			}
+		}
+
+		private BigDecimal getSettlementFromMedicalFiles(SubCasualty subCasualty) throws BigBangJewelException {
+
+			IEntity filesEntity;
+			MasterDB database;
+			ResultSet fetchedFiles;
+			BigDecimal result = BigDecimal.ZERO;
+						
+			try {
+				filesEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MedicalFile));
+				database = new MasterDB();
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			try {
+				fetchedFiles = filesEntity.SelectByMembers(database, new int[] {MedicalFile.I.SUBCASUALTY}, new java.lang.Object[] {subCasualty.getKey()}, new int[] {MedicalFile.I.REFERENCE});
+				if (fetchedFiles == null) {
+					return null;
+				}
+			} catch (Throwable e) {
+				try { database.Disconnect(); } catch (SQLException e1) {}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			try {
+				while ( fetchedFiles.next() ) {
+					for (MedicalDetail tmp : (MedicalFile.GetInstance(Engine.getCurrentNameSpace(), fetchedFiles).GetCurrentDetails())) {
+						if (tmp.getAt(MedicalDetail.I.BENEFITS) == null) {
+							return null;
+						}
+						result = result.add((BigDecimal) tmp.getAt(MedicalDetail.I.BENEFITS));
+					}
+				}
+			} catch (Throwable e) {
+				try { fetchedFiles.close(); } catch (SQLException e1) {}
+				try { database.Disconnect(); } catch (SQLException e1) {}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			try {
+				fetchedFiles.close();
+			} catch (Throwable e) {
+				try { database.Disconnect(); } catch (SQLException e1) {}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			try {
+				database.Disconnect();
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			return result;
 		}
 	}
 
@@ -582,6 +666,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		cells[0] = ReportBuilder.buildHeaderCell(text);
 		cells[0].setWidth("1px");
+		cells[0].setColSpan(2);
 		ReportBuilder.styleCell(cells[0], topRow, false);
 		if (!isMoney) {
 			cells[1] = ReportBuilder.buildCell(value, typeGUID);
@@ -594,7 +679,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					TypeDefGUIDs.T_String, true, rightAlign);
 			ReportBuilder.styleCell(cells[1], topRow, false);
 		}
-		cells[1].setColSpan(8);
+		cells[1].setColSpan(7);
 		
 		row = ReportBuilder.buildRow(cells);
 		ReportBuilder.styleRow(row, false);
@@ -613,8 +698,16 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, false, false);
 		ReportBuilder.styleCell(dataCells[0], true, false);
 		
-		dataCells[1] = safeBuildCell(subCasualtyData.getInsuredObject(),
-				TypeDefGUIDs.T_String, false, false);
+		String objectName = subCasualtyData.getInsuredObject();
+		if (objectName.length() <= OBJECT_BREAK_POINT) {
+			dataCells[1] = safeBuildCell(subCasualtyData.getInsuredObject(),
+					TypeDefGUIDs.T_String, false, false);
+		} else {
+			ArrayList<String> descriptionArray = new ArrayList<String>();
+			descriptionArray.add(objectName);
+			dataCells[1] = buildValuesTable(
+					splitValue(descriptionArray, OBJECT_BREAK_POINT), OBJECT_WIDTH, false, false);
+		}
 		ReportBuilder.styleCell(dataCells[1], true, true);
 		
 		dataCells[2] = safeBuildCell(subCasualtyData.getEgsProcess(),
@@ -625,8 +718,16 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, false, false);
 		ReportBuilder.styleCell(dataCells[3], true, true);
 		
-		dataCells[4] = safeBuildCell(subCasualtyData.getCasualtyDescription(),
-				TypeDefGUIDs.T_String, false, false);
+		String casualtyDescription = subCasualtyData.getCasualtyDescription();
+		if (casualtyDescription.length() <= DESCRIPTION_BREAK_POINT) {
+			dataCells[4] = safeBuildCell(casualtyDescription,
+					TypeDefGUIDs.T_String, false, false);
+		} else {
+			ArrayList<String> descriptionArray = new ArrayList<String>();
+			descriptionArray.add(casualtyDescription);
+			dataCells[4] = buildValuesTable(
+					splitValue(descriptionArray, DESCRIPTION_BREAK_POINT), CASUALTY_DESCRIPTION_WIDTH, false, false);
+		}
 		ReportBuilder.styleCell(dataCells[4], true, true);
 		
 		dataCells[5] = safeBuildCell(subCasualtyData.getDeductible(),
@@ -637,8 +738,16 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, true, true);
 		ReportBuilder.styleCell(dataCells[6], true, true);
 		
-		dataCells[7] = safeBuildCell(subCasualtyData.getSubCasualtyNotes(),
-				TypeDefGUIDs.T_String, false, false);
+		String subCasualtyNotes = subCasualtyData.getSubCasualtyNotes();
+		if (subCasualtyNotes.length() <= DESCRIPTION_BREAK_POINT) {
+			dataCells[7] = safeBuildCell(subCasualtyData.getSubCasualtyNotes(),
+					TypeDefGUIDs.T_String, false, false);
+		} else {
+			ArrayList<String> descriptionArray = new ArrayList<String>();
+			descriptionArray.add(subCasualtyNotes);
+			dataCells[7] = buildValuesTable(
+					splitValue(descriptionArray, DESCRIPTION_BREAK_POINT), SUBCASUALTY_NOTES_WIDTH, false, false);
+		}
 		ReportBuilder.styleCell(dataCells[7], true, true);
 		
 		String state = subCasualtyData.isClosed() ? "Fechado" : "Aberto";
@@ -646,8 +755,36 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, false, false);
 		ReportBuilder.styleCell(dataCells[8], true, true);
 		
+		setCellWidths(dataCells);
+		
 		return dataCells;
 	}
+	
+	/**
+	 * This method is used to split a string, which could be "too wide", and
+	 * wreck the report's look. It gets not a String, but an array list with one
+	 * element (the string) for it is the way it is represented in the
+	 * CoverageData's class.
+	 */
+	private ArrayList<String> splitValue(ArrayList<String> stringToSplit, int breakPosition) {
+
+		ArrayList<String> result = new ArrayList<String>();
+		String[] split = stringToSplit.get(0).split("\\s+");
+		String tmp = "";
+
+		// Splits when it occupies more than (approximately) one row's length
+		for (int i = 0; i < split.length; i++) {
+			tmp = tmp + " " + split[i];
+			if ((tmp.length() / (breakPosition - 6)) >= 1) {
+				result.add(tmp);
+				tmp = "";
+			} else if (i + 1 == split.length) {
+				result.add(tmp);
+			}
+		}
+
+		return (result.size() == 0 ? stringToSplit : result);
+	}		
 	
 	/**
 	 * Builds a cell in a "safe way", meaning that if the value is null, the
@@ -659,13 +796,65 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		if (pobjValue == null || pobjValue.toString().trim().length() == 0) {
 			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
 		}
-		if (addEuro) {
+		if (addEuro && !pobjValue.toString().equals(NO_VALUE)) {
 			String valueString = pobjValue + " " + Utils.getCurrency();
 			return safeBuildCell(valueString, TypeDefGUIDs.T_String, false, alignRight);
 		}
 		return ReportBuilder.buildCell(pobjValue, pidType, alignRight);
 	}
 
+	/**
+	 * This method returns a TD containing a value or a table of values,
+	 * contained in an ArrayList. It's used to build tables to display inside a
+	 * TD.
+	 */
+	private TD buildValuesTable(ArrayList<String> data, int width,
+			boolean addEuro, boolean alignRight) {
+
+		TD content;
+
+		content = new TD();
+		content.setColSpan(1);
+
+		if (data == null) {
+			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+		}
+
+		// Builds a "simple" TD or a table with a TD with each value
+		if (data.size() == 1) {
+			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String, addEuro, alignRight);
+			content.setWidth(width);
+			ReportBuilder.styleCell(content, false, false);
+			ReportBuilder.styleInnerContainer(content);
+		} else {
+
+			Table table;
+			TR[] tableRows = new TR[data.size()];
+
+			// Iterates the values, and adds them to the table
+			for (int i = 0; i < data.size(); i++) {
+				TD[] cell = new TD[1];
+
+				cell[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String, addEuro, alignRight);
+				cell[0].setWidth(width);
+				cell[0].setStyle("overflow:hidden;white-space:nowrap");
+
+				tableRows[i] = ReportBuilder.buildRow(cell);
+				tableRows[i].setStyle(("height:15px;"));
+			}
+
+			table = ReportBuilder.buildTable(tableRows);
+			ReportBuilder.styleTable(table, true);
+			table.setStyle("background-color:white;margin-top:8px;margin-bottom:8px;");
+
+			content.addElement(new Div().addElement(table).setStyle(
+					"width:inherit;"));
+			ReportBuilder.styleInnerContainer(content);
+		}
+
+		return content;
+	}
+	
 	/**
 	 * This method builds the row with the information about the preceding
 	 * sub-casualties' "ramo"
@@ -678,7 +867,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		// Builds the TD with the content
 		rowContent = ReportBuilder.buildCell("Ramo: " + subline,
 				TypeDefGUIDs.T_String);
-		rowContent.setColSpan(10);
+		rowContent.setColSpan(9);
 		ReportBuilder.styleCell(rowContent, true, false);
 
 		// Builds the TR encapsulating the TD
@@ -699,7 +888,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(cells[0], false, false);
 
-		cells[1] = ReportBuilder.buildCell("Unidade Risco",
+		cells[1] = ReportBuilder.buildCell("Unidade de Risco",
 				TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(cells[1], false, true);
 
@@ -728,15 +917,30 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		cells[8] = ReportBuilder.buildCell("Estado", TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(cells[8], false, true);
+		
+		setCellWidths(cells);
 
 		return cells;
 	}
 
 	/**
+	 * This method sets the cells' width
+	 */
+	private void setCellWidths(TD[] cells) {
+		cells[0].setWidth(DATE_WIDTH);
+		cells[1].setWidth(OBJECT_WIDTH);
+		cells[2].setWidth(EGS_PROCESS_WIDTH);
+		cells[3].setWidth(COMPANY_PROCESS_WIDTH);
+		cells[4].setWidth(CASUALTY_DESCRIPTION_WIDTH);
+		cells[5].setWidth(DEDUCTIBLE_WIDTH);
+		cells[6].setWidth(SETTLEMENT_WIDTH);
+		cells[7].setWidth(SUBCASUALTY_NOTES_WIDTH);
+		cells[8].setWidth(IS_CLOSED_WIDTH);
+	}
+
+	/**
 	 * This method builds the report's header, with a credite's logo, the
 	 * report's title and the date the report was extracted
-	 * 
-	 * @throws BigBangJewelException
 	 */
 	private Table buildHeader(String[] reportParams)
 			throws BigBangJewelException {
