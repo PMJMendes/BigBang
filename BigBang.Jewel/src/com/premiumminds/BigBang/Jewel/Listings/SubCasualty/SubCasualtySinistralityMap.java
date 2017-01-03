@@ -53,7 +53,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 	// The total settlement to display in the report
 	private BigDecimal settlementTotal = BigDecimal.ZERO;
-	
+
 	// Width Constants
 	private static final int DATE_WIDTH = 72;
 	private static final int OBJECT_WIDTH = 160;
@@ -64,7 +64,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	private static final int SETTLEMENT_WIDTH = 88;
 	private static final int SUBCASUALTY_NOTES_WIDTH = 380;
 	private static final int IS_CLOSED_WIDTH = 54;
-	
+
 	private static final int DESCRIPTION_BREAK_POINT = 66;
 	private static final int OBJECT_BREAK_POINT = 23;
 
@@ -316,6 +316,9 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			this.category = category;
 		}
 
+		/**
+		 * This method sets the report values, giving a sub-casualty
+		 */
 		private void setValues(SubCasualty subCasualty,
 				ArrayList<UUID> closedSubCasualties)
 				throws BigBangJewelException {
@@ -326,7 +329,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			}
 			// Sets the sub-casualty's insured object, if possible
 			if (subCasualty.GetObjectName() != null) {
-				setInsuredObject(WordUtils.capitalizeFully(subCasualty.GetObjectName()));
+				setInsuredObject(WordUtils.capitalizeFully(subCasualty
+						.GetObjectName()));
 			}
 			// Sets the sub-casualty's internal process number, if possible
 			if (subCasualty.getAt(SubCasualty.I.NUMBER) != null) {
@@ -345,20 +349,28 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			}
 			// Sets the sub-casualty's notes, if possible
 			if (subCasualty.getAt(SubCasualty.I.DESCRIPTION) != null) {
-				setSubCasualtyNotes(subCasualty.getAt(SubCasualty.I.DESCRIPTION)
-						.toString());
+				setSubCasualtyNotes(subCasualty
+						.getAt(SubCasualty.I.DESCRIPTION).toString());
 			}
 			// Checks (and sets) the casualty's closed flag
 			if (closedSubCasualties.contains(subCasualty.getKey())) {
 				setClosed(true);
-			}			
+			}
 			// Sets the casualty's category
 			setCategory(subCasualty.GetSubLine().getLine().getCategory());
 			// Tries to set the numeric values from the sub-casualty's details
 			if (subCasualty.GetCurrentItems() != null) {
+
 				SubCasualtyItem[] currentItems = subCasualty.GetCurrentItems();
+
 				BigDecimal deductible = BigDecimal.ZERO;
 				BigDecimal settlement = BigDecimal.ZERO;
+
+				// The settlement and deductible is the sum from all
+				// sub-casualty's items
+				// There is also one total for all sub-casualties
+				// If any of them is undefined, all sums become assigned with
+				// the "NO_VALUE" constant
 				for (int i = 0; i < currentItems.length; i++) {
 					SubCasualtyItem temp = currentItems[i];
 					// Indemnização
@@ -378,17 +390,19 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 						deductible = null;
 					}
 				}
-				
+
+				// If there is no items, the values are null
 				if (currentItems.length == 0) {
 					settlement = null;
 					deductible = null;
 				}
-				
+
 				// Special case to work accidents
-				if (subCasualty.GetSubLine().getLine().getCategory().equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+				if (subCasualty.GetSubLine().getLine().getCategory()
+						.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
 					settlement = getSettlementFromMedicalFiles(subCasualty);
 				}
-				
+
 				if (settlement == null) {
 					deductibleTotal = null;
 				}
@@ -412,49 +426,74 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			}
 		}
 
-		private BigDecimal getSettlementFromMedicalFiles(SubCasualty subCasualty) throws BigBangJewelException {
+		/**
+		 * If it is a work-accidents' policy, the settlement is the sum of the
+		 * benefits from the medical details, from the medical files
+		 */
+		private BigDecimal getSettlementFromMedicalFiles(SubCasualty subCasualty)
+				throws BigBangJewelException {
 
 			IEntity filesEntity;
 			MasterDB database;
 			ResultSet fetchedFiles;
 			BigDecimal result = BigDecimal.ZERO;
-						
+
 			try {
-				filesEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MedicalFile));
+				filesEntity = Entity.GetInstance(Engine.FindEntity(
+						Engine.getCurrentNameSpace(),
+						Constants.ObjID_MedicalFile));
 				database = new MasterDB();
 			} catch (Throwable e) {
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
-			
+
 			try {
-				fetchedFiles = filesEntity.SelectByMembers(database, new int[] {MedicalFile.I.SUBCASUALTY}, new java.lang.Object[] {subCasualty.getKey()}, new int[] {MedicalFile.I.REFERENCE});
+				fetchedFiles = filesEntity.SelectByMembers(database,
+						new int[] { MedicalFile.I.SUBCASUALTY },
+						new java.lang.Object[] { subCasualty.getKey() },
+						new int[] { MedicalFile.I.REFERENCE });
 				if (fetchedFiles == null) {
 					return null;
 				}
 			} catch (Throwable e) {
-				try { database.Disconnect(); } catch (SQLException e1) {}
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
-			
+
 			try {
-				while ( fetchedFiles.next() ) {
-					for (MedicalDetail tmp : (MedicalFile.GetInstance(Engine.getCurrentNameSpace(), fetchedFiles).GetCurrentDetails())) {
+				while (fetchedFiles.next()) {
+					for (MedicalDetail tmp : (MedicalFile.GetInstance(
+							Engine.getCurrentNameSpace(), fetchedFiles)
+							.GetCurrentDetails())) {
 						if (tmp.getAt(MedicalDetail.I.BENEFITS) == null) {
 							return null;
 						}
-						result = result.add((BigDecimal) tmp.getAt(MedicalDetail.I.BENEFITS));
+						result = result.add((BigDecimal) tmp
+								.getAt(MedicalDetail.I.BENEFITS));
 					}
 				}
 			} catch (Throwable e) {
-				try { fetchedFiles.close(); } catch (SQLException e1) {}
-				try { database.Disconnect(); } catch (SQLException e1) {}
+				try {
+					fetchedFiles.close();
+				} catch (SQLException e1) {
+				}
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
 			try {
 				fetchedFiles.close();
 			} catch (Throwable e) {
-				try { database.Disconnect(); } catch (SQLException e1) {}
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
@@ -463,7 +502,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			} catch (Throwable e) {
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
-			
+
 			return result;
 		}
 	}
@@ -515,8 +554,6 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 	/**
 	 * This is the initial method "designing" the report
-	 * 
-	 * @throws BigBangJewelException
 	 */
 	private GenericElement[] createReport(
 			HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap,
@@ -587,7 +624,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		tableRows[rowNum++] = ReportBuilder.buildRow(buildHeaderRow());
 		ReportBuilder.styleRow(tableRows[0], true);
 
-		// Iterates the hashmap with the several policies by "ramo", and creates
+		// Iterates the hashmap with the several sub-casualties by "ramo", and creates
 		// a line
 		// with the name of that "ramo", followed by the information about the
 		// SUB-CASUALTIES
@@ -595,7 +632,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			String[] sublineTemp = ORDERED_SUBLINES[i];
 			String titleTemp = CATEGORY_TRANSLATOR.get(sublineTemp[0]);
 
-			ArrayList<SubCasualtyData> subCasualties = subCasualtiesMap.get(sublineTemp[0]);
+			ArrayList<SubCasualtyData> subCasualties = subCasualtiesMap
+					.get(sublineTemp[0]);
 
 			if (sublineTemp.length > 1) {
 				for (int u = 1; u < sublineTemp.length; u++) {
@@ -611,56 +649,55 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			}
 
 			if (subCasualties != null) {
-				SubCasualtyData[] subCasualtyArray = subCasualties.toArray(new SubCasualtyData[0]);
+				SubCasualtyData[] subCasualtyArray = subCasualties
+						.toArray(new SubCasualtyData[0]);
 
 				if (titleTemp == null) {
 					titleTemp = CATEGORY_TRANSLATOR.get(subCasualtyArray[0]
-							.getCategory().getKey()
-							.toString());
+							.getCategory().getKey().toString());
 					if (titleTemp == null) {
-						titleTemp = subCasualtyArray[0].getCategory().getLabel();
+						titleTemp = subCasualtyArray[0].getCategory()
+								.getLabel();
 					}
 				}
 
 				tableRows[rowNum++] = buildSublineRow(titleTemp);
 
 				for (int u = 0; u < subCasualtyArray.length; u++) {
-					tableRows[rowNum] = ReportBuilder.buildRow(buildRow(
-							(SubCasualtyData) subCasualtyArray[u]));
+					tableRows[rowNum] = ReportBuilder
+							.buildRow(buildRow((SubCasualtyData) subCasualtyArray[u]));
 					ReportBuilder.styleRow(tableRows[rowNum++], false);
 				}
 			}
 		}
-		
+
 		// Builds the row with the total number of sub-casualties
 		tableRows[rowNum++] = constructSummaryRow("Nº de Sinistros:",
 				subCasualtiesNr, TypeDefGUIDs.T_Integer, true, false, false);
 
 		// Build the row with the total deductible
-		tableRows[rowNum++] = constructSummaryRow(
-					"Total de Franquias:", deductibleTotal, TypeDefGUIDs.T_Decimal,
-					true, false, true);
-		
+		tableRows[rowNum++] = constructSummaryRow("Total de Franquias:",
+				deductibleTotal, TypeDefGUIDs.T_Decimal, true, false, true);
+
 		// Build the row with the total settlement
-		tableRows[rowNum++] = constructSummaryRow(
-					"Total de Indemnizações:", deductibleTotal, TypeDefGUIDs.T_Decimal,
-					true, false, true);
+		tableRows[rowNum++] = constructSummaryRow("Total de Indemnizações:",
+				settlementTotal, TypeDefGUIDs.T_Decimal, true, false, true);
 
 		table = ReportBuilder.buildTable(tableRows);
 		ReportBuilder.styleTable(table, false);
 
 		return table;
 	}
-	
+
 	/**
-	 * This method builds a "summary row" with info to display at the end of the report.
-	 * It is (REALLY) similar to ReportBuilder's constructDualRow method, but without the 
-	 * left line, and allowing to print a "money" value formatted properly.
+	 * This method builds a "summary row" with info to display at the end of the
+	 * report. It is (REALLY) similar to ReportBuilder's constructDualRow
+	 * method, but without the left line, and allowing to print a "money" value
+	 * formatted properly.
 	 */
-	private TR constructSummaryRow(String text, 
-			Object value, UUID typeGUID, boolean topRow, boolean rightAlign, 
-			boolean isMoney) {
-		
+	private TR constructSummaryRow(String text, Object value, UUID typeGUID,
+			boolean topRow, boolean rightAlign, boolean isMoney) {
+
 		TD[] cells = new TD[2];
 		TR row;
 
@@ -675,29 +712,29 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				cells[1].setAlign("right");
 			}
 		} else {
-			cells[1] = safeBuildCell(value,
-					TypeDefGUIDs.T_String, true, rightAlign);
+			cells[1] = safeBuildCell(value, TypeDefGUIDs.T_String, true,
+					rightAlign);
 			ReportBuilder.styleCell(cells[1], topRow, false);
 		}
 		cells[1].setColSpan(7);
-		
+
 		row = ReportBuilder.buildRow(cells);
 		ReportBuilder.styleRow(row, false);
 
 		return row;
 	}
-	
+
 	/**
 	 * This method builds a row with a sub-casualty's information
 	 */
 	private TD[] buildRow(SubCasualtyData subCasualtyData) {
 
 		TD[] dataCells = new TD[9];
-		
+
 		dataCells[0] = safeBuildCell(subCasualtyData.getDate(),
 				TypeDefGUIDs.T_String, false, false);
 		ReportBuilder.styleCell(dataCells[0], true, false);
-		
+
 		String objectName = subCasualtyData.getInsuredObject();
 		if (objectName.length() <= OBJECT_BREAK_POINT) {
 			dataCells[1] = safeBuildCell(subCasualtyData.getInsuredObject(),
@@ -706,10 +743,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			ArrayList<String> descriptionArray = new ArrayList<String>();
 			descriptionArray.add(objectName);
 			dataCells[1] = buildValuesTable(
-					splitValue(descriptionArray, OBJECT_BREAK_POINT), OBJECT_WIDTH, false, false);
+					splitValue(descriptionArray, OBJECT_BREAK_POINT),
+					OBJECT_WIDTH, false, false);
 		}
 		ReportBuilder.styleCell(dataCells[1], true, true);
-		
+
 		dataCells[2] = safeBuildCell(subCasualtyData.getEgsProcess(),
 				TypeDefGUIDs.T_String, false, false);
 		ReportBuilder.styleCell(dataCells[2], true, true);
@@ -717,7 +755,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		dataCells[3] = safeBuildCell(subCasualtyData.getCompanyProcess(),
 				TypeDefGUIDs.T_String, false, false);
 		ReportBuilder.styleCell(dataCells[3], true, true);
-		
+
 		String casualtyDescription = subCasualtyData.getCasualtyDescription();
 		if (casualtyDescription.length() <= DESCRIPTION_BREAK_POINT) {
 			dataCells[4] = safeBuildCell(casualtyDescription,
@@ -726,18 +764,19 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			ArrayList<String> descriptionArray = new ArrayList<String>();
 			descriptionArray.add(casualtyDescription);
 			dataCells[4] = buildValuesTable(
-					splitValue(descriptionArray, DESCRIPTION_BREAK_POINT), CASUALTY_DESCRIPTION_WIDTH, false, false);
+					splitValue(descriptionArray, DESCRIPTION_BREAK_POINT),
+					CASUALTY_DESCRIPTION_WIDTH, false, false);
 		}
 		ReportBuilder.styleCell(dataCells[4], true, true);
-		
+
 		dataCells[5] = safeBuildCell(subCasualtyData.getDeductible(),
 				TypeDefGUIDs.T_String, true, true);
 		ReportBuilder.styleCell(dataCells[5], true, true);
-		
+
 		dataCells[6] = safeBuildCell(subCasualtyData.getSettlement(),
 				TypeDefGUIDs.T_String, true, true);
 		ReportBuilder.styleCell(dataCells[6], true, true);
-		
+
 		String subCasualtyNotes = subCasualtyData.getSubCasualtyNotes();
 		if (subCasualtyNotes.length() <= DESCRIPTION_BREAK_POINT) {
 			dataCells[7] = safeBuildCell(subCasualtyData.getSubCasualtyNotes(),
@@ -746,27 +785,28 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			ArrayList<String> descriptionArray = new ArrayList<String>();
 			descriptionArray.add(subCasualtyNotes);
 			dataCells[7] = buildValuesTable(
-					splitValue(descriptionArray, DESCRIPTION_BREAK_POINT), SUBCASUALTY_NOTES_WIDTH, false, false);
+					splitValue(descriptionArray, DESCRIPTION_BREAK_POINT),
+					SUBCASUALTY_NOTES_WIDTH, false, false);
 		}
 		ReportBuilder.styleCell(dataCells[7], true, true);
-		
+
 		String state = subCasualtyData.isClosed() ? "Fechado" : "Aberto";
-		dataCells[8] = safeBuildCell(state,
-				TypeDefGUIDs.T_String, false, false);
+		dataCells[8] = safeBuildCell(state, TypeDefGUIDs.T_String, false, false);
 		ReportBuilder.styleCell(dataCells[8], true, true);
-		
+
 		setCellWidths(dataCells);
-		
+
 		return dataCells;
 	}
-	
+
 	/**
 	 * This method is used to split a string, which could be "too wide", and
 	 * wreck the report's look. It gets not a String, but an array list with one
 	 * element (the string) for it is the way it is represented in the
 	 * CoverageData's class.
 	 */
-	private ArrayList<String> splitValue(ArrayList<String> stringToSplit, int breakPosition) {
+	private ArrayList<String> splitValue(ArrayList<String> stringToSplit,
+			int breakPosition) {
 
 		ArrayList<String> result = new ArrayList<String>();
 		String[] split = stringToSplit.get(0).split("\\s+");
@@ -784,21 +824,22 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		}
 
 		return (result.size() == 0 ? stringToSplit : result);
-	}		
-	
+	}
+
 	/**
 	 * Builds a cell in a "safe way", meaning that if the value is null, the
 	 * cell is built simply with a whitespace, preventing cells with the '?'
 	 * character
 	 */
-	private TD safeBuildCell(java.lang.Object pobjValue, UUID pidType, 
+	private TD safeBuildCell(java.lang.Object pobjValue, UUID pidType,
 			boolean addEuro, boolean alignRight) {
 		if (pobjValue == null || pobjValue.toString().trim().length() == 0) {
-			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			return ReportBuilder.buildCell(NO_VALUE, TypeDefGUIDs.T_String);
 		}
 		if (addEuro && !pobjValue.toString().equals(NO_VALUE)) {
 			String valueString = pobjValue + " " + Utils.getCurrency();
-			return safeBuildCell(valueString, TypeDefGUIDs.T_String, false, alignRight);
+			return safeBuildCell(valueString, TypeDefGUIDs.T_String, false,
+					alignRight);
 		}
 		return ReportBuilder.buildCell(pobjValue, pidType, alignRight);
 	}
@@ -822,7 +863,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		// Builds a "simple" TD or a table with a TD with each value
 		if (data.size() == 1) {
-			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String, addEuro, alignRight);
+			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String,
+					addEuro, alignRight);
 			content.setWidth(width);
 			ReportBuilder.styleCell(content, false, false);
 			ReportBuilder.styleInnerContainer(content);
@@ -835,7 +877,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			for (int i = 0; i < data.size(); i++) {
 				TD[] cell = new TD[1];
 
-				cell[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String, addEuro, alignRight);
+				cell[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String,
+						addEuro, alignRight);
 				cell[0].setWidth(width);
 				cell[0].setStyle("overflow:hidden;white-space:nowrap");
 
@@ -854,7 +897,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		return content;
 	}
-	
+
 	/**
 	 * This method builds the row with the information about the preceding
 	 * sub-casualties' "ramo"
@@ -868,7 +911,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		rowContent = ReportBuilder.buildCell("Ramo: " + subline,
 				TypeDefGUIDs.T_String);
 		rowContent.setColSpan(9);
-		ReportBuilder.styleCell(rowContent, true, false);
+		ReportBuilder.styleCell(rowContent, true, true);
 
 		// Builds the TR encapsulating the TD
 		row = ReportBuilder.buildRow(new TD[] { rowContent });
@@ -917,7 +960,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		cells[8] = ReportBuilder.buildCell("Estado", TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(cells[8], false, true);
-		
+
 		setCellWidths(cells);
 
 		return cells;
@@ -960,8 +1003,19 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		// Builds the cell with the report title and client name
 		TD title = new TD();
-		Strong titleStrong = new Strong("Mapa de Sinistralidade de "
-				+ clientTitle);
+		String titleString = "Mapa de Sinistros de " + clientTitle;
+
+		if (reportParams[1] != null && reportParams[2] != null) {
+			titleString = titleString + ", ocorridos entre " + reportParams[1]
+					+ " e " + reportParams[2];
+		} else if (reportParams[1] != null && reportParams[2] == null) {
+			titleString = titleString + ", posteriores a " + reportParams[1];
+		} else if (reportParams[1] == null && reportParams[2] != null) {
+			titleString = titleString + ", anteriores a " + reportParams[2];
+		}
+
+		Strong titleStrong = new Strong(titleString);
+
 		titleStrong.setStyle("font-size: 15px;");
 		title.addElement(titleStrong);
 		title.setAlign(AlignType.middle);
@@ -1249,8 +1303,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		String subCasualtySubLineKey = "";
 		String result = "";
 
-		subCasualtyCategoryKey = subCasualty.GetSubLine().getLine().getCategory()
-				.getKey().toString();
+		subCasualtyCategoryKey = subCasualty.GetSubLine().getLine()
+				.getCategory().getKey().toString();
 		subCasualtyLineKey = subCasualtyCategoryKey
 				+ subCasualty.GetSubLine().getLine().getKey().toString();
 		subCasualtySubLineKey = subCasualtyLineKey
