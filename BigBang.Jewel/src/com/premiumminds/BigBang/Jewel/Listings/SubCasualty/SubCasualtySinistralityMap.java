@@ -46,7 +46,8 @@ import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 	// Constants
-	private static final String NO_VALUE = "Em Gestão";
+	private static final String NO_VALUE = "-";
+	private static final String NO_VALUE_OPEN = "Em Gestão";
 
 	// The total deductible to display in the report
 	private BigDecimal deductibleTotal = BigDecimal.ZERO;
@@ -329,8 +330,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			}
 			// Sets the sub-casualty's insured object, if possible
 			if (subCasualty.GetObjectName() != null) {
-				setInsuredObject(WordUtils.capitalizeFully(subCasualty
-						.GetObjectName()));
+				String objectName = subCasualty.GetObjectName();
+				if (subCasualty.GetSubLine().getLine().getCategory()
+						.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+					objectName = WordUtils.capitalizeFully(objectName);
+				}
+				setInsuredObject(objectName);
 			}
 			// Sets the sub-casualty's internal process number, if possible
 			if (subCasualty.getAt(SubCasualty.I.NUMBER) != null) {
@@ -347,14 +352,19 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				setCasualtyDescription(subCasualty.GetCasualty()
 						.getAt(Casualty.I.DESCRIPTION).toString());
 			}
+			// Checks (and sets) the casualty's closed flag
+			if (closedSubCasualties.contains(subCasualty.getKey())) {
+				setClosed(true);
+			}
 			// Sets the sub-casualty's notes, if possible
 			if (subCasualty.getAt(SubCasualty.I.DESCRIPTION) != null) {
 				setSubCasualtyNotes(subCasualty
 						.getAt(SubCasualty.I.DESCRIPTION).toString());
-			}
-			// Checks (and sets) the casualty's closed flag
-			if (closedSubCasualties.contains(subCasualty.getKey())) {
-				setClosed(true);
+			} else {
+				// If the process is open, sets the notes as "Em Gestão"
+				if (!isClosed) {
+					setSubCasualtyNotes(NO_VALUE_OPEN);
+				}
 			}
 			// Sets the casualty's category
 			setCategory(subCasualty.GetSubLine().getLine().getCategory());
@@ -402,26 +412,17 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 						.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
 					settlement = getSettlementFromMedicalFiles(subCasualty);
 				}
-
-				if (settlement == null) {
-					deductibleTotal = null;
-				}
-				if (deductible == null) {
-					settlementTotal = null;
-				}
 				if (settlement != null) {
 					setSettlement(String.format("%,.2f",
 							((BigDecimal) settlement)));
-					if (settlementTotal != null) {
-						settlementTotal = settlementTotal.add(settlement);
-					}
+
+					settlementTotal = settlementTotal.add(settlement);
 				}
 				if (deductible != null) {
 					setDeductible(String.format("%,.2f",
 							((BigDecimal) deductible)));
-					if (deductibleTotal != null) {
-						deductibleTotal = deductibleTotal.add(deductible);
-					}
+					
+					deductibleTotal = deductibleTotal.add(deductible);
 				}
 			}
 		}
@@ -719,7 +720,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		cells[1].setColSpan(7);
 
 		row = ReportBuilder.buildRow(cells);
-		ReportBuilder.styleRow(row, false);
+		row.setStyle("height:30px;background:#e6e6e6;");
 
 		return row;
 	}
@@ -733,7 +734,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		dataCells[0] = safeBuildCell(subCasualtyData.getDate(),
 				TypeDefGUIDs.T_String, false, false);
-		ReportBuilder.styleCell(dataCells[0], true, false);
+		styleCenteredCell(dataCells[0], true, false);
 
 		String objectName = subCasualtyData.getInsuredObject();
 		if (objectName.length() <= OBJECT_BREAK_POINT) {
@@ -750,11 +751,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		dataCells[2] = safeBuildCell(subCasualtyData.getEgsProcess(),
 				TypeDefGUIDs.T_String, false, false);
-		ReportBuilder.styleCell(dataCells[2], true, true);
+		styleCenteredCell(dataCells[2], true, true);
 
 		dataCells[3] = safeBuildCell(subCasualtyData.getCompanyProcess(),
 				TypeDefGUIDs.T_String, false, false);
-		ReportBuilder.styleCell(dataCells[3], true, true);
+		styleCenteredCell(dataCells[3], true, true);
 
 		String casualtyDescription = subCasualtyData.getCasualtyDescription();
 		if (casualtyDescription.length() <= DESCRIPTION_BREAK_POINT) {
@@ -792,11 +793,21 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		String state = subCasualtyData.isClosed() ? "Fechado" : "Aberto";
 		dataCells[8] = safeBuildCell(state, TypeDefGUIDs.T_String, false, false);
-		ReportBuilder.styleCell(dataCells[8], true, true);
+		styleCenteredCell(dataCells[8], true, true);
 
 		setCellWidths(dataCells);
 
 		return dataCells;
+	}
+	
+	/**
+	 * Similar to ReportBuilder.styleCell, but makes the text centered
+	 */
+	public static void styleCenteredCell(TD pcell, boolean pbAddTop, boolean pbAddLeft) {
+		pcell.setStyle("overflow:hidden;white-space:nowrap;padding-left:5px;padding-right:5px;text-align:center;" +
+				(pbAddTop ? "border-top:1px solid #3f6d9d;" : "") +
+				(pbAddLeft ? "border-left:1px solid #3f6d9d;" : ""));
+
 	}
 
 	/**
@@ -911,7 +922,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		rowContent = ReportBuilder.buildCell("Ramo: " + subline,
 				TypeDefGUIDs.T_String);
 		rowContent.setColSpan(9);
-		ReportBuilder.styleCell(rowContent, true, true);
+		ReportBuilder.styleCell(rowContent, true, false);
 
 		// Builds the TR encapsulating the TD
 		row = ReportBuilder.buildRow(new TD[] { rowContent });
@@ -929,37 +940,37 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		cells[0] = ReportBuilder.buildCell("Data Sinistro",
 				TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(cells[0], false, false);
+		styleCenteredCell(cells[0], false, false);
 
 		cells[1] = ReportBuilder.buildCell("Unidade de Risco",
 				TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(cells[1], false, true);
+		styleCenteredCell(cells[1], false, true);
 
 		cells[2] = ReportBuilder.buildCell("Processo EGS",
 				TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(cells[2], false, true);
+		styleCenteredCell(cells[2], false, true);
 
 		cells[3] = ReportBuilder.buildCell("Processo Segurador",
 				TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(cells[3], false, true);
+		styleCenteredCell(cells[3], false, true);
 
 		cells[4] = ReportBuilder.buildCell("Descrição do Sinistro",
 				TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(cells[4], false, true);
+		styleCenteredCell(cells[4], false, true);
 
 		cells[5] = ReportBuilder.buildCell("Franquia Aplicada",
 				TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(cells[5], false, true);
+		styleCenteredCell(cells[5], false, true);
 
 		cells[6] = ReportBuilder.buildCell("Indemnização",
 				TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(cells[6], false, true);
+		styleCenteredCell(cells[6], false, true);
 
 		cells[7] = ReportBuilder.buildCell("Notas", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(cells[7], false, true);
+		styleCenteredCell(cells[7], false, true);
 
 		cells[8] = ReportBuilder.buildCell("Estado", TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(cells[8], false, true);
+		styleCenteredCell(cells[8], false, true);
 
 		setCellWidths(cells);
 
