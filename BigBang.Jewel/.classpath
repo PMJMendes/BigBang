@@ -26,7 +26,6 @@
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.8-20120326.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.8-20120326.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.6.jar"/>
-	<classpathentry kind="lib" path="C:/projects/bigbang/ews-java/EWSJavaAPI_1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-io-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/google-api-client-1.21.0.jar"/>
 	<classpathentry kind="lib" path="lib/google-api-services-storage-v1-rev90-1.22.0.jar"/>

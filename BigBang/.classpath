@@ -31,7 +31,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/pdfbox-1.6.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jdom-1.1.3.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/ecs-1.4.2.jar"/>
-	<classpathentry kind="lib" path="C:/projects/bigbang/ews-java/EWSJavaAPI_1.2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/mail.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-mosaic-0.4.0-rc4.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/google-api-client-1.21.0.jar"/>
