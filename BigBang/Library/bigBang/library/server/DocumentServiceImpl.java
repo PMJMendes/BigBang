@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import javax.mail.internet.MimeUtility;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -455,7 +457,11 @@ public class DocumentServiceImpl
 		    	lidAux = UUID.randomUUID();
 		    	FileServiceImpl.GetFileXferStorage().put(lidAux, laux);
 				lobjAux.mimeType = laux.getContentType();
-				lobjAux.fileName = laux.getFileName();
+				try {
+					lobjAux.fileName = MimeUtility.decodeText(laux.getFileName());
+				} catch (Throwable e) {
+					throw new BigBangException(e.getMessage(), e);
+				}
 				lobjAux.fileStorageId = lidAux.toString();
 			}
 		}

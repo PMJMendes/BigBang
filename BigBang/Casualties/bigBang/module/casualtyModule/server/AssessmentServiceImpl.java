@@ -38,6 +38,7 @@ import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Assessment.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Assessment.CreateConversation;
 import com.premiumminds.BigBang.Jewel.Operations.Assessment.ManageData;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class AssessmentServiceImpl
 	extends SearchServiceBase
@@ -199,7 +200,7 @@ public class AssessmentServiceImpl
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY),
-				Constants.MsgDir_Outgoing);
+				Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -242,7 +243,7 @@ public class AssessmentServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 246 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjAssessment.GetProcessID());
@@ -258,9 +259,16 @@ public class AssessmentServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage() + " 267 ", e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjAssessment.getAt(com.premiumminds.BigBang.Jewel.Objects.Assessment.I.SUBCASUALTY),
-				lopCC.mobjData.midStartDir);
+				lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{
@@ -268,7 +276,7 @@ public class AssessmentServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 278 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);

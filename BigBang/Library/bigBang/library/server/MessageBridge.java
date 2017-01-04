@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
+import javax.mail.internet.MimeUtility;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -170,7 +172,8 @@ public class MessageBridge
 		return lobjResult;
 	}
 	
-	public static MessageData clientToServer(Message pobjMessage, UUID pidParentType, UUID pidParentID, UUID pidDefaultDir)
+	public static MessageData clientToServer(Message pobjMessage, UUID pidParentType, UUID pidParentID, 
+			UUID pidDefaultDir, javax.mail.Message existingMailMessage)
 		throws BigBangException
 	{
 		MessageData lobjResult;
@@ -203,11 +206,15 @@ public class MessageBridge
 				if (lobjResult.midDirection.equals(Constants.MsgDir_Incoming )) {
 					try
 					{
-						lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID, lobjResult.mstrFolderID);
+						if (existingMailMessage == null) {
+							lobjAux = MailConnector.getAsData(lobjResult.mstrEmailID, lobjResult.mstrFolderID);
+						} else {
+							lobjAux = MailConnector.messageToData(existingMailMessage, lobjResult.mstrEmailID);
+						}
 					}
 					catch (Throwable e)
 					{
-						throw new BigBangException(e.getMessage(), e);
+						throw new BigBangException(e.getMessage() + " 217 ", e);
 					}
 					lobjResult.mstrSubject = lobjAux.mstrSubject;
 					lobjResult.marrAddresses = lobjAux.marrAddresses;
@@ -226,7 +233,11 @@ public class MessageBridge
 							tmpData.midUsage    = sGetUsage(tmpAddr.usage);
 							tmpData.midUser     = tmpAddr.userId== null ? null : UUID.fromString(tmpAddr.userId);
 							tmpData.midInfo     = tmpAddr.contactInfoId==null ? null : UUID.fromString(tmpAddr.contactInfoId);
-							tmpData.mstrDisplay = tmpAddr.display;
+							try {
+								tmpData.mstrDisplay = MimeUtility.decodeText(tmpAddr.display);
+							} catch (Throwable e) {
+								throw new BigBangException(e.getMessage() + " 239 ", e);
+							}
 							addresses[u] = tmpData;
 						}
 						lobjResult.marrAddresses = addresses;
@@ -261,12 +272,15 @@ public class MessageBridge
 							UUID.fromString(pobjMessage.addresses[i].userId) );
 					lobjResult.marrAddresses[i].midInfo = ( pobjMessage.addresses[i].contactInfoId == null ? null :
 						UUID.fromString(pobjMessage.addresses[i].contactInfoId) );
-					lobjResult.marrAddresses[i].mstrDisplay = pobjMessage.addresses[i].display;
+					try {
+						lobjResult.marrAddresses[i].mstrDisplay = pobjMessage.addresses[i].display;
+					} catch (Throwable e) {
+						throw new BigBangException(e.getMessage() + " 278 ", e);
+					}
 				}
 			}
 		}
 
-		//Attachment[] promotedAttachments = filterPromotedAttachments(pobjMessage.attachments);
 		Attachment[] promotedAttachments = pobjMessage.attachments;
 		
 		if ( !lobjResult.mbIsEmail || pobjMessage.attachments == null || pobjMessage.attachments.length==0 )
@@ -293,26 +307,6 @@ public class MessageBridge
 		lobjResult.mobjDocOps = handleAttachments(lobjResult, promotedAttachments, pidParentType, pidParentID);
 
 		return lobjResult;
-	}
-
-	private static Attachment[] filterPromotedAttachments(
-			Attachment[] attachments) {
-
-		Attachment[] temp = new Attachment[attachments.length];
-		int count = 0;
-				
-		for (int i = 0; i < attachments.length; i++ )
-		{
-			if (attachments[i].promote) {
-				temp[count++] = attachments[i];
-			}
-		}
-		
-		Attachment[] result = new Attachment[count];
-		
-		System.arraycopy(temp, 0, result, 0, count);
-		
-		return result;
 	}
 
 	private static ContactOps handleAddresses(MessageAddressData[] parrAddresses, UUID pidParentType, UUID pidParentID)

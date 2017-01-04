@@ -81,6 +81,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.ReactivatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.TransferToClient;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.VoidPolicy;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class InsurancePolicyServiceImpl
 	extends SearchServiceBase
@@ -521,7 +522,7 @@ public class InsurancePolicyServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Policy,
-				lobjPolicy.getKey(), Constants.MsgDir_Outgoing);
+				lobjPolicy.getKey(), Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -563,7 +564,7 @@ public class InsurancePolicyServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 567 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjPolicy.GetProcessID());
@@ -579,8 +580,15 @@ public class InsurancePolicyServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage() + " 588 ", e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Policy,
-				lobjPolicy.getKey(), lopCC.mobjData.midStartDir);
+				lobjPolicy.getKey(), lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{
@@ -588,7 +596,7 @@ public class InsurancePolicyServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 599 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);

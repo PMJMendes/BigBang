@@ -146,7 +146,7 @@ public class AssessmentBrokerImpl extends DataBroker<Assessment> implements Asse
 			@Override 
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not receive the message")		
+						new String("Could not receive the message " + caught.getMessage() + " " + caught.getCause() + " " + caught.getClass())	
 				});	
 				super.onResponseFailure(caught);
 			}

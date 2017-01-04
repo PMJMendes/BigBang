@@ -67,7 +67,6 @@ HasValue<Message> {
 
 		void clearList();
 
-
 	}
 
 	public MailItemSelectionViewPresenter(Display view){
@@ -75,6 +74,7 @@ HasValue<Message> {
 		manager = new HandlerManager(this);
 		service = MailService.Util.getInstance();
 	}
+	
 	@Override
 	public void setView(UIObject view) {
 
@@ -96,27 +96,31 @@ HasValue<Message> {
 					MailItemStub stub = ((EmailEntry) ((HasValueSelectables<MailItemStub>)event.getSource()).getSelected().toArray()[0]).getValue();
 					if ( stub.isFolder )
 					{
-						view.clear();
-						view.clearList();
-						view.enableGetAll(false);
-						view.enableRefresh(false);
-						
-						service.getFolder(stub, new BigBangAsyncCallback<MailItemStub[]>() {
-
-							@Override
-							public void onResponseSuccess(MailItemStub[] result) {
-								for(int i=0; i<result.length; i++){
-									view.addEmailEntry(result[i]);
-								}
-								view.enableGetAll(true);
-								view.enableRefresh(true);
-							}
+						if (stub.parentFolderId != null) {
+							getBack();
+						} else {
+							view.clear();
+							view.clearList();
+							view.enableGetAll(false);
+							view.enableRefresh(false);
 							
-							public void onResponseFailure(Throwable caught) {
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível o conteúdo da pasta."), TYPE.ERROR_NOTIFICATION));
-								view.enableRefresh(true);
-							};
-						});
+							service.getFolder(stub, new BigBangAsyncCallback<MailItemStub[]>() {
+
+								@Override
+								public void onResponseSuccess(MailItemStub[] result) {
+									for(int i=0; i<result.length; i++){
+										view.addEmailEntry(result[i]);
+									}
+									view.enableGetAll(true);
+									view.enableRefresh(true);
+								}
+								
+								public void onResponseFailure(Throwable caught) {
+									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível o conteúdo da pasta."), TYPE.ERROR_NOTIFICATION));
+									view.enableRefresh(true);
+								};
+							});
+						}
 					}
 					else
 					{
@@ -221,6 +225,35 @@ HasValue<Message> {
 			};
 		});
 	}
+	
+	protected void getBack() {
+		
+		view.clear();
+		view.clearList();
+		view.enableGetAll(false);
+		view.enableRefresh(false);
+
+		service.getStoredFolders(new BigBangAsyncCallback<MailItemStub[]>() {
+
+			@Override
+			public void onResponseSuccess(MailItemStub[] result) {
+
+				for(int i=0; i<result.length; i++){
+					view.addEmailEntry(result[i]);
+				}
+				view.enableGetAll(true);		
+				view.enableRefresh(true);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os emails."), TYPE.ALERT_NOTIFICATION));
+				view.enableRefresh(true);
+				super.onResponseFailure(caught);
+			}
+		});		
+	}
+	
 	@Override
 	public void go(HasWidgets container) {
 		bind();

@@ -271,7 +271,7 @@ public class ConversationBrokerImpl extends DataBroker<Conversation> implements 
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not receive the message")
+						new String("Could not receive the message" + caught.getMessage())
 				});			
 				super.onResponseFailure(caught);
 			}

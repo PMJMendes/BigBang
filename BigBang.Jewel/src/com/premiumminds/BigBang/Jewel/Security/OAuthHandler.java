@@ -82,7 +82,7 @@ public class OAuthHandler {
 
 		Security.addProvider(new OAuth2Provider());
 		
-		Store store = session.getStore("imaps");
+		Store store = session.getStore("imaps"); // TODO é aqui que dá o toot manuy connections
 		store.connect("imap.gmail.com", IMAPS_PORT, userEmail, oauthToken);
 
 		return store;
@@ -95,8 +95,8 @@ public class OAuthHandler {
 	 * TODO: Not working yet, needs to be changed upon implementing message
 	 * sending
 	 */
-	public static SMTPTransport getSmtpStore(String host, int port,
-			String userEmail, boolean debug) throws Exception {
+	public static Session getSmtpSession(boolean debug) throws Exception {
+		
 		Properties props = new Properties();
 		props.put("mail.smtp.starttls.enable", "true");
 		props.put("mail.smtp.starttls.required", "true");
@@ -105,15 +105,21 @@ public class OAuthHandler {
 		props.put(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, getOauthToken());
 		Session session = Session.getInstance(props);
 		session.setDebug(debug);
-
-		final URLName unusedUrlName = null;
-		SMTPTransport transport = new SMTPTransport(session, unusedUrlName);
-		// If the password is non-null, SMTP tries to do AUTH LOGIN.
-		final String emptyPassword = "";
-		transport.connect(host, port, userEmail, emptyPassword);
-
-		return transport;
+		
+		return session;
 	}
+	
+	 public static SMTPTransport getSmtpConnection(String host, int port, String userEmail, Session session) throws Exception {
+		
+		 final URLName unusedUrlName = null;
+		 SMTPTransport transport = new SMTPTransport(session, unusedUrlName);
+		 // If the password is non-null, SMTP tries to do AUTH LOGIN.
+		 final String emptyPassword = "";
+		 transport.connect(host, port, userEmail, emptyPassword);
+
+		 return transport;
+	 }
+	
 
 	/**
 	 * This method gets an OAUTH token used to access a user mail account, with

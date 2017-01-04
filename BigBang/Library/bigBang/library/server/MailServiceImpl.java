@@ -2,6 +2,7 @@ package bigBang.library.server;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -11,8 +12,6 @@ import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -25,6 +24,7 @@ import bigBang.library.shared.MailItem;
 import bigBang.library.shared.MailItemStub;
 import bigBang.library.shared.SessionExpiredException;
 
+import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
@@ -34,48 +34,74 @@ public class MailServiceImpl
 	implements MailService
 {
 	private static final long serialVersionUID = 1L;
-
+	
+	private static HashMap<String, MailItemStub[]> storedFoldersByUser;
+	
 	/**
-	 * Prepares the data from a mail list in an intelligible way to to the client
+	 * Prepares the data from a mails' list to be displayed
 	 */
-	private static MailItemStub[] sToClient(Message[] parrSource)
+	private static MailItemStub[] messagesToClient(Message[] parrSource)
 			throws BigBangException {
 
 		String lstrEmail;
 		MailItemStub[] larrResults;
 		int i;
 		String lstrFrom;
-		String lstrBody;
-
-		try
-		{
+		
+		try {
 			lstrEmail = MailConnector.getUserEmail();
-		}
-		catch (Throwable e)
-		{
+		} catch (Throwable e) {
 			lstrEmail = null;
 		}
 
-		larrResults = new MailItemStub[parrSource.length];
-
-		for ( i = 0; i < larrResults.length; i++ )
+		int size = parrSource==null ? 0 : parrSource.length;
+		
+		larrResults = new MailItemStub[size+1];
+		
+		// sets the parent "back" folder
+		larrResults[0] = new MailItemStub();
+		larrResults[0].isParentFolder = true;
+		larrResults[0].id = "Voltar";
+		larrResults[0].isFolder = true;
+		larrResults[0].isFromMe = false;
+		larrResults[0].subject = "Voltar";
+		larrResults[0].from = null;
+		larrResults[0].timestamp = null;
+		larrResults[0].attachmentCount = -1;
+		larrResults[0].bodyPreview = null;
+		larrResults[0].folderId = null;
+		larrResults[0].isParentFolder = true; 
+		larrResults[0].parentFolderId = "bck";
+				
+		if (parrSource==null || parrSource.length==0) {
+			return larrResults;
+		}
+		
+		String folderId = parrSource[0].getFolder().getFullName();	
+		
+		for ( i = 1; i < larrResults.length; i++ )
 		{
 			larrResults[i] = new MailItemStub();
 
 			try {
 
-				larrResults[i].id = "" + parrSource[i].getHeader("Message-Id")[0];
+				Message message = parrSource[i-1];
+				
+				larrResults[i].id = "" + message.getHeader("Message-Id")[0];
+				
 				larrResults[i].isFolder = false;
-				larrResults[i].subject = parrSource[i].getSubject();
-				larrResults[i].folderId = parrSource[i].getFolder().getFullName();
-
-				InternetAddress address = (InternetAddress) (parrSource[i].getFrom() == null ? null : parrSource[i].getFrom()[0]);
+				
+				larrResults[i].subject = message.getSubject();
+				
+				larrResults[i].folderId = folderId;
+				
+				InternetAddress address = (InternetAddress) (message.getFrom() == null ? null : message.getFrom()[0]);
 				lstrFrom = address == null ? "" : address.getAddress();
 				larrResults[i].from = lstrFrom;
-
+				
 				try
 				{
-					larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(parrSource[i].getSentDate());
+					larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(message.getReceivedDate());
 				}
 				catch (Throwable e)
 				{
@@ -87,26 +113,10 @@ public class MailServiceImpl
 				else
 					larrResults[i].isFromMe = false;
 
-				Map<String, BodyPart> attachmentsMap = MailConnector.getAttachmentsMap (parrSource[i]);
-				larrResults[i].attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
+				larrResults[i].attachmentCount = attachmentsNumber(message);
 				
-				Object content = parrSource[i].getContent();
+				larrResults[i].bodyPreview = "_";
 				
-				if ( content.toString() == null )
-					larrResults[i].bodyPreview = "_";
-				else
-				{
-				if (content instanceof Multipart && attachmentsMap != null && attachmentsMap.size() != 0) {
-						lstrBody = attachmentsMap.get("main").getContent().toString();
-						lstrBody = MailConnector.prepareBodyInline(lstrBody, attachmentsMap);
-					} else {
-						lstrBody = content.toString();
-					}
-					lstrBody = MailConnector.removeHtml(lstrBody);
-					if ( lstrBody.length() > 170 ) {
-						larrResults[i].bodyPreview = lstrBody.substring(0, 170);
-					}
-				}
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
@@ -114,154 +124,164 @@ public class MailServiceImpl
 
 		return larrResults;
 	}
-	
+
 	/**
-	 * Prepares the data from a mail in an intelligible way to to the client
+	 * Prepares the data from a folders' list to be displayed to the client
 	 */
-	private static MailItemStub[] sToClient(MailItemStub current, javax.mail.Folder[] folders)
-			throws BigBangException { 
-		
-		MailItemStub[] larrResults = null; 
-		
-		int arrSize = (folders==null && current==null) ? 0 : 
-			folders == null ? 1 : 
-			(current == null || (current.isParentFolder && (current.parentFolderId==null || current.parentFolderId.length()==0))) ? folders.length : folders.length + 1; 
-		
-		int start = 0;
-		
-		larrResults = new MailItemStub[arrSize];
-		
-		// sets the parent folder, used to allow a back
-		if (current != null && (!current.isParentFolder || (current.parentFolderId!=null && current.parentFolderId.length() > 0))) {
-			larrResults[0] = new MailItemStub();
-			
-			larrResults[0].isParentFolder = true;
-			larrResults[0].id = "Voltar";
-			larrResults[0].isFolder = true;
-			larrResults[0].isFromMe = false;
-			larrResults[0].subject = "Voltar";
-			larrResults[0].from = null;
-			larrResults[0].timestamp = null;
-			larrResults[0].attachmentCount = -1;
-			larrResults[0].bodyPreview = null;
-			larrResults[0].folderId = null;
-			larrResults[0].isParentFolder = true; 
-			larrResults[0].parentFolderId = current.isParentFolder ? getBackFolder(current.parentFolderId) : current.parentFolderId;
-			
-			start++;
-		}
-		
-		for (int u=0; start < larrResults.length; start++, u++) {
-			
-			larrResults[start] = new MailItemStub();
-			
+	private static MailItemStub[] foldersToClient(Folder[] parrSource)
+			throws BigBangException {
+
+		MailItemStub[] result;
+
+		result = new MailItemStub[parrSource.length];
+
+		for (int i = 0; i < result.length; i++ )
+		{
+			result[i] = new MailItemStub();
+
 			try {
 				
-				larrResults[start].id = folders[u].getName(); 
-				larrResults[start].isFolder = true;
-				larrResults[start].isFromMe = false;
-				larrResults[start].subject = folders[u].getName();
-				larrResults[start].from = null;
-				larrResults[start].timestamp = null;
-				larrResults[start].attachmentCount = -1;
-				larrResults[start].bodyPreview = null;
-				larrResults[start].folderId = folders[u].getFullName();
-				larrResults[start].isParentFolder = false; 
-				larrResults[start].parentFolderId = 
-						(current == null || (current.isParentFolder && current.parentFolderId==null)) ? null : 
-						(current.isParentFolder && current.parentFolderId!=null) ? current.parentFolderId : current.folderId;
+				String tempFolderName = parrSource[i].getFullName();
+				String cleanName = tempFolderName;
+				
+				result[i].id = tempFolderName; 
+				result[i].isFolder = true;
+				result[i].isFromMe = false;
+				result[i].subject = cleanName;
+				result[i].from = null;
+				result[i].timestamp = null;
+				result[i].bodyPreview = null;
+				result[i].folderId = tempFolderName;
+				result[i].isParentFolder = false; 
+				result[i].parentFolderId = null;
+				
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
 		}
-		
-		return larrResults;
-	}
 
-	/**
-	 * This method gets the "back" folder, when navigating in the mail folders
-	 */
-	private static String getBackFolder(String parentFolderId) {
-		
-		String[] parts = parentFolderId.split("/");
-		
-		String result = "";
-		
-		for (int i=0;i<parts.length - 1;i++) {
-			if (result.length() > 0) {
-				result = result + "/";
-			}
-			result = result + parts[i];
-		}
-		
-		if (result.length() == 0) {
-			return null;
+		try {
+			storeFolders(result);
+		} catch (SessionExpiredException e) {
+			// Unable to store... no problem
 		}
 		
 		return result;
 	}
-
+	
 	/**
-	 * Gets the initial items in a mailbox (corresponding to inbox)
+	 * Counts the number of attachments in a message
+	 */
+	private static int attachmentsNumber(Message msg) throws BigBangException {
+
+		try {
+			if (msg.isMimeType("multipart/mixed")) {
+				Multipart mp = (Multipart)msg.getContent();
+				return mp.getCount();
+			}
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
+		return 0;
+	}
+	
+	
+	/**
+	 * Gets the initial/most used folders, as defined in the constants
+	 * No call to the mail service is needed, so it can make the process faster.
 	 */
 	public MailItemStub[] getItems()
 		throws SessionExpiredException, BigBangException
 	{
-		Message[] larrItems;
-
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
-
-		try {
-			larrItems = MailConnector.getMails(null, false);
-		}
-		catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return sToClient(larrItems);
-	}
-
-	public MailItemStub[] getItemsAll()
-		throws SessionExpiredException, BigBangException
-	{
 		
-		return getItemsAll(null);
+		MailItemStub[] result = new MailItemStub[Constants.GoogleAppsConstants.INITIAL_FOLDERS.length];
+		
+		// Iterates the folders defined as the ones to display in the initial
+		// page, and creates MailItemStubs for them
+		for (int i=0; i<Constants.GoogleAppsConstants.INITIAL_FOLDERS.length; i++) {
+			String tempFolderName = Constants.GoogleAppsConstants.INITIAL_FOLDERS[i];
+			String cleanName = tempFolderName;
+			if (tempFolderName.contains(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME)) {
+				cleanName = cleanName.substring(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME.length() + 1);
+			}
+			result[i] = new MailItemStub();
+			result[i].id = tempFolderName; 
+			result[i].isFolder = true;
+			result[i].isFromMe = false;
+			result[i].subject = cleanName;
+			result[i].from = null;
+			result[i].timestamp = null;
+			result[i].attachmentCount = -1;
+			result[i].bodyPreview = null;
+			result[i].folderId = tempFolderName;
+			result[i].isParentFolder = false; 
+			result[i].parentFolderId = null;
+		}
+		
+		try {
+			storeFolders(result);
+		} catch (SessionExpiredException e) {
+			// Unable to store... no problem
+		}
+		
+		return result;
 	}
 	
+	public MailItemStub[] getItemsAll() throws BigBangException, SessionExpiredException {
+		
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+		
+		Folder [] folders = null;
+		
+		try {
+			folders = MailConnector.getAllFolders();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
+		
+		MailItemStub[] folderItems = null;
+		
+		if (folders != null && folders.length > 0) {
+			folderItems = foldersToClient(folders);
+			closeFolderAndStore(folders[0]);
+		}
+		
+		return folderItems;
+	}
+
 	/**
 	 * Gets all items and folders in root
 	 */
-	private MailItemStub[] getItemsAll(MailItemStub current)
+	public MailItemStub[] getFolder(MailItemStub current)
 			throws SessionExpiredException, BigBangException
 		{
 			Message[] items;
-			Folder[] folders;
 			
-			String folderId = current == null ? null : 
-				current.isParentFolder ? current.parentFolderId : current.folderId;
+			String folderId = current.folderId;
 
 			if ( Engine.getCurrentUser() == null )
 				throw new SessionExpiredException();
 
 			try {
-				items = MailConnector.getMails(folderId, false);
-				folders = MailConnector.getFolders(folderId);
+				items = MailConnector.getMailsFast(folderId, false);
 			}
 			catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			MailItemStub[] mailItems = items==null ? null : sToClient(items);
-			MailItemStub[] folderItems = (folders==null && current == null) ? null : sToClient(current, folders);
+			MailItemStub[] mailItems = null;
 			
-			return ArrayUtils.addAll(folderItems, mailItems);
+			mailItems = messagesToClient(items);
+			
+			if (items != null && items.length > 0) {
+				closeFolderAndStore((MimeMessage) items[0]);
+			}
+			
+			return mailItems;
 		}
-	
-	@Override
-	public MailItemStub[] getFolder(MailItemStub current) throws SessionExpiredException, BigBangException {
-		return getItemsAll(current);
-	}
 
 	/**
 	 * Gets a given item in a given folder
@@ -269,12 +289,12 @@ public class MailServiceImpl
 	public MailItem getItem(String folderId, String id)
 		throws SessionExpiredException, BigBangException
 	{
-		MimeMessage lobjItem;
-		MailItem lobjResult;
-		String lstrFrom;
-		ArrayList<AttachmentStub> larrStubs;
-		AttachmentStub lobjAttStub;
-		String lstrBody;
+		MimeMessage mailMessage;
+		MailItem result;
+		String from;
+		ArrayList<AttachmentStub> attStubsList;
+		AttachmentStub attachmentStub;
+		String body;
 		Map<String, BodyPart> attachmentsMap = null;
 
 		if ( Engine.getCurrentUser() == null )
@@ -282,45 +302,43 @@ public class MailServiceImpl
 
 		try
 		{
-			lobjItem = (MimeMessage) MailConnector.getMessage(id, folderId);
+			mailMessage = (MimeMessage) MailConnector.getMessage(id, folderId);
+			
+			MailConnector.storeLastMessage(mailMessage);
 
-			lobjResult = new MailItem();
-			lobjResult.folderId = lobjItem.getFolder().getFullName();
-			lobjResult.id = lobjItem.getMessageID();
-			lobjResult.isFolder = false;
-			lobjResult.subject = lobjItem.getSubject();
-			InternetAddress address = (InternetAddress) (lobjItem.getFrom() == null ? null : lobjItem.getFrom()[0]);
-			lstrFrom = address == null ? "" : address.getAddress();
-			lobjResult.from = lstrFrom.length()>0 ? lstrFrom : null;
-			lobjResult.isFromMe = (lstrFrom.length()>0 && lstrFrom.equals(MailConnector.getUserEmail()));
+			result = new MailItem();
+			result.folderId = mailMessage.getFolder().getFullName();
+			result.id = mailMessage.getMessageID();
+			result.isFolder = false;
+			result.subject = mailMessage.getSubject();
+			InternetAddress address = (InternetAddress) (mailMessage.getFrom() == null ? null : mailMessage.getFrom()[0]);
+			from = address == null ? "" : address.getAddress();
+			result.from = from.length()>0 ? from : null;
+			result.isFromMe = (from.length()>0 && from.equals(MailConnector.getUserEmail()));
 			
-			lobjResult.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getSentDate());
+			result.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailMessage.getSentDate());
 			
-			attachmentsMap = MailConnector.getAttachmentsMap(lobjItem);
+			attachmentsMap = MailConnector.getAttachmentsMap(mailMessage);
 			
-			lobjResult.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
-			Object content = lobjItem.getContent();
-			larrStubs = new ArrayList<AttachmentStub>();
+			result.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
+			Object content = mailMessage.getContent();
+			attStubsList = new ArrayList<AttachmentStub>();
 			
 			try
 			{
 				if (content instanceof Multipart && attachmentsMap != null) {
-					lstrBody = attachmentsMap.get("main").getContent().toString();
-					lstrBody = MailConnector.prepareBodyInline(lstrBody, attachmentsMap);
-					lobjResult.body = lstrBody;
-					lobjResult.bodyPreview = lobjResult.subject;
+					body = attachmentsMap.get("main").getContent().toString();
+					body = MailConnector.prepareBodyInline(body, attachmentsMap);
+					result.body = body;
 				} else {
-					lstrBody = content.toString();
-					lobjResult.body = MailConnector.prepareSimpleBody(lstrBody);
+					body = content.toString();
+					result.body = MailConnector.prepareSimpleBody(body);
 				}
-				lstrBody = MailConnector.removeHtml(lstrBody);
-				if ( lstrBody.length() > 170 ) {
-					lobjResult.bodyPreview = lstrBody.substring(0, 170);
-				}
+				body = MailConnector.removeHtml(body);
 			}
 			catch (Throwable e)
 			{
-				lobjResult.bodyPreview = "(Erro interno do servidor de Email.)";
+				result.bodyPreview = "(Erro interno do servidor de Email.)";
 			}
 			
 			if (attachmentsMap != null) {
@@ -329,24 +347,48 @@ public class MailServiceImpl
 				attachmentsMap.remove("main");
 				
 				for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
-				    lobjAttStub = new AttachmentStub();
-				    lobjAttStub.id = entry.getKey();
-					lobjAttStub.fileName = entry.getValue().getFileName();
+				    attachmentStub = new AttachmentStub();
+				    attachmentStub.id = entry.getKey();
+					attachmentStub.fileName = entry.getKey();
 					String contentType = entry.getValue().getContentType();
-					lobjAttStub.mimeType = contentType!=null ? contentType.split(";")[0] : null;
-					lobjAttStub.size = entry.getValue().getSize();
-					larrStubs.add(lobjAttStub);
+					attachmentStub.mimeType = contentType!=null ? contentType.split(";")[0] : null;
+					attachmentStub.size = entry.getValue().getSize();
+					attStubsList.add(attachmentStub);
 				}
 				
-				lobjResult.attachments = larrStubs.toArray(new AttachmentStub[larrStubs.size()]);
+				result.attachments = attStubsList.toArray(new AttachmentStub[attStubsList.size()]);
+				
 			}
+			
+			closeFolderAndStore(mailMessage);
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return lobjResult;
+		return result;
+	}
+
+	protected void closeFolderAndStore(MimeMessage lobjItem)
+			throws BigBangException {
+	/*	try {
+			Store storeRef = lobjItem.getFolder().getStore();
+			lobjItem.getFolder().close(false);
+			storeRef.close();
+		} catch (Throwable e){
+			throw new BigBangException(e.getMessage(), e);
+		}	 */
+	}
+	
+	protected void closeFolderAndStore(Folder lobjItem)
+			throws BigBangException {
+	/*	try {
+			Store storeRef = lobjItem.getStore();
+			storeRef.close();
+		} catch (Throwable e){
+			throw new BigBangException(e.getMessage(), e);
+		}	*/
 	}
 
 	/**
@@ -438,5 +480,54 @@ public class MailServiceImpl
 		lobjResult.parameters = new DocInfo[0];
 
 		return lobjResult;
+	}
+	
+	/**
+	 * This method "stores" in memory the users' folders list
+	 */
+	private static void storeFolders(MailItemStub[] folders) throws 
+		SessionExpiredException, BigBangException {
+		
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+		
+		if (storedFoldersByUser == null) {
+			storedFoldersByUser = new HashMap<String, MailItemStub[]>();
+		}
+		
+		try {
+			String userMail = MailConnector.getUserEmail();
+			storedFoldersByUser.put(userMail, folders);
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}		
+	}
+	
+	/**
+	 * This method returns the stored users' folders list
+	 */
+	public MailItemStub[] getStoredFolders() throws BigBangException, SessionExpiredException {
+		
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+		
+		MailItemStub[] result = null; 
+				
+		if (storedFoldersByUser == null) {
+			storedFoldersByUser = new HashMap<String, MailItemStub[]>();
+		}
+		
+		try {
+			String userMail = MailConnector.getUserEmail();
+			result = storedFoldersByUser.get(userMail);
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
+		}
+				
+		if (result == null) {
+			return getItemsAll();
+		}
+		
+		return result;
 	}
 }

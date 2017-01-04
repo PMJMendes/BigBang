@@ -1,6 +1,7 @@
 package bigBang.library.interfaces;
 
 import bigBang.definitions.shared.Document;
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.shared.MailItem;
 import bigBang.library.shared.MailItemStub;
 
@@ -15,4 +16,5 @@ public interface MailServiceAsync
 	void getItem(String folderId, String id, AsyncCallback<MailItem> callback);
 	void getAttAsDoc(String emailId, String folderId, String attachmentId, AsyncCallback<Document> callback);
 	void getAttAsDocFromStorage(String storageId, String attachmentId, AsyncCallback<Document> callback);
+	void getStoredFolders(AsyncCallback<MailItemStub[]> callback);
 }

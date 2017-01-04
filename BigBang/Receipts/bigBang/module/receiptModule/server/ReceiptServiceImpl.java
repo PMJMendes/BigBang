@@ -101,6 +101,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ValidateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.VoidInternal;
 import com.premiumminds.BigBang.Jewel.SysObjects.ImageHelper;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.PDFHelper;
 
 public class ReceiptServiceImpl
@@ -1480,7 +1481,7 @@ public class ReceiptServiceImpl
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Receipt,
-				lobjReceipt.getKey(), Constants.MsgDir_Outgoing);
+				lobjReceipt.getKey(), Constants.MsgDir_Outgoing, null);
 
 		try
 		{
@@ -1523,7 +1524,7 @@ public class ReceiptServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 1527 ", e);
 		}
 
 		lopCC = new CreateConversation(lobjReceipt.GetProcessID());
@@ -1539,8 +1540,15 @@ public class ReceiptServiceImpl
 		lopCC.mobjData.mdtDueDate = ldtLimit;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
+		
+		javax.mail.Message storedMessage = null;
+		try {
+			storedMessage = MailConnector.getStoredMessage();
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage() + " 1548 ", e);
+		}
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Receipt,
-				lobjReceipt.getKey(), lopCC.mobjData.midStartDir);
+				lobjReceipt.getKey(), lopCC.mobjData.midStartDir, storedMessage);
 
 		try
 		{
@@ -1548,7 +1556,7 @@ public class ReceiptServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getMessage() + " 1559 ", e);
 		}
 
 		return ConversationServiceImpl.sGetConversation(lopCC.mobjData.mid);

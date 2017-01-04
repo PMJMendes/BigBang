@@ -278,7 +278,11 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ocorreu um erro ao enviar avisos de cobrança"), TYPE.ALERT_NOTIFICATION));				
+				String mensagem = "";
+				for (ResponseError tmp : errors) {
+					mensagem = mensagem + tmp.description + "\n";
+				}
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ocorreu um erro ao enviar avisos de cobrança\n" +  mensagem), TYPE.ALERT_NOTIFICATION));				
 			}
 		});
 

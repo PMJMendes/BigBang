@@ -83,7 +83,7 @@ public abstract class CreateConversationBase
 		AgendaItem lobjAgendaItem;
 		Map<String, String> larrAttTrans;
 
-		if ( (mobjData.marrMessages == null) || (mobjData.marrMessages.length != 1) )
+		if ( (mobjData.marrMessages == null) || (mobjData.marrMessages.length != 1))
 			throw new JewelPetriException("Erro: Tem que indicar a mensagem inicial.");
 
 		if ( mobjData.mstrSubject == null )
@@ -230,7 +230,7 @@ public abstract class CreateConversationBase
 		}
 		catch (Throwable e)
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + " 233 ", e);
 		}
 
 		larrUsers = new HashSet<UUID>();
@@ -264,7 +264,7 @@ public abstract class CreateConversationBase
 				}
 				catch (Throwable e)
 				{
-					throw new JewelPetriException(e.getMessage(), e);
+					throw new JewelPetriException(e.getMessage() + " 267 ", e);
 				}
 	    	}
 		}
@@ -279,12 +279,16 @@ public abstract class CreateConversationBase
 		{
 			try
 			{
-				if ( mobjData.marrMessages[0].mstrEmailID != null )
-				{
-					javax.mail.Message mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID);
+				if ( mobjData.marrMessages[0].mstrEmailID != null ) {
+					
+					javax.mail.Message mailMsg = MailConnector.getStoredMessage(); 
+					if (mailMsg == null) {
+						mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID);
+					}
+					
 					Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
-					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mailMsg,
-							mailAttachments);
+					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID,
+							mailMsg, mailAttachments);
 					mobjData.marrMessages[0].mstrEmailID = larrAttTrans.get("_");
 					Object content = mailMsg.getContent();
 					String tmpBody;
@@ -296,7 +300,7 @@ public abstract class CreateConversationBase
 						tmpBody = MailConnector.prepareSimpleBody(tmpBody);
 					}					
 					
-					mobjData.marrMessages[0].mstrBody = tmpBody;
+					mobjData.marrMessages[0].mstrBody = tmpBody; // TODO é igual ao que já está... para que é que faço set?
 					mobjData.marrMessages[0].ToObject(lobjMessage);
 					lobjMessage.SaveToDb(pdb);
 
@@ -311,7 +315,7 @@ public abstract class CreateConversationBase
 					}
 
 					// Calls the method responsble for updating the message to google storage.
-					StorageConnector.uploadMailMessage(mailMsg, mobjData.marrMessages[0].mstrEmailID);
+					StorageConnector.uploadMailMessage(mailMsg, mobjData.marrMessages[0].mstrEmailID); //TODO aqui é que é necessário ter a mensagem, "caramba"
 					
 				}
 				else

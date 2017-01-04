@@ -8,11 +8,11 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.CheckedStateChangedEvent;
 import bigBang.library.client.event.CheckedStateChangedEventHandler;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.MailItemSelectionToolbar;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.MailItemSelectionToolbar;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.form.MailItemForm;
 import bigBang.library.client.userInterface.presenter.MailItemSelectionViewPresenter;
@@ -39,6 +39,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class MailItemSelectionView extends View implements MailItemSelectionViewPresenter.Display{
 
 	FilterableList<MailItemStub> emails;
+	FilterableList<MailItemStub> storedFolders;
 	FilterableList<AttachmentStub> attachments;
 	MailItemForm centerForm;
 	private ActionInvokedEventHandler<Action> actionHandler;
@@ -81,8 +82,6 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 				filename = getFormatedLabel();
 				filename.getElement().getStyle().setFontSize(11, Unit.PX);
 
-
-
 				VerticalPanel wrapper = new VerticalPanel();
 				this.setWidget(wrapper);
 
@@ -100,9 +99,6 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 						event.stopPropagation();
 					}
 				});
-
-
-
 
 				addCheckedStateChangedEventHandler(new CheckedStateChangedEventHandler() {
 
@@ -267,7 +263,8 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 		VerticalPanel leftWrapper = new VerticalPanel();
 		leftWrapper.setSize("100%", "100%");
 		header = new ListHeader("Lista de E-mails");
-		header.showNewButton("Obter todos (lento)");
+		//header.showNewButton("Obter todos (lento)");
+		header.showNewButton("Todas as Pastas");
 		header.showRefreshButton();
 		header.getNewButton().setEnabled(false);
 		header.getNewButton().setVisible(true);		
@@ -441,6 +438,4 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 	public void clearList() {
 		emails.clear();		
 	}
-
-
 }

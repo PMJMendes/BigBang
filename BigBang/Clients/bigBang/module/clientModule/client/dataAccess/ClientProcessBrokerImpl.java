@@ -510,7 +510,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not send the message")		
+						new String("Could not receive the message " + caught.getMessage() + " " + caught.getCause() + " " + caught.getClass())
 				});	
 				super.onResponseFailure(caught);
 			}

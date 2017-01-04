@@ -13,6 +13,7 @@ import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
 
 import org.apache.poi.util.IOUtils;
 
@@ -50,7 +51,7 @@ public class StorageConnector {
 			outputStream.close();
 
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " 54 ", e);
 		}
 
 		if (tempEmlFile != null) {
@@ -62,8 +63,8 @@ public class StorageConnector {
 	 * Creates a temporary file
 	 */
 	private static File createTemporaryFile(String prefix, String suffix) {
-		String tempDir = System.getProperty("java.io.tmpdir")
-				+ Constants.GoogleAppsConstants.TMP_FOLDER;
+		String tempDir = System.getProperty("java.io.tmpdir");
+				//+ Constants.GoogleAppsConstants.TMP_FOLDER;
 		String fileName = (prefix != null ? prefix : "")
 				+ (suffix != null ? suffix : "");
 		return new File(tempDir, fileName);
@@ -123,7 +124,7 @@ public class StorageConnector {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 		
-		return MailConnector.messageToData(fetchedMessage);
+		return MailConnector.messageToData(fetchedMessage, fileId);
 	}
 	
 	/**
@@ -223,18 +224,22 @@ public class StorageConnector {
 		// Creates the array to return
 		FileXfer result = null;
 		
-		for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
-			if (entry.getKey().equals(attachmentId)) { 
-				try {
-					byte[] binaryData = IOUtils.toByteArray(entry.getValue().getInputStream());
-					String contentType = entry.getValue().getContentType().split(";")[0];
-					result = new FileXfer(binaryData.length, contentType, entry.getKey(), new ByteArrayInputStream(binaryData));
-				} catch (Throwable e) {
-					throw new BigBangJewelException(e.getMessage(), e);
+		try {
+			for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
+				if (MimeUtility.decodeText(entry.getKey()).equals(MimeUtility.decodeText(attachmentId))) { 
+					try {
+						byte[] binaryData = IOUtils.toByteArray(entry.getValue().getInputStream());
+						String contentType = entry.getValue().getContentType().split(";")[0];
+						result = new FileXfer(binaryData.length, contentType, entry.getKey(), new ByteArrayInputStream(binaryData));
+					} catch (Throwable e) {
+						throw new BigBangJewelException(e.getMessage(), e);
+					}
+					break;
 				}
-				break;
 			}
-		}
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		} 
 		
 		return result;
 	}

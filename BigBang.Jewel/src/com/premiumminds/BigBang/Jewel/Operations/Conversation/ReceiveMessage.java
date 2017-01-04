@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.mail.BodyPart;
+import javax.mail.Multipart;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
@@ -22,6 +25,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
 public class ReceiveMessage
 	extends UndoableOperation
@@ -107,7 +111,7 @@ public class ReceiveMessage
 		catch (Throwable e)
 		{
 			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + " 114 ", e);
 		}
 
 		try
@@ -120,7 +124,7 @@ public class ReceiveMessage
 		}
 		catch (Throwable e)
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + " 127 ", e);
 		}
 
 		lobjConv = (Conversation)GetProcess().GetData();
@@ -158,7 +162,7 @@ public class ReceiveMessage
 		}
 		catch (Throwable e)
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + "165 ", e);
 		}
 
 		if ( mobjData.mobjDocOps != null )
@@ -258,16 +262,32 @@ public class ReceiveMessage
 		}
 		catch (Throwable e)
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			throw new JewelPetriException(e.getMessage() + " 265 ", e);
 		}
 
 		if ( mobjData.mstrEmailID != null )
 		{
 			try
 			{
-				larrAttTrans = MailConnector.processItem(mobjData.mstrEmailID, null, null);
+				javax.mail.Message mailMsg = MailConnector.getStoredMessage(); 
+				if (mailMsg == null) {
+					mailMsg = MailConnector.getMessage(mobjData.mstrEmailID, mobjData.mstrFolderID);
+				}
+				
+				Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
+				Object content = mailMsg.getContent();
+				String tmpBody;
+				if (content instanceof Multipart && mailAttachments != null) {
+					tmpBody = mailAttachments.get("main").getContent().toString();
+					tmpBody = MailConnector.prepareBodyInline(tmpBody, mailAttachments);
+				} else {
+					tmpBody = content.toString();
+					tmpBody = MailConnector.prepareSimpleBody(tmpBody);
+				}		
+				
+				larrAttTrans = MailConnector.processItem(mobjData.mstrEmailID, mobjData.mstrFolderID, mailMsg, mailAttachments);
 				mobjData.mstrEmailID = larrAttTrans.get("_");
-				mobjData.mstrBody = null;
+				mobjData.mstrBody = tmpBody;
 				mobjData.ToObject(lobjMessage);
 				lobjMessage.SaveToDb(pdb);
 
@@ -275,16 +295,18 @@ public class ReceiveMessage
 				{
 					for ( i = 0; i < mobjData.marrAttachments.length; i++ )
 					{
-						mobjData.marrAttachments[i].mstrAttId = larrAttTrans.get(mobjData.marrAttachments[i].mstrAttId);
 						lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrAttachments[i].mid);
 						mobjData.marrAttachments[i].ToObject(lobjAttachment);
 						lobjAttachment.SaveToDb(pdb);
 					}
 				}
+				
+				// Calls the method responsble for updating the message to google storage.
+				StorageConnector.uploadMailMessage(mailMsg, mobjData.mstrEmailID);
 			}
 			catch (Throwable e)
 			{
-				throw new JewelPetriException(e.getMessage(), e);
+				throw new JewelPetriException(e.getMessage() + " 309 ", e);
 			}
 		}
 	}
