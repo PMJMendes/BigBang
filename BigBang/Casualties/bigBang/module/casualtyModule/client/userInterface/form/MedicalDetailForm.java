@@ -27,7 +27,7 @@ public class MedicalDetailForm extends FormView<MedicalDetail>{
 
 		startDate = new DatePickerFormField("Data de início");
 		disabilityType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DISABILITY_TYPE, "Tipo de baixa");
-		disabilityLocation = new TextBoxFormField("Local da baixa");
+		disabilityLocation = new TextBoxFormField("Notas/Observações");
 		disabilityPercent = new NumericTextBoxFormField("Percentagem de incapacidade", false);
 		disabilityPercent.setUnitsLabel("%");
 		endDate = new DatePickerFormField("Data de fim");

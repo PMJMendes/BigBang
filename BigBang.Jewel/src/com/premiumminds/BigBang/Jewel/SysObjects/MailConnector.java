@@ -868,8 +868,16 @@ public class MailConnector {
 				
 				// Gets the encoded base-64 String, ready to be used in HTML's IMG's SRC
 				try {
-					byte[] binaryData = IOUtils.toByteArray(imageBodyPart.getInputStream());
+					byte[] binaryData = null;
+					try {
+						binaryData = IOUtils.toByteArray(imageBodyPart.getInputStream());
+					} catch (DecodingException d) {
+						// Removes the inline image from the attachments
+						attachmentsMap.remove(prevImg);
+						continue;
+					}
 					String encodedString = Base64.encodeBase64String(binaryData);
+					
 					String dataType = imageBodyPart.getContentType();
 					String[] splittedType = dataType.split(";");
 					dataType = "data:" + splittedType[0] + ";base64,"; 

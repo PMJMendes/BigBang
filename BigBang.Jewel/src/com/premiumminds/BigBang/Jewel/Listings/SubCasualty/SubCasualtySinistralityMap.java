@@ -331,7 +331,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			// Sets the sub-casualty's insured object, if possible
 			if (subCasualty.GetObjectName() != null) {
 				String objectName = subCasualty.GetObjectName();
-				if (subCasualty.GetSubLine().getLine().getCategory()
+				if (subCasualty.GetSubLine().getLine().getCategory().getKey()
 						.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
 					objectName = WordUtils.capitalizeFully(objectName);
 				}
@@ -375,6 +375,10 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 				BigDecimal deductible = BigDecimal.ZERO;
 				BigDecimal settlement = BigDecimal.ZERO;
+				
+				// needed to identify if there's no value for all, in case a '-' must be outputted, and not a 0
+				boolean allDeductibleNull = true;
+				boolean allSettlementNull = true;
 
 				// The settlement and deductible is the sum from all
 				// sub-casualty's items
@@ -384,20 +388,16 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				for (int i = 0; i < currentItems.length; i++) {
 					SubCasualtyItem temp = currentItems[i];
 					// Indemnização
-					if (settlement != null
-							&& temp.getAt(SubCasualtyItem.I.SETTLEMENT) != null) {
+					if (temp.getAt(SubCasualtyItem.I.SETTLEMENT) != null) {
 						settlement = settlement.add((BigDecimal) temp
 								.getAt(SubCasualtyItem.I.SETTLEMENT));
-					} else {
-						settlement = null;
+						allSettlementNull = false;
 					}
 					// Franquia
-					if (deductible != null
-							&& temp.getAt(SubCasualtyItem.I.DEDUCTIBLE) != null) {
+					if (temp.getAt(SubCasualtyItem.I.DEDUCTIBLE) != null) {
 						deductible = deductible.add((BigDecimal) temp
 								.getAt(SubCasualtyItem.I.DEDUCTIBLE));
-					} else {
-						deductible = null;
+						allDeductibleNull = false;
 					}
 				}
 
@@ -406,11 +406,18 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					settlement = null;
 					deductible = null;
 				}
+				
+				if (allDeductibleNull) {
+					deductible = null;
+				}
+				if (allSettlementNull) {
+					settlement = null;
+				}
 
 				// Special case to work accidents
-				if (subCasualty.GetSubLine().getLine().getCategory()
+				if (subCasualty.GetSubLine().getLine().getCategory().getKey()
 						.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
-					settlement = getSettlementFromMedicalFiles(subCasualty);
+					settlement = getSettlementFromMedicalFiles(subCasualty, settlement);
 				}
 				if (settlement != null) {
 					setSettlement(String.format("%,.2f",
@@ -431,13 +438,14 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		 * If it is a work-accidents' policy, the settlement is the sum of the
 		 * benefits from the medical details, from the medical files
 		 */
-		private BigDecimal getSettlementFromMedicalFiles(SubCasualty subCasualty)
+		private BigDecimal getSettlementFromMedicalFiles(SubCasualty subCasualty, BigDecimal prevValue)
 				throws BigBangJewelException {
 
 			IEntity filesEntity;
 			MasterDB database;
 			ResultSet fetchedFiles;
-			BigDecimal result = BigDecimal.ZERO;
+			BigDecimal result = prevValue==null ? BigDecimal.ZERO : prevValue;
+			boolean allResultNull = true;
 
 			try {
 				filesEntity = Entity.GetInstance(Engine.FindEntity(
@@ -454,7 +462,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 						new java.lang.Object[] { subCasualty.getKey() },
 						new int[] { MedicalFile.I.REFERENCE });
 				if (fetchedFiles == null) {
-					return null;
+					if (prevValue==null) {
+						return null;
+					} else {
+						return prevValue;
+					}
 				}
 			} catch (Throwable e) {
 				try {
@@ -469,11 +481,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					for (MedicalDetail tmp : (MedicalFile.GetInstance(
 							Engine.getCurrentNameSpace(), fetchedFiles)
 							.GetCurrentDetails())) {
-						if (tmp.getAt(MedicalDetail.I.BENEFITS) == null) {
-							return null;
-						}
-						result = result.add((BigDecimal) tmp
+						if (tmp.getAt(MedicalDetail.I.BENEFITS) != null) {
+							result = result.add((BigDecimal) tmp
 								.getAt(MedicalDetail.I.BENEFITS));
+							allResultNull = false;
+						}
 					}
 				}
 			} catch (Throwable e) {
@@ -504,6 +516,9 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
+			if(allResultNull==true && prevValue==null) {
+				return null;
+			}
 			return result;
 		}
 	}

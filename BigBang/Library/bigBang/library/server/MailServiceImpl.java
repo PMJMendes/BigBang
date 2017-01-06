@@ -339,6 +339,7 @@ public class MailServiceImpl
 			catch (Throwable e)
 			{
 				result.bodyPreview = "(Erro interno do servidor de Email.)";
+				result.body = "(Erro interno do servidor de Email.)";
 			}
 			
 			if (attachmentsMap != null) {
