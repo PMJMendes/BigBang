@@ -727,11 +727,11 @@ public abstract class DetailedBase
 
 				if ( marrSubCoverages[i].GetCoverage().IsHeader() )
 					continue;
-				if ( marrSubCoverages[i].IsPresent() == null )
-					pstrBuilder.append("O indicador de presença da cobertura '").append(marrCoverages[i].GetCoverage().getLabel()).
+				if ( marrSubCoverages[i].IsPresent() == null ) 
+					pstrBuilder.append("O indicador de presença da cobertura '").append(marrSubCoverages[i].GetCoverage().getLabel()).
 							append("' não está preenchido.\n");
 				else if ( marrSubCoverages[i].GetCoverage().IsMandatory() && !marrSubCoverages[i].IsPresent())
-					pstrBuilder.append("A cobertura '").append(marrCoverages[i].GetCoverage().getLabel()).
+					pstrBuilder.append("A cobertura '").append(marrSubCoverages[i].GetCoverage().getLabel()).
 							append("' é obrigatória mas não está presente.\n");
 			}
 
