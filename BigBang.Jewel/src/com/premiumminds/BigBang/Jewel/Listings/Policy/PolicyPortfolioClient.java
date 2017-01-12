@@ -96,7 +96,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		public void setCoverages(PolicyCoverage[] policyCoverages) {
 
 			if (policyCoverages == null || policyCoverages.length == 0) {
-				coverages.add(" ");
+				coverages.add(WHITESPACE);
 			}
 			for (int i = 0; i < policyCoverages.length; i++) {
 				// Only inserts the coverages present at the policy
@@ -133,6 +133,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 	// A "Faux-id" used when there is no insured object associated with a policy
 	private UUID fauxId;
+	
+	// An id for the special cases where we "skip" the object information
+	private UUID skipId = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
 	// Width Constants
 	private static final int POLICY_WIDTH = 100;
@@ -165,6 +168,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	public static final String FRAC_MONTH    	= "Mensal";
 	public static final String FRAC_UNIQUE  	= "Única";
 	public static final String FRAC_FRACTIONED 	= "Fraccionada";
+	
+	public static final String MULTIPLE_M		= "Diversos";
+	public static final String MULTIPLE_F		= "Diversas";
+	public static final String NO_VALUE			= "-";
+	public static final String WHITESPACE		= " ";
 	
 	public static final String ESCAPE_CHARACTER = "|_|_|";
 	
@@ -349,7 +357,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		
 		// Filters by client (if defined in the interface)
 		if (reportParams[0] == null && reportParams[1] == null) {
-			throw new BigBangJewelException("Deve definir-se o Cliente ou Grupo de Clientes a que o relatório se refere");
+			throw new BigBangJewelException(
+					"Deve definir-se o Cliente ou Grupo de Clientes a que o relatório se refere");
 		}
 
 		try {
@@ -558,8 +567,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			columnFull[paramCount++] = "Fraccionamento";
 		}
 		if (reportParams[10].equals("1")) {
-			columnLabels[paramCount] = "Taxa Com.";
-			columnFull[paramCount++] = "Taxa Comercial";
+			columnLabels[paramCount] = "T/P Com.";
+			columnFull[paramCount++] = "Taxa/Prémio Comercial";
 		}
 		if (reportParams[11].equals("1")) {
 			columnLabels[paramCount] = "Franq.";
@@ -660,7 +669,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			ReportBuilder.styleCell(cells[1], topRow, false);
 		}
 		row = ReportBuilder.buildRow(cells);
-		ReportBuilder.styleRow(row, false);
+		row.setStyle("height:30px;background:#e6e6e6;");
 
 		return row;
 	}
@@ -767,9 +776,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		ReportBuilder.styleRow(tableRows[0], true);
 
 		// Iterates the hashmap with the several policies by "ramo", and creates
-		// a line
-		// with the name of that "ramo", followed by the information about the
-		// policies
+		// a line with the name of that "ramo", followed by the information
+		// about the policies
 		for (int i=0; i<ORDERED_SUBLINES.length; i++) {
 			String [] sublineTemp = ORDERED_SUBLINES[i];
 			String titleTemp = CATEGORY_TRANSLATOR.get(sublineTemp[0]);
@@ -854,24 +862,24 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (policyParams.get(paramCheck++).equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Apólice",
 					TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			styleCenteredCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Segurador",
 					TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			styleCenteredCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
 			cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Venc.", "(M / D)"));
-			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			styleCenteredCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Frac.",
 					TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			styleCenteredCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (innerObjs > 0) {
@@ -879,18 +887,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
 			cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Prémio Total", "Anual"));
-			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			styleCenteredCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
 			cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Modalidade de", "Pagamento"));
-			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			styleCenteredCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 		if (policyParams.get(paramCheck++).equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Observações",
 					TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(cells[cellNumber++], false, leftLine);
+			styleCenteredCell(cells[cellNumber++], false, leftLine);
 			leftLine = true;
 		}
 
@@ -955,8 +963,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		TD[] dataCells = new TD[cellNumber];
 
 		// Variables used to know which parameter is being checked for display,
-		// and which
-		// cell is being built
+		// and which cell is being built
 		cellNumber = 0;
 		int paramCheck = 0;
 
@@ -1056,7 +1063,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				
 		// Notes - intentionally left blank
 		if (policyParams.get(paramCheck++).equals("1")) {
-			dataCells[cellNumber] = ReportBuilder.buildCell(" ",
+			dataCells[cellNumber] = ReportBuilder.buildCell(WHITESPACE,
 					TypeDefGUIDs.T_String);
 			ReportBuilder.styleCell(dataCells[cellNumber++], true, leftLine);
 			leftLine = true;
@@ -1128,31 +1135,31 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Pessoas/Bens Seguros",
 					TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+			styleCenteredCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Local de Risco",
 					TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+			styleCenteredCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Coberturas",
 					TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+			styleCenteredCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Capital",
 					TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+			styleCenteredCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Taxa", "Com."));
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+			cells[cellNumber] = cells[cellNumber] = new TD(buildDoubleHeaderTitle ("T/P", "Com."));
+			styleCenteredCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
 			cells[cellNumber] = ReportBuilder.buildCell("Franq.",
 					TypeDefGUIDs.T_String);
-			ReportBuilder.styleCell(cells[cellNumber++], false, true);
+			styleCenteredCell(cells[cellNumber++], false, true);
 		}
 
 		setInnerWidths(cells, reportParams);
@@ -1236,14 +1243,46 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private HashMap<UUID, CoverageData> getValuesByObject(Policy policy)
 			throws BigBangJewelException {
 
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		UUID policyLine = policy.GetSubLine().getLine().getKey();
+		UUID policySubLine = policy.GetSubLine().getKey();
+		
 		PolicyObject[] policyObjects;
 
 		HashMap<UUID, CoverageData> result = new HashMap<UUID, CoverageData>();
 
 		policyObjects = policy.GetCurrentObjects();
-
+		
 		CoverageData coverageData;
-
+		
+		// Case in which the policy has no objects
+		if (policyObjects == null) {
+			coverageData = buildCoverageData(policy, null);
+			result.put(fauxId, coverageData);
+			return result;
+		}
+		
+		// Special Cases.
+		// In the following cases, the object name should read "Diversos". Most of the values will also read "Diversos".
+		if ((policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
+				&& policySubLine.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET)
+				&& policyObjects.length==1) ||
+			(policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) 
+				&& policyLine.equals(Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN)
+				&& hasMultipleObjects(policy)) ||
+			(policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) 
+				&& policyLine.equals(Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL)
+				&& hasMultipleObjects(policy)) || 
+			(policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) 
+				&& policyLine.equals(Constants.PolicyLines.OTHER_DAMAGES_LEASING)
+				&& hasMultipleObjects(policy)) ||
+			(policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) 
+				&& policyLine.equals(Constants.PolicyLines.ELECTRONIC_EQUIPMENT)
+				&& hasMultipleObjects(policy))) {
+			coverageData = buildSimplifiedCoverageData();
+			result.put(skipId, coverageData);
+		}
+			
 		// Iterates the policy's objects (if any)
 		// In case the policy does not have objects, it uses a "faux" object
 		for (int i = 0; i <= policyObjects.length; i++) {
@@ -1254,7 +1293,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			if (policyObjects.length != 0 && policyObjects.length > i) {
 				insuredObject = policyObjects.length == 0 ? null
 						: policyObjects[i];
-				objectKey = insuredObject.getKey();
+				objectKey = insuredObject==null ? fauxId : insuredObject.getKey();
 			} else {
 				insuredObject = null;
 				objectKey = fauxId; // faux
@@ -1276,6 +1315,22 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	}
 
 	/**
+	 * Special case where most coverage data simply says "Diversos" | "Diversas"
+	 */
+	private CoverageData buildSimplifiedCoverageData() {
+		
+		CoverageData coverageData = new CoverageData();
+		
+		coverageData.setCoverages(MULTIPLE_F);
+		coverageData.setRiskSite(NO_VALUE);
+		coverageData.setInsuredValues(new ArrayList<String>(Arrays.asList(MULTIPLE_F)));
+		coverageData.setTaxes(new ArrayList<String>(Arrays.asList(MULTIPLE_F)));
+		coverageData.setFranchises(new ArrayList<String>(Arrays.asList(MULTIPLE_F)));
+		
+		return coverageData;
+	}
+
+	/**
 	 * Builds a cell in a "safe way", meaning that if the value is null, the
 	 * cell is built simply with a whitespace, preventing cells with the '?'
 	 * character
@@ -1283,10 +1338,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private TD safeBuildCell(java.lang.Object pobjValue, UUID pidType, 
 			boolean addEuro, boolean alignRight) {
 		if (pobjValue == null || pobjValue.toString().trim().length() == 0) {
-			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			return ReportBuilder.buildCell(WHITESPACE, TypeDefGUIDs.T_String);
 		}
 		if (addEuro) {
-			String valueString = pobjValue + " €";
+			String valueString = pobjValue + " " + Utils.getCurrency();
 			return safeBuildCell(valueString, TypeDefGUIDs.T_String, false, alignRight);
 		}
 		return ReportBuilder.buildCell(pobjValue, pidType, alignRight);
@@ -1332,7 +1387,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		content.setColSpan(1);
 
 		if (data == null) {
-			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+			return ReportBuilder.buildCell(WHITESPACE, TypeDefGUIDs.T_String);
 		}
 
 		// Builds a "simple" TD or a table with a TD with each value
@@ -1377,6 +1432,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private TD buildInnerObjectsTable(Policy policy, String[] reportParams,
 			PolicyObject[] policyObjects,
 			HashMap<UUID, CoverageData> valuesByObject) throws BigBangJewelException {
+		
+		int numberOfIteractions = policyObjects == null || policyObjects.length == 0 ? 1 : policyObjects.length;
 
 		// Gets the number of columns to initialize the TD's array
 		int cellNumber = Collections
@@ -1390,7 +1447,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Iterates the objects (if any, otherwise it makes a
 		// "forced iteration") and builds the row
 		// corresponding to a given object
-		for (int i = 0; i <= policyObjects.length; i++) {
+		for (int i = 0; i < numberOfIteractions; i++) {
 
 			TD[] dataCells = new TD[cellNumber];
 
@@ -1402,7 +1459,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// If there are no objects, uses a "faux" key to retrieve the
 			// coverages, insured values, risk site and taxes
 			UUID objectKey;
-			if (policyObjects.length != 0 && policyObjects.length > i) {
+			if (policyObjects != null && policyObjects.length != 0 && policyObjects.length > i) {
 				objectKey = policyObjects[i].getKey();
 			} else {
 				objectKey = fauxId;
@@ -1411,11 +1468,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// Needed to guarantee that the following code is executed when
 			// there are no objects, and to prevent a
 			// java.lang.ArrayIndexOutOfBoundsException
-			if (policyObjects.length == 0 || policyObjects.length > i) {
+			if (policyObjects == null || policyObjects.length == 0 || policyObjects.length > i) {
 
 				// Policy Object's Name
 				if (reportParams[paramCheck++].equals("1")) {
-					String objectName = (policyObjects.length == 0) ? " "
+					String objectName = (policyObjects==null || policyObjects.length == 0) ? WHITESPACE
 							: getObjectName(policy, policyObjects[i]);
 					if (objectName.contains(ESCAPE_CHARACTER)) {
 						// If it has an escape character, it means it is a Auto-Individual, and must be treated differently
@@ -1482,8 +1539,15 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 				// Sales' Tax
 				if (reportParams[paramCheck++].equals("1")) {
-					dataCells[currentCell] = buildValuesTable(valuesByObject
-							.get(objectKey).getTaxes(), TAX_WIDTH, false, true);
+					// If policy is MULTIRRISK
+					if (policy.GetSubLine().getLine().getCategory().getKey()
+							.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
+						dataCells[currentCell] = buildSpecialTaxTD(valuesByObject
+								.get(objectKey).getTaxes(), TAX_WIDTH);
+					} else {
+						dataCells[currentCell] = buildValuesTable(valuesByObject
+								.get(objectKey).getTaxes(), TAX_WIDTH, false, true);
+					}
 					dataCells[currentCell].setWidth(TAX_WIDTH);
 					dataCells[currentCell].setHeight(INNER_HEIGHT);
 					ReportBuilder.styleCell(dataCells[currentCell++], topLine,
@@ -1507,6 +1571,47 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		table = ReportBuilder.buildTable(tableRows);
 		ReportBuilder.styleTable(table, true);
 		return new TD(table);
+	}
+
+	/**
+	 * This method returns a TD containing a table of values for the Responsability policies,
+	 * with a line for the hitting rate and another for the minimum sales premium
+	 */
+	private TD buildSpecialTaxTD(ArrayList<String> taxes, int taxWidth) {
+		
+		TD content = new TD();
+		content.setColSpan(1);
+		
+		String[] varsArray = taxes.get(0).split(Pattern.quote(ESCAPE_CHARACTER));
+		
+		Table table;
+		TR[] tableRows = new TR[2];
+		
+		TD[] cell = new TD[1];
+
+		cell[0] = safeBuildCell(varsArray[0], TypeDefGUIDs.T_String, false, true);
+		cell[0].setWidth(taxWidth);
+		cell[0].setStyle("overflow:hidden;white-space:nowrap");
+
+		tableRows[0] = ReportBuilder.buildRow(cell);
+		ReportBuilder.styleRow(tableRows[0], false);
+		
+		cell = new TD[1];
+		cell[0] = safeBuildCell(varsArray[1], TypeDefGUIDs.T_String, true, true);
+		cell[0].setWidth(taxWidth);
+		cell[0].setStyle("overflow:hidden;white-space:nowrap;border-top:1px solid #3f6d9d;");
+		
+		tableRows[1] = ReportBuilder.buildRow(cell);
+		ReportBuilder.styleRow(tableRows[1], false);
+		
+		table = ReportBuilder.buildTable(tableRows);
+		ReportBuilder.styleTable(table, true);
+		
+		content.addElement(new Div().addElement(table).setStyle(
+				"width:inherit;"));
+		ReportBuilder.styleInnerContainer(content);
+		
+		return content;
 	}
 
 	/**
@@ -1546,9 +1651,6 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private CoverageData buildCoverageData(Policy policy,
 			PolicyObject insuredObject) throws BigBangJewelException {
 
-		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
-		UUID policySubLine = policy.GetSubLine().getKey();
-
 		UUID currentExercise = getCurrentExercise(policy.GetCurrentExercises());
 
 		CoverageData coverageData = new CoverageData();
@@ -1560,16 +1662,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		/*
 		 * Policy Coverages' set
 		 */
-		// In case of an Automobile / Fleet policy, and only one policy object,
-		// it should read "Diversos"
-		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
-				&& policySubLine.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET)
-				&& policy.GetCurrentObjects().length == 1) {
-			coverageData.setCoverages("Diversos");
-		} else {
-			policyCoverages = policy.GetCurrentCoverages();
-			coverageData.setCoverages(policyCoverages);
-		}
+		policyCoverages = policy.GetCurrentCoverages();
+		coverageData.setCoverages(policyCoverages);
 
 		/*
 		 * Policy Risk Site's set
@@ -1608,12 +1702,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private String getObjectName(Policy policy, PolicyObject policyObject) throws BigBangJewelException {
 
 		if (policyObject == null) {
-			return " ";
+			return WHITESPACE;
 		}
 
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
 		UUID policySubLine = policy.GetSubLine().getKey();
-
+		
+		// Special Cases:
 		// For an automobile / Individual, it's the mark and model
 		// otherwise, it's the policy object's name
 		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
@@ -1662,7 +1757,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			JewelEngineException, BigBangJewelException {
 
 		if (policyValues == null) {
-			return " ";
+			return WHITESPACE;
 		}
 
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
@@ -1673,34 +1768,72 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			return getObjectAddress(insuredObject);
 		}
 
-		// If policy is RESPONSABILITY or CONSTRUCTION_ASSEMBLY, the risk site
-		// is retrieved from the policy values
-		for (int i = 0; i < policyValues.length; i++) {
-			if (policyValues[i].GetTax().GetTag() != null
-					&& (policyValues[i].GetObjectID() == null
-					|| insuredObject == null || policyValues[i]
-							.GetObjectID().equals(insuredObject.getKey()))
-							&& policyValues[i].GetValue() != null) {
-
-				if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
-					if (policyValues[i]
-							.GetTax()
-							.GetTag()
-							.equals(Constants.PolicyValuesTags.TERRITORIAL_SCOPE)) {
-						return policyValues[i].GetValue();
-					}
-				}
-				if (policyCat
-						.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
-					if (policyValues[i].GetTax().GetTag()
-							.equals(Constants.PolicyValuesTags.CONTRACT_NAME)) {
-						return policyValues[i].GetValue();
+		// If policy is RESPONSABILITY, CONSTRUCTION_ASSEMBLY, or WORK_ACCIDENTS 
+		// the risk site is retrieved from the policy values
+		String valueTag = "";
+		String priorityValue = "";
+		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) || 
+			policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+			valueTag = Constants.PolicyValuesTags.TERRITORIAL_SCOPE;
+			if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS) && hasTerritoryExtent(policy)) {
+				priorityValue = Constants.PolicyValuesTags.COUNTRY;
+			}
+		}
+		if (policyCat.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
+			valueTag = Constants.PolicyValuesTags.CONTRACT_NAME;
+		}
+		if (!valueTag.equals("")) {
+			for (int i = 0; i < policyValues.length; i++) {
+				if (policyValues[i].GetTax().GetTag() != null
+						&& (policyValues[i].GetObjectID() == null
+						|| insuredObject == null || policyValues[i]
+								.GetObjectID().equals(insuredObject.getKey()))
+								&& policyValues[i].GetValue() != null) {
+					if (!priorityValue.equals("")) {
+						if (policyValues[i]
+								.GetTax()
+								.GetTag()
+								.equals(priorityValue)) {
+							return policyValues[i].GetValue();
+						}
+					} else {
+						if (policyValues[i]
+								.GetTax()
+								.GetTag()
+								.equals(valueTag)) {
+							return policyValues[i].GetValue();
+						}
 					}
 				}
 			}
 		}
+		
+		return NO_VALUE;
+	}
 
-		return "-";
+	/**
+	 * Checks if a given policy has the Extended Territory Coverage
+	 */
+	private boolean hasTerritoryExtent(Policy policy)
+			throws BigBangJewelException {
+
+		PolicyCoverage[] coverages = policy.GetCurrentCoverages();
+
+		if (coverages == null || coverages.length == 0) {
+			return false;
+		}
+
+		for (int i = 0; i < coverages.length; i++) {
+			// Only inserts the coverages present at the policy
+			if (coverages[i].IsPresent() != null
+					&& coverages[i].IsPresent()
+					&& ((String) coverages[i].GetCoverage().getAt(
+							Coverage.I.TAG))
+							.equals(Constants.PolicyCoveragesTags.TERRITORIAL)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -1754,21 +1887,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		/*
 		 * Special Cases
 		 */
-		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
-				&& policySubLine.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET)
-				&& policy.GetCurrentObjects().length == 1) {
-			// For an automobile / Fleet with only one insured object, it should
-			// read "Diversos"
-			result.add("Diversos");
-			return result;
-		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
+		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
 				&& ((policySubLine
 						.equals(Constants.PolicySubLines.WORK_ACCIDENTS_OTHERS_FIXED_PREMIUM)) || (policySubLine
 						.equals(Constants.PolicySubLines.WORK_ACCIDENTS_CGA_FIXED_PREMIUM)))) {
 			// For Work accidents with fixed premium, the value comes from the yearly salary
 			result.add(getValueWithTags(policyValues, insuredObject,
 					currentExercise, null, Constants.PolicyValuesTags.YEARLY_SALARY,
-					true));
+					true, false));
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
 			// For Work Accidents, the insured value corresponds to the
@@ -1776,11 +1902,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			String valueWithTags = getValueWithTags(policyValues,
 					insuredObject, currentExercise,
 					Constants.PolicyCoveragesTags.LEGAL,
-					Constants.PolicyValuesTags.TEMPORARY_VALUE, false);
+					Constants.PolicyValuesTags.TEMPORARY_VALUE, false, false);
 			if (valueWithTags == null || valueWithTags.length() == 0) {
 				valueWithTags = getValueWithTags(policyValues, insuredObject,
 						currentExercise, Constants.PolicyCoveragesTags.LEGAL,
-						Constants.PolicyValuesTags.VALUE, false);
+						Constants.PolicyValuesTags.VALUE, false, false);
 			}
 			result.add(valueWithTags);
 			return result;
@@ -1789,7 +1915,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// value in the policy header
 			result.add(getValueWithTags(policyValues, insuredObject,
 					currentExercise, null, Constants.PolicyValuesTags.VALUE,
-					true));
+					true, false));
 			return result;
 		}
 
@@ -1801,7 +1927,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
 				result.add(getCoverageValues(insuredObject, currentExercise,
 						policyValues, policyCoverages[i],
-						Constants.PolicyValuesTags.VALUE));
+						Constants.PolicyValuesTags.VALUE, false));
 			}
 		}
 
@@ -1835,41 +1961,58 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// tax corresponds to the sales tax from the policy header
 			result.add(getValueWithTags(policyValues, insuredObject,
 					currentExercise, null,
-					Constants.PolicyValuesTags.SALES_TAX, true));
+					Constants.PolicyValuesTags.SALES_TAX, true, true));
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			// If the policy is a responsibility policy, the tax is the
-			// "hitting rate"
-			result.add(getValueWithTags(policyValues, insuredObject,
+			// "hitting rate" and the minimum sales premium (in two different lines)
+			String hitRateTmp = getValueWithTags(policyValues, insuredObject,
 					currentExercise, null,
-					Constants.PolicyValuesTags.HITTING_RATE, true));
+					Constants.PolicyValuesTags.HITTING_RATE, true, true);
+			if (hitRateTmp==null) {
+				hitRateTmp = WHITESPACE;
+			}
+			String minPremimTmp = getValueWithTags(policyValues, insuredObject,
+					currentExercise, null,
+					Constants.PolicyValuesTags.MIN_SALES_PREMIUM, true, true);
+			if (minPremimTmp==null) {
+				minPremimTmp = WHITESPACE;
+			}
+			result.add(hitRateTmp + ESCAPE_CHARACTER + minPremimTmp);
 			return result;
 		}
 
-		/*
-		 * Direct tax-coverage correspondence
-		 */
-		if (policyCat.equals(Constants.PolicyCategories.MULTIRISK)
-				|| policyCat
-				.equals(Constants.PolicyCategories.PERSONAL_ACCIDENTS)
-				|| policyCat
-				.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
+		boolean anyCovFound = false;
+		
+		for (int i = 0; i < policyCoverages.length; i++) {
 
-			for (int i = 0; i < policyCoverages.length; i++) {
+			// Only lists the values for the coverages present at the policy
+			if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
 
-				// Only lists the values for the coverages present at the policy
-				if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
-
-					result.add(getCoverageValues(insuredObject,
-							currentExercise, policyValues, policyCoverages[i],
-							Constants.PolicyValuesTags.SALES_TAX));
+				String taxValue = getCoverageValues(insuredObject,
+						currentExercise, policyValues, policyCoverages[i],
+						Constants.PolicyValuesTags.SALES_TAX, true);
+				
+				if (!taxValue.equals(WHITESPACE)) {
+					anyCovFound = true;
 				}
+								
+				result.add(taxValue);
 			}
+		}
+		
+		// If no tax was found, returns the value from the policy premium
+		if (!anyCovFound) {
+			String policyPremium = policy.getAt(Policy.I.PREMIUM)==null ? WHITESPACE : policy.getAt(Policy.I.PREMIUM).toString();
+			return new ArrayList<String>(Arrays.asList(policyPremium));
+		}
+		
+		if (result.size()>0) {
 			return result;
 		}
 
 		// Default - no tax
-		return new ArrayList<String>(Arrays.asList("-"));
+		return new ArrayList<String>(Arrays.asList(NO_VALUE));
 	}
 
 	/**
@@ -1878,7 +2021,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private String getValueWithTags(PolicyValue[] policyValues,
 			PolicyObject insuredObject, UUID exerciseId, String coverageTag,
-			String taxTag, boolean isHeader) {
+			String taxTag, boolean isHeader, boolean displayUnit) {
 
 		UUID objectID = insuredObject == null ? null : insuredObject.getKey();
 
@@ -1906,7 +2049,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 							&& (policyValues[i].GetExerciseID() == null
 							&& exerciseId == null || (exerciseId != null && exerciseId
 							.equals(policyValues[i].GetExerciseID())))) {
-						return policyValues[i].GetValue();
+						return getValueMindingUnit(policyValues[i], displayUnit);
 					}
 				}
 			}
@@ -1936,7 +2079,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 									.GetTax().GetTag().equals(taxTag))) {
 						// Checks if the value is associated with the exercise
 						if (exerciseId.equals(policyValues[i].GetExerciseID())) {
-							return policyValues[i].GetValue();
+							return getValueMindingUnit(policyValues[i], displayUnit);
 						}
 					}
 				}
@@ -1959,7 +2102,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 									.GetTax().GetTag().equals(taxTag))) {
 						// Checks if the value is associated with the object
 						if (objectID.equals(policyValues[i].GetObjectID())) {
-							return policyValues[i].GetValue();
+							return getValueMindingUnit(policyValues[i], displayUnit);
 						}
 					}
 				}
@@ -1979,11 +2122,23 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				if (taxTag == null
 						|| (policyValues[i].GetTax().GetTag() != null && policyValues[i]
 								.GetTax().GetTag().equals(taxTag))) {
-					return policyValues[i].GetValue();
+					return getValueMindingUnit(policyValues[i], displayUnit);
 				}
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * This method returns a giving value, adding the display unit when requested
+	 */
+	private String getValueMindingUnit(PolicyValue val, boolean displayUnit) {
+		String value = val.GetValue();
+		if (displayUnit && value!=null && value.length()!=0) {
+			value = val.GetTax().GetUnitsLabel()==null ? value :
+				value + val.GetTax().GetUnitsLabel();
+		}
+		return value;
 	}
 
 	/**
@@ -1992,7 +2147,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private String getCoverageValues(PolicyObject insuredObject,
 			UUID currentExercise, PolicyValue[] policyValues,
-			PolicyCoverage policyCoverage, String valueTag) {
+			PolicyCoverage policyCoverage, String valueTag, boolean displayUnit) {
 
 		UUID objectID = insuredObject == null ? null : insuredObject.getKey();
 
@@ -2009,7 +2164,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					&& currentExercise == null || (currentExercise != null && currentExercise
 					.equals(policyValues[u].GetExerciseID())))
 					&& policyValues[u].GetValue() != null) {
-				return policyValues[u].GetValue();
+				return getValueMindingUnit(policyValues[u], displayUnit);
 			}
 		}
 
@@ -2025,7 +2180,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						&& (currentExercise.equals(policyValues[u]
 								.GetExerciseID()))
 								&& policyValues[u].GetValue() != null) {
-					return policyValues[u].GetValue();
+					return getValueMindingUnit(policyValues[u], displayUnit);
 				}
 			}
 		}
@@ -2038,7 +2193,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						&& objectID.equals(policyValues[u].GetObjectID())
 						&& policyValues[u].GetExerciseID() == null
 						&& policyValues[u].GetValue() != null) {
-					return policyValues[u].GetValue();
+					return getValueMindingUnit(policyValues[u], displayUnit);
 				}
 			}
 		}
@@ -2051,11 +2206,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					.equals(policyCoverage.GetCoverage().getKey())
 					&& policyValues[u].GetTax().GetTag().equals(valueTag)
 					&& policyValues[u].GetValue() != null) {
-				return policyValues[u].GetValue();
+				return getValueMindingUnit(policyValues[u], displayUnit);
 			}
 		}
 
-		return " ";
+		return WHITESPACE;
 	}
 	
 	/**
@@ -2069,6 +2224,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) {
 
 		ArrayList<String> result = new ArrayList<String>();
+		
+		if (policy.GetSubLine().getLine().getCategory().getKey()
+				.equals(Constants.PolicyCategories.MULTIRISK)
+				&& insuredObject != null) {
+			return new ArrayList<String>(Arrays.asList(MULTIPLE_F));
+		}
 
 		for (int i = 0; i < policyCoverages.length; i++) {
 
@@ -2077,13 +2238,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 				result.add(getCoverageValues(insuredObject,
 						currentExercise, policyValues, policyCoverages[i],
-						Constants.PolicyValuesTags.FRANCHISE));
+						Constants.PolicyValuesTags.FRANCHISE, false));
 			}
 		}
 		
 		if (result.size() == 0) {
 			// Default - no tax
-			return new ArrayList<String>(Arrays.asList("-"));
+			return new ArrayList<String>(Arrays.asList(NO_VALUE));
 		}
 		
 		return result;
@@ -2120,68 +2281,45 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private IMG getImage() throws BigBangJewelException {
 		
-		// TODO: a fix, to be altered on (probable) future interactions on this report
-		
-		/*	Working when debugging from eclipse, not working in Tomcat. Why?
-		 *  It worked when printing to the screen, but not when printing to pdf.
-		 *  I do believe that if I could get the complete path to the image, and not only the
-		 *  relative path it will work... but I wasn't able to get it.
-		 * 
 		IMG result = new IMG();
-		
-		result.setSrc("images/report_logo.png");
-		result.setID("credite_logo");
-		result.setBorder(0);
-		result.setHeight(116);
-		result.setWidth(180);
-		
-		return result;
-		*/
-		
-		/* Not working. I get an error at Jewel.Engine.SysObjects.FileXfer.java, line 119.
-		 * It's either ArrayOutOfBounds, or Java Heap Size. This second error also occurs when 
-		 * trying to get an attachment from a mail, so I'll investigate it there.
-		 * 
-		Template imgTemplate;
-		FileXfer imgFile;
-		String base64String;
-		
-		IMG result = null;
-		
-		try {
-			imgTemplate = Template.GetInstance(Engine.getCurrentNameSpace(), Constants.TID_ReportLogo);
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-		
-		imgFile = imgTemplate.getFile();
-		
-		if ( imgFile != null ) {
-			result = new IMG();
-			base64String = Base64.encodeBase64String(imgFile.getData());
-			result.setSrc("data:" + imgFile.getContentType() + ";base64," + base64String);
-			result.setID("credite_logo");
-			result.setBorder(0);
-			result.setHeight(116);
-			result.setWidth(180);
-		}
-		
-		return result;
-		
-		*/
-		
-		// The fix
-		IMG result = new IMG();
-		
+
 		// Crédite-egs
-		result.setSrc("data:image/png;base64,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");
-		// Angola
-		//result.setSrc("data:image/png;base64,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");
+		if (Utils.getCurrency().equals("€")) {
+			result.setSrc("data:image/png;base64,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");
+		} else {
+			// Angola
+			result.setSrc("data:image/png;base64,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");
+		}
 		result.setID("credite_logo");
 		result.setBorder(0);
 		result.setHeight(116);
 		result.setWidth(180);
-		
+
 		return result;
 	}
+	
+	/**
+	 * Given a policy, this method checks if it has multiple insured objects
+	 */
+	private boolean hasMultipleObjects (Policy policy) throws BigBangJewelException {
+		
+		PolicyObject[] policyObjects = policy.GetCurrentObjects();
+		
+		if (policyObjects == null) {
+			return false;
+		} else if (policyObjects.length>1) {
+			return true;
+		}
+		return false;		
+	}
+	
+	/**
+	 * Similar to ReportBuilder.styleCell, but makes the text centered
+	 */
+	private static void styleCenteredCell(TD pcell, boolean pbAddTop, boolean pbAddLeft) {
+		pcell.setStyle("overflow:hidden;white-space:nowrap;padding-left:5px;padding-right:5px;text-align:center;" +
+				(pbAddTop ? "border-top:1px solid #3f6d9d;" : "") +
+				(pbAddLeft ? "border-left:1px solid #3f6d9d;" : ""));
+
+	}	
 }
