@@ -821,6 +821,7 @@ public class Constants
 		public static final UUID OTHER_DAMAGES_CEASING				= UUID.fromString("8901C038-BA37-4F40-8359-9EE901112634");
 		public static final UUID OTHER_DAMAGES_MACHINE_BREAKDOWN	= UUID.fromString("CBCB9041-8012-46D7-B8F2-9EE901111406");
 		public static final UUID OTHER_DAMAGES_MACHINE_HULL			= UUID.fromString("47FAC08E-F9F0-4695-9CB7-9EE901111DC3");
+		public static final UUID ELECTRONIC_EQUIPMENT				= UUID.fromString("7AD30E66-4799-4595-A4F9-9EE90111324A");
 	}
 	
 	// Policy Sublines
@@ -835,6 +836,7 @@ public class Constants
 	// Policy's Coverages' TAGS
 	public static class PolicyCoveragesTags {
 		public static final String LEGAL				= "LEGAL";
+		public static final String TERRITORIAL			= "TER";
 	}
 	
 	// Values' Retrieval TAGS
@@ -847,6 +849,8 @@ public class Constants
 		public static final String HITTING_RATE			= "TXACE";
 		public static final String FRANCHISE			= "FRANQ";
 		public static final String YEARLY_SALARY		= "SALANU";
+		public static final String COUNTRY				= "CNT";
+		public static final String MIN_SALES_PREMIUM	= "MINPR";
 	}
 
 	// FK Constants
