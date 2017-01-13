@@ -139,19 +139,19 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 	// Width Constants
 	private static final int POLICY_WIDTH = 100;
-	private static final int COMPANY_WIDTH = 200;
+	private static final int COMPANY_WIDTH = 180;
 	private static final int DATE_WIDTH = 40;
 	private static final int FRACTIONING_WIDTH = 70;
 	private static final int OBJECT_WIDTH = 200;
 	private static final int RISK_SITE_WIDTH = 230;
 	private static final int COVERAGES_WIDTH = 230;
-	private static final int VALUE_WIDTH = 92;
-	private static final int TAX_WIDTH = 40;
-	private static final int FRANCHISE_WIDTH = 40;
-	private static final int PREMIUM_WIDTH = 92;
-	private static final int METHOD_WIDTH = 90;
-	private static final int OBSERVATIONS_WIDTH = 80;
-	private static final int STRING_BREAK_POINT = 30;
+	private static final int VALUE_WIDTH = 88;
+	private static final int TAX_WIDTH = 88;
+	private static final int FRANCHISE_WIDTH = 50;
+	private static final int PREMIUM_WIDTH = 88;
+	private static final int METHOD_WIDTH = 60;
+	private static final int OBSERVATIONS_WIDTH = 40;
+	private static final int STRING_BREAK_POINT = 26;
 	private static final int METHOD_BREAK_POINT = 18;
 	
 	// Height
@@ -566,10 +566,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			columnLabels[paramCount] = "Frac.";
 			columnFull[paramCount++] = "Fraccionamento";
 		}
-		if (reportParams[10].equals("1")) {
-			columnLabels[paramCount] = "T/P Com.";
+		/*if (reportParams[10].equals("1")) {
+			columnLabels[paramCount] = "Taxa/Prémio Comercial";
 			columnFull[paramCount++] = "Taxa/Prémio Comercial";
-		}
+		}*/
 		if (reportParams[11].equals("1")) {
 			columnLabels[paramCount] = "Franq.";
 			columnFull[paramCount++] = "Franquia";
@@ -1153,7 +1153,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			styleCenteredCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
-			cells[cellNumber] = cells[cellNumber] = new TD(buildDoubleHeaderTitle ("T/P", "Com."));
+			cells[cellNumber] = cells[cellNumber] = new TD(buildDoubleHeaderTitle ("Taxa/Prémio", "Comercial"));
 			styleCenteredCell(cells[cellNumber++], false, true);
 		}
 		if (reportParams[paramCheck++].equals("1")) {
@@ -1341,7 +1341,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			return ReportBuilder.buildCell(WHITESPACE, TypeDefGUIDs.T_String);
 		}
 		if (addEuro) {
-			String valueString = pobjValue + " " + Utils.getCurrency();
+			
+			String valueString = pobjValue.toString();
+			
+			if (valueString.contains(",")) {
+				valueString = valueString.replace(".", "");
+				valueString = valueString.replace(",", ".");
+			}
+			
+			valueString = valueString + " " + Utils.getCurrency();
+			
 			return safeBuildCell(valueString, TypeDefGUIDs.T_String, false, alignRight);
 		}
 		return ReportBuilder.buildCell(pobjValue, pidType, alignRight);
@@ -1539,7 +1548,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 				// Sales' Tax
 				if (reportParams[paramCheck++].equals("1")) {
-					// If policy is MULTIRRISK
+					// If policy is RESPONSIBILITY
 					if (policy.GetSubLine().getLine().getCategory().getKey()
 							.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 						dataCells[currentCell] = buildSpecialTaxTD(valuesByObject
@@ -1959,9 +1968,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				|| policyCat.equals(Constants.PolicyCategories.LIFE)) {
 			// If the policy is in the work accidents or life categories, the
 			// tax corresponds to the sales tax from the policy header
-			result.add(getValueWithTags(policyValues, insuredObject,
-					currentExercise, null,
-					Constants.PolicyValuesTags.SALES_TAX, true, true));
+			String tax = getValueWithTags(policyValues, insuredObject,
+							currentExercise, null,
+							Constants.PolicyValuesTags.SALES_TAX, true, true);
+			if (!tax.equals(WHITESPACE)) {
+				tax = tax.replace(",", ".");
+			}
+			result.add(tax);
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			// If the policy is a responsibility policy, the tax is the
@@ -1971,10 +1984,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					Constants.PolicyValuesTags.HITTING_RATE, true, true);
 			if (hitRateTmp==null) {
 				hitRateTmp = WHITESPACE;
+			} else {
+				hitRateTmp = hitRateTmp.replace(",", ".");
 			}
 			String minPremimTmp = getValueWithTags(policyValues, insuredObject,
 					currentExercise, null,
-					Constants.PolicyValuesTags.MIN_SALES_PREMIUM, true, true);
+					Constants.PolicyValuesTags.MIN_SALES_PREMIUM, true, false);
 			if (minPremimTmp==null) {
 				minPremimTmp = WHITESPACE;
 			}
@@ -1995,6 +2010,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				
 				if (!taxValue.equals(WHITESPACE)) {
 					anyCovFound = true;
+					taxValue = taxValue.replace(",", ".");
 				}
 								
 				result.add(taxValue);
@@ -2003,7 +2019,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		
 		// If no tax was found, returns the value from the policy premium
 		if (!anyCovFound) {
-			String policyPremium = policy.getAt(Policy.I.PREMIUM)==null ? WHITESPACE : policy.getAt(Policy.I.PREMIUM).toString();
+			String policyPremium = policy.getAt(Policy.I.PREMIUM) == null ? WHITESPACE
+					: policy.getAt(Policy.I.PREMIUM).toString() + " " + Utils.getCurrency();
 			return new ArrayList<String>(Arrays.asList(policyPremium));
 		}
 		
@@ -2261,10 +2278,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		TD[] tdTwo = new TD[1];
 		
 		tdOne[0] = ReportBuilder.buildCell(lineOne, TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(tdOne[0], false, false);
+		styleCenteredCell(tdOne[0], false, false);
 		
 		tdTwo[0] = ReportBuilder.buildCell(lineTwo, TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(tdTwo[0], false, false);
+		styleCenteredCell(tdTwo[0], false, false);
 		
 		tableRows[0] = ReportBuilder.buildRow(tdOne);
 		tableRows[0].setStyle("font-weight:bold;");
@@ -2317,7 +2334,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * Similar to ReportBuilder.styleCell, but makes the text centered
 	 */
 	private static void styleCenteredCell(TD pcell, boolean pbAddTop, boolean pbAddLeft) {
-		pcell.setStyle("overflow:hidden;white-space:nowrap;padding-left:5px;padding-right:5px;text-align:center;" +
+		/*pcell.setStyle("overflow:hidden;white-space:nowrap;padding-left:5px;padding-right:5px;text-align:center;" +
+				(pbAddTop ? "border-top:1px solid #3f6d9d;" : "") +
+				(pbAddLeft ? "border-left:1px solid #3f6d9d;" : ""));*/
+		pcell.setStyle("overflow:hidden;white-space:nowrap;padding-left:5px;padding-right:5px;" +
 				(pbAddTop ? "border-top:1px solid #3f6d9d;" : "") +
 				(pbAddLeft ? "border-left:1px solid #3f6d9d;" : ""));
 
