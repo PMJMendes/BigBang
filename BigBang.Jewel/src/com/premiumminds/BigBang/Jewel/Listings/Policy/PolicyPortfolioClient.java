@@ -379,7 +379,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 							null) + ") [AuxPol] WHERE 1=1");
 
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " " + "Error while getting the policy SQL.", e);
 		}
 
 		// Filters by client (if defined in the interface)
@@ -409,7 +409,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		try {
 			ldb = new MasterDB();
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " Error while getting the DB reference.", e);
 		}
 
 		// Fetches the policies from the DB
@@ -420,7 +420,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				ldb.Disconnect();
 			} catch (SQLException e1) {
 			}
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " Error while fetching policies.", e);
 		}
 
 		// Iterates the policies and adds to the result
@@ -438,7 +438,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				ldb.Disconnect();
 			} catch (SQLException e1) {
 			}
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " Error while creating policies' array list.", e);
 		}
 
 		// Cleanup
@@ -449,12 +449,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				ldb.Disconnect();
 			} catch (SQLException e1) {
 			}
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " Error while closing the policies' result set.", e);
 		}
 		try {
 			ldb.Disconnect();
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " Error while disconnecting from the DB.", e);
 		}
 
 		return policies.toArray(new Policy[policies.size()]);
@@ -980,7 +980,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		policyObjects = policy.GetCurrentObjects();
 
-		valuesByObject = getValuesByObject(policy);
+		try {
+			valuesByObject = getValuesByObject(policy);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage() + " Error while getting values by object from policy " + policy.getLabel(), e);
+		}
 
 		// Increases the value for the total premium
 		if (policy.getAt(Policy.I.TOTALPREMIUM) != null) {
@@ -1081,6 +1085,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		UUID fractioningID = (UUID) policy.getAt(Policy.I.FRACTIONING);
 		
+		if (fractioningID == null) {
+			return WHITESPACE;
+		}
+		
 		if (fractioningID.equals(Constants.FracID_Year)) {
 			return FRAC_YEAR;
 		} else if (fractioningID.equals(Constants.FracID_Semester)) {
@@ -1105,10 +1113,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		UUID profile = policy.getProfile();
 		
 		if (profile == null) {
-			profile = policy.GetClient().getProfile();
+			try {
+				profile = policy.GetClient().getProfile();
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage() + " Error while getting client's profile from policy " + policy.getAt(Policy.I.NUMBER), e);
+			}
 		}
 		if (profile == null) {
-			return null;
+			return WHITESPACE;
 		}
 		
 		if (profile.equals(Constants.ProfID_External)) {
@@ -1591,7 +1603,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		TD content = new TD();
 		content.setColSpan(1);
 		
-		String[] varsArray = taxes.get(0).split(Pattern.quote(ESCAPE_CHARACTER));
+		String[] varsArray = {WHITESPACE, WHITESPACE};
+		
+		if (taxes != null) {
+			varsArray = taxes.get(0).split(Pattern.quote(ESCAPE_CHARACTER));
+		}
 		
 		Table table;
 		TR[] tableRows = new TR[2];
@@ -1671,7 +1687,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		/*
 		 * Policy Coverages' set
 		 */
-		policyCoverages = policy.GetCurrentCoverages();
+		try {
+			policyCoverages = policy.GetCurrentCoverages();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage() + " Error while setting coverages from policy " + policy.getLabel(), e);
+		}
 		coverageData.setCoverages(policyCoverages);
 
 		/*
@@ -1681,26 +1701,38 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			coverageData.setRiskSite(getRiskSite(policy, insuredObject,
 					policyValues));
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " Error while setting risk site from policy " + policy.getLabel(), e);
 		}
 
 		/*
 		 * Policy Insured Values' set
 		 */
-		coverageData.setInsuredValues(getInsuredValues(policy, insuredObject,
-				currentExercise, policyValues, policyCoverages));
+		try {
+			coverageData.setInsuredValues(getInsuredValues(policy, insuredObject,
+					currentExercise, policyValues, policyCoverages));
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage() + " Error while setting the insured values from policy " + policy.getLabel(), e);
+		}
 
 		/*
 		 * Policy Taxes' set
 		 */
-		coverageData.setTaxes(getTaxes(policy, insuredObject, currentExercise,
-				policyValues, policyCoverages));
+		try {
+			coverageData.setTaxes(getTaxes(policy, insuredObject, currentExercise,
+					policyValues, policyCoverages));
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage() + " Error while setting the taxes from policy " + policy.getLabel(), e);
+		}
 		
 		/*
 		 * Policy Franchise's set
 		 */
-		coverageData.setFranchises(getFranchises(policy, insuredObject, currentExercise,
-				policyValues, policyCoverages));
+		try {
+			coverageData.setFranchises(getFranchises(policy, insuredObject, currentExercise,
+					policyValues, policyCoverages));
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage() + " Error while setting the policy franchises from policy " + policy.getLabel(), e);
+		}
 
 		return coverageData;
 	}
@@ -1733,7 +1765,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				objName;
 			return objName;
 		} else if (policyCat.equals(Constants.PolicyCategories.FIRE)) {
-			return getObjectAddress(policyObject);			
+			return getObjectAddress(policyObject);
 		} else {
 			return (String) policyObject.getAt(PolicyObject.I.NAME);
 		}
@@ -1791,6 +1823,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (policyCat.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
 			valueTag = Constants.PolicyValuesTags.CONTRACT_NAME;
 		}
+		if (valueTag==null) {
+			valueTag = "";
+		}
+		if (priorityValue==null) {
+			valueTag = "";
+		}
+		
 		if (!valueTag.equals("")) {
 			for (int i = 0; i < policyValues.length; i++) {
 				if (policyValues[i].GetTax().GetTag() != null
@@ -1836,6 +1875,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// Only inserts the coverages present at the policy
 			if (coverages[i].IsPresent() != null
 					&& coverages[i].IsPresent()
+					&& coverages[i].GetCoverage().getAt(
+							Coverage.I.TAG) != null
 					&& ((String) coverages[i].GetCoverage().getAt(
 							Coverage.I.TAG))
 							.equals(Constants.PolicyCoveragesTags.TERRITORIAL)) {
@@ -1871,7 +1912,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				address = address + " " + zipCode.getAt(1);
 			}
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " Error while getting object address from policy " + insuredObject.getAt(PolicyObject.I.POLICY), e);
 		}
 			
 		return address;
@@ -1901,9 +1942,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						.equals(Constants.PolicySubLines.WORK_ACCIDENTS_OTHERS_FIXED_PREMIUM)) || (policySubLine
 						.equals(Constants.PolicySubLines.WORK_ACCIDENTS_CGA_FIXED_PREMIUM)))) {
 			// For Work accidents with fixed premium, the value comes from the yearly salary
-			result.add(getValueWithTags(policyValues, insuredObject,
-					currentExercise, null, Constants.PolicyValuesTags.YEARLY_SALARY,
-					true, false));
+			String val = getValueWithTags(policyValues, insuredObject,
+									currentExercise, null, Constants.PolicyValuesTags.YEARLY_SALARY,
+									true, false);
+			if (val==null) {
+				val = WHITESPACE;
+			}
+			
+			result.add(val);
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
 			// For Work Accidents, the insured value corresponds to the
@@ -1917,14 +1963,21 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						currentExercise, Constants.PolicyCoveragesTags.LEGAL,
 						Constants.PolicyValuesTags.VALUE, false, false);
 			}
+			if (valueWithTags==null) {
+				valueWithTags = WHITESPACE;
+			}
 			result.add(valueWithTags);
 			return result;
 		} else if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			// For Responsibility policies, the value comes from the insured
 			// value in the policy header
-			result.add(getValueWithTags(policyValues, insuredObject,
+			String val = getValueWithTags(policyValues, insuredObject,
 					currentExercise, null, Constants.PolicyValuesTags.VALUE,
-					true, false));
+					true, false);
+			result.add(val);
+			if (val==null) {
+				val = WHITESPACE;
+			}
 			return result;
 		}
 
@@ -1971,6 +2024,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			String tax = getValueWithTags(policyValues, insuredObject,
 							currentExercise, null,
 							Constants.PolicyValuesTags.SALES_TAX, true, true);
+			if (tax==null) {
+				tax = WHITESPACE;
+			}
 			if (!tax.equals(WHITESPACE)) {
 				tax = tax.replace(",", ".");
 			}
@@ -2007,6 +2063,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				String taxValue = getCoverageValues(insuredObject,
 						currentExercise, policyValues, policyCoverages[i],
 						Constants.PolicyValuesTags.SALES_TAX, true);
+				
+				if (taxValue==null) {
+					taxValue = WHITESPACE;
+				}
 				
 				if (!taxValue.equals(WHITESPACE)) {
 					anyCovFound = true;
@@ -2150,10 +2210,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * This method returns a giving value, adding the display unit when requested
 	 */
 	private String getValueMindingUnit(PolicyValue val, boolean displayUnit) {
+		if (val==null) {
+			return WHITESPACE;
+		}
 		String value = val.GetValue();
 		if (displayUnit && value!=null && value.length()!=0) {
 			value = val.GetTax().GetUnitsLabel()==null ? value :
 				value + val.GetTax().GetUnitsLabel();
+		}
+		if (value==null) {
+			value = WHITESPACE;
 		}
 		return value;
 	}
@@ -2252,10 +2318,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 			// Only lists the values for the coverages present at the policy
 			if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
-
-				result.add(getCoverageValues(insuredObject,
+				
+				String value = getCoverageValues(insuredObject,
 						currentExercise, policyValues, policyCoverages[i],
-						Constants.PolicyValuesTags.FRANCHISE, false));
+						Constants.PolicyValuesTags.FRANCHISE, false);
+				
+				if (value==null) {
+					value = WHITESPACE;
+				}
+				
+				result.add(value);
 			}
 		}
 		

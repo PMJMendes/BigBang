@@ -55,7 +55,7 @@ public class ReportServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException(e.getCause().getMessage(), e);
 		}
 
 		return larrResult;

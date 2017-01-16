@@ -395,7 +395,7 @@ public class ReportViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
-				onGenerateReportFailure();
+				onGenerateReportFailure(caught);
 				super.onResponseFailure(caught);
 			}
 		});
@@ -412,7 +412,7 @@ public class ReportViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
-				onGenerateReportFailure();
+				onGenerateReportFailure(caught);
 				super.onResponseFailure(caught);
 			}
 		});
@@ -429,7 +429,7 @@ public class ReportViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
-				onGenerateReportFailure();
+				onGenerateReportFailure(caught);
 				super.onResponseFailure(caught);
 			}
 		});
@@ -530,8 +530,8 @@ public class ReportViewPresenter implements ViewPresenter {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível exportar o Relatório"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	protected void onGenerateReportFailure(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gerar o Relatório"), TYPE.ALERT_NOTIFICATION));
+	protected void onGenerateReportFailure(Throwable caught){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gerar o Relatório " + caught.getMessage()), TYPE.ALERT_NOTIFICATION));
 	}
 
 	protected void onGetNextFailure(){
