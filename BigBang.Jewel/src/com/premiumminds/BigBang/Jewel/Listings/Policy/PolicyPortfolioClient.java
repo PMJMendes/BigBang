@@ -1293,36 +1293,37 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				&& hasMultipleObjects(policy))) {
 			coverageData = buildSimplifiedCoverageData();
 			result.put(skipId, coverageData);
-		}
-			
-		// Iterates the policy's objects (if any)
-		// In case the policy does not have objects, it uses a "faux" object
-		for (int i = 0; i <= policyObjects.length; i++) {
+		} else {
+			// Iterates the policy's objects (if any)
+			// In case the policy does not have objects, it uses a "faux" object
+			for (int i = 0; i <= policyObjects.length; i++) {
 
-			UUID objectKey;
+				UUID objectKey;
 
-			PolicyObject insuredObject;
-			if (policyObjects.length != 0 && policyObjects.length > i) {
-				insuredObject = policyObjects.length == 0 ? null
-						: policyObjects[i];
-				objectKey = insuredObject==null ? fauxId : insuredObject.getKey();
-			} else {
-				insuredObject = null;
-				objectKey = fauxId; // faux
+				PolicyObject insuredObject;
+				if (policyObjects.length != 0 && policyObjects.length > i) {
+					insuredObject = policyObjects.length == 0 ? null
+							: policyObjects[i];
+					objectKey = insuredObject==null ? fauxId : insuredObject.getKey();
+				} else {
+					insuredObject = null;
+					objectKey = fauxId; // faux
+				}
+
+				// Needed to guarantee that the following code is executed when
+				// there are no objects, and
+				// to prevent a java.lang.ArrayIndexOutOfBoundsException
+				if (policyObjects.length == 0 || policyObjects.length > i) {
+
+					// Gets the Data related to the coverages and inserts in the
+					// HashMap
+					coverageData = buildCoverageData(policy, insuredObject);
+					result.put(objectKey, coverageData);
+
+				}
 			}
-
-			// Needed to guarantee that the following code is executed when
-			// there are no objects, and
-			// to prevent a java.lang.ArrayIndexOutOfBoundsException
-			if (policyObjects.length == 0 || policyObjects.length > i) {
-
-				// Gets the Data related to the coverages and inserts in the
-				// HashMap
-				coverageData = buildCoverageData(policy, insuredObject);
-				result.put(objectKey, coverageData);
-
-			}
-		}
+		}			
+		
 		return result;
 	}
 
