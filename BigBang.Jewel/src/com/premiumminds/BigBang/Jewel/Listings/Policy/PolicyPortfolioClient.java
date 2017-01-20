@@ -1292,7 +1292,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				&& policyLine.equals(Constants.PolicyLines.ELECTRONIC_EQUIPMENT)
 				&& hasMultipleObjects(policy))) {
 			coverageData = buildSimplifiedCoverageData();
-			result.put(skipId, coverageData);
+			UUID objectKey;
+			if (policyObjects != null && policyObjects.length != 0 && policyObjects.length == 1) {
+				objectKey = policyObjects[0].getKey();
+			} else {
+				objectKey = skipId;
+			}
+			result.put(objectKey, coverageData);
 		} else {
 			// Iterates the policy's objects (if any)
 			// In case the policy does not have objects, it uses a "faux" object
@@ -1353,7 +1359,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (pobjValue == null || pobjValue.toString().trim().length() == 0) {
 			return ReportBuilder.buildCell(WHITESPACE, TypeDefGUIDs.T_String);
 		}
-		if (addEuro) {
+		if (addEuro && !pobjValue.equals(MULTIPLE_F) && !pobjValue.equals(MULTIPLE_M)) {
 			
 			String valueString = pobjValue.toString();
 			
@@ -1455,7 +1461,28 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			PolicyObject[] policyObjects,
 			HashMap<UUID, CoverageData> valuesByObject) throws BigBangJewelException {
 		
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		UUID policyLine = policy.GetSubLine().getLine().getKey();
+		
 		int numberOfIteractions = policyObjects == null || policyObjects.length == 0 ? 1 : policyObjects.length;
+		
+		// needed to fetch the special cases...
+		boolean specialCase = (policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) 
+				&& policyLine.equals(Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN)
+				&& hasMultipleObjects(policy)) ||
+			(policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) 
+				&& policyLine.equals(Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL)
+				&& hasMultipleObjects(policy)) || 
+			(policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) 
+				&& policyLine.equals(Constants.PolicyLines.OTHER_DAMAGES_LEASING)
+				&& hasMultipleObjects(policy)) ||
+			(policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) 
+				&& policyLine.equals(Constants.PolicyLines.ELECTRONIC_EQUIPMENT)
+				&& hasMultipleObjects(policy));
+		
+		if (specialCase) {
+			numberOfIteractions = 1;
+		}
 
 		// Gets the number of columns to initialize the TD's array
 		int cellNumber = Collections
@@ -1485,6 +1512,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				objectKey = policyObjects[i].getKey();
 			} else {
 				objectKey = fauxId;
+			}
+			// needed to fetch the special cases...
+			if (specialCase) {
+				objectKey = skipId;
 			}
 
 			// Needed to guarantee that the following code is executed when
