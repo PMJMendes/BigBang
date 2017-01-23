@@ -831,6 +831,7 @@ public class Constants
 		public static final UUID OTHER_DAMAGES_CEASING_MACHINES			= UUID.fromString("DBFA4951-59CF-4008-98A5-9EE9011A0F30");
 		public static final UUID WORK_ACCIDENTS_OTHERS_FIXED_PREMIUM	= UUID.fromString("CA6EC5CA-FF4E-4E2C-BCF9-9EE901189BE9");
 		public static final UUID WORK_ACCIDENTS_CGA_FIXED_PREMIUM		= UUID.fromString("BB0E78F2-3817-45C6-94C7-9EE90118BA82");
+		public static final UUID GUARANTEE								= UUID.fromString("88DBC911-336B-4098-A0B7-9EE90113BD32");
 	}
 	
 	// Policy's Coverages' TAGS
@@ -851,6 +852,9 @@ public class Constants
 		public static final String YEARLY_SALARY		= "SALANU";
 		public static final String COUNTRY				= "CNT";
 		public static final String MIN_SALES_PREMIUM	= "MINPR";
+		public static final String ACTIVITY				= "ACT";
+		public static final String TYPE_GUARANTEE		= "TPGUA";
+		public static final String DESCRIPTION			= "DESC";
 	}
 
 	// FK Constants
