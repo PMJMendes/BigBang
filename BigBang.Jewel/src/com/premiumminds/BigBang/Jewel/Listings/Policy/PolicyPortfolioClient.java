@@ -2028,66 +2028,327 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	}
 	
 	/**
-	 * This method gets the policy's coverages (or some other information that someone decided to display in the coverages' column, because... "what's logic?")
-	 * @param insuredObject 
-	 * @param policyValues 
+	 * This method gets the policy's coverages (or some other information that
+	 * someone decided to display in the coverages' column, because...
+	 * "what's logic?")
 	 */
-	private String[] getPolicyCoverages(Policy policy, PolicyObject insuredObject, PolicyValue[] policyValues) {
-		
+	private String[] getPolicyCoverages(Policy policy,
+			PolicyObject insuredObject, PolicyValue[] policyValues) {
+
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
 		UUID policySubLine = policy.GetSubLine().getKey();
 		UUID policyLine = policy.GetSubLine().getLine().getKey();
-		
+
 		// If policy is RESPONSIBILITY
 		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			try {
-				String top = policy.GetSubLine().getLine().getCategory().getLabel() + " | " +  policy.GetSubLine().getLine().getLabel();
+				String top = policy.GetSubLine().getLine().getCategory()
+						.getLabel()
+						+ " / " + policy.GetSubLine().getLine().getLabel();
 				String bottom = getValueWithTags(policyValues, insuredObject,
-						null, null, Constants.PolicyValuesTags.ACTIVITY,
-						false, false);
-				String[] result = {top, bottom};
+						null, null, Constants.PolicyValuesTags.ACTIVITY, false,
+						false);
+				String[] result = { top, bottom };
 				return result;
 			} catch (Throwable e) {
-				throw new BigBangJewelException(e.getMessage()
-						+ " Error while getting the rosponsibility coverages for policy "
-						+ policy.getLabel(), e);
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the responsibility coverages for policy "
+								+ policy.getLabel(), e);
 			}
 		}
-		
+
 		// If policy is divers/Caution
-		if (policyCat.equals(Constants.PolicyCategories.DIVERS) &&
-				policySubLine.equals(Constants.PolicySubLines.GUARANTEE)) {
+		if (policyCat.equals(Constants.PolicyCategories.DIVERS)
+				&& policySubLine.equals(Constants.PolicySubLines.GUARANTEE)) {
 			try {
-				String top = getValueWithTags(policyValues, null,
-						null, null, Constants.PolicyValuesTags.TYPE_GUARANTEE,
-						true, false);
-				String bottom = getValueWithTags(policyValues, null,
-						null, null, Constants.PolicyValuesTags.DESCRIPTION,
-						true, false);
-				String[] result = {top, bottom};
+				String top = getValueWithTags(policyValues, null, null, null,
+						Constants.PolicyValuesTags.TYPE_GUARANTEE, true, false);
+				String bottom = getValueWithTags(policyValues, null, null,
+						null, Constants.PolicyValuesTags.DESCRIPTION, true,
+						false);
+				String[] result = { top, bottom };
 				return result;
 			} catch (Throwable e) {
-				throw new BigBangJewelException(e.getMessage()
-						+ " Error while getting the divers coverages for policy "
-						+ policy.getLabel(), e);
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the divers coverages for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+
+		try {
+			PolicyCoverage[] policyCoverages = policy.GetCurrentCoverages();
+
+			if (policyCoverages == null || policyCoverages.length == 0) {
+				String[] result = { WHITESPACE };
+				return result;
+			}
+			for (int i = 0; i < policyCoverages.length; i++) {
+				// Only inserts the coverages present at the policy
+				ArrayList<String> coverages = new ArrayList<String>();
+				if (policyCoverages[i].IsPresent() != null
+						&& policyCoverages[i].IsPresent()) {
+					coverages.add((String) policyCoverages[i].GetCoverage()
+							.getAt(Coverage.I.NAME));
+				}
+				return (String[]) coverages.toArray();
+			}
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage()
+					+ " Error while getting the coverages for policy "
+					+ policy.getLabel(), e);
+		}
+	}
+	
+	/**
+	 * This method gets the risk site (if any) according to the policy's
+	 * category
+	 */
+	private String getRiskSite(Policy policy, PolicyObject insuredObject,
+			PolicyValue[] policyValues) throws InvocationTargetException,
+			JewelEngineException, BigBangJewelException {
+
+		if (policyValues == null) {
+			return WHITESPACE;
+		}
+
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		UUID policySubLine = policy.GetSubLine().getKey();
+		UUID policyLine = policy.GetSubLine().getLine().getKey();
+
+		// Cases in which the risk site comes from the object address
+		if ((policyCat.equals(Constants.PolicyCategories.MULTIRISK) || 
+			(policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) && 
+			 policyLine.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL)) ||
+			(policyCat.equals(Constants.PolicyCategories.DIVERS) && 
+						policySubLine.equals(Constants.PolicySubLines.GUARANTEE)) )	
+				&& insuredObject != null) {
+			try {
+				return getObjectAddress(insuredObject);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the risk site from object's address for policy "
+								+ policy.getLabel(), e);
 			}
 		}
 		
-		PolicyCoverage[] policyCoverages = policy.GetCurrentCoverages();
-		
-		if (policyCoverages == null || policyCoverages.length == 0) {
-			String[] result = {WHITESPACE};
-			return result;
+		// Cases in which the risk site comes from the country value
+		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS) && hasTerritoryExtent(policy)) {
+			try {
+				return getValueWithTags(policyValues, insuredObject,
+						null, null, Constants.PolicyValuesTags.COUNTRY, false,
+						false);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the risk site from country for policy "
+								+ policy.getLabel(), e);
+			}
 		}
+
+		// Cases in which the risk site comes from the territorial scope
+		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) || 
+			policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS) ||
+			(policyCat.equals(Constants.PolicyCategories.PERSONAL_ACCIDENTS) &&
+			policyLine.equals(Constants.PolicyLines.PERSONAL_ACC_TRADICIONAL)) ||
+			(policyCat.equals(Constants.PolicyCategories.DIVERS) &&
+			policyLine.equals(Constants.PolicyLines.DIVERS_ASSISTANCE)) ||
+			policyCat.equals(Constants.PolicyCategories.LIFE) || 
+			(policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) &&
+			policyLine.equals(Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL)) ) {
+			try {
+				return getValueWithTags(policyValues, insuredObject,
+						null, null, Constants.PolicyValuesTags.TERRITORIAL_SCOPE, false,
+						false);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the risk site from territorial scope for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+		
+		// Cases in which the risk site comes from the itinerary
+		if (policyCat.equals(Constants.PolicyCategories.PERSONAL_ACCIDENTS) &&
+			policyLine.equals(Constants.PolicyLines.PERSONAL_ACC_TRIP)) {
+			try {
+				return getValueWithTags(policyValues, insuredObject,
+						null, null, Constants.PolicyValuesTags.ITINERARY, true,
+						false);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the risk site from itinerary for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+		
+		// Cases in which the risk site comes from the navigation zone
+		if (policyCat.equals(Constants.PolicyCategories.MARINE_VESSELS)) {
+			try {
+				return getValueWithTags(policyValues, insuredObject,
+						null, null, Constants.PolicyValuesTags.NAVIGATION_ZONE, true,
+						false);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the risk site from navigation zone for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+		
+		return NO_VALUE;
+	}
+	
+	/**
+	 * This method gets the insured values according to the category. If they
+	 * are related with the coverages, they are returned in the same order than
+	 * the coverages, with a white space when the value does not exist for a
+	 * given coverage
+	 */
+	private ArrayList<String> getInsuredValues(Policy policy,
+			PolicyObject insuredObject, UUID currentExercise,
+			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages)
+					throws BigBangJewelException {
+
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		UUID policySubLine = policy.GetSubLine().getKey();
+		UUID policyLine = policy.GetSubLine().getLine().getKey();
+
+		ArrayList<String> result = new ArrayList<String>();
+
+		// Case in which the value comes from the yealy salary
+		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS) && 
+			((policySubLine.equals(Constants.PolicySubLines.WORK_ACCIDENTS_OTHERS_FIXED_PREMIUM)) || 
+			 (policySubLine.equals(Constants.PolicySubLines.WORK_ACCIDENTS_CGA_FIXED_PREMIUM)))) {
+			
+			try {
+				String val = getValueWithTags(policyValues, insuredObject,
+										currentExercise, null, Constants.PolicyValuesTags.YEARLY_SALARY,
+										true, false);
+				if (val==null) {
+					val = WHITESPACE;
+				}
+				result.add(val);
+				return result;
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the insured value from yearly salary for policy "
+								+ policy.getLabel(), e);
+			}
+		} 
+		
+		// Case in which the value comes from the temporary value from the legal coverage
+		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+			try {
+				String valueWithTags = getValueWithTags(policyValues,
+						insuredObject, currentExercise,
+						Constants.PolicyCoveragesTags.LEGAL,
+						Constants.PolicyValuesTags.TEMPORARY_VALUE, false, false);
+				if (valueWithTags == null || valueWithTags.length() == 0) {
+					valueWithTags = getValueWithTags(policyValues, insuredObject,
+							currentExercise, Constants.PolicyCoveragesTags.LEGAL,
+							Constants.PolicyValuesTags.VALUE, false, false);
+				}
+				if (valueWithTags==null) {
+					valueWithTags = WHITESPACE;
+				}
+				result.add(valueWithTags);
+				return result;
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the insured value from legal coverage for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+		
+		// Case in which the value comes from the insured value in the policy header
+		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) ||
+				(policyCat.equals(Constants.PolicyCategories.DIVERS) && 
+				policySubLine.equals(Constants.PolicySubLines.GUARANTEE))) {
+			try {
+				String val = getValueWithTags(policyValues, insuredObject,
+						currentExercise, null, Constants.PolicyValuesTags.VALUE,
+						true, false);
+				result.add(val);
+				if (val==null) {
+					val = WHITESPACE;
+				}
+				return result;
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the insured value from capital for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+		
+		// Case in which the value comes from the compensation
+		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) && 
+			policyLine.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL)) {
+			try {
+				String val = getValueWithTags(policyValues, insuredObject,
+								currentExercise, null, Constants.PolicyValuesTags.COMPENSATION_LIMIT,
+										false, false);
+				if (val==null) {
+					val = WHITESPACE;
+				}
+				result.add(val);
+				return result;
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the insured value fromthe compensation limity for policy "
+								+ policy.getLabel(), e);
+			}
+		} 
+		
+		// Case in which the value comes from the maximum transportation limit
+		if (policyCat.equals(Constants.PolicyCategories.TRANSPORTED_GOODS)) {
+			try {
+				String val = getValueWithTags(policyValues, insuredObject,
+								currentExercise, null, Constants.PolicyValuesTags.TRANSPORTATION_LIMIT,
+										false, false);
+				if (val==null) {
+					val = WHITESPACE;
+				}
+				result.add(val);
+				return result;
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the insured value from transportation limit for policy "
+								+ policy.getLabel(), e);
+			}
+		} 
+		
+		/*
+		 * "Default case" - to each coverage corresponds a given insured value
+		 */
 		for (int i = 0; i < policyCoverages.length; i++) {
-			// Only inserts the coverages present at the policy
-			ArrayList<String> coverages = new ArrayList<String>();
-			if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
-				coverages.add((String) policyCoverages[i].GetCoverage()
-						.getAt(Coverage.I.NAME));
+			try {
+				// Only lists the values for the coverages present at the policy
+				if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
+					result.add(getCoverageValues(insuredObject, currentExercise,
+							policyValues, policyCoverages[i],
+							Constants.PolicyValuesTags.VALUE, false));
+				}
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the insured value from coverages for policy "
+								+ policy.getLabel(), e);
 			}
-			return (String[]) coverages.toArray();
 		}
-		
+
+		if (result.size() == 0) {
+			return null;
+		}
+
+		return result;
 	}
 }
