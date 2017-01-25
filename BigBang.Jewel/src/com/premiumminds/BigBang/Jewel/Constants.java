@@ -861,6 +861,12 @@ public class Constants
 		public static final String NAVIGATION_ZONE		= "NAVI";
 		public static final String COMPENSATION_LIMIT	= "LIND";
 		public static final String TRANSPORTATION_LIMIT	= "LIMT";
+		public static final String HIT_RATE_INCIDENCE	= "ITAC";
+	}
+	
+	// Values' Retrieval TAGS
+	public static class ValuesConstants {
+		public static final String HIT_RATE_INCIDENCE_NO_VALUE	= "225c91d0-b17e-430b-8c7c-a11700920f39";
 	}
 
 	// FK Constants
