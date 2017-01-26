@@ -1375,8 +1375,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// Special Cases.
 		// In the following cases, the object name should read "Diversos". Most
 		// of the values will also read "Diversos".
-		if (isSimplifiedPortfolio(policy, policyCat, policyLine, policySubLine,
-				policyObjects)) {
+		if (isSimplifiedPortfolio(policy, policyCat, policyLine, policySubLine)) {
 			coverageData = buildSimplifiedCoverageData();
 			result.put(policy.getKey(), coverageData); // references the policy key
 		} else {
@@ -1532,7 +1531,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		UUID policyLine = policy.GetSubLine().getLine().getKey();
 		// needed to fetch the special cases...
 		boolean specialCase = isSimplifiedPortfolio(policy, policyCat,
-				policyLine, policySubLine, policyObjects);
+				policyLine, policySubLine);
 
 		int numberOfIteractions = specialCase || policyObjects == null
 				|| policyObjects.length == 0 ? 1 : policyObjects.length;
@@ -1884,12 +1883,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * simplified portfolio, mostly with the word "Diversos" for most values
 	 */
 	private boolean isSimplifiedPortfolio(Policy policy, UUID policyCat,
-			UUID policyLine, UUID policySubLine, PolicyObject[] policyObjects)
+			UUID policyLine, UUID policySubLine)
 			throws BigBangJewelException {
 
 		return (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
 				&& policySubLine
-						.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET) && policyObjects.length == 1)
+						.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET) && !hasMultipleObjects(policy))
 				|| (policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES)
 						&& policyLine
 								.equals(Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN) && hasMultipleObjects(policy))
@@ -1914,7 +1913,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		coverageData.addCoverage(MULTIPLE_F);
 		coverageData.setRiskSite(NO_VALUE);
 		coverageData.setInsuredValues(new ArrayList<String>(Arrays
-				.asList(MULTIPLE_F)));
+				.asList(MULTIPLE_M)));
 		coverageData.setTaxes(new ArrayList<String>(Arrays.asList(MULTIPLE_F)));
 		coverageData.setFranchises(new ArrayList<String>(Arrays
 				.asList(MULTIPLE_F)));
@@ -1933,11 +1932,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		UUID policyLine = policy.GetSubLine().getLine().getKey();
 		UUID policySubLine = policy.GetSubLine().getKey();
-
+		
 		// Special Cases:
 		// For an automobile / Individual, it's the mark and model
-		// otherwise, it's the policy object's name
+		// There are also some cases where it should read "Diversos"
+		// For fire, gets the object address
+		// Other cases, 
 		if (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
 				&& policySubLine
 						.equals(Constants.PolicySubLines.AUTO_AUTO_INDIVIDUAL)) {
@@ -1952,6 +1954,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					+ policyObject.getAt(PolicyObject.I.MAKEANDMODEL)
 					: objName;
 			return objName;
+		} else if (isSimplifiedPortfolio(policy, policyCat,
+				policyLine, policySubLine)) {
+			return MULTIPLE_M;
 		} else if (policyCat.equals(Constants.PolicyCategories.FIRE)) {
 			return getObjectAddress(policyObject);
 		} else {
@@ -2090,11 +2095,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				}
 			}
 			if (coverages.size() > 0) {
-				return (String[]) coverages.toArray();
+				return coverages.toArray(new String[0]);
 			}
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage()
-					+ " Error while getting the coverages for policy "
+					+ " Error while getting the general case coverages for policy "
 					+ policy.getLabel(), e);
 		}
 		
@@ -2182,6 +2187,20 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				throw new BigBangJewelException(
 						e.getMessage()
 								+ " Error while getting the risk site from itinerary for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+		
+		// Cases in which the risk site comes from the contract name
+		if (policyCat.equals(Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY)) {
+			try {
+				return getValueWithTags(policyValues, null, null,
+						null, Constants.PolicyValuesTags.CONTRACT_NAME, true,
+						false);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the risk site from contract name for policy "
 								+ policy.getLabel(), e);
 			}
 		}
@@ -2749,7 +2768,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				}
 			}
 		}
-		return null;
+		return WHITESPACE;
 	}
 	
 	/**
