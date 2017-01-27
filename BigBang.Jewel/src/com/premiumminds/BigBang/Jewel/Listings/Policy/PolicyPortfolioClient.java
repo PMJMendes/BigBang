@@ -2123,8 +2123,23 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		UUID policySubLine = policy.GetSubLine().getKey();
 		UUID policyLine = policy.GetSubLine().getLine().getKey();
 
+		// Cases in which the risk site comes from the country value
+		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
+				&& hasTerritoryExtent(policy)) {
+			try {
+				return getValueWithTags(policyValues, insuredObject, null,
+						null, Constants.PolicyValuesTags.COUNTRY, false, false);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the risk site from country for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+				
 		// Cases in which the risk site comes from the object address
-		if ((policyCat.equals(Constants.PolicyCategories.MULTIRISK)
+		if ((policyCat.equals(Constants.PolicyCategories.MULTIRISK) ||
+				policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
 				|| (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) && policyLine
 						.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL)) || (policyCat
 				.equals(Constants.PolicyCategories.DIVERS) && policySubLine
@@ -2139,24 +2154,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								+ policy.getLabel(), e);
 			}
 		}
-
-		// Cases in which the risk site comes from the country value
-		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
-				&& hasTerritoryExtent(policy)) {
-			try {
-				return getValueWithTags(policyValues, insuredObject, null,
-						null, Constants.PolicyValuesTags.COUNTRY, false, false);
-			} catch (Throwable e) {
-				throw new BigBangJewelException(
-						e.getMessage()
-								+ " Error while getting the risk site from country for policy "
-								+ policy.getLabel(), e);
-			}
-		}
-
+		
 		// Cases in which the risk site comes from the territorial scope
 		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)
-				|| policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
 				|| (policyCat
 						.equals(Constants.PolicyCategories.PERSONAL_ACCIDENTS) && policyLine
 						.equals(Constants.PolicyLines.PERSONAL_ACC_TRADICIONAL))
