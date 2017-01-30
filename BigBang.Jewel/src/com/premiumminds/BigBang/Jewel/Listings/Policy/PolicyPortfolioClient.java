@@ -2038,7 +2038,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			PolicyObject insuredObject, PolicyValue[] policyValues) throws BigBangJewelException {
 
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
-		UUID policySubLine = policy.GetSubLine().getKey();
+		UUID policyLine = policy.GetSubLine().getLine().getKey();
 
 		// If policy is RESPONSIBILITY
 		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
@@ -2061,7 +2061,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		// If policy is divers/Caution
 		if (policyCat.equals(Constants.PolicyCategories.DIVERS)
-				&& policySubLine.equals(Constants.PolicySubLines.GUARANTEE)) {
+				&& policyLine.equals(Constants.PolicyLines.GUARANTEE)) {
 			try {
 				String top = getValueWithTags(policyValues, null, null, null,
 						Constants.PolicyValuesTags.TYPE_GUARANTEE, true, false);
@@ -2120,7 +2120,6 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		}
 
 		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
-		UUID policySubLine = policy.GetSubLine().getKey();
 		UUID policyLine = policy.GetSubLine().getLine().getKey();
 
 		// Cases in which the risk site comes from the country value
@@ -2139,11 +2138,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				
 		// Cases in which the risk site comes from the object address
 		if ((policyCat.equals(Constants.PolicyCategories.MULTIRISK) ||
+				policyCat.equals(Constants.PolicyCategories.DISEASE) ||
 				policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
 				|| (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) && policyLine
 						.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL)) || (policyCat
-				.equals(Constants.PolicyCategories.DIVERS) && policySubLine
-				.equals(Constants.PolicySubLines.GUARANTEE)))
+				.equals(Constants.PolicyCategories.DIVERS) && policyLine
+				.equals(Constants.PolicyLines.GUARANTEE)))
 				&& insuredObject != null) {
 			try {
 				return getObjectAddress(insuredObject);
@@ -2289,29 +2289,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								+ policy.getLabel(), e);
 			}
 		}
-
-		// Case in which the value comes from the insured value in the policy
-		// header
-		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)
-				|| (policyCat.equals(Constants.PolicyCategories.DIVERS) && policySubLine
-						.equals(Constants.PolicySubLines.GUARANTEE))) {
-			try {
-				String val = getValueWithTags(policyValues, insuredObject,
-						currentExercise, null,
-						Constants.PolicyValuesTags.VALUE, true, false);
-				result.add(val);
-				if (val == null) {
-					val = WHITESPACE;
-				}
-				return result;
-			} catch (Throwable e) {
-				throw new BigBangJewelException(
-						e.getMessage()
-								+ " Error while getting the insured value from capital for policy "
-								+ policy.getLabel(), e);
-			}
-		}
-
+		
 		// Case in which the value comes from the compensation
 		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)
 				&& policyLine
@@ -2330,6 +2308,28 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				throw new BigBangJewelException(
 						e.getMessage()
 								+ " Error while getting the insured value fromthe compensation limity for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+
+		// Case in which the value comes from the insured value in the policy
+		// header
+		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)
+				|| (policyCat.equals(Constants.PolicyCategories.DIVERS) && policyLine
+						.equals(Constants.PolicyLines.GUARANTEE))) {
+			try {
+				String val = getValueWithTags(policyValues, insuredObject,
+						currentExercise, null,
+						Constants.PolicyValuesTags.VALUE, true, false);
+				result.add(val);
+				if (val == null) {
+					val = WHITESPACE;
+				}
+				return result;
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the insured value from capital for policy "
 								+ policy.getLabel(), e);
 			}
 		}
@@ -2481,7 +2481,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					String taxValue = getCoverageValues(insuredObject,
 							currentExercise, policyValues, policyCoverages[i],
 							Constants.PolicyValuesTags.SALES_TAX, true);
-					if (taxValue == null) {
+					if (taxValue == null || taxValue.trim().length()==0) {
 						taxValue = WHITESPACE;
 					} else {
 						taxValue = taxValue.replace(",", ".");
@@ -2510,17 +2510,17 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			try {
 				boolean allExist = true;
 				boolean allEqual = true;
+				boolean ran = false;
 				String oldTemp = "";
 				for (String temp : result) {
-					if (!temp.equals(oldTemp)) {
+					if (!temp.equals(oldTemp) && ran) {
 						allEqual = false;
-						break;
 					}
 					if (temp.equals(WHITESPACE)) {
 						allExist = false;
-						break;
 					}
 					oldTemp = temp;
+					ran = true;
 				}
 				if (allExist && allEqual) {
 					result.clear();
@@ -2576,7 +2576,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private ArrayList<String> getFranchises(Policy policy,
 			PolicyObject insuredObject, UUID currentExercise,
-			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) {
+			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) throws BigBangJewelException {
 
 		ArrayList<String> result = new ArrayList<String>();
 		
@@ -2663,7 +2663,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 */
 	private String getValueWithTags(PolicyValue[] policyValues,
 			PolicyObject insuredObject, UUID exerciseId, String coverageTag,
-			String taxTag, boolean isHeader, boolean displayUnit) {
+			String taxTag, boolean isHeader, boolean displayUnit) throws BigBangJewelException {
 
 		UUID objectID = insuredObject == null ? null : insuredObject.getKey();
 
@@ -2801,10 +2801,11 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	/**
 	 * This method iterates the policy values and returns the one with a given
 	 * tax's tag, corresponding to a given coverage
+	 * @throws BigBangJewelException 
 	 */
 	private String getCoverageValues(PolicyObject insuredObject,
 			UUID currentExercise, PolicyValue[] policyValues,
-			PolicyCoverage policyCoverage, String valueTag, boolean displayUnit) {
+			PolicyCoverage policyCoverage, String valueTag, boolean displayUnit) throws BigBangJewelException {
 
 		UUID objectID = insuredObject == null ? null : insuredObject.getKey();
 
@@ -2896,20 +2897,102 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	}
 	
 	/**
-	 * This method returns a giving value, adding the display unit when requested
+	 * This method returns a giving value, adding the display unit when
+	 * requested
 	 */
-	private String getValueMindingUnit(PolicyValue val, boolean displayUnit) {
-		if (val==null) {
+	private String getValueMindingUnit(PolicyValue val, boolean displayUnit)
+			throws BigBangJewelException {
+		if (val == null) {
 			return WHITESPACE;
 		}
-		String value = val.GetValue();
-		if (displayUnit && value!=null && value.length()!=0) {
-			value = val.GetTax().GetUnitsLabel()==null ? value :
-				value + val.GetTax().GetUnitsLabel();
+		if (val.GetTax() != null
+				&& val.GetTax().getAt(2) != null
+				&& Constants.FieldID_List.equals(val.GetTax().getAt(2))) {
+			return getListValue(val.GetTax().getKey().toString(),
+					(String) val.GetValue());
 		}
-		if (value==null) {
+
+		String value = val.GetValue();
+		if (displayUnit && value != null && value.length() != 0) {
+			value = val.GetTax().GetUnitsLabel() == null ? value : value
+					+ val.GetTax().GetUnitsLabel();
+		}
+		if (value == null) {
 			value = WHITESPACE;
 		}
 		return value;
+	}
+
+	/**
+	 * This method returns the textual value for a given reference from a list
+	 * of values
+	 */
+	private String getListValue(String key, String value)
+			throws BigBangJewelException {
+
+		if (key == null || value == null || key.length() == 0
+				|| value.length() == 0) {
+			return WHITESPACE;
+		}
+
+		MasterDB ldb;
+		ResultSet returnedVals;
+		String result = WHITESPACE;
+
+		StringBuilder strSQL = new StringBuilder();
+		strSQL.append("SELECT ITEMVALUE FROM credite_egs.tblPolicyValueItems where FKTaxAsSubList = '"
+				+ key + "' AND PK = '" + value + "'");
+
+		// gets the DB
+		try {
+			ldb = new MasterDB();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(
+					e.getMessage()
+							+ " Error while getting the DB reference while getting a value from a list.",
+					e);
+		}
+
+		// fetches the Value
+		try {
+			returnedVals = ldb.OpenRecordset(strSQL.toString());
+		} catch (Throwable e) {
+			try {
+				ldb.Disconnect();
+			} catch (SQLException e1) {
+			}
+			throw new BigBangJewelException(e.getMessage()
+					+ " Error while getting list value.", e);
+		}
+
+		// Gets the value
+		try {
+			if (returnedVals.next()) {
+				result = returnedVals.getString("ITEMVALUE");
+			}
+		} catch (SQLException e) {
+			throw new BigBangJewelException(e.getMessage()
+					+ " Error while fetching list value.", e);
+		}
+
+		// Cleanup
+		try {
+			returnedVals.close();
+		} catch (Throwable e) {
+			try {
+				ldb.Disconnect();
+			} catch (SQLException e1) {
+			}
+			throw new BigBangJewelException(e.getMessage()
+					+ " Error while closing the policies' result set.", e);
+		}
+		try {
+			ldb.Disconnect();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage()
+					+ " Error while disconnecting from the DB.", e);
+		}
+
+		return result;
 	}
 }
