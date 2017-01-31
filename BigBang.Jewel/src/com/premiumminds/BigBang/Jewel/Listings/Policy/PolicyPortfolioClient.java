@@ -2486,7 +2486,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 							Constants.PolicyValuesTags.SALES_TAX, true);
 					if (taxValue == null || taxValue.trim().length()==0) {
 						taxValue = WHITESPACE;
-					} else {
+					} else if (!taxValue.equals(NO_VALUE)) {
 						taxValue = taxValue.replace(",", ".");
 						anyCovFound = true;
 					}
