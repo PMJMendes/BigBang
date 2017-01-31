@@ -45,6 +45,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
+import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
@@ -691,8 +692,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		notes = new TD[1];
 
 		// Creates a line with the notes added as parameter
-		notes[0] = ReportBuilder.buildCell(reportNotes, TypeDefGUIDs.T_String,
-				false);
+		Div textDiv = new Div(reportNotes);
+		TD textTd = new TD();
+		notes[0] = textTd;
+		notes[0].addElementToRegistry(textDiv);
 		notes[0].setColSpan(4);
 		notes[0].setStyle("padding-top:20px;padding-left:5px;width:100px;word-wrap:break-word;");
 		tableRows[1] = ReportBuilder.buildRow(notes);
@@ -1183,23 +1186,26 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * cell is built simply with a whitespace, preventing cells with the '?'
 	 * character
 	 */
-	private TD safeBuildCell(java.lang.Object pobjValue, UUID pidType, 
+	private TD safeBuildCell(java.lang.Object pobjValue, UUID pidType,
 			boolean addEuro, boolean alignRight) {
 		if (pobjValue == null || pobjValue.toString().trim().length() == 0) {
 			return ReportBuilder.buildCell(WHITESPACE, TypeDefGUIDs.T_String);
 		}
-		if (addEuro && !pobjValue.equals(MULTIPLE_F) && !pobjValue.equals(MULTIPLE_M)) {
-			
+		if (addEuro && !pobjValue.equals(MULTIPLE_F)
+				&& !pobjValue.equals(MULTIPLE_M)
+				&& !pobjValue.equals(WHITESPACE) && !pobjValue.equals(NO_VALUE)) {
+
 			String valueString = pobjValue.toString();
-			
+
 			if (valueString.contains(",")) {
 				valueString = valueString.replace(".", "");
 				valueString = valueString.replace(",", ".");
 			}
-			
+
 			valueString = valueString + " " + Utils.getCurrency();
-			
-			return safeBuildCell(valueString, TypeDefGUIDs.T_String, false, alignRight);
+
+			return safeBuildCell(valueString, TypeDefGUIDs.T_String, false,
+					alignRight);
 		}
 		return ReportBuilder.buildCell(pobjValue, pidType, alignRight);
 	}
@@ -2798,13 +2804,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	/**
 	 * This method iterates the policy values and returns the one with a given
 	 * tax's tag, corresponding to a given coverage
-	 * @throws BigBangJewelException 
 	 */
 	private String getCoverageValues(PolicyObject insuredObject,
 			UUID currentExercise, PolicyValue[] policyValues,
 			PolicyCoverage policyCoverage, String valueTag, boolean displayUnit) throws BigBangJewelException {
 
 		UUID objectID = insuredObject == null ? null : insuredObject.getKey();
+		
+		// First, it needs to check if the tax with the given tag is present for the coverage.
+		// If it isn't, it simply returns a '-'
+		if (!isTaxAssociated(policyCoverage, valueTag)) {
+			return NO_VALUE;
+		}
 
 		// Tries to get the values associated with the object and the exercise
 		for (int u = 0; u < policyValues.length; u++) {
@@ -2989,7 +3000,35 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			throw new BigBangJewelException(e.getMessage()
 					+ " Error while disconnecting from the DB.", e);
 		}
-
 		return result;
 	}
+	
+	/**
+	 * This method iterates the taxes for a given coverage, and checks if there
+	 * is one corresponding to the valueTag. If there isn't, of course there
+	 * will not exist a value for that tax, ence a '-' should be returned.
+	 */
+	private boolean isTaxAssociated(PolicyCoverage policyCoverage,
+			String valueTag) throws BigBangJewelException {
+
+		if (policyCoverage == null || valueTag == null) {
+			return false;
+		}
+
+		Tax[] policyCoveragesTaxes;
+		try {
+			policyCoveragesTaxes = policyCoverage.GetCoverage()
+					.GetCurrentTaxes();
+		} catch (BigBangJewelException e) {
+			throw new BigBangJewelException(e.getMessage()
+					+ " Error while getting the taxes from a coverage.", e);
+		}
+		for (Tax tx : policyCoveragesTaxes) {
+			if (tx.GetTag() != null && tx.GetTag().equals(valueTag)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
