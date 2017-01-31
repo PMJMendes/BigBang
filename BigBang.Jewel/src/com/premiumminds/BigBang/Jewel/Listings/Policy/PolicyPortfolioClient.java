@@ -1689,12 +1689,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				if (reportParams[paramCheck++].equals("1")) {
 					try {
 						// If policy is RESPONSIBILITY
-						if (policy
-								.GetSubLine()
-								.getLine()
-								.getCategory()
-								.getKey()
-								.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
+						if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) &&
+							!hasNoHittingRate(policy.GetCurrentValues()) &&
+							 !policyLine.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL)) {
 							dataCells[currentCell] = buildSpecialTaxTD(
 									valuesByObject.get(objectKey).getTaxes(),
 									TAX_WIDTH);
@@ -2418,6 +2415,23 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			}
 		}
 
+		// Case in which the tax comes from the Sales' Premium
+		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)
+				&& policyLine
+						.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL)) {
+			try {
+				String policyPremium = policy.getAt(Policy.I.PREMIUM) == null ? WHITESPACE
+						: policy.getAt(Policy.I.PREMIUM).toString() + " "
+								+ Utils.getCurrency();
+				return new ArrayList<String>(Arrays.asList(policyPremium));
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the tax from the policy's premium for environmental policies, for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+		
 		// Case in which the tax should only output '-'
 		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)
 				&& hasNoHittingRate(policyValues)) {
@@ -2453,24 +2467,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								+ policy.getLabel(), e);
 			}
 		}
-
-		// Case in which the tax comes from the Sales' Premium
-		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)
-				&& policyLine
-						.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL)) {
-			try {
-				String policyPremium = policy.getAt(Policy.I.PREMIUM) == null ? WHITESPACE
-						: policy.getAt(Policy.I.PREMIUM).toString() + " "
-								+ Utils.getCurrency();
-				return new ArrayList<String>(Arrays.asList(policyPremium));
-			} catch (Throwable e) {
-				throw new BigBangJewelException(
-						e.getMessage()
-								+ " Error while getting the tax from the policy's premium for environmental policies, for policy "
-								+ policy.getLabel(), e);
-			}
-		}
-
+		
 		boolean anyCovFound = false;
 
 		// Case in which the tax is referent to a coverage
