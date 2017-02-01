@@ -2582,30 +2582,29 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * with the coverages, they are returned in the same order than the
 	 * coverages, with a white space when the value does not exist for a given
 	 * coverage Note that there are some categories without an associated tax
-	 * 
-	 * TODO: Alterações necessárias mas não tão prioritárias, para já:
-	 * 
-	 * Alterações de Franquia
-		Franquia de Acidentes de Trabalho - Aparece espaço em branco, devia aparecer traço
-		Verificar se é possível preencher ou não (ou seja, se o campo efectivamente existe para aquela cobertura). Se for possível e não preenchido, deve colocar espaço em branco. Se não for possível, deve colocar um traço. - É necessário validar se isto é possível...
 	 */
 	private ArrayList<String> getFranchises(Policy policy,
 			PolicyObject insuredObject, UUID currentExercise,
 			PolicyValue[] policyValues, PolicyCoverage[] policyCoverages) throws BigBangJewelException {
 
+		UUID policyCat = policy.GetSubLine().getLine().getCategory().getKey();
+		
 		ArrayList<String> result = new ArrayList<String>();
 		
-		if (policy.GetSubLine().getLine().getCategory().getKey()
-				.equals(Constants.PolicyCategories.MULTIRISK)
-				&& insuredObject != null) {
+		// Case in which the franchise should read only '-'
+		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+			return new ArrayList<String>(Arrays.asList(NO_VALUE));
+		}
+		
+		// Case in which the franchise should read only 'DIVERSAS'
+		if (policyCat.equals(Constants.PolicyCategories.MULTIRISK)) {
 			return new ArrayList<String>(Arrays.asList(MULTIPLE_F));
 		}
-
+		
+		// Case in which to each coverage corresponds a franchise, or '-' if there is no franchise field related to the coverage
 		for (int i = 0; i < policyCoverages.length; i++) {
-
 			// Only lists the values for the coverages present at the policy
 			if (policyCoverages[i].IsPresent()!=null && policyCoverages[i].IsPresent()) {
-				
 				String value = getCoverageValues(insuredObject,
 						currentExercise, policyValues, policyCoverages[i],
 						Constants.PolicyValuesTags.FRANCHISE, false);
@@ -2613,7 +2612,6 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				if (value==null) {
 					value = WHITESPACE;
 				}
-				
 				result.add(value);
 			}
 		}
