@@ -824,7 +824,8 @@ public class Constants
 		public static final UUID ELECTRONIC_EQUIPMENT				= UUID.fromString("7AD30E66-4799-4595-A4F9-9EE90111324A");
 		public static final UUID PERSONAL_ACC_TRADICIONAL			= UUID.fromString("5115A4A2-25BD-40B1-88F0-9EE9010E3BE6");
 		public static final UUID PERSONAL_ACC_TRIP 					= UUID.fromString("EB02FB3D-6457-4BE1-A540-9EE9010E307E");
-		public static final UUID GUARANTEE								= UUID.fromString("88DBC911-336B-4098-A0B7-9EE90113BD32");
+		public static final UUID GUARANTEE							= UUID.fromString("88DBC911-336B-4098-A0B7-9EE90113BD32");
+		public static final UUID BURGLARY							= UUID.fromString("E5CDFEBC-926C-4502-9F9A-9EE901110585");
 	}
 	
 	// Policy Sublines

@@ -195,19 +195,22 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			{ Constants.PolicyCategories.MULTIRISK.toString() }, // "Multirriscos"
 			{ Constants.PolicyCategories.MULTIRISK.toString()
 					+ Constants.PolicyLines.MULTIRISK_ALLRISKS.toString() }, // "All Risks"
-			{
-					Constants.PolicyCategories.OTHER_DAMAGES.toString()
-							+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN,
-					Constants.PolicyCategories.OTHER_DAMAGES.toString()
-							+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL,
-					Constants.PolicyCategories.OTHER_DAMAGES.toString()
-							+ Constants.PolicyLines.OTHER_DAMAGES_CEASING
-							+ Constants.PolicySubLines.OTHER_DAMAGES_CEASING_MACHINES }, // "Máquinas , Avaria de Máquinas e Máquinas de Casco"
-			{ Constants.PolicyCategories.OTHER_DAMAGES.toString() }, // "Outras
-																		// perdas
-			{ Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY.toString() }, // "Obras e Montagens"
+			{ Constants.PolicyCategories.FIRE.toString(), 
+			  Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.BURGLARY		}, // "Incêndio e Roubo"
 			{ Constants.PolicyCategories.OTHER_DAMAGES.toString()
-					+ Constants.PolicyLines.OTHER_DAMAGES_LEASING.toString() }, // "Bens em Leasing"
+						+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL }, // "Máquinas de Casco"
+			{ Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN,
+			  Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_CEASING
+						+ Constants.PolicySubLines.OTHER_DAMAGES_CEASING_MACHINES }, // "Avaria de Máquinas"
+			{ Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.OTHER_DAMAGES_LEASING.toString() }, // "Bens em Leasing"
+			{ Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.ELECTRONIC_EQUIPMENT.toString() }, // "Equipamento Electrónico"
+			{ Constants.PolicyCategories.OTHER_DAMAGES.toString() }, // "Outras perdas
+			{ Constants.PolicyCategories.CONSTRUCTION_ASSEMBLY.toString() }, // "Obras e Montagens"
 			{ Constants.PolicyCategories.TRANSPORTED_GOODS.toString() }, // "Mercadorias Transportadas"
 			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
 					+ Constants.PolicyLines.RESPONSIBILITY_GENERAL.toString() }, // "Responsabilidade Civil Geral"
@@ -226,13 +229,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			{ Constants.PolicyCategories.RESPONSIBILITY.toString()
 					+ Constants.PolicyLines.RESPONSIBILITY_EXPLORATION
 							.toString() }, // "Resp. Civil Exploração"
+			{ Constants.PolicyCategories.RESPONSIBILITY.toString() }, // "Responsabilidade"
 			/*
 			 * From this point forward are the ones not defined by EGS, so there
 			 * is no special order
 			 */
-			{ Constants.PolicyCategories.FIRE.toString() }, // "Incêndio"
 			{ Constants.PolicyCategories.AGRICULTURAL.toString() }, // "Agrícola"
-			{ Constants.PolicyCategories.RESPONSIBILITY.toString() }, // "Responsabilidade"
 			{ Constants.PolicyCategories.MARINE_VESSELS.toString() }, // "Embarcações Marítimas"
 			{ Constants.PolicyCategories.RAIL_VEHICLES.toString() }, // "Veículos Ferroviários"
 			{ Constants.PolicyCategories.AIRCRAFTS.toString() }, // "Aeronaves"
@@ -263,16 +265,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		CATEGORY_TRANSLATOR
 				.put(Constants.PolicyCategories.OTHER_DAMAGES.toString()
 						+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN,
-						"Máquinas , Avaria de Máquinas e Máquinas de Casco");
+						"Avaria de Máquinas");
 		CATEGORY_TRANSLATOR.put(
 				Constants.PolicyCategories.OTHER_DAMAGES.toString()
 						+ Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL,
-				"Máquinas , Avaria de Máquinas e Máquinas de Casco");
+				"Máquinas de Casco");
 		CATEGORY_TRANSLATOR
 				.put(Constants.PolicyCategories.OTHER_DAMAGES.toString()
 						+ Constants.PolicyLines.OTHER_DAMAGES_CEASING
 						+ Constants.PolicySubLines.OTHER_DAMAGES_CEASING_MACHINES,
-						"Máquinas , Avaria de Máquinas e Máquinas de Casco");
+						"Avaria de Máquinas");
 		CATEGORY_TRANSLATOR.put(
 				Constants.PolicyCategories.OTHER_DAMAGES.toString(),
 				"Outras perdas");
@@ -280,6 +282,10 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				Constants.PolicyCategories.OTHER_DAMAGES.toString()
 						+ Constants.PolicyLines.OTHER_DAMAGES_LEASING
 								.toString(), "Bens em Leasing");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.ELECTRONIC_EQUIPMENT
+								.toString(), "Equipamento Electrónico");
 		CATEGORY_TRANSLATOR.put(
 				Constants.PolicyCategories.RESPONSIBILITY.toString()
 						+ Constants.PolicyLines.RESPONSIBILITY_GENERAL
@@ -308,6 +314,12 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				Constants.PolicyCategories.RESPONSIBILITY.toString()
 						+ Constants.PolicyLines.RESPONSIBILITY_EXPLORATION
 								.toString(), "Resp. Civil Exploração");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.FIRE.toString(), "Incêndio e Roubo");
+		CATEGORY_TRANSLATOR.put(
+				Constants.PolicyCategories.OTHER_DAMAGES.toString()
+						+ Constants.PolicyLines.BURGLARY
+								.toString(), "Incêndio e Roubo");
 	}
 
 	/**
