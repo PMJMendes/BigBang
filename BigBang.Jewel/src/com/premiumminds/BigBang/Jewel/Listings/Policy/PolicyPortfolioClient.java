@@ -2537,7 +2537,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					oldTemp = temp;
 					ran = true;
 				}
-				if (allExist && allEqual) {
+				if (allExist && allEqual && result.size()>0 && !result.get(0).equals(NO_VALUE)) {
 					result.clear();
 					result.add(oldTemp);
 					return result;
