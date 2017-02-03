@@ -147,6 +147,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private static final int OBSERVATIONS_WIDTH = 40;
 	private static final int STRING_BREAK_POINT = 26;
 	private static final int METHOD_BREAK_POINT = 18;
+	private static final int COVERAGES_BREAK_POINT = 36;
 
 	// Height
 	private static final int INNER_HEIGHT = 70;
@@ -169,6 +170,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	private static final String WHITESPACE = " ";
 
 	private static final String ESCAPE_CHARACTER = "|_|_|";
+	
+	private static final int MAX_NUMBER_OF_OBJECTS = 10;
 
 	/*
 	 * This Matrix represents the order to display the policies, as well as the
@@ -1709,7 +1712,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						// If policy is RESPONSIBILITY
 						if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) &&
 							!hasNoHittingRate(policy.GetCurrentValues()) &&
-							 !policyLine.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL)) {
+							 !policyLine.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL) &&
+							 !specialCase) {
 							dataCells[currentCell] = buildSpecialTaxTD(
 									valuesByObject.get(objectKey).getTaxes(),
 									TAX_WIDTH);
@@ -1915,7 +1919,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								.equals(Constants.PolicyLines.OTHER_DAMAGES_LEASING) && hasMultipleObjects(policy))
 				|| (policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES)
 						&& policyLine
-								.equals(Constants.PolicyLines.ELECTRONIC_EQUIPMENT) && hasMultipleObjects(policy));
+								.equals(Constants.PolicyLines.ELECTRONIC_EQUIPMENT) && hasMultipleObjects(policy))
+				|| (policy.GetCurrentObjects()!=null && policy.GetCurrentObjects().length>MAX_NUMBER_OF_OBJECTS) ;
 	}
 	
 	/**
@@ -2000,7 +2005,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		TD[] cell = new TD[1];
 
-		cell[0] = safeBuildCell(varsArray[0], TypeDefGUIDs.T_String, false,
+		cell[0] = safeBuildCell(varsArray[0], TypeDefGUIDs.T_String, true,
 				true);
 		cell[0].setWidth(taxWidth);
 		cell[0].setStyle("overflow:hidden;white-space:nowrap");
@@ -2009,7 +2014,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		ReportBuilder.styleRow(tableRows[0], false);
 
 		cell = new TD[1];
-		cell[0] = safeBuildCell(varsArray[1], TypeDefGUIDs.T_String, true, true);
+		cell[0] = safeBuildCell(varsArray[1], TypeDefGUIDs.T_String, false, true);
 		cell[0].setWidth(taxWidth);
 		cell[0].setStyle("overflow:hidden;white-space:nowrap;border-top:1px solid #3f6d9d;");
 
@@ -2058,18 +2063,40 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		// If policy is RESPONSIBILITY
 		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			try {
+				ArrayList<String> coverages = new ArrayList<String>();
 				String top = policy.GetSubLine().getLine().getCategory()
 						.getLabel()
 						+ " / " + policy.GetSubLine().getLine().getLabel();
+				if (top.length() > COVERAGES_BREAK_POINT) {
+					ArrayList<String> tmpArray = new ArrayList<String>();
+					tmpArray.add(top);
+					tmpArray = splitValue(tmpArray,
+							COVERAGES_BREAK_POINT);
+					for (int u = 0; u < tmpArray.size(); u++) {
+						coverages.add(tmpArray.get(u));
+					}
+				} else {
+					coverages.add(top);
+				}
 				String bottom = getValueWithTags(policyValues, insuredObject,
 						null, null, Constants.PolicyValuesTags.ACTIVITY, false,
 						false);
-				String[] result = { top, bottom };
-				return result;
+				if (bottom.length() > COVERAGES_BREAK_POINT) {
+					ArrayList<String> tmpArray = new ArrayList<String>();
+					tmpArray.add(bottom);
+					tmpArray = splitValue(tmpArray,
+							COVERAGES_BREAK_POINT);
+					for (int u = 0; u < tmpArray.size(); u++) {
+						coverages.add(tmpArray.get(u));
+					}
+				} else {
+					coverages.add(bottom);
+				}
+				return coverages.toArray(new String[coverages.size()]);
 			} catch (Throwable e) {
 				throw new BigBangJewelException(
 						e.getMessage()
-								+ " Error while getting the responsibility coverages for policy "
+								+ " Error while getting the responsibility coverages for responsibility policy "
 								+ policy.getLabel(), e);
 			}
 		}
@@ -2078,17 +2105,39 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (policyCat.equals(Constants.PolicyCategories.DIVERS)
 				&& policyLine.equals(Constants.PolicyLines.GUARANTEE)) {
 			try {
+				ArrayList<String> coverages = new ArrayList<String>();
 				String top = getValueWithTags(policyValues, null, null, null,
 						Constants.PolicyValuesTags.TYPE_GUARANTEE, true, false);
+				if (top.length() > COVERAGES_BREAK_POINT) {
+					ArrayList<String> tmpArray = new ArrayList<String>();
+					tmpArray.add(top);
+					tmpArray = splitValue(tmpArray,
+							COVERAGES_BREAK_POINT);
+					for (int u = 0; u < tmpArray.size(); u++) {
+						coverages.add(tmpArray.get(u));
+					}
+				} else {
+					coverages.add(top);
+				}
 				String bottom = getValueWithTags(policyValues, null, null,
 						null, Constants.PolicyValuesTags.DESCRIPTION, true,
 						false);
-				String[] result = { top, bottom };
-				return result;
+				if (bottom.length() > COVERAGES_BREAK_POINT) {
+					ArrayList<String> tmpArray = new ArrayList<String>();
+					tmpArray.add(bottom);
+					tmpArray = splitValue(tmpArray,
+							COVERAGES_BREAK_POINT);
+					for (int u = 0; u < tmpArray.size(); u++) {
+						coverages.add(tmpArray.get(u));
+					}
+				} else {
+					coverages.add(bottom);
+				}
+				return coverages.toArray(new String[coverages.size()]);
 			} catch (Throwable e) {
 				throw new BigBangJewelException(
 						e.getMessage()
-								+ " Error while getting the divers coverages for policy "
+								+ " Error while getting the divers coverages for divers policy "
 								+ policy.getLabel(), e);
 			}
 		}
@@ -2377,9 +2426,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				// Only lists the values for the coverages present at the policy
 				if (policyCoverages[i].IsPresent() != null
 						&& policyCoverages[i].IsPresent()) {
-					result.add(getCoverageValues(insuredObject,
-							currentExercise, policyValues, policyCoverages[i],
-							Constants.PolicyValuesTags.VALUE, false));
+					String value = getCoverageValues(insuredObject,
+									currentExercise, policyValues, policyCoverages[i],
+									Constants.PolicyValuesTags.VALUE, false);
+					if (value!=null && !value.equals(NO_VALUE) && value.trim().startsWith("-")) {
+						value = MULTIPLE_M;
+					}
+					result.add(value);
 				}
 			} catch (Throwable e) {
 				throw new BigBangJewelException(
@@ -2463,11 +2516,18 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			try {
 				String hitRateTmp = getValueWithTags(policyValues,
 						insuredObject, currentExercise, null,
-						Constants.PolicyValuesTags.HITTING_RATE, true, true);
+						Constants.PolicyValuesTags.HITTING_RATE, true, false);
 				if (hitRateTmp == null) {
 					hitRateTmp = WHITESPACE;
 				} else {
 					hitRateTmp = hitRateTmp.replace(",", ".");
+					String taxType = getValueWithTags(policyValues,
+							insuredObject, currentExercise, null,
+							Constants.PolicyValuesTags.TAX_TYPE, true, false);
+					if (taxType!=null) {
+						taxType = taxType.equals("o/oo") ? "‰" : taxType.equals("o/o") ? "%" : taxType;
+						hitRateTmp = hitRateTmp + " " + taxType;
+					}
 				}
 				String minPremimTmp = getValueWithTags(policyValues,
 						insuredObject, currentExercise, null,

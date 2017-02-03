@@ -863,6 +863,7 @@ public class Constants
 		public static final String COMPENSATION_LIMIT	= "LIND";
 		public static final String TRANSPORTATION_LIMIT	= "LIMT";
 		public static final String HIT_RATE_INCIDENCE	= "ITAC";
+		public static final String TAX_TYPE				= "TPTX";
 	}
 	
 	// Values' Retrieval TAGS
