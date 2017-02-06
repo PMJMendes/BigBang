@@ -385,9 +385,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			// Starts building the SQL used.
 			strSQL = new StringBuilder();
 			strSQL.append("SELECT * FROM ("
-					+ policyEntity.SQLForSelectByMembers(
-							new int[] { Policy.I.STATUS },
-							getPossiblePolicyStatuses(reportParams), null)
+					+ policyEntity.SQLForSelectAll()
 					+ ") [AuxPol] WHERE 1=1");
 
 		} catch (Throwable e) {
@@ -409,6 +407,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		if (reportParams[15].equals("0")) {
 			filterOngoingPolicies(strSQL);
 		}
+		
+		// Filters the possible status 
+		strSQL.append(" AND [Status] IN " + getPossiblePolicyStatuses(reportParams));
 
 		// If the current user is an "agent", he only sees the corresponding
 		// policies
@@ -525,12 +526,17 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 	 * This method gets the possible policy statuses, according to user's
 	 * preference concerning listing policies still being created, or not
 	 */
-	private Object[] getPossiblePolicyStatuses(String[] reportParams) {
+	private String getPossiblePolicyStatuses(String[] reportParams) {
+		
+		String result = "('" + Constants.StatusID_Valid + "'";
+		
 		// Filters the temporary policies
 		if (reportParams[16].equals("1")) {
-			return new java.lang.Object[] { Constants.StatusID_Valid, Constants.StatusID_InProgress };
+			result = result + ", '" + Constants.StatusID_InProgress + "'";
 		}
-		return new java.lang.Object[] { Constants.StatusID_Valid };
+		result = result + ")";
+		
+		return result;
 	}
 	
 	/**
