@@ -7,6 +7,8 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 
 /**
  * Class responsible for creating a XML file with the needed info for billing
+ * 
+ * https://www.mkyong.com/java/how-to-create-xml-file-in-java-dom/
  */
 public class XMLCreator {
 
