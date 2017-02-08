@@ -1,9 +1,6 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -18,6 +15,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
@@ -30,6 +28,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Company;
  * Class responsible for creating a XML file with the needed info for billing
  * 
  * https://www.mkyong.com/java/how-to-create-xml-file-in-java-dom/
+ * https://www.mkyong.com/java/how-to-modify-xml-file-in-java-dom-parser/
  */
 public class XMLCreator {
 
@@ -54,10 +53,6 @@ public class XMLCreator {
 	private static String TOTAL_VALUE_ID = "TotalComissoes";
 	private static String TAX_ID = "ImpostoSelo";
 	private static String LIQUID_VALUE_ID = "ValorLiquido";
-
-	// The URLs for both the local and the PHC's server
-	private static String LOCAL_URL = "C:\\facturas\\xml\\";
-	private static String PHC_URL = "XPTO"; // TODO: definir quando for criada
 
 	// Class variables
 	private static DocumentBuilderFactory docFactory;
@@ -387,7 +382,7 @@ public class XMLCreator {
 	/**
 	 * This method writes the xml file, storing it in the given URL
 	 */
-	private static void writeXmlFile(String url) throws BigBangJewelException {
+	private static void writeXmlFile(String url, Document docToWrite) throws BigBangJewelException {
 
 		TransformerFactory transformerFactory = TransformerFactory
 				.newInstance();
@@ -400,7 +395,13 @@ public class XMLCreator {
 					"Error while getting the transformer used for XML creation. "
 							+ e.getMessage(), e);
 		}
-		DOMSource source = new DOMSource(doc);
+		DOMSource source;
+		if(docToWrite==null) {
+			source = new DOMSource(doc);
+		} else {
+			source = new DOMSource(docToWrite);
+		}
+		
 		StreamResult result = new StreamResult(new File(url));
 		try {
 			transformer.transform(source, result);
@@ -414,9 +415,9 @@ public class XMLCreator {
 	 * This method creates a new XML. Fills the XMLEntry with the info and then
 	 * writes the file.
 	 */
-	public void createXML(Company company, String docNumber, String docDate,
-			String dueDate, String totalValue, String taxValue, String netValue)
-			throws BigBangJewelException {
+	private void createXML(Company company, String docNumber, String docDate,
+			String dueDate, String totalValue, String taxValue,
+			String netValue, String filePath) throws BigBangJewelException {
 
 		XMLEntry entry = new XMLEntry(company, docNumber, docDate, dueDate,
 				totalValue, taxValue, netValue);
@@ -425,6 +426,52 @@ public class XMLCreator {
 
 		createRootElement();
 
+		Element entryEl = createElement(entry);
+
+		// adds it all to the root element
+		rootElement.appendChild(entryEl);
+
+		writeXmlFile(filePath, null);
+	}
+	
+	/**
+	 * This method fills a XMLEntry with info and writes it to an existing file
+	 */
+	private void addElementToXML(Company company, String docNumber, String docDate,
+			String dueDate, String totalValue, String taxValue,
+			String netValue, String filePath) throws BigBangJewelException {
+
+		XMLEntry entry = new XMLEntry(company, docNumber, docDate, dueDate,
+				totalValue, taxValue, netValue);
+		
+		Document existingDoc;
+
+		initialize();
+
+		createRootElement();
+
+		Element entryEl = createElement(entry);
+		
+		// Parses the file in the path
+		try {
+			existingDoc = docBuilder.parse(filePath);
+		} catch (Throwable e) { 
+			throw new BigBangJewelException( "Error while getting the file to add a new element. " + e.getMessage(), e);
+		}
+		
+		// Get the root element
+		Node existingRoot = existingDoc.getFirstChild();
+		
+		// adds it all to the root element
+		existingRoot.appendChild(entryEl);
+		
+		writeXmlFile(filePath, existingDoc);
+	}
+
+	/**
+	 * This method fills a XMLEntry with info and writes it to an existing file
+	 */
+	private Element createElement(XMLEntry entry) {
 		// Creates the entities with the values
 		Element totalValueEl = createElementWithValue(TOTAL_VALUE_ID,
 				entry.getValuesTotalValue());
@@ -483,17 +530,29 @@ public class XMLCreator {
 		entryEl.appendChild(companyNifEl);
 		entryEl.appendChild(addressEl);
 		entryEl.appendChild(lineEl);
+		return entryEl;
+	}
+	
+	/**
+	 * This method creates a new XML or adds a new element to an existing XML.
+	 * If the file exists, it adds a new element. If it does not exist, it
+	 * creates a new file. However, you may force a new file creation, case in
+	 * which a new file will always be created, overwriting any existing file
+	 * with the same name.
+	 */
+	public void createXML(Company company, String docNumber, String docDate,
+			String dueDate, String totalValue, String taxValue,
+			String netValue, String filePath, boolean overWrite)
+			throws BigBangJewelException {
 
-		// adds it all to the root element
-		rootElement.appendChild(entryEl);
+		File f = new File(filePath); // The file used to check if a file exists
 
-		// Defines the filename (today's date)
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-		Calendar cal = Calendar.getInstance();
-		String fileName = dateFormat.format(cal);
-
-		fileName = LOCAL_URL + fileName;
-
-		writeXmlFile(fileName);
+		if (f.exists() && !f.isDirectory() && !overWrite) {
+			addElementToXML(company, docNumber, docDate, dueDate, totalValue,
+					taxValue, netValue, filePath);
+		} else {
+			createXML(company, docNumber, docDate, dueDate, totalValue,
+					taxValue, netValue, filePath);
+		}
 	}
 }
