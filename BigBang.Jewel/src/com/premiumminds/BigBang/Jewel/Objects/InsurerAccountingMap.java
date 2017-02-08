@@ -27,6 +27,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
 import com.premiumminds.BigBang.Jewel.Reports.InsurerAccountingReport;
+import com.premiumminds.BigBang.Jewel.SysObjects.PHCConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionDetailBase;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
@@ -78,6 +79,7 @@ public class InsurerAccountingMap
     private transient DocOps mobjDoc;
     private transient BigDecimal mdblTotal;
     private transient Timestamp mdtToday;
+    private transient InsurerAccountingReport lrepIA;
 
 	public void Initialize()
 		throws JewelEngineException
@@ -138,12 +140,18 @@ public class InsurerAccountingMap
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+		
+		// Now, it must create the XML used to send the billing info to PHC
+		try {
+			PHCConnector.createPHCFile(mrefCompany, lrepIA, mdtToday);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	public DocOps generateDocOp(SQLServer pdb)
 		throws BigBangJewelException
-	{
-		InsurerAccountingReport lrepIA;
+	{ 
 		FileXfer lobjFile;
 		DocDataLight lobjDoc;
 		DocOps lobjResult;
