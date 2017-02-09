@@ -12,10 +12,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
@@ -33,8 +31,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Company;
 public class XMLCreator {
 
 	// Element Names' Definition
-	private static String ROOT_ID = "Documento";
-	private static String ENTRY_ID = "Entrada";
+	private static String ROOT_ID = "Factura";
 	private static String COMPANY_NAME_ID = "NomeCompanhia";
 	private static String COMPANY_NIF_ID = "NifCompanhia";
 	private static String ADDRESS_ID = "MoradaCompanhia";
@@ -45,20 +42,14 @@ public class XMLCreator {
 	private static String COUNTY_ID = "Concelho";
 	private static String DISTRICT_ID = "Distrito";
 	private static String COUNTRY_ID = "Pais";
-	private static String LINE_ID = "Linha";
-	private static String DOC_NUMBER_ID = "NumDoc";
-	private static String DOC_DATE_ID = "DataDocumento";
-	private static String DUE_DATE_ID = "DataVencimento";
+	private static String DOC_DATE_ID = "DataEmissao";
 	private static String VALUES_ID = "Valores";
 	private static String TOTAL_VALUE_ID = "TotalComissoes";
 	private static String TAX_ID = "ImpostoSelo";
 	private static String LIQUID_VALUE_ID = "ValorLiquido";
-
-	// Class variables
-	private static DocumentBuilderFactory docFactory;
-	private static DocumentBuilder docBuilder;
-	private static Document doc;
-	private static Element rootElement;
+	
+	// Other constants
+	private static String EMPTY_VAL = ""; 
 
 	// This class defines the data to display in one entry
 	private class XMLEntry {
@@ -72,9 +63,7 @@ public class XMLCreator {
 		private String addressCounty;
 		private String addressDistrict;
 		private String addressCountry;
-		private String documentNumber;
 		private String documentDate;
-		private String dueDate;
 		private String valuesTotalValue;
 		private String valuesTax;
 		private String valuesNet;
@@ -151,28 +140,12 @@ public class XMLCreator {
 			this.addressCountry = addressCountry;
 		}
 
-		private String getDocumentNumber() {
-			return documentNumber;
-		}
-
-		private void setDocumentNumber(String documentNumber) {
-			this.documentNumber = documentNumber;
-		}
-
 		private String getDocumentDate() {
 			return documentDate;
 		}
 
 		private void setDocumentDate(String documentDate) {
 			this.documentDate = documentDate;
-		}
-
-		private String getDueDate() {
-			return dueDate;
-		}
-
-		private void setDueDate(String dueDate) {
-			this.dueDate = dueDate;
 		}
 
 		private String getValuesTotalValue() {
@@ -208,21 +181,29 @@ public class XMLCreator {
 
 			if (company.getLabel() != null) {
 				setCompanyName(company.getLabel());
+			} else {
+				setCompanyName(EMPTY_VAL);
 			}
 
 			Object val = company.getAt(Company.I.FISCALNUMBER);
 			if (val != null) {
 				setCompanyNif(val.toString());
+			} else {
+				setCompanyNif(EMPTY_VAL);
 			}
 
 			val = company.getAt(Company.I.ADDRESS1);
 			if (val != null) {
 				setAddressStreet1(val.toString());
+			} else {
+				setAddressStreet1(EMPTY_VAL);
 			}
 
 			val = company.getAt(Company.I.ADDRESS2);
 			if (val != null) {
 				setAddressStreet2(val.toString());
+			} else {
+				setAddressStreet2(EMPTY_VAL);
 			}
 
 			val = company.getAt(Company.I.ZIPCODE);
@@ -244,27 +225,43 @@ public class XMLCreator {
 					val = zipCode.getAt(0);
 					if (val != null) {
 						setAddressZipCode(val.toString());
+					} else {
+						setAddressZipCode(EMPTY_VAL);
 					}
 
 					val = zipCode.getAt(1);
 					if (val != null) {
 						setAddressCity(val.toString());
+					} else {
+						setAddressCity(EMPTY_VAL);
 					}
 
 					val = zipCode.getAt(2);
 					if (val != null) {
 						setAddressCounty(val.toString());
+					} else {
+						setAddressCounty(EMPTY_VAL);
 					}
 
 					val = zipCode.getAt(3);
 					if (val != null) {
 						setAddressDistrict(val.toString());
+					} else {
+						setAddressDistrict(EMPTY_VAL);
 					}
 
 					val = zipCode.getAt(4);
 					if (val != null) {
 						setAddressCountry(val.toString());
+					} else {
+						setAddressCountry(EMPTY_VAL);
 					}
+				} else {
+					setAddressZipCode(EMPTY_VAL);
+					setAddressCity(EMPTY_VAL);
+					setAddressCounty(EMPTY_VAL);
+					setAddressDistrict(EMPTY_VAL);
+					setAddressCountry(EMPTY_VAL);
 				}
 			}
 		}
@@ -280,102 +277,29 @@ public class XMLCreator {
 				setCompanyValues(company);
 			}
 
-			if (docNumber != null) {
-				setDocumentNumber(docNumber);
-			}
-
 			if (docDate != null) {
 				setDocumentDate(docDate);
-			}
-
-			if (dueDate != null) {
-				setDueDate(dueDate);
+			} else {
+				setDocumentDate(EMPTY_VAL);
 			}
 
 			if (totalValue != null) {
 				setValuesTotalValue(totalValue);
+			} else {
+				setValuesTotalValue(EMPTY_VAL);
 			}
 
 			if (taxValue != null) {
 				setValuesTax(taxValue);
+			} else {
+				setValuesTax(EMPTY_VAL);
 			}
 
 			if (netValue != null) {
 				setValuesNet(netValue);
+			} else {
+				setValuesNet(EMPTY_VAL);
 			}
-		}
-	}
-
-	/**
-	 * This method initializes the document factory, the document builder, and
-	 * the document, used to write the XML
-	 */
-	private static void initialize() throws BigBangJewelException {
-
-		if (docFactory == null) {
-			docFactory = DocumentBuilderFactory.newInstance();
-		}
-
-		if (docBuilder == null) {
-			try {
-				docBuilder = docFactory.newDocumentBuilder();
-			} catch (Throwable e) {
-				throw new BigBangJewelException(
-						"Error while initializing the DocumentBuilder used for XML creation. "
-								+ e.getMessage(), e);
-			}
-		}
-
-		if (doc == null) {
-			doc = docBuilder.newDocument();
-		}
-	}
-
-	/**
-	 * This method creates an element with attributes, attributes' values and an
-	 * element value
-	 */
-	private static Element createElement(String elementName,
-			String[] attributes, String[] attValues, String elementValue) {
-
-		Element el = doc.createElement(elementName);
-
-		if (attributes != null && attValues != null) {
-			for (int i = 0; i < attributes.length && i < attValues.length; i++) {
-				Attr attr = doc.createAttribute(attributes[i]);
-				attr.setValue(attValues[i]);
-				el.setAttributeNode(attr);
-			}
-		}
-
-		if (elementValue != null) {
-			el.appendChild(doc.createTextNode(elementValue));
-		}
-
-		return el;
-	}
-
-	/**
-	 * This method creates an element with an element value
-	 */
-	private static Element createElementWithValue(String elementName,
-			String elementValue) {
-		return createElement(elementName, null, null, elementValue);
-	}
-
-	/**
-	 * This method creates a simple element, without attributes or values
-	 */
-	private static Element createSimpleElement(String elementName) {
-		return createElement(elementName, null, null, null);
-	}
-
-	/**
-	 * This method creates the root element
-	 */
-	private static void createRootElement() {
-		if (rootElement == null) {
-			rootElement = createElement(ROOT_ID, null, null, null);
 		}
 	}
 
@@ -396,11 +320,7 @@ public class XMLCreator {
 							+ e.getMessage(), e);
 		}
 		DOMSource source;
-		if(docToWrite==null) {
-			source = new DOMSource(doc);
-		} else {
-			source = new DOMSource(docToWrite);
-		}
+		source = new DOMSource(docToWrite);
 		
 		StreamResult result = new StreamResult(new File(url));
 		try {
@@ -415,144 +335,84 @@ public class XMLCreator {
 	 * This method creates a new XML. Fills the XMLEntry with the info and then
 	 * writes the file.
 	 */
-	private void createXML(Company company, String docNumber, String docDate,
-			String dueDate, String totalValue, String taxValue,
-			String netValue, String filePath) throws BigBangJewelException {
-
-		XMLEntry entry = new XMLEntry(company, docNumber, docDate, dueDate,
-				totalValue, taxValue, netValue);
-
-		initialize();
-
-		createRootElement();
-
-		Element entryEl = createElement(entry);
-
-		// adds it all to the root element
-		rootElement.appendChild(entryEl);
-
-		writeXmlFile(filePath, null);
-	}
-	
-	/**
-	 * This method fills a XMLEntry with info and writes it to an existing file
-	 */
-	private void addElementToXML(Company company, String docNumber, String docDate,
-			String dueDate, String totalValue, String taxValue,
-			String netValue, String filePath) throws BigBangJewelException {
-
-		XMLEntry entry = new XMLEntry(company, docNumber, docDate, dueDate,
-				totalValue, taxValue, netValue);
-		
-		Document existingDoc;
-
-		initialize();
-
-		createRootElement();
-
-		Element entryEl = createElement(entry);
-		
-		// Parses the file in the path
-		try {
-			existingDoc = docBuilder.parse(filePath);
-		} catch (Throwable e) { 
-			throw new BigBangJewelException( "Error while getting the file to add a new element. " + e.getMessage(), e);
-		}
-		
-		// Get the root element
-		Node existingRoot = existingDoc.getFirstChild();
-		
-		// adds it all to the root element
-		existingRoot.appendChild(entryEl);
-		
-		writeXmlFile(filePath, existingDoc);
-	}
-
-	/**
-	 * This method fills a XMLEntry with info and writes it to an existing file
-	 */
-	private Element createElement(XMLEntry entry) {
-		// Creates the entities with the values
-		Element totalValueEl = createElementWithValue(TOTAL_VALUE_ID,
-				entry.getValuesTotalValue());
-		Element taxEl = createElementWithValue(TAX_ID, entry.getValuesTax());
-		Element netValueEl = createElementWithValue(LIQUID_VALUE_ID,
-				entry.getValuesNet());
-		Element valuesEl = createSimpleElement(VALUES_ID);
-		valuesEl.appendChild(totalValueEl);
-		valuesEl.appendChild(taxEl);
-		valuesEl.appendChild(netValueEl);
-
-		// Creates the entities with the billing info
-		Element docNumberEl = createElementWithValue(DOC_NUMBER_ID,
-				entry.getDocumentNumber());
-		Element docCreationDateEl = createElementWithValue(DOC_DATE_ID,
-				entry.getDocumentDate());
-		Element docDueDateEl = createElementWithValue(DUE_DATE_ID,
-				entry.getDueDate());
-		Element lineEl = createSimpleElement(LINE_ID);
-		lineEl.appendChild(valuesEl);
-		lineEl.appendChild(docNumberEl);
-		lineEl.appendChild(docCreationDateEl);
-		lineEl.appendChild(docDueDateEl);
-
-		// Creates the entities with the address info
-		Element street1El = createElementWithValue(STREET_1_ID,
-				entry.getAddressStreet1());
-		Element street2El = createElementWithValue(STREET_2_ID,
-				entry.getAddressStreet2());
-		Element zipEl = createElementWithValue(ZIP_ID,
-				entry.getAddressZipCode());
-		Element cityEl = createElementWithValue(LOCALIDADE_ID,
-				entry.getAddressCity());
-		Element countyEl = createElementWithValue(COUNTY_ID,
-				entry.getAddressCounty());
-		Element districtEl = createElementWithValue(DISTRICT_ID,
-				entry.getAddressDistrict());
-		Element countryEl = createElementWithValue(COUNTRY_ID,
-				entry.getAddressCountry());
-		Element addressEl = createSimpleElement(ADDRESS_ID);
-		addressEl.appendChild(street1El);
-		addressEl.appendChild(street2El);
-		addressEl.appendChild(zipEl);
-		addressEl.appendChild(cityEl);
-		addressEl.appendChild(countyEl);
-		addressEl.appendChild(districtEl);
-		addressEl.appendChild(countryEl);
-
-		// Creates the entities with the company info
-		Element companyNameEl = createElementWithValue(COMPANY_NAME_ID,
-				entry.getCompanyName());
-		Element companyNifEl = createElementWithValue(COMPANY_NIF_ID,
-				entry.getCompanyNif());
-		Element entryEl = createSimpleElement(ENTRY_ID);
-		entryEl.appendChild(companyNameEl);
-		entryEl.appendChild(companyNifEl);
-		entryEl.appendChild(addressEl);
-		entryEl.appendChild(lineEl);
-		return entryEl;
-	}
-	
-	/**
-	 * This method creates a new XML or adds a new element to an existing XML.
-	 * If the file exists, it adds a new element. If it does not exist, it
-	 * creates a new file. However, you may force a new file creation, case in
-	 * which a new file will always be created, overwriting any existing file
-	 * with the same name.
-	 */
 	public void createXML(Company company, String docNumber, String docDate,
 			String dueDate, String totalValue, String taxValue,
-			String netValue, String filePath, boolean overWrite)
-			throws BigBangJewelException {
+			String netValue, String filePath) throws BigBangJewelException {
 
-		File f = new File(filePath); // The file used to check if a file exists
+		XMLEntry entry = new XMLEntry(company, docNumber, docDate, dueDate,
+				totalValue, taxValue, netValue);
 
-		if (f.exists() && !f.isDirectory() && !overWrite) {
-			addElementToXML(company, docNumber, docDate, dueDate, totalValue,
-					taxValue, netValue, filePath);
-		} else {
-			createXML(company, docNumber, docDate, dueDate, totalValue,
-					taxValue, netValue, filePath);
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder;
+		try {
+			docBuilder = docFactory.newDocumentBuilder();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(
+					"Error while getting the document builder. " + e.getMessage(), e);
 		}
+		
+		// root elements
+		Document doc = docBuilder.newDocument();
+		Element rootElement = doc.createElement(ROOT_ID);
+		doc.appendChild(rootElement);
+
+		// Company's Name
+		Element companyNameEl = doc.createElement(COMPANY_NAME_ID);
+		companyNameEl.appendChild(doc.createTextNode(entry.getCompanyName()));
+		rootElement.appendChild(companyNameEl);
+		
+		// Company's Nif
+		Element companyNifEl = doc.createElement(COMPANY_NIF_ID);
+		companyNifEl.appendChild(doc.createTextNode(entry.getCompanyNif()));
+		rootElement.appendChild(companyNifEl);
+		
+		// Company's Address
+		Element addressEl = doc.createElement(ADDRESS_ID);
+		rootElement.appendChild(addressEl);
+		
+		// Address' fields
+		Element street1El = doc.createElement(STREET_1_ID);
+		street1El.appendChild(doc.createTextNode(entry.getAddressStreet1()));
+		addressEl.appendChild(street1El);
+		Element street2El = doc.createElement(STREET_2_ID);
+		street2El.appendChild(doc.createTextNode(entry.getAddressStreet2()));
+		addressEl.appendChild(street2El);
+		Element zipEl = doc.createElement(ZIP_ID);
+		zipEl.appendChild(doc.createTextNode(entry.getAddressZipCode()));
+		addressEl.appendChild(zipEl);
+		Element cityEl = doc.createElement(LOCALIDADE_ID);
+		cityEl.appendChild(doc.createTextNode(entry.getAddressCity()));
+		addressEl.appendChild(cityEl);
+		Element countyEl = doc.createElement(COUNTY_ID);
+		countyEl.appendChild(doc.createTextNode(entry.getAddressCounty()));
+		addressEl.appendChild(countyEl);
+		Element districtEl = doc.createElement(DISTRICT_ID);
+		districtEl.appendChild(doc.createTextNode(entry.getAddressDistrict()));
+		addressEl.appendChild(districtEl);
+		Element countryEl = doc.createElement(COUNTRY_ID);
+		countryEl.appendChild(doc.createTextNode(entry.getAddressCountry()));
+		addressEl.appendChild(countryEl);
+		
+		// The date the document was created
+		Element docCreationDateEl = doc.createElement(DOC_DATE_ID);
+		docCreationDateEl.appendChild(doc.createTextNode(entry.getDocumentDate()));
+		rootElement.appendChild(docCreationDateEl);
+		
+		// Invoice's values
+		Element valuesEl = doc.createElement(VALUES_ID);
+		rootElement.appendChild(valuesEl);
+		
+		// Values' fields
+		Element totalValueEl = doc.createElement(TOTAL_VALUE_ID);
+		totalValueEl.appendChild(doc.createTextNode(entry.getValuesTotalValue()));
+		valuesEl.appendChild(totalValueEl);
+		Element taxEl = doc.createElement(TAX_ID);
+		taxEl.appendChild(doc.createTextNode(entry.getValuesTax()));
+		valuesEl.appendChild(taxEl);
+		Element netValueEl = doc.createElement(LIQUID_VALUE_ID);
+		netValueEl.appendChild(doc.createTextNode(entry.getValuesNet()));
+		valuesEl.appendChild(netValueEl);
+		
+		writeXmlFile(filePath, doc);
 	}
 }
