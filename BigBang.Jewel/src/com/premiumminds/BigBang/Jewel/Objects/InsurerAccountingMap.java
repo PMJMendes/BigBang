@@ -141,11 +141,15 @@ public class InsurerAccountingMap
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 		
-		// Now, it must create the XML used to send the billing info to PHC
-		try {
-			PHCConnector.createPHCFile(mrefCompany, lrepIA, mdtToday);
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+		// Now, it must create the XML used to send the billing info to PHC, but
+		// only in Portugal. The conditional is not perfect, but for the time
+		// being is the only way to differentiate.
+		if (Utils.getCurrency().equals("€")) {
+			try {
+				PHCConnector.createPHCFile(mrefCompany, lrepIA, mdtToday);
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
 		}
 	}
 

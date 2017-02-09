@@ -26,7 +26,6 @@ import com.premiumminds.BigBang.Jewel.Objects.Company;
  * Class responsible for creating a XML file with the needed info for billing
  * 
  * https://www.mkyong.com/java/how-to-create-xml-file-in-java-dom/
- * https://www.mkyong.com/java/how-to-modify-xml-file-in-java-dom-parser/
  */
 public class XMLCreator {
 
@@ -306,7 +305,8 @@ public class XMLCreator {
 	/**
 	 * This method writes the xml file, storing it in the given URL
 	 */
-	private static void writeXmlFile(String url, Document docToWrite) throws BigBangJewelException {
+	private static void writeXmlFile(String url, Document docToWrite)
+			throws BigBangJewelException {
 
 		TransformerFactory transformerFactory = TransformerFactory
 				.newInstance();
@@ -321,7 +321,7 @@ public class XMLCreator {
 		}
 		DOMSource source;
 		source = new DOMSource(docToWrite);
-		
+
 		StreamResult result = new StreamResult(new File(url));
 		try {
 			transformer.transform(source, result);
