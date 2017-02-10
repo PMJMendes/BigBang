@@ -42,8 +42,12 @@ public class StorageConnector {
 			// Temporary File's creation
 			tempEmlFile = createTemporaryFile(itemId,
 					Constants.GoogleAppsConstants.TMP_FILE_EXTENSION);
+			
+			// Creates an output stream used to "write" to storage
+			FileOutputStream outputStream = new FileOutputStream(tempEmlFile);
+			tempItem.writeTo(outputStream);
 
-			uploadFile(tempItem, tempEmlFile, itemId
+			uploadFile(tempEmlFile, itemId
 					+ Constants.GoogleAppsConstants.TMP_FILE_EXTENSION,
 					Constants.GoogleAppsConstants.TMP_FILE_CONTENT_TYPE,
 					Constants.StorageConstants.BUCKET_NAME);
@@ -60,20 +64,15 @@ public class StorageConnector {
 	/**
 	 * This method actually uploads the file
 	 */
-	public static void uploadFile(Message tempItem, File tempEmlFile,
+	public static void uploadFile(File tempEmlFile,
 			String fileName, String contentType, String bucketName)
 			throws BigBangJewelException {
 
 		try {
-			// Creates an output stream used to "write" to storage
-			FileOutputStream outputStream = new FileOutputStream(tempEmlFile);
-			tempItem.writeTo(outputStream);
-
 			// Upload to storage
 			StorageMethods.uploadFile(fileName, contentType, tempEmlFile,
 					bucketName);
 
-			outputStream.close();
 		} catch (Throwable e) {
 			throw new BigBangJewelException(
 					"Não foi possível fazer um upload de ficheiro " + fileName
