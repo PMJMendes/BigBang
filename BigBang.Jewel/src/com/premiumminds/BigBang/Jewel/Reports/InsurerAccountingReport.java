@@ -175,7 +175,7 @@ public class InsurerAccountingReport
 		mdblPayables = ldblTotalPremiums.subtract(ldblDirectPremiums);
 		mdblTaxableComms = mdblTotalComms.subtract(ldblLifeComms);
 
-		if (lobjMap.getCompany().getTaxRetention())
+		if (lobjMap.getCompany()!=null && lobjMap.getCompany().getTaxRetention())
 		{
 			ldblTaxCoeff = Utils.getCommissionsTax();
 			ldblTaxCoeff = ldblTaxCoeff.add(new BigDecimal(100)).setScale(10);
