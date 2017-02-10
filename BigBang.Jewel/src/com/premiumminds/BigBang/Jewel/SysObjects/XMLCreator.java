@@ -268,9 +268,8 @@ public class XMLCreator {
 		/**
 		 * A constructor with all the needed info
 		 */
-		public XMLEntry(Company company, String docNumber, String docDate,
-				String dueDate, String totalValue, String taxValue,
-				String netValue) throws BigBangJewelException {
+		public XMLEntry(Company company, String docDate, String totalValue,
+				String taxValue, String netValue) throws BigBangJewelException {
 
 			if (company != null) {
 				setCompanyValues(company);
@@ -335,22 +334,24 @@ public class XMLCreator {
 	 * This method creates a new XML. Fills the XMLEntry with the info and then
 	 * writes the file.
 	 */
-	public void createXML(Company company, String docNumber, String docDate,
-			String dueDate, String totalValue, String taxValue,
-			String netValue, String filePath) throws BigBangJewelException {
+	public void createXML(Company company, String docDate, String totalValue,
+			String taxValue, String netValue, String filePath)
+			throws BigBangJewelException {
 
-		XMLEntry entry = new XMLEntry(company, docNumber, docDate, dueDate,
-				totalValue, taxValue, netValue);
+		XMLEntry entry = new XMLEntry(company, docDate, totalValue, taxValue,
+				netValue);
 
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory
+				.newInstance();
 		DocumentBuilder docBuilder;
 		try {
 			docBuilder = docFactory.newDocumentBuilder();
 		} catch (Throwable e) {
 			throw new BigBangJewelException(
-					"Error while getting the document builder. " + e.getMessage(), e);
+					"Error while getting the document builder. "
+							+ e.getMessage(), e);
 		}
-		
+
 		// root elements
 		Document doc = docBuilder.newDocument();
 		Element rootElement = doc.createElement(ROOT_ID);
@@ -360,16 +361,16 @@ public class XMLCreator {
 		Element companyNameEl = doc.createElement(COMPANY_NAME_ID);
 		companyNameEl.appendChild(doc.createTextNode(entry.getCompanyName()));
 		rootElement.appendChild(companyNameEl);
-		
+
 		// Company's Nif
 		Element companyNifEl = doc.createElement(COMPANY_NIF_ID);
 		companyNifEl.appendChild(doc.createTextNode(entry.getCompanyNif()));
 		rootElement.appendChild(companyNifEl);
-		
+
 		// Company's Address
 		Element addressEl = doc.createElement(ADDRESS_ID);
 		rootElement.appendChild(addressEl);
-		
+
 		// Address' fields
 		Element street1El = doc.createElement(STREET_1_ID);
 		street1El.appendChild(doc.createTextNode(entry.getAddressStreet1()));
@@ -392,19 +393,21 @@ public class XMLCreator {
 		Element countryEl = doc.createElement(COUNTRY_ID);
 		countryEl.appendChild(doc.createTextNode(entry.getAddressCountry()));
 		addressEl.appendChild(countryEl);
-		
+
 		// The date the document was created
 		Element docCreationDateEl = doc.createElement(DOC_DATE_ID);
-		docCreationDateEl.appendChild(doc.createTextNode(entry.getDocumentDate()));
+		docCreationDateEl.appendChild(doc.createTextNode(entry
+				.getDocumentDate()));
 		rootElement.appendChild(docCreationDateEl);
-		
+
 		// Invoice's values
 		Element valuesEl = doc.createElement(VALUES_ID);
 		rootElement.appendChild(valuesEl);
-		
+
 		// Values' fields
 		Element totalValueEl = doc.createElement(TOTAL_VALUE_ID);
-		totalValueEl.appendChild(doc.createTextNode(entry.getValuesTotalValue()));
+		totalValueEl
+				.appendChild(doc.createTextNode(entry.getValuesTotalValue()));
 		valuesEl.appendChild(totalValueEl);
 		Element taxEl = doc.createElement(TAX_ID);
 		taxEl.appendChild(doc.createTextNode(entry.getValuesTax()));
@@ -412,7 +415,7 @@ public class XMLCreator {
 		Element netValueEl = doc.createElement(LIQUID_VALUE_ID);
 		netValueEl.appendChild(doc.createTextNode(entry.getValuesNet()));
 		valuesEl.appendChild(netValueEl);
-		
+
 		writeXmlFile(filePath, doc);
 	}
 }

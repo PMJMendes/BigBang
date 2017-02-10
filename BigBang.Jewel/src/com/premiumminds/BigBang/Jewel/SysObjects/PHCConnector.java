@@ -30,7 +30,6 @@ public class PHCConnector {
 
 		String filePath;
 		String todayString;
-		String docNumber = "112533"; // DUMMY
 
 		if (company == null) {
 			throw new BigBangJewelException(
@@ -66,8 +65,8 @@ public class PHCConnector {
 
 		try {
 			XMLCreator creator = new XMLCreator();
-			creator.createXML(company, docNumber, todayString, todayString,
-					totalValue, taxValue, netValue, filePath);
+			creator.createXML(company, todayString, totalValue, taxValue,
+					netValue, filePath);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(
 					"Error while calling the method to create the XML. "
