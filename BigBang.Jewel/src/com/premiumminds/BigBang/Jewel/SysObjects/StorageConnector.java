@@ -38,17 +38,15 @@ public class StorageConnector {
 			// "forbidden" characters' cleanup
 			String itemId = mailId.replaceAll("/", "_").replaceAll("<", "")
 					.replaceAll(">", "");
-			tempEmlFile = createTemporaryFile(itemId, Constants.GoogleAppsConstants.TMP_FILE_EXTENSION);
 
 			// Temporary File's creation
-			FileOutputStream outputStream = new FileOutputStream(tempEmlFile);
-			tempItem.writeTo(outputStream);
+			tempEmlFile = createTemporaryFile(itemId,
+					Constants.GoogleAppsConstants.TMP_FILE_EXTENSION);
 
-			// Upload to storage
-			StorageMethods.uploadFile(itemId + Constants.GoogleAppsConstants.TMP_FILE_EXTENSION, Constants.GoogleAppsConstants.TMP_FILE_CONTENT_TYPE,
-					tempEmlFile, Constants.StorageConstants.BUCKET_NAME);
-
-			outputStream.close();
+			uploadFile(tempItem, tempEmlFile, itemId
+					+ Constants.GoogleAppsConstants.TMP_FILE_EXTENSION,
+					Constants.GoogleAppsConstants.TMP_FILE_CONTENT_TYPE,
+					Constants.StorageConstants.BUCKET_NAME);
 
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage() + " 54 ", e);
@@ -56,6 +54,30 @@ public class StorageConnector {
 
 		if (tempEmlFile != null) {
 			tempEmlFile.delete();
+		}
+	}
+
+	/**
+	 * This method actually uploads the file
+	 */
+	public static void uploadFile(Message tempItem, File tempEmlFile,
+			String fileName, String contentType, String bucketName)
+			throws BigBangJewelException {
+
+		try {
+			// Creates an output stream used to "write" to storage
+			FileOutputStream outputStream = new FileOutputStream(tempEmlFile);
+			tempItem.writeTo(outputStream);
+
+			// Upload to storage
+			StorageMethods.uploadFile(fileName, contentType, tempEmlFile,
+					bucketName);
+
+			outputStream.close();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(
+					"Não foi possível fazer um upload de ficheiro " + fileName
+							+ " para o Storage. " + e.getMessage(), e);
 		}
 	}
 
@@ -78,8 +100,9 @@ public class StorageConnector {
 		ByteArrayOutputStream storedObject = null;
 		File result = null;
 		OutputStream outStream = null;
-		String convertedId =  id.replaceAll("/", "_").replaceAll("<", "")
-				.replaceAll(">", "") + Constants.GoogleAppsConstants.TMP_FILE_EXTENSION;
+		String convertedId = id.replaceAll("/", "_").replaceAll("<", "")
+				.replaceAll(">", "")
+				+ Constants.GoogleAppsConstants.TMP_FILE_EXTENSION;
 
 		try {
 			storedObject = StorageMethods.downloadObject(
@@ -89,7 +112,9 @@ public class StorageConnector {
 		}
 
 		try {
-			result = File.createTempFile(Constants.GoogleAppsConstants.TMP_FILE_PREFIX, Constants.GoogleAppsConstants.TMP_FILE_EXTENSION);
+			result = File.createTempFile(
+					Constants.GoogleAppsConstants.TMP_FILE_PREFIX,
+					Constants.GoogleAppsConstants.TMP_FILE_EXTENSION);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -158,28 +183,31 @@ public class StorageConnector {
 			throws BigBangJewelException {
 
 		Map<String, BodyPart> attachmentsMap = getAttsMapFromStorage(fileId);
-			
+
 		if (attachmentsMap == null) {
 			return null;
 		}
 
 		// Removes the mail's text from the attachments
 		attachmentsMap.remove("main");
-		
+
 		// Creates the array to return
 		FileXfer[] result = new FileXfer[attachmentsMap.size()];
-		int u=0;
+		int u = 0;
 		for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
 			try {
-				byte[] binaryData = IOUtils.toByteArray(entry.getValue().getInputStream());
-				String contentType = entry.getValue().getContentType().split(";")[0];
-				FileXfer tmp = new FileXfer(binaryData.length, contentType, entry.getKey(), new ByteArrayInputStream(binaryData));
+				byte[] binaryData = IOUtils.toByteArray(entry.getValue()
+						.getInputStream());
+				String contentType = entry.getValue().getContentType()
+						.split(";")[0];
+				FileXfer tmp = new FileXfer(binaryData.length, contentType,
+						entry.getKey(), new ByteArrayInputStream(binaryData));
 				result[u++] = tmp;
 			} catch (Throwable e) {
 				throw new BigBangJewelException(e.getMessage(), e);
-			}	
+			}
 		}
-		
+
 		return result;
 	}
 
@@ -209,28 +237,33 @@ public class StorageConnector {
 	 * returns) an array of FileXfer objects, representing the mails'
 	 * attachments
 	 */
-	public static FileXfer getAttachmentAsFileXfer(String fileId, String attachmentId)
-			throws BigBangJewelException {
+	public static FileXfer getAttachmentAsFileXfer(String fileId,
+			String attachmentId) throws BigBangJewelException {
 
 		Map<String, BodyPart> attachmentsMap = getAttsMapFromStorage(fileId);
-		
+
 		if (attachmentsMap == null) {
 			return null;
 		}
 
 		// Removes the mail's text from the attachments
 		attachmentsMap.remove("main");
-		
+
 		// Creates the array to return
 		FileXfer result = null;
-		
+
 		try {
 			for (Map.Entry<String, BodyPart> entry : attachmentsMap.entrySet()) {
-				if (MimeUtility.decodeText(entry.getKey()).equals(MimeUtility.decodeText(attachmentId))) { 
+				if (MimeUtility.decodeText(entry.getKey()).equals(
+						MimeUtility.decodeText(attachmentId))) {
 					try {
-						byte[] binaryData = IOUtils.toByteArray(entry.getValue().getInputStream());
-						String contentType = entry.getValue().getContentType().split(";")[0];
-						result = new FileXfer(binaryData.length, contentType, entry.getKey(), new ByteArrayInputStream(binaryData));
+						byte[] binaryData = IOUtils.toByteArray(entry
+								.getValue().getInputStream());
+						String contentType = entry.getValue().getContentType()
+								.split(";")[0];
+						result = new FileXfer(binaryData.length, contentType,
+								entry.getKey(), new ByteArrayInputStream(
+										binaryData));
 					} catch (Throwable e) {
 						throw new BigBangJewelException(e.getMessage(), e);
 					}
@@ -239,9 +272,8 @@ public class StorageConnector {
 			}
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
-		} 
-		
+		}
+
 		return result;
 	}
-
 }

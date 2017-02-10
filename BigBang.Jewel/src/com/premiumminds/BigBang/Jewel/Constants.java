@@ -896,6 +896,7 @@ public class Constants
 		public static final String SERVICE_ACCOUNT_ID 	= "bigbang-access-account@tidy-campaign-139313.iam.gserviceaccount.com";
 		public static final String STORAGE_SCOPE 		= "https://www.googleapis.com/auth/devstorage.read_write";
 		public static final String APP_NAME 			= "BigBang";
+		public static final String INVOICE_BUCKET_NAME	= "gatekeeper-invoice-14122015-buckete";
 	}
 	
 	// Constants used by google apps
@@ -910,5 +911,6 @@ public class Constants
 		public static final String[]	INITIAL_FOLDERS			= {"inbox", "[Gmail]/Correio enviado"};
 		public static final String		GMAIL_FOLDER_NAME		= "[Gmail]";
 		public static final String		MAIL_MIGRATION_DATE		= "2016-11-19 23:59:000";
+		public static final String 		INVOICE_FILE_EXTENSION	= ".xml";
 	}
 }
