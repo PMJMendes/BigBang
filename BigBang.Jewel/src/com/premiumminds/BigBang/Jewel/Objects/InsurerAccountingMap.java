@@ -146,6 +146,9 @@ public class InsurerAccountingMap
 		// being is the only way to differentiate.
 		if (Utils.getCurrency().equals("€")) {
 			try {
+				if (mrefCompany==null) {
+					mrefCompany = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)getAt(I.OWNER));
+				}
 				PHCConnector.createPHCFile(mrefCompany, lrepIA, mdtToday);
 			} catch (Throwable e) {
 				throw new BigBangJewelException(e.getMessage(), e);
