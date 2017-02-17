@@ -1717,7 +1717,6 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 					try {
 						// If policy is RESPONSIBILITY
 						if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY) &&
-							!hasNoHittingRate(policy.GetCurrentValues()) &&
 							 !policyLine.equals(Constants.PolicyLines.RESPONSIBILITY_ENVIRONMENTAL) &&
 							 !specialCase) {
 							dataCells[currentCell] = buildSpecialTaxTD(
@@ -2234,7 +2233,8 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						.equals(Constants.PolicyLines.DIVERS_ASSISTANCE))
 				|| policyCat.equals(Constants.PolicyCategories.LIFE)
 				|| (policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES) && policyLine
-						.equals(Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL))) {
+						.equals(Constants.PolicyLines.OTHER_DAMAGES_MACHINE_HULL))
+				|| policyCat.equals(Constants.PolicyCategories.TRANSPORTED_GOODS)) {
 			try {
 				return getValueWithTags(policyValues, insuredObject, null,
 						null, Constants.PolicyValuesTags.TERRITORIAL_SCOPE,
@@ -2508,31 +2508,28 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								+ policy.getLabel(), e);
 			}
 		}
-		
-		// Case in which the tax should only output '-'
-		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)
-				&& hasNoHittingRate(policyValues)) {
-			result.add(NO_VALUE);
-			return result;
-		}
 
 		// Case in which the tax comes from the hitting rate and minimum sales'
 		// premium
 		if (policyCat.equals(Constants.PolicyCategories.RESPONSIBILITY)) {
 			try {
-				String hitRateTmp = getValueWithTags(policyValues,
-						insuredObject, currentExercise, null,
-						Constants.PolicyValuesTags.HITTING_RATE, true, false);
-				if (hitRateTmp == null) {
-					hitRateTmp = WHITESPACE;
-				} else {
-					hitRateTmp = hitRateTmp.replace(",", ".");
-					String taxType = getValueWithTags(policyValues,
+				String hitRateTmp = NO_VALUE;
+				// It only gets the hitting rate when possible (the user did not defined "Sem taxa de acerto" as the hitting rate)
+				if (!hasNoHittingRate(policyValues)) {
+					hitRateTmp = getValueWithTags(policyValues,
 							insuredObject, currentExercise, null,
-							Constants.PolicyValuesTags.TAX_TYPE, true, false);
-					if (taxType!=null) {
-						taxType = taxType.equals("o/oo") ? "‰" : taxType.equals("o/o") ? "%" : taxType;
-						hitRateTmp = hitRateTmp + " " + taxType;
+							Constants.PolicyValuesTags.HITTING_RATE, true, false);
+					if (hitRateTmp == null) {
+						hitRateTmp = WHITESPACE;
+					} else {
+						hitRateTmp = hitRateTmp.replace(",", ".");
+						String taxType = getValueWithTags(policyValues,
+								insuredObject, currentExercise, null,
+								Constants.PolicyValuesTags.TAX_TYPE, true, false);
+						if (taxType!=null) {
+							taxType = taxType.equals("o/oo") ? "‰" : taxType.equals("o/o") ? "%" : taxType;
+							hitRateTmp = hitRateTmp + " " + taxType;
+						}
 					}
 				}
 				String minPremimTmp = getValueWithTags(policyValues,
