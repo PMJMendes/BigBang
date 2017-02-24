@@ -1912,7 +1912,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		return (policyCat.equals(Constants.PolicyCategories.AUTOMOBILE)
 				&& policySubLine
-						.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET) && !hasMultipleObjects(policy))
+						.equals(Constants.PolicySubLines.AUTO_AUTO_FLEET) && getObjNumber(policy)==1)
 				|| (policyCat.equals(Constants.PolicyCategories.OTHER_DAMAGES)
 						&& policyLine
 								.equals(Constants.PolicyLines.OTHER_DAMAGES_MACHINE_BREAKDOWN) && hasMultipleObjects(policy))
@@ -2699,6 +2699,22 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Given a policy, this method returns the number of objects
+	 */
+	private int getObjNumber(Policy policy)
+			throws BigBangJewelException {
+
+		PolicyObject[] policyObjects = policy.GetCurrentObjects();
+
+		if (policyObjects == null) {
+			return 0;
+		} else if (policyObjects.length > 1) {
+			return policyObjects.length;
+		}
+		return 1;
 	}
 	
 	/**
