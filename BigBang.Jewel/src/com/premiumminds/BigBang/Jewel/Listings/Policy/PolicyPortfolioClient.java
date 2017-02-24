@@ -2711,10 +2711,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 
 		if (policyObjects == null) {
 			return 0;
-		} else if (policyObjects.length > 1) {
+		} else {
 			return policyObjects.length;
 		}
-		return 1;
 	}
 	
 	/**
