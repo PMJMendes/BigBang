@@ -2591,14 +2591,16 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				boolean ran = false;
 				String oldTemp = "";
 				for (String temp : result) {
-					if (!temp.equals(oldTemp) && ran) {
-						allEqual = false;
+					if (!temp.equals(NO_VALUE)) {
+						if (!temp.equals(oldTemp) && ran) {
+							allEqual = false;
+						}
+						if (temp.equals(WHITESPACE)) {
+							allExist = false;
+						}
+						oldTemp = temp;
+						ran = true;
 					}
-					if (temp.equals(WHITESPACE)) {
-						allExist = false;
-					}
-					oldTemp = temp;
-					ran = true;
 				}
 				if (allExist && allEqual && result.size()>0 && !result.get(0).equals(NO_VALUE)) {
 					result.clear();
