@@ -2526,7 +2526,7 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 						String taxType = getValueWithTags(policyValues,
 								insuredObject, currentExercise, null,
 								Constants.PolicyValuesTags.TAX_TYPE, true, false);
-						if (taxType!=null) {
+						if (taxType!=null && !hitRateTmp.equals(WHITESPACE)) {
 							taxType = taxType.equals("o/oo") ? "‰" : taxType.equals("o/o") ? "%" : taxType;
 							hitRateTmp = hitRateTmp + " " + taxType;
 						}
