@@ -234,7 +234,9 @@ public class MessageBridge
 							tmpData.midUser     = tmpAddr.userId== null ? null : UUID.fromString(tmpAddr.userId);
 							tmpData.midInfo     = tmpAddr.contactInfoId==null ? null : UUID.fromString(tmpAddr.contactInfoId);
 							try {
-								tmpData.mstrDisplay = MimeUtility.decodeText(tmpAddr.display);
+								if (tmpAddr.display != null) {
+									tmpData.mstrDisplay = MimeUtility.decodeText(tmpAddr.display);
+								}
 							} catch (Throwable e) {
 								throw new BigBangException(e.getMessage() + " 239 ", e);
 							}
