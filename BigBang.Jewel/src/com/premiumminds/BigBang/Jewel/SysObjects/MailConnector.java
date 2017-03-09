@@ -1,6 +1,11 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLConnection;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -16,6 +21,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.activation.MimetypesFileTypeMap;
+import javax.imageio.ImageIO;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.FetchProfile;
@@ -40,6 +49,7 @@ import javax.mail.search.SearchTerm;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.util.IOUtils;
 
 import Jewel.Engine.Engine;
@@ -106,6 +116,8 @@ public class MailConnector {
 			String[] from, String subject, String body, FileXfer[] attachments, boolean addFrom) throws BigBangJewelException {
 
 		InternetAddress[] addresses;
+		
+		HashMap<String, FileXfer> base64ImagesExtracted;
 
 		try {
 			
@@ -152,6 +164,15 @@ public class MailConnector {
 			// Sets SENT DATE
 			mailMsg.setSentDate(new Date());
 
+			// Needed check and adaptation to handle inline images 
+			if (hasInlineImages(body)) {
+				
+				// Gets the inline images as attachments
+				base64ImagesExtracted = extractb64Images(body); 
+						
+				// Changes the body to have the new type of images
+			}
+			
 			// Sets the message's TEXT
 			if ((attachments == null) || (attachments.length == 0)) {
 				mailMsg.setText(body, "UTF-8");
@@ -188,6 +209,127 @@ public class MailConnector {
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	/**
+	 *	This method gets the base-64 strings representing images, and creates an HashMap
+	 *	with their names and decoded content.
+	 */
+	private static HashMap<String, FileXfer> extractb64Images(String body) {
+
+		HashMap<String, FileXfer> pics = new HashMap<String, FileXfer>();
+		
+		// Uses a Regular Expression to find "IMG" tags in html
+		final String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
+		final Pattern imgPatt = Pattern.compile(imgRegex);
+		final Matcher imgMtc = imgPatt.matcher(body);
+		
+		int imageNr = 0;
+		
+		// Iterates the found images to get the image alt and source
+        while (imgMtc.find()) {
+        	
+        	String imgHtml = imgMtc.group();
+        	String altStr = "";
+    		String srcStr = "";
+    		String imgType = "";
+        	
+        	// Uses a Regular Expression to find "alt" tags in html
+    		final String altRegex = "alt\\s*=\\s*([\"'])?([^\"']*)";
+    		final Pattern altPatt = Pattern.compile(altRegex);
+    		final Matcher altMtc = altPatt.matcher(imgHtml);
+    		
+    		while (altMtc.find()) {
+    			altStr = altMtc.group();
+    		}
+    		
+    		if (altStr.equals("") || altStr.indexOf("@")<0) {
+    			altStr = "image" + imageNr;
+    			imageNr++;
+    		} else {
+    			altStr = altStr.substring(9, altStr.indexOf("@"));
+    			
+    			// Gets the file name and extension
+        		imgType = FilenameUtils.getExtension(altStr);
+        		
+        		if (!imgType.equals("")) {
+        			altStr = altStr.substring(0, altStr.length()-(imgType.length()+1));
+        		}
+    		}
+    		
+    		
+    		// Uses a Regular Expression to find "IMG" tags in html
+    		final String srcRegex = "src\\s*=\\s*([\"'])?([^\"']*)";
+    		final Pattern srcPatt = Pattern.compile(srcRegex);
+            final Matcher srcMtc = srcPatt.matcher(imgHtml);
+            
+            while (srcMtc.find()) {
+            	srcStr = srcMtc.group();
+    		}
+            
+            // Only tries to get the image, if the base-64 string exists...
+            if (srcStr.length()>0 && srcStr.indexOf(",")>0 && Base64.isBase64(srcStr.substring(srcStr.indexOf(",")+1))) {
+            	srcStr = srcStr.substring(srcStr.indexOf(",")+1);
+            	byte[] srcByteArray = Base64.decodeBase64(srcStr);
+				InputStream stream = new ByteArrayInputStream(srcByteArray);
+            	
+            	if (imgType.equals("")) {
+            		try {
+						imgType = URLConnection.guessContentTypeFromStream(stream);
+					} catch (IOException e) {
+						imgType = "jpg";
+					}
+            	}
+            	
+            	try {
+            		
+            		MimetypesFileTypeMap map = new MimetypesFileTypeMap();
+            		map.addMimeTypes("image/gif gif GIF");
+            		map.addMimeTypes("image/ief ief");
+            		map.addMimeTypes("image/jpeg jpeg jpg jpe JPG");
+            		map.addMimeTypes("image/tiff tiff tif");
+            		map.addMimeTypes("image/png png PNG");
+            		map.addMimeTypes("image/x-xwindowdump xwd");
+            		
+            		String fullName = altStr+"."+imgType;
+					FileXfer attachmentXFer = new FileXfer(srcByteArray.length, map.getContentType(fullName), 
+            				fullName, stream);
+            		
+					pics.put(fullName, attachmentXFer);
+	                
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}            	
+            }
+        }
+		
+		return pics;
+	}
+
+	/**
+	 *	This method checks if the mail body needs to be changed in order to display 
+	 *	body images upon sending
+	 */
+	private static boolean hasInlineImages(String body) {
+		
+		// Uses a Regular Expression to find "IMG" tags in html
+		final String regex = "src\\s*=\\s*([\"'])?([^\"']*)";
+		final Pattern p = Pattern.compile(regex);
+		final Matcher m = p.matcher(body);
+		
+		// Iterates the found images
+        while (m.find()) {
+        	String encodedImg = m.group();
+        	
+        	encodedImg = encodedImg.substring(encodedImg.indexOf(",")+1);
+        			
+        	if(Base64.isBase64(encodedImg)) {
+        		return true;
+        	}
+        }
+		
+		return false;
 	}
 
 	/**

@@ -325,25 +325,25 @@ public class CreatePaymentNotice
 			mobjConvData.marrMessages[0].mdtDate = new Timestamp(new Date().getTime());
 			mobjConvData.marrMessages[0].mstrBody = getBody();
 
-			mobjConvData.marrMessages[0].marrAddresses = new MessageAddressData[larrInfo.length + 2];
-			mobjConvData.marrMessages[0].marrAddresses[0] = getSelf(Constants.UsageID_From);
-			mobjConvData.marrMessages[0].marrAddresses[1] = getSelf(Constants.UsageID_BCC);
+			mobjConvData.marrMessages[0].marrAddresses = new MessageAddressData[larrInfo.length + 1];
+			//mobjConvData.marrMessages[0].marrAddresses[0] = getSelf(Constants.UsageID_From);
+			mobjConvData.marrMessages[0].marrAddresses[0] = getSelf(Constants.UsageID_BCC);
 
 			for ( i = 0; i < larrInfo.length; i++ )
 			{
-				mobjConvData.marrMessages[0].marrAddresses[i + 2] = new MessageAddressData();
-				mobjConvData.marrMessages[0].marrAddresses[i + 2].mstrAddress = (String)larrInfo[i].getAt(ContactInfo.I.VALUE);
-				mobjConvData.marrMessages[0].marrAddresses[i + 2].midOwner = null;
-				mobjConvData.marrMessages[0].marrAddresses[i + 2].midUsage = Constants.UsageID_To;
-				mobjConvData.marrMessages[0].marrAddresses[i + 2].midUser = null;
-				mobjConvData.marrMessages[0].marrAddresses[i + 2].midInfo = larrInfo[i].getKey();
+				mobjConvData.marrMessages[0].marrAddresses[i + 1] = new MessageAddressData();
+				mobjConvData.marrMessages[0].marrAddresses[i + 1].mstrAddress = (String)larrInfo[i].getAt(ContactInfo.I.VALUE);
+				mobjConvData.marrMessages[0].marrAddresses[i + 1].midOwner = null;
+				mobjConvData.marrMessages[0].marrAddresses[i + 1].midUsage = Constants.UsageID_To;
+				mobjConvData.marrMessages[0].marrAddresses[i + 1].midUser = null;
+				mobjConvData.marrMessages[0].marrAddresses[i + 1].midInfo = larrInfo[i].getKey();
 				try
 				{
-					mobjConvData.marrMessages[0].marrAddresses[i + 2].mstrDisplay = larrInfo[i].getOwner().getLabel();
+					mobjConvData.marrMessages[0].marrAddresses[i + 1].mstrDisplay = larrInfo[i].getOwner().getLabel();
 				}
 				catch (Throwable e)
 				{
-					mobjConvData.marrMessages[0].marrAddresses[i + 2].mstrDisplay = null;
+					mobjConvData.marrMessages[0].marrAddresses[i + 1].mstrDisplay = null;
 				}
 			}
 
