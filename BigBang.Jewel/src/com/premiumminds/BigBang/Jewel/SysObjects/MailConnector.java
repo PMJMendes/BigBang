@@ -1,8 +1,6 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -10,21 +8,20 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.activation.MimetypesFileTypeMap;
-import javax.imageio.ImageIO;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.FetchProfile;
@@ -50,6 +47,7 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.util.IOUtils;
 
 import Jewel.Engine.Engine;
@@ -169,8 +167,20 @@ public class MailConnector {
 				
 				// Gets the inline images as attachments
 				base64ImagesExtracted = extractb64Images(body); 
-						
-				// Changes the body to have the new type of images
+				
+				if (base64ImagesExtracted!=null && base64ImagesExtracted.size()>0) {
+					// Changes the body to have the new type of images
+					body = editOutterBody(base64ImagesExtracted.keySet(), body);
+					
+					Collection<FileXfer> imgValues = base64ImagesExtracted.values();
+					FileXfer[] inlineImgs = imgValues.toArray(new FileXfer[imgValues.size()]); 
+					
+					if (inlineImgs != null && inlineImgs.length>0 && attachments != null && attachments.length>0) {
+						attachments = ArrayUtils.addAll(attachments, inlineImgs);
+					} else if (inlineImgs != null && inlineImgs.length>0 && (attachments == null || attachments.length==0)) {
+						attachments = inlineImgs;
+					}
+				}
 			}
 			
 			// Sets the message's TEXT
@@ -192,6 +202,7 @@ public class MailConnector {
 					bodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(attachments[i].getData(),
 							attachments[i].getContentType())));
 					bodyPart.setFileName(attachments[i].getFileName());
+					bodyPart.setHeader("Content-ID", attachments[i].getFileName());
 					multipartMsg.addBodyPart(bodyPart);
 				}
 
@@ -209,6 +220,56 @@ public class MailConnector {
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+	}
+
+	/**
+	 *	This method changes the src in the img tag for the base-64 inline images
+	 */
+	private static String editOutterBody(Set<String> keySet, String body) {
+		
+		// Uses a Regular Expression to find "IMG" tags in html
+		final String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
+		final Pattern imgPatt = Pattern.compile(imgRegex);
+		final Matcher imgMtc = imgPatt.matcher(body);
+		
+		// Iterates the found images to get the image alt and source
+        while (imgMtc.find()) {
+        	
+        	String imgHtml = imgMtc.group();
+        	String altStr = "";
+    		String srcStr = "";
+        	
+        	// Uses a Regular Expression to find "alt" tags in html
+    		final String altRegex = "alt\\s*=\\s*([\"'])?([^\"']*)";
+    		final Pattern altPatt = Pattern.compile(altRegex);
+    		final Matcher altMtc = altPatt.matcher(imgHtml);
+    		
+    		while (altMtc.find()) {
+    			altStr = altMtc.group();
+    		}
+    		
+    		if (!altStr.equals("") && altStr.indexOf("@")>0) {
+    			for (String tmp : keySet) {
+    				if (altStr.toLowerCase().contains(tmp.toLowerCase())) {
+    					
+    					// Uses a Regular Expression to find "IMG" tags in html
+    		    		final String srcRegex = "src\\s*=\\s*([\"'])?([^\"']*)";
+    		    		final Pattern srcPatt = Pattern.compile(srcRegex);
+    		            final Matcher srcMtc = srcPatt.matcher(imgHtml);
+    		            
+    		            while (srcMtc.find()) {
+    		            	srcStr = srcMtc.group();
+    		    		}
+    		            
+    		            // Only tries to get the image, if the base-64 string exists...
+    		            if (srcStr.length()>0 && srcStr.indexOf(",")>0 && Base64.isBase64(srcStr.substring(srcStr.indexOf(",")+1))) {
+    		            	body = body.replaceAll(srcStr, "src=\"cid:" + tmp);
+    		            }
+    				}
+    			}
+    		}
+        }
+        return body;
 	}
 
 	/**
