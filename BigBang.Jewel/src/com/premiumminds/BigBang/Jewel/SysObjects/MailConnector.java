@@ -263,7 +263,15 @@ public class MailConnector {
     		            
     		            // Only tries to get the image, if the base-64 string exists...
     		            if (srcStr.length()>0 && srcStr.indexOf(",")>0 && Base64.isBase64(srcStr.substring(srcStr.indexOf(",")+1))) {
-    		            	body = body.replaceAll(srcStr, "src=\"cid:" + tmp);
+    		            	String cenas = body.replaceAll("src\\s*=\\s*([\"'])?([^\"']*)", "src=\"cid:" + tmp);
+    		            	String cenas2 = body;
+    		            	body = body.replaceAll("src\\s*=\\s*([\"'])?([^\"']*)", "src=\"cid:" + tmp);
+    		            	if (cenas.equals(cenas2)) {
+    		            		System.out.println ("equal");
+    		            	} else {
+    		            		System.out.println ("not equal");
+    		            	}
+    		            	break;
     		            }
     				}
     			}
