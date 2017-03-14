@@ -99,13 +99,14 @@ public class Constants
 	public static final UUID ObjID_Casualty                 = UUID.fromString("EFFA56DF-8F3C-4361-A584-A02E00C4F0C5");
 
 	// SubCasualty Objects
-	public static final UUID ObjID_SubCasualty              = UUID.fromString("D5FD2D1B-59FB-4171-961A-A02E0121C81B");
-	public static final UUID ObjID_SubCasualtyItem          = UUID.fromString("A62F4F4F-7F10-4391-ABF4-A035012009A9");
-	public static final UUID ObjID_Assessment               = UUID.fromString("CCCC8540-B2AF-45D6-951C-A1330100BC77");
-	public static final UUID ObjID_MedicalFile              = UUID.fromString("835E3722-A13B-451B-AEC8-A13401125446");
-	public static final UUID ObjID_MedicalDetail            = UUID.fromString("10480936-9597-4D94-B1DC-A1340114071D");
-	public static final UUID ObjID_MedicalAppointment       = UUID.fromString("CE323715-1EA5-473C-87BC-A14F00DE2208");
-	public static final UUID ObjID_TotalLossFile            = UUID.fromString("1D05DA1F-873D-4CA6-BA62-A15001064C06");
+	public static final UUID ObjID_SubCasualty              	= UUID.fromString("D5FD2D1B-59FB-4171-961A-A02E0121C81B");
+	public static final UUID ObjID_SubCasualtyItem          	= UUID.fromString("A62F4F4F-7F10-4391-ABF4-A035012009A9");
+	public static final UUID ObjID_Assessment               	= UUID.fromString("CCCC8540-B2AF-45D6-951C-A1330100BC77");
+	public static final UUID ObjID_MedicalFile              	= UUID.fromString("835E3722-A13B-451B-AEC8-A13401125446");
+	public static final UUID ObjID_MedicalDetail            	= UUID.fromString("10480936-9597-4D94-B1DC-A1340114071D");
+	public static final UUID ObjID_MedicalAppointment       	= UUID.fromString("CE323715-1EA5-473C-87BC-A14F00DE2208");
+	public static final UUID ObjID_TotalLossFile            	= UUID.fromString("1D05DA1F-873D-4CA6-BA62-A15001064C06");
+	public static final UUID ObjID_SubCasualtyInsurerRequest	= UUID.fromString("90A96896-F729-435C-A1C2-A73501271825");
 
 	// Expense Objects
 	public static final UUID ObjID_Expense                  = UUID.fromString("09963260-CDB1-4207-B856-A03800B8AFC8");
