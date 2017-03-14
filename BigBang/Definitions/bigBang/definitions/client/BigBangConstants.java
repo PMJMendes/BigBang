@@ -89,6 +89,7 @@ public class BigBangConstants {
 		public static final String INJURY_CAUSE = "CECE0118-B15A-4F8E-87D7-A39A00E81BAF";
 		public static final String INJURY_TYPE = "85387A5F-D744-4B00-A813-A39A00E83F3C";
 		public static final String INJURED_PART = "038230AA-2100-4F0E-91B7-A39A00E8637A";
+		public static final String INSURER_REQUEST_TYPE = "525DAE0E-6426-4173-A7B8-A73501249C95";
 	}
 
 	public static class TypifiedListValues {
