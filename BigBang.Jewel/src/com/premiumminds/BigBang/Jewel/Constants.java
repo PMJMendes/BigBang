@@ -826,6 +826,7 @@ public class Constants
 		public static final UUID PERSONAL_ACC_TRIP 					= UUID.fromString("EB02FB3D-6457-4BE1-A540-9EE9010E307E");
 		public static final UUID GUARANTEE							= UUID.fromString("88DBC911-336B-4098-A0B7-9EE90113BD32");
 		public static final UUID BURGLARY							= UUID.fromString("E5CDFEBC-926C-4502-9F9A-9EE901110585");
+		public static final UUID LIFE_FINANCE						= UUID.fromString("7D0FB015-7FEF-4D29-915B-A06E00D140F4");
 	}
 	
 	// Policy Sublines

@@ -2474,6 +2474,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								+ policy.getLabel(), e);
 			}
 		}
+		
+		// Case in which the value should read '-'
+		if (policyCat.equals(Constants.PolicyCategories.LIFE) &&
+				policyLine.equals(Constants.PolicyLines.LIFE_FINANCE)) {
+			String val = NO_VALUE;
+			result.add(val);
+			return result;
+		}
 
 		/*
 		 * "Default case" - to each coverage corresponds a given insured value
@@ -2522,8 +2530,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		UUID policyLine = policy.GetSubLine().getLine().getKey();
 
 		// Case in which the tax comes from the sales'tax
-		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
-				|| policyCat.equals(Constants.PolicyCategories.LIFE)) {
+		if ((policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
+				|| policyCat.equals(Constants.PolicyCategories.LIFE)) && 
+				!policyLine.equals(Constants.PolicyLines.LIFE_FINANCE)) {
 			try {
 				String tax = getValueWithTags(policyValues, insuredObject,
 						currentExercise, null,
@@ -2541,6 +2550,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								+ " Error while getting the tax from sales'tax for policy "
 								+ policy.getLabel(), e);
 			}
+		}
+		
+		// Case in which the tax should read '-'
+		if (policyCat.equals(Constants.PolicyCategories.LIFE)
+				&& policyLine
+						.equals(Constants.PolicyLines.LIFE_FINANCE)) {
+			return new ArrayList<String>(Arrays.asList(NO_VALUE));
 		}
 
 		// Case in which the tax comes from the Sales' Premium
