@@ -122,6 +122,7 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validateGuid(section.requestType, false);
 		valid &= validateDate(section.requestDate, false);
 		valid &= validateDate(section.acceptanceDate, true);
+		
 		if (section.conforms.getValue().booleanValue()) {
 			valid &= validateDate(section.resendDate, true);
 		} else {
@@ -129,11 +130,11 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		}
 		
 		if (section.conforms.getValue().booleanValue()) {
-			if (section.clarificationDate.getValue()!=null) {
+			if (section.clarificationDate.getValueForValidation()!=null) {
 				valid &= false;
 			}
 		} else {
-			if (section.resendDate.getValue()!=null) {
+			if (section.resendDate.getValueForValidation()!=null) {
 				valid &= false;
 			}
 		}

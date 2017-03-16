@@ -41,13 +41,16 @@ public class SubCasualtyInsurerRequestSection extends CollapsibleFormViewSection
 		
 		addFormFieldGroup(new FormField<?>[]{
 				requestType,
-				requestDate,
-				acceptanceDate
+				conforms
 		}, true);
 		
 		addFormFieldGroup(new FormField<?>[]{
-				conforms,
-				resendDate,
+				requestDate,
+				resendDate
+		}, true);
+		
+		addFormFieldGroup(new FormField<?>[]{
+				acceptanceDate,
 				clarificationDate
 		}, true);
 		

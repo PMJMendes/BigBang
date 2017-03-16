@@ -376,12 +376,15 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			setSubCasualtyItems(info.items);
 			
 			addSection(newItemSection);
-			
+						
 			setSubCasualtyInsurerRequests(info.insurerRequests);
+			
+			addSection(newInsurerRequestSection);
 		} else {
 			addSection(newItemSection);
+			addSection(newInsurerRequestSection);
 		}
-		addLastFields();
+		addNotesSections();
 	}
 
 	protected void setSubCasualtyItems(SubCasualtyItem[] items) {
@@ -416,6 +419,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			final SubCasualtyItemSection section = new SubCasualtyItemSection(item, referenceType.getValue(), referenceId);
 			section.setReadOnly(this.isReadOnly());
 			this.subCasualtyItemSections.add(section);
+			
 			addSection(section);
 
 			section.getRemoveButton().addClickHandler(new ClickHandler() {
@@ -428,7 +432,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			if(item.id == null){
 				section.expand();
 			}
-			addSection(newItemSection);
+			
+			//addLastFields();
 		}
 	}
 
@@ -446,12 +451,11 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		String referenceId = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue();
 		section.setItem(item, referenceType.getValue(), referenceId);
 	}
-
-	protected void addLastFields() {
-		addSection(newInsurerRequestSection);
+	
+	protected void addNotesSections() {
 		addSection(notesSection);
 		addSection(internalNotesSection);
-	}
+	}	
 
 	public void setPanelParameters(HasParameters parameters){
 		policyReference.setParameters(parameters);
@@ -557,7 +561,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			if(request.id == null){
 				section.expand();
 			}
-			addLastFields();
+			addNotesSections();
 		}
 	}
 	
