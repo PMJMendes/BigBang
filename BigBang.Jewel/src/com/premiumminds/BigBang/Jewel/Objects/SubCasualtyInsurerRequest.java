@@ -16,12 +16,13 @@ import Jewel.Engine.SysObjects.ObjectBase;
 public class SubCasualtyInsurerRequest extends ObjectBase {
 
 	public static class I {
-		public static int TYPE = 1;
-		public static int REQUESTDATE = 2;
-		public static int ACCEPTANCEDATE = 3;
-		public static int CONFORMITY = 4;
-		public static int RESENDDATE = 5;
-		public static int CLARIFICATIONDATE = 6;
+		public static int TYPE = 0;
+		public static int REQUESTDATE = 1;
+		public static int ACCEPTANCEDATE = 2;
+		public static int CONFORMITY = 3;
+		public static int RESENDDATE = 4;
+		public static int CLARIFICATIONDATE = 5;
+		public static int SUBCASUALTY =  6;
 	}
 
 	public static SubCasualtyInsurerRequest GetInstance(UUID pidNameSpace,

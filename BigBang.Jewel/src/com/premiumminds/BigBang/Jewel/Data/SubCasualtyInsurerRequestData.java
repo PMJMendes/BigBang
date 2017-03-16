@@ -9,6 +9,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 
 public class SubCasualtyInsurerRequestData implements DataBridge {
 	
@@ -21,6 +22,7 @@ public class SubCasualtyInsurerRequestData implements DataBridge {
 	public Timestamp acceptanceDate;
 	public Timestamp resendDate;
 	public Timestamp clarificationDate;
+	public UUID subCasualtyId;
 	
 	public boolean isNew;
 	public boolean isDeleted;
@@ -37,6 +39,7 @@ public class SubCasualtyInsurerRequestData implements DataBridge {
 		acceptanceDate   	= (Timestamp)source.getAt(SubCasualtyInsurerRequest.I.ACCEPTANCEDATE);
 		resendDate   		= (Timestamp)source.getAt(SubCasualtyInsurerRequest.I.RESENDDATE);
 		clarificationDate   = (Timestamp)source.getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONDATE);
+		subCasualtyId       = (UUID)source.getAt(SubCasualtyInsurerRequest.I.SUBCASUALTY);
 	}
 	
 	public void ToObject(ObjectBase dest) throws BigBangJewelException {
@@ -47,6 +50,7 @@ public class SubCasualtyInsurerRequestData implements DataBridge {
 			dest.setAt(SubCasualtyInsurerRequest.I.ACCEPTANCEDATE,      acceptanceDate);
 			dest.setAt(SubCasualtyInsurerRequest.I.RESENDDATE,        	resendDate);
 			dest.setAt(SubCasualtyInsurerRequest.I.CLARIFICATIONDATE,  	clarificationDate);
+			dest.setAt(SubCasualtyInsurerRequest.I.SUBCASUALTY,         subCasualtyId);
 		}
 		catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);

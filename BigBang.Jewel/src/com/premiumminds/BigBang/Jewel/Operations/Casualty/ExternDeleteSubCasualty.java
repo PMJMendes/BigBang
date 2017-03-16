@@ -15,10 +15,12 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocDataHeavy;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -86,10 +88,12 @@ public class ExternDeleteSubCasualty
 	{
 		IEntity lrefSubCasualties;
 		IEntity lrefSubCasualtyItems;
+		IEntity requestEntity;
 		SubCasualty lobjAux;
 		Contact[] larrContacts;
 		Document[] larrDocs;
 		SubCasualtyItem[] larrItems;
+		SubCasualtyInsurerRequest[] requests;
 		PNProcess lobjProcess;
 		int i;
 
@@ -99,6 +103,8 @@ public class ExternDeleteSubCasualty
 					Constants.ObjID_SubCasualty));
 			lrefSubCasualtyItems = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_SubCasualtyItem));
+			requestEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_SubCasualtyInsurerRequest));
 
 			lobjAux = SubCasualty.GetInstance(Engine.getCurrentNameSpace(), midSubCasualty);
 			mobjData = new SubCasualtyData();
@@ -153,6 +159,19 @@ public class ExternDeleteSubCasualty
 					lrefSubCasualtyItems.Delete(pdb, larrItems[i].getKey());
 				}
 			}
+			
+			requests = lobjAux.GetCurrentInsurerRequests();
+			if (requests == null) {
+				mobjData.requests = null;
+			} else {
+				mobjData.requests = new SubCasualtyInsurerRequestData[requests.length];
+				for (i = 0; i<requests.length; i++) {
+					mobjData.requests[i] = new SubCasualtyInsurerRequestData();
+					mobjData.requests[i].FromObject(requests[i]);
+					mobjData.requests[i].isDeleted = true;
+					requestEntity.Delete(pdb, requests[i].getKey());
+				}
+			}
 
 			lrefSubCasualties.Delete(pdb, mobjData.mid);
 		}
@@ -190,6 +209,7 @@ public class ExternDeleteSubCasualty
 	{
 		SubCasualty lobjAux;
 		SubCasualtyItem lobjItem;
+		SubCasualtyInsurerRequest request;
 		PNProcess lobjProcess;
 		ExternResumeSubCasualty lopERC;
 		int i;
@@ -212,6 +232,17 @@ public class ExternDeleteSubCasualty
 						mobjData.marrItems[i].ToObject(lobjItem);
 						lobjItem.SaveToDb(pdb);
 						mobjData.marrItems[i].mid = lobjItem.getKey();
+					}
+				}
+			}
+			
+			if (mobjData.requests != null) {
+				for (i = 0; i<mobjData.requests.length; i++) {
+					if (mobjData.requests[i].isDeleted) {
+						request = SubCasualtyInsurerRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.requests[i].ToObject(request);
+						request.SaveToDb(pdb);
+						mobjData.requests[i].id = request.getKey();
 					}
 				}
 			}

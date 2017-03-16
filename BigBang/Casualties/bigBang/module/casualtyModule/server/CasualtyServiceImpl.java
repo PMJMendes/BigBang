@@ -38,6 +38,7 @@ import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
@@ -401,6 +402,29 @@ public class CasualtyServiceImpl
 		}
 		else
 			lopCSC.mobjData.marrItems = null;
+		
+		if ( subCasualty.insurerRequests != null ) {
+			lopCSC.mobjData.requests = new SubCasualtyInsurerRequestData[subCasualty.insurerRequests.length];
+			for ( i = 0; i < lopCSC.mobjData.requests.length; i++ ) {
+				lopCSC.mobjData.requests[i] = new SubCasualtyInsurerRequestData();
+				lopCSC.mobjData.requests[i].typeId = (subCasualty.insurerRequests[i].insurerRequestTypeId == null ? null :
+					UUID.fromString(subCasualty.insurerRequests[i].insurerRequestTypeId));
+				lopCSC.mobjData.requests[i].requestDate = (subCasualty.insurerRequests[i].requestDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].requestDate + " 00:00:00.0"));
+				lopCSC.mobjData.requests[i].acceptanceDate = (subCasualty.insurerRequests[i].acceptanceDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].acceptanceDate + " 00:00:00.0"));
+				lopCSC.mobjData.requests[i].conforms = subCasualty.insurerRequests[i].conforms;
+				lopCSC.mobjData.requests[i].resendDate = (subCasualty.insurerRequests[i].resendDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].resendDate + " 00:00:00.0"));
+				lopCSC.mobjData.requests[i].clarificationDate = (subCasualty.insurerRequests[i].clarificationDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].clarificationDate + " 00:00:00.0"));
+				
+				lopCSC.mobjData.requests[i].isNew = !subCasualty.insurerRequests[i].deleted;
+				lopCSC.mobjData.requests[i].isDeleted = subCasualty.insurerRequests[i].deleted;
+			}
+		} else {
+			lopCSC.mobjData.requests = null;
+		}
 
 		lopCSC.mobjContactOps = null;
 		lopCSC.mobjDocOps = null;

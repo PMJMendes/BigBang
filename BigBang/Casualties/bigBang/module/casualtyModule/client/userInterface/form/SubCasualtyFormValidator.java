@@ -20,6 +20,7 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validatePresentInPolicy();
 		valid &= validateInsuredObject();
 		valid &= validateDetails();
+		valid &= validateInsurerRequests();
 
 		return new Result(valid, this.validationMessages);
 	}
@@ -87,6 +88,15 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		
 		return valid;
 	}
+	
+	private boolean validateInsurerRequests() {
+		boolean valid = true;
+		for(SubCasualtyInsurerRequestSection section : form.subCasualtyInsurerRequestSections){
+			valid &= validateInsurerRequestSection(section);
+		}
+		
+		return valid;
+	}
 
 	private boolean validateDetailSection(SubCasualtyItemSection section) {
 		boolean valid = true;
@@ -102,6 +112,31 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validateGuid(section.injuredPart, true);
 		valid &= (section.thirdParty.getValue() != null);
 		valid &= validateString(section.notes, 0, 250, true);
+
+		return valid;
+	}
+	
+	private boolean validateInsurerRequestSection(SubCasualtyInsurerRequestSection section) {
+		boolean valid = true;
+		
+		valid &= validateGuid(section.requestType, false);
+		valid &= validateDate(section.requestDate, false);
+		valid &= validateDate(section.acceptanceDate, true);
+		if (section.conforms.getValue().booleanValue()) {
+			valid &= validateDate(section.resendDate, true);
+		} else {
+			valid &= validateDate(section.clarificationDate, true);
+		}
+		
+		if (section.conforms.getValue().booleanValue()) {
+			if (section.clarificationDate.getValue()!=null) {
+				valid &= false;
+			}
+		} else {
+			if (section.resendDate.getValue()!=null) {
+				valid &= false;
+			}
+		}
 
 		return valid;
 	}

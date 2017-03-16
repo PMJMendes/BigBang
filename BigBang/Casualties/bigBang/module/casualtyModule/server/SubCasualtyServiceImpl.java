@@ -39,11 +39,13 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -79,6 +81,7 @@ public class SubCasualtyServiceImpl
 		Mediator lobjMed;
 		Company lobjComp;
 		SubCasualtyItem[] larrItems;
+		SubCasualtyInsurerRequest[] requests;
 		SubCasualty lobjResult;
 		BigDecimal ldblTotal;
 		BigDecimal ldblLocal;
@@ -100,6 +103,7 @@ public class SubCasualtyServiceImpl
 			lobjClient = lobjPolicy.GetClient();
 			lobjMed = lobjClient.getMediator();
 			larrItems = lobjSubCasualty.GetCurrentItems();
+			requests = lobjSubCasualty.GetCurrentInsurerRequests();
 		}
 		catch (Throwable e)
 		{
@@ -175,6 +179,29 @@ public class SubCasualtyServiceImpl
 			lobjResult.items[i].notes = (String)larrItems[i].getAt(SubCasualtyItem.I.NOTES);
 
 			ldblTotal = ( ldblTotal == null ? ldblLocal : (ldblLocal == null ? ldblTotal : ldblTotal.add(ldblLocal)) );
+		}
+		
+		// Insurer Requests set
+		lobjResult.insurerRequests = new SubCasualty.SubCasualtyInsurerRequest[requests.length];
+		
+		for ( i = 0; i < lobjResult.insurerRequests.length; i++ ) {
+			
+			lobjResult.insurerRequests[i] = new SubCasualty.SubCasualtyInsurerRequest();
+			
+			lobjResult.insurerRequests[i].id = requests[i].getKey().toString();
+			lobjResult.insurerRequests[i].insurerRequestTypeId = (requests[i].getAt(SubCasualtyInsurerRequest.I.TYPE) == null ? null :
+				((UUID)requests[i].getAt(SubCasualtyInsurerRequest.I.TYPE)).toString());
+			
+			lobjResult.insurerRequests[i].conforms = (Boolean)requests[i].getAt(SubCasualtyInsurerRequest.I.CONFORMITY);
+			
+			lobjResult.insurerRequests[i].requestDate = (requests[i].getAt(SubCasualtyInsurerRequest.I.REQUESTDATE) == null ? null :
+				((Timestamp)requests[i].getAt(SubCasualtyInsurerRequest.I.REQUESTDATE)).toString().substring(0, 10));
+			lobjResult.insurerRequests[i].acceptanceDate = (requests[i].getAt(SubCasualtyInsurerRequest.I.ACCEPTANCEDATE) == null ? null :
+				((Timestamp)requests[i].getAt(SubCasualtyInsurerRequest.I.ACCEPTANCEDATE)).toString().substring(0, 10));
+			lobjResult.insurerRequests[i].clarificationDate = (requests[i].getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONDATE) == null ? null :
+				((Timestamp)requests[i].getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONDATE)).toString().substring(0, 10));
+			lobjResult.insurerRequests[i].resendDate = (requests[i].getAt(SubCasualtyInsurerRequest.I.RESENDDATE) == null ? null :
+				((Timestamp)requests[i].getAt(SubCasualtyInsurerRequest.I.RESENDDATE)).toString().substring(0, 10));
 		}
 		lobjResult.totalDamages = (ldblTotal == null ? null : ldblTotal.toPlainString());
 
@@ -273,7 +300,35 @@ public class SubCasualtyServiceImpl
 		}
 		else
 			lopMD.mobjData.marrItems = null;
-
+		
+		// Insurer Requests set
+		if ( subCasualty.insurerRequests != null ) {
+			lopMD.mobjData.requests = new SubCasualtyInsurerRequestData[subCasualty.insurerRequests.length];
+			
+			for ( i = 0; i < lopMD.mobjData.requests.length; i++ ) {
+				
+				lopMD.mobjData.requests[i] = new SubCasualtyInsurerRequestData();
+				
+				lopMD.mobjData.requests[i].id = (subCasualty.insurerRequests[i].id == null ? null : UUID.fromString(subCasualty.insurerRequests[i].id) ); 
+				lopMD.mobjData.requests[i].typeId = ( subCasualty.insurerRequests[i].insurerRequestTypeId == null ? null :
+					UUID.fromString(subCasualty.insurerRequests[i].insurerRequestTypeId) ); 
+						
+				lopMD.mobjData.requests[i].conforms = subCasualty.insurerRequests[i].conforms;
+				
+				lopMD.mobjData.requests[i].requestDate = ( subCasualty.insurerRequests[i].requestDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].requestDate + " 00:00:00.0"));
+				lopMD.mobjData.requests[i].acceptanceDate = ( subCasualty.insurerRequests[i].acceptanceDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].acceptanceDate + " 00:00:00.0"));
+				lopMD.mobjData.requests[i].resendDate = ( subCasualty.insurerRequests[i].resendDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].resendDate + " 00:00:00.0"));
+				lopMD.mobjData.requests[i].clarificationDate = ( subCasualty.insurerRequests[i].clarificationDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].clarificationDate + " 00:00:00.0"));
+				
+				lopMD.mobjData.requests[i].isNew = ( !subCasualty.insurerRequests[i].deleted && (subCasualty.insurerRequests[i].id == null) );
+				lopMD.mobjData.requests[i].isDeleted = subCasualty.insurerRequests[i].deleted;	
+			}
+		}
+			
 		lopMD.mobjContactOps = null;
 		lopMD.mobjDocOps = null;
 

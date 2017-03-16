@@ -321,6 +321,84 @@ public class SubCasualty
 
 		return larrAux.toArray(new SubCasualtyItem[larrAux.size()]);
     }
+    
+    public SubCasualtyInsurerRequest[] GetCurrentInsurerRequests() throws BigBangJewelException {
+    	ArrayList<SubCasualtyInsurerRequest> iReqs;
+    	IEntity reqEntity;
+        MasterDB ldb;
+        ResultSet resultSet;
+
+        iReqs = new ArrayList<SubCasualtyInsurerRequest>();
+
+    	try {
+    		reqEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualtyInsurerRequest)); 
+    		ldb = new MasterDB();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		resultSet = reqEntity.SelectByMembers(ldb, new int[] {SubCasualtyInsurerRequest.I.SUBCASUALTY},
+    				new java.lang.Object[] {getKey()}, new int[0]);
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		while (resultSet.next()) {
+    			iReqs.add(SubCasualtyInsurerRequest.GetInstance(getNameSpace(), resultSet));
+    		}
+    	} catch (BigBangJewelException e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw e;
+    	} catch (Throwable e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+
+    	try {
+    		resultSet.close();
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		ldb.Disconnect();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+
+    	return iReqs.toArray(new SubCasualtyInsurerRequest[iReqs.size()]);
+    }
 
     public Casualty GetCasualty()
     	throws BigBangJewelException
