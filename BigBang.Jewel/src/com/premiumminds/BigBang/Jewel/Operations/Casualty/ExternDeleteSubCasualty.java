@@ -240,6 +240,7 @@ public class ExternDeleteSubCasualty
 				for (i = 0; i<mobjData.requests.length; i++) {
 					if (mobjData.requests[i].isDeleted) {
 						request = SubCasualtyInsurerRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.requests[i].subCasualtyId = mobjData.mid;
 						mobjData.requests[i].ToObject(request);
 						request.SaveToDb(pdb);
 						mobjData.requests[i].id = request.getKey();

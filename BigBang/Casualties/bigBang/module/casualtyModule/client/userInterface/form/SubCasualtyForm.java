@@ -432,8 +432,10 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			if(item.id == null){
 				section.expand();
 			}
-			
-			//addLastFields();
+			addSection(newItemSection);
+			addRequests();
+			addSection(newInsurerRequestSection);
+			addNotesSections();
 		}
 	}
 
@@ -455,6 +457,13 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected void addNotesSections() {
 		addSection(notesSection);
 		addSection(internalNotesSection);
+	}	
+	
+	protected void addRequests() {
+		SubCasualtyInsurerRequest[] subCasualtyInsurerRequests = getSubCasualtyInsurerRequests();
+		if (subCasualtyInsurerRequests != null && subCasualtyInsurerRequests.length>0) {
+			setSubCasualtyInsurerRequests(subCasualtyInsurerRequests);
+		}
 	}	
 
 	public void setPanelParameters(HasParameters parameters){
@@ -561,6 +570,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			if(request.id == null){
 				section.expand();
 			}
+			addSection(newInsurerRequestSection);
 			addNotesSections();
 		}
 	}

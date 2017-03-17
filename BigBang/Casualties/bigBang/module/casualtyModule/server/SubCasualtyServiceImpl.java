@@ -324,6 +324,8 @@ public class SubCasualtyServiceImpl
 				lopMD.mobjData.requests[i].clarificationDate = ( subCasualty.insurerRequests[i].clarificationDate == null ? null :
 					Timestamp.valueOf(subCasualty.insurerRequests[i].clarificationDate + " 00:00:00.0"));
 				
+				lopMD.mobjData.requests[i].subCasualtyId = lopMD.mobjData.mid;
+				
 				lopMD.mobjData.requests[i].isNew = ( !subCasualty.insurerRequests[i].deleted && (subCasualty.insurerRequests[i].id == null) );
 				lopMD.mobjData.requests[i].isDeleted = subCasualty.insurerRequests[i].deleted;	
 			}

@@ -10,8 +10,10 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -72,6 +74,7 @@ public class ManageData
 	{
 		SubCasualty lobjAux;
 		SubCasualtyItem lobjItem;
+		SubCasualtyInsurerRequest request;
 		UUID lidOwner;
 		int i;
 
@@ -120,6 +123,33 @@ public class ManageData
 							mobjData.marrItems[i].mobjPrevValues.FromObject(lobjItem);
 							mobjData.marrItems[i].ToObject(lobjItem);
 							lobjItem.SaveToDb(pdb);
+						}
+					}
+				}
+				
+				// Insurer Requests' management
+				if ( mobjData.requests != null ) {
+					for ( i = 0; i < mobjData.requests.length; i++ ) {
+						if ( mobjData.requests[i].isDeleted ) {
+							if ( mobjData.requests[i].id == null ) {
+								continue;
+							}
+							request = SubCasualtyInsurerRequest.GetInstance(Engine.getCurrentNameSpace(), mobjData.requests[i].id);
+							mobjData.requests[i].FromObject(request);
+							request.getDefinition().Delete(pdb, request.getKey());
+						} else if ( mobjData.requests[i].isNew ) {
+							request = SubCasualtyInsurerRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.requests[i].subCasualtyId = mobjData.mid;
+							mobjData.requests[i].ToObject(request);
+							request.SaveToDb(pdb);
+							mobjData.requests[i].id = request.getKey();
+						}
+						else {
+							request = SubCasualtyInsurerRequest.GetInstance(Engine.getCurrentNameSpace(), mobjData.requests[i].id);
+							mobjData.requests[i].prevValues = new SubCasualtyInsurerRequestData();
+							mobjData.requests[i].prevValues.FromObject(request);
+							mobjData.requests[i].ToObject(request);
+							request.SaveToDb(pdb);
 						}
 					}
 				}
