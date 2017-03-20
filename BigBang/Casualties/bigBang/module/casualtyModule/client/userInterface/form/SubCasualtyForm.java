@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -568,6 +569,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				}
 			});
 			if(request.id == null){
+				section.requestDate.setValue(new Date(), false);
+				section.acceptanceDate.setValue(new Date(), false);
 				section.expand();
 			}
 			addSection(newInsurerRequestSection);
