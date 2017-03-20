@@ -29,6 +29,22 @@ public class SubCasualty
 		public boolean deleted;
 
 	}
+	
+	public static class SubCasualtyInsurerRequest implements Serializable {
+	
+		private static final long serialVersionUID = 1L;
+
+		public String id; //TODO: fica por analogia com SubCasualtyItem. A remover se não necessário
+		public String insurerRequestTypeId; // Request type
+		public String requestDate;  // the date the insurer made the request
+		public String acceptanceDate; // The date the request was received
+		public boolean conforms; // Conformity flag
+		public String resendDate; // date the request was sent to the insurer, if conformity = true
+		public String clarificationDate; // the date a clarification was requested, if conformity = false 
+	
+		public boolean deleted;
+
+	}
 
 	public String managerId;
 
@@ -48,4 +64,6 @@ public class SubCasualty
 	public String text;
 	public String internalNotes;
 	public String serviceCenterId;
+	
+	public SubCasualtyInsurerRequest[] insurerRequests;  // The array with the insurer requests
 }

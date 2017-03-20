@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -11,6 +12,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
+import bigBang.definitions.shared.SubCasualty.SubCasualtyInsurerRequest;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;
@@ -32,6 +34,7 @@ import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
 import bigBang.module.casualtyModule.client.resources.Resources;
+import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyInsurerRequestSection;
 import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyItemSection;
 
 import com.google.gwt.core.client.GWT;
@@ -64,6 +67,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 	protected Collection<SubCasualtyItemSection> subCasualtyItemSections;
 	protected NewSubCasualtyItemSection newItemSection;
+	
+	protected Collection<SubCasualtyInsurerRequestSection> subCasualtyInsurerRequestSections;
+	protected NewSubCasualtyInsurerRequestSection newInsurerRequestSection;
 
 	public SubCasualtyForm(){
 		casualty = new NavigationFormField("Sinistro");
@@ -191,6 +197,17 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				addSubCasualtyItemSection(new SubCasualtyItem());
 			}
 		});
+		
+		this.subCasualtyInsurerRequestSections = new ArrayList<SubCasualtyInsurerRequestSection>();
+
+		this.newInsurerRequestSection = new NewSubCasualtyInsurerRequestSection();
+		this.newInsurerRequestSection.newButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				addSubCasualtyInsurerRequestSection(new SubCasualtyInsurerRequest());
+			}
+		});
 
 		notesSection = new FormViewSection("Notas");
 		notesSection.addFormField(notes);
@@ -240,6 +257,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			result.text = notes.getValue();
 			result.internalNotes = internalNotes.getValue();
 			result.items = getSubCasualtyItems();
+			result.insurerRequests = getSubCasualtyInsurerRequests();
 			result.insuredObjectId = insuredObject.getValue();
 			result.insuredObjectName = insuredObjectName.getValue();
 			result.serviceCenterId = carRepair.getValue();
@@ -357,8 +375,17 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			carRepair.setValue(info.serviceCenterId);
 			
 			setSubCasualtyItems(info.items);
+			
+			addSection(newItemSection);
+						
+			setSubCasualtyInsurerRequests(info.insurerRequests);
+			
+			addSection(newInsurerRequestSection);
+		} else {
+			addSection(newItemSection);
+			addSection(newInsurerRequestSection);
 		}
-		addLastFields();
+		addNotesSections();
 	}
 
 	protected void setSubCasualtyItems(SubCasualtyItem[] items) {
@@ -393,6 +420,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			final SubCasualtyItemSection section = new SubCasualtyItemSection(item, referenceType.getValue(), referenceId);
 			section.setReadOnly(this.isReadOnly());
 			this.subCasualtyItemSections.add(section);
+			
 			addSection(section);
 
 			section.getRemoveButton().addClickHandler(new ClickHandler() {
@@ -405,7 +433,10 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			if(item.id == null){
 				section.expand();
 			}
-			addLastFields();
+			addSection(newItemSection);
+			addRequests();
+			addSection(newInsurerRequestSection);
+			addNotesSections();
 		}
 	}
 
@@ -423,12 +454,18 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		String referenceId = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue();
 		section.setItem(item, referenceType.getValue(), referenceId);
 	}
-
-	protected void addLastFields() {
-		addSection(newItemSection);
+	
+	protected void addNotesSections() {
 		addSection(notesSection);
 		addSection(internalNotesSection);
-	}
+	}	
+	
+	protected void addRequests() {
+		SubCasualtyInsurerRequest[] subCasualtyInsurerRequests = getSubCasualtyInsurerRequests();
+		if (subCasualtyInsurerRequests != null && subCasualtyInsurerRequests.length>0) {
+			setSubCasualtyInsurerRequests(subCasualtyInsurerRequests);
+		}
+	}	
 
 	public void setPanelParameters(HasParameters parameters){
 		policyReference.setParameters(parameters);
@@ -489,6 +526,63 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	public void openNewDetail() {
 		addSubCasualtyItemSection(new SubCasualtyItem());
 	}
+	
+	protected void setSubCasualtyInsurerRequests(SubCasualtyInsurerRequest[] requests) {
+		for(FormViewSection section : this.subCasualtyInsurerRequestSections) {
+			removeSection(section);
+		}
+		this.subCasualtyInsurerRequestSections.clear();
+
+		if(requests != null) {
+			for(SubCasualtyInsurerRequest request : requests) {
+				addSubCasualtyInsurerRequestSection(request);
+			}
+		}
+	}
+	
+	protected SubCasualtyInsurerRequest[] getSubCasualtyInsurerRequests(){
+		SubCasualtyInsurerRequest[] result = new SubCasualtyInsurerRequest[subCasualtyInsurerRequestSections.size()];
+
+		int i = 0;
+		for(SubCasualtyInsurerRequestSection section : subCasualtyInsurerRequestSections) {
+			result[i] = section.getRequest();
+			i++;
+		}
+
+		return result;
+	}
 
 
+	protected void addSubCasualtyInsurerRequestSection(SubCasualtyInsurerRequest request){
+		if(!request.deleted) {
+			
+			final SubCasualtyInsurerRequestSection section = new SubCasualtyInsurerRequestSection(request);
+			section.setReadOnly(this.isReadOnly());
+			this.subCasualtyInsurerRequestSections.add(section);
+			addSection(section);
+
+			section.getRemoveButton().addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					removeInsurerRequestAndSection(section);
+				}
+			});
+			if(request.id == null){
+				section.requestDate.setValue(new Date(), false);
+				section.acceptanceDate.setValue(new Date(), false);
+				section.expand();
+			}
+			addSection(newInsurerRequestSection);
+			addNotesSections();
+		}
+	}
+	
+	protected void removeInsurerRequestAndSection(SubCasualtyInsurerRequestSection section){
+		section.setVisible(false);
+		SubCasualtyInsurerRequest request = section.getRequest();
+		request.deleted = true;
+		section.setRequest(request);
+	}
+	
 }

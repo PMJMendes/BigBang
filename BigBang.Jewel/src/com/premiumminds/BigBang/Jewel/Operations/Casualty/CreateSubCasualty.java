@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -78,6 +79,7 @@ public class CreateSubCasualty
 		IScript lobjScript;
 		IProcess lobjProc;
 		SubCasualtyItem lobjItem;
+		SubCasualtyInsurerRequest request;
 		int i;
 
 		if ( mobjData.midManager == null )
@@ -116,6 +118,19 @@ public class CreateSubCasualty
 						mobjData.marrItems[i].ToObject(lobjItem);
 						lobjItem.SaveToDb(pdb);
 						mobjData.marrItems[i].mid = lobjItem.getKey();
+					}
+				}
+			}
+			
+			// Insurer requests
+			if (mobjData.requests != null) {
+				for (i=0; i<mobjData.requests.length; i++) {
+					if (mobjData.requests[i].isNew) {
+						request = SubCasualtyInsurerRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.requests[i].subCasualtyId = mobjData.mid;
+						mobjData.requests[i].ToObject(request);
+						request.SaveToDb(pdb);
+						mobjData.requests[i].id = request.getKey();
 					}
 				}
 			}

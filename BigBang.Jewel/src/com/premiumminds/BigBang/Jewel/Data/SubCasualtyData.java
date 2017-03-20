@@ -43,6 +43,7 @@ public class SubCasualtyData
 	public UUID midProcess;
 
 	public SubCasualtyItemData[] marrItems;
+	public SubCasualtyInsurerRequestData[] requests;
 
 	public SubCasualtyData mobjPrevValues;
 
@@ -206,6 +207,14 @@ public class SubCasualtyData
 			for ( i = 0; i < marrItems.length; i++ )
 			{
 				marrItems[i].Describe(pstrBuilder, pstrLineBreak);
+				pstrBuilder.append(pstrLineBreak);
+			}
+		}
+		
+		if (requests != null && requests.length > 0) {
+			pstrBuilder.append(pstrLineBreak).append("Pedidos de Seguradora:").append(pstrLineBreak).append(pstrLineBreak);
+			for ( i = 0; i < requests.length; i++ ) {
+				requests[i].Describe(pstrBuilder, pstrLineBreak);
 				pstrBuilder.append(pstrLineBreak);
 			}
 		}

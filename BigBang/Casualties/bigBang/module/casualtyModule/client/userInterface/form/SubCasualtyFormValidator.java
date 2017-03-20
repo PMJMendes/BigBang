@@ -20,6 +20,7 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validatePresentInPolicy();
 		valid &= validateInsuredObject();
 		valid &= validateDetails();
+		valid &= validateInsurerRequests();
 
 		return new Result(valid, this.validationMessages);
 	}
@@ -82,7 +83,23 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 	private boolean validateDetails() {
 		boolean valid = true;
 		for(SubCasualtyItemSection section : form.subCasualtyItemSections){
-			valid &= validateDetailSection(section);
+			if (section.getItem().deleted != true) {
+				valid &= validateDetailSection(section);
+			}
+		}
+		
+		return valid;
+	}
+	
+	/**
+	 * Iterates and validates the insurer requests 
+	 */
+	private boolean validateInsurerRequests() {
+		boolean valid = true;
+		for(SubCasualtyInsurerRequestSection section : form.subCasualtyInsurerRequestSections){
+			if (section.getRequest().deleted != true) {
+				valid &= validateInsurerRequestSection(section);
+			}
 		}
 		
 		return valid;
@@ -105,5 +122,37 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 
 		return valid;
 	}
+	
+	/**
+	 * Validates a insurer request
+	 */
+	private boolean validateInsurerRequestSection(SubCasualtyInsurerRequestSection section) {
+		boolean valid = true;
+		
+		valid &= validateGuid(section.requestType, false);
+		valid &= validateDate(section.requestDate, false);
+		valid &= validateDate(section.acceptanceDate, true);
+		
+		if (section.conforms.getValue().booleanValue()) {
+			valid &= validateDate(section.resendDate, true);
+		} else {
+			valid &= validateDate(section.clarificationDate, true);
+		}
+		
+		// Checks for non null dates that should be null
+		if (section.conforms.getValue().booleanValue()) {
+			if (section.clarificationDate.getValueForValidation()!=null) {
+				valid &= false;
+				section.clarificationDate.setInvalid(true);
+			}
+		} else {
+			if (section.resendDate.getValueForValidation()!=null) {
+				valid &= false;
+				section.resendDate.setInvalid(true);
+			} 
+		}
+
+		return valid;
+	}	
 
 }
