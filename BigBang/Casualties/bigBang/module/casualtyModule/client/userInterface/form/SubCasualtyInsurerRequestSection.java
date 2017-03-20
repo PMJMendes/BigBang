@@ -13,62 +13,65 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public class SubCasualtyInsurerRequestSection extends CollapsibleFormViewSection {
-	
+/**
+ * The class used to display the insurer request section. This sections is used
+ * to store a given insurer request, some control dates, and whether it conforms
+ * to what's supposed.
+ * 
+ */
+public class SubCasualtyInsurerRequestSection extends
+		CollapsibleFormViewSection {
+
 	protected SubCasualty.SubCasualtyInsurerRequest currentRequest;
-	
+
 	protected ExpandableListBoxFormField requestType;
 	protected DatePickerFormField requestDate;
 	protected DatePickerFormField acceptanceDate;
 	protected DatePickerFormField resendDate;
 	protected DatePickerFormField clarificationDate;
 	protected CheckBoxFormField conforms;
-	
+
 	protected Button removeButton;
-	
+
 	public SubCasualtyInsurerRequestSection(SubCasualtyInsurerRequest request) {
-		
+
 		super("");
-		
+
 		removeButton = new Button("Remover");
 		// requestType = new ExpandableListBoxFormField(null, "Tipo de Pedido");
-		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INSURER_REQUEST_TYPE, "Tipo de Pedido");
+		requestType = new ExpandableListBoxFormField(
+				BigBangConstants.TypifiedListIds.INSURER_REQUEST_TYPE,
+				"Tipo de Pedido");
 		conforms = new CheckBoxFormField("Conformidade com Pedido");
 		requestDate = new DatePickerFormField("Data de Pedido");
 		acceptanceDate = new DatePickerFormField("Data de Recepção");
-		resendDate = new DatePickerFormField("Data de Reenvio (a preencher em caso de conformidade)");
-		clarificationDate = new DatePickerFormField("Data de Pedido de Esclarecimento  (a preencher em caso de não conformidade)");
-		
-		addFormFieldGroup(new FormField<?>[]{
-				requestType,
-				conforms
-		}, true);
-		
-		addFormFieldGroup(new FormField<?>[]{
-				requestDate,
-				resendDate
-		}, true);
-		
-		addFormFieldGroup(new FormField<?>[]{
-				acceptanceDate,
-				clarificationDate
-		}, true);
-		
+		resendDate = new DatePickerFormField(
+				"Data de Reenvio (a preencher em caso de conformidade)");
+		clarificationDate = new DatePickerFormField(
+				"Data de Pedido de Esclarecimento  (a preencher em caso de não conformidade)");
+
+		addFormFieldGroup(new FormField<?>[] { requestType, conforms }, true);
+
+		addFormFieldGroup(new FormField<?>[] { requestDate, resendDate }, true);
+
+		addFormFieldGroup(new FormField<?>[] { acceptanceDate,
+				clarificationDate }, true);
+
 		SimplePanel buttonWrapper = new SimplePanel();
 		buttonWrapper.add(removeButton);
 		buttonWrapper.setWidth("100%");
 
 		addWidget(buttonWrapper, false);
-		
+
 		setRequest(request);
 	}
-	
+
 	public void setRequest(final SubCasualtyInsurerRequest request) {
 		this.currentRequest = request;
-		
-		if(request != null) {
+
+		if (request != null) {
 			this.headerLabel.setText("Pedido de Segurador");
-			
+
 			// setRequestType();
 			requestType.setValue(request.insurerRequestTypeId);
 			conforms.setValue(request.conforms);
@@ -78,12 +81,12 @@ public class SubCasualtyInsurerRequestSection extends CollapsibleFormViewSection
 			clarificationDate.setValue(request.clarificationDate);
 		}
 	}
-	
+
 	public SubCasualtyInsurerRequest getRequest() {
 		SubCasualtyInsurerRequest result = this.currentRequest;
 
-		if(result != null) {
-			
+		if (result != null) {
+
 			result.insurerRequestTypeId = requestType.getValue();
 			result.requestDate = requestDate.getStringValue();
 			result.acceptanceDate = acceptanceDate.getStringValue();
@@ -94,7 +97,7 @@ public class SubCasualtyInsurerRequestSection extends CollapsibleFormViewSection
 
 		return result;
 	}
-	
+
 	public HasClickHandlers getRemoveButton() {
 		return removeButton;
 	}
@@ -104,4 +107,4 @@ public class SubCasualtyInsurerRequestSection extends CollapsibleFormViewSection
 		super.setReadOnly(readOnly);
 		removeButton.setVisible(!readOnly);
 	}
-} 
+}
