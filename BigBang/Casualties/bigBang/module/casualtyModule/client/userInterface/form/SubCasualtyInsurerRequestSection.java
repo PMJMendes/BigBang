@@ -79,23 +79,6 @@ public class SubCasualtyInsurerRequestSection extends CollapsibleFormViewSection
 		}
 	}
 	
-	/*public void setRequestType() {
-		
-		requestType.setListId(BigBangConstants.TypifiedListIds.INSURER_REQUEST_TYPE, new ResponseHandler<Void>() {
-
-			@Override
-			public void onResponse(Void response) {
-				return;
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				return;
-			}
-		});
-		
-	}*/
-	
 	public SubCasualtyInsurerRequest getRequest() {
 		SubCasualtyInsurerRequest result = this.currentRequest;
 
@@ -104,8 +87,8 @@ public class SubCasualtyInsurerRequestSection extends CollapsibleFormViewSection
 			result.insurerRequestTypeId = requestType.getValue();
 			result.requestDate = requestDate.getStringValue();
 			result.acceptanceDate = acceptanceDate.getStringValue();
-			result.resendDate = acceptanceDate.getStringValue();
-			result.clarificationDate = acceptanceDate.getStringValue();
+			result.resendDate = resendDate.getStringValue();
+			result.clarificationDate = clarificationDate.getStringValue();
 			result.conforms = conforms.getValue();
 		}
 

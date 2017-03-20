@@ -92,7 +92,9 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 	private boolean validateInsurerRequests() {
 		boolean valid = true;
 		for(SubCasualtyInsurerRequestSection section : form.subCasualtyInsurerRequestSections){
-			valid &= validateInsurerRequestSection(section);
+			if (section.getRequest().deleted != true) {
+				valid &= validateInsurerRequestSection(section);
+			}
 		}
 		
 		return valid;
@@ -132,14 +134,16 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		if (section.conforms.getValue().booleanValue()) {
 			if (section.clarificationDate.getValueForValidation()!=null) {
 				valid &= false;
+				section.clarificationDate.setInvalid(true);
 			}
 		} else {
 			if (section.resendDate.getValueForValidation()!=null) {
 				valid &= false;
-			}
+				section.resendDate.setInvalid(true);
+			} 
 		}
 
 		return valid;
-	}
+	}	
 
 }
