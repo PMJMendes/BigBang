@@ -41,6 +41,7 @@ public class SubCasualty
 		public boolean conforms; // Conformity flag
 		public String resendDate; // date the request was sent to the insurer, if conformity = true
 		public String clarificationDate; // the date a clarification was requested, if conformity = false 
+		public String clarificationTypeId; // Clarification type
 	
 		public boolean deleted;
 

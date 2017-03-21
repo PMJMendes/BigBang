@@ -137,6 +137,7 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 			valid &= validateDate(section.resendDate, true);
 		} else {
 			valid &= validateDate(section.clarificationDate, true);
+			valid &= validateGuid(section.clarificationType, true);
 		}
 		
 		// Checks for non null dates that should be null
@@ -145,6 +146,10 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 				valid &= false;
 				section.clarificationDate.setInvalid(true);
 			}
+			if (section.clarificationType.getValue()!=null) {
+				valid &= false;
+				section.clarificationType.setInvalid(true);
+			} 
 		} else {
 			if (section.resendDate.getValueForValidation()!=null) {
 				valid &= false;

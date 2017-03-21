@@ -409,6 +409,8 @@ public class CasualtyServiceImpl
 				lopCSC.mobjData.requests[i] = new SubCasualtyInsurerRequestData();
 				lopCSC.mobjData.requests[i].typeId = (subCasualty.insurerRequests[i].insurerRequestTypeId == null ? null :
 					UUID.fromString(subCasualty.insurerRequests[i].insurerRequestTypeId));
+				lopCSC.mobjData.requests[i].clarificationTypeId = (subCasualty.insurerRequests[i].clarificationTypeId == null ? null :
+					UUID.fromString(subCasualty.insurerRequests[i].clarificationTypeId));
 				lopCSC.mobjData.requests[i].requestDate = (subCasualty.insurerRequests[i].requestDate == null ? null :
 					Timestamp.valueOf(subCasualty.insurerRequests[i].requestDate + " 00:00:00.0"));
 				lopCSC.mobjData.requests[i].acceptanceDate = (subCasualty.insurerRequests[i].acceptanceDate == null ? null :
