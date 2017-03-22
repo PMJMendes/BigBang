@@ -23,6 +23,7 @@ public class SubCasualtyInsurerRequest extends ObjectBase {
 		public static int RESENDDATE = 4;
 		public static int CLARIFICATIONDATE = 5;
 		public static int SUBCASUALTY =  6;
+		public static int CLARIFICATIONTYPE = 7;
 	}
 
 	public static SubCasualtyInsurerRequest GetInstance(UUID pidNameSpace,

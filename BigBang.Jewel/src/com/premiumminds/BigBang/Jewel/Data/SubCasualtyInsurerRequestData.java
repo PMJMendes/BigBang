@@ -27,6 +27,7 @@ public class SubCasualtyInsurerRequestData implements DataBridge {
 	public Timestamp resendDate;
 	public Timestamp clarificationDate;
 	public UUID subCasualtyId;
+	public UUID clarificationTypeId;
 
 	public boolean isNew;
 	public boolean isDeleted;
@@ -50,6 +51,7 @@ public class SubCasualtyInsurerRequestData implements DataBridge {
 				.getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONDATE);
 		subCasualtyId = (UUID) source
 				.getAt(SubCasualtyInsurerRequest.I.SUBCASUALTY);
+		clarificationTypeId = (UUID) source.getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONTYPE);
 	}
 
 	public void ToObject(ObjectBase dest) throws BigBangJewelException {
@@ -63,6 +65,7 @@ public class SubCasualtyInsurerRequestData implements DataBridge {
 			dest.setAt(SubCasualtyInsurerRequest.I.CLARIFICATIONDATE,
 					clarificationDate);
 			dest.setAt(SubCasualtyInsurerRequest.I.SUBCASUALTY, subCasualtyId);
+			dest.setAt(SubCasualtyInsurerRequest.I.CLARIFICATIONTYPE, clarificationTypeId);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -70,13 +73,14 @@ public class SubCasualtyInsurerRequestData implements DataBridge {
 
 	public void Describe(StringBuilder pstrBuilder, String pstrLineBreak) {
 		ObjectBase requestType;
+		ObjectBase clarificationType;
 
 		pstrBuilder.append("Tipologia: ");
 		if (typeId != null) {
 			try {
 				requestType = Engine.GetWorkInstance(Engine.FindEntity(
 						Engine.getCurrentNameSpace(),
-						Constants.ObjID_SubCasualtyInsurerRequest), typeId);
+						Constants.ObjID_InsurerRequestType), typeId);
 				pstrBuilder.append(requestType.getLabel());
 			} catch (Throwable e) {
 				pstrBuilder
@@ -124,6 +128,20 @@ public class SubCasualtyInsurerRequestData implements DataBridge {
 				pstrBuilder.append("Não indicada.");
 			}
 			pstrBuilder.append(pstrLineBreak);
+			pstrBuilder.append("Tipologia: ");
+			if (clarificationTypeId != null) {
+				try {
+					clarificationType = Engine.GetWorkInstance(Engine.FindEntity(
+							Engine.getCurrentNameSpace(),
+							Constants.ObjID_ClarificationReasonType), clarificationTypeId);
+					pstrBuilder.append(clarificationType.getLabel());
+				} catch (Throwable e) {
+					pstrBuilder
+							.append("(Erro a obter motivo de clarificação.)");
+				}
+			} else {
+				pstrBuilder.append("Não indicada.");
+			}
 		}
 	}
 }

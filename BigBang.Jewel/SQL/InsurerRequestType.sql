@@ -244,3 +244,111 @@ INSERT INTO [madds].[tblViewDefs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKObje
 
 /*-- -Insert(s): [madds].[tblViewTabs] */
 INSERT INTO [madds].[tblViewTabs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKOwner],[NOrd],[VTName],[FKVTType],[FKForm],[FKQuery],[FKReport]) VALUES('43d8c2e6-36d3-4965-8809-a73600c57647','2017-03-14T11:58:56.257','2017-03-14T11:58:56.257','e204d946-661a-4cf3-ba7a-31f55b95caf8','0a31cfc5-ee25-4fb1-a9a2-a73600c551dd',1,N'General','1febe70f-5461-48ee-b3a4-191bc47db3c5','d3779e26-2e7c-4641-a852-a73600c4d1e5',null,null);
+
+
+
+-- Table changes and another table creation
+ALTER TABLE [bbcomercial].[tblBBSubCasualtyInsurerRequest] ADD [FkClarificationReasonType] [uniqueidentifier] NULL;
+ALTER TABLE [bbleiria].[tblBBSubCasualtyInsurerRequest] ADD [FkClarificationReasonType] [uniqueidentifier] NULL;
+ALTER TABLE [credite_egs].[tblBBSubCasualtyInsurerRequest] ADD [FkClarificationReasonType] [uniqueidentifier] NULL;
+
+CREATE TABLE [bigbang].[tblClarificationReasonType]
+(
+	[PK] [uniqueidentifier] ROWGUIDCOL NOT NULL,
+	[_VER] [timestamp] NOT NULL,
+	[_TSCreate] [datetime] NOT NULL,
+	[_TSUpdate] [datetime] NOT NULL,
+	[FKType] [uniqueidentifier] NOT NULL,
+	[ClarificationType] [nvarchar](250) COLLATE SQL_Latin1_General_CP1_CI_AI NOT NULL
+);
+
+ALTER TABLE [bigbang].[tblClarificationReasonType] ADD CONSTRAINT [DF__tblClarif__FKTyp__646C3075] DEFAULT ('3441ec0c-edf7-410e-a284-a73d00d1a699') FOR [FKType];
+
+ALTER TABLE [bigbang].[tblClarificationReasonType] ADD CONSTRAINT [DF__tblClarif___TSCr__6283E803] DEFAULT (getdate()) FOR [_TSCreate];
+
+ALTER TABLE [bigbang].[tblClarificationReasonType] ADD CONSTRAINT [DF__tblClarif___TSUp__63780C3C] DEFAULT (getdate()) FOR [_TSUpdate];
+
+ALTER TABLE [bigbang].[tblClarificationReasonType] ADD CONSTRAINT [PK__tblClari__32150787609B9F91] PRIMARY KEY CLUSTERED
+(
+	[PK] ASC
+)
+WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON);
+
+ALTER TABLE [bbcomercial].[tblBBSubCasualtyInsurerRequest] WITH CHECK ADD CONSTRAINT [FK__tblBBSubC__FKCla__665478E7] FOREIGN KEY
+(
+	[FkClarificationReasonType]
+)
+REFERENCES [bigbang].[tblClarificationReasonType]
+(
+	[PK]
+);
+
+ALTER TABLE [bbleiria].[tblBBSubCasualtyInsurerRequest] WITH CHECK ADD CONSTRAINT [FK__tblBBSubC__FKCla__67489D20] FOREIGN KEY
+(
+	[FkClarificationReasonType]
+)
+REFERENCES [bigbang].[tblClarificationReasonType]
+(
+	[PK]
+);
+
+ALTER TABLE [credite_egs].[tblBBSubCasualtyInsurerRequest] WITH CHECK ADD CONSTRAINT [FK__tblBBSubC__FKCla__683CC159] FOREIGN KEY
+(
+	[FkClarificationReasonType]
+)
+REFERENCES [bigbang].[tblClarificationReasonType]
+(
+	[PK]
+);
+
+ALTER TABLE [bigbang].[tblClarificationReasonType] WITH CHECK ADD CONSTRAINT [FK__tblClarif__FKTyp__656054AE] FOREIGN KEY
+(
+	[FKType]
+)
+REFERENCES [madds].[tblObjects]
+(
+	[PK]
+);
+
+
+/*-- -Insert(s): [bigbang].[tblTNodes] */
+INSERT INTO [bigbang].[tblTNodes] ([PK],[_TSCreate],[_TSUpdate],[FKType],[NodeName],[FKNodeType],[FKParentNode],[NOrder],[Form],[Method],[FKNameSpace],[FKReport]) VALUES('6c99d897-5991-4769-a74b-a73600ce789d','2017-03-14T12:31:44.327','2017-03-14T12:35:47.287','463910cb-1b7e-4dbc-9451-9d7c0510e7a1',N'Insurer Request Types','473d0763-9693-44d5-97db-3cd4e98213dd','c55d6711-4072-4ea1-9e1a-9ebb00e62daa',28,'d3779e26-2e7c-4641-a852-a73600c4d1e5',null,null,null);
+INSERT INTO [bigbang].[tblTNodes] ([PK],[_TSCreate],[_TSUpdate],[FKType],[NodeName],[FKNodeType],[FKParentNode],[NOrder],[Form],[Method],[FKNameSpace],[FKReport]) VALUES('ea91015a-2448-42d8-a3cf-a73d00d966b9','2017-03-21T13:11:32.047','2017-03-21T13:11:32.047','463910cb-1b7e-4dbc-9451-9d7c0510e7a1',N'Clarification Reason Type','473d0763-9693-44d5-97db-3cd4e98213dd','c55d6711-4072-4ea1-9e1a-9ebb00e62daa',29,'33a55152-a537-4d27-a170-a73d00d48b8b',null,null,null);
+
+/*-- -Insert(s): [madds].[tblDDLLogs] */
+INSERT INTO [madds].[tblDDLLogs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNSpace],[DDLText]) VALUES('28c3768d-4618-41b2-90bb-04d8b4c32287','2017-03-21T12:46:31.730','2017-03-21T12:46:31.730','f57bcb6b-ec2d-4828-bbc9-3ef660ecb900','c37b81f0-860f-4868-9177-9e15008b3efd',N'CREATE TABLE [bigbang].[tblClarificationReasonType] ([PK] uniqueidentifier ROWGUIDCOL NOT NULL PRIMARY KEY, [_VER] rowversion, [_TSCreate] datetime DEFAULT GETDATE() NOT NULL, [_TSUpdate] datetime DEFAULT GETDATE() NOT NULL, [FKType] uniqueidentifier DEFAULT ''3441ec0c-edf7-410e-a284-a73d00d1a699'' NOT NULL REFERENCES [madds].[tblObjects] ([PK]), [ClarificationType] nvarchar(250) NOT NULL)');
+INSERT INTO [madds].[tblDDLLogs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNSpace],[DDLText]) VALUES('1d3390d3-5bb6-4594-bab8-38d87cdb8d2d','2017-03-21T12:50:34.140','2017-03-21T12:50:34.140','f57bcb6b-ec2d-4828-bbc9-3ef660ecb900','a1cc31a3-e471-4568-b5fc-9e15008e98c9',N'ALTER TABLE [credite_egs].[tblBBSubCasualtyInsurerRequest] ADD [FKClarificationReasontType] uniqueidentifier FOREIGN KEY REFERENCES [bigbang].[tblClarificationReasonType] ([PK])');
+INSERT INTO [madds].[tblDDLLogs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNSpace],[DDLText]) VALUES('07436891-fa5b-4eb0-8b84-71714593e7c5','2017-03-21T12:50:34.130','2017-03-21T12:50:34.130','f57bcb6b-ec2d-4828-bbc9-3ef660ecb900','3ede450f-17ef-4d91-ac72-a4c3012591f1',N'ALTER TABLE [bbcomercial].[tblBBSubCasualtyInsurerRequest] ADD [FKClarificationReasontType] uniqueidentifier FOREIGN KEY REFERENCES [bigbang].[tblClarificationReasonType] ([PK])');
+INSERT INTO [madds].[tblDDLLogs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNSpace],[DDLText]) VALUES('819e5d2b-60f1-4109-85bc-8b3c6e64724d','2017-03-21T12:50:34.137','2017-03-21T12:50:34.137','f57bcb6b-ec2d-4828-bbc9-3ef660ecb900','337a0a77-8942-43aa-9ec0-a47001171a77',N'ALTER TABLE [bbleiria].[tblBBSubCasualtyInsurerRequest] ADD [FKClarificationReasontType] uniqueidentifier FOREIGN KEY REFERENCES [bigbang].[tblClarificationReasonType] ([PK])');
+INSERT INTO [madds].[tblDDLLogs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNSpace],[DDLText]) VALUES('7675abe2-3a7e-41f7-8d6f-918defb2825d','2017-03-21T17:35:26.480','2017-03-21T17:35:26.480','f57bcb6b-ec2d-4828-bbc9-3ef660ecb900','3ede450f-17ef-4d91-ac72-a4c3012591f1',N'ALTER TABLE [bbcomercial].[tblBBSubCasualtyInsurerRequest] ALTER COLUMN [FKClarificationReasontType] uniqueidentifier');
+INSERT INTO [madds].[tblDDLLogs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNSpace],[DDLText]) VALUES('d2ccf52f-f99e-4928-bb7d-e106cd40ec4b','2017-03-21T17:35:26.487','2017-03-21T17:35:26.487','f57bcb6b-ec2d-4828-bbc9-3ef660ecb900','337a0a77-8942-43aa-9ec0-a47001171a77',N'ALTER TABLE [bbleiria].[tblBBSubCasualtyInsurerRequest] ALTER COLUMN [FKClarificationReasontType] uniqueidentifier');
+INSERT INTO [madds].[tblDDLLogs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNSpace],[DDLText]) VALUES('f73cff79-3324-4251-b9e1-ec0fb262c9a6','2017-03-21T17:35:26.490','2017-03-21T17:35:26.490','f57bcb6b-ec2d-4828-bbc9-3ef660ecb900','a1cc31a3-e471-4568-b5fc-9e15008e98c9',N'ALTER TABLE [credite_egs].[tblBBSubCasualtyInsurerRequest] ALTER COLUMN [FKClarificationReasontType] uniqueidentifier');
+
+/*-- -Insert(s): [madds].[tblEntities] */
+INSERT INTO [madds].[tblEntities] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNameSpace],[FKObject]) VALUES('ced7888e-3373-46d8-9c8e-a73d00d2888d','2017-03-21T12:46:31.727','2017-03-21T12:46:31.727','94ab0a6d-25a1-11da-91c2-000b6abc6ae9','c37b81f0-860f-4868-9177-9e15008b3efd','3441ec0c-edf7-410e-a284-a73d00d1a699');
+
+/*-- -Insert(s): [madds].[tblFormFields] */
+INSERT INTO [madds].[tblFormFields] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKOwner],[FKFieldType],[FLabel],[FRow],[FCol],[ObjMemberNum],[ObjRef],[FWidth],[FHeight],[FKQuery],[FKSearchForm],[ParamTag],[DefaultText],[DefaultValue]) VALUES('42ffa2c8-b61b-402b-98c0-a73d00d4b4d8','2017-03-21T12:54:26.430','2017-03-21T12:54:26.430','1a272874-d1c1-4ce3-8a93-1912137fc607','33a55152-a537-4d27-a170-a73d00d48b8b','41f8ff38-808b-41d3-b88a-8dca5384a637',N'Type',1,1,1,null,1,1,null,null,null,null,null);
+
+/*-- -Insert(s): [madds].[tblForms] */
+INSERT INTO [madds].[tblForms] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FName],[FKEdited],[FKQueryResults],[FKApplication],[ClassName]) VALUES('33a55152-a537-4d27-a170-a73d00d48b8b','2017-03-21T12:53:51.200','2017-03-21T13:02:24.467','7fe57d40-7e89-4a3e-bee7-defce1af4a50',N'Clarification Reason Type','3441ec0c-edf7-410e-a284-a73d00d1a699','e8f7f02b-607f-4a3d-a676-a73d00d675e2',null,null);
+
+/*-- -Insert(s): [madds].[tblObjectMembers] */
+INSERT INTO [madds].[tblObjectMembers] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKObject],[NOrder],[MemberName],[MemberComments],[FKTypeDef],[Size],[FKRefersTo],[Nullable],[Unique],[TableColumn],[Precision]) VALUES('a5f9ad2d-0be3-4732-96c2-a73d00d1ff78','2017-03-21T12:44:34.760','2017-03-21T12:44:34.760','94ab0a6f-25a1-11da-91c2-000b6abc6ae9','3441ec0c-edf7-410e-a284-a73d00d1a699',1,N'Type',N'The type of the clarification','94ab0a78-25a1-11da-91c2-000b6abc6ae9',250,null,0,0,N'ClarificationType',null);
+INSERT INTO [madds].[tblObjectMembers] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKObject],[NOrder],[MemberName],[MemberComments],[FKTypeDef],[Size],[FKRefersTo],[Nullable],[Unique],[TableColumn],[Precision]) VALUES('5971e6b5-cff1-44de-8fce-a73d00d3a882','2017-03-21T12:50:37.463','2017-03-21T17:35:31.237','94ab0a6f-25a1-11da-91c2-000b6abc6ae9','90a96896-f729-435c-a1c2-a73501271825',8,N'Clarification Type',N'The type of the clarification''s reason.','94ab0a77-25a1-11da-91c2-000b6abc6ae9',null,'3441ec0c-edf7-410e-a284-a73d00d1a699',1,0,N'FKClarificationReasonType',null);
+
+/*-- -Insert(s): [madds].[tblObjects] */
+INSERT INTO [madds].[tblObjects] ([PK],[_TSCreate],[_TSUpdate],[FKType],[ObjName],[ObjComments],[MainTable],[ClassName],[FKApplication]) VALUES('3441ec0c-edf7-410e-a284-a73d00d1a699','2017-03-21T12:43:18.920','2017-03-21T12:43:18.920','94ab0a6b-25a1-11da-91c2-000b6abc6ae9',N'Clarification Reason Type',N'The class which tipifies the possible reasons to ask for a clarification.',N'tblClarificationReasonType',null,'9003fda0-e35b-4c2c-85f8-9e15008b262c');
+
+/*-- -Insert(s): [madds].[tblQueryDefs] */
+INSERT INTO [madds].[tblQueryDefs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKDriver],[IsDefault],[DefParamName],[DefParamType],[ParamAppliesTo],[FKEditorView],[IsReadOnly],[FKReport],[Reference],[CanCreate],[CanEditRows],[CanDelete],[FKQueryType]) VALUES('e8f7f02b-607f-4a3d-a676-a73d00d675e2','2017-03-21T13:00:49.627','2017-03-21T13:01:25.147','957cb94d-7968-4921-8797-43af37ab98d9','3441ec0c-edf7-410e-a284-a73d00d1a699',1,null,null,null,'97d4ea11-98ed-459d-9c09-a73d00d527d1',0,null,null,1,1,1,'9d20405a-9968-4807-9980-7a6166a72283');
+
+/*-- -Insert(s): [madds].[tblQueryFields] */
+INSERT INTO [madds].[tblQueryFields] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKOwner],[NOrder],[QFName],[QFSQL],[QFWidth]) VALUES('99f3d29e-e99c-4ce2-87a8-a73d00d69bad','2017-03-21T13:01:21.873','2017-03-21T13:01:21.873','942704b9-8fef-40c3-8020-3911efb3f094','e8f7f02b-607f-4a3d-a676-a73d00d675e2',1,N'Type',N'[:Type]',200);
+
+/*-- -Insert(s): [madds].[tblViewDefs] */
+INSERT INTO [madds].[tblViewDefs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKObject],[IsDefault],[Reference]) VALUES('97d4ea11-98ed-459d-9c09-a73d00d527d1','2017-03-21T12:56:04.553','2017-03-21T12:57:12.450','cb6d759d-0333-4830-914c-b7d0b9b728dd','3441ec0c-edf7-410e-a284-a73d00d1a699',1,null);
+
+/*-- -Insert(s): [madds].[tblViewTabs] */
+INSERT INTO [madds].[tblViewTabs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKOwner],[NOrd],[VTName],[FKVTType],[FKForm],[FKQuery],[FKReport]) VALUES('fbcd6e4e-60d0-4d84-9e2d-a73d00d574a0','2017-03-21T12:57:10.100','2017-03-21T12:57:10.100','e204d946-661a-4cf3-ba7a-31f55b95caf8','97d4ea11-98ed-459d-9c09-a73d00d527d1',1,N'General','1febe70f-5461-48ee-b3a4-191bc47db3c5','33a55152-a537-4d27-a170-a73d00d48b8b',null,null);
+

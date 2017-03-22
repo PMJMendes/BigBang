@@ -192,6 +192,9 @@ public class SubCasualtyServiceImpl
 			lobjResult.insurerRequests[i].insurerRequestTypeId = (requests[i].getAt(SubCasualtyInsurerRequest.I.TYPE) == null ? null :
 				((UUID)requests[i].getAt(SubCasualtyInsurerRequest.I.TYPE)).toString());
 			
+			lobjResult.insurerRequests[i].clarificationTypeId = (requests[i].getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONTYPE) == null ? null :
+				((UUID)requests[i].getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONTYPE)).toString());
+			
 			lobjResult.insurerRequests[i].conforms = (Boolean)requests[i].getAt(SubCasualtyInsurerRequest.I.CONFORMITY);
 			
 			lobjResult.insurerRequests[i].requestDate = (requests[i].getAt(SubCasualtyInsurerRequest.I.REQUESTDATE) == null ? null :
@@ -311,7 +314,7 @@ public class SubCasualtyServiceImpl
 				
 				lopMD.mobjData.requests[i].id = (subCasualty.insurerRequests[i].id == null ? null : UUID.fromString(subCasualty.insurerRequests[i].id) ); 
 				lopMD.mobjData.requests[i].typeId = ( subCasualty.insurerRequests[i].insurerRequestTypeId == null ? null :
-					UUID.fromString(subCasualty.insurerRequests[i].insurerRequestTypeId) ); 
+					UUID.fromString(subCasualty.insurerRequests[i].insurerRequestTypeId) );
 						
 				lopMD.mobjData.requests[i].conforms = subCasualty.insurerRequests[i].conforms;
 				
@@ -323,6 +326,9 @@ public class SubCasualtyServiceImpl
 					Timestamp.valueOf(subCasualty.insurerRequests[i].resendDate + " 00:00:00.0"));
 				lopMD.mobjData.requests[i].clarificationDate = ( subCasualty.insurerRequests[i].clarificationDate == null ? null :
 					Timestamp.valueOf(subCasualty.insurerRequests[i].clarificationDate + " 00:00:00.0"));
+				
+				lopMD.mobjData.requests[i].clarificationTypeId = ( subCasualty.insurerRequests[i].clarificationTypeId == null ? null :
+					UUID.fromString(subCasualty.insurerRequests[i].clarificationTypeId) ); 
 				
 				lopMD.mobjData.requests[i].subCasualtyId = lopMD.mobjData.mid;
 				

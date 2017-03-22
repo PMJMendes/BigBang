@@ -266,6 +266,11 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	public void openNewDetail() {
 		form.openNewDetail();
 	}
+	
+	@Override
+	public void openNewInsurerRequest() {
+		form.openNewInsurerRequest();
+	}
 
 	@Override
 	public void allowCreateReceipt(boolean allow) {

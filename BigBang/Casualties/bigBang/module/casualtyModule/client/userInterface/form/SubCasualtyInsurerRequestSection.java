@@ -30,6 +30,7 @@ public class SubCasualtyInsurerRequestSection extends
 	protected DatePickerFormField resendDate;
 	protected DatePickerFormField clarificationDate;
 	protected CheckBoxFormField conforms;
+	protected ExpandableListBoxFormField clarificationType;
 
 	protected Button removeButton;
 
@@ -46,16 +47,20 @@ public class SubCasualtyInsurerRequestSection extends
 		requestDate = new DatePickerFormField("Data de Pedido");
 		acceptanceDate = new DatePickerFormField("Data de Recepção");
 		resendDate = new DatePickerFormField(
-				"Data de Reenvio (a preencher em caso de conformidade)");
+				"Data de Reenvio (se conforme)");
 		clarificationDate = new DatePickerFormField(
-				"Data de Pedido de Esclarecimento  (a preencher em caso de não conformidade)");
-
-		addFormFieldGroup(new FormField<?>[] { requestType, conforms }, true);
-
-		addFormFieldGroup(new FormField<?>[] { requestDate, resendDate }, true);
-
-		addFormFieldGroup(new FormField<?>[] { acceptanceDate,
-				clarificationDate }, true);
+				"Data de Pedido de Esclarecimento  (se não conforme)");
+		clarificationType = new ExpandableListBoxFormField(
+				BigBangConstants.TypifiedListIds.CLARIFICATION_REASON_TYPE,
+				"Motivo de Pedido de Esclarecimento");
+		
+		addFormField(requestType, true);
+		addFormField(requestDate, true);
+		addFormField(acceptanceDate, true);
+		addFormField(conforms, false);
+		addFormField(resendDate, true);
+		addFormField(clarificationDate, true);
+		addFormField(clarificationType, true);
 
 		SimplePanel buttonWrapper = new SimplePanel();
 		buttonWrapper.add(removeButton);
@@ -79,6 +84,7 @@ public class SubCasualtyInsurerRequestSection extends
 			acceptanceDate.setValue(request.acceptanceDate);
 			resendDate.setValue(request.resendDate);
 			clarificationDate.setValue(request.clarificationDate);
+			clarificationType.setValue(request.clarificationTypeId);
 		}
 	}
 
@@ -93,6 +99,7 @@ public class SubCasualtyInsurerRequestSection extends
 			result.resendDate = resendDate.getStringValue();
 			result.clarificationDate = clarificationDate.getStringValue();
 			result.conforms = conforms.getValue();
+			result.clarificationTypeId = clarificationType.getValue();
 		}
 
 		return result;
