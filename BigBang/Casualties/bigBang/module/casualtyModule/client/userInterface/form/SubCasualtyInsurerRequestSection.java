@@ -47,19 +47,20 @@ public class SubCasualtyInsurerRequestSection extends
 		requestDate = new DatePickerFormField("Data de Pedido");
 		acceptanceDate = new DatePickerFormField("Data de Recepção");
 		resendDate = new DatePickerFormField(
-				"Data de Reenvio (a preencher em caso de conformidade)");
+				"Data de Reenvio (se conforme)");
 		clarificationDate = new DatePickerFormField(
-				"Data de Pedido de Esclarecimento  (a preencher em caso de não conformidade)");
+				"Data de Pedido de Esclarecimento  (se não conforme)");
 		clarificationType = new ExpandableListBoxFormField(
 				BigBangConstants.TypifiedListIds.CLARIFICATION_REASON_TYPE,
 				"Motivo de Pedido de Esclarecimento");
-
-		addFormFieldGroup(new FormField<?>[] { requestType, conforms }, true);
-
-		addFormFieldGroup(new FormField<?>[] { requestDate, resendDate }, true);
-
-		addFormFieldGroup(new FormField<?>[] { acceptanceDate,
-				clarificationDate, clarificationType }, true);
+		
+		addFormField(requestType, true);
+		addFormField(requestDate, true);
+		addFormField(acceptanceDate, true);
+		addFormField(conforms, false);
+		addFormField(resendDate, true);
+		addFormField(clarificationDate, true);
+		addFormField(clarificationType, true);
 
 		SimplePanel buttonWrapper = new SimplePanel();
 		buttonWrapper.add(removeButton);

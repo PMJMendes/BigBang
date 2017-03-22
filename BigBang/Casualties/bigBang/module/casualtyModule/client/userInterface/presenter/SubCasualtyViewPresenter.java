@@ -79,6 +79,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		HasValueSelectables<ReceiptStub> getReceiptsList();
 		void setReferenceParameters(HasParameters parameterHolder);
 		void openNewDetail();
+		void openNewInsurerRequest();
 		void allowCreateReceipt(boolean allow);
 		void allowCreateAssessment(boolean allow);
 		void allowCreateTotalLosses(boolean hasPermission);
@@ -374,6 +375,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 
 				view.getForm().setValue(subCasualty);
 				view.openNewDetail();
+				view.openNewInsurerRequest();
 				view.allowEdit(true);
 				view.allowDelete(true);
 				view.getForm().setReadOnly(false);

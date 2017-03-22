@@ -462,7 +462,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	
 	protected void addRequests() {
 		SubCasualtyInsurerRequest[] subCasualtyInsurerRequests = getSubCasualtyInsurerRequests();
-		if (subCasualtyInsurerRequests != null && subCasualtyInsurerRequests.length>0) {
+		if (subCasualtyInsurerRequests != null) {
 			setSubCasualtyInsurerRequests(subCasualtyInsurerRequests);
 		}
 	}	
@@ -525,6 +525,10 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 	public void openNewDetail() {
 		addSubCasualtyItemSection(new SubCasualtyItem());
+	}
+	
+	public void openNewInsurerRequest() {
+		addSubCasualtyInsurerRequestSection(new SubCasualtyInsurerRequest());
 	}
 	
 	protected void setSubCasualtyInsurerRequests(SubCasualtyInsurerRequest[] requests) {
