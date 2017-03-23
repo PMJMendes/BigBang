@@ -528,7 +528,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	}
 	
 	public void openNewInsurerRequest() {
-		addSubCasualtyInsurerRequestSection(new SubCasualtyInsurerRequest());
+	//	addSubCasualtyInsurerRequestSection(new SubCasualtyInsurerRequest()); TODO: Voltar a pôr isto "coiso" quando passar a ser obrigatório
 	}
 	
 	protected void setSubCasualtyInsurerRequests(SubCasualtyInsurerRequest[] requests) {
