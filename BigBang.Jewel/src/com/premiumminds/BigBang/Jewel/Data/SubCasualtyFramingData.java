@@ -234,5 +234,13 @@ public class SubCasualtyFramingData implements DataBridge {
 			pstrBuilder.append("Notas sobre avaliação de perito: ");
 			pstrBuilder.append(expertEvaluationNotes );
 		}
+		
+		if (framingEntities != null && framingEntities.length > 0) {
+			pstrBuilder.append(pstrLineBreak).append("Outras entidades envolvidas:").append(pstrLineBreak).append(pstrLineBreak);
+			for (int i=0; i<framingEntities.length; i++) {
+				framingEntities[i].Describe(pstrBuilder, pstrLineBreak);
+				pstrBuilder.append(pstrLineBreak);
+			}
+		}
 	}
 }
