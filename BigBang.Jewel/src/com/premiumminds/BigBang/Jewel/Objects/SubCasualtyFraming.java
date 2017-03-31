@@ -16,26 +16,25 @@ import Jewel.Engine.SysObjects.ObjectBase;
 public class SubCasualtyFraming extends ObjectBase {
 
 	public static class I {
-		public static int TYPE = 0;
-		public static int SUBCASUALTY = 1;
-		public static int ANALYSISDATE = 2;
-		public static int FRAMINGDIFFICULTY = 3;
-		public static int VALIDPOLICY = 4;
-		public static int VALIDITYNOTES = 5;
-		public static int GENERALEXCLUSIONS = 6;
-		public static int GENERALEXCLUSIONSNOTES = 7;
-		public static int RELEVANTCOVERAGE = 8;
-		public static int COVERAGERELEVANCYNOTES = 9;
-		public static int COVERAGEVALUE = 10;
-		public static int COVERAGEEXCLUSIONS = 11;
-		public static int COVERAGEEXCLUSIONSNOTES = 12;
-		public static int FRANCHISE = 13;
-		public static int DEDUCTIBLETYPE = 14;
-		public static int FRANCHISENOTES = 15;
-		public static int INSUREREVALUATION = 16;
-		public static int INSUREREVALUATIONNOTES = 17;
-		public static int EXPERTEVALUATION = 18;
-		public static int EXPERTEVALUATIONNOTES = 19;
+		public static int SUBCASUALTY = 0;
+		public static int ANALYSISDATE = 1;
+		public static int FRAMINGDIFFICULTY = 2;
+		public static int VALIDPOLICY = 3;
+		public static int VALIDITYNOTES = 4;
+		public static int GENERALEXCLUSIONS = 5;
+		public static int GENERALEXCLUSIONSNOTES = 6;
+		public static int RELEVANTCOVERAGE = 7;
+		public static int COVERAGERELEVANCYNOTES = 8;
+		public static int COVERAGEVALUE = 9;
+		public static int COVERAGEEXCLUSIONS = 10;
+		public static int COVERAGEEXCLUSIONSNOTES = 11;
+		public static int FRANCHISE = 12;
+		public static int DEDUCTIBLETYPE = 13;
+		public static int FRANCHISENOTES = 14;
+		public static int INSUREREVALUATION = 15;
+		public static int INSUREREVALUATIONNOTES = 16;
+		public static int EXPERTEVALUATION = 17;
+		public static int EXPERTEVALUATIONNOTES = 18;
 	}
 	
 	public static SubCasualtyFraming GetInstance(UUID pidNameSpace,
