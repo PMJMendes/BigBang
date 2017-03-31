@@ -10,7 +10,6 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
-import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 
 /**
  * This class stores and transforms data from the BD object to the object used
@@ -93,7 +92,6 @@ public class SubCasualtyFramingData implements DataBridge {
 		}
 	}
 
-	@Override
 	public void Describe(StringBuilder pstrBuilder, String pstrLineBreak) {
 		
 		ObjectBase franchiseTypeObj;

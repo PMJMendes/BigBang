@@ -175,6 +175,7 @@ public class Constants
 	public static final UUID ObjID_ClarificationReasonType  = UUID.fromString("3441EC0C-EDF7-410E-A284-A73D00D1A699");
 	public static final UUID ObjID_DeductibleType			= UUID.fromString("0DA382A9-08C7-474C-816E-A04D011607ED");
 	public static final UUID ObjID_EvaluationValues			= UUID.fromString("B0AB7A81-C2FD-485B-B18E-A7450125D9EA");
+	public static final UUID ObjID_FramingEntityTypes		= UUID.fromString("7774017D-1E45-45FA-B638-A74501229762");
 
 	public static final UUID ObjID_FieldType                = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues              = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
