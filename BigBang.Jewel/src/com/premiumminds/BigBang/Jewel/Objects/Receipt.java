@@ -1096,8 +1096,12 @@ public class Receipt
 					prevPremiums[0] = (BigDecimal)policy.getAt(Policy.I.PREMIUM);
 					prevPremiums[1] = (BigDecimal)policy.getAt(Policy.I.TOTALPREMIUM);
 					try {
-						policy.setAt(Policy.I.PREMIUM, newPremium);
-						policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
+						if (newPremium != null) {
+							policy.setAt(Policy.I.PREMIUM, newPremium);
+						}
+						if (newTotalPr != null) {
+							policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
+						}
 						policy.SaveToDb(pdb);
 						
 						return prevPremiums;						
