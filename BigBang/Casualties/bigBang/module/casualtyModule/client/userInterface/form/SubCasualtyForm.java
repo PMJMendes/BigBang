@@ -70,6 +70,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	
 	protected Collection<SubCasualtyInsurerRequestSection> subCasualtyInsurerRequestSections;
 	protected NewSubCasualtyInsurerRequestSection newInsurerRequestSection;
+	
+	protected FormViewSection framingSection;
 
 	public SubCasualtyForm(){
 		casualty = new NavigationFormField("Sinistro");
@@ -186,6 +188,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				insuredObject.setValue(null);
 			}
 		});
+		
+		this.framingSection = new SubCasualtyFramingSection("Enquadramento");
+		addSection(framingSection);
 
 		this.subCasualtyItemSections = new ArrayList<SubCasualtyItemSection>();
 

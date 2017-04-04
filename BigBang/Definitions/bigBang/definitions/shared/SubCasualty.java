@@ -90,7 +90,7 @@ public class SubCasualty extends SubCasualtyStub {
 											// grade for the expert
 		public String expertEvaluationNotes; // notes on the expert evaluation
 
-		SubCasualtyFramingEntity[] framingEntities; // The array with adicional
+		public SubCasualtyFramingEntity[] framingEntities; // The array with adicional
 													// entities related with
 													// this framing
 	}

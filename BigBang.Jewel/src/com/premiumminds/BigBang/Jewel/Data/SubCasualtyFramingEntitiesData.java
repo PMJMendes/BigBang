@@ -7,7 +7,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntities;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
 
 /**
  * This class stores and transforms data from the BD object to the object used
@@ -31,16 +31,16 @@ public class SubCasualtyFramingEntitiesData implements DataBridge {
 
 	public void FromObject(ObjectBase source) {
 		id = source.getKey();
-		entityType = (UUID) source.getAt(SubCasualtyFramingEntities.I.ENTITYTYPE);
-		evaluation = (UUID) source.getAt(SubCasualtyFramingEntities.I.EVALUATION);
-		notes = (String) source.getAt(SubCasualtyFramingEntities.I.EVALUATIONNOTES);
+		entityType = (UUID) source.getAt(SubCasualtyFramingEntity.I.ENTITYTYPE);
+		evaluation = (UUID) source.getAt(SubCasualtyFramingEntity.I.EVALUATION);
+		notes = (String) source.getAt(SubCasualtyFramingEntity.I.EVALUATIONNOTES);
 	}
 
 	public void ToObject(ObjectBase dest) throws BigBangJewelException {
 		try {
-			dest.setAt(SubCasualtyFramingEntities.I.ENTITYTYPE, entityType);
-			dest.setAt(SubCasualtyFramingEntities.I.EVALUATION, evaluation);
-			dest.setAt(SubCasualtyFramingEntities.I.EVALUATIONNOTES, notes);
+			dest.setAt(SubCasualtyFramingEntity.I.ENTITYTYPE, entityType);
+			dest.setAt(SubCasualtyFramingEntity.I.EVALUATION, evaluation);
+			dest.setAt(SubCasualtyFramingEntity.I.EVALUATIONNOTES, notes);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}

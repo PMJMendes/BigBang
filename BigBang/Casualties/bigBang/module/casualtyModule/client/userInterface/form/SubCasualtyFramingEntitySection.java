@@ -9,10 +9,11 @@ import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public class SubCasualtyFramingEntitySection  extends CollapsibleFormViewSection {
+public class SubCasualtyFramingEntitySection extends CollapsibleFormViewSection {
 	
 	protected SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity currentEntity;
 	
@@ -49,12 +50,33 @@ public class SubCasualtyFramingEntitySection  extends CollapsibleFormViewSection
 		this.currentEntity = framingEntity;
 
 		if (framingEntity != null) {
-			this.headerLabel.setText("Outros Intervenientes");
 
 			entityType.setValue(framingEntity.entityTypeId);
 			evaluation.setValue(framingEntity.evaluationId);
 			notes.setValue(framingEntity.evaluationNotes);
 		}
+	}
+	
+	public SubCasualtyFramingEntity getFramingEntity() {
+		SubCasualtyFramingEntity result = this.currentEntity;
+
+		if (result != null) {
+
+			result.entityTypeId = entityType.getValue();
+			result.evaluationId = evaluation.getValue();
+			result.evaluationNotes = notes.getValue();
+		}
+
+		return result;
+	}
+	
+	public HasClickHandlers getRemoveButton() {
+		return removeButton;
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		removeButton.setVisible(!readOnly);
 	}
 
 }

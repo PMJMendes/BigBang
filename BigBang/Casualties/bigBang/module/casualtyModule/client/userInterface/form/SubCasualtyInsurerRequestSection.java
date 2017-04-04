@@ -108,7 +108,6 @@ public class SubCasualtyInsurerRequestSection extends
 		return removeButton;
 	}
 
-	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);
 		removeButton.setVisible(!readOnly);
