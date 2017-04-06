@@ -69,6 +69,8 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		validPolicy.addOption("false", "Não");
 		
 		validityNotes = new TextAreaFormField("Se não, porquê?");
+		validityNotes.setFieldWidth("600px");
+		validityNotes.setFieldHeight("60px");
 		
 		generalExclusions = new RadioButtonFormField(false);
 		generalExclusions.setLabelText("Exclusões Gerais Aplicáveis?");
