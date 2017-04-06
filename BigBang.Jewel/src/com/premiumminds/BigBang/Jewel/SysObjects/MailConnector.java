@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -506,7 +507,12 @@ public class MailConnector {
 			content = part.getContent();
 		} catch (DecodingException e) {
 			return result;
-		} 
+		} catch (IOException io) {
+			if (part.getContentType().contains("TEXT/PLAIN") || part.getContentType().contains("TEXT/HTML")
+					|| part.getContentType().contains("text/plain") || part.getContentType().contains("text/html")) { 
+				result.put("main", part);
+			}
+		}
 		
 		// If it is an attachment, gets its id from the header and inserts it in the result's map
 		if (content instanceof InputStream || content instanceof String) {
