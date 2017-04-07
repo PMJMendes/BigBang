@@ -7,7 +7,6 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity;
-import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
@@ -19,7 +18,6 @@ import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyFramingE
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
 public class SubCasualtyFramingSection extends FormViewSection {
@@ -40,12 +38,12 @@ public class SubCasualtyFramingSection extends FormViewSection {
 	protected RadioButtonFormField coverageExclusions;
 	protected TextAreaFormField coverageExclusionsNotes;
 	protected NumericTextBoxFormField franchise;
-	protected ListBoxFormField deductibleType;
+	protected ExpandableListBoxFormField deductibleType;
 	protected TextAreaFormField franchiseNotes;
 	protected Label evaluationLabel;
-	protected ListBoxFormField insurerEvaluation;
+	protected ExpandableListBoxFormField insurerEvaluation;
 	protected TextAreaFormField insurerEvaluationNotes;
-	protected ListBoxFormField expertEvaluation;
+	protected ExpandableListBoxFormField expertEvaluation;
 	protected TextAreaFormField expertEvaluationNotes;
 	
 	protected Collection<SubCasualtyFramingEntitySection> aditionalEntitiesSection;
@@ -69,8 +67,8 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		validPolicy.addOption("false", "Não");
 		
 		validityNotes = new TextAreaFormField("Se não, porquê?");
-		validityNotes.setFieldWidth("600px");
-		validityNotes.setFieldHeight("60px");
+		validityNotes.setFieldWidth("650px");
+		validityNotes.setFieldHeight("50px");
 		
 		generalExclusions = new RadioButtonFormField(false);
 		generalExclusions.setLabelText("Exclusões Gerais Aplicáveis?");
@@ -78,6 +76,8 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		generalExclusions.addOption("false", "Não");
 		
 		generalExclusionsNotes = new TextAreaFormField("Se sim, quais?");
+		generalExclusionsNotes.setFieldWidth("650px");
+		generalExclusionsNotes.setFieldHeight("50px");
 		
 		relevantCoverage = new RadioButtonFormField(false);
 		relevantCoverage.setLabelText("Cobertura Aplicável?");
@@ -85,6 +85,8 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		relevantCoverage.addOption("false", "Não");
 		
 		coverageRelevancyNotes = new TextAreaFormField("Se não, porquê?");
+		coverageRelevancyNotes.setFieldWidth("650px");
+		coverageRelevancyNotes.setFieldHeight("50px");
 		
 		coverageValue = new NumericTextBoxFormField("Capital de Cobertura", true);
 		
@@ -94,18 +96,29 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		coverageExclusions.addOption("false", "Não");
 		
 		coverageExclusionsNotes = new TextAreaFormField("Se sim, quais?");
+		coverageExclusionsNotes.setFieldWidth("650px");
+		coverageExclusionsNotes.setFieldHeight("50px");
 		
 		franchise = new NumericTextBoxFormField("Capital da Franquia", false);
 		
 		deductibleType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DEDUCTIBLE_TYPE, "Tipo de Franquia");
+		deductibleType.allowEdition(false);
 		
 		franchiseNotes = new TextAreaFormField("Observações Franquia.");
+		franchiseNotes.setFieldWidth("650px");
+		franchiseNotes.setFieldHeight("50px");
 		
 		insurerEvaluation = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.EVALUATION_TIPIFICATION, "Avaliação Segurador");
+		insurerEvaluation.allowEdition(false);
 		insurerEvaluationNotes = new TextAreaFormField("Observações.");
+		insurerEvaluationNotes.setFieldWidth("650px");
+		insurerEvaluationNotes.setFieldHeight("50px");
 		
 		expertEvaluation = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.EVALUATION_TIPIFICATION, "Avaliação Perito");
+		expertEvaluation.allowEdition(false);
 		expertEvaluationNotes = new TextAreaFormField("Observações.");
+		expertEvaluationNotes.setFieldWidth("650px");
+		expertEvaluationNotes.setFieldHeight("50px");
 		
 		addFormField(analysisDate, false);
 		

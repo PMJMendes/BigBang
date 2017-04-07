@@ -2,7 +2,6 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
-import bigBang.definitions.shared.SubCasualty.SubCasualtyInsurerRequest;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
