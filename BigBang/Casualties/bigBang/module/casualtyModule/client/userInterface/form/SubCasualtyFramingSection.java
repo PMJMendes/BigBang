@@ -199,6 +199,10 @@ public class SubCasualtyFramingSection extends FormViewSection {
 			expertEvaluation.setValue(framing.expertEvaluationId);
 			expertEvaluationNotes.setValue(framing.expertEvaluationNotes);
 			setSubCasualtyFramingEntities(framing.framingEntities);
+			
+			if (!this.readOnly) {
+				addWidget(newEntitySection.newButton);
+			}
 		}
 	}
 	
@@ -233,8 +237,8 @@ public class SubCasualtyFramingSection extends FormViewSection {
 	}
 	
 	protected void setSubCasualtyFramingEntities(SubCasualtyFramingEntity[] entities) {
-		for(FormViewSection section : this.aditionalEntitiesSection) {
-			//removeSection(section); TODO
+		for(SubCasualtyFramingEntitySection section : this.aditionalEntitiesSection) {
+			removeSection(section);
 		}
 		this.aditionalEntitiesSection.clear();
 
@@ -243,6 +247,13 @@ public class SubCasualtyFramingSection extends FormViewSection {
 				addSubCasualtyFramingEntitySection(entity);
 			}
 		}
+	}
+
+	private void removeSection(SubCasualtyFramingEntitySection section) {
+		section.entityType.removeFromParent();
+		section.evaluation.removeFromParent();
+		section.notes.removeFromParent();
+		section.removeButton.removeFromParent();
 	}
 
 	protected SubCasualtyFramingEntity[] getSubCasualtyFramingEntities(){
@@ -264,8 +275,8 @@ public class SubCasualtyFramingSection extends FormViewSection {
 			section.setReadOnly(this.isReadOnly());
 			this.aditionalEntitiesSection.add(section);
 			
-			// addSection(section); TODO
-
+			addSection(section);
+			
 			section.getRemoveButton().addClickHandler(new ClickHandler() {
 
 				@Override
@@ -276,14 +287,28 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		} 
 	}
 	
+	private void addSection(SubCasualtyFramingEntitySection section) {
+		newEntitySection.newButton.removeFromParent();
+		addFormField(section.entityType, true);
+		section.entityType.setReadOnly(true);
+		addFormField(section.evaluation, true);
+		section.evaluation.setReadOnly(this.isReadOnly());
+		addFormField(section.notes, true);
+		section.notes.setFieldHeight("75px");
+		section.notes.setReadOnly(this.isReadOnly());
+		addWidget(section.removeButton);
+		addLineBreak();
+		addWidget(newEntitySection.newButton);
+	}
+
 	protected void removeAditionalEntityAndSection(SubCasualtyFramingEntitySection section){
-		section.setVisible(false);
 		SubCasualtyFramingEntity entity = section.getFramingEntity();
 		entity.deleted = true;
 		section.setFramingEntity(entity);
+		removeSection(section);
 	}
 	
 	public boolean isReadOnly(){
-		return this.isReadOnly;
+		return this.readOnly;
 	}
 }

@@ -17,7 +17,7 @@ public class SubCasualtyFramingEntitySection extends CollapsibleFormViewSection 
 	protected SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity currentEntity;
 	
 	protected ExpandableListBoxFormField entityType;
-	protected ListBoxFormField evaluation;
+	protected ExpandableListBoxFormField evaluation;
 	protected TextAreaFormField notes;
 	
 	protected Button removeButton;
@@ -29,12 +29,9 @@ public class SubCasualtyFramingEntitySection extends CollapsibleFormViewSection 
 		removeButton = new Button("Remover");
 		
 		entityType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.FRAMING_ENTITY_TYPE, "Oficina/Outra Entidade");
-		evaluation = new ListBoxFormField("Pontuação");
+		evaluation = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.EVALUATION_TIPIFICATION, "Pontuação");
+		evaluation.allowEdition(false);
 		notes = new TextAreaFormField("Observações");
-		
-		addFormField(entityType, true);
-		addFormField(evaluation, true);
-		addFormField(notes, true);
 		
 		SimplePanel buttonWrapper = new SimplePanel();
 		buttonWrapper.add(removeButton);
