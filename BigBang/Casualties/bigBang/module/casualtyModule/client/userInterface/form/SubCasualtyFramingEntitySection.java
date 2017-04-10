@@ -4,7 +4,6 @@ import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
 
@@ -33,6 +32,12 @@ public class SubCasualtyFramingEntitySection extends CollapsibleFormViewSection 
 		evaluation.allowEdition(false);
 		notes = new TextAreaFormField("Observações");
 		
+		addFormField(entityType, true);
+		addFormField(evaluation, true);
+		addFormField(notes, true);
+		notes.setFieldWidth("650px");
+		notes.setFieldHeight("50px");
+		
 		SimplePanel buttonWrapper = new SimplePanel();
 		buttonWrapper.add(removeButton);
 		buttonWrapper.setWidth("100%");
@@ -46,6 +51,7 @@ public class SubCasualtyFramingEntitySection extends CollapsibleFormViewSection 
 		this.currentEntity = framingEntity;
 
 		if (framingEntity != null) {
+			this.headerLabel.setText("Enquadramento - Outros Intervenientes");
 
 			entityType.setValue(framingEntity.entityTypeId);
 			evaluation.setValue(framingEntity.evaluationId);

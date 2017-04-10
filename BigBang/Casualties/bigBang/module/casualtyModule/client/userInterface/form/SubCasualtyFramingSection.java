@@ -1,30 +1,20 @@
 package bigBang.module.casualtyModule.client.userInterface.form;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming;
-import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.view.FormViewSection;
-import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyFramingEntitySection;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
 
 public class SubCasualtyFramingSection extends FormViewSection {
 
 	protected SubCasualty.SubCasualtyFraming currentFraming;
-	
-	private boolean isReadOnly;
 	
 	protected DatePickerFormField analysisDate;
 	protected RadioButtonFormField difficultFraming;
@@ -45,9 +35,6 @@ public class SubCasualtyFramingSection extends FormViewSection {
 	protected TextAreaFormField insurerEvaluationNotes;
 	protected ExpandableListBoxFormField expertEvaluation;
 	protected TextAreaFormField expertEvaluationNotes;
-	
-	protected Collection<SubCasualtyFramingEntitySection> aditionalEntitiesSection;
-	protected NewSubCasualtyFramingEntitySection newEntitySection;
 	
 	public SubCasualtyFramingSection(String title) {
 		
@@ -163,17 +150,6 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		addFormField(expertEvaluationNotes, true);
 		
 		addLineBreak();
-		
-		this.aditionalEntitiesSection = new ArrayList<SubCasualtyFramingEntitySection>();
-
-		this.newEntitySection = new NewSubCasualtyFramingEntitySection();
-		this.newEntitySection.newButton.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				addSubCasualtyFramingEntitySection(new SubCasualtyFramingEntity());
-			}
-		});
 	}
 	
 	public void setFraming(final SubCasualtyFraming framing) {
@@ -198,11 +174,6 @@ public class SubCasualtyFramingSection extends FormViewSection {
 			insurerEvaluationNotes.setValue(framing.insurerEvaluationNotes);
 			expertEvaluation.setValue(framing.expertEvaluationId);
 			expertEvaluationNotes.setValue(framing.expertEvaluationNotes);
-			setSubCasualtyFramingEntities(framing.framingEntities);
-			
-			if (!this.readOnly) {
-				addWidget(newEntitySection.newButton);
-			}
 		}
 	}
 	
@@ -230,84 +201,10 @@ public class SubCasualtyFramingSection extends FormViewSection {
 			result.insurerEvaluationNotes = insurerEvaluationNotes.getValue(); 
 			result.expertEvaluationId = expertEvaluation.getValue();
 			result.expertEvaluationNotes = expertEvaluationNotes.getValue();
-			result.framingEntities = getSubCasualtyFramingEntities();
 		}
 
 		return result;
 	}
-	
-	protected void setSubCasualtyFramingEntities(SubCasualtyFramingEntity[] entities) {
-		for(SubCasualtyFramingEntitySection section : this.aditionalEntitiesSection) {
-			removeSection(section);
-		}
-		this.aditionalEntitiesSection.clear();
-
-		if(entities != null) {
-			for(SubCasualtyFramingEntity entity : entities) {
-				addSubCasualtyFramingEntitySection(entity);
-			}
-		}
-	}
-
-	private void removeSection(SubCasualtyFramingEntitySection section) {
-		section.entityType.removeFromParent();
-		section.evaluation.removeFromParent();
-		section.notes.removeFromParent();
-		section.removeButton.removeFromParent();
-	}
-
-	protected SubCasualtyFramingEntity[] getSubCasualtyFramingEntities(){
-		SubCasualtyFramingEntity[] result = new SubCasualtyFramingEntity[aditionalEntitiesSection.size()];
-
-		int i = 0;
-		for(SubCasualtyFramingEntitySection section : aditionalEntitiesSection) {
-			result[i] = section.getFramingEntity();
-			i++;
-		}
-
-		return result;
-	}
-	
-	protected void addSubCasualtyFramingEntitySection(SubCasualtyFramingEntity entity){
-		if(!entity.deleted) {
-
-			final SubCasualtyFramingEntitySection section = new SubCasualtyFramingEntitySection(entity);
-			section.setReadOnly(this.isReadOnly());
-			this.aditionalEntitiesSection.add(section);
-			
-			addSection(section);
-			
-			section.getRemoveButton().addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					removeAditionalEntityAndSection(section);
-				}
-			});
-		} 
-	}
-	
-	private void addSection(SubCasualtyFramingEntitySection section) {
-		newEntitySection.newButton.removeFromParent();
-		addFormField(section.entityType, true);
-		section.entityType.setReadOnly(true);
-		addFormField(section.evaluation, true);
-		section.evaluation.setReadOnly(this.isReadOnly());
-		addFormField(section.notes, true);
-		section.notes.setFieldHeight("75px");
-		section.notes.setReadOnly(this.isReadOnly());
-		addWidget(section.removeButton);
-		addLineBreak();
-		addWidget(newEntitySection.newButton);
-	}
-
-	protected void removeAditionalEntityAndSection(SubCasualtyFramingEntitySection section){
-		SubCasualtyFramingEntity entity = section.getFramingEntity();
-		entity.deleted = true;
-		section.setFramingEntity(entity);
-		removeSection(section);
-	}
-	
 	public boolean isReadOnly(){
 		return this.readOnly;
 	}
