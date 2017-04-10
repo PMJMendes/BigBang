@@ -478,4 +478,87 @@ public class SubCasualty
     	
     	return null;
     }
+    
+    public SubCasualtyFraming GetFraming() throws BigBangJewelException  {
+    	
+    	ArrayList<SubCasualtyFraming> iReqs;
+    	IEntity framEntity;
+        MasterDB ldb;
+        ResultSet resultSet;
+        
+        iReqs = new ArrayList<SubCasualtyFraming>();
+        
+        try {
+        	framEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualtyFraming)); 
+    		ldb = new MasterDB();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+        
+        try {
+    		resultSet = framEntity.SelectByMembers(ldb, new int[] {SubCasualtyFraming.I.SUBCASUALTY},
+    				new java.lang.Object[] {getKey()}, new int[0]);
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+        
+        try {
+    		while (resultSet.next()) {
+    			iReqs.add(SubCasualtyFraming.GetInstance(getNameSpace(), resultSet));
+    		}
+    	} catch (BigBangJewelException e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw e;
+    	} catch (Throwable e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+        
+        try {
+    		resultSet.close();
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		ldb.Disconnect();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	if (iReqs!=null && iReqs.size()>0) {
+    		return iReqs.get(0);
+    	} else {
+    		return null;
+    	}
+    }
 }

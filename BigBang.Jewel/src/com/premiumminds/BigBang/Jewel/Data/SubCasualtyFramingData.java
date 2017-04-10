@@ -10,6 +10,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 
 /**
  * This class stores and transforms data from the BD object to the object used
@@ -40,6 +41,8 @@ public class SubCasualtyFramingData implements DataBridge {
 	public UUID expertEvaluation;
 	public String expertEvaluationNotes;
 	
+	public UUID subCasualtyId;
+	
 	public SubCasualtyFramingEntitiesData[] framingEntities;
 	
 	public boolean isNew;
@@ -66,6 +69,7 @@ public class SubCasualtyFramingData implements DataBridge {
 		insurerEvaluationNotes = (String) source.getAt(SubCasualtyFraming.I.INSUREREVALUATIONNOTES);
 		expertEvaluation = (UUID) source.getAt(SubCasualtyFraming.I.EXPERTEVALUATION);
 		expertEvaluationNotes = (String) source.getAt(SubCasualtyFraming.I.EXPERTEVALUATIONNOTES);		
+		subCasualtyId = (UUID) source.getAt(SubCasualtyFraming.I.SUBCASUALTY);
 	}
 
 	public void ToObject(ObjectBase dest) throws BigBangJewelException {
@@ -87,6 +91,7 @@ public class SubCasualtyFramingData implements DataBridge {
 			dest.setAt(SubCasualtyFraming.I.INSUREREVALUATIONNOTES, insurerEvaluationNotes);
 			dest.setAt(SubCasualtyFraming.I.EXPERTEVALUATION, expertEvaluation);
 			dest.setAt(SubCasualtyFraming.I.EXPERTEVALUATIONNOTES, expertEvaluationNotes);
+			dest.setAt(SubCasualtyFraming.I.SUBCASUALTY, subCasualtyId);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}

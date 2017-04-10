@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -80,6 +81,7 @@ public class CreateSubCasualty
 		IProcess lobjProc;
 		SubCasualtyItem lobjItem;
 		SubCasualtyInsurerRequest request;
+		SubCasualtyFraming framing;
 		int i;
 
 		if ( mobjData.midManager == null )
@@ -132,6 +134,17 @@ public class CreateSubCasualty
 						request.SaveToDb(pdb);
 						mobjData.requests[i].id = request.getKey();
 					}
+				}
+			}
+			
+			// Framing
+			if (mobjData.framing != null) {
+				if (mobjData.framing.isNew) {
+					framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.framing.subCasualtyId = mobjData.mid;
+					mobjData.framing.ToObject(framing);
+					framing.SaveToDb(pdb);
+					mobjData.framing.id = framing.getKey();
 				}
 			}
 		}

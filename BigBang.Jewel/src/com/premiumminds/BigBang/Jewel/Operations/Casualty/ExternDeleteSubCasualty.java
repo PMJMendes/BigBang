@@ -15,11 +15,13 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocDataHeavy;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -89,11 +91,13 @@ public class ExternDeleteSubCasualty
 		IEntity lrefSubCasualties;
 		IEntity lrefSubCasualtyItems;
 		IEntity requestEntity;
+		IEntity framingEntity;
 		SubCasualty lobjAux;
 		Contact[] larrContacts;
 		Document[] larrDocs;
 		SubCasualtyItem[] larrItems;
 		SubCasualtyInsurerRequest[] requests;
+		SubCasualtyFraming framing;
 		PNProcess lobjProcess;
 		int i;
 
@@ -105,6 +109,8 @@ public class ExternDeleteSubCasualty
 					Constants.ObjID_SubCasualtyItem));
 			requestEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_SubCasualtyInsurerRequest));
+			framingEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_SubCasualtyFraming));
 
 			lobjAux = SubCasualty.GetInstance(Engine.getCurrentNameSpace(), midSubCasualty);
 			mobjData = new SubCasualtyData();
@@ -171,6 +177,16 @@ public class ExternDeleteSubCasualty
 					mobjData.requests[i].isDeleted = true;
 					requestEntity.Delete(pdb, requests[i].getKey());
 				}
+			}
+			
+			framing = lobjAux.GetFraming();
+			if (framing == null) {
+				mobjData.framing = null;
+			} else {
+				mobjData.framing = new SubCasualtyFramingData();
+				mobjData.framing.FromObject(framing);
+				mobjData.framing.isDeleted = true;
+				framingEntity.Delete(pdb, framing.getKey());
 			}
 
 			lrefSubCasualties.Delete(pdb, mobjData.mid);

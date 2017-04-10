@@ -93,6 +93,7 @@ public class SubCasualty extends SubCasualtyStub {
 		public SubCasualtyFramingEntity[] framingEntities; // The array with adicional
 													// entities related with
 													// this framing
+		public boolean deleted;
 	}
 
 	public String managerId;
