@@ -39,6 +39,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -367,6 +368,36 @@ public class SubCasualtyServiceImpl
 				lopMD.mobjData.requests[i].isNew = ( !subCasualty.insurerRequests[i].deleted && (subCasualty.insurerRequests[i].id == null) );
 				lopMD.mobjData.requests[i].isDeleted = subCasualty.insurerRequests[i].deleted;	
 			}
+		}
+		
+		// Framing set
+		lopMD.mobjData.framing = new SubCasualtyFramingData();
+		if (lopMD != null) {
+			lopMD.mobjData.framing.id = (subCasualty.framing.id == null ? null : UUID.fromString(subCasualty.framing.id));
+			lopMD.mobjData.framing.analysisDate = (subCasualty.framing.analysisDate == null ? null : Timestamp.valueOf(subCasualty.framing.analysisDate + " 00:00:00.0"));
+			lopMD.mobjData.framing.wasDifficult = subCasualty.framing.framingDifficulty;
+			lopMD.mobjData.framing.policyValid = subCasualty.framing.validPolicy;
+			lopMD.mobjData.framing.validityNotes = subCasualty.framing.validityNotes;
+			lopMD.mobjData.framing.areGeneralExclusions = subCasualty.framing.generalExclusions;
+			lopMD.mobjData.framing.generalExclusionsNotes = subCasualty.framing.generalExclusionNotes;
+			lopMD.mobjData.framing.isCoverageRelevant = subCasualty.framing.relevantCoverages;
+			lopMD.mobjData.framing.coverageRelevancyNotes = subCasualty.framing.coverageRelevancyNotes;
+			lopMD.mobjData.framing.coverageValue = (subCasualty.framing.coverageValue == null ? null : new BigDecimal(subCasualty.framing.coverageValue+""));
+			lopMD.mobjData.framing.areCoverageExclusions = subCasualty.framing.coverageExclusions;
+			lopMD.mobjData.framing.coverageExclusionsNotes = subCasualty.framing.coverageExclusionsNotes;
+			lopMD.mobjData.framing.franchise = (subCasualty.framing.franchise == null ? null : new BigDecimal(subCasualty.framing.franchise+""));
+			lopMD.mobjData.framing.franchiseType = (subCasualty.framing.deductibleTypeId == null ? null :
+				UUID.fromString(subCasualty.framing.deductibleTypeId));
+			lopMD.mobjData.framing.franchiseNotes = subCasualty.framing.franchiseNotes;
+			lopMD.mobjData.framing.insurerEvaluation = (subCasualty.framing.insurerEvaluationId == null ? null :
+				UUID.fromString(subCasualty.framing.insurerEvaluationId));
+			lopMD.mobjData.framing.insurerEvaluationNotes = subCasualty.framing.insurerEvaluationNotes;
+			lopMD.mobjData.framing.expertEvaluation = (subCasualty.framing.expertEvaluationId == null ? null :
+				UUID.fromString(subCasualty.framing.expertEvaluationId));
+			lopMD.mobjData.framing.expertEvaluationNotes = subCasualty.framing.expertEvaluationNotes;
+			
+			lopMD.mobjData.framing.isNew = ( !subCasualty.framing.deleted && (subCasualty.framing.id == null) );
+			lopMD.mobjData.framing.isDeleted = subCasualty.framing.deleted;	
 		}
 			
 		lopMD.mobjContactOps = null;

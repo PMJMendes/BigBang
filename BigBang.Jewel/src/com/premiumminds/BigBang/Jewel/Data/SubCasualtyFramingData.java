@@ -10,7 +10,6 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
-import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 
 /**
  * This class stores and transforms data from the BD object to the object used
@@ -36,6 +35,7 @@ public class SubCasualtyFramingData implements DataBridge {
 	public String coverageExclusionsNotes;
 	public BigDecimal franchise;
 	public UUID franchiseType;
+	public String franchiseNotes;
 	public UUID insurerEvaluation;
 	public String insurerEvaluationNotes;
 	public UUID expertEvaluation;
@@ -65,6 +65,7 @@ public class SubCasualtyFramingData implements DataBridge {
 		coverageExclusionsNotes = (String) source.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONSNOTES);
 		franchise = (BigDecimal) source.getAt(SubCasualtyFraming.I.FRANCHISE);
 		franchiseType = (UUID) source.getAt(SubCasualtyFraming.I.DEDUCTIBLETYPE);
+		franchiseNotes = (String) source.getAt(SubCasualtyFraming.I.FRANCHISENOTES);
 		insurerEvaluation = (UUID) source.getAt(SubCasualtyFraming.I.INSUREREVALUATION);
 		insurerEvaluationNotes = (String) source.getAt(SubCasualtyFraming.I.INSUREREVALUATIONNOTES);
 		expertEvaluation = (UUID) source.getAt(SubCasualtyFraming.I.EXPERTEVALUATION);
@@ -87,6 +88,7 @@ public class SubCasualtyFramingData implements DataBridge {
 			dest.setAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONSNOTES, coverageExclusionsNotes);
 			dest.setAt(SubCasualtyFraming.I.FRANCHISE, franchise);
 			dest.setAt(SubCasualtyFraming.I.DEDUCTIBLETYPE, franchiseType);
+			dest.setAt(SubCasualtyFraming.I.FRANCHISENOTES, franchiseNotes);
 			dest.setAt(SubCasualtyFraming.I.INSUREREVALUATION, insurerEvaluation);
 			dest.setAt(SubCasualtyFraming.I.INSUREREVALUATIONNOTES, insurerEvaluationNotes);
 			dest.setAt(SubCasualtyFraming.I.EXPERTEVALUATION, expertEvaluation);
@@ -197,6 +199,13 @@ public class SubCasualtyFramingData implements DataBridge {
 		} else {
 			pstrBuilder.append("(não definido)");
 		}
+		
+		pstrBuilder.append(pstrLineBreak);
+		if (validityNotes != null) {
+			pstrBuilder.append("Notas sobre franquia: ");
+			pstrBuilder.append(franchiseNotes);
+		}
+		pstrBuilder.append(pstrLineBreak);	
 		
 		pstrBuilder.append(pstrLineBreak);		
 		pstrBuilder.append("Avaliação segurador: ");
