@@ -224,10 +224,10 @@ public class SubCasualtyServiceImpl
 			lobjResult.framing.generalExclusionNotes = (String)framing.getAt(SubCasualtyFraming.I.GENERALEXCLUSIONSNOTES);
 			lobjResult.framing.relevantCoverages = (Boolean)framing.getAt(SubCasualtyFraming.I.RELEVANTCOVERAGE);
 			lobjResult.framing.coverageRelevancyNotes = (String)framing.getAt(SubCasualtyFraming.I.COVERAGERELEVANCYNOTES);
-			lobjResult.framing.coverageValue = ((BigDecimal)framing.getAt(SubCasualtyFraming.I.COVERAGEVALUE)).doubleValue();
+			lobjResult.framing.coverageValue = (framing.getAt(SubCasualtyFraming.I.COVERAGEVALUE)==null ? null : ((BigDecimal)framing.getAt(SubCasualtyFraming.I.COVERAGEVALUE)).doubleValue());
 			lobjResult.framing.coverageExclusions = (Boolean)framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONS);
 			lobjResult.framing.coverageExclusionsNotes = (String)framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONSNOTES);
-			lobjResult.framing.franchise = ((BigDecimal)framing.getAt(SubCasualtyFraming.I.FRANCHISE)).doubleValue();
+			lobjResult.framing.franchise = (framing.getAt(SubCasualtyFraming.I.FRANCHISE)==null ? null : ((BigDecimal)framing.getAt(SubCasualtyFraming.I.FRANCHISE)).doubleValue());
 			lobjResult.framing.deductibleTypeId = (framing.getAt(SubCasualtyFraming.I.DEDUCTIBLETYPE) == null ? null :
 				((UUID)framing.getAt(SubCasualtyFraming.I.DEDUCTIBLETYPE)).toString());
 			lobjResult.framing.franchiseNotes = (String)framing.getAt(SubCasualtyFraming.I.FRANCHISENOTES);

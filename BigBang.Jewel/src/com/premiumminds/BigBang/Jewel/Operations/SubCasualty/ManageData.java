@@ -171,6 +171,7 @@ public class ManageData
 					mobjData.framing.id = framing.getKey();
 				} else {
 					framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.id);
+					mobjData.framing.subCasualtyId = mobjData.mid;
 					mobjData.framing.prevValues = new SubCasualtyFramingData();
 					mobjData.framing.prevValues.FromObject(framing);
 					mobjData.framing.ToObject(framing);
