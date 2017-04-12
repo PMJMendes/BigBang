@@ -1,14 +1,18 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.UUID;
+
+import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-
-import Jewel.Engine.Engine;
-import Jewel.Engine.SysObjects.JewelEngineException;
-import Jewel.Engine.SysObjects.ObjectBase;
 
 /**
  * Class to map the tblBBSubCasualtyFraming table
@@ -59,6 +63,84 @@ public class SubCasualtyFraming extends ObjectBase {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
+	
+	public SubCasualtyFramingEntity[] GetCurrentFramingEntities() throws BigBangJewelException {
+    	ArrayList<SubCasualtyFramingEntity> iEntities;
+    	IEntity entEntity;
+        MasterDB ldb;
+        ResultSet resultSet;
+
+        iEntities = new ArrayList<SubCasualtyFramingEntity>();
+
+    	try {
+    		entEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualtyFramingEntities)); 
+    		ldb = new MasterDB();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		resultSet = entEntity.SelectByMembers(ldb, new int[] {SubCasualtyFramingEntity.I.SUBFRAMING},
+    				new java.lang.Object[] {getKey()}, new int[0]);
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		while (resultSet.next()) {
+    			iEntities.add(SubCasualtyFramingEntity.GetInstance(getNameSpace(), resultSet));
+    		}
+    	} catch (BigBangJewelException e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw e;
+    	} catch (Throwable e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+
+    	try {
+    		resultSet.close();
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		ldb.Disconnect();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+
+    	return iEntities.toArray(new SubCasualtyFramingEntity[iEntities.size()]);
+    }
 	
 	public void Initialize() throws JewelEngineException {
 	}

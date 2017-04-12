@@ -24,6 +24,8 @@ public class SubCasualtyFramingEntitiesData implements DataBridge {
 	public UUID evaluation;
 	public String notes;
 	
+	public UUID framingId;
+	
 	public boolean isNew;
 	public boolean isDeleted;
 	
@@ -34,6 +36,7 @@ public class SubCasualtyFramingEntitiesData implements DataBridge {
 		entityType = (UUID) source.getAt(SubCasualtyFramingEntity.I.ENTITYTYPE);
 		evaluation = (UUID) source.getAt(SubCasualtyFramingEntity.I.EVALUATION);
 		notes = (String) source.getAt(SubCasualtyFramingEntity.I.EVALUATIONNOTES);
+		framingId = (UUID) source.getAt(SubCasualtyFramingEntity.I.SUBFRAMING);
 	}
 
 	public void ToObject(ObjectBase dest) throws BigBangJewelException {
@@ -41,6 +44,7 @@ public class SubCasualtyFramingEntitiesData implements DataBridge {
 			dest.setAt(SubCasualtyFramingEntity.I.ENTITYTYPE, entityType);
 			dest.setAt(SubCasualtyFramingEntity.I.EVALUATION, evaluation);
 			dest.setAt(SubCasualtyFramingEntity.I.EVALUATIONNOTES, notes);
+			dest.setAt(SubCasualtyFramingEntity.I.SUBFRAMING, framingId);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}

@@ -39,6 +39,7 @@ import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingEntitiesData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -456,6 +457,23 @@ public class CasualtyServiceImpl
 			
 			lopCSC.mobjData.framing.isNew = !subCasualty.framing.deleted;
 			lopCSC.mobjData.framing.isDeleted = subCasualty.framing.deleted;
+			
+			if (subCasualty.framing.framingEntities != null) {
+				lopCSC.mobjData.framing.framingEntities = new SubCasualtyFramingEntitiesData[subCasualty.framing.framingEntities.length];
+				for (i=0; i<lopCSC.mobjData.framing.framingEntities.length; i++) {
+					lopCSC.mobjData.framing.framingEntities[i] = new SubCasualtyFramingEntitiesData();
+					lopCSC.mobjData.framing.framingEntities[i].entityType = (subCasualty.framing.framingEntities[i].entityTypeId == null ? null :
+						UUID.fromString(subCasualty.framing.framingEntities[i].entityTypeId));
+					lopCSC.mobjData.framing.framingEntities[i].evaluation = (subCasualty.framing.framingEntities[i].evaluationId == null ? null :
+						UUID.fromString(subCasualty.framing.framingEntities[i].evaluationId));
+					lopCSC.mobjData.framing.framingEntities[i].notes = subCasualty.framing.framingEntities[i].evaluationNotes;
+					
+					lopCSC.mobjData.framing.framingEntities[i].isNew = !subCasualty.framing.framingEntities[i].deleted;
+					lopCSC.mobjData.framing.framingEntities[i].isDeleted = subCasualty.framing.framingEntities[i].deleted;
+				}
+			} else {
+				subCasualty.framing.framingEntities =null;
+			}
 		} else {
 			lopCSC.mobjData.framing = null;
 		}

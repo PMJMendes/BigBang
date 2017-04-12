@@ -16,12 +16,14 @@ import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocDataHeavy;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingEntitiesData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -92,12 +94,14 @@ public class ExternDeleteSubCasualty
 		IEntity lrefSubCasualtyItems;
 		IEntity requestEntity;
 		IEntity framingEntity;
+		IEntity framingEntitiesEntity;
 		SubCasualty lobjAux;
 		Contact[] larrContacts;
 		Document[] larrDocs;
 		SubCasualtyItem[] larrItems;
 		SubCasualtyInsurerRequest[] requests;
 		SubCasualtyFraming framing;
+		SubCasualtyFramingEntity[] framingEntities;
 		PNProcess lobjProcess;
 		int i;
 
@@ -111,6 +115,8 @@ public class ExternDeleteSubCasualty
 					Constants.ObjID_SubCasualtyInsurerRequest));
 			framingEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_SubCasualtyFraming));
+			framingEntitiesEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_SubCasualtyFramingEntities));
 
 			lobjAux = SubCasualty.GetInstance(Engine.getCurrentNameSpace(), midSubCasualty);
 			mobjData = new SubCasualtyData();
@@ -186,6 +192,21 @@ public class ExternDeleteSubCasualty
 				mobjData.framing = new SubCasualtyFramingData();
 				mobjData.framing.FromObject(framing);
 				mobjData.framing.isDeleted = true;
+				
+				// Aditional entities' deletion
+				framingEntities = framing.GetCurrentFramingEntities();
+				if (framingEntities == null) {
+					mobjData.framing.framingEntities = null;
+				} else {
+					mobjData.framing.framingEntities = new SubCasualtyFramingEntitiesData[framingEntities.length];
+					for (i=0; i<framingEntities.length; i++) {
+						mobjData.framing.framingEntities[i] = new SubCasualtyFramingEntitiesData();
+						mobjData.framing.framingEntities[i].FromObject(framingEntities[i]);
+						mobjData.framing.framingEntities[i].isDeleted = true;
+						framingEntitiesEntity.Delete(pdb, framingEntities[i].getKey());
+					}
+				}
+				
 				framingEntity.Delete(pdb, framing.getKey());
 			}
 
@@ -226,6 +247,8 @@ public class ExternDeleteSubCasualty
 		SubCasualty lobjAux;
 		SubCasualtyItem lobjItem;
 		SubCasualtyInsurerRequest request;
+		SubCasualtyFraming framing;
+		SubCasualtyFramingEntity framingEntity;
 		PNProcess lobjProcess;
 		ExternResumeSubCasualty lopERC;
 		int i;
@@ -260,6 +283,28 @@ public class ExternDeleteSubCasualty
 						mobjData.requests[i].ToObject(request);
 						request.SaveToDb(pdb);
 						mobjData.requests[i].id = request.getKey();
+					}
+				}
+			}
+			
+			if (mobjData.framing != null) {
+				if (mobjData.framing.isDeleted) {
+					framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.framing.subCasualtyId = mobjData.mid;
+					mobjData.framing.ToObject(framing);
+					framing.SaveToDb(pdb);
+					mobjData.framing.id = framing.getKey();
+					
+					if (mobjData.framing.framingEntities != null) {
+						for (i = 0; i<mobjData.framing.framingEntities.length; i++) {
+							if (mobjData.framing.framingEntities[i].isDeleted) {
+								framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+								mobjData.framing.framingEntities[i].framingId = mobjData.framing.id;
+								mobjData.framing.framingEntities[i].ToObject(framingEntity);
+								framingEntity.SaveToDb(pdb);
+								mobjData.framing.framingEntities[i].id = framingEntity.getKey();
+							}
+						}
 					}
 				}
 			}
