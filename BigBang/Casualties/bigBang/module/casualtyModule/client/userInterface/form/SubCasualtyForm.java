@@ -285,6 +285,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			result.items = getSubCasualtyItems();
 			result.insurerRequests = getSubCasualtyInsurerRequests();
 			result.framing = framingSection.getFraming();
+			if (aditionalEntitiesSection.size() > 0) {
+				result.framing.framingEntities = getSubCasualtyFramingEntities();
+			}	
 			result.insuredObjectId = insuredObject.getValue();
 			result.insuredObjectName = insuredObjectName.getValue();
 			result.serviceCenterId = carRepair.getValue();
@@ -409,7 +412,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 						
 			setSubCasualtyInsurerRequests(info.insurerRequests);
 			
-			//setSubCasualtyFramingEntities(info.framing.framingEntities);
+			if (info.framing!=null) {
+				setSubCasualtyFramingEntities(info.framing.framingEntities);
+			}
 			
 			addSection(newInsurerRequestSection);
 		} else {

@@ -16,11 +16,10 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class SubCasualtyFramingEntity extends ObjectBase {
 
 	public static class I {
-		public static int TYPE = 0;
-		public static int SUBFRAMING = 1;
-		public static int ENTITYTYPE = 2;
-		public static int EVALUATION = 3;
-		public static int EVALUATIONNOTES = 4;
+		public static int SUBFRAMING = 0;
+		public static int ENTITYTYPE = 1;
+		public static int EVALUATION = 2;
+		public static int EVALUATIONNOTES = 3;
 	}
 	
 	public static SubCasualtyFramingEntity GetInstance(UUID pidNameSpace,

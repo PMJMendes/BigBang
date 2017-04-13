@@ -191,7 +191,7 @@ public class ManageData
 							framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingEntities[i].id);
 							mobjData.framing.framingEntities[i].FromObject(framingEntity);
 							framingEntity.getDefinition().Delete(pdb, framingEntity.getKey());
-						} else if ( mobjData.requests[i].isNew ) {
+						} else if ( mobjData.framing.framingEntities[i].isNew ) {
 							framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 							mobjData.framing.framingEntities[i].framingId = mobjData.framing.id;
 							mobjData.framing.framingEntities[i].ToObject(framingEntity);

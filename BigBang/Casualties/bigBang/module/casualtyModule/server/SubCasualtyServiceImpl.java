@@ -425,7 +425,7 @@ public class SubCasualtyServiceImpl
 			lopMD.mobjData.framing.isDeleted = subCasualty.framing.deleted;	
 			
 			// FramingEntities set
-			if ( subCasualty.framing.framingEntities!=null && subCasualty.framing.framingEntities.length>0) {
+			if (subCasualty.framing.framingEntities!=null) {
 				lopMD.mobjData.framing.framingEntities = new SubCasualtyFramingEntitiesData[subCasualty.framing.framingEntities.length];
 				
 				for ( i = 0; i < lopMD.mobjData.framing.framingEntities.length; i++ ) {
