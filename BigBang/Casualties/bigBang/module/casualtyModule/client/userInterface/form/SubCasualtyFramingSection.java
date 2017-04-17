@@ -1,5 +1,7 @@
 package bigBang.module.casualtyModule.client.userInterface.form;
 
+import java.util.Date;
+
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming;
@@ -156,7 +158,11 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		this.currentFraming = framing;
 
 		if (framing != null) {
-			analysisDate.setValue(framing.analysisDate);
+			if (framing.analysisDate != null) {
+				analysisDate.setValue(framing.analysisDate);
+			} else {
+				analysisDate.setValue(new Date(), false);
+			}
 			difficultFraming.setValue(framing.framingDifficulty?"true":"false");
 			validPolicy.setValue(framing.validPolicy?"true":"false");
 			validityNotes.setValue(framing.validityNotes);
@@ -185,14 +191,14 @@ public class SubCasualtyFramingSection extends FormViewSection {
 
 			result.analysisDate = analysisDate.getStringValue();
 			result.framingDifficulty = difficultFraming.getValue() == null ? null : difficultFraming.getValue().equals("true") ? true : false; 
-			result.validPolicy = validPolicy.getValue() == null ? null : difficultFraming.getValue().equals("true") ? true : false; ;
+			result.validPolicy = validPolicy.getValue() == null ? null : validPolicy.getValue().equals("true") ? true : false; ;
 			result.validityNotes = validityNotes.getValue();
-			result.generalExclusions = generalExclusions.getValue() == null ? null : difficultFraming.getValue().equals("true") ? true : false; 
+			result.generalExclusions = generalExclusions.getValue() == null ? null : generalExclusions.getValue().equals("true") ? true : false; 
 			result.generalExclusionNotes = generalExclusionsNotes.getValue();
-			result.relevantCoverages = relevantCoverage.getValue() == null ? null : difficultFraming.getValue().equals("true") ? true : false; ;
+			result.relevantCoverages = relevantCoverage.getValue() == null ? null : relevantCoverage.getValue().equals("true") ? true : false; ;
 			result.coverageRelevancyNotes = coverageRelevancyNotes.getValue(); 
 			result.coverageValue = coverageValue.getValue();
-			result.coverageExclusions = coverageExclusions.getValue() == null ? null : difficultFraming.getValue().equals("true") ? true : false; ;
+			result.coverageExclusions = coverageExclusions.getValue() == null ? null : coverageExclusions.getValue().equals("true") ? true : false; ;
 			result.coverageExclusionsNotes = coverageExclusionsNotes.getValue();
 			result.franchise = franchise.getValue();
 			result.deductibleTypeId = deductibleType.getValue();

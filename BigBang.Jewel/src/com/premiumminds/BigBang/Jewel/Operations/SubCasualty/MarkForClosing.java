@@ -15,9 +15,12 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
 
 public class MarkForClosing
 	extends UndoableOperation
@@ -115,6 +118,7 @@ public class MarkForClosing
 			mstrReviewer = User.GetInstance(Engine.getCurrentNameSpace(), midReviewer).getDisplayName();
 
 			lobjSubCasualty = (SubCasualty)GetProcess().GetData();
+			validateFraming(lobjSubCasualty);
 			lobjSubCasualty.setAt(SubCasualty.I.REVIEWER, midReviewer);
 			lobjSubCasualty.setAt(SubCasualty.I.REVIEWDATE, ldtFinal);
 			lobjSubCasualty.SaveToDb(pdb);
@@ -133,6 +137,125 @@ public class MarkForClosing
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	private void validateFraming(SubCasualty lobjSubCasualty) throws JewelPetriException {
+
+		boolean isWrong = false;
+		
+		String errors = "";
+		
+		SubCasualtyFraming framing;
+		
+		try {
+			framing = lobjSubCasualty.GetFraming();
+		} catch (BigBangJewelException e) {
+			throw new JewelPetriException("Não foi possível obter o enquadramento", e);
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.ANALYSISDATE) == null) {
+			isWrong = true;
+			errors = errors + "Deve definir-se uma data de análise. ";
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.FRAMINGDIFFICULTY) == null) {
+			isWrong = true;
+			errors = errors + "Deve indicar-se se existiram dificuldades no enquadramento. ";
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.VALIDPOLICY) == null) {
+			isWrong = true;
+			errors = errors + "Deve indicar-se se a apólice é válida. ";
+		} else {
+			if ((Boolean)framing.getAt(SubCasualtyFraming.I.VALIDPOLICY) == false) {
+				if (framing.getAt(SubCasualtyFraming.I.VALIDITYNOTES) == null) {
+					isWrong = true;
+					errors = errors + "Se a apólice não for válida, devem-se indicar os motivos. ";
+				}
+			}
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.GENERALEXCLUSIONS) == null) {
+			isWrong = true;
+			errors = errors + "Deve indicar-se se existem exclusões aplicáveis. ";
+		} else {
+			if ((Boolean)framing.getAt(SubCasualtyFraming.I.GENERALEXCLUSIONS) == true) {
+				if (framing.getAt(SubCasualtyFraming.I.GENERALEXCLUSIONSNOTES) == null) {
+					isWrong = true;
+					errors = errors + "Se existirem exclusões aplicáveis, devem indicar-se quais. ";
+				}
+			}
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.RELEVANTCOVERAGE) == null) {
+			isWrong = true;
+			errors = errors + "Deve indicar-se se a cobertura é aplicável. ";
+		} else {
+			if ((Boolean)framing.getAt(SubCasualtyFraming.I.RELEVANTCOVERAGE) == false) {
+				if (framing.getAt(SubCasualtyFraming.I.GENERALEXCLUSIONSNOTES) == null) {
+					isWrong = true;
+					errors = errors + "Se a cobertura não for aplicável, deve indicar-se o porquê. ";
+				}
+			}
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.COVERAGEVALUE) == null) {
+			isWrong = true;
+			errors = errors + "Deve indicar-se um capital de cobertura. ";
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONS) == null) {
+			isWrong = true;
+			errors = errors + "Deve indicar-se se existem exclusões de cobertura aplicáveis. ";
+		} else {
+			if ((Boolean)framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONS) == true) {
+				if (framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONSNOTES) == null) {
+					isWrong = true;
+					errors = errors + "Se existirem exclusões de cobertura aplicáveis, deve indicar-se quais. ";
+				}
+			}
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.FRANCHISE) == null) {
+			isWrong = true;
+			errors = errors + "Deve indicar-se um capital de franquia. ";
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.DEDUCTIBLETYPE) == null) {
+			isWrong = true;
+			errors = errors + "Deve indicar-se um tipo de franquia. ";
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.INSUREREVALUATION) == null) {
+			isWrong = true;
+			errors = errors + "Deve definir-se uma avaliação para o segurador. ";
+		}
+		
+		if (framing.getAt(SubCasualtyFraming.I.INSUREREVALUATION) == null) {
+			isWrong = true;
+			errors = errors + "Deve definir-se uma avaliação para o perito. ";
+		}
+		
+		try {
+			for (SubCasualtyFramingEntity entity : framing.GetCurrentFramingEntities()) {
+				if (entity.getAt(SubCasualtyFramingEntity.I.ENTITYTYPE) == null) {
+					isWrong = true;
+					errors = errors + "Deve definir-se o tipo de entidade envolvida para todas as entidades. ";
+					break;
+				}
+				if (entity.getAt(SubCasualtyFramingEntity.I.EVALUATION) == null) {
+					isWrong = true;
+					errors = errors + "Deve definir-se uma pontuação para todas as entidades. ";
+					break;
+				}
+			}
+		} catch (BigBangJewelException e) {
+			throw new JewelPetriException("Não foi possível obter os outros intervenientes envolvidos no enquadramento ", e);
+		}
+		
+		if (isWrong) {
+			throw new JewelPetriException(errors);
 		}
 	}
 

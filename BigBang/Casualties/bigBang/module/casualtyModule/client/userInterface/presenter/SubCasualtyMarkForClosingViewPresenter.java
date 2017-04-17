@@ -138,7 +138,11 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onMarkForClosingFailed();
+				String error = "";
+				for (ResponseError e: errors) {
+					error += error + " " + e.description;
+				}
+				onMarkForClosingFailed(error);
 			}
 		});
 	}
@@ -157,8 +161,8 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(item);
 	} 
 
-	private void onMarkForClosingFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível Marcar o Encerramento"), TYPE.ALERT_NOTIFICATION));
+	private void onMarkForClosingFailed(String errorString){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível Marcar o Encerramento\n" + errorString), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void onMarkForClosingCancelled(){

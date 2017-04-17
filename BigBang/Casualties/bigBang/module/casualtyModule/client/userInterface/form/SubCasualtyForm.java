@@ -195,9 +195,6 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		});
 		
 		this.framingSection = new SubCasualtyFramingSection("Enquadramento");
-		if (framingSection.analysisDate.getValue()==null) {
-			framingSection.analysisDate.setValue(new Date(), false);
-		}
 		addSection(framingSection);
 
 		this.aditionalEntitiesSection = new ArrayList<SubCasualtyFramingEntitySection>();
