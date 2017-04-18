@@ -140,6 +140,10 @@ public class MarkForClosing
 		}
 	}
 
+	/** 
+	 * This method validates if all the framing fields have the needed info
+	 * when a sub-casualty is marked for closing.
+	 */
 	private void validateFraming(SubCasualty lobjSubCasualty) throws JewelPetriException {
 
 		boolean isWrong = false;
@@ -152,18 +156,15 @@ public class MarkForClosing
 			framing = lobjSubCasualty.GetFraming();
 		} catch (BigBangJewelException e) {
 			throw new JewelPetriException("Não foi possível obter o enquadramento", e);
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.ANALYSISDATE) == null) {
 			isWrong = true;
 			errors = errors + "Deve definir-se uma data de análise. ";
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.FRAMINGDIFFICULTY) == null) {
 			isWrong = true;
 			errors = errors + "Deve indicar-se se existiram dificuldades no enquadramento. ";
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.VALIDPOLICY) == null) {
 			isWrong = true;
 			errors = errors + "Deve indicar-se se a apólice é válida. ";
@@ -174,8 +175,7 @@ public class MarkForClosing
 					errors = errors + "Se a apólice não for válida, devem-se indicar os motivos. ";
 				}
 			}
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.GENERALEXCLUSIONS) == null) {
 			isWrong = true;
 			errors = errors + "Deve indicar-se se existem exclusões aplicáveis. ";
@@ -186,8 +186,7 @@ public class MarkForClosing
 					errors = errors + "Se existirem exclusões aplicáveis, devem indicar-se quais. ";
 				}
 			}
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.RELEVANTCOVERAGE) == null) {
 			isWrong = true;
 			errors = errors + "Deve indicar-se se a cobertura é aplicável. ";
@@ -198,13 +197,11 @@ public class MarkForClosing
 					errors = errors + "Se a cobertura não for aplicável, deve indicar-se o porquê. ";
 				}
 			}
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.COVERAGEVALUE) == null) {
 			isWrong = true;
 			errors = errors + "Deve indicar-se um capital de cobertura. ";
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONS) == null) {
 			isWrong = true;
 			errors = errors + "Deve indicar-se se existem exclusões de cobertura aplicáveis. ";
@@ -215,28 +212,25 @@ public class MarkForClosing
 					errors = errors + "Se existirem exclusões de cobertura aplicáveis, deve indicar-se quais. ";
 				}
 			}
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.FRANCHISE) == null) {
 			isWrong = true;
 			errors = errors + "Deve indicar-se um capital de franquia. ";
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.DEDUCTIBLETYPE) == null) {
 			isWrong = true;
 			errors = errors + "Deve indicar-se um tipo de franquia. ";
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.INSUREREVALUATION) == null) {
 			isWrong = true;
 			errors = errors + "Deve definir-se uma avaliação para o segurador. ";
-		}
-		
+		}		
 		if (framing.getAt(SubCasualtyFraming.I.INSUREREVALUATION) == null) {
 			isWrong = true;
 			errors = errors + "Deve definir-se uma avaliação para o perito. ";
 		}
 		
+		// And now for the framing entities
 		try {
 			for (SubCasualtyFramingEntity entity : framing.GetCurrentFramingEntities()) {
 				if (entity.getAt(SubCasualtyFramingEntity.I.ENTITYTYPE) == null) {
@@ -254,6 +248,7 @@ public class MarkForClosing
 			throw new JewelPetriException("Não foi possível obter os outros intervenientes envolvidos no enquadramento ", e);
 		}
 		
+		// If anything is incorrect, returns all error messages.
 		if (isWrong) {
 			throw new JewelPetriException(errors);
 		}

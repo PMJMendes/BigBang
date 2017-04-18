@@ -168,15 +168,10 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		boolean valid = true;
 		
 		valid &= validateDate(section.analysisDate, true);
-		valid &= section.difficultFraming.getValue() != null;
-		valid &= section.validPolicy.getValue() != null;
 		valid &= validateString(section.validityNotes, 0, 250, true);
-		valid &= section.generalExclusions.getValue() != null;
 		valid &= validateString(section.generalExclusionsNotes, 0, 250, true);
-		valid &= section.relevantCoverage.getValue() != null;
 		valid &= validateString(section.coverageRelevancyNotes, 0, 250, true);
 		valid &= validateNumber(section.coverageValue, 0.0, null, true);
-		valid &= section.coverageExclusions.getValue() != null;
 		valid &= validateString(section.coverageExclusionsNotes, 0, 250, true);
 		valid &= validateNumber(section.franchise, 0.0, null, true);
 		valid &= validateGuid(section.deductibleType, true);
@@ -200,7 +195,7 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 
 		boolean valid = true;
 		
-		valid &= validateGuid(entitySection.entityType, true);
+		valid &= validateGuid(entitySection.entityType, false);
 		valid &= validateGuid(entitySection.evaluation, true);
 		valid &= validateString(entitySection.notes, 0, 250, true);
 		

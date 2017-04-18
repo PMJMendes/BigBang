@@ -158,20 +158,20 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		this.currentFraming = framing;
 
 		if (framing != null) {
-			if (framing.analysisDate != null) {
+			if (framing.id != null) { // TODO ver se ainda funca 
 				analysisDate.setValue(framing.analysisDate);
 			} else {
 				analysisDate.setValue(new Date(), false);
 			}
-			difficultFraming.setValue(framing.framingDifficulty?"true":"false");
-			validPolicy.setValue(framing.validPolicy?"true":"false");
+			difficultFraming.setValue(framing.id==null ? null : framing.framingDifficulty?"true":"false"); // TODO E depois de salvar uma vez? 
+			validPolicy.setValue(framing.id==null ? null : framing.validPolicy?"true":"false");
 			validityNotes.setValue(framing.validityNotes);
-			generalExclusions.setValue(framing.generalExclusions?"true":"false");
+			generalExclusions.setValue(framing.id==null ? null : framing.generalExclusions?"true":"false");
 			generalExclusionsNotes.setValue(framing.generalExclusionNotes);
-			relevantCoverage.setValue(framing.relevantCoverages?"true":"false");
+			relevantCoverage.setValue(framing.id==null ? null : framing.relevantCoverages?"true":"false");
 			coverageRelevancyNotes.setValue(framing.coverageRelevancyNotes);
 			coverageValue.setValue(framing.coverageValue);
-			coverageExclusions.setValue(framing.coverageExclusions?"true":"false");
+			coverageExclusions.setValue(framing.id==null ? null : framing.coverageExclusions?"true":"false");
 			coverageExclusionsNotes.setValue(framing.coverageExclusionsNotes);
 			franchise.setValue(framing.franchise);
 			deductibleType.setValue(framing.deductibleTypeId);
@@ -190,15 +190,25 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		if (result != null) {
 
 			result.analysisDate = analysisDate.getStringValue();
-			result.framingDifficulty = difficultFraming.getValue() == null ? null : difficultFraming.getValue().equals("true") ? true : false; 
-			result.validPolicy = validPolicy.getValue() == null ? null : validPolicy.getValue().equals("true") ? true : false; ;
+			if(difficultFraming.getValue() != null){
+				result.framingDifficulty = "true".equalsIgnoreCase(difficultFraming.getValue());
+			}
+			if(validPolicy.getValue() != null){
+				result.validPolicy = "true".equalsIgnoreCase(validPolicy.getValue());
+			}
 			result.validityNotes = validityNotes.getValue();
-			result.generalExclusions = generalExclusions.getValue() == null ? null : generalExclusions.getValue().equals("true") ? true : false; 
+			if(generalExclusions.getValue() != null){
+				result.generalExclusions = "true".equalsIgnoreCase(generalExclusions.getValue());
+			}
 			result.generalExclusionNotes = generalExclusionsNotes.getValue();
-			result.relevantCoverages = relevantCoverage.getValue() == null ? null : relevantCoverage.getValue().equals("true") ? true : false; ;
+			if(relevantCoverage.getValue() != null){
+				result.relevantCoverages = "true".equalsIgnoreCase(relevantCoverage.getValue());
+			}
 			result.coverageRelevancyNotes = coverageRelevancyNotes.getValue(); 
 			result.coverageValue = coverageValue.getValue();
-			result.coverageExclusions = coverageExclusions.getValue() == null ? null : coverageExclusions.getValue().equals("true") ? true : false; ;
+			if(coverageExclusions.getValue() != null){
+				result.coverageExclusions = "true".equalsIgnoreCase(coverageExclusions.getValue());
+			}
 			result.coverageExclusionsNotes = coverageExclusionsNotes.getValue();
 			result.franchise = franchise.getValue();
 			result.deductibleTypeId = deductibleType.getValue();

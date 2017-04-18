@@ -162,7 +162,7 @@ public class SubCasualtyMarkForClosingViewPresenter implements ViewPresenter {
 	} 
 
 	private void onMarkForClosingFailed(String errorString){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível Marcar o Encerramento\n" + errorString), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível Marcar o Encerramento. " + errorString), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void onMarkForClosingCancelled(){
