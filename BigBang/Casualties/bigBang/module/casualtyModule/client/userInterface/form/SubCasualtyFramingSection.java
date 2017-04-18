@@ -14,6 +14,10 @@ import bigBang.library.client.userInterface.view.FormViewSection;
 
 import com.google.gwt.user.client.ui.Label;
 
+/**
+ * The section where the framing is defined
+ */
+
 public class SubCasualtyFramingSection extends FormViewSection {
 
 	protected SubCasualty.SubCasualtyFraming currentFraming;

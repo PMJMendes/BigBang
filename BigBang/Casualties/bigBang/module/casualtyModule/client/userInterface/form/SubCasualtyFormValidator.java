@@ -161,6 +161,10 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		return valid;
 	}	
 	
+	/**
+	 * Validates the framing section. This validation does not contemplates nullable fields
+	 * (this only occurs while marking the sub-casualty for closing) 
+	 */
 	private boolean validateFraming() {
 		
 		SubCasualtyFramingSection section = form.framingSection; 
@@ -190,6 +194,9 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		return valid;
 	}
 
+	/**
+	 * Validates an aditional framing entity section. The user must define the entity
+	 */
 	private boolean validateFramingEntitySection(
 			SubCasualtyFramingEntitySection entitySection) {
 

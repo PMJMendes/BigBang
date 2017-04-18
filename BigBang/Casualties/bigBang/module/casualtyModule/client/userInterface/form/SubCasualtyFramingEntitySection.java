@@ -11,6 +11,9 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimplePanel;
 
+/**
+ * This class controls the section where a user may define an aditional entity related with the framing 
+ */
 public class SubCasualtyFramingEntitySection extends CollapsibleFormViewSection {
 	
 	protected SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity currentEntity;
