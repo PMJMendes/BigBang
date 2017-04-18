@@ -282,7 +282,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			result.items = getSubCasualtyItems();
 			result.insurerRequests = getSubCasualtyInsurerRequests();
 			result.framing = framingSection.getFraming();
-			if (aditionalEntitiesSection.size() > 0) {
+			if (aditionalEntitiesSection.size() > 0 && result.framing!=null) {
 				result.framing.framingEntities = getSubCasualtyFramingEntities();
 			}	
 			result.insuredObjectId = insuredObject.getValue();

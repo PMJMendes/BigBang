@@ -1,10 +1,9 @@
 package bigBang.module.casualtyModule.client.userInterface.form;
 
-import java.util.Date;
-
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming;
+import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
@@ -162,12 +161,14 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		this.currentFraming = framing;
 
 		if (framing != null) {
-			if (framing.id != null) { // TODO ver se ainda funca 
+			/*if (framing.id != null) {
 				analysisDate.setValue(framing.analysisDate);
 			} else {
 				analysisDate.setValue(new Date(), false);
-			}
-			difficultFraming.setValue(framing.id==null ? null : framing.framingDifficulty?"true":"false"); // TODO E depois de salvar uma vez? 
+			}*/ 
+			//TODO: I believe it does not make sense to auto-set the date for it will create a framing even if the user does not wish to do so
+			analysisDate.setValue(framing.analysisDate);
+			difficultFraming.setValue(framing.id==null ? null : framing.framingDifficulty?"true":"false");
 			validPolicy.setValue(framing.id==null ? null : framing.validPolicy?"true":"false");
 			validityNotes.setValue(framing.validityNotes);
 			generalExclusions.setValue(framing.id==null ? null : framing.generalExclusions?"true":"false");
@@ -190,6 +191,11 @@ public class SubCasualtyFramingSection extends FormViewSection {
 	public SubCasualtyFraming getFraming() {
 		
 		SubCasualtyFraming result = this.currentFraming;
+		
+		if (result == null) {
+			result = new SubCasualtyFraming();
+			this.currentFraming = result;
+		}
 
 		if (result != null) {
 
