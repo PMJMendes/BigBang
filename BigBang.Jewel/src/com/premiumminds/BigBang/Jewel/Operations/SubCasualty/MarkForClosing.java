@@ -248,7 +248,7 @@ public class MarkForClosing
 				isWrong = true;
 				errors = errors + "Deve definir-se uma avaliação para o segurador. ";
 			}		
-			if (framing.getAt(SubCasualtyFraming.I.INSUREREVALUATION) == null) {
+			if (framing.getAt(SubCasualtyFraming.I.EXPERTEVALUATION) == null) {
 				isWrong = true;
 				errors = errors + "Deve definir-se uma avaliação para o perito. ";
 			}
