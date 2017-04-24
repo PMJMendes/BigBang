@@ -9,6 +9,7 @@ public class DocInfo
 
 	public String name;
 	public String value;
+	public boolean displayAtPortal;
 
 	public DocInfo()
 	{
@@ -18,5 +19,6 @@ public class DocInfo
 	{
 		this.name = orig.name;
 		this.value = orig.value;
+		this.displayAtPortal = orig.displayAtPortal;
 	}
 }

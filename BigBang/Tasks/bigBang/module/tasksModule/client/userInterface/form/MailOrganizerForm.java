@@ -7,6 +7,7 @@ import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListBoxFormField;
@@ -31,6 +32,7 @@ public class MailOrganizerForm extends FormView<Document>{
 		protected TextBoxFormField info;
 		protected TextBoxFormField infoValue;
 		private Button remove;
+		private CheckBoxFormField displayAtPortal;
 		public DocumentDetailEntry(DocInfo docInfo) {
 			super(docInfo);
 			this.setHeight("40px");
@@ -48,9 +50,11 @@ public class MailOrganizerForm extends FormView<Document>{
 
 			setInfo(new TextBoxFormField());
 			setInfoValue(new TextBoxFormField());
+			setDisplayAtPortal(new CheckBoxFormField());
 
 			getInfo().setValue(docInfo.name);
 			getInfoValue().setValue(docInfo.value);
+			getDisplayAtPortal().setValue(docInfo.displayAtPortal);
 
 			remove = new Button("X");
 			remove.addClickHandler( new ClickHandler() {
@@ -94,6 +98,7 @@ public class MailOrganizerForm extends FormView<Document>{
 			}
 			getInfo().setReadOnly(!editable);
 			getInfoValue().setReadOnly(!editable);
+			getDisplayAtPortal().setReadOnly(!editable);
 			remove.setVisible(editable);
 			add.setVisible(editable);
 		}
@@ -104,6 +109,7 @@ public class MailOrganizerForm extends FormView<Document>{
 			DocInfo docInfo = new DocInfo();
 			docInfo.name = info.getValue();
 			docInfo.value = infoValue.getValue();
+			docInfo.displayAtPortal = displayAtPortal.getValue();
 			return docInfo;
 		}
 
@@ -122,6 +128,14 @@ public class MailOrganizerForm extends FormView<Document>{
 		public void setInfoValue(TextBoxFormField infoValue) {
 			this.infoValue = infoValue;
 		}
+		
+		public CheckBoxFormField getDisplayAtPortal() {
+			return displayAtPortal;
+		}
+
+		public void setDisplayAtPortal(CheckBoxFormField displayAtPortal) {
+			this.displayAtPortal = displayAtPortal;
+		}
 
 	}
 
@@ -131,6 +145,7 @@ public class MailOrganizerForm extends FormView<Document>{
 	private HorizontalPanel referenceWrapper;
 	protected TextBoxFormField name;
 	protected ExpandableListBoxFormField docType;
+	protected CheckBoxFormField displayAtPortal;
 	List<DocInfo> details;
 	DocInfo[] docInfo;
 	private Button add;
@@ -173,8 +188,11 @@ public class MailOrganizerForm extends FormView<Document>{
 		name.setWidth("390px");
 		name.setFieldWidth("390px");
 		
+		displayAtPortal = new CheckBoxFormField("Mostrar no Portal");
+		
 		addFormField(name);
 		addFormField(docType);
+		addFormField(displayAtPortal);
 		
 		addSection("Detalhes");
 
@@ -284,6 +302,8 @@ public class MailOrganizerForm extends FormView<Document>{
 
 		newDoc.docTypeId = docType.getValue();
 		newDoc.hasFile = true;
+		
+		newDoc.displayAtPortal = displayAtPortal.getValue();
 		
 		Iterator<ListEntry<DocInfo>> iterator = details.iterator();
 		ListEntry<DocInfo> temp;
