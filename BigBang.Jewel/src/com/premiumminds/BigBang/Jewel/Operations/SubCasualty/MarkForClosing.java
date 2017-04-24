@@ -161,7 +161,7 @@ public class MarkForClosing
 		}
 		
 		Timestamp casDate = ((Timestamp)casualty.getAt(Casualty.I.DATE));
-		Timestamp cutDate = Timestamp.valueOf("2017-05-01" + " 00:00:00.0");
+		Timestamp cutDate = Timestamp.valueOf("2017-05-15" + " 00:00:00.0");
 		
 		if(casDate.after(cutDate)) {
 			boolean isWrong = false;

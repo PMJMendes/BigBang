@@ -89,6 +89,7 @@ public class SubCasualty extends SubCasualtyStub {
 		public String expertEvaluationId; // The id corresponding to a textual
 											// grade for the expert
 		public String expertEvaluationNotes; // notes on the expert evaluation
+		public String coverageNotes; // notes about the coverage value
 
 		public SubCasualtyFramingEntity[] framingEntities; // The array with adicional
 													// entities related with

@@ -454,6 +454,7 @@ public class CasualtyServiceImpl
 			lopCSC.mobjData.framing.expertEvaluation = (subCasualty.framing.expertEvaluationId == null ? null :
 				UUID.fromString(subCasualty.framing.expertEvaluationId));
 			lopCSC.mobjData.framing.expertEvaluationNotes = subCasualty.framing.expertEvaluationNotes;
+			lopCSC.mobjData.framing.coverageNotes = subCasualty.framing.coverageNotes;
 			
 			lopCSC.mobjData.framing.isNew = !subCasualty.framing.deleted;
 			lopCSC.mobjData.framing.isDeleted = subCasualty.framing.deleted;

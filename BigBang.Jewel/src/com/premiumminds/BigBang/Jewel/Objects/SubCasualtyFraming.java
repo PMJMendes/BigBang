@@ -39,6 +39,7 @@ public class SubCasualtyFraming extends ObjectBase {
 		public static int INSUREREVALUATIONNOTES = 16;
 		public static int EXPERTEVALUATION = 17;
 		public static int EXPERTEVALUATIONNOTES = 18;
+		public static int COVERAGENOTES = 19;
 	}
 	
 	public static SubCasualtyFraming GetInstance(UUID pidNameSpace,

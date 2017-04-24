@@ -40,6 +40,7 @@ public class SubCasualtyFramingData implements DataBridge {
 	public String insurerEvaluationNotes;
 	public UUID expertEvaluation;
 	public String expertEvaluationNotes;
+	public String coverageNotes;
 	
 	public UUID subCasualtyId;
 	
@@ -71,6 +72,7 @@ public class SubCasualtyFramingData implements DataBridge {
 		expertEvaluation = (UUID) source.getAt(SubCasualtyFraming.I.EXPERTEVALUATION);
 		expertEvaluationNotes = (String) source.getAt(SubCasualtyFraming.I.EXPERTEVALUATIONNOTES);		
 		subCasualtyId = (UUID) source.getAt(SubCasualtyFraming.I.SUBCASUALTY);
+		coverageNotes = (String) source.getAt(SubCasualtyFraming.I.COVERAGENOTES);	
 	}
 
 	public void ToObject(ObjectBase dest) throws BigBangJewelException {
@@ -93,6 +95,7 @@ public class SubCasualtyFramingData implements DataBridge {
 			dest.setAt(SubCasualtyFraming.I.INSUREREVALUATIONNOTES, insurerEvaluationNotes);
 			dest.setAt(SubCasualtyFraming.I.EXPERTEVALUATION, expertEvaluation);
 			dest.setAt(SubCasualtyFraming.I.EXPERTEVALUATIONNOTES, expertEvaluationNotes);
+			dest.setAt(SubCasualtyFraming.I.COVERAGENOTES, coverageNotes);
 			dest.setAt(SubCasualtyFraming.I.SUBCASUALTY, subCasualtyId);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
@@ -165,6 +168,11 @@ public class SubCasualtyFramingData implements DataBridge {
 			pstrBuilder.append(coverageValue);
 		} else {
 			pstrBuilder.append("(não definido)");
+		}
+		
+		if (coverageNotes != null) {
+			pstrBuilder.append("Notas sobrecovertura: ");
+			pstrBuilder.append(coverageNotes );
 		}
 
 		pstrBuilder.append(pstrLineBreak);

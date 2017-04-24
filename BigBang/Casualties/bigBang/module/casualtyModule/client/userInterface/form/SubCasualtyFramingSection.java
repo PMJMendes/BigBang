@@ -40,6 +40,7 @@ public class SubCasualtyFramingSection extends FormViewSection {
 	protected TextAreaFormField insurerEvaluationNotes;
 	protected ExpandableListBoxFormField expertEvaluation;
 	protected TextAreaFormField expertEvaluationNotes;
+	protected TextAreaFormField coverageNotes;
 	
 	public SubCasualtyFramingSection(String title) {
 		
@@ -82,6 +83,10 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		
 		coverageValue = new NumericTextBoxFormField("Capital de Cobertura", true);
 		
+		coverageNotes = new TextAreaFormField("Observações Capital.");
+		coverageNotes.setFieldWidth("650px");
+		coverageNotes.setFieldHeight("50px");
+		
 		coverageExclusions = new RadioButtonFormField(false);
 		coverageExclusions.setLabelText("Exclusões de Cobertura Aplicáveis?");
 		coverageExclusions.addOption("true", "Sim");
@@ -91,7 +96,7 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		coverageExclusionsNotes.setFieldWidth("650px");
 		coverageExclusionsNotes.setFieldHeight("50px");
 		
-		franchise = new NumericTextBoxFormField("Capital da Franquia", false);
+		franchise = new NumericTextBoxFormField("Franquia Aplicável", false);
 		
 		deductibleType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DEDUCTIBLE_TYPE, "Tipo de Franquia");
 		deductibleType.allowEdition(false);
@@ -132,6 +137,7 @@ public class SubCasualtyFramingSection extends FormViewSection {
 		addLineBreak();
 		
 		addFormField(coverageValue, true);
+		addFormField(coverageNotes, true);
 		
 		addLineBreak();
 		
@@ -185,6 +191,7 @@ public class SubCasualtyFramingSection extends FormViewSection {
 			insurerEvaluationNotes.setValue(framing.insurerEvaluationNotes);
 			expertEvaluation.setValue(framing.expertEvaluationId);
 			expertEvaluationNotes.setValue(framing.expertEvaluationNotes);
+			coverageNotes.setValue(framing.coverageNotes);
 		}
 	}
 	
@@ -227,6 +234,7 @@ public class SubCasualtyFramingSection extends FormViewSection {
 			result.insurerEvaluationNotes = insurerEvaluationNotes.getValue(); 
 			result.expertEvaluationId = expertEvaluation.getValue();
 			result.expertEvaluationNotes = expertEvaluationNotes.getValue();
+			result.coverageNotes = coverageNotes.getValue();
 		}
 
 		return result;
