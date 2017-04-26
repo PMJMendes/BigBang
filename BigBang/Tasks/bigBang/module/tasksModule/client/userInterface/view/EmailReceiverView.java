@@ -203,6 +203,7 @@ public class EmailReceiverView extends View implements EmailReceiverViewPresente
 			attachs[i].name =((AttachmentEntry)attachments.get(i)).getDocName().getValue();
 			attachs[i].attachmentId = ((AttachmentEntry)attachments.get(i)).getValue().id;
 			attachs[i].promote = attachments.get(i).isChecked();
+			attachs[i].displayAtPortal = ((AttachmentEntry)attachments.get(i)).getDisplayAtPortal();
 		}
 
 		return attachs;

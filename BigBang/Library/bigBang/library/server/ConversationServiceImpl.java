@@ -101,6 +101,7 @@ public class ConversationServiceImpl
 		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();	
 		lobjResult.promote = true;
 		lobjResult.ownerId = lobjDoc.getAt(Document.I.OWNER).toString();
+		lobjResult.displayAtPortal = (Boolean) lobjDoc.getAt(Document.I.DISPLAYATPORTAL);
 
 		return lobjResult;
 	}
