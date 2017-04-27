@@ -8,6 +8,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.CheckedStateChangedEvent;
 import bigBang.library.client.event.CheckedStateChangedEventHandler;
 import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
@@ -51,6 +52,7 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 
 		protected TextBoxFormField docName;
 		protected ExpandableListBoxFormField docType;
+		protected CheckBoxFormField displayAtPortal;
 		protected Image mimeImg;
 		protected Label filename;
 		protected boolean initialized = false;
@@ -62,22 +64,29 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 		public HasValue<String> getDocType(){
 			return docType;
 		}
+		
+		public boolean getDisplayAtPortal(){
+			return displayAtPortal.getValue();
+		}
 
 		public AttachmentEntry(AttachmentStub value) {
 			super(value);
 			setInfo(value);
-			setHeight("90px");
+			setHeight("160px");
 		}
 
 		public void setInfo(AttachmentStub item){
 			if(!initialized){
-				docName = new TextBoxFormField();
+				docName = new TextBoxFormField("Nome de Documento");
 				docName.setFieldWidth("170px");
 				docName.setReadOnly(true);
-				docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "");
-				docType.showLabel(false);
+				docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo de Documento");
+				docType.showLabel(true);
 				docType.setReadOnly(true);
 				docType.allowEdition(false);
+				displayAtPortal = new CheckBoxFormField("Mostrar no Portal");
+				displayAtPortal.showLabel(true);
+				displayAtPortal.setReadOnly(true);
 				mimeImg = new Image();
 				filename = getFormatedLabel();
 				filename.getElement().getStyle().setFontSize(11, Unit.PX);
@@ -86,11 +95,13 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 				this.setWidget(wrapper);
 
 				HorizontalPanel bottom = new HorizontalPanel();
+				bottom.setHeight("26px");
 				bottom.add(mimeImg);
 				bottom.add(filename);
 				wrapper.add(bottom);
 				wrapper.add(docName);
 				wrapper.add(docType);
+				wrapper.add(displayAtPortal);
 
 				docName.getNativeField().addKeyDownHandler(new KeyDownHandler() {
 
@@ -106,9 +117,11 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 					public void onCheckedStateChanged(CheckedStateChangedEvent event) {
 						docName.setReadOnly(!event.getChecked());
 						docType.setReadOnly(!event.getChecked());
+						displayAtPortal.setReadOnly(!event.getChecked());
 						if(!event.getChecked()){
 							docName.clear();
 							docType.clear();
+							displayAtPortal.clear();
 						}
 					}
 				});
@@ -415,6 +428,7 @@ public class MailItemSelectionView extends View implements MailItemSelectionView
 			attachs[i].name =((AttachmentEntry)attachments.get(i)).getDocName().getValue();
 			attachs[i].attachmentId = ((AttachmentEntry)attachments.get(i)).getValue().id;
 			attachs[i].promote = attachments.get(i).isChecked();
+			attachs[i].displayAtPortal = ((AttachmentEntry)attachments.get(i)).displayAtPortal.getValue();
 		}
 
 		return attachs;
