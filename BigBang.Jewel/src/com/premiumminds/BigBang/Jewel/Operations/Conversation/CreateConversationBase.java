@@ -209,16 +209,21 @@ public abstract class CreateConversationBase
 				}
 			}
 
-			if ( mobjData.marrMessages[0].marrAttachments != null )
+			if ( mobjData.marrMessages[0].marrAttachments != null ) // ou cria um doc op falso,ou aqui tem q apanhar o correspondente tb pode "re-orde
 			{
 				for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ )
 				{
 					if ( (mobjData.marrMessages[0].marrAttachments[i].midDocument == null) &&
 							(mobjData.marrMessages[0].mobjDocOps != null) &&
 							(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null) &&
-							(mobjData.marrMessages[0].mobjDocOps.marrCreate2.length > i) &&
-							(mobjData.marrMessages[0].mobjDocOps.marrCreate2[i] != null) )
-						mobjData.marrMessages[0].marrAttachments[i].midDocument = mobjData.marrMessages[0].mobjDocOps.marrCreate2[i].mid;
+							(mobjData.marrMessages[0].mobjDocOps.marrCreate2.length > 0))
+						
+						for (int u=0; u<mobjData.marrMessages[0].mobjDocOps.marrCreate2.length; u++) {
+							if (mobjData.marrMessages[0].marrAttachments[i].mstrAttId.equals(mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText)) {
+								mobjData.marrMessages[0].marrAttachments[i].midDocument = mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mid;
+								break;
+							}
+						}
 
 					mobjData.marrMessages[0].marrAttachments[i].midOwner = lobjMessage.getKey();
 					lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
