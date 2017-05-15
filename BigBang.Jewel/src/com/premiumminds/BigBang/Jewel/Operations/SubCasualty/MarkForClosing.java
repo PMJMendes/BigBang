@@ -215,7 +215,7 @@ public class MarkForClosing
 				errors = errors + "Deve indicar-se se a cobertura é aplicável. ";
 			} else {
 				if ((Boolean)framing.getAt(SubCasualtyFraming.I.RELEVANTCOVERAGE) == false) {
-					if (framing.getAt(SubCasualtyFraming.I.GENERALEXCLUSIONSNOTES) == null) {
+					if (framing.getAt(SubCasualtyFraming.I.COVERAGERELEVANCYNOTES) == null) {
 						isWrong = true;
 						errors = errors + "Se a cobertura não for aplicável, deve indicar-se o porquê. ";
 					}
