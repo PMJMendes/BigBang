@@ -389,7 +389,7 @@ REFERENCES [bigbang].[tblBBEvaluationValues]
 	[PK]
 );
 
-SALTER TABLE [bbcomercial].[tblBBSubCasualtyFraming] WITH CHECK ADD CONSTRAINT [FK__tblBBSubC__FKExp__34881329] FOREIGN KEY
+ALTER TABLE [bbcomercial].[tblBBSubCasualtyFraming] WITH CHECK ADD CONSTRAINT [FK__tblBBSubC__FKExp__34881329] FOREIGN KEY
 (
 	[FKExpertEvaluation]
 )
@@ -597,3 +597,13 @@ INSERT INTO [madds].[tblViewDefs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKObje
 /*-- -Insert(s): [madds].[tblViewTabs] */
 INSERT INTO [madds].[tblViewTabs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKOwner],[NOrd],[VTName],[FKVTType],[FKForm],[FKQuery],[FKReport]) VALUES('0603cf98-ac3d-46b2-9177-a74600aec354','2017-03-30T10:36:17.570','2017-03-30T10:37:21.103','e204d946-661a-4cf3-ba7a-31f55b95caf8','b1312296-0899-4f5c-b2f6-a74600ae75e8',1,N'General','1febe70f-5461-48ee-b3a4-191bc47db3c5','43862a2a-752c-4df6-af19-a74600ab31a3',null,null);
 INSERT INTO [madds].[tblViewTabs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKOwner],[NOrd],[VTName],[FKVTType],[FKForm],[FKQuery],[FKReport]) VALUES('1b668897-034b-4929-8153-a74600ba17fd','2017-03-30T11:17:32.797','2017-03-30T11:17:32.797','e204d946-661a-4cf3-ba7a-31f55b95caf8','6dc0bf86-4197-49dd-b433-a74600b95e15',1,N'General','1febe70f-5461-48ee-b3a4-191bc47db3c5','28712f34-a979-42ca-b643-a74600b81d97',null,null);
+
+
+/*-- -Insert(s): [bigbang].[tblBBEvaluationValues] */
+INSERT INTO [bigbang].[tblBBEvaluationValues] ([PK],[_TSCreate],[_TSUpdate],[FKType],[Grade]) VALUES('83a74beb-84fb-4f78-a694-a74e00c077ad','2017-04-07T11:40:45.173','2017-04-19T11:44:17.490','b0ab7a81-c2fd-485b-b18e-a7450125d9ea',N'0 - Não aplicável');
+INSERT INTO [bigbang].[tblBBEvaluationValues] ([PK],[_TSCreate],[_TSUpdate],[FKType],[Grade]) VALUES('02fda7b8-b439-4e5f-8790-a74e00c08192','2017-04-07T11:40:53.613','2017-04-19T11:45:08.013','b0ab7a81-c2fd-485b-b18e-a7450125d9ea',N'1 - Muito fraco');
+INSERT INTO [bigbang].[tblBBEvaluationValues] ([PK],[_TSCreate],[_TSUpdate],[FKType],[Grade]) VALUES('4c5e9770-0c75-4659-9d55-a74e00c08e2f','2017-04-07T11:41:04.377','2017-04-19T11:44:37.733','b0ab7a81-c2fd-485b-b18e-a7450125d9ea',N'2 - Fraco');
+INSERT INTO [bigbang].[tblBBEvaluationValues] ([PK],[_TSCreate],[_TSUpdate],[FKType],[Grade]) VALUES('88b09950-3643-4590-97c6-a74e00c09991','2017-04-07T11:41:14.087','2017-04-19T11:44:41.833','b0ab7a81-c2fd-485b-b18e-a7450125d9ea',N'3 - Suficiente');
+INSERT INTO [bigbang].[tblBBEvaluationValues] ([PK],[_TSCreate],[_TSUpdate],[FKType],[Grade]) VALUES('05697dfd-edda-45bc-a021-a74e00c0b2da','2017-04-07T11:41:35.667','2017-04-19T11:44:48.973','b0ab7a81-c2fd-485b-b18e-a7450125d9ea',N'4 - Bom');
+INSERT INTO [bigbang].[tblBBEvaluationValues] ([PK],[_TSCreate],[_TSUpdate],[FKType],[Grade]) VALUES('a5cf1fed-1ec7-4fb8-a954-a75a00c19efa','2017-04-19T11:44:57.160','2017-04-19T11:44:57.160','b0ab7a81-c2fd-485b-b18e-a7450125d9ea',N'5 - Muito bom');
+
