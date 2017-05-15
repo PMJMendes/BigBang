@@ -44,6 +44,8 @@ public class SubCasualtyData
 
 	public SubCasualtyItemData[] marrItems;
 	public SubCasualtyInsurerRequestData[] requests;
+	
+	public SubCasualtyFramingData framing;
 
 	public SubCasualtyData mobjPrevValues;
 
@@ -200,6 +202,11 @@ public class SubCasualtyData
 
 		if ( mstrNotes != null )
 			pstrBuilder.append("Notas internas:").append(pstrLineBreak).append(mstrNotes).append(pstrLineBreak);
+		
+		if (framing!=null) {
+			pstrBuilder.append(pstrLineBreak).append("Informação de Enquadramento:").append(pstrLineBreak).append(pstrLineBreak);
+			framing.Describe(pstrBuilder, pstrLineBreak);
+		}
 
 		if ( (marrItems != null) && (marrItems.length > 0) )
 		{

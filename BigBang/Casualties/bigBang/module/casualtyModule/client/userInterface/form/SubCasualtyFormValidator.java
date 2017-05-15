@@ -21,6 +21,7 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validateInsuredObject();
 		valid &= validateDetails();
 		valid &= validateInsurerRequests();
+		valid &= validateFraming();
 
 		return new Result(valid, this.validationMessages);
 	}
@@ -159,5 +160,53 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 
 		return valid;
 	}	
+	
+	/**
+	 * Validates the framing section. This validation does not contemplates nullable fields
+	 * (this only occurs while marking the sub-casualty for closing) 
+	 */
+	private boolean validateFraming() {
+		
+		SubCasualtyFramingSection section = form.framingSection; 
+		
+		boolean valid = true;
+		
+		valid &= validateDate(section.analysisDate, true);
+		valid &= validateString(section.validityNotes, 0, 250, true);
+		valid &= validateString(section.generalExclusionsNotes, 0, 250, true);
+		valid &= validateString(section.coverageRelevancyNotes, 0, 250, true);
+		valid &= validateNumber(section.coverageValue, 0.0, null, true);
+		valid &= validateString(section.coverageExclusionsNotes, 0, 250, true);
+		valid &= validateNumber(section.franchise, 0.0, null, true);
+		valid &= validateGuid(section.deductibleType, true);
+		valid &= validateString(section.franchiseNotes, 0, 250, true);
+		valid &= validateGuid(section.insurerEvaluation, true);
+		valid &= validateString(section.insurerEvaluationNotes, 0, 250, true);
+		valid &= validateGuid(section.expertEvaluation, true);
+		valid &= validateString(section.expertEvaluationNotes, 0, 250, true);
+		valid &= validateString(section.coverageNotes, 0, 250, true);
 
+		for(SubCasualtyFramingEntitySection entitySection : form.aditionalEntitiesSection){
+			if (entitySection.getFramingEntity().deleted != true) {
+				valid &= validateFramingEntitySection(entitySection);
+			}
+		}
+		
+		return valid;
+	}
+
+	/**
+	 * Validates an aditional framing entity section. The user must define the entity
+	 */
+	private boolean validateFramingEntitySection(
+			SubCasualtyFramingEntitySection entitySection) {
+
+		boolean valid = true;
+		
+		valid &= validateGuid(entitySection.entityType, false);
+		valid &= validateGuid(entitySection.evaluation, true);
+		valid &= validateString(entitySection.notes, 0, 250, true);
+		
+		return valid;
+	}
 }

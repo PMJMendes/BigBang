@@ -11,6 +11,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
+import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyInsurerRequest;
 import bigBang.definitions.shared.SubPolicy;
@@ -34,6 +35,7 @@ import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
 import bigBang.module.casualtyModule.client.resources.Resources;
+import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyFramingEntitySection;
 import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyInsurerRequestSection;
 import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyItemSection;
 
@@ -70,6 +72,11 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	
 	protected Collection<SubCasualtyInsurerRequestSection> subCasualtyInsurerRequestSections;
 	protected NewSubCasualtyInsurerRequestSection newInsurerRequestSection;
+	
+	protected Collection<SubCasualtyFramingEntitySection> aditionalEntitiesSection;
+	protected NewSubCasualtyFramingEntitySection newEntitySection;
+	
+	protected SubCasualtyFramingSection framingSection;
 
 	public SubCasualtyForm(){
 		casualty = new NavigationFormField("Sinistro");
@@ -186,6 +193,22 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				insuredObject.setValue(null);
 			}
 		});
+		
+		this.framingSection = new SubCasualtyFramingSection("Enquadramento");
+		addSection(framingSection);
+
+		this.aditionalEntitiesSection = new ArrayList<SubCasualtyFramingEntitySection>();
+
+		this.newEntitySection = new NewSubCasualtyFramingEntitySection();
+		this.newEntitySection.newButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				addSubCasualtyFramingEntitySection(new SubCasualtyFramingEntity());
+			}
+		});
+		
+		addSection(newEntitySection);
 
 		this.subCasualtyItemSections = new ArrayList<SubCasualtyItemSection>();
 
@@ -258,6 +281,10 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			result.internalNotes = internalNotes.getValue();
 			result.items = getSubCasualtyItems();
 			result.insurerRequests = getSubCasualtyInsurerRequests();
+			result.framing = framingSection.getFraming();
+			if (aditionalEntitiesSection.size() > 0 && result.framing!=null) {
+				result.framing.framingEntities = getSubCasualtyFramingEntities();
+			}	
 			result.insuredObjectId = insuredObject.getValue();
 			result.insuredObjectName = insuredObjectName.getValue();
 			result.serviceCenterId = carRepair.getValue();
@@ -377,8 +404,14 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			setSubCasualtyItems(info.items);
 			
 			addSection(newItemSection);
+			
+			framingSection.setFraming(info.framing);
 						
 			setSubCasualtyInsurerRequests(info.insurerRequests);
+			
+			if (info.framing!=null) {
+				setSubCasualtyFramingEntities(info.framing.framingEntities);
+			}
 			
 			addSection(newInsurerRequestSection);
 		} else {
@@ -588,5 +621,65 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		request.deleted = true;
 		section.setRequest(request);
 	}
+	
+	protected void setSubCasualtyFramingEntities(SubCasualtyFramingEntity[] framingEntities) {
+		for(SubCasualtyFramingEntitySection section : this.aditionalEntitiesSection) {
+			removeSection(section);
+		}
+		this.aditionalEntitiesSection.clear();
+
+		if(framingEntities != null) {
+			for(SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity entity : framingEntities) {
+				addSubCasualtyFramingEntitySection(entity);
+			}
+		}
+	}
+	
+	protected SubCasualtyFramingEntity[] getSubCasualtyFramingEntities(){
+		SubCasualtyFramingEntity[] result = new SubCasualtyFramingEntity[aditionalEntitiesSection.size()];
+
+		int i = 0;
+		for(SubCasualtyFramingEntitySection section : aditionalEntitiesSection) {
+			result[i] = section.getFramingEntity();
+			i++;
+		}
+
+		return result;
+	}
+	
+	protected void addSubCasualtyFramingEntitySection(SubCasualtyFramingEntity entity){
+		if(!entity.deleted) {
+
+			final SubCasualtyFramingEntitySection section = new SubCasualtyFramingEntitySection(entity);
+			section.setReadOnly(this.isReadOnly());
+			this.aditionalEntitiesSection.add(section);
+			addSection(section);
+			
+			section.getRemoveButton().addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					removeAditionalEntityAndSection(section);
+				}
+			});
+			if(entity.id == null){
+				section.expand();
+			}
+			
+			addSection(newEntitySection);
+			setSubCasualtyItems(getSubCasualtyItems());
+			addSection(newItemSection);
+			addRequests();
+			addSection(newInsurerRequestSection);
+			addNotesSections();
+		} 
+	}	
+	
+	protected void removeAditionalEntityAndSection(SubCasualtyFramingEntitySection section){
+		section.setVisible(false);
+		SubCasualtyFramingEntity entity = section.getFramingEntity();
+		entity.deleted = true;
+		section.setFramingEntity(entity);
+	}	
 	
 }

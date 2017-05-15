@@ -10,9 +10,13 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingEntitiesData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -75,6 +79,8 @@ public class ManageData
 		SubCasualty lobjAux;
 		SubCasualtyItem lobjItem;
 		SubCasualtyInsurerRequest request;
+		SubCasualtyFraming framing;
+		SubCasualtyFramingEntity framingEntity;
 		UUID lidOwner;
 		int i;
 
@@ -154,6 +160,54 @@ public class ManageData
 					}
 				}
 			}
+			
+			if (mobjData.framing != null) {
+				if ( mobjData.framing.isDeleted ) {
+					framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.id);
+					mobjData.framing.FromObject(framing);
+					framing.getDefinition().Delete(pdb, framing.getKey());
+				} else if ( mobjData.framing.isNew ) {
+					framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.framing.subCasualtyId = mobjData.mid;
+					mobjData.framing.ToObject(framing);
+					framing.SaveToDb(pdb);
+					mobjData.framing.id = framing.getKey();
+				} else {
+					framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.id);
+					mobjData.framing.subCasualtyId = mobjData.mid;
+					mobjData.framing.prevValues = new SubCasualtyFramingData();
+					mobjData.framing.prevValues.FromObject(framing);
+					mobjData.framing.ToObject(framing);
+					framing.SaveToDb(pdb);
+				}
+				
+				// Framing Entities' management
+				if ( mobjData.framing.framingEntities != null ) {
+					for ( i = 0; i < mobjData.framing.framingEntities.length; i++ ) {
+						if ( mobjData.framing.framingEntities[i].isDeleted ) {
+							if ( mobjData.framing.framingEntities[i].id == null ) {
+								continue;
+							}
+							framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingEntities[i].id);
+							mobjData.framing.framingEntities[i].FromObject(framingEntity);
+							framingEntity.getDefinition().Delete(pdb, framingEntity.getKey());
+						} else if ( mobjData.framing.framingEntities[i].isNew ) {
+							framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.framing.framingEntities[i].framingId = mobjData.framing.id;
+							mobjData.framing.framingEntities[i].ToObject(framingEntity);
+							framingEntity.SaveToDb(pdb);
+							mobjData.framing.framingEntities[i].id = framingEntity.getKey();
+						}
+						else {
+							framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingEntities[i].id);
+							mobjData.framing.framingEntities[i].prevValues = new SubCasualtyFramingEntitiesData();
+							mobjData.framing.framingEntities[i].prevValues.FromObject(framingEntity);
+							mobjData.framing.framingEntities[i].ToObject(framingEntity);
+							framingEntity.SaveToDb(pdb);
+						}
+					}
+				}
+			}
 
 			if ( mobjContactOps != null )
 				mobjContactOps.RunSubOp(pdb, lidOwner);
@@ -215,6 +269,9 @@ public class ManageData
 	{
 		SubCasualty lobjAux;
 		SubCasualtyItem lobjItem;
+		SubCasualtyInsurerRequest request;
+		SubCasualtyFraming framing;
+		SubCasualtyFramingEntity framingEntity;
 		UUID lidOwner;
 		int i;
 
@@ -252,6 +309,57 @@ public class ManageData
 							lobjItem = SubCasualtyItem.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrItems[i].mid);
 							mobjData.marrItems[i].mobjPrevValues.ToObject(lobjItem);
 							lobjItem.SaveToDb(pdb);
+						}
+					}
+				}
+				
+				if (mobjData.requests != null) {
+					for (i = 0; i < mobjData.requests.length; i++) {
+						if (mobjData.requests[i].isDeleted) {
+							request = SubCasualtyInsurerRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.requests[i].ToObject(request);
+							request.SaveToDb(pdb);
+						} else if (mobjData.requests[i].isNew) {
+							request = SubCasualtyInsurerRequest.GetInstance(Engine.getCurrentNameSpace(), mobjData.requests[i].id);
+							request.getDefinition().Delete(pdb, request.getKey());
+						} else {
+							request = SubCasualtyInsurerRequest.GetInstance(Engine.getCurrentNameSpace(), mobjData.requests[i].id);
+							mobjData.requests[i].prevValues.ToObject(request);
+							request.SaveToDb(pdb);
+						}
+					}
+				}
+				
+				if (mobjData.framing != null) {
+					if (mobjData.framing.isDeleted) {
+						framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.framing.ToObject(framing);
+						framing.SaveToDb(pdb);
+					} else if (mobjData.framing.isNew) {
+						framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.id);
+						framing.getDefinition().Delete(pdb, framing.getKey());
+					} else {
+						framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.id);
+						mobjData.framing.prevValues.ToObject(framing);
+						framing.SaveToDb(pdb);
+					}
+					
+					// Framing Entities' management
+					if ( mobjData.framing.framingEntities != null ) {
+						for ( i = 0; i < mobjData.framing.framingEntities.length; i++ ) {
+							if ( mobjData.framing.framingEntities[i].isDeleted ) {
+								framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+								mobjData.framing.framingEntities[i].ToObject(framingEntity);
+								framingEntity.SaveToDb(pdb);
+							} else if ( mobjData.requests[i].isNew ) {
+								framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingEntities[i].id);
+								framingEntity.getDefinition().Delete(pdb, framingEntity.getKey());
+							}
+							else {
+								framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingEntities[i].id);
+								mobjData.framing.framingEntities[i].prevValues.ToObject(framingEntity);
+								framingEntity.SaveToDb(pdb);
+							}
 						}
 					}
 				}

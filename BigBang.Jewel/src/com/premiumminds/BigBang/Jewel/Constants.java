@@ -107,7 +107,9 @@ public class Constants
 	public static final UUID ObjID_MedicalAppointment       	= UUID.fromString("CE323715-1EA5-473C-87BC-A14F00DE2208");
 	public static final UUID ObjID_TotalLossFile            	= UUID.fromString("1D05DA1F-873D-4CA6-BA62-A15001064C06");
 	public static final UUID ObjID_SubCasualtyInsurerRequest	= UUID.fromString("90A96896-F729-435C-A1C2-A73501271825");
-
+	public static final UUID ObjID_SubCasualtyFraming			= UUID.fromString("BEE4608E-3F2E-4AFB-A996-A745010A87AB");
+	public static final UUID ObjID_SubCasualtyFramingEntities	= UUID.fromString("884B05C1-6377-4E24-9C4F-A74501281AFB");
+	
 	// Expense Objects
 	public static final UUID ObjID_Expense                  = UUID.fromString("09963260-CDB1-4207-B856-A03800B8AFC8");
 
@@ -171,6 +173,9 @@ public class Constants
 	public static final UUID ObjID_InjuredPart              = UUID.fromString("038230AA-2100-4F0E-91B7-A39A00E8637A");
 	public static final UUID ObjID_InsurerRequestType       = UUID.fromString("525DAE0E-6426-4173-A7B8-A73501249C95");
 	public static final UUID ObjID_ClarificationReasonType  = UUID.fromString("3441EC0C-EDF7-410E-A284-A73D00D1A699");
+	public static final UUID ObjID_DeductibleType			= UUID.fromString("0DA382A9-08C7-474C-816E-A04D011607ED");
+	public static final UUID ObjID_EvaluationValues			= UUID.fromString("B0AB7A81-C2FD-485B-B18E-A7450125D9EA");
+	public static final UUID ObjID_FramingEntityTypes		= UUID.fromString("7774017D-1E45-45FA-B638-A74501229762");
 
 	public static final UUID ObjID_FieldType                = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues              = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");

@@ -91,6 +91,9 @@ public class BigBangConstants {
 		public static final String INJURED_PART = "038230AA-2100-4F0E-91B7-A39A00E8637A";
 		public static final String INSURER_REQUEST_TYPE = "525DAE0E-6426-4173-A7B8-A73501249C95";
 		public static final String CLARIFICATION_REASON_TYPE = "3441EC0C-EDF7-410E-A284-A73D00D1A699";
+		public static final String FRAMING_ENTITY_TYPE = "7774017D-1E45-45FA-B638-A74501229762";
+		public static final String EVALUATION_TIPIFICATION = "B0AB7A81-C2FD-485B-B18E-A7450125D9EA";
+		public static final String DEDUCTIBLE_TYPE = "0DA382A9-08C7-474C-816E-A04D011607ED";
 	}
 
 	public static class TypifiedListValues {
