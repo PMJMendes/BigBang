@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
-import javax.activation.MimetypesFileTypeMap;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.FetchProfile;
@@ -194,7 +193,7 @@ public class MailConnector {
 				bodyPart.setContent(body, "text/html; charset=utf-8");
 				multipartMsg.addBodyPart(bodyPart);
 
-				for (int i=0; i<attachments.length; i++) {
+				/*for (int i=0; i<attachments.length; i++) {
 					if (attachments[i] == null) {
 						continue;
 					}
@@ -204,7 +203,7 @@ public class MailConnector {
 					bodyPart.setFileName(attachments[i].getFileName());
 					bodyPart.setHeader("Content-ID", attachments[i].getFileName());
 					multipartMsg.addBodyPart(bodyPart);
-				}
+				} */
 
 				mailMsg.setContent(multipartMsg);
 				mailMsg.addHeader("Content-Type", multipartMsg.getContentType());
@@ -248,11 +247,8 @@ public class MailConnector {
     			altStr = altMtc.group();
     		}
     		
-    		if (!altStr.equals("") && altStr.indexOf("@")>0) {
-    			for (String tmp : keySet) {
-    				if (altStr.toLowerCase().contains(tmp.toLowerCase())) {
-    					
-    					// Uses a Regular Expression to find "IMG" tags in html
+    		//if (!altStr.equals("") && altStr.indexOf("@")>0) {
+    			for (String tmp : keySet) {// Uses a Regular Expression to find "IMG" tags in html
     		    		final String srcRegex = "src\\s*=\\s*([\"'])?([^\"']*)";
     		    		final Pattern srcPatt = Pattern.compile(srcRegex);
     		            final Matcher srcMtc = srcPatt.matcher(imgHtml);
@@ -266,9 +262,8 @@ public class MailConnector {
     		            	body = body.replaceAll("src\\s*=\\s*([\"'])?([^\"']*)", "src=\"cid:" + tmp);
     		            	break;
     		            }
-    				}
     			}
-    		}
+    		//}
         }
         return body;
 	}
@@ -343,18 +338,15 @@ public class MailConnector {
 					}
             	}
             	
+            	if (imgType.contains("image/")) {
+            		imgType = imgType.substring(6).toLowerCase();
+            	}
+            	
             	try {
             		
-            		MimetypesFileTypeMap map = new MimetypesFileTypeMap();
-            		map.addMimeTypes("image/gif gif GIF");
-            		map.addMimeTypes("image/ief ief");
-            		map.addMimeTypes("image/jpeg jpeg jpg jpe JPG");
-            		map.addMimeTypes("image/tiff tiff tif");
-            		map.addMimeTypes("image/png png PNG");
-            		map.addMimeTypes("image/x-xwindowdump xwd");
-            		
-            		String fullName = altStr+"."+imgType;
-					FileXfer attachmentXFer = new FileXfer(srcByteArray.length, map.getContentType(fullName), 
+            		String fullName =  altStr + "." + imgType;
+            				
+					FileXfer attachmentXFer = new FileXfer(srcByteArray.length, imgType, 
             				fullName, stream);
             		
 					pics.put(fullName, attachmentXFer);
@@ -722,7 +714,14 @@ public class MailConnector {
 					// If the part is a MimeBodyPart, tries to get the file name in a more direct way
 					MimeBodyPart mimePart = (MimeBodyPart) part;
 					
+					/*
 					attId = MimeUtility.decodeText(mimePart.getFileName());
+					
+					if(attId != null) {
+						result.put(attId, part);
+					}
+					*/
+					attId = MimeUtility.decodeText(mimePart.getContentID());
 					
 					if(attId != null) {
 						result.put(attId, part);
