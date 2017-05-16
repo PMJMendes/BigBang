@@ -161,7 +161,7 @@ public class ManageData
 				}
 			}
 			
-			if (mobjData.framing != null) {
+			if (mobjData != null && mobjData.framing != null) {
 				if ( mobjData.framing.isDeleted ) {
 					framing = SubCasualtyFraming.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.id);
 					mobjData.framing.FromObject(framing);
