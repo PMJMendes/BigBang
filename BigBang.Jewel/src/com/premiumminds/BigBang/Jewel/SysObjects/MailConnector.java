@@ -1,6 +1,8 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -116,6 +118,8 @@ public class MailConnector {
 		
 		HashMap<String, FileXfer> base64ImagesExtracted;
 
+		FileXfer[] inlineImgs = null;
+		
 		try {
 			
 			OAuthHandler.initialize();
@@ -172,18 +176,13 @@ public class MailConnector {
 					body = editOutterBody(base64ImagesExtracted.keySet(), body);
 					
 					Collection<FileXfer> imgValues = base64ImagesExtracted.values();
-					FileXfer[] inlineImgs = imgValues.toArray(new FileXfer[imgValues.size()]); 
-					
-					if (inlineImgs != null && inlineImgs.length>0 && attachments != null && attachments.length>0) {
-						attachments = ArrayUtils.addAll(attachments, inlineImgs);
-					} else if (inlineImgs != null && inlineImgs.length>0 && (attachments == null || attachments.length==0)) {
-						attachments = inlineImgs;
-					}
+					inlineImgs = imgValues.toArray(new FileXfer[imgValues.size()]); 
 				}
 			}
 			
 			// Sets the message's TEXT
-			if ((attachments == null) || (attachments.length == 0)) {
+			if (((attachments == null) || (attachments.length == 0)) && 
+					((inlineImgs == null) || (inlineImgs.length == 0))) {
 				mailMsg.setText(body, "UTF-8");
 				mailMsg.addHeader("Content-Type", "text/html");
 			} else {
@@ -193,17 +192,41 @@ public class MailConnector {
 				bodyPart.setContent(body, "text/html; charset=utf-8");
 				multipartMsg.addBodyPart(bodyPart);
 
-				/*for (int i=0; i<attachments.length; i++) {
-					if (attachments[i] == null) {
-						continue;
+				if (inlineImgs!=null) {
+					for (int i=0; i<inlineImgs.length; i++) {
+						if (inlineImgs[i] == null) {
+							continue;
+						}
+						bodyPart = new MimeBodyPart();
+						
+						File tempFile = File.createTempFile(inlineImgs[i].getFileName(), ".tmp", null);
+						FileOutputStream outputStream = new FileOutputStream(tempFile);
+						outputStream.write(inlineImgs[i].getData());
+						
+						bodyPart.attachFile(tempFile);	
+						bodyPart.setContentID("<" + inlineImgs[i].getFileName() + ">");
+						bodyPart.setDisposition(MimeBodyPart.INLINE);
+						
+						multipartMsg.addBodyPart(bodyPart);
+	
+						outputStream.close();
 					}
-					bodyPart = new MimeBodyPart();
-					bodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(attachments[i].getData(),
-							attachments[i].getContentType())));
-					bodyPart.setFileName(attachments[i].getFileName());
-					bodyPart.setHeader("Content-ID", attachments[i].getFileName());
-					multipartMsg.addBodyPart(bodyPart);
-				} */
+				}
+				
+				// TODO: NEEDS TO BE DIFFERENT?
+				if(attachments!=null) {
+					for (int i=0; i<attachments.length; i++) {
+						if (attachments[i] == null) {
+							continue;
+						}
+						bodyPart = new MimeBodyPart();
+						bodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(attachments[i].getData(),
+								attachments[i].getContentType())));
+						bodyPart.setFileName(attachments[i].getFileName());
+						bodyPart.setHeader("Content-ID", attachments[i].getFileName());
+						multipartMsg.addBodyPart(bodyPart);
+					}
+				}
 
 				mailMsg.setContent(multipartMsg);
 				mailMsg.addHeader("Content-Type", multipartMsg.getContentType());
