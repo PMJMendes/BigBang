@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +49,6 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.util.IOUtils;
 
 import Jewel.Engine.Engine;
@@ -116,7 +116,7 @@ public class MailConnector {
 
 		InternetAddress[] addresses;
 		
-		HashMap<String, FileXfer> base64ImagesExtracted;
+		LinkedHashMap<String, FileXfer> base64ImagesExtracted;
 
 		FileXfer[] inlineImgs = null;
 		
@@ -294,9 +294,9 @@ public class MailConnector {
 	 *	This method gets the base-64 strings representing images, and creates an HashMap
 	 *	with their names and decoded content.
 	 */
-	private static HashMap<String, FileXfer> extractb64Images(String body) {
+	private static LinkedHashMap<String, FileXfer> extractb64Images(String body) {
 
-		HashMap<String, FileXfer> pics = new HashMap<String, FileXfer>();
+		LinkedHashMap<String, FileXfer> pics = new LinkedHashMap<String, FileXfer>();
 		
 		// Uses a Regular Expression to find "IMG" tags in html
 		final String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
