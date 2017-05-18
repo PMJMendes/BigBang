@@ -253,40 +253,39 @@ public class MailConnector {
 		final String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
 		final Pattern imgPatt = Pattern.compile(imgRegex);
 		final Matcher imgMtc = imgPatt.matcher(body);
+		String result = "";
+		
+		String[] keySetArray = keySet.toArray(new String[keySet.size()]);
+		
+		int i = 0; 
 		
 		// Iterates the found images to get the image alt and source
         while (imgMtc.find()) {
         	
         	String imgHtml = imgMtc.group();
-        	String altStr = "";
     		String srcStr = "";
-        	
-        	// Uses a Regular Expression to find "alt" tags in html
-    		final String altRegex = "alt\\s*=\\s*([\"'])?([^\"']*)";
-    		final Pattern altPatt = Pattern.compile(altRegex);
-    		final Matcher altMtc = altPatt.matcher(imgHtml);
     		
-    		while (altMtc.find()) {
-    			altStr = altMtc.group();
+    		final String srcRegex = "src\\s*=\\s*([\"'])?([^\"']*)";
+    		final Pattern srcPatt = Pattern.compile(srcRegex);
+    		final Matcher srcMtc = srcPatt.matcher(imgHtml);
+    		            
+    		while (srcMtc.find()) {
+    		    srcStr = srcMtc.group();
     		}
-    		
-    		//if (!altStr.equals("") && altStr.indexOf("@")>0) {
-    			for (String tmp : keySet) {// Uses a Regular Expression to find "IMG" tags in html
-    		    		final String srcRegex = "src\\s*=\\s*([\"'])?([^\"']*)";
-    		    		final Pattern srcPatt = Pattern.compile(srcRegex);
-    		            final Matcher srcMtc = srcPatt.matcher(imgHtml);
     		            
-    		            while (srcMtc.find()) {
-    		            	srcStr = srcMtc.group();
-    		    		}
-    		            
-    		            // Only tries to get the image, if the base-64 string exists...
-    		            if (srcStr.length()>0 && srcStr.indexOf(",")>0 && Base64.isBase64(srcStr.substring(srcStr.indexOf(",")+1))) {
-    		            	body = body.replaceAll("src\\s*=\\s*([\"'])?([^\"']*)", "src=\"cid:" + tmp);
-    		            	break;
-    		            }
-    			}
-    		//}
+    		// Only tries to get the image, if the base-64 string exists...
+    		if (srcStr.length()>0 && srcStr.indexOf(",")>0 && Base64.isBase64(srcStr.substring(srcStr.indexOf(",")+1))) {
+    			String tmp = keySetArray[i++];
+    			String replaceStr = "src=\"cid:" + tmp;
+				body = body.replaceFirst("src\\s*=\\s*([\"'])?([^\"']*)", replaceStr);
+    			int cutIndex = body.indexOf(replaceStr) + replaceStr.length();
+				result = result + body.substring(0, cutIndex);
+				body = body.substring(cutIndex, body.length());
+    		}
+        }
+        
+        if (result.length() > 0) {
+        	return result + body;
         }
         return body;
 	}
