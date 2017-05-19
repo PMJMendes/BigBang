@@ -498,7 +498,7 @@ public class MessageBridge
 						lobjResult.marrCreate2[j].mstrName = parrAttachments[i].name;
 						lobjResult.marrCreate2[j].midOwnerType = pidParentType;
 						lobjResult.marrCreate2[j].midOwnerId = pidParentID;
-						lobjResult.marrCreate2[j].midDocType = UUID.fromString(parrAttachments[i].docTypeId);
+						lobjResult.marrCreate2[j].midDocType = parrAttachments[i].docTypeId==null ? null : UUID.fromString(parrAttachments[i].docTypeId);
 						lobjResult.marrCreate2[j].mstrText = null;
 
 						if ( parrAttachments[i].storageId != null )

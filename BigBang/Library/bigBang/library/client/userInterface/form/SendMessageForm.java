@@ -499,6 +499,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			for(int i = 0; i<msg.attachments.length; i++){
 				msg.attachments[i] = new Message.Attachment();
 				msg.attachments[i].docId = outgoingAttachment.get(i);
+				msg.attachments[i].promote = true;
 			}
 		}else{
 			msg.text = note.getValue();
