@@ -17,8 +17,10 @@ public class DocInfo
 
 	public DocInfo(DocInfo orig)
 	{
-		this.name = orig.name;
-		this.value = orig.value;
-		this.displayAtPortal = orig.displayAtPortal;
+		if (orig!=null) {
+			this.name = orig.name;
+			this.value = orig.value;
+			this.displayAtPortal = orig.displayAtPortal;
+		}
 	}
 }

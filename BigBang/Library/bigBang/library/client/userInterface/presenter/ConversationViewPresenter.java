@@ -590,7 +590,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		}
 		else{
 			if(conversationId == null){
-				onGetConversationFailed();
+				onGetConversationFailed("Could not get the conversation");
 			}
 			else{
 				getConversation();
@@ -625,7 +625,11 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onGetConversationFailed();
+				String errorStr = "";
+				for (ResponseError err : errors) {
+					errorStr = errorStr + err.description + " ";
+				}
+				onGetConversationFailed(errorStr);
 			}
 		});
 	}
@@ -642,8 +646,8 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		view.allowReopen(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REOPEN));
 	}
 
-	private void onGetConversationFailed() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a troca de mensagens."), TYPE.ALERT_NOTIFICATION));
+	private void onGetConversationFailed(String err) {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a troca de mensagens. " + err), TYPE.ALERT_NOTIFICATION));
 
 	}
 

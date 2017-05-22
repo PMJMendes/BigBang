@@ -9,6 +9,7 @@ import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
+import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
 import com.google.gwt.user.client.ui.Label;
@@ -17,7 +18,7 @@ import com.google.gwt.user.client.ui.Label;
  * The section where the framing is defined
  */
 
-public class SubCasualtyFramingSection extends FormViewSection {
+public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 
 	protected SubCasualty.SubCasualtyFraming currentFraming;
 	

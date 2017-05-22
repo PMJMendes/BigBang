@@ -87,7 +87,9 @@ public class ConversationServiceImpl
 		}
 		catch (BigBangJewelException e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			String docId = pobjAttachment.getAt(MessageAttachment.I.DOCUMENT) == null ? "" : 
+				" " + pobjAttachment.getAt(MessageAttachment.I.DOCUMENT).toString() + " ";
+			throw new BigBangException("Error while getting the document" + docId + e.getMessage(), e);
 		}
 
 		if (lobjDoc == null) {
@@ -101,7 +103,8 @@ public class ConversationServiceImpl
 		lobjResult.docTypeId = ((UUID)lobjDoc.getAt(Document.I.TYPE)).toString();	
 		lobjResult.promote = true;
 		lobjResult.ownerId = lobjDoc.getAt(Document.I.OWNER).toString();
-		lobjResult.displayAtPortal = (Boolean) lobjDoc.getAt(Document.I.DISPLAYATPORTAL);
+		lobjResult.displayAtPortal =  lobjDoc.getAt(Document.I.DISPLAYATPORTAL) == null ? 
+				false : (Boolean) lobjDoc.getAt(Document.I.DISPLAYATPORTAL);
 
 		return lobjResult;
 	}
@@ -124,7 +127,7 @@ public class ConversationServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException("Error while getting the attachments or addresses " + e.getMessage(), e);
 		}
 
 		lobjResult = new Message();
@@ -385,7 +388,7 @@ public class ConversationServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException("Error while getting an attachment " + pstrEmailId + " " + pid.toString() + e.getMessage(), e); 
 		}
 
 		dbAttachment = sGetDBDocument(lobjAttachment, pdtMsg);
@@ -419,7 +422,7 @@ public class ConversationServiceImpl
 			lobjMsg = com.premiumminds.BigBang.Jewel.Objects.Message
 					.GetInstance(Engine.getCurrentNameSpace(), pid);
 		} catch (Throwable e) {
-			throw new BigBangException(e.getMessage(), e);
+			throw new BigBangException("Error while getting the message " + pid.toString() + " " + e.getMessage(), e);
 		}
 
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:sss");
@@ -486,7 +489,7 @@ public class ConversationServiceImpl
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException(e.getMessage() + " 488 ", e);
+			throw new BigBangException("Error while getting the conversation " + pid + " " + e.getMessage() + " 488 ", e);
 		}
 
 		lobjResult = new Conversation();
