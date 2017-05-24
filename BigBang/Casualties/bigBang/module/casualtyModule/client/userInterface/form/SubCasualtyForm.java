@@ -12,8 +12,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity;
-import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyInsurerRequest;
+import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.FormField;
 import bigBang.library.client.HasParameters;
@@ -26,8 +26,8 @@ import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
-import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.UnlimitedTextAreaFormField;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.view.FormView;
@@ -57,7 +57,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected TextBoxFormField insurerProcessNumber;
 	protected CheckBoxFormField hasJudicial;
 	protected TextBoxFormField status;
-	protected TextAreaFormField notes, internalNotes;
+	protected UnlimitedTextAreaFormField notes, internalNotes;
 	protected NavigationFormField casualty;
 	protected ExpandableListBoxFormField insuredObject;
 	protected RadioButtonFormField belongsToPolicy;
@@ -115,8 +115,14 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		statusIcon = new Image();
 		status.add(statusIcon);
 
-		notes = new TextAreaFormField();
-		internalNotes = new TextAreaFormField();
+		notes = new UnlimitedTextAreaFormField();
+		notes.setMaxCharacters(4000, null);
+		notes.setFieldWidth("600px");
+		notes.setFieldHeight("250px");
+		internalNotes = new UnlimitedTextAreaFormField();
+		internalNotes.setMaxCharacters(4000, null);
+		internalNotes.setFieldWidth("600px");
+		internalNotes.setFieldHeight("250px");
 		hasJudicial = new CheckBoxFormField("Tem processo Judicial");
 
 		insuredObject = new ExpandableListBoxFormField("Unidade de Risco");
@@ -234,11 +240,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 		notesSection = new FormViewSection("Notas");
 		notesSection.addFormField(notes);
-		notes.setFieldHeight("100px");
 
 		internalNotesSection = new FormViewSection("Notas Internas");
 		internalNotesSection.addFormField(internalNotes);
-		internalNotes.setFieldHeight("400px");
 
 		ValueChangeHandler<String> changeHandler = new ValueChangeHandler<String>() {
 

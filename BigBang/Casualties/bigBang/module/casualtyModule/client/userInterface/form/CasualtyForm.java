@@ -11,7 +11,7 @@ import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
-import bigBang.library.client.userInterface.TextAreaFormField;
+import bigBang.library.client.userInterface.UnlimitedTextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.casualtyModule.client.resources.Resources;
@@ -21,11 +21,11 @@ public class CasualtyForm extends FormView<Casualty> {
 	protected TextBoxFormField number;
 	protected NavigationFormField client;
 	protected DatePickerFormField date;
-	protected TextAreaFormField description;
+	protected UnlimitedTextAreaFormField description;
 	protected ExpandableListBoxFormField manager;
 	protected TextBoxFormField status;
 	protected CheckBoxFormField caseStudy;
-	protected TextAreaFormField notes;
+	protected UnlimitedTextAreaFormField notes;
 	protected NumericTextBoxFormField percResponsability;
 	protected Image statusIcon;
 
@@ -36,12 +36,14 @@ public class CasualtyForm extends FormView<Casualty> {
 		client.setEditable(false);
 		date = new DatePickerFormField("Data do Sinistro");
 		date.setMandatory(true);
-		description = new TextAreaFormField();
+		description = new UnlimitedTextAreaFormField();
 		description.setFieldWidth("600px");
 		description.setFieldHeight("250px");
-		notes = new TextAreaFormField();
+		description.setMaxCharacters(4000, null);
+		notes = new UnlimitedTextAreaFormField();
 		notes.setFieldWidth("600px");
 		notes.setFieldHeight("250px");
+		notes.setMaxCharacters(4000, null);
 
 		caseStudy = new CheckBoxFormField("Case Study");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Sinistro");

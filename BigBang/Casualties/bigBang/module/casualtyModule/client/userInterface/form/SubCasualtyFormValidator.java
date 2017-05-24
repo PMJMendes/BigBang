@@ -22,6 +22,8 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validateDetails();
 		valid &= validateInsurerRequests();
 		valid &= validateFraming();
+		valid &= validateString(form.notes, 0, 4000, true);
+		valid &= validateString(form.internalNotes, 0, 4000, true);
 
 		return new Result(valid, this.validationMessages);
 	}
