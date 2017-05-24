@@ -97,6 +97,16 @@ public class InsurerAccountingMap
 
 	public Company getCompany()
 	{
+		// TODO: Sometimes the company gets "lost" in this class, even though it was previously defined.
+		// The reason why this happens must be verified, but for now this workaround will try to 
+		// surpass a problem verified in the insurer accounting report.
+		if (mrefCompany==null && getAt(I.OWNER)!=null) {
+			try {
+				mrefCompany = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)getAt(I.OWNER));
+			} catch (Throwable e) {
+				return null;
+			}
+		}
 		return mrefCompany;
 	}
 
