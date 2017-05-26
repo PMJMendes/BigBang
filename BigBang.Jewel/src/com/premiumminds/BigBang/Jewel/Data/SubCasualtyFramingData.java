@@ -46,6 +46,8 @@ public class SubCasualtyFramingData implements DataBridge {
 	
 	public SubCasualtyFramingEntitiesData[] framingEntities;
 	
+	public SubCasualtyFramingHeadingsData framingHeadings;
+	
 	public boolean isNew;
 	public boolean isDeleted;
 
@@ -170,8 +172,12 @@ public class SubCasualtyFramingData implements DataBridge {
 			pstrBuilder.append("(não definido)");
 		}
 		
+		if (framingHeadings != null) {
+			framingHeadings.Describe(pstrBuilder, pstrLineBreak);
+		}
+		
 		if (coverageNotes != null) {
-			pstrBuilder.append("Notas sobrecovertura: ");
+			pstrBuilder.append("Notas sobrecobertura: ");
 			pstrBuilder.append(coverageNotes );
 		}
 

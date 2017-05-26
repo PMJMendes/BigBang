@@ -353,6 +353,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 						referenceDetails.setValue(item);
 						referenceDetails.setValueName(response.categoryName + " / " + response.lineName + " / " + response.subLineName);
+						
+						framingSection.setIsWorkAccidents(response);
 					}
 
 					@Override
@@ -381,6 +383,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 						referenceDetails.setValue(item);
 						referenceDetails.setValueName(response.inheritCategoryName + " / " + response.inheritLineName + " / " + response.inheritSubLineName);
+						
+						framingSection.setIsWorkAccidents(response);
 					}
 
 					@Override

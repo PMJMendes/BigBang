@@ -109,6 +109,7 @@ public class Constants
 	public static final UUID ObjID_SubCasualtyInsurerRequest	= UUID.fromString("90A96896-F729-435C-A1C2-A73501271825");
 	public static final UUID ObjID_SubCasualtyFraming			= UUID.fromString("BEE4608E-3F2E-4AFB-A996-A745010A87AB");
 	public static final UUID ObjID_SubCasualtyFramingEntities	= UUID.fromString("884B05C1-6377-4E24-9C4F-A74501281AFB");
+	public static final UUID ObjID_SubCasualtyFramingHeadings	= UUID.fromString("A3E737A5-5474-41D4-842E-A77E00AF9E40");
 	
 	// Expense Objects
 	public static final UUID ObjID_Expense                  = UUID.fromString("09963260-CDB1-4207-B856-A03800B8AFC8");

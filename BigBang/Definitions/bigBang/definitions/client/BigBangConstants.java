@@ -342,4 +342,9 @@ public class BigBangConstants {
 		public static final String PRINT_SET = "F3B52F31-9C2F-4AD3-B566-A032010C5077";
 		public static final String TRANSACTION = "3108E23A-45C2-4F1C-983E-A032010C566E";
 	}
+	
+	// Policy Categories
+	public static class PolicyCategories {
+		public static final String WORK_ACCIDENTS	=	"53DB03E7-F423-4656-A23A-9EE9010A5B87";
+	}
 }

@@ -1,8 +1,11 @@
 package bigBang.module.casualtyModule.client.userInterface.form;
 
 import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
@@ -10,6 +13,7 @@ import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 
 /**
@@ -29,6 +33,10 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 	protected RadioButtonFormField relevantCoverage;
 	protected TextAreaFormField coverageRelevancyNotes;
 	protected NumericTextBoxFormField coverageValue;
+	protected NumericTextBoxFormField baseSalary;
+	protected NumericTextBoxFormField feedAllowance;
+	protected NumericTextBoxFormField otherFees12;
+	protected NumericTextBoxFormField otherFees14;
 	protected RadioButtonFormField coverageExclusions;
 	protected TextAreaFormField coverageExclusionsNotes;
 	protected NumericTextBoxFormField franchise;
@@ -81,6 +89,15 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		coverageRelevancyNotes.setFieldHeight("50px");
 		
 		coverageValue = new NumericTextBoxFormField("Capital de Cobertura", true);
+		
+		baseSalary = new NumericTextBoxFormField("Salário Base", true);
+		feedAllowance = new NumericTextBoxFormField("Subsidio de Alimentação", true);
+		otherFees12 = new NumericTextBoxFormField("Outras Remunerações (12)", true);
+		otherFees14 = new NumericTextBoxFormField("Outras Remunerações (14)", true);
+		baseSalary.setVisible(false);
+		feedAllowance.setVisible(false);
+		otherFees12.setVisible(false);
+		otherFees14.setVisible(false);
 		
 		coverageNotes = new TextAreaFormField("Observações Capital.");
 		coverageNotes.setFieldWidth("650px");
@@ -137,6 +154,13 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		
 		addFormField(coverageValue, true);
 		addFormField(coverageNotes, true);
+		
+		addLineBreak();
+		
+		addFormField(baseSalary, true);
+		addFormField(feedAllowance, true);
+		addFormField(otherFees12, true);
+		addFormField(otherFees14, true);
 		
 		addLineBreak();
 		
@@ -238,6 +262,43 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 
 		return result;
 	}
+	
+	public void setIsWorkAccidents(InsurancePolicy policy){
+		String categoryId = policy.categoryId;
+		if (categoryId!=null && categoryId.equalsIgnoreCase(BigBangConstants.PolicyCategories.WORK_ACCIDENTS)) {
+			showExtraCoverageFields();
+		} else {
+			hideExtraCoverageFields();
+		}
+	}
+	
+	public void setIsWorkAccidents(SubPolicy subPolicy){
+		String categoryId = subPolicy.inheritCategoryId;
+		if (categoryId!=null && categoryId.equalsIgnoreCase(BigBangConstants.PolicyCategories.WORK_ACCIDENTS)) {
+			showExtraCoverageFields();
+		} else {
+			hideExtraCoverageFields();
+		}
+	}
+	
+	private void hideExtraCoverageFields() {
+		baseSalary.setVisible(false);
+		feedAllowance.setVisible(false);
+		otherFees12.setVisible(false);
+		otherFees14.setVisible(false);
+		baseSalary.setValue(null);
+		feedAllowance.setValue(null);
+		otherFees12.setValue(null);
+		otherFees14.setValue(null);
+	}
+
+	private void showExtraCoverageFields() {
+		baseSalary.setVisible(true);
+		feedAllowance.setVisible(true);
+		otherFees12.setVisible(true);
+		otherFees14.setVisible(true);
+	}
+	
 	public boolean isReadOnly(){
 		return this.readOnly;
 	}

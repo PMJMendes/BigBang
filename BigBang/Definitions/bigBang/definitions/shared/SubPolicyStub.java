@@ -12,6 +12,7 @@ public class SubPolicyStub
 	public String clientNumber;
 	public String clientName;
 	public String inheritCategoryName;
+	public String inheritCategoryId;
 	public String inheritLineName;
 	public String inheritSubLineName;
 	public String inheritCompanyName;
@@ -38,6 +39,7 @@ public class SubPolicyStub
 		this.clientNumber = orig.clientNumber;
 		this.clientName = orig.clientName;
 		this.inheritCategoryName = orig.inheritCategoryName;
+		this.inheritCategoryId = orig.inheritCategoryId;
 		this.inheritLineName = orig.inheritLineName;
 		this.inheritSubLineName = orig.inheritSubLineName;
 		this.inheritCompanyName = orig.inheritCompanyName;
