@@ -1,11 +1,17 @@
 package bigBang.module.casualtyModule.client.userInterface.form;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming;
 import bigBang.definitions.shared.SubPolicy;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
@@ -13,7 +19,6 @@ import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 
 /**
@@ -263,22 +268,50 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		return result;
 	}
 	
-	public void setIsWorkAccidents(InsurancePolicy policy){
-		String categoryId = policy.categoryId;
-		if (categoryId!=null && categoryId.equalsIgnoreCase(BigBangConstants.PolicyCategories.WORK_ACCIDENTS)) {
-			showExtraCoverageFields();
-		} else {
+	public void setIsWorkAccidents(boolean isClear, boolean isPolicy, String reference){
+		
+		if(isClear) {
 			hideExtraCoverageFields();
+			return;
 		}
-	}
-	
-	public void setIsWorkAccidents(SubPolicy subPolicy){
-		String categoryId = subPolicy.inheritCategoryId;
-		if (categoryId!=null && categoryId.equalsIgnoreCase(BigBangConstants.PolicyCategories.WORK_ACCIDENTS)) {
-			showExtraCoverageFields();
+		
+		if (isPolicy) {
+			InsurancePolicyBroker policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+			policyBroker.getPolicy(reference, new ResponseHandler<InsurancePolicy>() {
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					String categoryId = response.categoryId;
+					if (categoryId!=null && categoryId.equalsIgnoreCase(BigBangConstants.PolicyCategories.WORK_ACCIDENTS)) {
+						showExtraCoverageFields();
+					} else {
+						hideExtraCoverageFields();
+					}
+				}
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 		} else {
-			hideExtraCoverageFields();
+			InsuranceSubPolicyBroker subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+			subPolicyBroker.getSubPolicy(reference, new ResponseHandler<SubPolicy>() {
+				@Override
+				public void onResponse(SubPolicy response) {
+					String categoryId = response.inheritCategoryId;
+					if (categoryId!=null && categoryId.equalsIgnoreCase(BigBangConstants.PolicyCategories.WORK_ACCIDENTS)) {
+						showExtraCoverageFields();
+					} else {
+						hideExtraCoverageFields();
+					}
+				}
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					// TODO Auto-generated method stub
+				}
+			});			
 		}
+		
 	}
 	
 	private void hideExtraCoverageFields() {

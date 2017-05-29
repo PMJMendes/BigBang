@@ -251,10 +251,16 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				if(event.getSource() == referenceType) {
 					policyReference.setValue(null, true);
 					subPolicyReference.setValue(null, true);
+					framingSection.setIsWorkAccidents(true, false, null);
 				}
-				else if((belongsToPolicy.getValue() != null) && belongsToPolicy.getValue().equalsIgnoreCase("true"))
-					setReference(referenceType.getValue(), referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue());
+				else if((belongsToPolicy.getValue() != null) && belongsToPolicy.getValue().equalsIgnoreCase("true")) {
+					boolean isPolicy = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY);
+					String reference = isPolicy ? policyReference.getValue() : subPolicyReference.getValue();
+					setReference(referenceType.getValue(), reference);
+					framingSection.setIsWorkAccidents(false, isPolicy, reference);
+				}
 				updateItemSections();
+				
 			}
 		};
 		referenceType.addValueChangeHandler(changeHandler);
@@ -353,8 +359,6 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 						referenceDetails.setValue(item);
 						referenceDetails.setValueName(response.categoryName + " / " + response.lineName + " / " + response.subLineName);
-						
-						framingSection.setIsWorkAccidents(response);
 					}
 
 					@Override
@@ -383,8 +387,6 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 						referenceDetails.setValue(item);
 						referenceDetails.setValueName(response.inheritCategoryName + " / " + response.inheritLineName + " / " + response.inheritSubLineName);
-						
-						framingSection.setIsWorkAccidents(response);
 					}
 
 					@Override
