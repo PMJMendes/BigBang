@@ -6,7 +6,6 @@ import java.util.UUID;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingHeadings;
 
 /**
@@ -29,13 +28,16 @@ public class SubCasualtyFramingHeadingsData implements DataBridge {
 	
 	public SubCasualtyFramingHeadingsData prevValues;
 	
+	public boolean isNew;
+	public boolean isDeleted;
+	
 	public void FromObject(ObjectBase source) {
 		id = source.getKey();
 		baseSalary = (BigDecimal) source.getAt(SubCasualtyFramingHeadings.I.BASESALARY);
 		feedAllowance = (BigDecimal) source.getAt(SubCasualtyFramingHeadings.I.FEEDALLOWANCE);
 		otherFees12 = (BigDecimal) source.getAt(SubCasualtyFramingHeadings.I.OTHERFEES12);
 		otherFees14 = (BigDecimal) source.getAt(SubCasualtyFramingHeadings.I.OTHERFEES14);
-		framingId = (UUID) source.getAt(SubCasualtyFramingEntity.I.SUBFRAMING);
+		framingId = (UUID) source.getAt(SubCasualtyFramingHeadings.I.SUBFRAMING);
 	}
 
 	public void ToObject(ObjectBase dest) throws BigBangJewelException {

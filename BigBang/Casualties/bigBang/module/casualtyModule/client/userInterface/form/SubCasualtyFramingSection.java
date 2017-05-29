@@ -220,6 +220,13 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			expertEvaluation.setValue(framing.expertEvaluationId);
 			expertEvaluationNotes.setValue(framing.expertEvaluationNotes);
 			coverageNotes.setValue(framing.coverageNotes);
+			
+			if (framing.headings != null) {
+				baseSalary.setValue(framing.headings.baseSalary);
+				feedAllowance.setValue(framing.headings.feedAllowance);
+				otherFees12.setValue(framing.headings.otherFees12);
+				otherFees14.setValue(framing.headings.otherFees14);
+			}
 		}
 	}
 	
@@ -263,6 +270,13 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			result.expertEvaluationId = expertEvaluation.getValue();
 			result.expertEvaluationNotes = expertEvaluationNotes.getValue();
 			result.coverageNotes = coverageNotes.getValue();
+			
+			if (result.headings != null) {
+				result.headings.baseSalary = baseSalary.getValue();
+				result.headings.feedAllowance = feedAllowance.getValue();
+				result.headings.otherFees12 = otherFees12.getValue();
+				result.headings.otherFees14 = otherFees14.getValue();
+			}
 		}
 
 		return result;

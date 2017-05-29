@@ -187,12 +187,25 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validateGuid(section.expertEvaluation, true);
 		valid &= validateString(section.expertEvaluationNotes, 0, 250, true);
 		valid &= validateString(section.coverageNotes, 0, 250, true);
+		valid &= validateHeadingFields(section);
 
 		for(SubCasualtyFramingEntitySection entitySection : form.aditionalEntitiesSection){
 			if (entitySection.getFramingEntity().deleted != true) {
 				valid &= validateFramingEntitySection(entitySection);
 			}
 		}
+		
+		return valid;
+	}
+
+	private boolean validateHeadingFields(SubCasualtyFramingSection section) {
+
+		boolean valid = true;
+		
+		valid &= validateNumber(section.baseSalary, 0.0, null, true);
+		valid &= validateNumber(section.feedAllowance, 0.0, null, true);
+		valid &= validateNumber(section.otherFees12, 0.0, null, true);
+		valid &= validateNumber(section.otherFees14, 0.0, null, true);
 		
 		return valid;
 	}
