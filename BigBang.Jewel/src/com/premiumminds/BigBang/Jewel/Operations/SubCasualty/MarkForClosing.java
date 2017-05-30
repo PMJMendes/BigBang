@@ -19,9 +19,12 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingHeadings;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 
 public class MarkForClosing
 	extends UndoableOperation
@@ -149,11 +152,22 @@ public class MarkForClosing
 		
 		// It only validates if the casualty was open after 01/05/2017
 		Casualty casualty;
+		Policy policy;
+		UUID categoryLine = null;
 		
 		try {
 			casualty = lobjSubCasualty.GetCasualty();
 		} catch (BigBangJewelException e1) {
 			throw new JewelPetriException("Não foi possível obter o sinistro", e1);
+		}
+		
+		try {
+			policy = lobjSubCasualty.getAbsolutePolicy();
+			if (policy==null) {
+				throw new JewelPetriException("Erro de Dados: Sub-sinistro não associado a apólice");
+			}
+		} catch (BigBangJewelException e1) {
+			throw new JewelPetriException("Não foi possível obter a apólice", e1);
 		}
 		
 		if (casualty == null) {
@@ -224,7 +238,15 @@ public class MarkForClosing
 			if (framing.getAt(SubCasualtyFraming.I.COVERAGEVALUE) == null) {
 				isWrong = true;
 				errors = errors + "Deve indicar-se um capital de cobertura. ";
-			}		
+			}
+			
+			if (policy!=null) {
+				categoryLine = policy.GetSubLine().getLine().getCategory().getKey();
+				if (categoryLine == null) {
+					throw new JewelPetriException("Nõ foi possível obter o Ramo.");
+				}
+			}
+			
 			if (framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONS) == null) {
 				isWrong = true;
 				errors = errors + "Deve indicar-se se existem exclusões de cobertura aplicáveis. ";
@@ -271,6 +293,31 @@ public class MarkForClosing
 				throw new JewelPetriException("Não foi possível obter os outros intervenientes envolvidos no enquadramento ", e);
 			}
 			
+			// And now for the framing headings
+			if (categoryLine.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+				try {
+					SubCasualtyFramingHeadings headings = framing.GetFramingHeadings();
+					if (headings.getAt(SubCasualtyFramingHeadings.I.BASESALARY) == null) {
+						isWrong = true;
+						errors = errors + "Deve definir-se o vencimento base para os sub-sinistros de acidentes de trabalho.";
+					} 
+					if (headings.getAt(SubCasualtyFramingHeadings.I.FEEDALLOWANCE) == null) {
+						isWrong = true;
+						errors = errors + "Deve definir-se o subsídio de alimentação para os sub-sinistros de acidentes de trabalho.";
+					} 
+					if (headings.getAt(SubCasualtyFramingHeadings.I.OTHERFEES12) == null) {
+						isWrong = true;
+						errors = errors + "Deve definir-se o valor de Outras Remunerações (12) para os sub-sinistros de acidentes de trabalho.";
+					} 
+					if (headings.getAt(SubCasualtyFramingHeadings.I.OTHERFEES14) == null) {
+						isWrong = true;
+						errors = errors + "Deve definir-se o valor de Outras Remunerações (14) para os sub-sinistros de acidentes de trabalho.";
+					} 
+				} catch (BigBangJewelException e) {
+					throw new JewelPetriException("Não foi possível obter os as verbas que compõem o capital de um sub-sinistro de acidentes de trabalho. ", e);
+				}
+			}
+						
 			// If anything is incorrect, returns all error messages.
 			if (isWrong) {
 				throw new JewelPetriException(errors);
