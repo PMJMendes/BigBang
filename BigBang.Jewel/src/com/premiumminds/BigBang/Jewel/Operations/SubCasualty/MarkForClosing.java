@@ -24,7 +24,6 @@ import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingHeadings;
-import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 
 public class MarkForClosing
 	extends UndoableOperation

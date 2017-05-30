@@ -464,9 +464,9 @@ public class SubCasualtyServiceImpl
 			if (subCasualty.framing.headings != null) {
 				lopMD.mobjData.framing.framingHeadings = new SubCasualtyFramingHeadingsData();
 				lopMD.mobjData.framing.framingHeadings.baseSalary = (subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary+""));
-				lopMD.mobjData.framing.framingHeadings.baseSalary = (subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary+""));
-				lopMD.mobjData.framing.framingHeadings.baseSalary = (subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary+""));
-				lopMD.mobjData.framing.framingHeadings.baseSalary = (subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary+""));
+				lopMD.mobjData.framing.framingHeadings.feedAllowance = (subCasualty.framing.headings.feedAllowance == null ? null : new BigDecimal(subCasualty.framing.headings.feedAllowance+""));
+				lopMD.mobjData.framing.framingHeadings.otherFees12 = (subCasualty.framing.headings.otherFees12 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees12+""));
+				lopMD.mobjData.framing.framingHeadings.otherFees14 = (subCasualty.framing.headings.otherFees14 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees14+""));
 				
 				lopMD.mobjData.framing.framingHeadings.isNew = ( !subCasualty.framing.headings.deleted && (subCasualty.framing.headings.id == null) );
 				lopMD.mobjData.framing.framingHeadings.isDeleted = subCasualty.framing.headings.deleted;
