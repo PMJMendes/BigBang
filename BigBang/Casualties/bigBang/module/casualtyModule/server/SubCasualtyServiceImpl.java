@@ -271,6 +271,7 @@ public class SubCasualtyServiceImpl
 			
 			if (framingHeadings != null) {
 				lobjResult.framing.headings = new SubCasualty.SubCasualtyFraming.SubCasualtyFramingHeadings();
+				lobjResult.framing.headings.id = framingHeadings.getKey().toString();
 				lobjResult.framing.headings.baseSalary = (framingHeadings.getAt(SubCasualtyFramingHeadings.I.BASESALARY) == null ? null : ((BigDecimal)framingHeadings.getAt(SubCasualtyFramingHeadings.I.BASESALARY)).doubleValue()); 
 				lobjResult.framing.headings.feedAllowance = (framingHeadings.getAt(SubCasualtyFramingHeadings.I.FEEDALLOWANCE) == null ? null : ((BigDecimal)framingHeadings.getAt(SubCasualtyFramingHeadings.I.FEEDALLOWANCE)).doubleValue());
 				lobjResult.framing.headings.otherFees12 = (framingHeadings.getAt(SubCasualtyFramingHeadings.I.OTHERFEES12) == null ? null : ((BigDecimal)framingHeadings.getAt(SubCasualtyFramingHeadings.I.OTHERFEES12)).doubleValue());
@@ -463,10 +464,13 @@ public class SubCasualtyServiceImpl
 			
 			if (subCasualty.framing.headings != null) {
 				lopMD.mobjData.framing.framingHeadings = new SubCasualtyFramingHeadingsData();
+				lopMD.mobjData.framing.framingHeadings.id = (subCasualty.framing.headings.id == null ? null : UUID.fromString(subCasualty.framing.headings.id) );
 				lopMD.mobjData.framing.framingHeadings.baseSalary = (subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary+""));
 				lopMD.mobjData.framing.framingHeadings.feedAllowance = (subCasualty.framing.headings.feedAllowance == null ? null : new BigDecimal(subCasualty.framing.headings.feedAllowance+""));
 				lopMD.mobjData.framing.framingHeadings.otherFees12 = (subCasualty.framing.headings.otherFees12 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees12+""));
 				lopMD.mobjData.framing.framingHeadings.otherFees14 = (subCasualty.framing.headings.otherFees14 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees14+""));
+				
+				lopMD.mobjData.framing.framingHeadings.framingId = lopMD.mobjData.framing.id;
 				
 				lopMD.mobjData.framing.framingHeadings.isNew = ( !subCasualty.framing.headings.deleted && (subCasualty.framing.headings.id == null) );
 				lopMD.mobjData.framing.framingHeadings.isDeleted = subCasualty.framing.headings.deleted;
