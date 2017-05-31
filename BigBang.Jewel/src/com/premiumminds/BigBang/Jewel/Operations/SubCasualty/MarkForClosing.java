@@ -19,7 +19,6 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
-import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
@@ -151,22 +150,12 @@ public class MarkForClosing
 		
 		// It only validates if the casualty was open after 01/05/2017
 		Casualty casualty;
-		Policy policy;
 		UUID categoryLine = null;
 		
 		try {
 			casualty = lobjSubCasualty.GetCasualty();
 		} catch (BigBangJewelException e1) {
 			throw new JewelPetriException("Não foi possível obter o sinistro", e1);
-		}
-		
-		try {
-			policy = lobjSubCasualty.getAbsolutePolicy();
-			if (policy==null) {
-				throw new JewelPetriException("Erro de Dados: Sub-sinistro não associado a apólice");
-			}
-		} catch (BigBangJewelException e1) {
-			throw new JewelPetriException("Não foi possível obter a apólice", e1);
 		}
 		
 		if (casualty == null) {
@@ -239,11 +228,10 @@ public class MarkForClosing
 				errors = errors + "Deve indicar-se um capital de cobertura. ";
 			}
 			
-			if (policy!=null) {
-				categoryLine = policy.GetSubLine().getLine().getCategory().getKey();
-				if (categoryLine == null) {
-					throw new JewelPetriException("Nõ foi possível obter o Ramo.");
-				}
+			try {
+				categoryLine = lobjSubCasualty.GetSubLine().getLine().getCategory().getKey();
+			} catch (BigBangJewelException e1) {
+				throw new JewelPetriException("Nõ foi possível obter o Ramo.");
 			}
 			
 			if (framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONS) == null) {

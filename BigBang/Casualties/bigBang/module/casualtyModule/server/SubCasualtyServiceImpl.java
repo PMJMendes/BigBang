@@ -474,6 +474,12 @@ public class SubCasualtyServiceImpl
 				
 				lopMD.mobjData.framing.framingHeadings.isNew = ( !subCasualty.framing.headings.deleted && (subCasualty.framing.headings.id == null) );
 				lopMD.mobjData.framing.framingHeadings.isDeleted = subCasualty.framing.headings.deleted;
+				
+				try {
+					lopMD.mobjData.framing.framingHeadings.isDeleted = checkCategoryLineChange(lopMD.mobjData.midPolicy, lopMD.mobjData.midSubPolicy);
+				} catch (BigBangJewelException e) {
+					throw new BigBangException(e.getMessage(), e);
+				}
 			}
 		}
 			
@@ -490,6 +496,34 @@ public class SubCasualtyServiceImpl
 		}
 
 		return sGetSubCasualty(lopMD.mobjData.mid);
+	}
+
+	private boolean checkCategoryLineChange(UUID policyId, UUID subPolicyId) throws BigBangJewelException {
+		
+		com.premiumminds.BigBang.Jewel.Objects.Policy policy;
+		com.premiumminds.BigBang.Jewel.Objects.SubPolicy subPolicy;
+		UUID category = null;
+		
+		if (policyId != null) {
+			policy = com.premiumminds.BigBang.Jewel.Objects.Policy.GetInstance(Engine.getCurrentNameSpace(),
+					policyId);
+			category = policy.GetSubLine().getLine().getCategory().getKey();
+		}
+		
+		if (subPolicyId != null) {
+			subPolicy = com.premiumminds.BigBang.Jewel.Objects.SubPolicy.GetInstance(Engine.getCurrentNameSpace(),
+					subPolicyId);
+			category = subPolicy.GetOwner().GetSubLine().getLine().getCategory().getKey();
+		}
+	
+		if (category==null) {
+			throw new BigBangJewelException("Could not get the category.");
+		}
+		
+		if (!category.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+			return true;
+		}
+		return false;
 	}
 
 	public SubCasualty sendNotification(String subCasualtyId)
