@@ -458,12 +458,27 @@ public class CasualtyServiceImpl
 			lopCSC.mobjData.framing.coverageNotes = subCasualty.framing.coverageNotes;
 			
 			if (subCasualty.framing.headings != null) {
+				BigDecimal sum = new BigDecimal(0);
 				lopCSC.mobjData.framing.framingHeadings = new SubCasualtyFramingHeadingsData();
 				lopCSC.mobjData.framing.framingHeadings.baseSalary = subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary);
 				lopCSC.mobjData.framing.framingHeadings.feedAllowance = subCasualty.framing.headings.feedAllowance == null ? null : new BigDecimal(subCasualty.framing.headings.feedAllowance);
 				lopCSC.mobjData.framing.framingHeadings.otherFees12 = subCasualty.framing.headings.otherFees12 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees12);
 				lopCSC.mobjData.framing.framingHeadings.otherFees14 = subCasualty.framing.headings.otherFees14 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees14);
 				
+				if (lopCSC.mobjData.framing.framingHeadings.baseSalary!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.baseSalary);
+				}
+				if (lopCSC.mobjData.framing.framingHeadings.feedAllowance!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.feedAllowance);
+				}
+				if (lopCSC.mobjData.framing.framingHeadings.otherFees12!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.otherFees12);
+				}
+				if (lopCSC.mobjData.framing.framingHeadings.otherFees14!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.otherFees14);
+				}
+				lopCSC.mobjData.framing.coverageValue = sum;
+
 				lopCSC.mobjData.framing.framingHeadings.isNew = !subCasualty.framing.headings.deleted;
 				lopCSC.mobjData.framing.framingHeadings.isDeleted = subCasualty.framing.headings.deleted;
 			} else {

@@ -472,6 +472,23 @@ public class SubCasualtyServiceImpl
 				
 				lopMD.mobjData.framing.framingHeadings.framingId = lopMD.mobjData.framing.id;
 				
+				BigDecimal sum = new BigDecimal(0);
+				
+				if (lopMD.mobjData.framing.framingHeadings.baseSalary!=null) {
+					sum.add(lopMD.mobjData.framing.framingHeadings.baseSalary);
+				}
+				if (lopMD.mobjData.framing.framingHeadings.feedAllowance!=null) {
+					sum.add(lopMD.mobjData.framing.framingHeadings.feedAllowance);
+				}
+				if (lopMD.mobjData.framing.framingHeadings.otherFees12!=null) {
+					sum.add(lopMD.mobjData.framing.framingHeadings.otherFees12);
+				}
+				if (lopMD.mobjData.framing.framingHeadings.otherFees14!=null) {
+					sum.add(lopMD.mobjData.framing.framingHeadings.otherFees14);
+				}
+				
+				lopMD.mobjData.framing.coverageValue = sum;
+				
 				lopMD.mobjData.framing.framingHeadings.isNew = ( !subCasualty.framing.headings.deleted && (subCasualty.framing.headings.id == null) );
 				lopMD.mobjData.framing.framingHeadings.isDeleted = subCasualty.framing.headings.deleted;
 				
