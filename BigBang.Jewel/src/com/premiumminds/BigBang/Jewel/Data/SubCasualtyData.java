@@ -46,6 +46,8 @@ public class SubCasualtyData
 	public SubCasualtyInsurerRequestData[] requests;
 	
 	public SubCasualtyFramingData framing;
+	
+	public SubCasualtyFramingData framingHeadings;
 
 	public SubCasualtyData mobjPrevValues;
 

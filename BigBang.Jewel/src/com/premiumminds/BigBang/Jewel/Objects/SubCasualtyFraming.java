@@ -143,6 +143,99 @@ public class SubCasualtyFraming extends ObjectBase {
     	return iEntities.toArray(new SubCasualtyFramingEntity[iEntities.size()]);
     }
 	
+	public SubCasualtyFramingHeadings GetFramingHeadings()
+			throws BigBangJewelException {
+		ArrayList<SubCasualtyFramingHeadings> iEntities;
+		IEntity entEntity;
+		MasterDB ldb;
+		ResultSet resultSet;
+
+		iEntities = new ArrayList<SubCasualtyFramingHeadings>();
+
+		try {
+			entEntity = Entity.GetInstance(Engine.FindEntity(
+					Engine.getCurrentNameSpace(),
+					Constants.ObjID_SubCasualtyFramingHeadings));
+			ldb = new MasterDB();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try {
+			resultSet = entEntity.SelectByMembers(ldb,
+					new int[] { SubCasualtyFramingHeadings.I.SUBFRAMING },
+					new java.lang.Object[] { getKey() }, new int[0]);
+		} catch (Throwable e) {
+			try {
+				ldb.Disconnect();
+			} catch (Throwable e1) {
+
+			}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try {
+			while (resultSet.next()) {
+				iEntities.add(SubCasualtyFramingHeadings.GetInstance(
+						getNameSpace(), resultSet));
+			}
+		} catch (BigBangJewelException e) {
+			try {
+				resultSet.close();
+			} catch (Throwable e1) {
+
+			}
+			try {
+				ldb.Disconnect();
+			} catch (Throwable e1) {
+
+			}
+			throw e;
+		} catch (Throwable e) {
+			try {
+				resultSet.close();
+			} catch (Throwable e1) {
+
+			}
+
+			try {
+				ldb.Disconnect();
+			} catch (Throwable e1) {
+
+			}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try {
+			resultSet.close();
+		} catch (Throwable e) {
+			try {
+				ldb.Disconnect();
+			} catch (Throwable e1) {
+
+			}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try {
+			ldb.Disconnect();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if (iEntities.size() > 1) {
+			throw new BigBangJewelException(
+					"Problem while fetching the Headings for the sub-casualty: too many headings for framing "
+							+ getKey());
+		}
+
+		if (iEntities == null || iEntities.size() == 0) {
+			return null;
+		}
+
+		return iEntities.get(0);
+	}
+	
 	public void Initialize() throws JewelEngineException {
 	}
 }

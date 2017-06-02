@@ -17,6 +17,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocDataHeavy;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingEntitiesData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingHeadingsData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
@@ -24,6 +25,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingHeadings;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -95,6 +97,7 @@ public class ExternDeleteSubCasualty
 		IEntity requestEntity;
 		IEntity framingEntity;
 		IEntity framingEntitiesEntity;
+		IEntity framingHeadingEntity;
 		SubCasualty lobjAux;
 		Contact[] larrContacts;
 		Document[] larrDocs;
@@ -102,6 +105,7 @@ public class ExternDeleteSubCasualty
 		SubCasualtyInsurerRequest[] requests;
 		SubCasualtyFraming framing;
 		SubCasualtyFramingEntity[] framingEntities;
+		SubCasualtyFramingHeadings framingHeadings;
 		PNProcess lobjProcess;
 		int i;
 
@@ -117,6 +121,8 @@ public class ExternDeleteSubCasualty
 					Constants.ObjID_SubCasualtyFraming));
 			framingEntitiesEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_SubCasualtyFramingEntities));
+			framingHeadingEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_SubCasualtyFramingHeadings));
 
 			lobjAux = SubCasualty.GetInstance(Engine.getCurrentNameSpace(), midSubCasualty);
 			mobjData = new SubCasualtyData();
@@ -207,6 +213,17 @@ public class ExternDeleteSubCasualty
 					}
 				}
 				
+				// Headings' deletion
+				framingHeadings = framing.GetFramingHeadings();
+				if (framingHeadings == null) {
+					mobjData.framing.framingHeadings = null;
+				} else {
+					mobjData.framing.framingHeadings = new SubCasualtyFramingHeadingsData();
+					mobjData.framing.framingHeadings.FromObject(framingHeadings);
+					mobjData.framing.framingHeadings.isDeleted = true;
+					framingHeadingEntity.Delete(pdb, framingHeadings.getKey());
+				}
+				
 				framingEntity.Delete(pdb, framing.getKey());
 			}
 
@@ -249,6 +266,7 @@ public class ExternDeleteSubCasualty
 		SubCasualtyInsurerRequest request;
 		SubCasualtyFraming framing;
 		SubCasualtyFramingEntity framingEntity;
+		SubCasualtyFramingHeadings framingHeadings;
 		PNProcess lobjProcess;
 		ExternResumeSubCasualty lopERC;
 		int i;
@@ -304,6 +322,16 @@ public class ExternDeleteSubCasualty
 								framingEntity.SaveToDb(pdb);
 								mobjData.framing.framingEntities[i].id = framingEntity.getKey();
 							}
+						}
+					}
+					
+					if (mobjData.framing.framingHeadings != null) {
+						if (mobjData.framing.framingHeadings.isDeleted) {
+							framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.framing.framingHeadings.framingId = mobjData.framing.id;
+							mobjData.framing.framingHeadings.ToObject(framingHeadings);
+							framingHeadings.SaveToDb(pdb);
+							mobjData.framing.framingHeadings.id = framingHeadings.getKey();
 						}
 					}
 				}

@@ -35,11 +35,11 @@ public class CasualtyFormValidator extends FormValidator<CasualtyForm> {
 	}
 
 	private boolean validateDescription() {
-		return validateString(form.notes, 0, 250, true);
+		return validateString(form.notes, 0, 4000, true);
 	}
 
 	private boolean validateNotes() {
-		return validateString(form.notes, 0, 250, true);
+		return validateString(form.notes, 0, 4000, true);
 	}
 
 	private boolean validCaseStudy() {

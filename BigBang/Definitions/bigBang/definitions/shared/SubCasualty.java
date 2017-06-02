@@ -64,6 +64,18 @@ public class SubCasualty extends SubCasualtyStub {
 
 			public boolean deleted;
 		}
+		
+		public static class SubCasualtyFramingHeadings implements Serializable {
+			private static final long serialVersionUID = 1L;
+
+			public String id;
+			public Double baseSalary; // The type of the entity
+			public Double feedAllowance; // The entity's evaluation
+			public Double otherFees12; // Notes on the evaluation
+			public Double otherFees14; // Notes on the evaluation
+			
+			public boolean deleted;
+		}
 
 		public String id;
 		public String analysisDate; // the date on which the framing was created
@@ -94,6 +106,9 @@ public class SubCasualty extends SubCasualtyStub {
 		public SubCasualtyFramingEntity[] framingEntities; // The array with adicional
 													// entities related with
 													// this framing
+		
+		public SubCasualtyFramingHeadings headings;
+		
 		public boolean deleted;
 	}
 

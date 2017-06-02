@@ -12,11 +12,13 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingEntitiesData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingHeadingsData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingHeadings;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -81,6 +83,7 @@ public class ManageData
 		SubCasualtyInsurerRequest request;
 		SubCasualtyFraming framing;
 		SubCasualtyFramingEntity framingEntity;
+		SubCasualtyFramingHeadings framingHeadings;
 		UUID lidOwner;
 		int i;
 
@@ -208,6 +211,29 @@ public class ManageData
 					}
 				}
 			}
+			
+			// Framing Headings' management
+			if ( mobjData.framing.framingHeadings != null ) {
+				if ( mobjData.framing.framingHeadings.isDeleted ) {
+					if ( mobjData.framing.framingHeadings.id != null ) {
+						framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingHeadings.id);
+						mobjData.framing.framingHeadings.FromObject(framingHeadings);
+						framingHeadings.getDefinition().Delete(pdb, framingHeadings.getKey());
+					}
+				} else if ( mobjData.framing.framingHeadings.isNew ) {
+					framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.framing.framingHeadings.framingId = mobjData.framing.id;
+					mobjData.framing.framingHeadings.ToObject(framingHeadings);
+					framingHeadings.SaveToDb(pdb);
+					mobjData.framing.framingHeadings.id = framingHeadings.getKey();
+				} else {
+					framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingHeadings.id);
+					mobjData.framing.framingHeadings.prevValues = new SubCasualtyFramingHeadingsData();
+					mobjData.framing.framingHeadings.prevValues.FromObject(framingHeadings);
+					mobjData.framing.framingHeadings.ToObject(framingHeadings);
+					framingHeadings.SaveToDb(pdb);
+				}
+			}
 
 			if ( mobjContactOps != null )
 				mobjContactOps.RunSubOp(pdb, lidOwner);
@@ -272,6 +298,7 @@ public class ManageData
 		SubCasualtyInsurerRequest request;
 		SubCasualtyFraming framing;
 		SubCasualtyFramingEntity framingEntity;
+		SubCasualtyFramingHeadings framingHeadings;
 		UUID lidOwner;
 		int i;
 
@@ -351,7 +378,7 @@ public class ManageData
 								framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 								mobjData.framing.framingEntities[i].ToObject(framingEntity);
 								framingEntity.SaveToDb(pdb);
-							} else if ( mobjData.requests[i].isNew ) {
+							} else if ( mobjData.framing.framingEntities[i].isNew ) {
 								framingEntity = SubCasualtyFramingEntity.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingEntities[i].id);
 								framingEntity.getDefinition().Delete(pdb, framingEntity.getKey());
 							}
@@ -360,6 +387,22 @@ public class ManageData
 								mobjData.framing.framingEntities[i].prevValues.ToObject(framingEntity);
 								framingEntity.SaveToDb(pdb);
 							}
+						}
+					}
+					
+					// Framing Entities' management
+					if ( mobjData.framing.framingHeadings != null ) {
+						if ( mobjData.framing.framingHeadings.isDeleted ) {
+							framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.framing.framingHeadings.ToObject(framingHeadings);
+							framingHeadings.SaveToDb(pdb);
+						} else if ( mobjData.framing.framingHeadings.isNew ) {
+							framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingHeadings.id);
+							framingHeadings.getDefinition().Delete(pdb, framingHeadings.getKey());
+						} else {
+							framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingHeadings.id);
+							mobjData.framing.framingHeadings.prevValues.ToObject(framingHeadings);
+							framingHeadings.SaveToDb(pdb);
 						}
 					}
 				}

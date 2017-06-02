@@ -184,6 +184,7 @@ public class ServerToClient
 		pobjDest.clientNumber = (lobjClient == null ? null : ((Integer)lobjClient.getAt(1)).toString());
 		pobjDest.clientName = (lobjClient == null ? null : lobjClient.getLabel());
 		pobjDest.inheritCategoryName = lobjCategory.getLabel();
+		pobjDest.inheritCategoryId = lobjCategory.getKey().toString();
 		pobjDest.inheritLineName = lobjLine.getLabel();
 		pobjDest.inheritSubLineName = lobjSubLine.getLabel();
 		pobjDest.inheritCompanyName = lobjComp.getLabel();
@@ -1600,6 +1601,7 @@ public class ServerToClient
 			mobjOutPolicy.mainPolicyId = mobjParent.getKey().toString();
 			mobjOutPolicy.mainPolicyNumber = mobjParent.getLabel();
 			mobjOutPolicy.inheritCategoryName = lobjCategory.getLabel();
+			mobjOutPolicy.inheritCategoryId = lobjCategory.getKey().toString();
 			mobjOutPolicy.inheritLineName = lobjLine.getLabel();
 			mobjOutPolicy.inheritSubLineId = mobjSubLine.getKey().toString();
 			mobjOutPolicy.inheritSubLineName = mobjSubLine.getLabel();

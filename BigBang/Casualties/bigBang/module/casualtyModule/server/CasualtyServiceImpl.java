@@ -40,6 +40,7 @@ import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingEntitiesData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingHeadingsData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -455,6 +456,36 @@ public class CasualtyServiceImpl
 				UUID.fromString(subCasualty.framing.expertEvaluationId));
 			lopCSC.mobjData.framing.expertEvaluationNotes = subCasualty.framing.expertEvaluationNotes;
 			lopCSC.mobjData.framing.coverageNotes = subCasualty.framing.coverageNotes;
+			
+			if (subCasualty.framing.headings != null) {
+				
+				lopCSC.mobjData.framing.framingHeadings = new SubCasualtyFramingHeadingsData();
+				lopCSC.mobjData.framing.framingHeadings.baseSalary = subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary);
+				lopCSC.mobjData.framing.framingHeadings.feedAllowance = subCasualty.framing.headings.feedAllowance == null ? null : new BigDecimal(subCasualty.framing.headings.feedAllowance);
+				lopCSC.mobjData.framing.framingHeadings.otherFees12 = subCasualty.framing.headings.otherFees12 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees12);
+				lopCSC.mobjData.framing.framingHeadings.otherFees14 = subCasualty.framing.headings.otherFees14 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees14);
+				
+				// Sums the headings' values to define the coverage value.
+				BigDecimal sum = new BigDecimal(0);
+				if (lopCSC.mobjData.framing.framingHeadings.baseSalary!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.baseSalary);
+				}
+				if (lopCSC.mobjData.framing.framingHeadings.feedAllowance!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.feedAllowance);
+				}
+				if (lopCSC.mobjData.framing.framingHeadings.otherFees12!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.otherFees12);
+				}
+				if (lopCSC.mobjData.framing.framingHeadings.otherFees14!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.otherFees14);
+				}
+				lopCSC.mobjData.framing.coverageValue = sum;
+
+				lopCSC.mobjData.framing.framingHeadings.isNew = !subCasualty.framing.headings.deleted;
+				lopCSC.mobjData.framing.framingHeadings.isDeleted = subCasualty.framing.headings.deleted;
+			} else {
+				lopCSC.mobjData.framing.framingHeadings = null;
+			}
 			
 			lopCSC.mobjData.framing.isNew = !subCasualty.framing.deleted;
 			lopCSC.mobjData.framing.isDeleted = subCasualty.framing.deleted;

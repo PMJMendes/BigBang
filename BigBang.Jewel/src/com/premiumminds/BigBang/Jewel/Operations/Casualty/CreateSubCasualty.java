@@ -21,6 +21,7 @@ import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingHeadings;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -84,6 +85,7 @@ public class CreateSubCasualty
 		SubCasualtyInsurerRequest request;
 		SubCasualtyFraming framing;
 		SubCasualtyFramingEntity framingEntity;
+		SubCasualtyFramingHeadings framingHeadings;
 		int i;
 
 		if ( mobjData.midManager == null )
@@ -148,7 +150,7 @@ public class CreateSubCasualty
 					framing.SaveToDb(pdb);
 					mobjData.framing.id = framing.getKey();
 					
-					// Insurer requests
+					// Framing Entities
 					if (mobjData.framing.framingEntities != null) {
 						for (i=0; i<mobjData.framing.framingEntities.length; i++) {
 							if (mobjData.framing.framingEntities[i].isNew) {
@@ -158,6 +160,17 @@ public class CreateSubCasualty
 								framingEntity.SaveToDb(pdb);
 								mobjData.framing.framingEntities[i].id = framingEntity.getKey();
 							}
+						}
+					}
+					
+					// Framing Headings
+					if (mobjData.framing.framingHeadings != null) {
+						if (mobjData.framing.framingHeadings.isNew) {
+							framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.framing.framingHeadings.framingId = mobjData.framing.id;
+							mobjData.framing.framingHeadings.ToObject(framingHeadings);
+							framingHeadings.SaveToDb(pdb);
+							mobjData.framing.framingHeadings.id = framingHeadings.getKey();
 						}
 					}
 				}

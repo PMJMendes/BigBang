@@ -1,16 +1,24 @@
 package bigBang.module.casualtyModule.client.userInterface.form;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming;
-import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity;
+import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingHeadings;
+import bigBang.definitions.shared.SubPolicy;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
-import bigBang.library.client.userInterface.view.FormViewSection;
 
 import com.google.gwt.user.client.ui.Label;
 
@@ -30,7 +38,15 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 	protected TextAreaFormField generalExclusionsNotes;
 	protected RadioButtonFormField relevantCoverage;
 	protected TextAreaFormField coverageRelevancyNotes;
+	
+	// These two coverageValue fields are displayed when editing a policy that isn't/is work accidents
 	protected NumericTextBoxFormField coverageValue;
+	protected NumericTextBoxFormField coverageValueNonEditable;
+	
+	protected NumericTextBoxFormField baseSalary;
+	protected NumericTextBoxFormField feedAllowance;
+	protected NumericTextBoxFormField otherFees12;
+	protected NumericTextBoxFormField otherFees14;
 	protected RadioButtonFormField coverageExclusions;
 	protected TextAreaFormField coverageExclusionsNotes;
 	protected NumericTextBoxFormField franchise;
@@ -83,6 +99,17 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		coverageRelevancyNotes.setFieldHeight("50px");
 		
 		coverageValue = new NumericTextBoxFormField("Capital de Cobertura", true);
+		coverageValueNonEditable = new NumericTextBoxFormField("Capital de Cobertura", true);
+		coverageValueNonEditable.setEditable(false);
+		
+		baseSalary = new NumericTextBoxFormField("Salário Base", true);
+		feedAllowance = new NumericTextBoxFormField("Subsidio de Alimentação", true);
+		otherFees12 = new NumericTextBoxFormField("Outras Remunerações (12)", true);
+		otherFees14 = new NumericTextBoxFormField("Outras Remunerações (14)", true);
+		baseSalary.setVisible(false);
+		feedAllowance.setVisible(false);
+		otherFees12.setVisible(false);
+		otherFees14.setVisible(false);
 		
 		coverageNotes = new TextAreaFormField("Observações Capital.");
 		coverageNotes.setFieldWidth("650px");
@@ -138,7 +165,15 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		addLineBreak();
 		
 		addFormField(coverageValue, true);
+		addFormField(coverageValueNonEditable, true);
 		addFormField(coverageNotes, true);
+		
+		addLineBreak();
+		
+		addFormField(baseSalary, true);
+		addFormField(feedAllowance, true);
+		addFormField(otherFees12, true);
+		addFormField(otherFees14, true);
 		
 		addLineBreak();
 		
@@ -168,12 +203,7 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		this.currentFraming = framing;
 
 		if (framing != null) {
-			/*if (framing.id != null) {
-				analysisDate.setValue(framing.analysisDate);
-			} else {
-				analysisDate.setValue(new Date(), false);
-			}*/ 
-			//TODO: I believe it does not make sense to auto-set the date for it will create a framing even if the user does not wish to do so
+
 			analysisDate.setValue(framing.analysisDate);
 			difficultFraming.setValue(framing.id==null ? null : framing.framingDifficulty?"true":"false");
 			validPolicy.setValue(framing.id==null ? null : framing.validPolicy?"true":"false");
@@ -183,6 +213,7 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			relevantCoverage.setValue(framing.id==null ? null : framing.relevantCoverages?"true":"false");
 			coverageRelevancyNotes.setValue(framing.coverageRelevancyNotes);
 			coverageValue.setValue(framing.coverageValue);
+			coverageValueNonEditable.setValue(framing.coverageValue);
 			coverageExclusions.setValue(framing.id==null ? null : framing.coverageExclusions?"true":"false");
 			coverageExclusionsNotes.setValue(framing.coverageExclusionsNotes);
 			franchise.setValue(framing.franchise);
@@ -193,6 +224,13 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			expertEvaluation.setValue(framing.expertEvaluationId);
 			expertEvaluationNotes.setValue(framing.expertEvaluationNotes);
 			coverageNotes.setValue(framing.coverageNotes);
+			
+			if (framing.headings != null) {
+				baseSalary.setValue(framing.headings.baseSalary);
+				feedAllowance.setValue(framing.headings.feedAllowance);
+				otherFees12.setValue(framing.headings.otherFees12);
+				otherFees14.setValue(framing.headings.otherFees14);
+			}
 		}
 	}
 	
@@ -236,10 +274,105 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			result.expertEvaluationId = expertEvaluation.getValue();
 			result.expertEvaluationNotes = expertEvaluationNotes.getValue();
 			result.coverageNotes = coverageNotes.getValue();
+			
+			if (result.headings == null
+					&& (baseSalary.getValue() != null
+							|| feedAllowance.getValue() != null
+							|| otherFees12.getValue() != null || otherFees14
+							.getValue() != null)) {
+				result.headings = new SubCasualtyFramingHeadings();
+				this.currentFraming.headings = result.headings;
+			}
+			
+			if (result.headings != null) {
+				result.headings.baseSalary = baseSalary.getValue();
+				result.headings.feedAllowance = feedAllowance.getValue();
+				result.headings.otherFees12 = otherFees12.getValue();
+				result.headings.otherFees14 = otherFees14.getValue();
+			}
 		}
 
 		return result;
 	}
+	
+	// This method defines whether the headings fields should/should not be displayed
+	public void setIsWorkAccidents(boolean isClear, boolean isPolicy, String reference){
+		
+		if(isClear) {
+			hideExtraCoverageFields();
+			return;
+		}
+		
+		if (reference != null) {
+			if (isPolicy) {
+				InsurancePolicyBroker policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+				policyBroker.getPolicy(reference, new ResponseHandler<InsurancePolicy>() {
+					@Override
+					public void onResponse(InsurancePolicy response) {
+						String categoryId = response.categoryId;
+						if (categoryId!=null && categoryId.equalsIgnoreCase(BigBangConstants.PolicyCategories.WORK_ACCIDENTS)) {
+							showExtraCoverageFields();
+						} else {
+							hideExtraCoverageFields();
+						}
+					}
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+			} else {
+				InsuranceSubPolicyBroker subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+				subPolicyBroker.getSubPolicy(reference, new ResponseHandler<SubPolicy>() {
+					@Override
+					public void onResponse(SubPolicy response) {
+						String categoryId = response.inheritCategoryId;
+						if (categoryId!=null && categoryId.equalsIgnoreCase(BigBangConstants.PolicyCategories.WORK_ACCIDENTS)) {
+							showExtraCoverageFields();
+						} else {
+							hideExtraCoverageFields();
+						}
+					}
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						// TODO Auto-generated method stub
+					}
+				});			
+			}
+		}
+	}
+	
+	// This method hides the extra coverage fields.
+	// Notice that upon hiding it "nulifies" the values.
+	// This is important. To know why, file-search for "AUUUUUGA"
+	private void hideExtraCoverageFields() {
+		
+		baseSalary.setVisible(false);
+		feedAllowance.setVisible(false);
+		otherFees12.setVisible(false);
+		otherFees14.setVisible(false);
+		
+		baseSalary.setValue(null);
+		feedAllowance.setValue(null);
+		otherFees12.setValue(null);
+		otherFees14.setValue(null);
+		
+		coverageValue.setVisible(true);
+		coverageValueNonEditable.setVisible(false);
+	}
+
+	private void showExtraCoverageFields() {
+		
+		baseSalary.setVisible(true);
+		feedAllowance.setVisible(true);
+		otherFees12.setVisible(true);
+		otherFees14.setVisible(true);
+		
+		coverageValue.setVisible(false);
+		coverageValueNonEditable.setVisible(true);
+	}
+	
 	public boolean isReadOnly(){
 		return this.readOnly;
 	}
