@@ -39,6 +39,7 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 	protected RadioButtonFormField relevantCoverage;
 	protected TextAreaFormField coverageRelevancyNotes;
 	protected NumericTextBoxFormField coverageValue;
+	protected NumericTextBoxFormField coverageValueNonEditable;
 	protected NumericTextBoxFormField baseSalary;
 	protected NumericTextBoxFormField feedAllowance;
 	protected NumericTextBoxFormField otherFees12;
@@ -95,6 +96,9 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		coverageRelevancyNotes.setFieldHeight("50px");
 		
 		coverageValue = new NumericTextBoxFormField("Capital de Cobertura", true);
+		
+		coverageValueNonEditable = new NumericTextBoxFormField("Capital de Cobertura", true);
+		coverageValueNonEditable.setEditable(false);
 		
 		baseSalary = new NumericTextBoxFormField("Salário Base", true);
 		feedAllowance = new NumericTextBoxFormField("Subsidio de Alimentação", true);
@@ -159,6 +163,7 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		addLineBreak();
 		
 		addFormField(coverageValue, true);
+		addFormField(coverageValueNonEditable, true);
 		addFormField(coverageNotes, true);
 		
 		addLineBreak();
@@ -211,6 +216,7 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			relevantCoverage.setValue(framing.id==null ? null : framing.relevantCoverages?"true":"false");
 			coverageRelevancyNotes.setValue(framing.coverageRelevancyNotes);
 			coverageValue.setValue(framing.coverageValue);
+			coverageValueNonEditable.setValue(framing.coverageValue);
 			coverageExclusions.setValue(framing.id==null ? null : framing.coverageExclusions?"true":"false");
 			coverageExclusionsNotes.setValue(framing.coverageExclusionsNotes);
 			franchise.setValue(framing.franchise);
@@ -344,14 +350,22 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		feedAllowance.setValue(null);
 		otherFees12.setValue(null);
 		otherFees14.setValue(null);
+		
+		coverageValue.setVisible(true);
+		coverageValueNonEditable.setVisible(false);
+		//this.coverageValue.setEditable(true);
 	}
 
 	private void showExtraCoverageFields() {
-		
 		baseSalary.setVisible(true);
 		feedAllowance.setVisible(true);
 		otherFees12.setVisible(true);
 		otherFees14.setVisible(true);
+		//this.coverageValue.setReadOnly(true);
+		//this.coverageValue.setEditable(false);
+		
+		coverageValue.setVisible(false);
+		coverageValueNonEditable.setVisible(true);
 	}
 	
 	public boolean isReadOnly(){
