@@ -38,8 +38,11 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 	protected TextAreaFormField generalExclusionsNotes;
 	protected RadioButtonFormField relevantCoverage;
 	protected TextAreaFormField coverageRelevancyNotes;
+	
+	// These two coverageValue fields are displayed when editing a policy that isn't/is work accidents
 	protected NumericTextBoxFormField coverageValue;
 	protected NumericTextBoxFormField coverageValueNonEditable;
+	
 	protected NumericTextBoxFormField baseSalary;
 	protected NumericTextBoxFormField feedAllowance;
 	protected NumericTextBoxFormField otherFees12;
@@ -96,7 +99,6 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		coverageRelevancyNotes.setFieldHeight("50px");
 		
 		coverageValue = new NumericTextBoxFormField("Capital de Cobertura", true);
-		
 		coverageValueNonEditable = new NumericTextBoxFormField("Capital de Cobertura", true);
 		coverageValueNonEditable.setEditable(false);
 		
@@ -201,12 +203,7 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		this.currentFraming = framing;
 
 		if (framing != null) {
-			/*if (framing.id != null) {
-				analysisDate.setValue(framing.analysisDate);
-			} else {
-				analysisDate.setValue(new Date(), false);
-			}*/ 
-			//TODO: I believe it does not make sense to auto-set the date for it will create a framing even if the user does not wish to do so
+
 			analysisDate.setValue(framing.analysisDate);
 			difficultFraming.setValue(framing.id==null ? null : framing.framingDifficulty?"true":"false");
 			validPolicy.setValue(framing.id==null ? null : framing.validPolicy?"true":"false");
@@ -278,7 +275,11 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			result.expertEvaluationNotes = expertEvaluationNotes.getValue();
 			result.coverageNotes = coverageNotes.getValue();
 			
-			if (result.headings == null && (baseSalary.getValue()!=null || feedAllowance.getValue()!=null || otherFees12.getValue()!=null || otherFees14.getValue()!=null)) {
+			if (result.headings == null
+					&& (baseSalary.getValue() != null
+							|| feedAllowance.getValue() != null
+							|| otherFees12.getValue() != null || otherFees14
+							.getValue() != null)) {
 				result.headings = new SubCasualtyFramingHeadings();
 				this.currentFraming.headings = result.headings;
 			}
@@ -294,6 +295,7 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		return result;
 	}
 	
+	// This method defines whether the headings fields should/should not be displayed
 	public void setIsWorkAccidents(boolean isClear, boolean isPolicy, String reference){
 		
 		if(isClear) {
@@ -341,11 +343,16 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		}
 	}
 	
+	// This method hides the extra coverage fields.
+	// Notice that upon hiding it "nulifies" the values.
+	// This is important. To know why, file-search for "AUUUUUGA"
 	private void hideExtraCoverageFields() {
+		
 		baseSalary.setVisible(false);
 		feedAllowance.setVisible(false);
 		otherFees12.setVisible(false);
 		otherFees14.setVisible(false);
+		
 		baseSalary.setValue(null);
 		feedAllowance.setValue(null);
 		otherFees12.setValue(null);
@@ -353,16 +360,14 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		
 		coverageValue.setVisible(true);
 		coverageValueNonEditable.setVisible(false);
-		//this.coverageValue.setEditable(true);
 	}
 
 	private void showExtraCoverageFields() {
+		
 		baseSalary.setVisible(true);
 		feedAllowance.setVisible(true);
 		otherFees12.setVisible(true);
 		otherFees14.setVisible(true);
-		//this.coverageValue.setReadOnly(true);
-		//this.coverageValue.setEditable(false);
 		
 		coverageValue.setVisible(false);
 		coverageValueNonEditable.setVisible(true);

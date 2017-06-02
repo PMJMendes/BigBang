@@ -472,8 +472,12 @@ public class SubCasualtyServiceImpl
 				
 				lopMD.mobjData.framing.framingHeadings.framingId = lopMD.mobjData.framing.id;
 				
+				// Note this only works when the framing headings was "nullified" 
+				// To understand this, file-search for "AUUUUUGA"
 				if (lopMD.mobjData.framing.framingHeadings.baseSalary!=null || lopMD.mobjData.framing.framingHeadings.feedAllowance!=null ||
 						lopMD.mobjData.framing.framingHeadings.otherFees12!=null || lopMD.mobjData.framing.framingHeadings.otherFees14!=null) {
+					
+					// It calculates the coverage value as the sum of the 4 headings' fields
 					BigDecimal sum = new BigDecimal(0);
 					
 					if (lopMD.mobjData.framing.framingHeadings.baseSalary!=null) {
@@ -496,6 +500,7 @@ public class SubCasualtyServiceImpl
 				lopMD.mobjData.framing.framingHeadings.isDeleted = subCasualty.framing.headings.deleted;
 				
 				try {
+					// If the subcasualty policy changed from one that is work-accidents to other category, the headings should be deleted 
 					lopMD.mobjData.framing.framingHeadings.isDeleted = checkCategoryLineChange(lopMD.mobjData.midPolicy, lopMD.mobjData.midSubPolicy);
 				} catch (BigBangJewelException e) {
 					throw new BigBangException(e.getMessage(), e);
@@ -518,6 +523,9 @@ public class SubCasualtyServiceImpl
 		return sGetSubCasualty(lopMD.mobjData.mid);
 	}
 
+	// This method is called for sub-casualties with headings (meaning they belonged to work-accidents' policies)
+	// Gets the policy's category line for the policy defined from the form.
+	// If it is not work-accidents, returns true, otherwise returns false.
 	private boolean checkCategoryLineChange(UUID policyId, UUID subPolicyId) throws BigBangJewelException {
 		
 		com.premiumminds.BigBang.Jewel.Objects.Policy policy;
