@@ -460,10 +460,10 @@ public class CasualtyServiceImpl
 			if (subCasualty.framing.headings != null) {
 				
 				lopCSC.mobjData.framing.framingHeadings = new SubCasualtyFramingHeadingsData();
-				lopCSC.mobjData.framing.framingHeadings.baseSalary = subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary);
-				lopCSC.mobjData.framing.framingHeadings.feedAllowance = subCasualty.framing.headings.feedAllowance == null ? null : new BigDecimal(subCasualty.framing.headings.feedAllowance);
-				lopCSC.mobjData.framing.framingHeadings.otherFees12 = subCasualty.framing.headings.otherFees12 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees12);
-				lopCSC.mobjData.framing.framingHeadings.otherFees14 = subCasualty.framing.headings.otherFees14 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees14);
+				lopCSC.mobjData.framing.framingHeadings.baseSalary = subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary+"");
+				lopCSC.mobjData.framing.framingHeadings.feedAllowance = subCasualty.framing.headings.feedAllowance == null ? null : new BigDecimal(subCasualty.framing.headings.feedAllowance+"");
+				lopCSC.mobjData.framing.framingHeadings.otherFees12 = subCasualty.framing.headings.otherFees12 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees12+"");
+				lopCSC.mobjData.framing.framingHeadings.otherFees14 = subCasualty.framing.headings.otherFees14 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees14+"");
 				
 				// Sums the headings' values to define the coverage value.
 				BigDecimal sum = new BigDecimal(0);
