@@ -210,31 +210,31 @@ public class ManageData
 						}
 					}
 				}
-			}
-			
-			// Framing Headings' management
-			if ( mobjData.framing.framingHeadings != null ) {
-				if ( mobjData.framing.framingHeadings.isDeleted ) {
-					if ( mobjData.framing.framingHeadings.id != null ) {
+				
+				// Framing Headings' management
+				if ( mobjData.framing.framingHeadings != null ) {
+					if ( mobjData.framing.framingHeadings.isDeleted ) {
+						if ( mobjData.framing.framingHeadings.id != null ) {
+							framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingHeadings.id);
+							mobjData.framing.framingHeadings.FromObject(framingHeadings);
+							framingHeadings.getDefinition().Delete(pdb, framingHeadings.getKey());
+						}
+					} else if ( mobjData.framing.framingHeadings.isNew ) {
+						framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.framing.framingHeadings.framingId = mobjData.framing.id;
+						mobjData.framing.framingHeadings.ToObject(framingHeadings);
+						framingHeadings.SaveToDb(pdb);
+						mobjData.framing.framingHeadings.id = framingHeadings.getKey();
+					} else {
 						framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingHeadings.id);
-						mobjData.framing.framingHeadings.FromObject(framingHeadings);
-						framingHeadings.getDefinition().Delete(pdb, framingHeadings.getKey());
+						mobjData.framing.framingHeadings.prevValues = new SubCasualtyFramingHeadingsData();
+						mobjData.framing.framingHeadings.prevValues.FromObject(framingHeadings);
+						mobjData.framing.framingHeadings.ToObject(framingHeadings);
+						framingHeadings.SaveToDb(pdb);
 					}
-				} else if ( mobjData.framing.framingHeadings.isNew ) {
-					framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.framing.framingHeadings.framingId = mobjData.framing.id;
-					mobjData.framing.framingHeadings.ToObject(framingHeadings);
-					framingHeadings.SaveToDb(pdb);
-					mobjData.framing.framingHeadings.id = framingHeadings.getKey();
-				} else {
-					framingHeadings = SubCasualtyFramingHeadings.GetInstance(Engine.getCurrentNameSpace(), mobjData.framing.framingHeadings.id);
-					mobjData.framing.framingHeadings.prevValues = new SubCasualtyFramingHeadingsData();
-					mobjData.framing.framingHeadings.prevValues.FromObject(framingHeadings);
-					mobjData.framing.framingHeadings.ToObject(framingHeadings);
-					framingHeadings.SaveToDb(pdb);
 				}
 			}
-
+			
 			if ( mobjContactOps != null )
 				mobjContactOps.RunSubOp(pdb, lidOwner);
 			if ( mobjDocOps != null )

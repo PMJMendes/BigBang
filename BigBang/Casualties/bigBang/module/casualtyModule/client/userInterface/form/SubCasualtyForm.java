@@ -248,19 +248,24 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
+
 				if(event.getSource() == referenceType) {
 					policyReference.setValue(null, true);
 					subPolicyReference.setValue(null, true);
-					framingSection.setIsWorkAccidents(true, false, null);
 				}
 				else if((belongsToPolicy.getValue() != null) && belongsToPolicy.getValue().equalsIgnoreCase("true")) {
 					boolean isPolicy = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY);
 					String reference = isPolicy ? policyReference.getValue() : subPolicyReference.getValue();
 					setReference(referenceType.getValue(), reference);
+				}
+
+				if (referenceType.getValue() != null && (policyReference.getValue()!=null || subPolicyReference.getValue()!=null)) {
+					boolean isPolicy = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY);
+					String reference = isPolicy ? policyReference.getValue() : subPolicyReference.getValue();
 					framingSection.setIsWorkAccidents(false, isPolicy, reference);
 				}
-				updateItemSections();
-				
+					
+				updateItemSections();	
 			}
 		};
 		referenceType.addValueChangeHandler(changeHandler);

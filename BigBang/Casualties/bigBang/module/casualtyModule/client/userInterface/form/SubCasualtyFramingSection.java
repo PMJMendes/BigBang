@@ -106,10 +106,12 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		feedAllowance = new NumericTextBoxFormField("Subsidio de Alimentação", true);
 		otherFees12 = new NumericTextBoxFormField("Outras Remunerações (12)", true);
 		otherFees14 = new NumericTextBoxFormField("Outras Remunerações (14)", true);
+		
 		baseSalary.setVisible(false);
 		feedAllowance.setVisible(false);
 		otherFees12.setVisible(false);
 		otherFees14.setVisible(false);
+		coverageValueNonEditable.setVisible(false); 
 		
 		coverageNotes = new TextAreaFormField("Observações Capital.");
 		coverageNotes.setFieldWidth("650px");
@@ -224,7 +226,6 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			expertEvaluation.setValue(framing.expertEvaluationId);
 			expertEvaluationNotes.setValue(framing.expertEvaluationNotes);
 			coverageNotes.setValue(framing.coverageNotes);
-			
 			if (framing.headings != null) {
 				baseSalary.setValue(framing.headings.baseSalary);
 				feedAllowance.setValue(framing.headings.feedAllowance);
@@ -304,6 +305,7 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		}
 		
 		if (reference != null) {
+			
 			if (isPolicy) {
 				InsurancePolicyBroker policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 				policyBroker.getPolicy(reference, new ResponseHandler<InsurancePolicy>() {
@@ -359,7 +361,7 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		otherFees14.setValue(null);
 		
 		coverageValue.setVisible(true);
-		coverageValueNonEditable.setVisible(false);
+		coverageValueNonEditable.setVisible(false); 
 	}
 
 	private void showExtraCoverageFields() {
