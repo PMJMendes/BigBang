@@ -54,6 +54,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 	// The total settlement to display in the report
 	private BigDecimal settlementTotal = BigDecimal.ZERO;
+	// The total settlement paid to third parties to display in the report
+	private BigDecimal thirdSettlementTotal = BigDecimal.ZERO;
 
 	// Width Constants
 	private static final int DATE_WIDTH = 72;
@@ -63,11 +65,14 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	private static final int CASUALTY_DESCRIPTION_WIDTH = 380;
 	private static final int DEDUCTIBLE_WIDTH = 94;
 	private static final int SETTLEMENT_WIDTH = 88;
+	private static final int THIRD_SETTLEMENT_WIDTH = 88;
 	private static final int SUBCASUALTY_NOTES_WIDTH = 380;
 	private static final int IS_CLOSED_WIDTH = 54;
 
 	private static final int DESCRIPTION_BREAK_POINT = 66;
 	private static final int OBJECT_BREAK_POINT = 23;
+	
+	private boolean showThirdParties = false;
 
 	/*
 	 * This Matrix represents the order to display the policies, as well as the
@@ -221,6 +226,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		private String casualtyDescription;
 		private String deductible; // Franquia
 		private String settlement; // Indemnização
+		private String thirdSettlement; // Indemnização paga a terceiros
 		private String subCasualtyNotes;
 		private boolean isClosed;
 		private Category category;
@@ -233,6 +239,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			setCasualtyDescription(NO_VALUE);
 			setDeductible(NO_VALUE);
 			setSettlement(NO_VALUE);
+			setThirdSettlement(NO_VALUE);
 			setSubCasualtyNotes(NO_VALUE);
 			setClosed(false);
 		}
@@ -291,6 +298,14 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		private void setSettlement(String settlement) {
 			this.settlement = settlement;
+		}
+		
+		private String getThirdSettlement() {
+			return thirdSettlement;
+		}
+
+		private void setThirdSettlement(String thirdSettlement) {
+			this.thirdSettlement = thirdSettlement;
 		}
 
 		private String getSubCasualtyNotes() {
@@ -375,6 +390,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 				BigDecimal deductible = BigDecimal.ZERO;
 				BigDecimal settlement = BigDecimal.ZERO;
+				BigDecimal thirdSettlement = BigDecimal.ZERO;
 				
 				// needed to identify if there's no value for all, in case a '-' must be outputted, and not a 0
 				boolean allDeductibleNull = true;
@@ -389,6 +405,10 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					SubCasualtyItem temp = currentItems[i];
 					// Indemnização
 					if (temp.getAt(SubCasualtyItem.I.SETTLEMENT) != null) {
+						if (temp.getAt(SubCasualtyItem.I.THIRDPARTY)!=null && ((Boolean) temp.getAt(SubCasualtyItem.I.THIRDPARTY)).booleanValue()==true) {
+							thirdSettlement = thirdSettlement.add((BigDecimal) temp
+								.getAt(SubCasualtyItem.I.SETTLEMENT));
+						}
 						settlement = settlement.add((BigDecimal) temp
 								.getAt(SubCasualtyItem.I.SETTLEMENT));
 						allSettlementNull = false;
@@ -405,6 +425,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				if (currentItems.length == 0) {
 					settlement = null;
 					deductible = null;
+					thirdSettlement = null;
 				}
 				
 				if (allDeductibleNull) {
@@ -412,6 +433,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				}
 				if (allSettlementNull) {
 					settlement = null;
+					thirdSettlement = null;
 				}
 
 				// Special case to work accidents
@@ -424,6 +446,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 							((BigDecimal) settlement)));
 
 					settlementTotal = settlementTotal.add(settlement);
+				}
+				if (thirdSettlement != null) {
+					setThirdSettlement(String.format("%,.2f",
+							((BigDecimal) thirdSettlement)));
+
+					thirdSettlementTotal = thirdSettlementTotal.add(thirdSettlement);
 				}
 				if (deductible != null) {
 					setDeductible(String.format("%,.2f",
@@ -543,6 +571,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		// to the user
 		if ((reportParams[0] == null) || "".equals(reportParams[0])) {
 			return doNotValid();
+		}
+		
+		// Tests if it is supposed to show the values paid to third parties
+		if ((reportParams[3] != null) && reportParams[3].equals("1")) {
+			showThirdParties = true;
 		}
 
 		// Gets the client's sub-casualties, filtered by dates
@@ -1272,6 +1305,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			throws BigBangJewelException {
 
 		StringBuilder subCasualtyQuery;
+		
+		boolean showOpenPreviously = false;
 
 		// Sub-casualty, Casualty and Logs' entities
 		IEntity subCasualtyEntity;
@@ -1284,6 +1319,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
 			casualtyEntity = Entity.GetInstance(Engine.FindEntity(
 					Engine.getCurrentNameSpace(), Constants.ObjID_Casualty));
+			
+			// Tests if it is supposed to show the values paid to third parties
+			if ((reportParams[4] != null) && reportParams[3].equals("1")) {
+				showOpenPreviously = true;
+			}
 
 			// The query "part" responsible for getting the sub-casualties for
 			// the casualties belonging to a client
