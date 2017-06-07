@@ -62,12 +62,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	private static final int OBJECT_WIDTH = 160;
 	private static final int EGS_PROCESS_WIDTH = 90;
 	private static final int COMPANY_PROCESS_WIDTH = 130;
-	private static final int CASUALTY_DESCRIPTION_WIDTH = 380;
-	private static final int DEDUCTIBLE_WIDTH = 94;
+	private static final int CASUALTY_DESCRIPTION_WIDTH = 300;
+	private static final int DEDUCTIBLE_WIDTH = 70;
 	private static final int SUM_SETTLEMENT_WIDTH = 88;
-	private static final int SETTLEMENT_WIDTH = 88;
-	private static final int THIRD_SETTLEMENT_WIDTH = 88;
-	private static final int SUBCASUALTY_NOTES_WIDTH = 380;
+	private static final int SETTLEMENT_WIDTH = 70;
+	private static final int THIRD_SETTLEMENT_WIDTH = 70;
+	private static final int SUBCASUALTY_NOTES_WIDTH = 300;
 	private static final int IS_CLOSED_WIDTH = 54;
 
 	private static final int DESCRIPTION_BREAK_POINT = 66;
@@ -1038,17 +1038,21 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String);
 		styleCenteredCell(cells[currColl-1], false, true);
 
-		cells[currColl++] = ReportBuilder.buildCell("Franquia Aplicada",
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl-1], false, true);
+		cells[currColl++] = new TD(buildDoubleHeaderTitle ("Franquia", "Aplicada"));
+		//styleCenteredCell(cells[currColl-1], false, true);
+		ReportBuilder.styleCell(cells[currColl-1], false, true);
 
-		cells[currColl++] = ReportBuilder.buildCell("Indemnização Paga a Segurado",
+		/*cells[currColl++] = ReportBuilder.buildCell("Indemnização Paga a Segurado",
 				TypeDefGUIDs.T_String);
+		styleCenteredCell(cells[currColl-1], false, true);*/
+		cells[currColl++] = new TD(buildDoubleHeaderTitle ("Indemnização Paga", "a Segurado"));
 		styleCenteredCell(cells[currColl-1], false, true);
 		
 		if (showThirdParties) {
-			cells[currColl++] = ReportBuilder.buildCell("Indemnização Paga a Terceiros",
+			/*cells[currColl++] = ReportBuilder.buildCell("Indemnização Paga",
 					TypeDefGUIDs.T_String);
+			styleCenteredCell(cells[currColl-1], false, true);*/
+			cells[currColl++] = new TD(buildDoubleHeaderTitle ("Indemnização Paga", "a Terceiros"));
 			styleCenteredCell(cells[currColl-1], false, true);
 		}
 
@@ -1061,6 +1065,31 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		setCellWidths(cells);
 
 		return cells;
+	}
+	
+	/**
+	 * Builds a dual-row table to use in the table header, for longer column names
+	 */
+	public Table buildDoubleHeaderTitle (String lineOne, String lineTwo) {
+		
+		Table table;
+		TR[] tableRows = new TR[2];
+		TD[] tdOne = new TD[1];
+		TD[] tdTwo = new TD[1];
+		
+		tdOne[0] = ReportBuilder.buildCell(lineOne, TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(tdOne[0], false, false);
+		
+		tdTwo[0] = ReportBuilder.buildCell(lineTwo, TypeDefGUIDs.T_String);
+		ReportBuilder.styleCell(tdTwo[0], false, false);
+		
+		tableRows[0] = ReportBuilder.buildRow(tdOne);
+		tableRows[0].setStyle("font-weight:bold;");
+		tableRows[1] = ReportBuilder.buildRow(tdTwo);
+		tableRows[1].setStyle("font-weight:bold;");
+		
+		table = ReportBuilder.buildTable(tableRows);
+		return table;
 	}
 
 	/**
