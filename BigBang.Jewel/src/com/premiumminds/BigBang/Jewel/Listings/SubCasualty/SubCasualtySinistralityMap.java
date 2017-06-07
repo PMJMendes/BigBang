@@ -396,6 +396,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				// needed to identify if there's no value for all, in case a '-' must be outputted, and not a 0
 				boolean allDeductibleNull = true;
 				boolean allSettlementNull = true;
+				boolean allThirdSettlementNull = true;
 
 				// The settlement and deductible is the sum from all
 				// sub-casualty's items
@@ -409,11 +410,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 						if (temp.getAt(SubCasualtyItem.I.THIRDPARTY)!=null && ((Boolean) temp.getAt(SubCasualtyItem.I.THIRDPARTY)).booleanValue()==true) {
 							thirdSettlement = thirdSettlement.add((BigDecimal) temp
 								.getAt(SubCasualtyItem.I.SETTLEMENT));
+							allThirdSettlementNull = false;
 						} else {
 							settlement = settlement.add((BigDecimal) temp
 								.getAt(SubCasualtyItem.I.SETTLEMENT));
-						}
-						allSettlementNull = false;
+							allSettlementNull = false;
+						}	
 					}
 					// Franquia
 					if (temp.getAt(SubCasualtyItem.I.DEDUCTIBLE) != null) {
@@ -435,6 +437,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				}
 				if (allSettlementNull) {
 					settlement = null;
+				}
+				if (allThirdSettlementNull) {
 					thirdSettlement = null;
 				}
 
@@ -1078,10 +1082,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		TD[] tdTwo = new TD[1];
 		
 		tdOne[0] = ReportBuilder.buildCell(lineOne, TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(tdOne[0], false, false);
+		//ReportBuilder.styleCell(tdOne[0], false, false);
+		styleCenteredCell(tdOne[0], false, false);
 		
 		tdTwo[0] = ReportBuilder.buildCell(lineTwo, TypeDefGUIDs.T_String);
-		ReportBuilder.styleCell(tdTwo[0], false, false);
+		//ReportBuilder.styleCell(tdTwo[0], false, false);
+		styleCenteredCell(tdTwo[0], false, false);
 		
 		tableRows[0] = ReportBuilder.buildRow(tdOne);
 		tableRows[0].setStyle("font-weight:bold;");
