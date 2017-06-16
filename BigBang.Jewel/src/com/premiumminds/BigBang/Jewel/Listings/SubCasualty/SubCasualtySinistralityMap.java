@@ -1157,7 +1157,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		titleStrong.setStyle("font-size: 15px;");
 		title.addElement(titleStrong);
-		title.setAlign(AlignType.middle);
+		title.setAlign(AlignType.center);
 		title.setStyle("padding-top:30px;");
 		cells[1] = title;
 
