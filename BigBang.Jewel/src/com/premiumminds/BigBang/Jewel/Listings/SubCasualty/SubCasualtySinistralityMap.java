@@ -54,20 +54,26 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 	// The total settlement to display in the report
 	private BigDecimal settlementTotal = BigDecimal.ZERO;
+	// The total settlement paid to third parties to display in the report
+	private BigDecimal thirdSettlementTotal = BigDecimal.ZERO;
 
 	// Width Constants
 	private static final int DATE_WIDTH = 72;
 	private static final int OBJECT_WIDTH = 160;
 	private static final int EGS_PROCESS_WIDTH = 90;
 	private static final int COMPANY_PROCESS_WIDTH = 130;
-	private static final int CASUALTY_DESCRIPTION_WIDTH = 380;
-	private static final int DEDUCTIBLE_WIDTH = 94;
-	private static final int SETTLEMENT_WIDTH = 88;
-	private static final int SUBCASUALTY_NOTES_WIDTH = 380;
+	private static final int CASUALTY_DESCRIPTION_WIDTH = 300;
+	private static final int DEDUCTIBLE_WIDTH = 70;
+	private static final int SUM_SETTLEMENT_WIDTH = 88;
+	private static final int SETTLEMENT_WIDTH = 70;
+	private static final int THIRD_SETTLEMENT_WIDTH = 70;
+	private static final int SUBCASUALTY_NOTES_WIDTH = 300;
 	private static final int IS_CLOSED_WIDTH = 54;
 
 	private static final int DESCRIPTION_BREAK_POINT = 66;
 	private static final int OBJECT_BREAK_POINT = 23;
+	
+	private boolean showThirdParties = false;
 
 	/*
 	 * This Matrix represents the order to display the policies, as well as the
@@ -221,6 +227,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		private String casualtyDescription;
 		private String deductible; // Franquia
 		private String settlement; // Indemnização
+		private String thirdSettlement; // Indemnização paga a terceiros
 		private String subCasualtyNotes;
 		private boolean isClosed;
 		private Category category;
@@ -233,6 +240,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			setCasualtyDescription(NO_VALUE);
 			setDeductible(NO_VALUE);
 			setSettlement(NO_VALUE);
+			setThirdSettlement(NO_VALUE);
 			setSubCasualtyNotes(NO_VALUE);
 			setClosed(false);
 		}
@@ -291,6 +299,14 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		private void setSettlement(String settlement) {
 			this.settlement = settlement;
+		}
+		
+		private String getThirdSettlement() {
+			return thirdSettlement;
+		}
+
+		private void setThirdSettlement(String thirdSettlement) {
+			this.thirdSettlement = thirdSettlement;
 		}
 
 		private String getSubCasualtyNotes() {
@@ -375,10 +391,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 				BigDecimal deductible = BigDecimal.ZERO;
 				BigDecimal settlement = BigDecimal.ZERO;
+				BigDecimal thirdSettlement = BigDecimal.ZERO;
 				
 				// needed to identify if there's no value for all, in case a '-' must be outputted, and not a 0
 				boolean allDeductibleNull = true;
 				boolean allSettlementNull = true;
+				boolean allThirdSettlementNull = true;
 
 				// The settlement and deductible is the sum from all
 				// sub-casualty's items
@@ -389,9 +407,15 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					SubCasualtyItem temp = currentItems[i];
 					// Indemnização
 					if (temp.getAt(SubCasualtyItem.I.SETTLEMENT) != null) {
-						settlement = settlement.add((BigDecimal) temp
+						if (temp.getAt(SubCasualtyItem.I.THIRDPARTY)!=null && ((Boolean) temp.getAt(SubCasualtyItem.I.THIRDPARTY)).booleanValue()==true) {
+							thirdSettlement = thirdSettlement.add((BigDecimal) temp
 								.getAt(SubCasualtyItem.I.SETTLEMENT));
-						allSettlementNull = false;
+							allThirdSettlementNull = false;
+						} else {
+							settlement = settlement.add((BigDecimal) temp
+								.getAt(SubCasualtyItem.I.SETTLEMENT));
+							allSettlementNull = false;
+						}	
 					}
 					// Franquia
 					if (temp.getAt(SubCasualtyItem.I.DEDUCTIBLE) != null) {
@@ -405,6 +429,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				if (currentItems.length == 0) {
 					settlement = null;
 					deductible = null;
+					thirdSettlement = null;
 				}
 				
 				if (allDeductibleNull) {
@@ -412,6 +437,9 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				}
 				if (allSettlementNull) {
 					settlement = null;
+				}
+				if (allThirdSettlementNull) {
+					thirdSettlement = null;
 				}
 
 				// Special case to work accidents
@@ -424,6 +452,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 							((BigDecimal) settlement)));
 
 					settlementTotal = settlementTotal.add(settlement);
+				}
+				if (thirdSettlement != null) {
+					setThirdSettlement(String.format("%,.2f",
+							((BigDecimal) thirdSettlement)));
+
+					thirdSettlementTotal = thirdSettlementTotal.add(thirdSettlement);
 				}
 				if (deductible != null) {
 					setDeductible(String.format("%,.2f",
@@ -544,6 +578,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		if ((reportParams[0] == null) || "".equals(reportParams[0])) {
 			return doNotValid();
 		}
+		
+		// Tests if it is supposed to show the values paid to third parties
+		if ((reportParams[3] != null) && reportParams[3].equals("1")) {
+			showThirdParties = true;
+		}
 
 		// Gets the client's sub-casualties, filtered by dates
 		subCasualties = getSubCasualties(reportParams);
@@ -633,8 +672,10 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		Table table;
 		TR[] tableRows;
 		int rowNum = 0;
+		
+		int totalLinesNumber = showThirdParties ? 6 : 4;
 
-		tableRows = new TR[subCasualtiesNr + 4 + subCasualtiesMap.size()];
+		tableRows = new TR[subCasualtiesNr + totalLinesNumber + subCasualtiesMap.size()];
 
 		// Builds the row with the column names
 		tableRows[rowNum++] = ReportBuilder.buildRow(buildHeaderRow());
@@ -696,8 +737,19 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				deductibleTotal, TypeDefGUIDs.T_Decimal, true, false, true);
 
 		// Build the row with the total settlement
+		BigDecimal totalSettlement = settlementTotal.add(thirdSettlementTotal);
 		tableRows[rowNum++] = constructSummaryRow("Total de Indemnizações:",
-				settlementTotal, TypeDefGUIDs.T_Decimal, true, false, true);
+				totalSettlement, TypeDefGUIDs.T_Decimal, true, false, true);
+		
+		if (showThirdParties) {
+			// Build the row with the total settlement
+			tableRows[rowNum++] = constructSummaryRow("Indemnizações Pagas Directamente:",
+					settlementTotal, TypeDefGUIDs.T_Decimal, true, false, true);
+			
+			// Build the row with the total settlement
+			tableRows[rowNum++] = constructSummaryRow("Indemnizações Pagas a Terceiros:",
+					thirdSettlementTotal, TypeDefGUIDs.T_Decimal, true, false, true);
+		}
 
 		table = ReportBuilder.buildTable(tableRows);
 		ReportBuilder.styleTable(table, false);
@@ -732,7 +784,10 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					rightAlign);
 			ReportBuilder.styleCell(cells[1], topRow, false);
 		}
-		cells[1].setColSpan(7);
+
+		int colspan= showThirdParties ? 8 : 7;
+		
+		cells[1].setColSpan(colspan);
 
 		row = ReportBuilder.buildRow(cells);
 		row.setStyle("height:30px;background:#e6e6e6;");
@@ -745,70 +800,78 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	 */
 	private TD[] buildRow(SubCasualtyData subCasualtyData) {
 
-		TD[] dataCells = new TD[9];
+		int colNr = showThirdParties ? 10 : 9;
+		TD[] dataCells = new TD[colNr];
+		int curCol = 0;
 
-		dataCells[0] = safeBuildCell(subCasualtyData.getDate(),
+		dataCells[curCol] = safeBuildCell(subCasualtyData.getDate(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(dataCells[0], true, false);
+		styleCenteredCell(dataCells[curCol++], true, false);
 
 		String objectName = subCasualtyData.getInsuredObject();
 		if (objectName.length() <= OBJECT_BREAK_POINT) {
-			dataCells[1] = safeBuildCell(subCasualtyData.getInsuredObject(),
+			dataCells[curCol] = safeBuildCell(subCasualtyData.getInsuredObject(),
 					TypeDefGUIDs.T_String, false, false);
 		} else {
 			ArrayList<String> descriptionArray = new ArrayList<String>();
 			descriptionArray.add(objectName);
-			dataCells[1] = buildValuesTable(
+			dataCells[curCol] = buildValuesTable(
 					splitValue(descriptionArray, OBJECT_BREAK_POINT),
 					OBJECT_WIDTH, false, false);
 		}
-		ReportBuilder.styleCell(dataCells[1], true, true);
+		ReportBuilder.styleCell(dataCells[curCol++], true, true);
 
-		dataCells[2] = safeBuildCell(subCasualtyData.getEgsProcess(),
+		dataCells[curCol] = safeBuildCell(subCasualtyData.getEgsProcess(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(dataCells[2], true, true);
+		styleCenteredCell(dataCells[curCol++], true, true);
 
-		dataCells[3] = safeBuildCell(subCasualtyData.getCompanyProcess(),
+		dataCells[curCol] = safeBuildCell(subCasualtyData.getCompanyProcess(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(dataCells[3], true, true);
+		styleCenteredCell(dataCells[curCol++], true, true);
 
 		String casualtyDescription = subCasualtyData.getCasualtyDescription();
 		if (casualtyDescription.length() <= DESCRIPTION_BREAK_POINT) {
-			dataCells[4] = safeBuildCell(casualtyDescription,
+			dataCells[curCol] = safeBuildCell(casualtyDescription,
 					TypeDefGUIDs.T_String, false, false);
 		} else {
 			ArrayList<String> descriptionArray = new ArrayList<String>();
 			descriptionArray.add(casualtyDescription);
-			dataCells[4] = buildValuesTable(
+			dataCells[curCol] = buildValuesTable(
 					splitValue(descriptionArray, DESCRIPTION_BREAK_POINT),
 					CASUALTY_DESCRIPTION_WIDTH, false, false);
 		}
-		ReportBuilder.styleCell(dataCells[4], true, true);
+		ReportBuilder.styleCell(dataCells[curCol++], true, true);
 
-		dataCells[5] = safeBuildCell(subCasualtyData.getDeductible(),
+		dataCells[curCol] = safeBuildCell(subCasualtyData.getDeductible(),
 				TypeDefGUIDs.T_String, true, true);
-		ReportBuilder.styleCell(dataCells[5], true, true);
+		ReportBuilder.styleCell(dataCells[curCol++], true, true);
 
-		dataCells[6] = safeBuildCell(subCasualtyData.getSettlement(),
+		dataCells[curCol] = safeBuildCell(subCasualtyData.getSettlement(),
 				TypeDefGUIDs.T_String, true, true);
-		ReportBuilder.styleCell(dataCells[6], true, true);
+		ReportBuilder.styleCell(dataCells[curCol++], true, true);
+		
+		if (showThirdParties) {
+			dataCells[curCol] = safeBuildCell(subCasualtyData.getThirdSettlement(),
+					TypeDefGUIDs.T_String, true, true);
+			ReportBuilder.styleCell(dataCells[curCol++], true, true);
+		}
 
 		String subCasualtyNotes = subCasualtyData.getSubCasualtyNotes();
 		if (subCasualtyNotes.length() <= DESCRIPTION_BREAK_POINT) {
-			dataCells[7] = safeBuildCell(subCasualtyData.getSubCasualtyNotes(),
+			dataCells[curCol] = safeBuildCell(subCasualtyData.getSubCasualtyNotes(),
 					TypeDefGUIDs.T_String, false, false);
 		} else {
 			ArrayList<String> descriptionArray = new ArrayList<String>();
 			descriptionArray.add(subCasualtyNotes);
-			dataCells[7] = buildValuesTable(
+			dataCells[curCol] = buildValuesTable(
 					splitValue(descriptionArray, DESCRIPTION_BREAK_POINT),
 					SUBCASUALTY_NOTES_WIDTH, false, false);
 		}
-		ReportBuilder.styleCell(dataCells[7], true, true);
+		ReportBuilder.styleCell(dataCells[curCol++], true, true);
 
 		String state = subCasualtyData.isClosed() ? "Fechado" : "Aberto";
-		dataCells[8] = safeBuildCell(state, TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(dataCells[8], true, true);
+		dataCells[curCol] = safeBuildCell(state, TypeDefGUIDs.T_String, false, false);
+		styleCenteredCell(dataCells[curCol++], true, true);
 
 		setCellWidths(dataCells);
 
@@ -932,11 +995,13 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		TD rowContent;
 		TR row;
+		
+		int colNr = showThirdParties ? 10 : 9;
 
 		// Builds the TD with the content
 		rowContent = ReportBuilder.buildCell("Ramo: " + subline,
 				TypeDefGUIDs.T_String);
-		rowContent.setColSpan(9);
+		rowContent.setColSpan(colNr);
 		ReportBuilder.styleCell(rowContent, true, false);
 
 		// Builds the TR encapsulating the TD
@@ -951,60 +1016,108 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	 */
 	private TD[] buildHeaderRow() {
 
-		TD[] cells = new TD[9];
+		int colNr = showThirdParties ? 10 : 9;
+		
+		TD[] cells = new TD[colNr];
+		
+		int currColl = 0;
 
-		cells[0] = ReportBuilder.buildCell("Data Sinistro",
+		cells[currColl++] = ReportBuilder.buildCell("Data Sinistro",
 				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[0], false, false);
+		styleCenteredCell(cells[currColl-1], false, false);
 
-		cells[1] = ReportBuilder.buildCell("Unidade de Risco",
+		cells[currColl++] = ReportBuilder.buildCell("Unidade de Risco",
 				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[1], false, true);
+		styleCenteredCell(cells[currColl-1], false, true);
 
-		cells[2] = ReportBuilder.buildCell("Processo EGS",
+		cells[currColl++] = ReportBuilder.buildCell("Processo EGS",
 				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[2], false, true);
+		styleCenteredCell(cells[currColl-1], false, true);
 
-		cells[3] = ReportBuilder.buildCell("Processo Segurador",
+		cells[currColl++] = ReportBuilder.buildCell("Processo Segurador",
 				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[3], false, true);
+		styleCenteredCell(cells[currColl-1], false, true);
 
-		cells[4] = ReportBuilder.buildCell("Descrição do Sinistro",
+		cells[currColl++] = ReportBuilder.buildCell("Descrição do Sinistro",
 				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[4], false, true);
+		styleCenteredCell(cells[currColl-1], false, true);
 
-		cells[5] = ReportBuilder.buildCell("Franquia Aplicada",
+		cells[currColl++] = new TD(buildDoubleHeaderTitle ("Franquia", "Aplicada"));
+		//styleCenteredCell(cells[currColl-1], false, true);
+		ReportBuilder.styleCell(cells[currColl-1], false, true);
+
+		/*cells[currColl++] = ReportBuilder.buildCell("Indemnização Paga a Segurado",
 				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[5], false, true);
+		styleCenteredCell(cells[currColl-1], false, true);*/
+		cells[currColl++] = new TD(buildDoubleHeaderTitle ("Indemnização Paga", "a Segurado"));
+		styleCenteredCell(cells[currColl-1], false, true);
+		
+		if (showThirdParties) {
+			/*cells[currColl++] = ReportBuilder.buildCell("Indemnização Paga",
+					TypeDefGUIDs.T_String);
+			styleCenteredCell(cells[currColl-1], false, true);*/
+			cells[currColl++] = new TD(buildDoubleHeaderTitle ("Indemnização Paga", "a Terceiros"));
+			styleCenteredCell(cells[currColl-1], false, true);
+		}
 
-		cells[6] = ReportBuilder.buildCell("Indemnização",
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[6], false, true);
+		cells[currColl++] = ReportBuilder.buildCell("Notas", TypeDefGUIDs.T_String);
+		styleCenteredCell(cells[currColl-1], false, true);
 
-		cells[7] = ReportBuilder.buildCell("Notas", TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[7], false, true);
-
-		cells[8] = ReportBuilder.buildCell("Estado", TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[8], false, true);
+		cells[currColl++] = ReportBuilder.buildCell("Estado", TypeDefGUIDs.T_String);
+		styleCenteredCell(cells[currColl-1], false, true);
 
 		setCellWidths(cells);
 
 		return cells;
+	}
+	
+	/**
+	 * Builds a dual-row table to use in the table header, for longer column names
+	 */
+	public Table buildDoubleHeaderTitle (String lineOne, String lineTwo) {
+		
+		Table table;
+		TR[] tableRows = new TR[2];
+		TD[] tdOne = new TD[1];
+		TD[] tdTwo = new TD[1];
+		
+		tdOne[0] = ReportBuilder.buildCell(lineOne, TypeDefGUIDs.T_String);
+		//ReportBuilder.styleCell(tdOne[0], false, false);
+		styleCenteredCell(tdOne[0], false, false);
+		
+		tdTwo[0] = ReportBuilder.buildCell(lineTwo, TypeDefGUIDs.T_String);
+		//ReportBuilder.styleCell(tdTwo[0], false, false);
+		styleCenteredCell(tdTwo[0], false, false);
+		
+		tableRows[0] = ReportBuilder.buildRow(tdOne);
+		tableRows[0].setStyle("font-weight:bold;");
+		tableRows[1] = ReportBuilder.buildRow(tdTwo);
+		tableRows[1].setStyle("font-weight:bold;");
+		
+		table = ReportBuilder.buildTable(tableRows);
+		return table;
 	}
 
 	/**
 	 * This method sets the cells' width
 	 */
 	private void setCellWidths(TD[] cells) {
-		cells[0].setWidth(DATE_WIDTH);
-		cells[1].setWidth(OBJECT_WIDTH);
-		cells[2].setWidth(EGS_PROCESS_WIDTH);
-		cells[3].setWidth(COMPANY_PROCESS_WIDTH);
-		cells[4].setWidth(CASUALTY_DESCRIPTION_WIDTH);
-		cells[5].setWidth(DEDUCTIBLE_WIDTH);
-		cells[6].setWidth(SETTLEMENT_WIDTH);
-		cells[7].setWidth(SUBCASUALTY_NOTES_WIDTH);
-		cells[8].setWidth(IS_CLOSED_WIDTH);
+		
+		int currColl = 0;
+		cells[currColl++].setWidth(DATE_WIDTH);
+		cells[currColl++].setWidth(OBJECT_WIDTH);
+		cells[currColl++].setWidth(EGS_PROCESS_WIDTH);
+		cells[currColl++].setWidth(COMPANY_PROCESS_WIDTH);
+		cells[currColl++].setWidth(CASUALTY_DESCRIPTION_WIDTH);
+		cells[currColl++].setWidth(DEDUCTIBLE_WIDTH);
+		if(showThirdParties) {
+			cells[currColl++].setWidth(SETTLEMENT_WIDTH);
+			cells[currColl++].setWidth(THIRD_SETTLEMENT_WIDTH);
+		} else {
+			cells[currColl++].setWidth(SUM_SETTLEMENT_WIDTH);
+		}
+		cells[currColl++].setWidth(SUBCASUALTY_NOTES_WIDTH);
+		cells[currColl++].setWidth(IS_CLOSED_WIDTH);
 	}
 
 	/**
@@ -1044,7 +1157,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		titleStrong.setStyle("font-size: 15px;");
 		title.addElement(titleStrong);
-		title.setAlign(AlignType.middle);
+		title.setAlign(AlignType.center);
 		title.setStyle("padding-top:30px;");
 		cells[1] = title;
 
@@ -1272,6 +1385,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			throws BigBangJewelException {
 
 		StringBuilder subCasualtyQuery;
+		
+		boolean showOpenPreviously = false;
 
 		// Sub-casualty, Casualty and Logs' entities
 		IEntity subCasualtyEntity;
@@ -1284,6 +1399,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
 			casualtyEntity = Entity.GetInstance(Engine.FindEntity(
 					Engine.getCurrentNameSpace(), Constants.ObjID_Casualty));
+			
+			// Tests if it is supposed to show the values paid to third parties
+			if ((reportParams[4] != null) && reportParams[3].equals("1")) {
+				showOpenPreviously = true;
+			}
 
 			// The query "part" responsible for getting the sub-casualties for
 			// the casualties belonging to a client
