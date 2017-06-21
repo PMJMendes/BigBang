@@ -42,6 +42,11 @@ public class SubCasualtyFramingData implements DataBridge {
 	public String expertEvaluationNotes;
 	public String coverageNotes;
 	
+	public boolean wasCasualtyDeclined;
+	public String declinedCasualtyNotes;
+	public boolean wasDeclineWarned;
+	public String declinedWarningNotes;
+	
 	public UUID subCasualtyId;
 	
 	public SubCasualtyFramingEntitiesData[] framingEntities;
@@ -75,6 +80,10 @@ public class SubCasualtyFramingData implements DataBridge {
 		expertEvaluationNotes = (String) source.getAt(SubCasualtyFraming.I.EXPERTEVALUATIONNOTES);		
 		subCasualtyId = (UUID) source.getAt(SubCasualtyFraming.I.SUBCASUALTY);
 		coverageNotes = (String) source.getAt(SubCasualtyFraming.I.COVERAGENOTES);	
+		wasCasualtyDeclined = (Boolean) source.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY);
+		declinedCasualtyNotes = (String) source.getAt(SubCasualtyFraming.I.DECLINEDCASUALTYNOTES);
+		wasDeclineWarned = (Boolean) source.getAt(SubCasualtyFraming.I.DECLINEDWARNING);
+		declinedWarningNotes = (String) source.getAt(SubCasualtyFraming.I.DECLINEDWARNINGNOTES);
 	}
 
 	public void ToObject(ObjectBase dest) throws BigBangJewelException {
@@ -99,6 +108,10 @@ public class SubCasualtyFramingData implements DataBridge {
 			dest.setAt(SubCasualtyFraming.I.EXPERTEVALUATIONNOTES, expertEvaluationNotes);
 			dest.setAt(SubCasualtyFraming.I.COVERAGENOTES, coverageNotes);
 			dest.setAt(SubCasualtyFraming.I.SUBCASUALTY, subCasualtyId);
+			dest.setAt(SubCasualtyFraming.I.DECLINEDCASUALTY, wasCasualtyDeclined);
+			dest.setAt(SubCasualtyFraming.I.DECLINEDCASUALTYNOTES, declinedCasualtyNotes);
+			dest.setAt(SubCasualtyFraming.I.DECLINEDWARNING, wasDeclineWarned);
+			dest.setAt(SubCasualtyFraming.I.DECLINEDWARNINGNOTES, declinedWarningNotes);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -220,6 +233,34 @@ public class SubCasualtyFramingData implements DataBridge {
 			pstrBuilder.append(franchiseNotes);
 		}
 		pstrBuilder.append(pstrLineBreak);	
+		
+		pstrBuilder.append(pstrLineBreak);
+		if (wasCasualtyDeclined) {
+			pstrBuilder.append("Sinistro declinado no encerramento do processo");
+		} else {
+			pstrBuilder.append("Sinistro não declinado no encerramento do processo");
+		}
+		
+		pstrBuilder.append(pstrLineBreak);
+		if (declinedCasualtyNotes != null) {
+			pstrBuilder.append("Notas sobre motivos para processo ser declinado: ");
+			pstrBuilder.append(declinedCasualtyNotes);
+		}
+		pstrBuilder.append(pstrLineBreak);		
+		
+		pstrBuilder.append(pstrLineBreak);
+		if (wasDeclineWarned) {
+			pstrBuilder.append("Cliente avisado sobre possibilidade de processo ser declinado");
+		} else {
+			pstrBuilder.append("Cliente não avisado sobre possibilidade de processo ser declinado");
+		}
+		
+		pstrBuilder.append(pstrLineBreak);
+		if (declinedWarningNotes != null) {
+			pstrBuilder.append("Notas sobre não ter sido percepcionada a possibilidade de processo ser declinado: ");
+			pstrBuilder.append(declinedWarningNotes);
+		}
+		pstrBuilder.append(pstrLineBreak);		
 		
 		pstrBuilder.append(pstrLineBreak);		
 		pstrBuilder.append("Avaliação segurador: ");

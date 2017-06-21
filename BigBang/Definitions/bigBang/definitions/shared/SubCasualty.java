@@ -102,6 +102,12 @@ public class SubCasualty extends SubCasualtyStub {
 											// grade for the expert
 		public String expertEvaluationNotes; // notes on the expert evaluation
 		public String coverageNotes; // notes about the coverage value
+		
+		public boolean declinedCasualty; // Indicator of whether the casualty was declined
+		public String declinedCasualtyNotes; // Notes about the fact that the casualty was declined
+		
+		public boolean declinedWarning; // Indicator of whether the client was warned by Crédite-EGS that the casualty cound be declined
+		public String declinedWarningNotes; // Why there was not the perception there could be a decline
 
 		public SubCasualtyFramingEntity[] framingEntities; // The array with adicional
 													// entities related with

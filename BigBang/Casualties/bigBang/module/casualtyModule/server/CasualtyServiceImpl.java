@@ -456,6 +456,10 @@ public class CasualtyServiceImpl
 				UUID.fromString(subCasualty.framing.expertEvaluationId));
 			lopCSC.mobjData.framing.expertEvaluationNotes = subCasualty.framing.expertEvaluationNotes;
 			lopCSC.mobjData.framing.coverageNotes = subCasualty.framing.coverageNotes;
+			lopCSC.mobjData.framing.wasCasualtyDeclined = subCasualty.framing.declinedCasualty;
+			lopCSC.mobjData.framing.declinedCasualtyNotes = subCasualty.framing.declinedCasualtyNotes;
+			lopCSC.mobjData.framing.wasDeclineWarned = subCasualty.framing.declinedWarning;
+			lopCSC.mobjData.framing.declinedWarningNotes = subCasualty.framing.declinedWarningNotes;
 			
 			if (subCasualty.framing.headings != null) {
 				
