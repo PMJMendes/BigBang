@@ -274,12 +274,12 @@ public class MarkForClosing
 					
 					if (framing.getAt(SubCasualtyFraming.I.DECLINEDWARNING) == null) {
 						isWrong = true;
-						errors = errors + "Deve indicar-se se Crédite-EGS avisou utilizador sobre possibilidade de processo ser declinado. ";
+						errors = errors + "Deve indicar-se se a Crédite-EGS avisou utilizador sobre possibilidade de processo ser declinado. ";
 					} else {
 						if ((Boolean)framing.getAt(SubCasualtyFraming.I.DECLINEDWARNING) == false) {
 							if (framing.getAt(SubCasualtyFraming.I.DECLINEDWARNINGNOTES) == null) {
 								isWrong = true;
-								errors = errors + "Deve indicar-se porque Crédite-EGS não conseguiu prever motivos para processo ser declinado. ";
+								errors = errors + "Deve indicar-se porque a Crédite-EGS não conseguiu prever motivos para processo ser declinado. ";
 							}
 						}
 					}	
