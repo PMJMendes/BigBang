@@ -262,6 +262,30 @@ public class MarkForClosing
 				errors = errors + "Deve definir-se uma avaliação para o perito. ";
 			}
 			
+			if (framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY) == null) {
+				isWrong = true;
+				errors = errors + "Deve indicar-se se processo foi declinado. ";
+			} else {
+				if ((Boolean)framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY) == true) {
+					if (framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTYNOTES) == null) {
+						isWrong = true;
+						errors = errors + "Se processo foi declinado, deve indicar-se o porquê. ";
+					}
+					
+					if (framing.getAt(SubCasualtyFraming.I.DECLINEDWARNING) == null) {
+						isWrong = true;
+						errors = errors + "Deve indicar-se se a Crédite-EGS avisou utilizador sobre possibilidade de processo ser declinado. ";
+					} else {
+						if ((Boolean)framing.getAt(SubCasualtyFraming.I.DECLINEDWARNING) == false) {
+							if (framing.getAt(SubCasualtyFraming.I.DECLINEDWARNINGNOTES) == null) {
+								isWrong = true;
+								errors = errors + "Deve indicar-se porque a Crédite-EGS não conseguiu prever motivos para processo ser declinado. ";
+							}
+						}
+					}	
+				}
+			}
+			
 			// And now for the framing entities
 			try {
 				for (SubCasualtyFramingEntity entity : framing.GetCurrentFramingEntities()) {

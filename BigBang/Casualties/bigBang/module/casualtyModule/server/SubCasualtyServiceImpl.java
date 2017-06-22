@@ -251,6 +251,10 @@ public class SubCasualtyServiceImpl
 				((UUID)framing.getAt(SubCasualtyFraming.I.EXPERTEVALUATION)).toString());
 			lobjResult.framing.expertEvaluationNotes = (String)framing.getAt(SubCasualtyFraming.I.EXPERTEVALUATIONNOTES);
 			lobjResult.framing.coverageNotes = (String)framing.getAt(SubCasualtyFraming.I.COVERAGENOTES);
+			lobjResult.framing.declinedCasualty = (Boolean)framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY);
+			lobjResult.framing.declinedCasualtyNotes = (String)framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTYNOTES);
+			lobjResult.framing.declinedWarning = (Boolean)framing.getAt(SubCasualtyFraming.I.DECLINEDWARNING);
+			lobjResult.framing.declinedWarningNotes = (String)framing.getAt(SubCasualtyFraming.I.DECLINEDWARNINGNOTES);
 			
 			if (framingEntities != null) {
 				lobjResult.framing.framingEntities = new SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity[framingEntities.length];
@@ -436,6 +440,11 @@ public class SubCasualtyServiceImpl
 				UUID.fromString(subCasualty.framing.expertEvaluationId));
 			lopMD.mobjData.framing.expertEvaluationNotes = subCasualty.framing.expertEvaluationNotes;
 			lopMD.mobjData.framing.coverageNotes = subCasualty.framing.coverageNotes;
+			
+			lopMD.mobjData.framing.wasCasualtyDeclined = subCasualty.framing.declinedCasualty;
+			lopMD.mobjData.framing.declinedCasualtyNotes = subCasualty.framing.declinedCasualtyNotes;
+			lopMD.mobjData.framing.wasDeclineWarned = subCasualty.framing.declinedWarning;
+			lopMD.mobjData.framing.declinedWarningNotes = subCasualty.framing.declinedWarningNotes;
 			
 			lopMD.mobjData.framing.isNew = ( !subCasualty.framing.deleted && (subCasualty.framing.id == null) );
 			lopMD.mobjData.framing.isDeleted = subCasualty.framing.deleted;	

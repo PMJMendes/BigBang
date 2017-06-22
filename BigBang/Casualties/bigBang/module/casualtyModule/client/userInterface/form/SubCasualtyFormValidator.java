@@ -187,6 +187,8 @@ public class SubCasualtyFormValidator extends FormValidator<SubCasualtyForm> {
 		valid &= validateGuid(section.expertEvaluation, true);
 		valid &= validateString(section.expertEvaluationNotes, 0, 250, true);
 		valid &= validateString(section.coverageNotes, 0, 250, true);
+		valid &= validateString(section.declinedCasualtyNotes, 0, 250, true);
+		valid &= validateString(section.declinedWarningNotes, 0, 250, true);
 		valid &= validateHeadingFields(section);
 
 		for(SubCasualtyFramingEntitySection entitySection : form.aditionalEntitiesSection){

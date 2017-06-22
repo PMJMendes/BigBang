@@ -58,6 +58,10 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 	protected ExpandableListBoxFormField expertEvaluation;
 	protected TextAreaFormField expertEvaluationNotes;
 	protected TextAreaFormField coverageNotes;
+	protected RadioButtonFormField declinedCasualty;
+	protected TextAreaFormField declinedCasualtyNotes;
+	protected RadioButtonFormField declinedWarning;
+	protected TextAreaFormField declinedWarningNotes;
 	
 	public SubCasualtyFramingSection(String title) {
 		
@@ -135,6 +139,24 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		franchiseNotes.setFieldWidth("650px");
 		franchiseNotes.setFieldHeight("50px");
 		
+		declinedCasualty = new RadioButtonFormField(false);
+		declinedCasualty.setLabelText("Sinistro Declinado no encerramento do processo?");
+		declinedCasualty.addOption("true", "Sim");
+		declinedCasualty.addOption("false", "Não");
+		
+		declinedCasualtyNotes = new TextAreaFormField("Se Sim, porquê?");
+		declinedCasualtyNotes.setFieldWidth("650px");
+		declinedCasualtyNotes.setFieldHeight("50px");
+		
+		declinedWarning = new RadioButtonFormField(false);
+		declinedWarning.setLabelText("Credite-EGS avisou sobre a possibilidade de processo ser declinado?");
+		declinedWarning.addOption("true", "Sim");
+		declinedWarning.addOption("false", "Não");
+		
+		declinedWarningNotes = new TextAreaFormField("Se Não, porquê?");
+		declinedWarningNotes.setFieldWidth("650px");
+		declinedWarningNotes.setFieldHeight("50px");
+		
 		insurerEvaluation = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.EVALUATION_TIPIFICATION, "Avaliação Segurador");
 		insurerEvaluation.allowEdition(false);
 		insurerEvaluationNotes = new TextAreaFormField("Observações.");
@@ -190,6 +212,16 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 		
 		addLineBreak();
 		
+		addFormField(declinedCasualty, true);		
+		addFormField(declinedCasualtyNotes, true);
+		
+		addLineBreak();
+		
+		addFormField(declinedWarning, true);		
+		addFormField(declinedWarningNotes, true);
+		
+		addLineBreak();
+		
 		addFormField(insurerEvaluation, true);
 		addFormField(insurerEvaluationNotes, true);
 		
@@ -221,6 +253,10 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			franchise.setValue(framing.franchise);
 			deductibleType.setValue(framing.deductibleTypeId);
 			franchiseNotes.setValue(framing.franchiseNotes);
+			declinedCasualty.setValue(framing.id==null ? null : framing.declinedCasualty?"true":"false");
+			declinedCasualtyNotes.setValue(framing.declinedCasualtyNotes);
+			declinedWarning.setValue(framing.id==null ? null : framing.declinedWarning?"true":"false");
+			declinedWarningNotes.setValue(framing.declinedWarningNotes);
 			insurerEvaluation.setValue(framing.insurerEvaluationId);
 			insurerEvaluationNotes.setValue(framing.insurerEvaluationNotes);
 			expertEvaluation.setValue(framing.expertEvaluationId);
@@ -270,6 +306,14 @@ public class SubCasualtyFramingSection extends CollapsibleFormViewSection {
 			result.franchise = franchise.getValue();
 			result.deductibleTypeId = deductibleType.getValue();
 			result.franchiseNotes = franchiseNotes.getValue();
+			if(declinedCasualty.getValue() != null){
+				result.declinedCasualty = "true".equalsIgnoreCase(declinedCasualty.getValue());
+			}
+			result.declinedCasualtyNotes = declinedCasualtyNotes.getValue(); 
+			if(declinedWarning.getValue() != null){
+				result.declinedWarning = "true".equalsIgnoreCase(declinedWarning.getValue());
+			}
+			result.declinedWarningNotes = declinedWarningNotes.getValue(); 
 			result.insurerEvaluationId = insurerEvaluation.getValue();
 			result.insurerEvaluationNotes = insurerEvaluationNotes.getValue(); 
 			result.expertEvaluationId = expertEvaluation.getValue();
