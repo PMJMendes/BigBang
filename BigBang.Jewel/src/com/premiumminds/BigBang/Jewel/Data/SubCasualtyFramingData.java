@@ -80,9 +80,9 @@ public class SubCasualtyFramingData implements DataBridge {
 		expertEvaluationNotes = (String) source.getAt(SubCasualtyFraming.I.EXPERTEVALUATIONNOTES);		
 		subCasualtyId = (UUID) source.getAt(SubCasualtyFraming.I.SUBCASUALTY);
 		coverageNotes = (String) source.getAt(SubCasualtyFraming.I.COVERAGENOTES);	
-		wasCasualtyDeclined = (Boolean) source.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY);
+		wasCasualtyDeclined = (Boolean) (source.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY)==null ? new Boolean(false) : source.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY));
 		declinedCasualtyNotes = (String) source.getAt(SubCasualtyFraming.I.DECLINEDCASUALTYNOTES);
-		wasDeclineWarned = (Boolean) source.getAt(SubCasualtyFraming.I.DECLINEDWARNING);
+		wasDeclineWarned = (Boolean) (source.getAt(SubCasualtyFraming.I.DECLINEDWARNING)==null ?  new Boolean(false) : source.getAt(SubCasualtyFraming.I.DECLINEDWARNING));
 		declinedWarningNotes = (String) source.getAt(SubCasualtyFraming.I.DECLINEDWARNINGNOTES);
 	}
 
