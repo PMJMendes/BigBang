@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.ecs.AlignType;
 import org.apache.ecs.GenericElement;
@@ -562,6 +563,13 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	 */
 	public GenericElement[] doReport(String[] reportParams)
 			throws BigBangJewelException {
+		
+		boolean showOpenPreviously = false;
+		
+		// Tests if it is supposed to show the values paid to third parties
+		if ((reportParams[4] != null) && reportParams[4].equals("1")) {
+			showOpenPreviously = true;
+		}
 
 		HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap;
 
@@ -570,6 +578,9 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		// The client's closed sub-casualties
 		ArrayList<UUID> closedSubCasualties;
+		
+		// The client's (past) sub-casualties still open, when a lower cut-date is defined, but it is suppose to show previous non-closed casualties 
+		SubCasualty[] previousSubCasualties;
 
 		// Tests if there was a selected client to whom the report should be
 		// created
@@ -589,6 +600,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		// Gets the client's closed sub-casualties identifiers
 		closedSubCasualties = getClosedSubCasualties(reportParams);
+		
+		// If it is the case... gets the previous open sub-casualties
+		if (showOpenPreviously && reportParams[1] != null) {
+			previousSubCasualties = getPreviousSubCasualties(reportParams);
+			subCasualties = ArrayUtils.addAll(previousSubCasualties, subCasualties);
+		}
 
 		// Creates an hashmap with the sub-casualties grouped by "Ramo"
 		subCasualtiesMap = new HashMap<String, ArrayList<SubCasualtyData>>();
@@ -1243,7 +1260,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		}
 
 		// The query to fetch the client's sub-casualty
-		subCasualtyQuery = getSubCasualtyQuery(reportParams);
+		subCasualtyQuery = getSubCasualtyQuery(reportParams, false);
 
 		// Gets the MasterDB
 		try {
@@ -1316,7 +1333,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		}
 
 		// The query to fetch the client's sub-casualty
-		subCasualtyQuery = getSubCasualtyQuery(reportParams);
+		subCasualtyQuery = getSubCasualtyQuery(reportParams, false);
 
 		// Adds the query part responsible for getting the closed processes
 		try {
@@ -1377,16 +1394,110 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		return closedSubCasualties;
 	}
+	
+	/**
+	 * This method gets The client's (past) sub-casualties still open, when a
+	 * lower cut-date is defined, but it is suppose to show previous non-closed
+	 * casualties. It is in a different method because it was a request
+	 * posterior to the report development, and to be hones... didn't want to
+	 * change what is already working for something I'm not sure will be used
+	 * that often
+	 */
+	private SubCasualty[] getPreviousSubCasualties(String[] reportParams)
+			throws BigBangJewelException {
+
+		StringBuilder subCasualtyQuery;
+		IEntity logsEntity;
+
+		MasterDB database;
+		ResultSet fetchedSubCasualties;
+
+		ArrayList<SubCasualty> previousSubCasualties;
+
+		if (Utils.getCurrentAgent() != null) {
+			return null;
+		}
+
+		// Gets the logs' entity
+		try {
+			logsEntity = Entity.GetInstance(Engine.FindEntity(
+					Engine.getCurrentNameSpace(),
+					Jewel.Petri.Constants.ObjID_PNLog));
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		// The query to fetch the client's sub-casualty
+		subCasualtyQuery = getSubCasualtyQuery(reportParams, true);
+
+		// Adds the query part responsible for getting the closed processes
+		try {
+			subCasualtyQuery
+					.append(" AND [Process] NOT IN (SELECT [Process] FROM (")
+					.append(logsEntity.SQLForSelectByMembers(new int[] {
+							Jewel.Petri.Constants.FKOperation_In_Log,
+							Jewel.Petri.Constants.Undone_In_Log },
+							new java.lang.Object[] {
+									Constants.OPID_SubCasualty_CloseProcess,
+									false }, null))
+					.append(") [AuxLogs] WHERE 1=1");
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		subCasualtyQuery.append(")");
+
+		// Gets the MasterDB
+		try {
+			database = new MasterDB();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		// Fetches the sub-casualties
+		try {
+			fetchedSubCasualties = database.OpenRecordset(subCasualtyQuery
+					.toString());
+		} catch (Throwable e) {
+			try {
+				database.Disconnect();
+			} catch (SQLException e1) {
+			}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		previousSubCasualties = new ArrayList<SubCasualty>();
+
+		// Adds the sub-casualties to an arraylist
+		try {
+			while (fetchedSubCasualties.next()) {
+				SubCasualty subCasualtyTemp = SubCasualty.GetInstance(
+						Engine.getCurrentNameSpace(), fetchedSubCasualties);
+				previousSubCasualties.add(subCasualtyTemp);
+			}
+		} catch (Throwable e) {
+			try {
+				fetchedSubCasualties.close();
+			} catch (SQLException e1) {
+			}
+			try {
+				database.Disconnect();
+			} catch (SQLException e1) {
+			}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return previousSubCasualties.toArray(new SubCasualty[previousSubCasualties
+			                                 				.size()]);
+	}
 
 	/**
 	 * This method gets the query used to get all sub-casualties
 	 */
-	protected StringBuilder getSubCasualtyQuery(String[] reportParams)
+	protected StringBuilder getSubCasualtyQuery(String[] reportParams, boolean reverseDates)
 			throws BigBangJewelException {
 
 		StringBuilder subCasualtyQuery;
-		
-		boolean showOpenPreviously = false;
 
 		// Sub-casualty, Casualty and Logs' entities
 		IEntity subCasualtyEntity;
@@ -1399,11 +1510,6 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 					Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
 			casualtyEntity = Entity.GetInstance(Engine.FindEntity(
 					Engine.getCurrentNameSpace(), Constants.ObjID_Casualty));
-			
-			// Tests if it is supposed to show the values paid to third parties
-			if ((reportParams[4] != null) && reportParams[3].equals("1")) {
-				showOpenPreviously = true;
-			}
 
 			// The query "part" responsible for getting the sub-casualties for
 			// the casualties belonging to a client
@@ -1418,14 +1524,21 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		// Appends the Casualty filter by date
-		if (reportParams[1] != null) {
-			subCasualtyQuery.append(" AND [Date] >= '").append(reportParams[1])
-					.append("'");
-		}
-		if (reportParams[2] != null) {
-			subCasualtyQuery.append(" AND [Date] < DATEADD(d, 1, '")
-					.append(reportParams[2]).append("')");
+		if (reverseDates == false) {
+			// Appends the Casualty filter by date
+			if (reportParams[1] != null) {
+				subCasualtyQuery.append(" AND [Date] >= '").append(reportParams[1])
+						.append("'");
+			}
+			if (reportParams[2] != null) {
+				subCasualtyQuery.append(" AND [Date] < DATEADD(d, 1, '")
+						.append(reportParams[2]).append("')");
+			}
+		} else {
+			if (reportParams[1] != null) {
+				subCasualtyQuery.append(" AND [Date] < '").append(reportParams[1])
+						.append("'");
+			}
 		}
 
 		subCasualtyQuery.append(")");
