@@ -1536,8 +1536,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			}
 		} else {
 			if (reportParams[1] != null) {
-				subCasualtyQuery.append(" AND [Date] < DATEADD(d, -1, '").append(reportParams[1])
-						.append("')");
+				subCasualtyQuery.append(" AND [Date] < '").append(reportParams[1])
+						.append("'");
 			}
 		}
 
