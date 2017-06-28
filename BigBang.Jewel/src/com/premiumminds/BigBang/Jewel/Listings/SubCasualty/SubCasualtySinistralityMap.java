@@ -1312,7 +1312,6 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			throws BigBangJewelException {
 
 		StringBuilder subCasualtyQuery;
-		IEntity logsEntity;
 
 		MasterDB database;
 		ResultSet fetchedSubCasualties;
@@ -1323,35 +1322,28 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			return null;
 		}
 
-		// Gets the logs' entity
-		try {
-			logsEntity = Entity.GetInstance(Engine.FindEntity(
-					Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNLog));
-		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
 		// The query to fetch the client's sub-casualty
 		subCasualtyQuery = getSubCasualtyQuery(reportParams, false);
 
 		// Adds the query part responsible for getting the closed processes
 		try {
 			subCasualtyQuery
-					.append(" AND [Process] IN (SELECT [Process] FROM (")
-					.append(logsEntity.SQLForSelectByMembers(new int[] {
-							Jewel.Petri.Constants.FKOperation_In_Log,
-							Jewel.Petri.Constants.Undone_In_Log },
-							new java.lang.Object[] {
-									Constants.OPID_SubCasualty_CloseProcess,
-									false }, null))
-					.append(") [AuxLogs] WHERE 1=1");
+					.append(" AND [Process] IN ( select FKProcess from (" + 
+							" select * FROM (" + 
+								" SELECT *," + 
+									"ROW_NUMBER() OVER (PARTITION BY FKPROCESS ORDER BY _TSCREATE DESC) AS rn" + 
+								" FROM credite_egs.tblPNLogs " + 
+								" where FKOperation in ('" + Constants.OPID_SubCasualty_CloseProcess +
+								"', '" + Constants.OPID_SubCasualty_ExternReopenProcess +"')" +
+							  ") last_op where rn = 1 "+
+							") final_op "+ 
+							"where FKOperation = '" + Constants.OPID_SubCasualty_CloseProcess + "'");
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		subCasualtyQuery.append(")");
-
+				
 		// Gets the MasterDB
 		try {
 			database = new MasterDB();
