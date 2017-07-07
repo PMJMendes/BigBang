@@ -24,6 +24,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
@@ -88,6 +89,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private int declinedCasualties = 0; // number of declined Casualties
 	private int warnedDeclinedCasualties = 0; // number of declined Casualties that were warned by Credite-EGS
 	private String paramClientUUID = NO_VALUE;
+	private String paramClientName= NO_VALUE;
 	private String paramStartDate = NO_VALUE;
 	private String paramEndDate = NO_VALUE;
 	
@@ -633,7 +635,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				if (!paramClientUUID.equals(NO_VALUE)) {
 					subCasualtyQuery.append(casualtyEntity.SQLForSelectByMembers(
 									new int[] { Casualty.I.CLIENT },
-									new java.lang.Object[] { reportParams[0] }, null));
+									new java.lang.Object[] { paramClientUUID }, null));
 				} else {
 					subCasualtyQuery.append(casualtyEntity.SQLForSelectAll());
 				}
@@ -644,13 +646,13 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 		
 		// Appends the Casualty filter by date
-		if (reportParams[1] != null) {
-			subCasualtyQuery.append(" AND [Date] >= '").append(reportParams[1])
+		if (!paramStartDate.equals(NO_VALUE)) {
+			subCasualtyQuery.append(" AND [Date] >= '").append(paramStartDate)
 					.append("'");
 		}
-		if (reportParams[2] != null) {
+		if (!paramEndDate.equals(NO_VALUE)) {
 			subCasualtyQuery.append(" AND [Date] < DATEADD(d, 1, '")
-					.append(reportParams[2]).append("')");
+					.append(paramEndDate).append("')");
 		}
 		
 		subCasualtyQuery.append(")");
@@ -727,6 +729,23 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	 */
 	public GenericElement[] doReport(String[] reportParams)
 			throws BigBangJewelException {
+		
+		// Sets the class variables for the parameters
+		if ((reportParams[0] != null) && !"".equals(reportParams[0])) {
+			paramClientUUID = reportParams[0];
+			Client client = Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(reportParams[0]));
+			paramClientName = (String) client.getAt(Client.I.NAME);;
+		} 		
+		if ((reportParams[1] != null) && !"".equals(reportParams[1])) {
+			paramStartDate = reportParams[1];
+		}		
+		if ((reportParams[2] != null) && !"".equals(reportParams[2])) {
+			paramEndDate = reportParams[1];
+		}
+		
+		// The sub-casualties, to display at the report
+		SubCasualty[] subCasualties = getSubCasualties(reportParams);
 		
 		return null;
 	}
