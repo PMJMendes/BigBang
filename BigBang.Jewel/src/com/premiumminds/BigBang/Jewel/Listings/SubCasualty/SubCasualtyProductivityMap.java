@@ -1,9 +1,36 @@
 package com.premiumminds.BigBang.Jewel.Listings.SubCasualty;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.UUID;
 
+import org.apache.ecs.GenericElement;
+
+import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Petri.Objects.PNLog;
+import Jewel.Petri.Objects.PNProcess;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
+import com.premiumminds.BigBang.Jewel.Objects.Casualty;
+import com.premiumminds.BigBang.Jewel.Objects.Category;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
+import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 /**
  * Class responsible for the creation of the Casualty Productivity Map
@@ -56,10 +83,13 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private int totalProcesses = 0; // number of processes
 	private BigDecimal settlementTotal = BigDecimal.ZERO; // valor total de indemnizações
 	private int settledProcesses = 0; // number of settled processes
-	private BigDecimal claimedValue = BigDecimal.ZERO; // number of claimed values
+	private BigDecimal claimedValueTotal = BigDecimal.ZERO; // number of claimed values
 	private int smallerClaimProcesses = 0; // number of processes with a claimed value inferior to the one paid
 	private int declinedCasualties = 0; // number of declined Casualties
 	private int warnedDeclinedCasualties = 0; // number of declined Casualties that were warned by Credite-EGS
+	private String paramClientUUID = NO_VALUE;
+	private String paramStartDate = NO_VALUE;
+	private String paramEndDate = NO_VALUE;
 	
 	/**
 	 * Inner class which holds the information to display at the map
@@ -188,6 +218,516 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			  
 			  setManagementTime(diffDays);
 		}
-	}
 		
+		/**
+		 * This method sets the report values, giving a sub-casualty
+		 */
+		private void setValues(SubCasualty subCasualty)
+				throws BigBangJewelException {
+			
+			Timestamp startDate = null;
+			Timestamp closingDate;
+			
+			// Sets the closing date, if possible
+			closingDate = Timestamp.valueOf(getClosingDateFomLogs(subCasualty) + " 00:00:00.0");
+			if (closingDate != null) {
+				setClosingDate(closingDate.toString().substring(0, 10));
+			}
+			
+			// Sets the casualty's date, if possible
+			if (subCasualty.GetCasualty().getAt(Casualty.I.DATE) != null) {
+				setCasualtyDate(subCasualty.GetCasualty().getAt(Casualty.I.DATE)
+						.toString().substring(0, 10));
+				startDate = Timestamp.valueOf(getCasualtyDate() + " 00:00:00.0");
+			}
+			
+			// Sets the management Time, if possible
+			if (startDate!=null && closingDate!=null) {
+				setManagementTime(startDate, closingDate);
+			}			
+			
+			// Sets the casualty's manager, if possible
+			if (subCasualty.GetCasualty().GetProcessID() != null) {
+				
+				try {				
+					UUID managerID = PNProcess.GetInstance(Engine.getCurrentNameSpace(), subCasualty.GetCasualty().GetProcessID()).GetManagerID();					
+					if (managerID != null) {
+						String managerName = User.GetInstance(Engine.getCurrentNameSpace(), managerID).getDisplayName();						
+						if (managerName != null) {
+							setManager(managerName);
+						}
+					}				
+				} catch (Throwable e) {
+					throw new BigBangJewelException("Could not get the Casualty's manager " +  e.getMessage(), e);
+				}
+			}
+			
+			// Sets the casualty's client, if possible
+			if (subCasualty.getAbsolutePolicy().GetClient() != null) {
+				setClient(subCasualty.getAbsolutePolicy().GetClient().getLabel());
+			}
+			
+			// Sets the sub-casualty's policy/sub-policy number, if possible
+			if (subCasualty.getAbsolutePolicy().getAt(Policy.I.NUMBER) != null) {
+				setClient(subCasualty.getAbsolutePolicy().getAt(Policy.I.NUMBER).toString());
+			}
+			
+			// Sets the sub-casualty's category, if possible
+			if (subCasualty.getAbsolutePolicy().GetSubLine() != null &&
+				subCasualty.getAbsolutePolicy().GetSubLine().getLine() != null &&
+				subCasualty.getAbsolutePolicy().GetSubLine().getLine().getCategory() != null) {
+
+				String catStr =  subCasualty.getAbsolutePolicy().GetSubLine().getLabel() + "/" +
+						subCasualty.getAbsolutePolicy().GetSubLine().getLine().getLabel() + "/" +
+						subCasualty.getAbsolutePolicy().GetSubLine().getLine().getCategory().getLabel();
+				
+				setCategory(catStr);
+			}
+			
+			// Sets the sub-casualty's company, if possible
+			if (subCasualty.getAbsolutePolicy().GetCompany() != null) {
+				setCompany(subCasualty.getAbsolutePolicy().GetCompany().getLabel());
+			}
+			
+			// Sets the sub-casualty's internal process number, if possible
+			if (subCasualty.getAt(SubCasualty.I.NUMBER) != null) {
+				setCasualtyNumber(subCasualty.getAt(SubCasualty.I.NUMBER)
+						.toString());
+			}
+			
+			// Sets the values which come from the sub-casualty items
+			setItemsValue(subCasualty);
+			
+			// Sets the values which come from the sub-casualty framing
+			setFramingValue(subCasualty);
+		}
+		
+		/**
+		 * This method gets the values coming from the sub-casualty framing, namely
+		 * whether the casualty was refused by the company, and whether that was warned
+		 * by the manager 
+		 */
+		private void setFramingValue(SubCasualty subCasualty) throws BigBangJewelException {
+			
+			if (subCasualty.GetFraming() != null) {
+				
+				SubCasualtyFraming framing = subCasualty.GetFraming();
+				
+				if (framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY) != null) {
+					if(((Boolean)framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY)).booleanValue()) {
+						setDeclinedCasualty(true);
+						declinedCasualties++;
+					}
+				}
+				
+				if (framing.getAt(SubCasualtyFraming.I.DECLINEDWARNING) != null) {
+					if(((Boolean)framing.getAt(SubCasualtyFraming.I.DECLINEDWARNING)).booleanValue()) {
+						setWarnedDeclinedCasualty(true);
+						warnedDeclinedCasualties++;
+					}
+				}
+			}
+		}
+		
+		/**
+		 * This method gets the values coming from the sub-casualty items, namely
+		 * the settlement value, if the process was settled, the damages claimed, 
+		 * and if the claimed value was smaller than the settled value
+		 */
+		private void setItemsValue(SubCasualty subCasualty) throws BigBangJewelException {
+			
+			// Gets the sub-casualty's category
+			Category categoryObj = subCasualty.GetSubLine().getLine().getCategory();
+			
+			// Tries to set the numeric values from the sub-casualty's details
+			if (subCasualty.GetCurrentItems() != null) {
+
+				SubCasualtyItem[] currentItems = subCasualty.GetCurrentItems();
+
+				BigDecimal settlement = BigDecimal.ZERO;
+				BigDecimal damagesClaimed = BigDecimal.ZERO;
+						
+				// needed to identify if there's no value for all, in case a '-' must be outputted, and not a 0
+				boolean allSettlementNull = true;
+				boolean allDamagesNull = true;
+				
+				// The settlement and damages is the sum from all
+				// sub-casualty's items
+				// There is also one total for all sub-casualties
+				// If any of them is undefined, all sums become assigned with
+				// the "NO_VALUE" constant
+				for (int i = 0; i < currentItems.length; i++) {
+					SubCasualtyItem temp = currentItems[i];
+					// Indemnização
+					if (temp.getAt(SubCasualtyItem.I.SETTLEMENT) != null) {
+						settlement = settlement.add((BigDecimal) temp
+								.getAt(SubCasualtyItem.I.SETTLEMENT));
+							allSettlementNull = false;
+					}
+					
+					// Valor reclamado
+					// Indemnização
+					if (temp.getAt(SubCasualtyItem.I.DAMAGES) != null) {
+						damagesClaimed = settlement.add((BigDecimal) temp
+								.getAt(SubCasualtyItem.I.DAMAGES));
+							allDamagesNull = false;
+					}
+				}
+				
+				// If there is no items, the values are null
+				if (currentItems.length == 0) {
+					settlement = null;
+					damagesClaimed = null;
+					setSettledProcess(false);
+				}
+				
+				if (allSettlementNull) {
+					settlement = null;
+					setSettledProcess(false);
+				}
+				if (allDamagesNull) {
+					damagesClaimed = null;
+				}
+				
+				// Special case to work accidents
+				if (categoryObj.getKey()
+						.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+					settlement = getSettlementFromMedicalFiles(subCasualty, settlement);
+				}
+				
+				if (settlement != null) {
+					setSettlementValue(String.format("%,.2f",
+							((BigDecimal) settlement)));
+
+					settlementTotal = settlementTotal.add(settlement);
+					
+					setSettledProcess(true);
+					
+					settledProcesses++;
+				}
+				if (damagesClaimed != null) {
+					setDamagesClaimed(String.format("%,.2f",
+							((BigDecimal) damagesClaimed)));
+					
+					claimedValueTotal = claimedValueTotal.add(damagesClaimed);
+					
+					smallerClaimProcesses++;
+				}
+				
+				if (!allSettlementNull && !allDamagesNull) {
+					if (settlement.compareTo(damagesClaimed) == 1) {
+						setSmallerClaimProcess(true);
+					}
+				}
+			}
+			
+		}
+		
+		/**
+		 * If it is a work-accidents' policy, the settlement is the sum of the
+		 * benefits from the medical details, from the medical files
+		 */
+		private BigDecimal getSettlementFromMedicalFiles(
+				SubCasualty subCasualty, BigDecimal prevValue)
+				throws BigBangJewelException {
+
+			IEntity filesEntity;
+			MasterDB database;
+			ResultSet fetchedFiles;
+			BigDecimal result = prevValue == null ? BigDecimal.ZERO : prevValue;
+			boolean allResultNull = true;
+
+			try {
+				filesEntity = Entity.GetInstance(Engine.FindEntity(
+						Engine.getCurrentNameSpace(),
+						Constants.ObjID_MedicalFile));
+				database = new MasterDB();
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			try {
+				fetchedFiles = filesEntity.SelectByMembers(database,
+						new int[] { MedicalFile.I.SUBCASUALTY },
+						new java.lang.Object[] { subCasualty.getKey() },
+						new int[] { MedicalFile.I.REFERENCE });
+				if (fetchedFiles == null) {
+					if (prevValue == null) {
+						return null;
+					} else {
+						return prevValue;
+					}
+				}
+			} catch (Throwable e) {
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			try {
+				while (fetchedFiles.next()) {
+					for (MedicalDetail tmp : (MedicalFile.GetInstance(
+							Engine.getCurrentNameSpace(), fetchedFiles)
+							.GetCurrentDetails())) {
+						if (tmp.getAt(MedicalDetail.I.BENEFITS) != null) {
+							result = result.add((BigDecimal) tmp
+									.getAt(MedicalDetail.I.BENEFITS));
+							allResultNull = false;
+						}
+					}
+				}
+			} catch (Throwable e) {
+				try {
+					fetchedFiles.close();
+				} catch (SQLException e1) {
+				}
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			try {
+				fetchedFiles.close();
+			} catch (Throwable e) {
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			try {
+				database.Disconnect();
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			if (allResultNull == true && prevValue == null) {
+				return null;
+			}
+			return result;
+		}
+			
+		/**
+		 * This method gets the closing date from a sub-casualty
+		 */
+		private String getClosingDateFomLogs(SubCasualty subCasualty) throws BigBangJewelException {
+			
+			StringBuilder logsQuery;
+			
+			// Logs' entity
+			IEntity logsEntity;
+			
+			MasterDB database;
+			ResultSet fetchedLogs;
+			ArrayList<PNLog> logsList = null;
+			
+			logsQuery = new StringBuilder();
+			
+			try {
+				// Gets the entity to fetch
+				logsEntity = Entity.GetInstance(Engine.FindEntity(
+						Engine.getCurrentNameSpace(), Constants.Process_Log));
+
+				// The query "part" responsible for getting the sub-casualties
+				logsQuery.append(logsEntity.SQLForSelectByMembers(
+						new int[] { 1 /* corresponds to column FKOperation @ credite_egs.tblPNLogs */ },
+						new java.lang.Object[] { subCasualty.GetProcessID() }, null));
+						
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			// Gets the MasterDB
+			try {
+				database = new MasterDB();
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			// Fetches the sub-casualties
+			try {
+				fetchedLogs = database.OpenRecordset(logsQuery
+						.toString());
+			} catch (Throwable e) {
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			// Adds the logs to an arraylist
+			try {
+				while (fetchedLogs.next()) {
+					logsList.add(PNLog.GetInstance(
+							Engine.getCurrentNameSpace(), fetchedLogs));
+				}
+			} catch (Throwable e) {
+				try {
+					fetchedLogs.close();
+				} catch (SQLException e1) {
+				}
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			// sorts the logs
+			Collections.sort(logsList, new Comparator<PNLog>() {
+		        @Override
+		        public int compare(PNLog l1, PNLog l2) {
+
+		            return  l2.GetTimestamp().compareTo(l1.GetTimestamp());
+		        }
+		    });
+			
+			if (logsList.size()>0) {
+				return logsList.get(0).GetTimestamp().toString().substring(0, 10);
+			}
+			
+			return null;
+		}
+	}
+	
+	/**
+	 * This method gets the closed sub-casualties
+	 */
+	protected SubCasualty[] getSubCasualties(String[] reportParams)
+			throws BigBangJewelException {
+
+		StringBuilder subCasualtyQuery;
+		
+		// Sub-casualty, Casualty and Logs' entities
+		IEntity subCasualtyEntity;
+		IEntity casualtyEntity;
+
+		MasterDB database;
+		ResultSet fetchedSubCasualties;
+		ArrayList<SubCasualty> subCasualtiesList;
+
+		if (Utils.getCurrentAgent() != null) {
+			return new SubCasualty[0];
+		}
+		
+		subCasualtyQuery = new StringBuilder();
+		try {
+			// Gets the entity to fetch
+			subCasualtyEntity = Entity.GetInstance(Engine.FindEntity(
+					Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+			casualtyEntity = Entity.GetInstance(Engine.FindEntity(
+					Engine.getCurrentNameSpace(), Constants.ObjID_Casualty));
+
+			// The query "part" responsible for getting the sub-casualties
+			subCasualtyQuery.append("SELECT * FROM ("
+					+ subCasualtyEntity.SQLForSelectAll()
+					+ ") [AuxSubC] WHERE [Casualty] IN (SELECT [PK] FROM (");
+					
+				// If a client was defined in the 
+				if (!paramClientUUID.equals(NO_VALUE)) {
+					subCasualtyQuery.append(casualtyEntity.SQLForSelectByMembers(
+									new int[] { Casualty.I.CLIENT },
+									new java.lang.Object[] { reportParams[0] }, null));
+				} else {
+					subCasualtyQuery.append(casualtyEntity.SQLForSelectAll());
+				}
+			subCasualtyQuery.append(") [AuxCas] WHERE 1=1");
+					
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+		
+		// Appends the Casualty filter by date
+		if (reportParams[1] != null) {
+			subCasualtyQuery.append(" AND [Date] >= '").append(reportParams[1])
+					.append("'");
+		}
+		if (reportParams[2] != null) {
+			subCasualtyQuery.append(" AND [Date] < DATEADD(d, 1, '")
+					.append(reportParams[2]).append("')");
+		}
+		
+		subCasualtyQuery.append(")");
+		
+		// Adds the query part responsible for getting the closed processes
+		try {
+			subCasualtyQuery
+					.append(" AND [Process] IN ( select FKProcess from ("
+							+ " select * FROM ("
+							+ " SELECT *,"
+							+ "ROW_NUMBER() OVER (PARTITION BY FKPROCESS ORDER BY _TSCREATE DESC) AS rn"
+							+ " FROM credite_egs.tblPNLogs "
+							+ " where FKOperation in ('"
+							+ Constants.OPID_SubCasualty_CloseProcess + "', '"
+							+ Constants.OPID_SubCasualty_ExternReopenProcess
+							+ "')" + " and Undone=0) last_op where rn = 1 "
+							+ ") final_op " + "where FKOperation = '"
+							+ Constants.OPID_SubCasualty_CloseProcess + "'");
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+		
+		subCasualtyQuery.append(")");
+		
+		// Gets the MasterDB
+		try {
+			database = new MasterDB();
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		// Fetches the sub-casualties
+		try {
+			fetchedSubCasualties = database.OpenRecordset(subCasualtyQuery
+					.toString());
+		} catch (Throwable e) {
+			try {
+				database.Disconnect();
+			} catch (SQLException e1) {
+			}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+		
+		subCasualtiesList = new ArrayList<SubCasualty>();
+
+		// Adds the sub-casualties to an arraylist
+		try {
+			while (fetchedSubCasualties.next()) {
+				subCasualtiesList.add(SubCasualty.GetInstance(
+						Engine.getCurrentNameSpace(), fetchedSubCasualties));
+			}
+		} catch (Throwable e) {
+			try {
+				fetchedSubCasualties.close();
+			} catch (SQLException e1) {
+			}
+			try {
+				database.Disconnect();
+			} catch (SQLException e1) {
+			}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if (subCasualtiesList.size() > 0) {
+			totalProcesses = subCasualtiesList.size();
+		}
+		
+		return subCasualtiesList.toArray(new SubCasualty[subCasualtiesList
+				.size()]);
+	}	
+	
+	/**
+	 * The method responsible for creating the report
+	 */
+	public GenericElement[] doReport(String[] reportParams)
+			throws BigBangJewelException {
+		
+		return null;
+	}
 }

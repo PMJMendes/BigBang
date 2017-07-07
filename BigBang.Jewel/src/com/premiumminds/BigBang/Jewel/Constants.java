@@ -794,6 +794,9 @@ public class Constants
 	// Transport Channels
 	public static final UUID ChannelID_Accounting = UUID.fromString("6D99EBAF-0DB7-42CD-8856-A172010A38BF");
 	
+	// Logs
+	public static final UUID Process_Log = UUID.fromString("F63454DC-B63C-44EC-9E5E-9E1A01004BDB");
+	
 	// Policy Categories
 	public static class PolicyCategories {
 		public static final UUID WORK_ACCIDENTS   		= UUID.fromString("53DB03E7-F423-4656-A23A-9EE9010A5B87");
