@@ -126,99 +126,117 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		private boolean declinedCasualty;
 		private boolean warnedDeclinedCasualty;
 		
-		public String getClosingDate() {
+		SubCasualtyData() {
+			setClosingDate(NO_VALUE);
+			setCasualtyDate(NO_VALUE);
+			setManagementTime(0);
+			setManager(NO_VALUE);
+			setClient(NO_VALUE);
+			setPolicyNumber(NO_VALUE);
+			setCategory(NO_VALUE);
+			setCompany(NO_VALUE);
+			setCasualtyNumber(NO_VALUE);
+			setSettlementValue(NO_VALUE);
+			setSettledProcess(false);
+			setDamagesClaimed(NO_VALUE);
+			setSmallerClaimProcess(false);
+			setDeclinedCasualty(false);
+			setWarnedDeclinedCasualty(false);
+		}
+		
+		private String getClosingDate() {
 			return closingDate;
 		}
-		public void setClosingDate(String closingDate) {
+		private void setClosingDate(String closingDate) {
 			this.closingDate = closingDate;
 		}
-		public String getCasualtyDate() {
+		private String getCasualtyDate() {
 			return casualtyDate;
 		}
-		public void setCasualtyDate(String casualtyDate) {
+		private void setCasualtyDate(String casualtyDate) {
 			this.casualtyDate = casualtyDate;
 		}
-		public int getManagementTime() {
+		private int getManagementTime() {
 			return managementTime;
 		}
-		public void setManagementTime(int managementTime) {
+		private void setManagementTime(int managementTime) {
 			this.managementTime = managementTime;
 		}
-		public String getManager() {
+		private String getManager() {
 			return manager;
 		}
-		public void setManager(String manager) {
+		private void setManager(String manager) {
 			this.manager = manager;
 		}
-		public String getClient() {
+		private String getClient() {
 			return client;
 		}
-		public void setClient(String client) {
+		private void setClient(String client) {
 			this.client = client;
 		}
-		public String getPolicyNumber() {
+		private String getPolicyNumber() {
 			return policyNumber;
 		}
-		public void setPolicyNumber(String policyNumber) {
+		private void setPolicyNumber(String policyNumber) {
 			this.policyNumber = policyNumber;
 		}
-		public String getCategory() {
+		private String getCategory() {
 			return category;
 		}
-		public void setCategory(String category) {
+		private void setCategory(String category) {
 			this.category = category;
 		}
-		public String getCompany() {
+		private String getCompany() {
 			return company;
 		}
-		public void setCompany(String company) {
+		private void setCompany(String company) {
 			this.company = company;
 		}
-		public String getCasualtyNumber() {
+		private String getCasualtyNumber() {
 			return casualtyNumber;
 		}
-		public void setCasualtyNumber(String casualtyNumber) {
+		private void setCasualtyNumber(String casualtyNumber) {
 			this.casualtyNumber = casualtyNumber;
 		}
-		public String getSettlementValue() {
+		private String getSettlementValue() {
 			return settlementValue;
 		}
-		public void setSettlementValue(String settlementValue) {
+		private void setSettlementValue(String settlementValue) {
 			this.settlementValue = settlementValue;
 		}
-		public boolean isSettledProcess() {
+		private boolean isSettledProcess() {
 			return settledProcess;
 		}
-		public void setSettledProcess(boolean settledProcess) {
+		private void setSettledProcess(boolean settledProcess) {
 			this.settledProcess = settledProcess;
 		}
-		public String getDamagesClaimed() {
+		private String getDamagesClaimed() {
 			return damagesClaimed;
 		}
-		public void setDamagesClaimed(String damagesClaimed) {
+		private void setDamagesClaimed(String damagesClaimed) {
 			this.damagesClaimed = damagesClaimed;
 		}
-		public boolean isSmallerClaimProcess() {
+		private boolean isSmallerClaimProcess() {
 			return smallerClaimProcess;
 		}
-		public void setSmallerClaimProcess(boolean smallerClaimProcess) {
+		private void setSmallerClaimProcess(boolean smallerClaimProcess) {
 			this.smallerClaimProcess = smallerClaimProcess;
 		}
-		public boolean isDeclinedCasualty() {
+		private boolean isDeclinedCasualty() {
 			return declinedCasualty;
 		}
-		public void setDeclinedCasualty(boolean declinedCasualty) {
+		private void setDeclinedCasualty(boolean declinedCasualty) {
 			this.declinedCasualty = declinedCasualty;
 		}
-		public boolean isWarnedDeclinedCasualty() {
+		private boolean isWarnedDeclinedCasualty() {
 			return warnedDeclinedCasualty;
 		}
-		public void setWarnedDeclinedCasualty(boolean warnedDeclinedCasualty) {
+		private void setWarnedDeclinedCasualty(boolean warnedDeclinedCasualty) {
 			this.warnedDeclinedCasualty = warnedDeclinedCasualty;
 		}
 		
 		// This method sets the management time according to the casualty date and closing date
-		public void setManagementTime(Timestamp startDate, Timestamp endDate) {
+		private void setManagementTime(Timestamp startDate, Timestamp endDate) {
 			
 			  long milliseconds1 = startDate.getTime();
 			  long milliseconds2 = endDate.getTime();
@@ -240,10 +258,13 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				throws BigBangJewelException {
 			
 			Timestamp startDate = null;
-			Timestamp closingDate;
+			Timestamp closingDate = null;
 			
 			// Sets the closing date, if possible
-			closingDate = Timestamp.valueOf(getClosingDateFomLogs(subCasualty) + " 00:00:00.0");
+			String closingDateFomLogs = getClosingDateFomLogs(subCasualty);
+			if (closingDateFomLogs!=null) {
+				closingDate = Timestamp.valueOf(closingDateFomLogs + " 00:00:00.0");
+			}
 			if (closingDate != null) {
 				setClosingDate(closingDate.toString().substring(0, 10));
 			}
@@ -538,7 +559,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			
 			MasterDB database;
 			ResultSet fetchedLogs;
-			ArrayList<PNLog> logsList = null;
+			ArrayList<PNLog> logsList = new ArrayList<PNLog>();
 			
 			logsQuery = new StringBuilder();
 			
@@ -547,9 +568,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				logsEntity = Entity.GetInstance(Engine.FindEntity(
 						Engine.getCurrentNameSpace(), Constants.Process_Log));
 
-				// The query "part" responsible for getting the sub-casualties
+				// The query "part" responsible for getting the logs
 				logsQuery.append(logsEntity.SQLForSelectByMembers(
-						new int[] { 1 /* corresponds to column FKOperation @ credite_egs.tblPNLogs */ },
+						new int[] { 0 /* corresponds to column FKOperation @ credite_egs.tblPNLogs */ },
 						new java.lang.Object[] { subCasualty.GetProcessID() }, null));
 						
 			} catch (Throwable e) {
@@ -809,7 +830,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 
 		table = ReportBuilder.buildTable(tableRows);
 		
-		return null;
+		reportResult[0] = table;
+		
+		return reportResult;
 	}
 
 	/**
@@ -879,7 +902,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		styleCenteredCell(cells[curCol++], true, false);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getManagementTime(),
-				TypeDefGUIDs.T_String, false, false);
+				TypeDefGUIDs.T_Integer, false, false);
 		styleCenteredCell(cells[curCol++], true, false);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getManager(),
