@@ -76,21 +76,21 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private static final String NO_STRING = "Não";
 	
 	// Width Constants
-	private static final int WIDTH_COL_01 = 99;
-	private static final int WIDTH_COL_02 = 99;
-	private static final int WIDTH_COL_03 = 99;
-	private static final int WIDTH_COL_04 = 99;
-	private static final int WIDTH_COL_05 = 99;
-	private static final int WIDTH_COL_06 = 99;
-	private static final int WIDTH_COL_07 = 99;
-	private static final int WIDTH_COL_08 = 99;
-	private static final int WIDTH_COL_09 = 99;
-	private static final int WIDTH_COL_10 = 99;
-	private static final int WIDTH_COL_11 = 99;
-	private static final int WIDTH_COL_12 = 99;
-	private static final int WIDTH_COL_13 = 99;
-	private static final int WIDTH_COL_14 = 99;
-	private static final int WIDTH_COL_15 = 99;
+	private static final int WIDTH_COL_01 = 69;
+	private static final int WIDTH_COL_02 = 69;
+	private static final int WIDTH_COL_03 = 69;
+	private static final int WIDTH_COL_04 = 69;
+	private static final int WIDTH_COL_05 = 69;
+	private static final int WIDTH_COL_06 = 69;
+	private static final int WIDTH_COL_07 = 69;
+	private static final int WIDTH_COL_08 = 69;
+	private static final int WIDTH_COL_09 = 69;
+	private static final int WIDTH_COL_10 = 69;
+	private static final int WIDTH_COL_11 = 69;
+	private static final int WIDTH_COL_12 = 69;
+	private static final int WIDTH_COL_13 = 69;
+	private static final int WIDTH_COL_14 = 69;
+	private static final int WIDTH_COL_15 = 69;
 	
 	// Class Variables
 	private int totalProcesses = 0; // number of processes
@@ -825,10 +825,12 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		if (numberOfRows == 3) {
 			TD reportNotes = new TD();
 			reportNotes.addElement(buildReportNotesTable(reportParams));
-			tableRows[3] = ReportBuilder.buildRow(new TD[] { reportNotes });
+			tableRows[2] = ReportBuilder.buildRow(new TD[] { reportNotes });
 		}
 
 		table = ReportBuilder.buildTable(tableRows);
+		ReportBuilder.styleTable(table, false);
+		table.setStyle("width:100%;");	
 		
 		reportResult[0] = table;
 		
