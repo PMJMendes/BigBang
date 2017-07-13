@@ -1168,38 +1168,86 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		TR row;
 		
 		int curCol = 0;
+		
+		String valToInsert = NO_VALUE;
+		float percentFloat;
 
 		cells[curCol] = ReportBuilder.buildHeaderCell(text);
 		cells[curCol++].setColSpan(8);
 		
 		ReportBuilder.styleCell(cells[0], true, false);
 		
-		cells[curCol] = safeBuildCell(totalProcesses,
-				TypeDefGUIDs.T_Integer, false, false);
+		if (!percent) {
+			valToInsert = String.valueOf(totalProcesses);
+		}
+		cells[curCol] = safeBuildCell(valToInsert,
+				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, false);
 		
-		cells[curCol] = safeBuildCell(settlementTotal,
-				TypeDefGUIDs.T_Decimal, false, false);
+		if (!percent) {
+			valToInsert = settlementTotal.toString();
+		} else {
+			valToInsert = NO_VALUE;
+		}
+		cells[curCol] = safeBuildCell(valToInsert,
+				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, false);
 		
-		cells[curCol] = safeBuildCell(settledProcesses,
-				TypeDefGUIDs.T_Integer, false, false);
+		if (!percent) {
+			valToInsert = String.valueOf(settledProcesses);
+		} else {
+			percentFloat = (settledProcesses * 100f) / totalProcesses;
+			BigDecimal bd = new BigDecimal(Float.toString(percentFloat));
+	        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);      
+			valToInsert = bd.toString() + "%";
+		}
+		cells[curCol] = safeBuildCell(valToInsert,
+				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, false);
 		
-		cells[curCol] = safeBuildCell(claimedValueTotal,
-				TypeDefGUIDs.T_Decimal, false, false);
+		if (!percent) {
+			valToInsert = claimedValueTotal.toString();
+		} else {
+			valToInsert = NO_VALUE;
+		}
+		cells[curCol] = safeBuildCell(valToInsert,
+				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, false);
 		
-		cells[curCol] = safeBuildCell(smallerClaimProcesses,
-				TypeDefGUIDs.T_Integer, false, false);
+		if (!percent) {
+			valToInsert = String.valueOf(smallerClaimProcesses);
+		} else {
+			percentFloat = (smallerClaimProcesses * 100f) / totalProcesses;
+			BigDecimal bd = new BigDecimal(Float.toString(percentFloat));
+	        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);      
+			valToInsert = bd.toString() + "%";
+		}
+		cells[curCol] = safeBuildCell(valToInsert,
+				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, false);
 		
-		cells[curCol] = safeBuildCell(declinedCasualties,
-				TypeDefGUIDs.T_Integer, false, false);
+		if (!percent) {
+			valToInsert = String.valueOf(declinedCasualties);
+		} else {
+			percentFloat = (declinedCasualties * 100f) / totalProcesses;
+			BigDecimal bd = new BigDecimal(Float.toString(percentFloat));
+	        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);      
+			valToInsert = bd.toString() + "%";
+		}
+		cells[curCol] = safeBuildCell(valToInsert,
+				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, false);
 		
-		cells[curCol] = safeBuildCell(warnedDeclinedCasualties,
-				TypeDefGUIDs.T_Integer, false, false);
+		if (!percent) {
+			valToInsert = String.valueOf(warnedDeclinedCasualties);
+		} else {
+			percentFloat = (warnedDeclinedCasualties * 100f) / totalProcesses;
+			BigDecimal bd = new BigDecimal(Float.toString(percentFloat));
+	        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);      
+			valToInsert = bd.toString() + "%";
+		}
+		cells[curCol] = safeBuildCell(valToInsert,
+				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, false);
 		
 		row = ReportBuilder.buildRow(cells);
