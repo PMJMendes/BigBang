@@ -112,7 +112,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		
 		private String closingDate;
 		private String casualtyDate;
-		private int managementTime;
+		private String managementTime;
 		private String manager;
 		private String client;
 		private String policyNumber;
@@ -129,7 +129,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		SubCasualtyData() {
 			setClosingDate(NO_VALUE);
 			setCasualtyDate(NO_VALUE);
-			setManagementTime(0);
+			setManagementTime(NO_VALUE);
 			setManager(NO_VALUE);
 			setClient(NO_VALUE);
 			setPolicyNumber(NO_VALUE);
@@ -156,11 +156,11 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		private void setCasualtyDate(String casualtyDate) {
 			this.casualtyDate = casualtyDate;
 		}
-		private int getManagementTime() {
+		private String getManagementTime() {
 			return managementTime;
 		}
-		private void setManagementTime(int managementTime) {
-			this.managementTime = managementTime;
+		private void setManagementTime(String longStr) {
+			this.managementTime = longStr;
 		}
 		private String getManager() {
 			return manager;
@@ -246,9 +246,11 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			  long diffMinutes = diff / (60 * 1000);
 			  long diffHours = diff / (60 * 60 * 1000); 
 			  long diffDays = diff / (24 * 60 * 60 * 1000); */
-			  int diffDays = (int) diff / (24 * 60 * 60 * 1000);
+			  long diffDays = diff / (24 * 60 * 60 * 1000);
 			  
-			  setManagementTime(diffDays);
+			  String longStr = Long.toString(diffDays);
+			  
+			  setManagementTime(longStr);
 		}
 		
 		/**
@@ -304,7 +306,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			
 			// Sets the sub-casualty's policy/sub-policy number, if possible
 			if (subCasualty.getAbsolutePolicy().getAt(Policy.I.NUMBER) != null) {
-				setClient(subCasualty.getAbsolutePolicy().getAt(Policy.I.NUMBER).toString());
+				setPolicyNumber(subCasualty.getAbsolutePolicy().getAt(Policy.I.NUMBER).toString());
 			}
 			
 			// Sets the sub-casualty's category, if possible
@@ -856,10 +858,6 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		mainContent.addElement(buildReportInfo(subcasualtyList));
 		tableRows[rowNum++] = ReportBuilder.buildRow(new TD[] { mainContent });
 
-		// Builds the row with the total number of policies
-		tableRows[rowNum++] = constructSummaryRow("Totais",
-				0, TypeDefGUIDs.T_Integer, true, false, false);
-
 		table = ReportBuilder.buildTable(tableRows);
 		ReportBuilder.styleTable(table, false);
 
@@ -869,7 +867,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private Table buildReportInfo(ArrayList<SubCasualtyData> subcasualtyList) {
 
 		Table table;
-		TR[] tableRows = new TR[subcasualtyList.size() + 1];
+		TR[] tableRows = new TR[subcasualtyList.size() + 3];
 		int rowNum = 0;
 		
 		// Builds the row with the column names
@@ -882,6 +880,10 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 					.buildRow(buildSubCasualtyRow(subCasualty));
 			ReportBuilder.styleRow(tableRows[rowNum++], false);
 		}
+		
+		// Builds the row with the total number of policies
+		tableRows[rowNum++] = constructSummaryRow(LIN_TOTAL, false);
+		tableRows[rowNum++] = constructSummaryRow(LIN_PERCENT, true);
 		
 		table = ReportBuilder.buildTable(tableRows);
 		ReportBuilder.styleTable(table, false);
@@ -904,7 +906,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		styleCenteredCell(cells[curCol++], true, false);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getManagementTime(),
-				TypeDefGUIDs.T_Integer, false, false);
+				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, false);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getManager(),
@@ -1160,26 +1162,46 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	 * method, but without the left line, and allowing to print a "money" value
 	 * formatted properly.
 	 */
-	private TR constructSummaryRow(String text, Object value, UUID typeGUID,
-			boolean topRow, boolean rightAlign, boolean isMoney) {
+	private TR constructSummaryRow(String text, boolean percent) {
 
-		TD[] cells = new TD[2];
+		TD[] cells = new TD[8];
 		TR row;
+		
+		int curCol = 0;
 
-		cells[0] = ReportBuilder.buildHeaderCell(text);
-		cells[0].setWidth("1px");
-		ReportBuilder.styleCell(cells[0], topRow, false);
-		if (!isMoney) {
-			cells[1] = ReportBuilder.buildCell(value, typeGUID);
-			ReportBuilder.styleCell(cells[1], topRow, false);
-			if (rightAlign) {
-				cells[1].setAlign("right");
-			}
-		} else {
-			cells[1] = safeBuildCell(value, TypeDefGUIDs.T_String, true,
-					rightAlign);
-			ReportBuilder.styleCell(cells[1], topRow, false);
-		}
+		cells[curCol] = ReportBuilder.buildHeaderCell(text);
+		cells[curCol++].setColSpan(8);
+		
+		ReportBuilder.styleCell(cells[0], true, false);
+		
+		cells[curCol] = safeBuildCell(totalProcesses,
+				TypeDefGUIDs.T_Integer, false, false);
+		styleCenteredCell(cells[curCol++], true, false);
+		
+		cells[curCol] = safeBuildCell(settlementTotal,
+				TypeDefGUIDs.T_Decimal, false, false);
+		styleCenteredCell(cells[curCol++], true, false);
+		
+		cells[curCol] = safeBuildCell(settledProcesses,
+				TypeDefGUIDs.T_Integer, false, false);
+		styleCenteredCell(cells[curCol++], true, false);
+		
+		cells[curCol] = safeBuildCell(claimedValueTotal,
+				TypeDefGUIDs.T_Decimal, false, false);
+		styleCenteredCell(cells[curCol++], true, false);
+		
+		cells[curCol] = safeBuildCell(smallerClaimProcesses,
+				TypeDefGUIDs.T_Integer, false, false);
+		styleCenteredCell(cells[curCol++], true, false);
+		
+		cells[curCol] = safeBuildCell(declinedCasualties,
+				TypeDefGUIDs.T_Integer, false, false);
+		styleCenteredCell(cells[curCol++], true, false);
+		
+		cells[curCol] = safeBuildCell(warnedDeclinedCasualties,
+				TypeDefGUIDs.T_Integer, false, false);
+		styleCenteredCell(cells[curCol++], true, false);
+		
 		row = ReportBuilder.buildRow(cells);
 		row.setStyle("height:30px;background:#e6e6e6;");
 
