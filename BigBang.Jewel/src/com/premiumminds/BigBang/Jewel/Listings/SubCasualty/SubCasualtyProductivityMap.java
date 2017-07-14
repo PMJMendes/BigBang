@@ -71,7 +71,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private static final String COL_13 = "Processos" + TITLE_SPLIT + "com Valores" + TITLE_SPLIT + "Reclamados" + TITLE_SPLIT + "Inferiores" + TITLE_SPLIT + "ou Iguais" + TITLE_SPLIT + "aos Valores" + TITLE_SPLIT + "Indemnizados" + TITLE_SPLIT + "(N.º)";
 	private static final String COL_14 = "Sinistros" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "(N.º)";
 	private static final String COL_15 = "Sinistros" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "que Foram" + TITLE_SPLIT + "Avisados" + TITLE_SPLIT + "Previamente" + TITLE_SPLIT + "pela Credite-EGS" + TITLE_SPLIT + "que Seriam" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "(N.º)";
-	private static final String LIN_PERCENT = "Percentagem de" + TITLE_SPLIT + "Processos";
+	private static final String LIN_PERCENT = "Percentagem de Processos";
 	private static final String LIN_TOTAL = "Totais";
 	//private static final int COLUMN_BREAK_POINT = 33;
 	private static final String YES_STRING = "Sim";
@@ -905,63 +905,63 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		
 		cells[curCol] = safeBuildCell(subCasualty.getCasualtyDate(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getManagementTime(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getManager(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getClient(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getPolicyNumber(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getCategory(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getCompany(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getCasualtyNumber(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getSettlementValue(),
-				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+				TypeDefGUIDs.T_String, true, true);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		String boolStr = subCasualty.isSettledProcess() ? YES_STRING : NO_STRING;
 		cells[curCol] = safeBuildCell(boolStr,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getDamagesClaimed(),
-				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+				TypeDefGUIDs.T_String, true, true);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		boolStr = subCasualty.isSmallerClaimProcess() ? YES_STRING : NO_STRING;
 		cells[curCol] = safeBuildCell(boolStr,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		boolStr = subCasualty.isDeclinedCasualty() ? YES_STRING : NO_STRING;
 		cells[curCol] = safeBuildCell(boolStr,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		boolStr = subCasualty.isWarnedDeclinedCasualty() ? YES_STRING : NO_STRING;
 		cells[curCol] = safeBuildCell(boolStr,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		return cells;
 	}
@@ -1154,7 +1154,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		if (!percent) {
 			valToInsert = settlementTotal.toString();
@@ -1162,8 +1162,8 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			valToInsert = NO_VALUE;
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
-				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+				TypeDefGUIDs.T_String, !percent, !percent);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		if (!percent) {
 			valToInsert = String.valueOf(settledProcesses);
@@ -1175,7 +1175,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		if (!percent) {
 			valToInsert = claimedValueTotal.toString();
@@ -1183,8 +1183,8 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			valToInsert = NO_VALUE;
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
-				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+				TypeDefGUIDs.T_String, !percent, !percent);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		if (!percent) {
 			valToInsert = String.valueOf(smallerClaimProcesses);
@@ -1196,7 +1196,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		if (!percent) {
 			valToInsert = String.valueOf(declinedCasualties);
@@ -1208,7 +1208,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		if (!percent) {
 			valToInsert = String.valueOf(warnedDeclinedCasualties);
@@ -1220,7 +1220,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		row = ReportBuilder.buildRow(cells);
 		row.setStyle("height:30px;background:#e6e6e6;");
