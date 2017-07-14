@@ -449,13 +449,12 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 							((BigDecimal) damagesClaimed)));
 					
 					claimedValueTotal = claimedValueTotal.add(damagesClaimed);
-					
-					smallerClaimProcesses++;
 				}
 				
 				if (!allSettlementNull && !allDamagesNull) {
 					if (settlement.compareTo(damagesClaimed) == 1) {
 						setSmallerClaimProcess(true);
+						smallerClaimProcesses++;
 					}
 				}
 			}
