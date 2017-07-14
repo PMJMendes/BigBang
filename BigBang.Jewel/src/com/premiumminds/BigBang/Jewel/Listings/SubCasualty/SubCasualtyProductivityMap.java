@@ -52,8 +52,8 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	
 	// Constants
 	private static final String NO_VALUE = "-";
-	private static final String TITLE_REPLACE_STR_1 = "<tit>";
-	private static final String TITLE_REPLACE_STR_2 = "<tit2>";
+	//private static final String TITLE_REPLACE_STR_1 = "<tit>";
+	//private static final String TITLE_REPLACE_STR_2 = "<tit2>";
 	private static final String TITLE_SPLIT = "<splt>";
 	private static final String COL_01 = "Data de" + TITLE_SPLIT + "Encerramento" + TITLE_SPLIT + "(__/__/____)";
 	private static final String COL_02 = "Data de" + TITLE_SPLIT + "Participação" + TITLE_SPLIT + "(__/__/____)";
@@ -73,7 +73,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private static final String COL_15 = "Sinistros" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "que Foram" + TITLE_SPLIT + "Avisados" + TITLE_SPLIT + "Previamente" + TITLE_SPLIT + "pela Credite-EGS" + TITLE_SPLIT + "que Seriam" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "(N.º)";
 	private static final String LIN_PERCENT = "Percentagem de" + TITLE_SPLIT + "Processos";
 	private static final String LIN_TOTAL = "Totais";
-	private static final int COLUMN_BREAK_POINT = 33;
+	//private static final int COLUMN_BREAK_POINT = 33;
 	private static final String YES_STRING = "Sim";
 	private static final String NO_STRING = "Não";
 	
@@ -980,7 +980,8 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			if (!tmp.contains(TITLE_SPLIT)) {
 				cells[i] = ReportBuilder.buildCell(allTitles[i],
 						TypeDefGUIDs.T_String);
-				styleCenteredCell(cells[i], false, true);
+				cells[i].setAlign("center");
+				ReportBuilder.styleCell(cells[i], false, (i!=0));
 			} else {
 				String[] tmpArr = tmp.split(TITLE_SPLIT);
 				
@@ -990,12 +991,14 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				for (int u=0; u<tmpArr.length; u++) {
 					TD[] tdArr = new TD[1];
 					tdArr[0] = ReportBuilder.buildCell(tmpArr[u], TypeDefGUIDs.T_String);
+					tdArr[0].setAlign("center");
 					ReportBuilder.styleCell(tdArr[0], false, false);
 					tableRows[u] = ReportBuilder.buildRow(tdArr);
 				}
 				table = ReportBuilder.buildTable(tableRows);
 				cells[i] = new TD(table);
-				styleCenteredCell(cells[i], false, true);
+				cells[i].setAlign("center");
+				ReportBuilder.styleCell(cells[i], false, (i!=0));
 			}			
 		}
 		
