@@ -54,22 +54,24 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private static final String NO_VALUE = "-";
 	private static final String TITLE_REPLACE_STR_1 = "<tit>";
 	private static final String TITLE_REPLACE_STR_2 = "<tit2>";
-	private static final String COL_01 = "Data de Encerramento (__/__/____)";
-	private static final String COL_02 = "Data de Participação (__/__/____)";
-	private static final String COL_03 = "Período de Gestão";
-	private static final String COL_04 = "Gestor do Sinistro";
+	private static final String TITLE_SPLIT = "<splt>";
+	private static final String COL_01 = "Data de" + TITLE_SPLIT + "Encerramento" + TITLE_SPLIT + "(__/__/____)";
+	private static final String COL_02 = "Data de" + TITLE_SPLIT + "Participação" + TITLE_SPLIT + "(__/__/____)";
+	private static final String COL_03 = "Período" + TITLE_SPLIT + "de Gestão";
+	private static final String COL_04 = "Gestor do" + TITLE_SPLIT + "Sinistro";
 	private static final String COL_05 = "Cliente";
 	private static final String COL_06 = "Apólice";
 	private static final String COL_07 = "Ramo";
 	private static final String COL_08 = "Segurador";
-	private static final String COL_09 = "N.º de Processos Encerrados em " + TITLE_REPLACE_STR_1 + " de " + TITLE_REPLACE_STR_2 + " pela EGS";
-	private static final String COL_10 = "Valores das Indemnizações (€)";
-	private static final String COL_11 = "Processos Indemnizados (N.º)";
-	private static final String COL_12 = "Valores dos Danos Reclamados (€)";
-	private static final String COL_13 = "Processos com Valores Reclamados Inferiores ou Iguais aos Valores Indemnizados (N.º)";
-	private static final String COL_14 = "Sinistros Declinados (N.º)";
-	private static final String COL_15 = "Sinistros Declinados que Foram Avisados Previamente pela Credite-EGS que Seriam Declinados (N.º)";
-	private static final String LIN_PERCENT = "Percentagem de Processos";
+	//private static final String COL_09 = "N.º de Processos" + TITLE_SPLIT + "Encerrados em " + TITLE_SPLIT + TITLE_REPLACE_STR_1 + " de " + TITLE_REPLACE_STR_2 + TITLE_SPLIT + " pela EGS";
+	private static final String COL_09 = "N.º do Processo";
+	private static final String COL_10 = "Valores das" + TITLE_SPLIT + "Indemnizações" + TITLE_SPLIT + "(€)";
+	private static final String COL_11 = "Processos" + TITLE_SPLIT + "Indemnizados" + TITLE_SPLIT + "(N.º)";
+	private static final String COL_12 = "Valores" + TITLE_SPLIT + "dos Danos" + TITLE_SPLIT + "Reclamados" + TITLE_SPLIT + "(€)";
+	private static final String COL_13 = "Processos" + TITLE_SPLIT + "com Valores" + TITLE_SPLIT + "Reclamados" + TITLE_SPLIT + "Inferiores" + TITLE_SPLIT + "ou Iguais" + TITLE_SPLIT + "aos Valores" + TITLE_SPLIT + "Indemnizados" + TITLE_SPLIT + "(N.º)";
+	private static final String COL_14 = "Sinistros" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "(N.º)";
+	private static final String COL_15 = "Sinistros" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "que Foram" + TITLE_SPLIT + "Avisados" + TITLE_SPLIT + "Previamente" + TITLE_SPLIT + "pela Credite-EGS" + TITLE_SPLIT + "que Seriam" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "(N.º)";
+	private static final String LIN_PERCENT = "Percentagem de" + TITLE_SPLIT + "Processos";
 	private static final String LIN_TOTAL = "Totais";
 	private static final int COLUMN_BREAK_POINT = 33;
 	private static final String YES_STRING = "Sim";
@@ -968,67 +970,34 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 
 		TD[] cells = new TD[15];
 		
-		int currColl = 0;
+		String[] allTitles = {COL_01, COL_02, COL_03, COL_04, COL_05, COL_06, 
+				COL_07, COL_08, COL_09, COL_10, COL_11, COL_12, COL_13, 
+				COL_14, COL_15};
 		
-		cells[currColl] = ReportBuilder.buildCell(COL_01,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_02,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_03,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_04,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_05,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_06,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_07,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_08,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_09,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_10,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_11,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_12,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_13,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_14,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
-		
-		cells[currColl] = ReportBuilder.buildCell(COL_15,
-				TypeDefGUIDs.T_String);
-		styleCenteredCell(cells[currColl++], false, false);
+		for (int i=0; i<allTitles.length; i++) {
+			String tmp = allTitles[i];
+			
+			if (!tmp.contains(TITLE_SPLIT)) {
+				cells[i] = ReportBuilder.buildCell(allTitles[i],
+						TypeDefGUIDs.T_String);
+				styleCenteredCell(cells[i], false, true);
+			} else {
+				String[] tmpArr = tmp.split(TITLE_SPLIT);
+				
+				Table table;
+				TR[] tableRows = new TR[tmpArr.length];
+				
+				for (int u=0; u<tmpArr.length; u++) {
+					TD[] tdArr = new TD[1];
+					tdArr[0] = ReportBuilder.buildCell(tmpArr[u], TypeDefGUIDs.T_String);
+					ReportBuilder.styleCell(tdArr[0], false, false);
+					tableRows[u] = ReportBuilder.buildRow(tdArr);
+				}
+				table = ReportBuilder.buildTable(tableRows);
+				cells[i] = new TD(table);
+				styleCenteredCell(cells[i], false, true);
+			}			
+		}
 		
 		setCellWidths(cells);
 
