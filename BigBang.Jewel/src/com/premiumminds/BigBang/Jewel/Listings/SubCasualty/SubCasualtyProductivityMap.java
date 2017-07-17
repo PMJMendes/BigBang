@@ -55,8 +55,8 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	//private static final String TITLE_REPLACE_STR_1 = "<tit>";
 	//private static final String TITLE_REPLACE_STR_2 = "<tit2>";
 	private static final String TITLE_SPLIT = "<splt>";
-	private static final String COL_01 = "Data de" + TITLE_SPLIT + "Encerramento" + TITLE_SPLIT + "(__/__/____)";
-	private static final String COL_02 = "Data de" + TITLE_SPLIT + "Participação" + TITLE_SPLIT + "(__/__/____)";
+	private static final String COL_01 = "Data de" + TITLE_SPLIT + "Encerramento" + TITLE_SPLIT + "(____/__/__)";
+	private static final String COL_02 = "Data de" + TITLE_SPLIT + "Participação" + TITLE_SPLIT + "(____/__/__)";
 	private static final String COL_03 = "Período" + TITLE_SPLIT + "de Gestão";
 	private static final String COL_04 = "Gestor do" + TITLE_SPLIT + "Sinistro";
 	private static final String COL_05 = "Cliente";
@@ -407,7 +407,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 					// Valor reclamado
 					// Indemnização
 					if (temp.getAt(SubCasualtyItem.I.DAMAGES) != null) {
-						damagesClaimed = settlement.add((BigDecimal) temp
+						damagesClaimed = damagesClaimed.add((BigDecimal) temp
 								.getAt(SubCasualtyItem.I.DAMAGES));
 							allDamagesNull = false;
 					}
@@ -680,17 +680,6 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-		
-		// Appends the Casualty filter by date
-		if (!paramStartDate.equals(NO_VALUE)) {
-			subCasualtyQuery.append(" AND [Date] >= '").append(paramStartDate)
-					.append("'");
-		}
-		if (!paramEndDate.equals(NO_VALUE)) {
-			subCasualtyQuery.append(" AND [Date] < DATEADD(d, 1, '")
-					.append(paramEndDate).append("')");
-		}
-		
 		subCasualtyQuery.append(")");
 		
 		// Adds the query part responsible for getting the closed processes
@@ -704,7 +693,20 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 							+ " where FKOperation in ('"
 							+ Constants.OPID_SubCasualty_CloseProcess + "', '"
 							+ Constants.OPID_SubCasualty_ExternReopenProcess
-							+ "')" + " and Undone=0) last_op where rn = 1 "
+							+ "')" + " and Undone=0"); 
+			
+			// Appends the Casualty filter by date
+			if (!paramStartDate.equals(NO_VALUE)) {
+				subCasualtyQuery.append(" AND [TStamp] >= '").append(paramStartDate)
+						.append("'");
+			}
+			if (!paramEndDate.equals(NO_VALUE)) {
+				subCasualtyQuery.append(" AND [TStamp] < DATEADD(d, 1, '")
+						.append(paramEndDate).append("')");
+			}
+							
+			subCasualtyQuery
+					.append(") last_op where rn = 1 "
 							+ ") final_op " + "where FKOperation = '"
 							+ Constants.OPID_SubCasualty_CloseProcess + "'");
 		} catch (Throwable e) {
@@ -795,12 +797,34 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		
 		return createReport(subcasualtyList, reportParams);
 	}
-
-	private GenericElement[] createReport(
-			ArrayList<SubCasualtyData> subcasualtyList, String[] reportParams) throws BigBangJewelException {
+	
+	/**
+	 * This is the initial method "designing" the report
+	 */
+	private GenericElement[] createReport(ArrayList<SubCasualtyData> subcasualtyList, String[] reportParams)
+			throws BigBangJewelException {
 
 		GenericElement[] reportResult = new GenericElement[1];
-		
+
+		// Builds the table with the report. This
+		// "table with one TR with one TD" is needed
+		// to export to Excel
+		Table table;
+		TR[] tableRows = new TR[1];
+		TD mainContent = new TD();
+		mainContent.addElement(buildSubCasualtyMap(subcasualtyList, reportParams));
+		tableRows[0] = ReportBuilder.buildRow(new TD[] { mainContent });
+
+		table = ReportBuilder.buildTable(tableRows);
+
+		reportResult[0] = table;
+
+		return reportResult;
+	}
+
+	private Table buildSubCasualtyMap(
+			ArrayList<SubCasualtyData> subcasualtyList, String[] reportParams) throws BigBangJewelException {
+
 		Table table;
 		
 		// Sets the number of rows (basically sections) of the report
@@ -821,9 +845,35 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		
 		// Builds the row with the main content
 		TD infoContent = new TD();
-		infoContent
-				.addElement(buildContentTable(subcasualtyList));
-		tableRows[1] = ReportBuilder.buildRow(new TD[] { infoContent });
+		
+		if (subcasualtyList.size()==851) {
+			Table noTbl;
+			TR[] noRws = new TR[1];
+			TD mainContent;
+			
+			mainContent = new TD();
+			mainContent
+					.setWidth(WIDTH_COL_01 + WIDTH_COL_02 + WIDTH_COL_03
+							+ WIDTH_COL_04 + WIDTH_COL_05 + WIDTH_COL_06
+							+ WIDTH_COL_07 + WIDTH_COL_08 + WIDTH_COL_09
+							+ WIDTH_COL_10 + WIDTH_COL_11 + WIDTH_COL_12
+							+ WIDTH_COL_13 + WIDTH_COL_14 + WIDTH_COL_15);
+			
+			mainContent.addElement("SEM COISO");
+			
+			noRws[0] = ReportBuilder.buildRow(new TD[] { mainContent });
+
+			noTbl = ReportBuilder.buildTable(noRws);
+			ReportBuilder.styleTable(noTbl, false);
+			
+			infoContent.addElement(noTbl);
+			
+			tableRows[1] = ReportBuilder.buildRow(new TD[] { infoContent });
+		} else {
+			infoContent
+			.addElement(buildContentTable(subcasualtyList));
+			tableRows[1] = ReportBuilder.buildRow(new TD[] { infoContent });
+		}
 		
 		if (numberOfRows == 3) {
 			TD reportNotes = new TD();
@@ -835,9 +885,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		ReportBuilder.styleTable(table, false);
 		table.setStyle("width:100%;");	
 		
-		reportResult[0] = table;
-		
-		return reportResult;
+		return table;
 	}
 
 	/**
@@ -1148,14 +1196,14 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		
 		ReportBuilder.styleCell(cells[0], true, false);
 		
-		if (!percent) {
+		if (!percent || totalProcesses==0) {
 			valToInsert = String.valueOf(totalProcesses);
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		if (!percent) {
+		if (!percent || totalProcesses==0) {
 			valToInsert = settlementTotal.toString();
 		} else {
 			valToInsert = NO_VALUE;
@@ -1164,7 +1212,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, !percent, !percent);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		if (!percent) {
+		if (!percent || totalProcesses==0) {
 			valToInsert = String.valueOf(settledProcesses);
 		} else {
 			percentFloat = (settledProcesses * 100f) / totalProcesses;
@@ -1176,7 +1224,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		if (!percent) {
+		if (!percent || totalProcesses==0) {
 			valToInsert = claimedValueTotal.toString();
 		} else {
 			valToInsert = NO_VALUE;
@@ -1185,7 +1233,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, !percent, !percent);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		if (!percent) {
+		if (!percent || totalProcesses==0) {
 			valToInsert = String.valueOf(smallerClaimProcesses);
 		} else {
 			percentFloat = (smallerClaimProcesses * 100f) / totalProcesses;
@@ -1197,7 +1245,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		if (!percent) {
+		if (!percent || totalProcesses==0) {
 			valToInsert = String.valueOf(declinedCasualties);
 		} else {
 			percentFloat = (declinedCasualties * 100f) / totalProcesses;
@@ -1209,7 +1257,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		if (!percent) {
+		if (!percent || totalProcesses==0) {
 			valToInsert = String.valueOf(warnedDeclinedCasualties);
 		} else {
 			percentFloat = (warnedDeclinedCasualties * 100f) / totalProcesses;
