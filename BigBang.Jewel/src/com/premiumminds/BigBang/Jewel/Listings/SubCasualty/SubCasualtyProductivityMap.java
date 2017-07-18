@@ -405,7 +405,6 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 					}
 					
 					// Valor reclamado
-					// Indemnização
 					if (temp.getAt(SubCasualtyItem.I.DAMAGES) != null) {
 						damagesClaimed = damagesClaimed.add((BigDecimal) temp
 								.getAt(SubCasualtyItem.I.DAMAGES));
@@ -635,7 +634,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	}
 	
 	/**
-	 * This method gets the closed sub-casualties
+	 * This method gets sub-casualties
 	 */
 	protected SubCasualty[] getSubCasualties(String[] reportParams)
 			throws BigBangJewelException {
@@ -695,7 +694,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 							+ Constants.OPID_SubCasualty_ExternReopenProcess
 							+ "')" + " and Undone=0"); 
 			
-			// Appends the Casualty filter by date
+			// Appends the Casualty filter by date (the Timestamp for the closing action)
 			if (!paramStartDate.equals(NO_VALUE)) {
 				subCasualtyQuery.append(" AND [TStamp] >= '").append(paramStartDate)
 						.append("'");
@@ -822,6 +821,10 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		return reportResult;
 	}
 
+	/**
+	 * This is the method which creates the header, the sub-casualties'lines,  
+	 * the totals' line and the notes
+	 */
 	private Table buildSubCasualtyMap(
 			ArrayList<SubCasualtyData> subcasualtyList, String[] reportParams) throws BigBangJewelException {
 
@@ -913,6 +916,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		return table;
 	}
 
+	/**
+	 * The method responsible for printing the sub-casualties' info
+	 */
 	private Table buildReportInfo(ArrayList<SubCasualtyData> subcasualtyList) {
 
 		Table table;
@@ -940,6 +946,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		return table;
 	}
 
+	/**
+	 * The method responsible for printing a row with a single sub-casualty's info
+	 */
 	private TD[] buildSubCasualtyRow(SubCasualtyData subCasualty) {
 
 		TD[] cells = new TD[15];
@@ -1013,6 +1022,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		return cells;
 	}
 
+	/**
+	 * The method responsible for printing the column names' row
+	 */
 	private TD[] buildTitlesRow() {
 
 		TD[] cells = new TD[15];
@@ -1153,7 +1165,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	}
 	
 	/**
-	 * This method gets and configures the Crédite-EGS' logo to display ate the
+	 * This method gets and configures the Crédite-EGS' logo to display at the
 	 * top of the report
 	 */
 	private IMG getImage() throws BigBangJewelException {
@@ -1300,7 +1312,6 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		pcell.setStyle("overflow:hidden;white-space:nowrap;padding-left:5px;padding-right:5px;text-align:center;" +
 				(pbAddTop ? "border-top:1px solid #3f6d9d;" : "") +
 				(pbAddLeft ? "border-left:1px solid #3f6d9d;" : ""));
-
 	}
 	
 	/**
