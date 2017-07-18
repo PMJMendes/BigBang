@@ -75,6 +75,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	private static final int OBJECT_BREAK_POINT = 23;
 	
 	private boolean showThirdParties = false;
+	
+	private String schemaName = "credite_egs";
 
 	/*
 	 * This Matrix represents the order to display the policies, as well as the
@@ -563,6 +565,10 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	 */
 	public GenericElement[] doReport(String[] reportParams)
 			throws BigBangJewelException {
+		
+		if (!Utils.getCurrency().equals("€")) {
+			schemaName = "bbangola"; // TODO: Fast fix to work in Angola and Alvalade, but a different solution must be implemented (soon, while developing the new report) 
+		} 
 		
 		boolean showOpenPreviously = false;
 		
@@ -1332,7 +1338,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 							" select * FROM (" + 
 								" SELECT *," + 
 									"ROW_NUMBER() OVER (PARTITION BY FKPROCESS ORDER BY _TSCREATE DESC) AS rn" + 
-								" FROM credite_egs.tblPNLogs " + 
+								" FROM " + schemaName + ".tblPNLogs " + 
 								" where FKOperation in ('" + Constants.OPID_SubCasualty_CloseProcess +
 								"', '" + Constants.OPID_SubCasualty_ExternReopenProcess +"')" +
 							  ") last_op where rn = 1 "+
