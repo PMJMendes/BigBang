@@ -29,6 +29,7 @@ import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Objects.PNLog;
 import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.SysObjects.JewelPetriException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -55,44 +56,48 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	//private static final String TITLE_REPLACE_STR_1 = "<tit>";
 	//private static final String TITLE_REPLACE_STR_2 = "<tit2>";
 	private static final String TITLE_SPLIT = "<splt>";
-	private static final String COL_01 = "Data de" + TITLE_SPLIT + "Encerramento" + TITLE_SPLIT + "(____/__/__)";
-	private static final String COL_02 = "Data de" + TITLE_SPLIT + "Participação" + TITLE_SPLIT + "(____/__/__)";
-	private static final String COL_03 = "Período" + TITLE_SPLIT + "de Gestão";
-	private static final String COL_04 = "Gestor do" + TITLE_SPLIT + "Sinistro";
-	private static final String COL_05 = "Cliente";
-	private static final String COL_06 = "Apólice";
-	private static final String COL_07 = "Ramo";
-	private static final String COL_08 = "Segurador";
-	//private static final String COL_09 = "N.º de Processos" + TITLE_SPLIT + "Encerrados em " + TITLE_SPLIT + TITLE_REPLACE_STR_1 + " de " + TITLE_REPLACE_STR_2 + TITLE_SPLIT + " pela EGS";
-	private static final String COL_09 = "N.º do Processo";
-	private static final String COL_10 = "Valores das" + TITLE_SPLIT + "Indemnizações" + TITLE_SPLIT + "(€)";
-	private static final String COL_11 = "Processos" + TITLE_SPLIT + "Indemnizados" + TITLE_SPLIT + "(N.º)";
-	private static final String COL_12 = "Valores" + TITLE_SPLIT + "dos Danos" + TITLE_SPLIT + "Reclamados" + TITLE_SPLIT + "(€)";
-	private static final String COL_13 = "Processos" + TITLE_SPLIT + "com Valores" + TITLE_SPLIT + "Reclamados" + TITLE_SPLIT + "Inferiores" + TITLE_SPLIT + "ou Iguais" + TITLE_SPLIT + "aos Valores" + TITLE_SPLIT + "Indemnizados" + TITLE_SPLIT + "(N.º)";
-	private static final String COL_14 = "Sinistros" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "(N.º)";
-	private static final String COL_15 = "Sinistros" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "que Foram" + TITLE_SPLIT + "Avisados" + TITLE_SPLIT + "Previamente" + TITLE_SPLIT + "pela Credite-EGS" + TITLE_SPLIT + "que Seriam" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "(N.º)";
+	private static final String COL_01 = "N.º do Processo";
+	private static final String COL_02 = "Data de" + TITLE_SPLIT + "Sinistro" + TITLE_SPLIT + "(____/__/__)";
+	private static final String COL_03 = "Data de" + TITLE_SPLIT + "Participação" + TITLE_SPLIT + "(____/__/__)";
+	private static final String COL_04 = "Data de" + TITLE_SPLIT + "Encerramento" + TITLE_SPLIT + "(____/__/__)";
+	private static final String COL_05 = "Período" + TITLE_SPLIT + "de Gestão";
+	private static final String COL_06 = "Existência" + TITLE_SPLIT + "de Processo" + TITLE_SPLIT + "Judicial";
+	private static final String COL_07 = "Gestor do" + TITLE_SPLIT + "Sinistro";
+	private static final String COL_08 = "Apólice";
+	private static final String COL_09 = "Ramo";
+	private static final String COL_10 = "Segurador";
+	private static final String COL_11 = "Valores" + TITLE_SPLIT + "dos Danos" + TITLE_SPLIT + "Reclamados" + TITLE_SPLIT + "(€)";
+	private static final String COL_12 = "Valores" + TITLE_SPLIT + "das Franquias";
+	private static final String COL_13 = "Valores das" + TITLE_SPLIT + "Indemnizações" + TITLE_SPLIT + "(€)";
+	private static final String COL_14 = "Processos" + TITLE_SPLIT + "Indemnizados" + TITLE_SPLIT + "(N.º)";
+	private static final String COL_15 = "Processos" + TITLE_SPLIT + "com Valores" + TITLE_SPLIT + "Reclamados" + TITLE_SPLIT + "Inferiores" + TITLE_SPLIT + "ou Iguais" + TITLE_SPLIT + "aos Valores" + TITLE_SPLIT + "Indemnizados" + TITLE_SPLIT + "(N.º)";
+	private static final String COL_16 = "Sinistros" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "(N.º)";
+	private static final String COL_17 = "Sinistros" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "que Foram" + TITLE_SPLIT + "Avisados" + TITLE_SPLIT + "Previamente" + TITLE_SPLIT + "pela Credite-EGS" + TITLE_SPLIT + "que Seriam" + TITLE_SPLIT + "Declinados" + TITLE_SPLIT + "(N.º)";
+	private static final String TOTAL_PROCESSES = "Número Total de Processos";
 	private static final String LIN_PERCENT = "Percentagem de Processos";
-	private static final String LIN_TOTAL = "Totais";
+	private static final String LIN_TOTAL = "Valores Totais";
 	//private static final int COLUMN_BREAK_POINT = 33;
 	private static final String YES_STRING = "Sim";
 	private static final String NO_STRING = "Não";
 	
 	// Width Constants
-	private static final int WIDTH_COL_01 = 69;
-	private static final int WIDTH_COL_02 = 69;
-	private static final int WIDTH_COL_03 = 69;
-	private static final int WIDTH_COL_04 = 69;
-	private static final int WIDTH_COL_05 = 69;
-	private static final int WIDTH_COL_06 = 69;
-	private static final int WIDTH_COL_07 = 69;
-	private static final int WIDTH_COL_08 = 69;
-	private static final int WIDTH_COL_09 = 69;
-	private static final int WIDTH_COL_10 = 69;
-	private static final int WIDTH_COL_11 = 69;
-	private static final int WIDTH_COL_12 = 69;
-	private static final int WIDTH_COL_13 = 69;
-	private static final int WIDTH_COL_14 = 69;
-	private static final int WIDTH_COL_15 = 69;
+	private static final int WIDTH_COL_01 = 60;
+	private static final int WIDTH_COL_02 = 60;
+	private static final int WIDTH_COL_03 = 60;
+	private static final int WIDTH_COL_04 = 60;
+	private static final int WIDTH_COL_05 = 60;
+	private static final int WIDTH_COL_06 = 60;
+	private static final int WIDTH_COL_07 = 60;
+	private static final int WIDTH_COL_08 = 60;
+	private static final int WIDTH_COL_09 = 60;
+	private static final int WIDTH_COL_10 = 60;
+	private static final int WIDTH_COL_11 = 60;
+	private static final int WIDTH_COL_12 = 60;
+	private static final int WIDTH_COL_13 = 60;
+	private static final int WIDTH_COL_14 = 60;
+	private static final int WIDTH_COL_15 = 60;
+	private static final int WIDTH_COL_16 = 60;
+	private static final int WIDTH_COL_17 = 60;
 	
 	// Class Variables
 	private int totalProcesses = 0; // number of processes
@@ -106,6 +111,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private String paramClientName= NO_VALUE;
 	private String paramStartDate = NO_VALUE;
 	private String paramEndDate = NO_VALUE;
+	private BigDecimal deductibleValueTotal = BigDecimal.ZERO;
 	
 	/**
 	 * Inner class which holds the information to display at the map
@@ -113,6 +119,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private class SubCasualtyData {
 		
 		private String closingDate;
+		private String notificationDate;
 		private String casualtyDate;
 		private String managementTime;
 		private String manager;
@@ -127,6 +134,8 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		private boolean smallerClaimProcess;
 		private boolean declinedCasualty;
 		private boolean warnedDeclinedCasualty;
+		private boolean judicialProcess;
+		private String deductibleValue;
 		
 		SubCasualtyData() {
 			setClosingDate(NO_VALUE);
@@ -144,6 +153,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			setSmallerClaimProcess(false);
 			setDeclinedCasualty(false);
 			setWarnedDeclinedCasualty(false);
+			setNotificationDate(NO_VALUE);
+			setJudicialProcess(false);
+			setDeductibleValue(NO_VALUE);
 		}
 		
 		private String getClosingDate() {
@@ -236,6 +248,24 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		private void setWarnedDeclinedCasualty(boolean warnedDeclinedCasualty) {
 			this.warnedDeclinedCasualty = warnedDeclinedCasualty;
 		}
+		private String getNotificationDate() {
+			return notificationDate;
+		}
+		private void setNotificationDate(String notificationDate) {
+			this.notificationDate = notificationDate;
+		}
+		private boolean isJudicialProcess() {
+			return judicialProcess;
+		}
+		private void setJudicialProcess(boolean judicialProcess) {
+			this.judicialProcess = judicialProcess;
+		}
+		private String getDeductibleValue() {
+			return deductibleValue;
+		}
+		private void setDeductibleValue(String deductibleValue) {
+			this.deductibleValue = deductibleValue;
+		}
 		
 		// This method sets the management time according to the casualty date and closing date
 		private void setManagementTime(Timestamp startDate, Timestamp endDate) {
@@ -273,17 +303,31 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				setClosingDate(closingDate.toString().substring(0, 10));
 			}
 			
+			// Sets the notification date, if possible
+			String notificationDateFomLogs = getNotificationDateFomLogs(subCasualty);
+			if (notificationDateFomLogs!=null) {
+				startDate = Timestamp.valueOf(notificationDateFomLogs + " 00:00:00.0");
+			}
+			if (startDate != null) {
+				setNotificationDate(startDate.toString().substring(0, 10));
+			}
+			
 			// Sets the casualty's date, if possible
 			if (subCasualty.GetCasualty().getAt(Casualty.I.DATE) != null) {
 				setCasualtyDate(subCasualty.GetCasualty().getAt(Casualty.I.DATE)
 						.toString().substring(0, 10));
-				startDate = Timestamp.valueOf(getCasualtyDate() + " 00:00:00.0");
 			}
 			
 			// Sets the management Time, if possible
 			if (startDate!=null && closingDate!=null) {
 				setManagementTime(startDate, closingDate);
 			}			
+			
+			// Sets the judicial process' flag
+			if (subCasualty.getAt(SubCasualty.I.HASJUDICIAL) != null) {
+				//mbHasJudicial      = (Boolean)   pobjSource.getAt(SubCasualty.I.HASJUDICIAL)
+				setJudicialProcess(((Boolean) subCasualty.getAt(SubCasualty.I.HASJUDICIAL)).booleanValue());
+			}
 			
 			// Sets the casualty's manager, if possible
 			if (subCasualty.GetCasualty().GetProcessID() != null) {
@@ -342,6 +386,92 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 		
 		/**
+		 * This method gets the date where the sub-casualty was created, from the 
+		 * casualty's history
+		 */
+		private String getNotificationDateFomLogs(SubCasualty subCasualty) throws BigBangJewelException {
+
+			StringBuilder logsQuery;
+			
+			// Logs' entity
+			IEntity logsEntity;
+			
+			MasterDB database;
+			ResultSet fetchedLogs;
+			ArrayList<PNLog> logsList = new ArrayList<PNLog>();
+			
+			logsQuery = new StringBuilder();
+			
+			try {
+				// Gets the entity to fetch
+				logsEntity = Entity.GetInstance(Engine.FindEntity(
+						Engine.getCurrentNameSpace(), Constants.Process_Log));
+
+				// The query "part" responsible for getting the logs
+				logsQuery.append(logsEntity.SQLForSelectByMembers(
+						new int[] { 0 /* corresponds to column FKOperation @ credite_egs.tblPNLogs */ },
+						new java.lang.Object[] { subCasualty.GetProcessID() }, null));
+						
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			// Gets the MasterDB
+			try {
+				database = new MasterDB();
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			// Fetches the sub-casualties
+			try {
+				fetchedLogs = database.OpenRecordset(logsQuery
+						.toString());
+			} catch (Throwable e) {
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			// Adds the logs to an arraylist
+			try {
+				while (fetchedLogs.next()) {
+					logsList.add(PNLog.GetInstance(
+							Engine.getCurrentNameSpace(), fetchedLogs));
+				}
+			} catch (Throwable e) {
+				try {
+					fetchedLogs.close();
+				} catch (SQLException e1) {
+				}
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			for (PNLog tmp : logsList) {
+				try {
+					// Checks whether the log describes the creation of a sub-casualty
+					if (tmp.GetOperation().getKey().equals(Constants.OPID_Casualty_CreateSubCasualty)) {
+						// Checks whether the sub-casualty created is the one to which we're trying to 
+						// get the date
+						if (tmp.GetExternalProcess().equals(subCasualty.GetCasualty().getKey())) {
+							return tmp.GetTimestamp().toString().substring(0, 10);
+						}
+					}
+				} catch (JewelPetriException e) {
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
+			
+			return null;
+		}
+
+		/**
 		 * This method gets the values coming from the sub-casualty framing, namely
 		 * whether the casualty was refused by the company, and whether that was warned
 		 * by the manager 
@@ -383,10 +513,12 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 
 				SubCasualtyItem[] currentItems = subCasualty.GetCurrentItems();
 
+				BigDecimal deductible = BigDecimal.ZERO;
 				BigDecimal settlement = BigDecimal.ZERO;
 				BigDecimal damagesClaimed = BigDecimal.ZERO;
 						
 				// needed to identify if there's no value for all, in case a '-' must be outputted, and not a 0
+				boolean allDeductibleNull = true;
 				boolean allSettlementNull = true;
 				boolean allDamagesNull = true;
 				
@@ -410,12 +542,19 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 								.getAt(SubCasualtyItem.I.DAMAGES));
 							allDamagesNull = false;
 					}
+					// Franquia
+					if (temp.getAt(SubCasualtyItem.I.DEDUCTIBLE) != null) {
+						deductible = deductible.add((BigDecimal) temp
+								.getAt(SubCasualtyItem.I.DEDUCTIBLE));
+						allDeductibleNull = false;
+					}
 				}
 				
 				// If there is no items, the values are null
 				if (currentItems.length == 0) {
 					settlement = null;
 					damagesClaimed = null;
+					deductible = null;
 					setSettledProcess(false);
 				}
 				
@@ -425,6 +564,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				}
 				if (allDamagesNull) {
 					damagesClaimed = null;
+				}
+				if (allDeductibleNull) {
+					deductible = null;
 				}
 				
 				// Special case to work accidents
@@ -448,6 +590,12 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 							((BigDecimal) damagesClaimed)));
 					
 					claimedValueTotal = claimedValueTotal.add(damagesClaimed);
+				}
+				if (deductible != null) {
+					setDeductibleValue(String.format("%,.2f",
+							((BigDecimal) deductible)));
+					
+					deductibleValueTotal = deductibleValueTotal.add(deductible);
 				}
 				
 				if (!allSettlementNull && !allDamagesNull) {
