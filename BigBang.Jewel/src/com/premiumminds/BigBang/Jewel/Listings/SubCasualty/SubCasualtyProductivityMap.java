@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.ecs.AlignType;
@@ -79,6 +80,8 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	//private static final int COLUMN_BREAK_POINT = 33;
 	private static final String YES_STRING = "Sim";
 	private static final String NO_STRING = "Não";
+	private static final String CLIENT_ROW_STR = "Cliente: ";
+	private static final int NR_OF_COLUMNS = 17;
 	
 	// Width Constants
 	private static final int WIDTH_COL_01 = 60;
@@ -384,92 +387,6 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			// Sets the values which come from the sub-casualty framing
 			setFramingValue(subCasualty);
 		}
-		
-		/**
-		 * This method gets the date where the sub-casualty was created, from the 
-		 * casualty's history
-		 */
-		private String getNotificationDateFomLogs(SubCasualty subCasualty) throws BigBangJewelException {
-
-			StringBuilder logsQuery;
-			
-			// Logs' entity
-			IEntity logsEntity;
-			
-			MasterDB database;
-			ResultSet fetchedLogs;
-			ArrayList<PNLog> logsList = new ArrayList<PNLog>();
-			
-			logsQuery = new StringBuilder();
-			
-			try {
-				// Gets the entity to fetch
-				logsEntity = Entity.GetInstance(Engine.FindEntity(
-						Engine.getCurrentNameSpace(), Constants.Process_Log));
-
-				// The query "part" responsible for getting the logs
-				logsQuery.append(logsEntity.SQLForSelectByMembers(
-						new int[] { 0 /* corresponds to column FKOperation @ credite_egs.tblPNLogs */ },
-						new java.lang.Object[] { subCasualty.GetProcessID() }, null));
-						
-			} catch (Throwable e) {
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-			
-			// Gets the MasterDB
-			try {
-				database = new MasterDB();
-			} catch (Throwable e) {
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-
-			// Fetches the sub-casualties
-			try {
-				fetchedLogs = database.OpenRecordset(logsQuery
-						.toString());
-			} catch (Throwable e) {
-				try {
-					database.Disconnect();
-				} catch (SQLException e1) {
-				}
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-			
-			// Adds the logs to an arraylist
-			try {
-				while (fetchedLogs.next()) {
-					logsList.add(PNLog.GetInstance(
-							Engine.getCurrentNameSpace(), fetchedLogs));
-				}
-			} catch (Throwable e) {
-				try {
-					fetchedLogs.close();
-				} catch (SQLException e1) {
-				}
-				try {
-					database.Disconnect();
-				} catch (SQLException e1) {
-				}
-				throw new BigBangJewelException(e.getMessage(), e);
-			}
-			
-			for (PNLog tmp : logsList) {
-				try {
-					// Checks whether the log describes the creation of a sub-casualty
-					if (tmp.GetOperation().getKey().equals(Constants.OPID_Casualty_CreateSubCasualty)) {
-						// Checks whether the sub-casualty created is the one to which we're trying to 
-						// get the date
-						if (tmp.GetExternalProcess().equals(subCasualty.GetCasualty().getKey())) {
-							return tmp.GetTimestamp().toString().substring(0, 10);
-						}
-					}
-				} catch (JewelPetriException e) {
-					throw new BigBangJewelException(e.getMessage(), e);
-				}
-			}
-			
-			return null;
-		}
 
 		/**
 		 * This method gets the values coming from the sub-casualty framing, namely
@@ -698,10 +615,11 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 			
 		/**
-		 * This method gets the closing date from a sub-casualty
+		 * This method gets the date where the sub-casualty was created, from the 
+		 * casualty's history
 		 */
-		private String getClosingDateFomLogs(SubCasualty subCasualty) throws BigBangJewelException {
-			
+		private String getNotificationDateFomLogs(SubCasualty subCasualty) throws BigBangJewelException {
+
 			StringBuilder logsQuery;
 			
 			// Logs' entity
@@ -734,7 +652,94 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
-			// Fetches the sub-casualties
+			// Fetches the sub-casualty's logs
+			try {
+				fetchedLogs = database.OpenRecordset(logsQuery
+						.toString());
+			} catch (Throwable e) {
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			// Adds the logs to an arraylist
+			try {
+				while (fetchedLogs.next()) {
+					logsList.add(PNLog.GetInstance(
+							Engine.getCurrentNameSpace(), fetchedLogs));
+				}
+			} catch (Throwable e) {
+				try {
+					fetchedLogs.close();
+				} catch (SQLException e1) {
+				}
+				try {
+					database.Disconnect();
+				} catch (SQLException e1) {
+				}
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			for (PNLog tmp : logsList) {
+				try {
+					// Checks whether the log describes the creation of a sub-casualty
+					if (tmp.GetOperation().getKey().equals(Constants.OPID_Casualty_CreateSubCasualty)) {
+						// Checks whether the sub-casualty created is the one to which we're trying to 
+						// get the date
+						if (tmp.GetExternalProcess().equals(subCasualty.GetCasualty().getKey())) {
+							return tmp.GetTimestamp().toString().substring(0, 10);
+						}
+					}
+				} catch (JewelPetriException e) {
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
+			
+			return null;
+		}
+		
+		/**
+		 * This method gets the closing date from a sub-casualty
+		 */
+		private String getClosingDateFomLogs(SubCasualty subCasualty) throws BigBangJewelException {
+			
+			StringBuilder logsQuery;
+			
+			// Logs' entity
+			IEntity logsEntity;
+			
+			MasterDB database;
+			ResultSet fetchedLogs;
+			ArrayList<PNLog> logsList = new ArrayList<PNLog>();
+			
+			logsQuery = new StringBuilder();
+			
+			String result = null;
+			
+			try {
+				// Gets the entity to fetch
+				logsEntity = Entity.GetInstance(Engine.FindEntity(
+						Engine.getCurrentNameSpace(), Constants.Process_Log));
+
+				// The query "part" responsible for getting the logs
+				logsQuery.append(logsEntity.SQLForSelectByMembers(
+						new int[] { 0 /* corresponds to column FKOperation @ credite_egs.tblPNLogs */ },
+						new java.lang.Object[] { subCasualty.GetProcessID() }, null));
+						
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			
+			// Gets the MasterDB
+			try {
+				database = new MasterDB();
+			} catch (Throwable e) {
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			// Fetches the sub-casualty's logs
 			try {
 				fetchedLogs = database.OpenRecordset(logsQuery
 						.toString());
@@ -769,15 +774,34 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		        @Override
 		        public int compare(PNLog l1, PNLog l2) {
 
-		            return  l2.GetTimestamp().compareTo(l1.GetTimestamp());
+		            return  l1.GetTimestamp().compareTo(l2.GetTimestamp());
 		        }
 		    });
 			
-			if (logsList.size()>0) {
-				return logsList.get(0).GetTimestamp().toString().substring(0, 10);
+			// the following cycle only works because the logs were ordered 
+			for (PNLog tmp : logsList) {
+				try {
+					// Checks whether the log describes the sub-casualty being marked for closing, not undone, stores the date
+					if (tmp.GetOperation().getKey().equals(Constants.OPID_SubCasualty_MarkForClosing) && !tmp.IsUndone()) {
+						result = tmp.GetTimestamp().toString().substring(0, 10);
+						continue;
+					}
+					// Checks whether the log marked as closed, was later reversed, and cleans the closing date 
+					if (tmp.GetOperation().getKey().equals(Constants.OPID_SubCasualty_UndoMarkForClosing) && !tmp.IsUndone()) {
+						result = null;
+						continue;
+					}
+					// Checks whether the log marked as closed, was later rejected, and cleans the closing date 
+					if (tmp.GetOperation().getKey().equals(Constants.OPID_SubCasualty_RejectClosing) && !tmp.IsUndone()) {
+						result = null;
+						continue;
+					}
+				} catch (JewelPetriException e) {
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
 			}
 			
-			return null;
+			return result;
 		}
 	}
 	
@@ -838,8 +862,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 							+ "ROW_NUMBER() OVER (PARTITION BY FKPROCESS ORDER BY _TSCREATE DESC) AS rn"
 							+ " FROM credite_egs.tblPNLogs "
 							+ " where FKOperation in ('"
-							+ Constants.OPID_SubCasualty_CloseProcess + "', '"
-							+ Constants.OPID_SubCasualty_ExternReopenProcess
+							+ Constants.OPID_SubCasualty_MarkForClosing + "', '"
+							+ Constants.OPID_SubCasualty_RejectClosing + "', '"
+							+ Constants.OPID_SubCasualty_UndoMarkForClosing
 							+ "')" + " and Undone=0"); 
 			
 			// Appends the Casualty filter by date (the Timestamp for the closing action)
@@ -855,7 +880,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			subCasualtyQuery
 					.append(") last_op where rn = 1 "
 							+ ") final_op " + "where FKOperation = '"
-							+ Constants.OPID_SubCasualty_CloseProcess + "'");
+							+ Constants.OPID_SubCasualty_MarkForClosing + "'");
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
@@ -933,22 +958,26 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		SubCasualty[] subCasualties = getSubCasualties(reportParams);
 		
 		// The array of Data to display
-		ArrayList<SubCasualtyData> subcasualtyList = new ArrayList<SubCasualtyData>();
+		HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap = new HashMap<String, ArrayList<SubCasualtyData>>();
 		
-		// adds the data to the arraylist
-		for (SubCasualty tmp : subCasualties) {
+		for (int i = 0; i < subCasualties.length; i++) {
 			SubCasualtyData data = new SubCasualtyData();
-			data.setValues(tmp);
-			subcasualtyList.add(data);
+			data.setValues(subCasualties[i]);
+			String clientName = data.getClient();
+			if (subCasualtiesMap.get(clientName) == null) {
+				subCasualtiesMap.put(clientName,
+						new ArrayList<SubCasualtyData>());
+			}
+			subCasualtiesMap.get(clientName).add(data);
 		}
 		
-		return createReport(subcasualtyList, reportParams);
+		return createReport(subCasualtiesMap, reportParams);
 	}
 	
 	/**
 	 * This is the initial method "designing" the report
 	 */
-	private GenericElement[] createReport(ArrayList<SubCasualtyData> subcasualtyList, String[] reportParams)
+	private GenericElement[] createReport(HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap, String[] reportParams)
 			throws BigBangJewelException {
 
 		GenericElement[] reportResult = new GenericElement[1];
@@ -959,7 +988,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		Table table;
 		TR[] tableRows = new TR[1];
 		TD mainContent = new TD();
-		mainContent.addElement(buildSubCasualtyMap(subcasualtyList, reportParams));
+		mainContent.addElement(buildSubCasualtyMap(subCasualtiesMap, reportParams));
 		tableRows[0] = ReportBuilder.buildRow(new TD[] { mainContent });
 
 		table = ReportBuilder.buildTable(tableRows);
@@ -974,7 +1003,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	 * the totals' line and the notes
 	 */
 	private Table buildSubCasualtyMap(
-			ArrayList<SubCasualtyData> subcasualtyList, String[] reportParams) throws BigBangJewelException {
+			HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap, String[] reportParams) throws BigBangJewelException {
 
 		Table table;
 		
@@ -997,34 +1026,8 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		// Builds the row with the main content
 		TD infoContent = new TD();
 		
-		if (subcasualtyList.size()==851) {
-			Table noTbl;
-			TR[] noRws = new TR[1];
-			TD mainContent;
-			
-			mainContent = new TD();
-			mainContent
-					.setWidth(WIDTH_COL_01 + WIDTH_COL_02 + WIDTH_COL_03
-							+ WIDTH_COL_04 + WIDTH_COL_05 + WIDTH_COL_06
-							+ WIDTH_COL_07 + WIDTH_COL_08 + WIDTH_COL_09
-							+ WIDTH_COL_10 + WIDTH_COL_11 + WIDTH_COL_12
-							+ WIDTH_COL_13 + WIDTH_COL_14 + WIDTH_COL_15);
-			
-			mainContent.addElement("SEM COISO");
-			
-			noRws[0] = ReportBuilder.buildRow(new TD[] { mainContent });
-
-			noTbl = ReportBuilder.buildTable(noRws);
-			ReportBuilder.styleTable(noTbl, false);
-			
-			infoContent.addElement(noTbl);
-			
-			tableRows[1] = ReportBuilder.buildRow(new TD[] { infoContent });
-		} else {
-			infoContent
-			.addElement(buildContentTable(subcasualtyList));
-			tableRows[1] = ReportBuilder.buildRow(new TD[] { infoContent });
-		}
+		infoContent.addElement(buildContentTable(subCasualtiesMap));
+		tableRows[1] = ReportBuilder.buildRow(new TD[] { infoContent });
 		
 		if (numberOfRows == 3) {
 			TD reportNotes = new TD();
@@ -1042,7 +1045,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	/**
 	 * The method responsible for printing the table with the content
 	 */
-	private Table buildContentTable(ArrayList<SubCasualtyData> subcasualtyList) {
+	private Table buildContentTable(HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap) {
 
 		Table table;
 		TR[] tableRows;
@@ -1055,7 +1058,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		// meaning... the values from the policies
 		mainContent = new TD();
 		mainContent.setColSpan(2);
-		mainContent.addElement(buildReportInfo(subcasualtyList));
+		mainContent.addElement(buildReportInfo(subCasualtiesMap));
 		tableRows[rowNum++] = ReportBuilder.buildRow(new TD[] { mainContent });
 
 		table = ReportBuilder.buildTable(tableRows);
@@ -1067,10 +1070,15 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	/**
 	 * The method responsible for printing the sub-casualties' info
 	 */
-	private Table buildReportInfo(ArrayList<SubCasualtyData> subcasualtyList) {
+	private Table buildReportInfo(HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap) {
 
 		Table table;
-		TR[] tableRows = new TR[subcasualtyList.size() + 3];
+		int nrOfRows = subCasualtiesMap.size() == 1 ? 0 : subCasualtiesMap.size(); // the client names' rows (when more than one client)
+		nrOfRows += 4; // the titles, and summary rows
+		for (ArrayList<SubCasualtyData> val : subCasualtiesMap.values()) {
+			nrOfRows += val.size();
+		}
+		TR[] tableRows = new TR[nrOfRows];
 		int rowNum = 0;
 		
 		// Builds the row with the column names
@@ -1078,13 +1086,19 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				.buildRow(buildTitlesRow());
 		ReportBuilder.styleRow(tableRows[0], true);
 		
-		for (SubCasualtyData subCasualty: subcasualtyList) {
-			tableRows[rowNum] = ReportBuilder
-					.buildRow(buildSubCasualtyRow(subCasualty));
-			ReportBuilder.styleRow(tableRows[rowNum++], false);
+		for (String clName : subCasualtiesMap.keySet()) {
+			if (subCasualtiesMap.size() > 1) {
+				tableRows[rowNum++] = constructClientRow(clName);
+			}
+			for (SubCasualtyData subCasualty: subCasualtiesMap.get(clName)) {
+				tableRows[rowNum] = ReportBuilder
+						.buildRow(buildSubCasualtyRow(subCasualty));
+				ReportBuilder.styleRow(tableRows[rowNum++], false);
+			}
 		}
 		
 		// Builds the row with the total number of policies
+		tableRows[rowNum++] = constructTotalProcessesRow();
 		tableRows[rowNum++] = constructSummaryRow(LIN_TOTAL, false);
 		tableRows[rowNum++] = constructSummaryRow(LIN_PERCENT, true);
 		
@@ -1099,15 +1113,23 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	 */
 	private TD[] buildSubCasualtyRow(SubCasualtyData subCasualty) {
 
-		TD[] cells = new TD[15];
+		TD[] cells = new TD[NR_OF_COLUMNS];
 		
 		int curCol = 0;
 		
-		cells[curCol] = safeBuildCell(subCasualty.getClosingDate(),
+		cells[curCol] = safeBuildCell(subCasualty.getCasualtyNumber(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, false);
+		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getCasualtyDate(),
+				TypeDefGUIDs.T_String, false, false);
+		styleCenteredCell(cells[curCol++], true, true);
+		
+		cells[curCol] = safeBuildCell(subCasualty.getNotificationDate(),
+				TypeDefGUIDs.T_String, false, false);
+		styleCenteredCell(cells[curCol++], true, true);
+		
+		cells[curCol] = safeBuildCell(subCasualty.getClosingDate(),
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
@@ -1115,11 +1137,12 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		cells[curCol] = safeBuildCell(subCasualty.getManager(),
+		String boolStr = subCasualty.isJudicialProcess() ? YES_STRING : NO_STRING;
+		cells[curCol] = safeBuildCell(boolStr,
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		cells[curCol] = safeBuildCell(subCasualty.getClient(),
+		cells[curCol] = safeBuildCell(subCasualty.getManager(),
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
@@ -1135,22 +1158,22 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		cells[curCol] = safeBuildCell(subCasualty.getCasualtyNumber(),
-				TypeDefGUIDs.T_String, false, false);
+		cells[curCol] = safeBuildCell(subCasualty.getDamagesClaimed(),
+				TypeDefGUIDs.T_String, true, true);
+		styleCenteredCell(cells[curCol++], true, true);
+		
+		cells[curCol] = safeBuildCell(subCasualty.getDeductibleValue(),
+				TypeDefGUIDs.T_String, true, true);
 		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getSettlementValue(),
 				TypeDefGUIDs.T_String, true, true);
-		styleCenteredCell(cells[curCol++], true, true);
+		styleCenteredCell(cells[curCol++], true, true);		
 		
-		String boolStr = subCasualty.isSettledProcess() ? YES_STRING : NO_STRING;
+		boolStr = subCasualty.isSettledProcess() ? YES_STRING : NO_STRING;
 		cells[curCol] = safeBuildCell(boolStr,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, true);
-		
-		cells[curCol] = safeBuildCell(subCasualty.getDamagesClaimed(),
-				TypeDefGUIDs.T_String, true, true);
-		styleCenteredCell(cells[curCol++], true, true);
+		styleCenteredCell(cells[curCol++], true, true);		
 		
 		boolStr = subCasualty.isSmallerClaimProcess() ? YES_STRING : NO_STRING;
 		cells[curCol] = safeBuildCell(boolStr,
@@ -1175,11 +1198,11 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	 */
 	private TD[] buildTitlesRow() {
 
-		TD[] cells = new TD[15];
+		TD[] cells = new TD[NR_OF_COLUMNS];
 		
 		String[] allTitles = {COL_01, COL_02, COL_03, COL_04, COL_05, COL_06, 
 				COL_07, COL_08, COL_09, COL_10, COL_11, COL_12, COL_13, 
-				COL_14, COL_15};
+				COL_14, COL_15, COL_16, COL_17};
 		
 		for (int i=0; i<allTitles.length; i++) {
 			String tmp = allTitles[i];
@@ -1336,6 +1359,54 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	}
 	
 	/**
+	 * This method builds the row with the information about the preceding
+	 * sub-casualties' Client
+	 */
+	private TR constructClientRow(String clName) {
+
+		TD rowContent;
+		TR row;
+		
+		// Builds the TD with the content
+		rowContent = ReportBuilder.buildCell(CLIENT_ROW_STR + clName,
+				TypeDefGUIDs.T_String);
+		rowContent.setColSpan(NR_OF_COLUMNS);
+		ReportBuilder.styleCell(rowContent, true, false);
+
+		// Builds the TR encapsulating the TD
+		row = ReportBuilder.buildRow(new TD[] { rowContent });
+		row.setStyle("height:35px;background:#e2f2ff;font-weight:bold;");
+
+		return row;
+	}
+	
+	/**
+	 * This method builds a the row with the total number of processes
+	 */
+	private TR constructTotalProcessesRow() {
+
+		TD[] cells = new TD[2];
+		TR row;
+
+		cells[0] = ReportBuilder.buildHeaderCell(TOTAL_PROCESSES);
+		cells[0].setWidth("1px");
+		cells[0].setColSpan(2);
+		ReportBuilder.styleCell(cells[0], true, false);
+
+		cells[1] = ReportBuilder.buildCell(totalProcesses, TypeDefGUIDs.T_Integer);
+		ReportBuilder.styleCell(cells[1], true, false);
+
+		int colspan= NR_OF_COLUMNS - 1;
+		
+		cells[1].setColSpan(colspan);
+
+		row = ReportBuilder.buildRow(cells);
+		row.setStyle("height:30px;background:#e6e6e6;");
+
+		return row;
+	}
+	
+	/**
 	 * This method builds a "summary row" with info to display at the end of the
 	 * report. It is (REALLY) similar to ReportBuilder's constructDualRow
 	 * method, but without the left line, and allowing to print a "money" value
@@ -1483,5 +1554,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		cells[currColl++].setWidth(WIDTH_COL_13);
 		cells[currColl++].setWidth(WIDTH_COL_14);
 		cells[currColl++].setWidth(WIDTH_COL_15);
+		cells[currColl++].setWidth(WIDTH_COL_16);
+		cells[currColl++].setWidth(WIDTH_COL_17);
 	}
 }
