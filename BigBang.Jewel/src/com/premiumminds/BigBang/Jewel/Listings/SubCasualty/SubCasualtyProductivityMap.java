@@ -57,7 +57,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	//private static final String TITLE_REPLACE_STR_1 = "<tit>";
 	//private static final String TITLE_REPLACE_STR_2 = "<tit2>";
 	private static final String TITLE_SPLIT = "<splt>";
-	private static final String COL_01 = "N.º do Processo";
+	private static final String COL_01 = "N.º do" + TITLE_SPLIT + "Processo";
 	private static final String COL_02 = "Data de" + TITLE_SPLIT + "Sinistro" + TITLE_SPLIT + "(____/__/__)";
 	private static final String COL_03 = "Data de" + TITLE_SPLIT + "Participação" + TITLE_SPLIT + "(____/__/__)";
 	private static final String COL_04 = "Data de" + TITLE_SPLIT + "Encerramento" + TITLE_SPLIT + "(____/__/__)";
@@ -77,7 +77,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private static final String TOTAL_PROCESSES = "Número Total de Processos";
 	private static final String LIN_PERCENT = "Percentagem de Processos";
 	private static final String LIN_TOTAL = "Valores Totais";
-	//private static final int COLUMN_BREAK_POINT = 33;
+	private static final int COLUMN_BREAK_POINT = 33;
 	private static final String YES_STRING = "Sim";
 	private static final String NO_STRING = "Não";
 	private static final String CLIENT_ROW_STR = "Cliente: ";
@@ -363,9 +363,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				subCasualty.getAbsolutePolicy().GetSubLine().getLine() != null &&
 				subCasualty.getAbsolutePolicy().GetSubLine().getLine().getCategory() != null) {
 
-				String catStr =  subCasualty.getAbsolutePolicy().GetSubLine().getLabel() + "/" +
-						subCasualty.getAbsolutePolicy().GetSubLine().getLine().getLabel() + "/" +
-						subCasualty.getAbsolutePolicy().GetSubLine().getLine().getCategory().getLabel();
+				String catStr = subCasualty.getAbsolutePolicy().GetSubLine().getLine().getCategory().getLabel() + " / " +
+						subCasualty.getAbsolutePolicy().GetSubLine().getLine().getLabel() + " / " +
+						subCasualty.getAbsolutePolicy().GetSubLine().getLabel();
 				
 				setCategory(catStr);
 			}
@@ -639,7 +639,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				// The query "part" responsible for getting the logs
 				logsQuery.append(logsEntity.SQLForSelectByMembers(
 						new int[] { 0 /* corresponds to column FKOperation @ credite_egs.tblPNLogs */ },
-						new java.lang.Object[] { subCasualty.GetProcessID() }, null));
+						new java.lang.Object[] { subCasualty.GetCasualty().GetProcessID() }, null));
 						
 			} catch (Throwable e) {
 				throw new BigBangJewelException(e.getMessage(), e);
@@ -688,7 +688,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 					if (tmp.GetOperation().getKey().equals(Constants.OPID_Casualty_CreateSubCasualty)) {
 						// Checks whether the sub-casualty created is the one to which we're trying to 
 						// get the date
-						if (tmp.GetExternalProcess().equals(subCasualty.GetCasualty().getKey())) {
+						if (tmp.GetExternalProcess().equals(subCasualty.GetProcessID())) {
 							return tmp.GetTimestamp().toString().substring(0, 10);
 						}
 					}
@@ -1119,7 +1119,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		
 		cells[curCol] = safeBuildCell(subCasualty.getCasualtyNumber(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, true);
+		styleCenteredCell(cells[curCol++], true, false);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getCasualtyDate(),
 				TypeDefGUIDs.T_String, false, false);
@@ -1150,12 +1150,30 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				TypeDefGUIDs.T_String, false, false);
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		cells[curCol] = safeBuildCell(subCasualty.getCategory(),
-				TypeDefGUIDs.T_String, false, false);
+		String categoryName = subCasualty.getCategory();
+		if (categoryName.length() <= COLUMN_BREAK_POINT) {
+			cells[curCol] = safeBuildCell(categoryName,
+					TypeDefGUIDs.T_String, false, false);
+		} else {
+			ArrayList<String> categoryArray = new ArrayList<String>();
+			categoryArray.add(categoryName);
+			cells[curCol] = buildValuesTable(
+					splitValue(categoryArray, COLUMN_BREAK_POINT),
+					WIDTH_COL_09, false, false);
+		}
 		styleCenteredCell(cells[curCol++], true, true);
 		
-		cells[curCol] = safeBuildCell(subCasualty.getCompany(),
-				TypeDefGUIDs.T_String, false, false);
+		String companyName = subCasualty.getCompany();
+		if (companyName.length() <= COLUMN_BREAK_POINT) {
+			cells[curCol] = safeBuildCell(companyName,
+					TypeDefGUIDs.T_String, false, false);
+		} else {
+			ArrayList<String> companyArray = new ArrayList<String>();
+			companyArray.add(companyName);
+			cells[curCol] = buildValuesTable(
+					splitValue(companyArray, COLUMN_BREAK_POINT),
+					WIDTH_COL_10, false, false);
+		}
 		styleCenteredCell(cells[curCol++], true, true);
 		
 		cells[curCol] = safeBuildCell(subCasualty.getDamagesClaimed(),
@@ -1390,10 +1408,10 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 
 		cells[0] = ReportBuilder.buildHeaderCell(TOTAL_PROCESSES);
 		cells[0].setWidth("1px");
-		cells[0].setColSpan(2);
+		cells[0].setColSpan(3);
 		ReportBuilder.styleCell(cells[0], true, false);
 
-		cells[1] = ReportBuilder.buildCell(totalProcesses, TypeDefGUIDs.T_Integer);
+		cells[1] = ReportBuilder.buildHeaderCell(totalProcesses + ""); 
 		ReportBuilder.styleCell(cells[1], true, false);
 
 		int colspan= NR_OF_COLUMNS - 1;
@@ -1423,17 +1441,28 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		float percentFloat;
 
 		cells[curCol] = ReportBuilder.buildHeaderCell(text);
-		cells[curCol++].setColSpan(8);
+		cells[curCol++].setColSpan(10);
 		
 		ReportBuilder.styleCell(cells[0], true, false);
 		
 		if (!percent || totalProcesses==0) {
-			valToInsert = String.valueOf(totalProcesses);
+			valToInsert = claimedValueTotal.toString();
+		} else {
+			valToInsert = NO_VALUE;
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
-				TypeDefGUIDs.T_String, false, false);
+				TypeDefGUIDs.T_String, !percent, !percent);
 		styleCenteredCell(cells[curCol++], true, true);
 		
+		if (!percent || totalProcesses==0) {
+			valToInsert = deductibleValueTotal.toString();
+		} else {
+			valToInsert = NO_VALUE;
+		}
+		cells[curCol] = safeBuildCell(valToInsert,
+				TypeDefGUIDs.T_String, !percent, !percent);
+		styleCenteredCell(cells[curCol++], true, true);
+				
 		if (!percent || totalProcesses==0) {
 			valToInsert = settlementTotal.toString();
 		} else {
@@ -1453,15 +1482,6 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 		cells[curCol] = safeBuildCell(valToInsert,
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(cells[curCol++], true, true);
-		
-		if (!percent || totalProcesses==0) {
-			valToInsert = claimedValueTotal.toString();
-		} else {
-			valToInsert = NO_VALUE;
-		}
-		cells[curCol] = safeBuildCell(valToInsert,
-				TypeDefGUIDs.T_String, !percent, !percent);
 		styleCenteredCell(cells[curCol++], true, true);
 		
 		if (!percent || totalProcesses==0) {
@@ -1556,5 +1576,86 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		cells[currColl++].setWidth(WIDTH_COL_15);
 		cells[currColl++].setWidth(WIDTH_COL_16);
 		cells[currColl++].setWidth(WIDTH_COL_17);
+	}
+	
+	/**
+	 * This method is used to split a string, which could be "too wide", and
+	 * wreck the report's look. It gets not a String, but an array list with one
+	 * element (the string) for it is the way it is represented in the
+	 * CoverageData's class.
+	 */
+	private ArrayList<String> splitValue(ArrayList<String> stringToSplit,
+			int breakPosition) {
+
+		ArrayList<String> result = new ArrayList<String>();
+		String[] split = stringToSplit.get(0).split("\\s+");
+		String tmp = "";
+
+		// Splits when it occupies more than (approximately) one row's length
+		for (int i = 0; i < split.length; i++) {
+			tmp = tmp + " " + split[i];
+			if ((tmp.length() / (breakPosition - 6)) >= 1) {
+				result.add(tmp);
+				tmp = "";
+			} else if (i + 1 == split.length) {
+				result.add(tmp);
+			}
+		}
+
+		return (result.size() == 0 ? stringToSplit : result);
+	}
+	
+	/**
+	 * This method returns a TD containing a value or a table of values,
+	 * contained in an ArrayList. It's used to build tables to display inside a
+	 * TD.
+	 */
+	private TD buildValuesTable(ArrayList<String> data, int width,
+			boolean addEuro, boolean alignRight) {
+
+		TD content;
+
+		content = new TD();
+		content.setColSpan(1);
+
+		if (data == null) {
+			return ReportBuilder.buildCell(" ", TypeDefGUIDs.T_String);
+		}
+
+		// Builds a "simple" TD or a table with a TD with each value
+		if (data.size() == 1) {
+			content = safeBuildCell(data.get(0), TypeDefGUIDs.T_String,
+					addEuro, alignRight);
+			content.setWidth(width);
+			ReportBuilder.styleCell(content, false, false);
+			ReportBuilder.styleInnerContainer(content);
+		} else {
+
+			Table table;
+			TR[] tableRows = new TR[data.size()];
+
+			// Iterates the values, and adds them to the table
+			for (int i = 0; i < data.size(); i++) {
+				TD[] cell = new TD[1];
+
+				cell[0] = safeBuildCell(data.get(i), TypeDefGUIDs.T_String,
+						addEuro, alignRight);
+				/*cell[0].setWidth(width);
+				cell[0].setStyle("overflow:hidden;white-space:nowrap");*/
+
+				tableRows[i] = ReportBuilder.buildRow(cell);
+				tableRows[i].setStyle(("height:15px;"));
+			}
+
+			table = ReportBuilder.buildTable(tableRows);
+			ReportBuilder.styleTable(table, true);
+			table.setStyle("background-color:white;margin-top:8px;margin-bottom:8px;width:100%;");
+
+			content.addElement(new Div().addElement(table).setStyle(
+					"width:inherit;"));
+			ReportBuilder.styleInnerContainer(content);
+		}
+
+		return content;
 	}
 }
