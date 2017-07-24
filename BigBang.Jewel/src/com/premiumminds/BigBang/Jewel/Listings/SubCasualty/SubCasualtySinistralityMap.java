@@ -1341,7 +1341,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 								" FROM " + schemaName + ".tblPNLogs " + 
 								" where FKOperation in ('" + Constants.OPID_SubCasualty_CloseProcess +
 								"', '" + Constants.OPID_SubCasualty_ExternReopenProcess +"')" +
-							  ") last_op where rn = 1 "+
+							  " and Undone=0) last_op where rn = 1 "+
 							") final_op "+ 
 							"where FKOperation = '" + Constants.OPID_SubCasualty_CloseProcess + "'");
 		} catch (Throwable e) {
