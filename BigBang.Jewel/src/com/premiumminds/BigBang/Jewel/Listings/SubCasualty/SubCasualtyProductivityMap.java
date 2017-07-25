@@ -116,6 +116,8 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private String paramEndDate = NO_VALUE;
 	private BigDecimal deductibleValueTotal = BigDecimal.ZERO;
 	
+	private String schemaName = "credite_egs";
+	
 	/**
 	 * Inner class which holds the information to display at the map
 	 */
@@ -860,7 +862,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 							+ " select * FROM ("
 							+ " SELECT *,"
 							+ "ROW_NUMBER() OVER (PARTITION BY FKPROCESS ORDER BY _TSCREATE DESC) AS rn"
-							+ " FROM credite_egs.tblPNLogs "
+							+ " FROM " + schemaName + ".tblPNLogs "
 							+ " where FKOperation in ('"
 							+ Constants.OPID_SubCasualty_MarkForClosing + "', '"
 							+ Constants.OPID_SubCasualty_RejectClosing + "', '"
@@ -939,6 +941,10 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	 */
 	public GenericElement[] doReport(String[] reportParams)
 			throws BigBangJewelException {
+		
+		if (!Utils.getCurrency().equals("€")) {
+			schemaName = "bbangola"; // TODO: Fast fix to work in Angola and Alvalade, but a different solution must be implemented (soon, while developing the new report) 
+		} 
 		
 		// Sets the class variables for the parameters
 		if ((reportParams[0] != null) && !"".equals(reportParams[0])) {
