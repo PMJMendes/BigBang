@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,14 +168,9 @@ public class MailConnector {
 
 			// Needed check and adaptation to handle inline images 
 			if (hasInlineImages(body)) {
-				
 				// Gets the inline images as attachments
 				base64ImagesExtracted = extractb64Images(body); 
-				
 				if (base64ImagesExtracted!=null && base64ImagesExtracted.size()>0) {
-					// Changes the body to have the new type of images
-					body = editOutterBody(base64ImagesExtracted.keySet(), body);
-					
 					Collection<FileXfer> imgValues = base64ImagesExtracted.values();
 					inlineImgs = imgValues.toArray(new FileXfer[imgValues.size()]); 
 				}
@@ -186,31 +182,56 @@ public class MailConnector {
 				mailMsg.setText(body, "UTF-8");
 				mailMsg.addHeader("Content-Type", "text/html");
 			} else {
+				
 				// If it has attachments, must set a multipart mail
-				MimeMultipart multipartMsg = new MimeMultipart();
 				MimeBodyPart bodyPart = new MimeBodyPart();
-				bodyPart.setContent(body, "text/html; charset=utf-8");
-				multipartMsg.addBodyPart(bodyPart);
+				MimeMultipart multipartMsg = new MimeMultipart("related");
 
 				if (inlineImgs!=null) {
+					
+					Set<String> fileNamesSet = new HashSet<String>();
+					Set<MimeBodyPart> inlinePartsSet = new HashSet<MimeBodyPart>();
+					 
 					for (int i=0; i<inlineImgs.length; i++) {
 						if (inlineImgs[i] == null) {
 							continue;
 						}
 						bodyPart = new MimeBodyPart();
 						
-						File tempFile = File.createTempFile(inlineImgs[i].getFileName(), ".tmp", null);
+						String fileName = inlineImgs[i].getFileName();
+						File tempFile = File
+								.createTempFile(fileName.substring(0,
+										fileName.length() - 4), fileName
+										.substring(fileName.length() - 4), null);
 						FileOutputStream outputStream = new FileOutputStream(tempFile);
 						outputStream.write(inlineImgs[i].getData());
 						
+						fileName = tempFile.getName();
+						
 						bodyPart.attachFile(tempFile);	
-						bodyPart.setContentID("<" + inlineImgs[i].getFileName() + ">");
+						bodyPart.setFileName(fileName);
+						bodyPart.setContentID("<" + fileName + ">");
 						bodyPart.setDisposition(MimeBodyPart.INLINE);
 						
-						multipartMsg.addBodyPart(bodyPart);
+						inlinePartsSet.add(bodyPart);
+						fileNamesSet.add(fileName);
 	
 						outputStream.close();
 					}
+					
+					// Changes the body to have the new type of images
+					body = editOutterBody(fileNamesSet, body);
+					
+					// Adds the mail text (must be prior to the attachments)
+					bodyPart = new MimeBodyPart();
+					bodyPart.setContent(body, "text/html; charset=utf-8");
+					multipartMsg.addBodyPart(bodyPart);
+					
+					// Adds the attachments
+					for (MimeBodyPart p : inlinePartsSet) {
+						multipartMsg.addBodyPart(p);
+					}
+					
 				}
 				
 				// TODO: NEEDS TO BE DIFFERENT?
