@@ -15,8 +15,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -189,8 +189,8 @@ public class MailConnector {
 
 				if (inlineImgs!=null) {
 					
-					Set<String> fileNamesSet = new HashSet<String>();
-					Set<MimeBodyPart> inlinePartsSet = new HashSet<MimeBodyPart>();
+					Set<String> fileNamesSet = new LinkedHashSet<String>();
+					Set<MimeBodyPart> inlinePartsSet = new LinkedHashSet<MimeBodyPart>();
 					 
 					for (int i=0; i<inlineImgs.length; i++) {
 						if (inlineImgs[i] == null) {
@@ -199,10 +199,12 @@ public class MailConnector {
 						bodyPart = new MimeBodyPart();
 						
 						String fileName = inlineImgs[i].getFileName();
+						int extensionSize = inlineImgs[i].getContentType().length() + 1;
+						
 						File tempFile = File
 								.createTempFile(fileName.substring(0,
-										fileName.length() - 4), fileName
-										.substring(fileName.length() - 4), null);
+										fileName.length() - extensionSize), fileName
+										.substring(fileName.length() - extensionSize), null);
 						FileOutputStream outputStream = new FileOutputStream(tempFile);
 						outputStream.write(inlineImgs[i].getData());
 						
