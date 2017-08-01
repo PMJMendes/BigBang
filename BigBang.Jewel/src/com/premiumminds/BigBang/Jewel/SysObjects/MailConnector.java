@@ -24,7 +24,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.activation.DataHandler;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.FetchProfile;
@@ -46,7 +45,6 @@ import javax.mail.internet.MimeUtility;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.MessageIDTerm;
 import javax.mail.search.SearchTerm;
-import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
@@ -183,7 +181,7 @@ public class MailConnector {
 				mailMsg.addHeader("Content-Type", "text/html");
 			} else {
 				
-				// If it has attachments, must set a multipart mail
+				// If it has inline images, must set a multipart mail
 				MimeBodyPart bodyPart = new MimeBodyPart();
 				MimeMultipart multipartMsg = new MimeMultipart("related");
 
@@ -236,18 +234,37 @@ public class MailConnector {
 					
 				}
 				
-				// TODO: NEEDS TO BE DIFFERENT?
+				// Now the attachments
 				if(attachments!=null) {
+					
 					for (int i=0; i<attachments.length; i++) {
+						
 						if (attachments[i] == null) {
 							continue;
 						}
+						
 						bodyPart = new MimeBodyPart();
-						bodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(attachments[i].getData(),
-								attachments[i].getContentType())));
-						bodyPart.setFileName(attachments[i].getFileName());
-						bodyPart.setHeader("Content-ID", attachments[i].getFileName());
+						
+						String fileName = attachments[i].getFileName();
+						
+						// Gets the file name and extension
+						String contentType = attachments[i].getContentType();
+		        		String fileExtension = contentType.substring(contentType.lastIndexOf("/") + 1).toLowerCase();
+		        		
+		        		int extensionSize = fileExtension.length() + 1;
+						
+						File tempFile = File
+								.createTempFile(fileName.substring(0,
+										fileName.length() - extensionSize), fileName
+										.substring(fileName.length() - extensionSize), null);
+
+						FileOutputStream outputStream = new FileOutputStream(tempFile);
+						outputStream.write(attachments[i].getData());
+						
+						bodyPart.attachFile(tempFile);
 						multipartMsg.addBodyPart(bodyPart);
+						
+						outputStream.close();
 					}
 				}
 
