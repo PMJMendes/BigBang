@@ -475,8 +475,9 @@ public class MessageBridge
 			j = 0;
 			for ( i = 0; i < parrAttachments.length; i++ )
 			{
-				if ( parrAttachments[i].promote )
+				if ( parrAttachments[i].promote && pobjMsg.midDirection.equals(Constants.MsgDir_Incoming)) {
 					j++;
+				}
 			}
 
 			if ( j == 0 )
@@ -492,7 +493,7 @@ public class MessageBridge
 				j = 0;
 				for ( i = 0; i < parrAttachments.length; i++ )
 				{
-					if ( parrAttachments[i].promote )
+					if (parrAttachments[i].promote && pobjMsg.midDirection.equals(Constants.MsgDir_Incoming))
 					{
 						lobjResult.marrCreate2[j] = new DocDataLight();
 						lobjResult.marrCreate2[j].mstrName = parrAttachments[i].name;
