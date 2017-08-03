@@ -147,5 +147,61 @@ public interface Resources extends ClientBundle {
 	@Source("images/yellowIcon.png")
 	ImageResource yellowIcon();
 
-
+	// RichText Buttons
+	@Source("images/richTextIcons/bold.png")
+	ImageResource bold();
+	
+	@Source("images/richTextIcons/italic.gif")
+	ImageResource italic();
+	
+	@Source("images/richTextIcons/underline.gif")
+	ImageResource underline();
+	
+	@Source("images/richTextIcons/striketrough.gif")
+	ImageResource striketrough();
+	
+	@Source("images/richTextIcons/subscript.gif")
+	ImageResource subscript();
+	
+	@Source("images/richTextIcons/superscript.gif")
+	ImageResource superscript();
+	
+	@Source("images/richTextIcons/just_left.gif")
+	ImageResource justLeft();
+	
+	@Source("images/richTextIcons/just_center.gif")
+	ImageResource justCenter();
+	
+	@Source("images/richTextIcons/just_right.png")
+	ImageResource justRight();
+	
+	@Source("images/richTextIcons/list_ordered.gif")
+	ImageResource listOrdered();
+	
+	@Source("images/richTextIcons/list_unordered.png")
+	ImageResource listUnordered();
+	
+	@Source("images/richTextIcons/indent_right.gif")
+	ImageResource indentRight();
+	
+	@Source("images/richTextIcons/indent_left.gif")
+	ImageResource indentLeft();
+	
+	@Source("images/richTextIcons/link_add.gif")
+	ImageResource linkAdd();
+	
+	@Source("images/richTextIcons/link_break.png")
+	ImageResource linkBreak();
+	
+	@Source("images/richTextIcons/horiz_rule.gif")
+	ImageResource horizRule();
+	
+	@Source("images/richTextIcons/image.gif")
+	ImageResource image();
+	
+	@Source("images/richTextIcons/remove_formatting.png")
+	ImageResource removeFormatting();
+	
+	@Source("images/richTextIcons/switch.png")
+	ImageResource switchImg();
 }
