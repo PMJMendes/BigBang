@@ -1,23 +1,33 @@
 package bigBang.library.client.userInterface.form;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.UserBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.Message.Kind;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.DocumentsBrokerClient;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
@@ -33,9 +43,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.web.bindery.requestfactory.shared.impl.EntityCodex;
 
 public class SendMessageForm extends FormView<Conversation> implements DocumentsBrokerClient {
 	
@@ -65,6 +75,11 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	private VerticalPanel emailWrapper;
 	private TextBoxFormField emailSubject;
 	private RichTextAreaFormField emailBody;
+	private VerticalPanel attachmentsWrapper;
+	protected bigBang.library.client.userInterface.List<Document> existingAttachments;
+	ListHeader existingAttsHeaderTitle;
+	ListHeader existingAttsEntityPicker;
+	protected Map<String, String> ownerTypes;
 	
 	public SendMessageForm(){
 		
@@ -75,6 +90,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		expectsResponse = new RadioButtonFormField("Espera resposta");
 		expectsResponse.addOption("YES", "Sim");
 		expectsResponse.addOption("NO", "Não");
+		expectsResponse.setValue("YES");
 		replyLimit = new NumericTextBoxFormField("Prazo de Resposta", false);
 		replyLimit.setUnitsLabel("dias");
 		replyLimit.setFieldWidth("70px");
@@ -97,22 +113,10 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		emailWrapper = new VerticalPanel();
 		emailSubject = new TextBoxFormField("Assunto");
 		emailBody = new RichTextAreaFormField();
-
-		expectsResponse.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if(event.getValue().equals("YES")){
-					replyLimit.clear();
-					replyLimit.setEditable(true);
-					replyLimit.setReadOnly(false);
-				}else{
-					replyLimit.clear();
-					replyLimit.setEditable(false);
-					replyLimit.setReadOnly(true);
-				}
-			}
-		});
+		attachmentsWrapper = new VerticalPanel();
+		existingAttachments = new bigBang.library.client.userInterface.List<Document>();
+		existingAttsHeaderTitle = new ListHeader("Anexos Associados a Entidades");
+		existingAttsEntityPicker = new ListHeader();
 		
 		addSection("Detalhes do Processo de Mensagem");
 		addFormField(requestType, false);
@@ -149,6 +153,13 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		addWidget(emailWrapper);
 		emailWrapper.setVisible(true);
 		
+		existingAttachments.setHeaderWidget(existingAttsEntityPicker);
+		attachmentsWrapper.add(existingAttsHeaderTitle);
+		attachmentsWrapper.add(existingAttachments);
+		attachmentsWrapper.setCellHeight(existingAttachments, "510px");
+		addWidget(existingAttachments);
+	
+		ownerTypes = new HashMap<String, String>();
 		
 		// Handlers
 		existingContactsEntity.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -189,6 +200,39 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				if (existingContact.getValue() != null && existingContact.getValue().length()!=0) {
 					addAddress(BCC_ADDRESS_ID, existingContact.getValue());
 				}
+			}
+		});
+		
+		expectsResponse.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(event.getValue().equals("YES")){
+					replyLimit.clear();
+					replyLimit.setEditable(true);
+					replyLimit.setReadOnly(false);
+				}else{
+					replyLimit.clear();
+					replyLimit.setEditable(false);
+					replyLimit.setReadOnly(true);
+				}
+			}
+		});
+		
+		((UserBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.USER)).getUsers(new ResponseHandler<User[]>() {
+
+			@Override
+			public void onResponse(User[] response) {
+				List<String> suggestions = new ArrayList<String>();
+				for(int i = 0; i < response.length; i++) {
+					suggestions.add(response[i].name);
+				}
+				forwardReply.setSuggestions(suggestions);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
 			}
 		});
 	}
@@ -310,7 +354,30 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			bccAddresses.setValue(addedAddresses);
 		}
 	}
+	
+	public void addItemContactList(String name, String id, String ownerType) {
+		
+	}
+	
+	public void setTypeAndOwnerId(String ownerTypeId2, String ownerId2) {
+		// TODO Dummy
+	}
+	
+	public HasValue<String> getTo(){
+		return toAddresses;
+	}
+	
+	public void addDocuments(Collection<Document> documents) {
+		// TODO Dummy
+	}
 
+	public void addDocument(Document doc){
+		// TODO Dummy
+	}
+
+	public void lockCreateNewButton(boolean lock) {
+		// TODO Dummy
+	}
 
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {

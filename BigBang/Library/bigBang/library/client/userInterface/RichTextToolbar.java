@@ -435,7 +435,7 @@ public class RichTextToolbar extends Composite {
 		topPanel.add(new HTML("&nbsp;"));
 		topPanel.add(removeformatting = createPushButton(12,GUI_HOVERTEXT_REMOVEFORMAT));
 		topPanel.add(new HTML("&nbsp;"));
-		topPanel.add(texthtml = createToggleButton(13,GUI_HOVERTEXT_SWITCHVIEW));
+		topPanel.add(texthtml = createToggleButton(7,GUI_HOVERTEXT_SWITCHVIEW));
 
 		//Init the BOTTOM Panel
 		bottomPanel.add(fontlist = createFontList());
@@ -460,6 +460,8 @@ public class RichTextToolbar extends Composite {
 	                 break;
 	        case 6:  extract = new Image(resources.superscript());
 	                 break;
+	        case 7: extract = new Image(resources.switchImg());
+		 			 break;
 	        default: 
 	                 break;
 	    }
@@ -489,21 +491,19 @@ public class RichTextToolbar extends Composite {
 	                 break;
 	        case 5:  extract = new Image(resources.listUnordered());
 	                 break;
-	        case 6:  extract = new Image(resources.listUnordered());
+	        case 6:  extract = new Image(resources.indentRight());
 	                 break;
-	        case 7:  extract = new Image(resources.indentRight());
+	        case 7:  extract = new Image(resources.indentLeft());
             		 break;
-	        case 8:  extract = new Image(resources.indentLeft());
+	        case 8:  extract = new Image(resources.linkAdd());
    		 			 break;
-	        case 9:  extract = new Image(resources.linkAdd());
+	        case 9:  extract = new Image(resources.linkBreak());
 	 			 	 break;
-	        case 10: extract = new Image(resources.linkBreak());
+	        case 10: extract = new Image(resources.horizRule());
 		 	 		 break;
-	        case 11: extract = new Image(resources.horizRule());
+	        case 11: extract = new Image(resources.image());
 	 		 		 break;
-	        case 12: extract = new Image(resources.image());
-	 		 		 break;
-	        case 13: extract = new Image(resources.switchImg());
+	        case 12: extract = new Image(resources.removeFormatting());
 	 		 		 break;
 	        default: 
 	                 break;

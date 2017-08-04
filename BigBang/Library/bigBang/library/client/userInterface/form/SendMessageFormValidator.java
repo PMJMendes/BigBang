@@ -27,15 +27,17 @@ FormValidator<SendMessageForm> {
 
 	private boolean validateText() {
 
-		if(form.emailOrNote.getValue() != null){
+		/*if(form.emailOrNote.getValue() != null){
 			return (form.emailOrNote.getValue().equals(Message.Kind.EMAIL.toString()) ? validateString(form.text.subject, 1, 250, false) : true);
 		}
 		else
-			return true;
+			return true;*/
+		return true;
 	}
 
 	private boolean validateContactFrom() {
-		return validateGuid(form.contactsFrom, Message.Kind.NOTE.toString().equalsIgnoreCase(form.emailOrNote.getValue()));
+		//return validateGuid(form.contactsFrom, Message.Kind.NOTE.toString().equalsIgnoreCase(form.emailOrNote.getValue()));
+		return true;
 	}
 
 	private boolean validateType() {
@@ -47,7 +49,8 @@ FormValidator<SendMessageForm> {
 	}
 
 	private boolean validateTo() {
-		return validateGuid(form.to, Message.Kind.NOTE.toString().equalsIgnoreCase(form.emailOrNote.getValue()));
+		//return validateGuid(form.to, Message.Kind.NOTE.toString().equalsIgnoreCase(form.emailOrNote.getValue()));
+		return true;
 	}
 
 	private boolean validateForwardReply() {
