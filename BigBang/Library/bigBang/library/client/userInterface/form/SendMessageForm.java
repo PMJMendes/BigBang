@@ -59,13 +59,17 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	protected AutoCompleteTextListFormField forwardReply;
 	protected RadioButtonFormField expectsResponse;
 	protected NumericTextBoxFormField replyLimit;
+	protected HorizontalPanel toPanel;
 	protected TextBoxFormField toAddresses;
 	private Button addToButton;
+	protected HorizontalPanel ccPanel;
 	protected TextBoxFormField ccAddresses;
 	private Button addCcButton;
+	protected HorizontalPanel bccPanel;
 	protected TextBoxFormField bccAddresses;
 	private Button addBccButton;
-	private HorizontalPanel contactsWrapper;
+	private VerticalPanel contactsWrapper;
+	protected HorizontalPanel contactsEntityPanel;
 	protected ListBoxFormField existingContactsEntity;
 	protected ListBoxFormField existingContact;
 	private FormField<String> otherEntityContacts;
@@ -94,17 +98,23 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		replyLimit = new NumericTextBoxFormField("Prazo de Resposta", false);
 		replyLimit.setUnitsLabel("dias");
 		replyLimit.setFieldWidth("70px");
+		contactsWrapper = new VerticalPanel();
+		toPanel = new HorizontalPanel();
 		toAddresses = new TextBoxFormField("Destinatários do Email (separados por ';')");
 		addToButton = new Button("Adicionar");
+		ccPanel = new HorizontalPanel();
 		ccAddresses = new TextBoxFormField("CC (separados por ';')");
 		addCcButton = new Button("Adicionar");
+		bccPanel = new HorizontalPanel();
 		bccAddresses = new TextBoxFormField("BCC (separados por ';')");
 		addBccButton = new Button("Adicionar");
+		contactsEntityPanel = new HorizontalPanel();
 		existingContactsEntity = new ListBoxFormField("Contacto associado a:");
 		existingContactsEntity.setFieldWidth("400px");
 		existingContact = new ListBoxFormField("Contacto Existente:");
 		existingContact.setFieldWidth("400px");
 		otherEntityContacts = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.OTHER_ENTITY, null);
+		otherEntityContacts.setLabelText("Contactos de 'Outras Entidades'");
 		emailOrNote = new RadioButtonFormField("E-mail ou Nota");
 		emailOrNote.addOption(Kind.EMAIL.toString(), "E-mail");
 		emailOrNote.addOption(Kind.NOTE.toString(), "Nota");
@@ -126,15 +136,18 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		addFormField(replyLimit, true);
 
 		addSection("Detalhes da Mensagem");
-		contactsWrapper = new HorizontalPanel();
-		contactsWrapper.add(toAddresses);
-		contactsWrapper.add(addToButton);
-		contactsWrapper.add(ccAddresses);
-		contactsWrapper.add(addCcButton);
-		contactsWrapper.add(bccAddresses);
-		contactsWrapper.add(addBccButton);
-		contactsWrapper.add(existingContactsEntity);
-		contactsWrapper.add(otherEntityContacts);
+		toPanel.add(toAddresses);
+		toPanel.add(addToButton);
+		contactsWrapper.add(toPanel);
+		ccPanel.add(ccAddresses);
+		ccPanel.add(addCcButton);
+		contactsWrapper.add(ccPanel);
+		bccPanel.add(bccAddresses);
+		bccPanel.add(addBccButton);
+		contactsWrapper.add(bccPanel);
+		contactsEntityPanel.add(existingContactsEntity);
+		contactsEntityPanel.add(otherEntityContacts);
+		contactsWrapper.add(contactsEntityPanel);
 		contactsWrapper.add(existingContact);
 		addWidget(contactsWrapper);
 		
@@ -145,6 +158,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		addWidget(noteWrapper);
 		noteWrapper.setVisible(false);
 		
+		emailSubject.setWidth("100%");
+		emailSubject.setFieldWidth("100%");
 		registerFormField(emailSubject);
 		emailWrapper.add(emailSubject);
 		emailBody.setLabelWidth("0px");
@@ -157,7 +172,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		attachmentsWrapper.add(existingAttsHeaderTitle);
 		attachmentsWrapper.add(existingAttachments);
 		attachmentsWrapper.setCellHeight(existingAttachments, "510px");
-		addWidget(existingAttachments);
+		addWidget(attachmentsWrapper);
 	
 		ownerTypes = new HashMap<String, String>();
 		
