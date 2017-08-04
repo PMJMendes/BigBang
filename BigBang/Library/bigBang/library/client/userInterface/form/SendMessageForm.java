@@ -38,6 +38,7 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.interfaces.ContactsService;
 import bigBang.library.interfaces.ContactsServiceAsync;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -81,9 +82,13 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	private RichTextAreaFormField emailBody;
 	private VerticalPanel attachmentsWrapper;
 	protected bigBang.library.client.userInterface.List<Document> existingAttachments;
-	ListHeader existingAttsHeaderTitle;
-	ListHeader existingAttsEntityPicker;
+	protected ListHeader existingAttsHeaderTitle;
+	protected ListHeader existingAttsEntityPicker;
+	private ListBoxFormField documentsFrom;
 	protected Map<String, String> ownerTypes;
+	protected VerticalPanel leftPanel;
+	protected VerticalPanel rightPanel;
+	protected HorizontalPanel fullMailPanel;
 	
 	public SendMessageForm(){
 		
@@ -127,6 +132,11 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		existingAttachments = new bigBang.library.client.userInterface.List<Document>();
 		existingAttsHeaderTitle = new ListHeader("Anexos Associados a Entidades");
 		existingAttsEntityPicker = new ListHeader();
+		documentsFrom = new ListBoxFormField("Documentos de:");
+		documentsFrom.setFieldWidth("400px");
+		leftPanel = new VerticalPanel();
+		rightPanel = new VerticalPanel();
+		fullMailPanel = new HorizontalPanel();
 		
 		addSection("Detalhes do Processo de Mensagem");
 		addFormField(requestType, false);
@@ -149,13 +159,16 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		contactsEntityPanel.add(otherEntityContacts);
 		contactsWrapper.add(contactsEntityPanel);
 		contactsWrapper.add(existingContact);
-		addWidget(contactsWrapper);
 		
-		addFormField(emailOrNote);
+		leftPanel.add(emailOrNote);
+		
+		leftPanel.add(contactsWrapper);
+		
+		//addFormField(emailOrNote);
 
 		registerFormField(note);
 		noteWrapper.add(note);
-		addWidget(noteWrapper);
+		leftPanel.add(noteWrapper);
 		noteWrapper.setVisible(false);
 		
 		emailSubject.setWidth("100%");
@@ -164,15 +177,28 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		emailWrapper.add(emailSubject);
 		emailBody.setLabelWidth("0px");
 		emailBody.setFieldWidth("100%");
+		emailBody.getElement().getStyle().setBackgroundColor("#FFFFFF");
 		emailWrapper.add(emailBody);
-		addWidget(emailWrapper);
+		leftPanel.add(emailWrapper);
+		emailWrapper.getElement().getStyle().setPaddingTop(40, Unit.PX);
+		//setPadding(40, Unit.PX);
 		emailWrapper.setVisible(true);
 		
+		fullMailPanel.add(leftPanel);
+		
+		existingAttsEntityPicker.setLeftWidget(documentsFrom);
 		existingAttachments.setHeaderWidget(existingAttsEntityPicker);
 		attachmentsWrapper.add(existingAttsHeaderTitle);
 		attachmentsWrapper.add(existingAttachments);
 		attachmentsWrapper.setCellHeight(existingAttachments, "510px");
-		addWidget(attachmentsWrapper);
+		existingAttachments.setHeight("355px");
+		rightPanel.add(attachmentsWrapper);
+		
+		rightPanel.getElement().getStyle().setPaddingLeft(40, Unit.PX);
+		
+		fullMailPanel.add(rightPanel);
+		
+		addWidget(fullMailPanel);
 	
 		ownerTypes = new HashMap<String, String>();
 		
