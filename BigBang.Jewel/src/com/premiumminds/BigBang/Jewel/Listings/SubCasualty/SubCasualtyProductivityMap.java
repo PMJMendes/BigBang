@@ -38,6 +38,7 @@ import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
@@ -111,7 +112,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private int declinedCasualties = 0; // number of declined Casualties
 	private int warnedDeclinedCasualties = 0; // number of declined Casualties that were warned by Credite-EGS
 	private String paramClientUUID = NO_VALUE;
-	private String paramClientName= NO_VALUE;
+	private String paramClientGroupUUID = NO_VALUE;
+	private String paramClientName = NO_VALUE;
+	private String paramClientGroupName = NO_VALUE;
 	private String paramStartDate = NO_VALUE;
 	private String paramEndDate = NO_VALUE;
 	private BigDecimal deductibleValueTotal = BigDecimal.ZERO;
@@ -848,6 +851,21 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				} else {
 					subCasualtyQuery.append(casualtyEntity.SQLForSelectAll());
 				}
+				
+				if (!paramClientGroupUUID.equals(NO_VALUE)) {
+					IEntity clientEntity;
+					try {
+						clientEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+						subCasualtyQuery.append(" WHERE [t1].[fkclient] IN (SELECT [PK] FROM (")
+								.append(clientEntity.SQLForSelectByMembers(new int[] {Client.I.GROUP}, new java.lang.Object[] {paramClientGroupUUID}, null))
+								.append(") [AuxCli])");
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangJewelException(e.getMessage(), e);
+					}
+				}
+				
 			subCasualtyQuery.append(") [AuxCas] WHERE 1=1");
 					
 		} catch (Throwable e) {
@@ -952,12 +970,18 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			Client client = Client.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(reportParams[0]));
 			paramClientName = (String) client.getAt(Client.I.NAME);;
-		} 		
+		} 	
 		if ((reportParams[1] != null) && !"".equals(reportParams[1])) {
-			paramStartDate = reportParams[1];
-		}		
+			paramClientGroupUUID = reportParams[1];
+			ClientGroup clientGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(paramClientGroupUUID));
+			paramClientGroupName = (String) clientGroup.getAt(ClientGroup.I.NAME);
+		} 	
 		if ((reportParams[2] != null) && !"".equals(reportParams[2])) {
-			paramEndDate = reportParams[2];
+			paramStartDate = reportParams[2];
+		}		
+		if ((reportParams[3] != null) && !"".equals(reportParams[3])) {
+			paramEndDate = reportParams[3];
 		}
 		
 		// The sub-casualties, to display at the report
@@ -1285,6 +1309,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		if (!paramClientName.equals(NO_VALUE)) {
 			titleString += " de " + paramClientName;
 		}
+		if (!paramClientGroupName.equals(NO_VALUE)) {
+			titleString += " do grupo " + paramClientGroupName;
+		}
 		titleString += " encerrados";
 		if (!paramStartDate.equals(NO_VALUE)) {
 			titleString += " desde " + paramStartDate;
@@ -1332,7 +1359,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		TR[] tableRows = new TR[2];
 		TD[] notes = new TD[1];
 
-		String reportNotes = reportParams[3];
+		String reportNotes = reportParams[4];
 
 		// Creates a line with the word "Observações"
 		notes[0] = ReportBuilder.buildCell("Observações",
