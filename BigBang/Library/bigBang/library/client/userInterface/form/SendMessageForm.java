@@ -53,7 +53,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	// Constants
 	private static int TO_ADDRESS_ID = 1;
 	private static int CC_ADDRESS_ID = 2;
-	private static int BCC_ADDRESS_ID = 1;
+	private static int BCC_ADDRESS_ID = 3;
 	
 	protected ExpandableListBoxFormField requestType;
 	private TextBoxFormField subject;
@@ -92,6 +92,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	
 	public SendMessageForm(){
 		
+		// Declares Fields
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
 		requestType.allowEdition(false);
 		subject = new TextBoxFormField("Tópico");
@@ -99,7 +100,6 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		expectsResponse = new RadioButtonFormField("Espera resposta");
 		expectsResponse.addOption("YES", "Sim");
 		expectsResponse.addOption("NO", "Não");
-		expectsResponse.setValue("YES");
 		replyLimit = new NumericTextBoxFormField("Prazo de Resposta", false);
 		replyLimit.setUnitsLabel("dias");
 		replyLimit.setFieldWidth("70px");
@@ -138,71 +138,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		rightPanel = new VerticalPanel();
 		fullMailPanel = new HorizontalPanel();
 		
-		addSection("Detalhes do Processo de Mensagem");
-		addFormField(requestType, false);
-		addFormField(subject, false);
-		addFormField(forwardReply, false);
-		addFormField(expectsResponse, true);
-		addFormField(replyLimit, true);
-
-		addSection("Detalhes da Mensagem");
-		toPanel.add(toAddresses);
-		toPanel.add(addToButton);
-		contactsWrapper.add(toPanel);
-		ccPanel.add(ccAddresses);
-		ccPanel.add(addCcButton);
-		contactsWrapper.add(ccPanel);
-		bccPanel.add(bccAddresses);
-		bccPanel.add(addBccButton);
-		contactsWrapper.add(bccPanel);
-		contactsEntityPanel.add(existingContactsEntity);
-		contactsEntityPanel.add(otherEntityContacts);
-		contactsWrapper.add(contactsEntityPanel);
-		contactsWrapper.add(existingContact);
-		
-		leftPanel.add(emailOrNote);
-		
-		leftPanel.add(contactsWrapper);
-		
-		//addFormField(emailOrNote);
-
-		registerFormField(note);
-		noteWrapper.add(note);
-		leftPanel.add(noteWrapper);
-		noteWrapper.setVisible(false);
-		
-		emailSubject.setWidth("100%");
-		emailSubject.setFieldWidth("100%");
-		registerFormField(emailSubject);
-		emailWrapper.add(emailSubject);
-		emailBody.setLabelWidth("0px");
-		emailBody.setFieldWidth("100%");
-		emailBody.getElement().getStyle().setBackgroundColor("#FFFFFF");
-		emailWrapper.add(emailBody);
-		leftPanel.add(emailWrapper);
-		emailWrapper.getElement().getStyle().setPaddingTop(40, Unit.PX);
-		//setPadding(40, Unit.PX);
-		emailWrapper.setVisible(true);
-		
-		fullMailPanel.add(leftPanel);
-		
-		existingAttsEntityPicker.setLeftWidget(documentsFrom);
-		existingAttachments.setHeaderWidget(existingAttsEntityPicker);
-		attachmentsWrapper.add(existingAttsHeaderTitle);
-		attachmentsWrapper.add(existingAttachments);
-		attachmentsWrapper.setCellHeight(existingAttachments, "510px");
-		existingAttachments.setHeight("355px");
-		rightPanel.add(attachmentsWrapper);
-		
-		rightPanel.getElement().getStyle().setPaddingLeft(40, Unit.PX);
-		
-		fullMailPanel.add(rightPanel);
-		
-		addWidget(fullMailPanel);
-	
-		ownerTypes = new HashMap<String, String>();
-		
-		// Handlers
+		// Defines Handlers
 		existingContactsEntity.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
@@ -214,6 +150,13 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				contactEmailChanged(event.getValue());
+			}
+		});
+		
+		otherEntityContacts.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				contactEntityChanged(event.getValue(), true);
 			}
 		});
 		
@@ -276,6 +219,79 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				return;
 			}
 		});
+		
+		// "Draws" screen
+		addSection("Detalhes do Processo de Mensagem");
+		addFormField(requestType, false);
+		addFormField(subject, false);
+		addFormField(forwardReply, false);
+		addFormField(expectsResponse, true);
+		addFormField(replyLimit, true);
+
+		addSection("Detalhes da Mensagem");
+		toPanel.add(toAddresses);
+		toPanel.add(addToButton);
+		contactsWrapper.add(toPanel);
+		ccPanel.add(ccAddresses);
+		ccPanel.add(addCcButton);
+		contactsWrapper.add(ccPanel);
+		bccPanel.add(bccAddresses);
+		bccPanel.add(addBccButton);
+		contactsWrapper.add(bccPanel);
+		contactsEntityPanel.add(existingContactsEntity);
+		contactsEntityPanel.add(otherEntityContacts);
+		contactsWrapper.add(contactsEntityPanel);
+		contactsWrapper.add(existingContact);
+		
+		otherEntityContacts.setVisible(false);
+		
+		addToButton.setEnabled(false);
+		addCcButton.setEnabled(false);
+		addBccButton.setEnabled(false);
+
+		leftPanel.add(emailOrNote);
+
+		leftPanel.add(contactsWrapper);
+
+		registerFormField(note);
+		noteWrapper.add(note);
+		leftPanel.add(noteWrapper);
+		noteWrapper.setVisible(false);
+
+		emailSubject.setWidth("100%");
+		emailSubject.setFieldWidth("100%");
+		registerFormField(emailSubject);
+		emailWrapper.add(emailSubject);
+		emailBody.setLabelWidth("0px");
+		emailBody.setFieldWidth("100%");
+		emailBody.getElement().getStyle().setBackgroundColor("#FFFFFF");
+		emailWrapper.add(emailBody);
+		leftPanel.add(emailWrapper);
+		emailWrapper.getElement().getStyle().setPaddingTop(40, Unit.PX);
+		// setPadding(40, Unit.PX);
+		emailWrapper.setVisible(true);
+
+		fullMailPanel.add(leftPanel);
+
+		existingAttsEntityPicker.setLeftWidget(documentsFrom);
+		existingAttachments.setHeaderWidget(existingAttsEntityPicker);
+		attachmentsWrapper.add(existingAttsHeaderTitle);
+		attachmentsWrapper.add(existingAttachments);
+		attachmentsWrapper.setCellHeight(existingAttachments, "510px");
+		existingAttachments.setHeight("355px");
+		rightPanel.add(attachmentsWrapper);
+
+		rightPanel.getElement().getStyle().setPaddingLeft(40, Unit.PX);
+
+		fullMailPanel.add(rightPanel);
+
+		addWidget(fullMailPanel);
+
+		ownerTypes = new HashMap<String, String>();
+
+		addOtherEntitiesContacts();
+		
+		setValidator(new SendMessageFormValidator(this));
 	}
 
 	
@@ -292,14 +308,15 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	protected void contactEntityChanged(String id, boolean isOtherEntity) {
 
 		if(id == null || id.isEmpty()) {
-			clearEmails();
+		//	clearEmails();
+			otherEntityContacts.setVisible(false);
 			return;
 		} else if(id.equalsIgnoreCase(BigBangConstants.EntityIds.OTHER_ENTITY)) {
-			clearEmails();
 			otherEntityContacts.setVisible(true);
+		//	clearEmails();
 			return;
 		}
-
+		
 		otherEntityContacts.setVisible(isOtherEntity);
 
 		// Gets the emails associated with the entity
@@ -338,7 +355,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			for(int i = 0; i < contacts.length; i++){
 				Contact contact = contacts[i];
 				ContactInfo info = contact.info[0];
-				this.existingContact.addItem(contact.name + " <" + info.value + ">", info.id);
+				this.existingContact.addItem(info.value, info.value);
 			}
 		}
 	}
@@ -351,9 +368,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			addToButton.setEnabled(false);
 			addCcButton.setEnabled(false);
 			addBccButton.setEnabled(false);
-			existingContact.clearValues();
 		} else {
-			existingContact.setValue(id);
 			addToButton.setEnabled(true);
 			addCcButton.setEnabled(true);
 			addBccButton.setEnabled(true);
@@ -385,6 +400,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			}
 			
 			addedAddresses = addedAddresses + mail;
+		} else {
+			addedAddresses = mail;
 		}
 		
 		if (typeOfAddId == TO_ADDRESS_ID) {
@@ -396,8 +413,25 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		}
 	}
 	
+	/**
+	 * Adds a value to the selectable entities' contacts
+	 */
+	private void addOtherEntitiesContacts() {
+		existingContactsEntity.addItem("Outras Entidades", BigBangConstants.EntityIds.OTHER_ENTITY);
+	}
+	
+	public HasValue<String> getContactType() {
+		return existingContactsEntity;
+	}
+	
 	public void addItemContactList(String name, String id, String ownerType) {
-		
+		existingContactsEntity.addItem(name, id);
+		documentsFrom.addItem(name, id);
+		ownerTypes.put(id, ownerType);
+	}
+	
+	public ListBoxFormField getContactList() {
+		return existingContactsEntity;
 	}
 	
 	public void setTypeAndOwnerId(String ownerTypeId2, String ownerId2) {
@@ -405,7 +439,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 	
 	public HasValue<String> getTo(){
-		return toAddresses;
+		return existingContact;
 	}
 	
 	public void addDocuments(Collection<Document> documents) {
