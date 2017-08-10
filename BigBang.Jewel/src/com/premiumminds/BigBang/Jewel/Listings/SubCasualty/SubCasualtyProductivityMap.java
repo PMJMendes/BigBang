@@ -38,6 +38,7 @@ import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
@@ -111,7 +112,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 	private int declinedCasualties = 0; // number of declined Casualties
 	private int warnedDeclinedCasualties = 0; // number of declined Casualties that were warned by Credite-EGS
 	private String paramClientUUID = NO_VALUE;
-	private String paramClientName= NO_VALUE;
+	private String paramClientGroupUUID = NO_VALUE;
+	private String paramClientName = NO_VALUE;
+	private String paramClientGroupName = NO_VALUE;
 	private String paramStartDate = NO_VALUE;
 	private String paramEndDate = NO_VALUE;
 	private BigDecimal deductibleValueTotal = BigDecimal.ZERO;
@@ -275,15 +278,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		// This method sets the management time according to the casualty date and closing date
 		private void setManagementTime(Timestamp startDate, Timestamp endDate) {
 			
-			  long milliseconds1 = startDate.getTime();
-			  long milliseconds2 = endDate.getTime();
-
-			  long diff = milliseconds2 - milliseconds1;
-			  /* long diffSeconds = diff / 1000;
-			  long diffMinutes = diff / (60 * 1000);
-			  long diffHours = diff / (60 * 60 * 1000); 
-			  long diffDays = diff / (24 * 60 * 60 * 1000); */
-			  long diffDays = diff / (24 * 60 * 60 * 1000);
+			  long diffDays = calculateDaysInterval(startDate, endDate);
 			  
 			  String longStr = Long.toString(diffDays);
 			  
@@ -848,6 +843,21 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 				} else {
 					subCasualtyQuery.append(casualtyEntity.SQLForSelectAll());
 				}
+				
+				if (!paramClientGroupUUID.equals(NO_VALUE)) {
+					IEntity clientEntity;
+					try {
+						clientEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+						subCasualtyQuery.append(" WHERE [t1].[fkclient] IN (SELECT [PK] FROM (")
+								.append(clientEntity.SQLForSelectByMembers(new int[] {Client.I.GROUP}, new java.lang.Object[] {paramClientGroupUUID}, null))
+								.append(") [AuxCli])");
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangJewelException(e.getMessage(), e);
+					}
+				}
+				
 			subCasualtyQuery.append(") [AuxCas] WHERE 1=1");
 					
 		} catch (Throwable e) {
@@ -952,13 +962,22 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			Client client = Client.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(reportParams[0]));
 			paramClientName = (String) client.getAt(Client.I.NAME);;
-		} 		
+		} 	
 		if ((reportParams[1] != null) && !"".equals(reportParams[1])) {
-			paramStartDate = reportParams[1];
-		}		
+			paramClientGroupUUID = reportParams[1];
+			ClientGroup clientGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(paramClientGroupUUID));
+			paramClientGroupName = (String) clientGroup.getAt(ClientGroup.I.NAME);
+		} 	
 		if ((reportParams[2] != null) && !"".equals(reportParams[2])) {
-			paramEndDate = reportParams[2];
+			paramStartDate = reportParams[2];
+		}		
+		if ((reportParams[3] != null) && !"".equals(reportParams[3])) {
+			paramEndDate = reportParams[3];
 		}
+		
+		// Calls the method that validates the parameters, and throws an exception (with the corresponding message) in case an error occurs.
+		validateParams();
 		
 		// The sub-casualties, to display at the report
 		SubCasualty[] subCasualties = getSubCasualties(reportParams);
@@ -980,6 +999,40 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		return createReport(subCasualtiesMap, reportParams);
 	}
 	
+	/**
+	 * This methods validates the report parameters, and throws an exception
+	 * that should be displayed to the user if there's something wrong
+	 */
+	private void validateParams() throws BigBangJewelException {
+		
+		// Only Client OR Client Group may be set
+		if (!paramClientUUID.equals(NO_VALUE) && !paramClientGroupUUID.equals(NO_VALUE)) {
+			throw new BigBangJewelException("Não se pode gerar o relatório simultâneamente para um cliente e grupo de clientes.");
+		}
+		
+		// When you don't have a client or a group set...
+		if (paramClientUUID.equals(NO_VALUE) && paramClientGroupUUID.equals(NO_VALUE)) {
+			// Either the client/client group or the dates must be set
+			if (paramStartDate.equals(NO_VALUE) && paramEndDate.equals(NO_VALUE)) {
+				throw new BigBangJewelException("Deve definir-se o cliente/grupo de clientes OU um intervalo de tempo."); 
+			}
+			// You must define at least an initial date
+			if (paramStartDate.equals(NO_VALUE)) {
+				throw new BigBangJewelException("Ao gerar um relatório para todos uns clientes, deve definir pelo menos a data inicial."); 
+			}
+			// The dates' interval should not be bigger then 15 months
+			Timestamp startDate = Timestamp.valueOf(paramStartDate
+					+ " 00:00:00.0");
+			Timestamp endDate = paramEndDate.equals(NO_VALUE) ? new Timestamp(
+					System.currentTimeMillis()) : Timestamp
+					.valueOf(paramEndDate + " 00:00:00.0");
+			long days = calculateDaysInterval(startDate, endDate);
+			if (days > 457) {
+				throw new BigBangJewelException("Ao gerar um relatório para todos uns clientes, o intervalo não deve ser superior a 15 meses."); 
+			}
+		}
+	}
+
 	/**
 	 * This is the initial method "designing" the report
 	 */
@@ -1285,6 +1338,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		if (!paramClientName.equals(NO_VALUE)) {
 			titleString += " de " + paramClientName;
 		}
+		if (!paramClientGroupName.equals(NO_VALUE)) {
+			titleString += " do grupo " + paramClientGroupName;
+		}
 		titleString += " encerrados";
 		if (!paramStartDate.equals(NO_VALUE)) {
 			titleString += " desde " + paramStartDate;
@@ -1332,7 +1388,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		TR[] tableRows = new TR[2];
 		TD[] notes = new TD[1];
 
-		String reportNotes = reportParams[3];
+		String reportNotes = reportParams[4];
 
 		// Creates a line with the word "Observações"
 		notes[0] = ReportBuilder.buildCell("Observações",
@@ -1663,5 +1719,22 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 
 		return content;
+	}
+
+	/**
+	 * Given two timestamps, this methods calculates the time interval in days.
+	 */
+	private long calculateDaysInterval(Timestamp startDate, Timestamp endDate) {
+		long milliseconds1 = startDate.getTime();
+		long milliseconds2 = endDate.getTime();
+
+		long diff = milliseconds2 - milliseconds1;
+		/*
+		 * long diffSeconds = diff / 1000; long diffMinutes = diff / (60 *
+		 * 1000); long diffHours = diff / (60 * 60 * 1000); long diffDays = diff
+		 * / (24 * 60 * 60 * 1000);
+		 */
+		long diffDays = diff / (24 * 60 * 60 * 1000);
+		return diffDays;
 	}
 }
