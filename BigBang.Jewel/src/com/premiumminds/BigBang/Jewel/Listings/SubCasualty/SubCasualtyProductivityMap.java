@@ -278,15 +278,7 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		// This method sets the management time according to the casualty date and closing date
 		private void setManagementTime(Timestamp startDate, Timestamp endDate) {
 			
-			  long milliseconds1 = startDate.getTime();
-			  long milliseconds2 = endDate.getTime();
-
-			  long diff = milliseconds2 - milliseconds1;
-			  /* long diffSeconds = diff / 1000;
-			  long diffMinutes = diff / (60 * 1000);
-			  long diffHours = diff / (60 * 60 * 1000); 
-			  long diffDays = diff / (24 * 60 * 60 * 1000); */
-			  long diffDays = diff / (24 * 60 * 60 * 1000);
+			  long diffDays = calculateDaysInterval(startDate, endDate);
 			  
 			  String longStr = Long.toString(diffDays);
 			  
@@ -984,6 +976,9 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 			paramEndDate = reportParams[3];
 		}
 		
+		// Calls the method that validates the parameters, and throws an exception (with the corresponding message) in case an error occurs.
+		validateParams();
+		
 		// The sub-casualties, to display at the report
 		SubCasualty[] subCasualties = getSubCasualties(reportParams);
 		
@@ -1004,6 +999,40 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		return createReport(subCasualtiesMap, reportParams);
 	}
 	
+	/**
+	 * This methods validates the report parameters, and throws an exception
+	 * that should be displayed to the user if there's something wrong
+	 */
+	private void validateParams() throws BigBangJewelException {
+		
+		// Only Client OR Client Group may be set
+		if (!paramClientUUID.equals(NO_VALUE) && !paramClientGroupUUID.equals(NO_VALUE)) {
+			throw new BigBangJewelException("Não se pode gerar o relatório simultâneamente para um cliente e grupo de clientes.");
+		}
+		
+		// When you don't have a client or a group set...
+		if (paramClientUUID.equals(NO_VALUE) && paramClientGroupUUID.equals(NO_VALUE)) {
+			// Either the client/client group or the dates must be set
+			if (paramStartDate.equals(NO_VALUE) && paramEndDate.equals(NO_VALUE)) {
+				throw new BigBangJewelException("Deve definir-se o cliente/grupo de clientes OU um intervalo de tempo."); 
+			}
+			// You must define at least an initial date
+			if (paramStartDate.equals(NO_VALUE)) {
+				throw new BigBangJewelException("Ao gerar um relatório para todos uns clientes, deve definir pelo menos a data inicial."); 
+			}
+			// The dates' interval should not be bigger then 15 months
+			Timestamp startDate = Timestamp.valueOf(paramStartDate
+					+ " 00:00:00.0");
+			Timestamp endDate = paramEndDate.equals(NO_VALUE) ? new Timestamp(
+					System.currentTimeMillis()) : Timestamp
+					.valueOf(paramEndDate + " 00:00:00.0");
+			long days = calculateDaysInterval(startDate, endDate);
+			if (days > 457) {
+				throw new BigBangJewelException("Ao gerar um relatório para todos uns clientes, o intervalo não deve ser superior a 15 meses."); 
+			}
+		}
+	}
+
 	/**
 	 * This is the initial method "designing" the report
 	 */
@@ -1690,5 +1719,22 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		}
 
 		return content;
+	}
+
+	/**
+	 * Given two timestamps, this methods calculates the time interval in days.
+	 */
+	private long calculateDaysInterval(Timestamp startDate, Timestamp endDate) {
+		long milliseconds1 = startDate.getTime();
+		long milliseconds2 = endDate.getTime();
+
+		long diff = milliseconds2 - milliseconds1;
+		/*
+		 * long diffSeconds = diff / 1000; long diffMinutes = diff / (60 *
+		 * 1000); long diffHours = diff / (60 * 60 * 1000); long diffDays = diff
+		 * / (24 * 60 * 60 * 1000);
+		 */
+		long diffDays = diff / (24 * 60 * 60 * 1000);
+		return diffDays;
 	}
 }
