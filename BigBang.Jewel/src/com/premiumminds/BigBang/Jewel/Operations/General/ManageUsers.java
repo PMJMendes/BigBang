@@ -42,6 +42,7 @@ public class ManageUsers
 		public UUID midMediator;
 		public String mstrTitle;
 		public String mstrPhone;
+		public boolean bChangeInsurer;
 
 		public UserData mobjPrevValues;
 	}
@@ -195,6 +196,7 @@ public class ManageUsers
 					lobjAuxOuter.setAt(5, marrCreate[i].midDelegate);
 					lobjAuxOuter.setAt(6, marrCreate[i].mstrTitle);
 					lobjAuxOuter.setAt(7, marrCreate[i].mstrPhone);
+					lobjAuxOuter.setAt(8, marrCreate[i].bChangeInsurer);
 					lobjAuxOuter.SaveToDb(pdb);
 
 					marrCreate[i].mid = lobjAuxBase.getKey();
@@ -237,6 +239,7 @@ public class ManageUsers
 					marrModify[i].mobjPrevValues.midMediator = (UUID)lobjAuxBase.getAt(4);
 					marrModify[i].mobjPrevValues.mstrTitle = (String)lobjAuxOuter.getAt(6);
 					marrModify[i].mobjPrevValues.mstrPhone = (String)lobjAuxOuter.getAt(7);
+					marrModify[i].mobjPrevValues.bChangeInsurer = lobjAuxOuter.getAt(8)==null ? false : (Boolean)lobjAuxOuter.getAt(8);
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 
 					lobjAuxBase.setAt(0, marrModify[i].mstrFullName);
@@ -252,6 +255,7 @@ public class ManageUsers
 					lobjAuxOuter.setAt(5, marrModify[i].midDelegate);
 					lobjAuxOuter.setAt(6, marrModify[i].mstrTitle);
 					lobjAuxOuter.setAt(7, marrModify[i].mstrPhone);
+					lobjAuxOuter.setAt(8, marrModify[i].bChangeInsurer);
 					lobjAuxOuter.SaveToDb(pdb);
 				}
 			}
@@ -286,6 +290,7 @@ public class ManageUsers
 					marrDelete[i].midMediator = (UUID)lobjAuxBase.getAt(4);
 					marrDelete[i].mstrTitle = (String)lobjAuxOuter.getAt(6);
 					marrDelete[i].mstrPhone = (String)lobjAuxOuter.getAt(7);
+					marrDelete[i].bChangeInsurer = lobjAuxOuter.getAt(8)==null ? false : (Boolean)lobjAuxOuter.getAt(8);
 					marrDelete[i].mobjPrevValues = null;
 
 					lrefDecorations.Delete(pdb, lobjAuxOuter.getKey());
@@ -650,6 +655,10 @@ public class ManageUsers
 		pstrString.append(pstrLineBreak);
 		pstrString.append("Impressora pré-definida: ");
 		pstrString.append(pobjData.mstrDefaultPrinter);
+		
+		if (pobjData.bChangeInsurer) {
+			pstrString.append("Pode alterar a seguradora de apólices já criadas.");
+		}
 
 		if ( pobjData.midDelegate != null )
 		{

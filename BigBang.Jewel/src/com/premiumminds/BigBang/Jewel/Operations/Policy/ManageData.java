@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.User;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
@@ -24,6 +25,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
+import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -207,9 +209,16 @@ public class ManageData
 					mobjData.midStatus = mobjData.mobjPrevValues.midStatus;
 					mobjData.midClient = mobjData.mobjPrevValues.midClient;
 
-					if ( (Integer)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
-							mobjData.midStatus).getAt(1) > 0 )
+					// It is only possible to change a policy's insurer for policies in a state other than "In Creation"
+					// if the user trying to do it is allowed (tblUser2.BCHANGEINSURER = 1, defined in the User Edition Screen)
+					User userInSession = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
+					UserDecoration userDeco = UserDecoration.GetByUserID(Engine.getCurrentNameSpace(), userInSession.getKey());
+					boolean mayChange = userDeco.getAt(UserDecoration.I.BCHANGEINSURER) == null? false : (Boolean) userDeco.getAt(UserDecoration.I.BCHANGEINSURER);
+					if (( (Integer)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
+							mobjData.midStatus).getAt(1) > 0 ) && 
+						(!mayChange)) {
 						mobjData.midCompany = mobjData.mobjPrevValues.midCompany;
+					}
 
 					mobjData.ToObject(lobjAux);
 					lobjAux.SaveToDb(pdb);
