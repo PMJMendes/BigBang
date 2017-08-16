@@ -5,6 +5,7 @@ import bigBang.definitions.shared.CostCenter;
 import bigBang.definitions.shared.User;
 import bigBang.definitions.shared.UserProfile;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.PasswordTextBoxFormField;
@@ -25,6 +26,7 @@ public class UserForm extends FormView<User> {
 	protected ExpandableListBoxFormField mediator;
 	protected TextBoxFormField title;
 	protected TextBoxFormField phone;
+	protected CheckBoxFormField changeInsurer;
 
 	private boolean printersInitialized = false;
 
@@ -42,6 +44,7 @@ public class UserForm extends FormView<User> {
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Agente Associado");
 		title = new TextBoxFormField("Título");
 		phone = new TextBoxFormField("Tel. Directo");
+		changeInsurer = new CheckBoxFormField("Utilizador pode alterar companhia de apólice?");
 
 		role.allowEdition(false);
 		costCenter.allowEdition(false);		
@@ -57,6 +60,9 @@ public class UserForm extends FormView<User> {
 		addFormField(delegate);
 		addFormField(printers);
 		addFormField(mediator);
+		
+		addSection("Permissões especiais");
+		addFormField(changeInsurer);
 
 		showPasswordField(false);
 
@@ -117,6 +123,7 @@ public class UserForm extends FormView<User> {
 		info.mediatorId = this.mediator.getValue();
 		info.title = this.title.getValue();
 		info.phone = this.phone.getValue();
+		info.changeInsurer = this.changeInsurer.getValue();
 		return info;
 	}
 
@@ -194,6 +201,11 @@ public class UserForm extends FormView<User> {
 			phone.clear();
 		else
 			this.phone.setValue(user.phone);
+		
+		if(!user.changeInsurer)
+			changeInsurer.clear();
+		else
+			this.changeInsurer.setValue(true);
 	}
 
 }
