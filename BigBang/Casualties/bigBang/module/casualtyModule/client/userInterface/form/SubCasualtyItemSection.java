@@ -50,7 +50,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		removeButton = new Button("Remover");
 
 		coverage = new ExpandableListBoxFormField("Cobertura");
-		damageType = new ExpandableListBoxFormField(null, "Tipologia");
+		damageType = new ExpandableListBoxFormField("Tipologia");
 		damages = new NumericTextBoxFormField("Valor dos Danos", true);
 		damages.setUnitsLabel(Session.getCurrency());
 		damages.setFieldWidth("175px");
@@ -61,8 +61,11 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		itemValue.setUnitsLabel(Session.getCurrency());
 		deductible = new NumericTextBoxFormField("Franquia", true);
 		injuryCause = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INJURY_CAUSE, "Causa do Sinistro");
+		injuryCause.allowEdition(false);
 		injuryType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INJURY_TYPE, "Tipo de Lesão");
+		injuryType.allowEdition(false);
 		injuredPart = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INJURED_PART, "Parte do Corpo");
+		injuredPart.allowEdition(false);
 		thirdParty = new CheckBoxFormField("Paga A Terceiros");
 		notes = new TextAreaFormField("Notas do Detalhe");
 
@@ -122,6 +125,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 					return;
 				}
 			});
+			
 			coverage.setValue(item.coverageId);
 			damageType.setValue(item.damageTypeId);
 			damages.setValue(item.damages);
@@ -161,6 +165,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 
 							@Override
 							public void onResponse(Void response) {
+								damageType.allowEdition(false);
 								return;
 							}
 
@@ -200,6 +205,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 
 							@Override
 							public void onResponse(Void response) {
+								damageType.allowEdition(false);
 								return;
 							}
 
@@ -234,6 +240,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 				
 				@Override
 				public void onResponse(Void response) {
+					damageType.allowEdition(false);
 					return;
 				}
 				
@@ -243,6 +250,8 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 				}
 			});
 		}
+
+		coverage.allowEdition(false);
 	}
 
 	public SubCasualtyItem getItem(){
