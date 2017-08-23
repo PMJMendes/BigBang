@@ -481,9 +481,7 @@ public class ReportServiceImpl
 		for ( i = 0; i < larrBuffer.length; i++ )
 		{
 			lobjResult.sections[i] = new Report.Section();
-			String injectedHtlm = "<style> body, table, td, div, select {font-family: Arial Unicode MS, Arial, sans-serif; font-size: xx-small;} </style>";
-			lobjResult.sections[i].htmlContent = injectedHtlm + larrBuffer[i].toString();
-			// TODO depois de corrigir imprimir, volta a ser: lobjResult.sections[i].htmlContent = larrBuffer[i].toString();
+			lobjResult.sections[i].htmlContent = larrBuffer[i].toString();
 			lobjResult.sections[i].verbs = new Report.Section.Verb[0];
 		}
 

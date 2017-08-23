@@ -39,6 +39,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HasValue;
@@ -300,8 +301,11 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 			@Override
 			public void onResponse(String response) {
 				currentPrintFileId = response;
-				Frame frame = ConversationViewPresenter.this.view.getPrintFrame();
-				frame.setUrl(GWT.getModuleBaseURL() + "bbfile?fileref=" + response);
+				/*Frame frame = ConversationViewPresenter.this.view.getPrintFrame();
+				frame.setUrl(GWT.getModuleBaseURL() + "bbfile?fileref=" + response);*/
+				// New way to print with styling
+				// https://stackoverflow.com/questions/44586986/why-is-google-chrome-not-printing-table-and-cell-borders-and-cell-background-co
+				Window.open(GWT.getModuleBaseURL() + "bbfile?fileref=" + response , null, null);
 			}
 
 			@Override

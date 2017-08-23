@@ -79,7 +79,8 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		buttonWrapper.setSpacing(5);
 		buttonWrapper.add(exportExcelButton);
 		buttonWrapper.add(printButton);
-		sectionsHeader.setRightWidget(buttonWrapper);
+		// Now on the left side, so it always shows on screen
+		sectionsHeader.setLeftWidget(buttonWrapper);
 
 		reportFrame = new Frame();
 		reportFrame.setVisible(false);

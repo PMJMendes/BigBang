@@ -41,7 +41,11 @@ public class HTMLConnector
 
 		try
 		{
-			larrBytes = ldoc.toString().getBytes("UTF-8");
+			// The next 2 lines became mandatory after a problem with printing from chrome 
+			// https://stackoverflow.com/questions/44586986/why-is-google-chrome-not-printing-table-and-cell-borders-and-cell-background-co
+			String docString = ldoc.toString();
+			docString = docString.replaceFirst("<body>", "<body onload=\"window.print();\">");
+			larrBytes = docString.getBytes("UTF-8");
 			lobjResult = new FileXfer(larrBytes.length, "text/html", "report.html", new ByteArrayInputStream(larrBytes));
 		}
 		catch (Throwable e)
