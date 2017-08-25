@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -452,7 +453,7 @@ public class MailConnector {
 	 *	This method gets all attachments on a message. It calls a recursive method for all 
 	 *	the body parts of the Message parameter, for parts can be encapsulated, with attachments
 	 */
-	public static Map<String, BodyPart> getAttachmentsMap(Message message) throws BigBangJewelException {
+	public static LinkedHashMap<String, BodyPart> getAttachmentsMap(Message message) throws BigBangJewelException {
 		Object content;
 		try {
 			content = message.getContent(); 
@@ -462,10 +463,10 @@ public class MailConnector {
 
 			if (content instanceof Multipart) {
 				Multipart multipart = (Multipart) content;
-				Map<String, BodyPart> result = new HashMap<String, BodyPart>();
+				LinkedHashMap<String, BodyPart> result = new LinkedHashMap<String, BodyPart>();
 
 				for (int i = 0; i < multipart.getCount(); i++) {
-					Map<String, BodyPart> attachmentsMap = getAttachmentsMap(multipart.getBodyPart(i));
+					LinkedHashMap<String, BodyPart> attachmentsMap = getAttachmentsMap(multipart.getBodyPart(i));
 					
 					for (String key : attachmentsMap.keySet()) {
 						BodyPart test = result.get(key);
@@ -499,9 +500,9 @@ public class MailConnector {
 	/**
 	 *	This is a recursive method to get all attachments in a body part. 
 	 */
-	private static Map<String, BodyPart> getAttachmentsMap(BodyPart part) throws Exception {
+	private static LinkedHashMap<String, BodyPart> getAttachmentsMap(BodyPart part) throws Exception {
 		
-		Map<String, BodyPart> result = new HashMap<String, BodyPart>();
+		LinkedHashMap<String, BodyPart> result = new LinkedHashMap<String, BodyPart>();
 		Object content = null;
 		try {
 			content = part.getContent();
@@ -555,7 +556,7 @@ public class MailConnector {
 					|| part.getContentType().contains("text/plain") || part.getContentType().contains("text/html")) { 
 				result.put("main", part);
 			} else {
-				return new HashMap<String, BodyPart>();
+				return new LinkedHashMap<String, BodyPart>();
 			}
 		}
 
@@ -740,7 +741,7 @@ public class MailConnector {
 			
 			if (content instanceof Multipart) {
 				
-				Map<String, BodyPart> attachmentsMap = getAttachmentsMap(fetchedMessage);
+				LinkedHashMap<String, BodyPart> attachmentsMap = getAttachmentsMap(fetchedMessage);
 				
 				result.mstrBody = attachmentsMap.get("main").getContent().toString();
 				result.mstrBody = prepareBodyInline(result.mstrBody, attachmentsMap);

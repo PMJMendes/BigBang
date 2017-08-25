@@ -3,6 +3,7 @@ package bigBang.library.server;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -295,7 +296,7 @@ public class MailServiceImpl
 		ArrayList<AttachmentStub> attStubsList;
 		AttachmentStub attachmentStub;
 		String body;
-		Map<String, BodyPart> attachmentsMap = null;
+		LinkedHashMap<String, BodyPart> attachmentsMap = null;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
