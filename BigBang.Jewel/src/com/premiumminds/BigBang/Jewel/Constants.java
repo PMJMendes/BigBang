@@ -850,6 +850,7 @@ public class Constants
 		public static final UUID WORK_ACCIDENTS_CGA_FIXED_PREMIUM		= UUID.fromString("BB0E78F2-3817-45C6-94C7-9EE90118BA82");
 		public static final UUID TRANSPORTED_GOODS_CASUAL				= UUID.fromString("722EBA20-3136-4E3B-B3F8-9EE9011B059E");
 		public static final UUID TRANSPORTED_GOODS_OWN_ACCOUNT			= UUID.fromString("FC9A126A-6ADB-4483-88CB-9FE2010916EE");
+		public static final UUID SHAMIR_SPECIAL							= UUID.fromString("E91E32C6-0C55-4F49-BA88-9F340153FD6D");
 	}
 	
 	// Policy's Coverages' TAGS

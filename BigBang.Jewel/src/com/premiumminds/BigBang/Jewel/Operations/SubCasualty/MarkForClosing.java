@@ -147,7 +147,12 @@ public class MarkForClosing
 	 * This method validates if all the framing fields have the needed info
 	 * when a sub-casualty is marked for closing.
 	 */
-	private void validateFraming(SubCasualty lobjSubCasualty) throws JewelPetriException {
+	private void validateFraming(SubCasualty lobjSubCasualty) throws JewelPetriException, BigBangJewelException {
+		
+		// Special cases where it does not need to validate
+		if (shouldNotValidateFraming(lobjSubCasualty)) {
+			return;
+		}
 		
 		// Only in Portugal
 		if (Utils.getCurrency().equals("€")) {
@@ -341,7 +346,26 @@ public class MarkForClosing
 
 		} 
 	}
-
+	
+	/** 
+	 * This method returns true for cases where the sub-policy's framing should not
+	 * be validated
+	 * @throws BigBangJewelException 
+	 */
+	private boolean shouldNotValidateFraming(SubCasualty subCasualty) throws BigBangJewelException {
+		
+		boolean result = false;
+		
+		UUID subCasualtySubLine = subCasualty.getAbsolutePolicy().GetSubLine().getKey();
+		
+		// Shamir's Sub-casualties don't need to have filled framing 
+		if (subCasualtySubLine.equals(Constants.PolicySubLines.SHAMIR_SPECIAL)) {
+			return true;
+		}
+		
+		return result;
+	}
+	
 	public String UndoDesc(String pstrLineBreak)
 	{
 		return "A marcação para encerramento será retirada sem revisão.";
