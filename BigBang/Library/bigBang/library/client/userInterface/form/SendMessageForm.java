@@ -188,7 +188,6 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		});
 		
 		expectsResponse.addValueChangeHandler(new ValueChangeHandler<String>() {
-
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				if(event.getValue().equals("YES")){
@@ -200,6 +199,13 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 					replyLimit.setEditable(false);
 					replyLimit.setReadOnly(true);
 				}
+			}
+		});
+		
+		documentsFrom.addValueChangeHandler(new ValueChangeHandler<String>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				getDocsFromOwner(event.getValue());
 			}
 		});
 		
@@ -418,6 +424,37 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	 */
 	private void addOtherEntitiesContacts() {
 		existingContactsEntity.addItem("Outras Entidades", BigBangConstants.EntityIds.OTHER_ENTITY);
+	}
+	
+	/**
+	 * This method gets the documents from a given owner, which may be attached to the email
+	 */
+	protected void getDocsFromOwner(String value) {
+		if(value == null || value.isEmpty() || BigBangConstants.TypifiedListValues.MEDIATOR_IDS.DIRECT.equalsIgnoreCase(value)){
+			addDocumentButton.setEnabled(false);
+			clearDocuments();
+			return;
+		}
+		addDocumentButton.setEnabled(true);
+		documentOwnerId = value;
+		clearDocuments();
+		DocumentServiceAsync documentsService = DocumentService.Util.getInstance();
+
+		documentsService.getDocuments(value, new AsyncCallback<Document[]>() {
+
+			@Override
+			public void onSuccess(Document[] result) {
+				for(Document doc : result){						
+					addDocument(doc);
+				}
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				return;
+			}
+		});
 	}
 	
 	public HasValue<String> getContactType() {
