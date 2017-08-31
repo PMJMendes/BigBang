@@ -107,6 +107,7 @@ public class CasualtyServiceImpl
 		lobjResult.isOpen = lobjProcess.IsRunning();
 		lobjResult.description = (String)lobjCasualty.getAt(3);
 		lobjResult.internalNotes = (String)lobjCasualty.getAt(4);
+		lobjResult.fraud = lobjCasualty.getAt(8) == null ? false : (Boolean)lobjCasualty.getAt(8);
 		lobjResult.percentFault = (lobjCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.Casualty.I.PERCENTFAULT)
 				== null ? null : ((BigDecimal)lobjCasualty.getAt(
 				com.premiumminds.BigBang.Jewel.Objects.Casualty.I.PERCENTFAULT)).doubleValue());
@@ -156,6 +157,7 @@ public class CasualtyServiceImpl
 		lopMD.mobjData.mdblPercentFault = (casualty.percentFault == null ? null :
 				new BigDecimal(casualty.percentFault + ""));
 		lopMD.mobjData.mbCaseStudy = casualty.caseStudy;
+		lopMD.mobjData.mbFraud = casualty.fraud;
 		lopMD.mobjData.midProcess = lobjCasualty.GetProcessID();
 		lopMD.mobjData.midManager = null;
 		lopMD.mobjData.mobjPrevValues = null;
@@ -696,11 +698,11 @@ public class CasualtyServiceImpl
 		}
 		catch (Throwable e)
 		{
-			return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
+			return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Is Fraud]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
 					"NULL", "NULL", "NULL", "NULL", "NULL"};
 		}
 
-		return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
+		return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Is Fraud]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
 				"(SELECT [:Policy:SubLine:Description] FROM (" + lstrMulti + ") [SC1] WHERE [:Number] = " +
 						"(SELECT MIN([:Number]) FROM (" + lstrSingle + ") [SC0] WHERE [:Casualty]=[Aux].[PK]))",
 				"(SELECT [:Sub Policy:Policy:SubLine:Description] FROM (" + lstrMulti + ") [SC1] WHERE [:Number] = " +
@@ -782,6 +784,11 @@ public class CasualtyServiceImpl
 		if ( (lParam.caseStudy != null) && lParam.caseStudy )
 		{
 			pstrBuffer.append(" AND [:Case Study] = 1");
+		}
+		
+		if ( (lParam.fraud != null) && lParam.fraud )
+		{
+			pstrBuffer.append(" AND [:Is Fraud] = 1");
 		}
 
 		if ( lParam.managerId != null )
@@ -921,27 +928,27 @@ public class CasualtyServiceImpl
 //		catch (Throwable e)
 //		{
 //		}
-
-		lstrCat = (String)parrValues[8];
+		lstrCat = (String)parrValues[9];
 		if (lstrCat == null)
-			lstrCat = (String)parrValues[9];
+			lstrCat = (String)parrValues[10];
 
-		lstrObj = (String)parrValues[10];
-		if (lstrObj == null)
-			lstrObj = (String)parrValues[11];
+		lstrObj = (String)parrValues[11];
 		if (lstrObj == null)
 			lstrObj = (String)parrValues[12];
+		if (lstrObj == null)
+			lstrObj = (String)parrValues[13];
 
 		lobjResult = new CasualtyStub();
 
 		lobjResult.id = pid.toString();
 		lobjResult.processNumber = (String)parrValues[0];
-		lobjResult.clientId = ((UUID)parrValues[4]).toString();
-		lobjResult.clientNumber = ((Integer)parrValues[6]).toString();
-		lobjResult.clientName = (String)parrValues[5];
+		lobjResult.clientId = ((UUID)parrValues[5]).toString();
+		lobjResult.clientNumber = ((Integer)parrValues[7]).toString();
+		lobjResult.clientName = (String)parrValues[6];
 		lobjResult.casualtyDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		lobjResult.caseStudy = (Boolean)parrValues[3];
-		lobjResult.isOpen = (Boolean)parrValues[7];
+		lobjResult.isOpen = (Boolean)parrValues[8];
+		lobjResult.fraud = parrValues[4]==null ? false : (Boolean)parrValues[4];
 		lobjResult.policyCategory = lstrCat;
 		lobjResult.insuredObject = lstrObj;
 		lobjResult.processId = (parrValues[1] == null ? null : ((UUID)parrValues[1]).toString());

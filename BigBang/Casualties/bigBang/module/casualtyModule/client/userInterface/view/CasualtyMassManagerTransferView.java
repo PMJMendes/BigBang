@@ -53,6 +53,7 @@ public class CasualtyMassManagerTransferView extends
 			filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor de Sinistro");
 			filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
 			filtersPanel.addCheckBoxField(Filters.INCLUDE_CLOSED, "Incluir Encerrados");
+			filtersPanel.addCheckBoxField(Filters.FRAUD, "Apenas Fraudes");
 
 			filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 
@@ -95,6 +96,7 @@ public class CasualtyMassManagerTransferView extends
 			p.caseStudy = (Boolean) filtersPanel.getFilterValue(Filters.CASE_STUDY);
 			p.includeClosed = (Boolean) filtersPanel.getFilterValue(Filters.INCLUDE_CLOSED);
 			p.closedOnly = false;
+			p.fraud = (Boolean) filtersPanel.getFilterValue(Filters.FRAUD);
 
 			parameters[0] = p;
 

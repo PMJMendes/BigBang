@@ -14,4 +14,5 @@ public class CasualtyStub
 	public String insuredObject;
 	public boolean caseStudy;
 	public boolean isOpen;
+	public boolean fraud;
 }

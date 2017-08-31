@@ -43,6 +43,7 @@ public class Casualty
 		public static int CASESTUDY    = 5;
 		public static int CLIENT       = 6;
 		public static int PERCENTFAULT = 7;
+		public static int FRAUD 	   = 8;
 	}
 
     public static Casualty GetInstance(UUID pidNameSpace, UUID pidKey)
