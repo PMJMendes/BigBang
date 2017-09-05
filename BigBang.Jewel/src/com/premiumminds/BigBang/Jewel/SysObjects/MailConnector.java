@@ -76,6 +76,10 @@ public class MailConnector {
 	
 	private static HashMap<String, Message> lastMessageUser;
 	
+	private static HashMap<String, LinkedHashMap<String, BodyPart>> lastAttachmentsMapUser;
+	
+	private static HashMap<String, String> lastPreparedBodyUser;
+	
 	/**
 	 *	This method initializes the store, if needed.
 	 *	Avoids "too much connections" error
@@ -1076,6 +1080,75 @@ public class MailConnector {
 			result = lastMessageUser.get(userMail);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage() + " 1063 ", e);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * This method "stores" in memory the users' current attachments
+	 * @param mailMessage 
+	 */
+	public static void storeLastAttachments(MimeMessage mailMessage, LinkedHashMap<String, BodyPart> atts) throws BigBangJewelException {
+		
+		if (lastAttachmentsMapUser == null) {
+			lastAttachmentsMapUser = new HashMap<String, LinkedHashMap<String, BodyPart>>();
+		}
+		
+		try {
+			String key = MailConnector.getUserEmail() + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			lastAttachmentsMapUser.put(key, atts);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}		
+	}
+	
+	/**
+	 * This method returns the stored users' attachments
+	 */
+	public static LinkedHashMap<String, BodyPart> getStoredAttachments(MimeMessage mailMessage) throws BigBangJewelException {
+		
+		LinkedHashMap<String, BodyPart> result = null; 
+		
+		try {
+			String key = MailConnector.getUserEmail() + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			result = lastAttachmentsMapUser==null? null : lastAttachmentsMapUser.get(key);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage() + " 1116 ", e);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * This method "stores" in memory the users' current ready to display message
+	 */
+	public static void storeLastPreparedBody(MimeMessage mailMessage, String body) throws BigBangJewelException {
+		
+		if (lastPreparedBodyUser == null) {
+			lastPreparedBodyUser = new HashMap<String, String>();
+		}
+		
+		try {
+			String key = MailConnector.getUserEmail() + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			lastPreparedBodyUser.put(key, body);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}		
+	}
+	
+	/**
+	 * This method returns the stored users' attachments
+	 */
+	public static String getStoredPreparedBody(MimeMessage mailMessage) throws BigBangJewelException {
+		
+		String result = null; 
+		
+		try {
+			String key = MailConnector.getUserEmail() + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			result = lastPreparedBodyUser==null ? null : lastPreparedBodyUser.get(key);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage() + " 1116 ", e);
 		}
 		
 		return result;

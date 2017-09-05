@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -25,6 +26,7 @@ import bigBang.library.shared.MailItem;
 import bigBang.library.shared.MailItemStub;
 import bigBang.library.shared.SessionExpiredException;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
@@ -303,9 +305,7 @@ public class MailServiceImpl
 
 		try
 		{
-			mailMessage = (MimeMessage) MailConnector.getMessage(id, folderId);
-			
-			MailConnector.storeLastMessage(mailMessage);
+			mailMessage = conditionalGetMessage(folderId, id);
 
 			result = new MailItem();
 			result.folderId = mailMessage.getFolder().getFullName();
@@ -319,26 +319,16 @@ public class MailServiceImpl
 			
 			result.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailMessage.getSentDate());
 			
-			attachmentsMap = MailConnector.getAttachmentsMap(mailMessage);
+			attachmentsMap = conditionalGetAttachmentsMap(mailMessage);
 			
 			result.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
-			Object content = mailMessage.getContent();
 			attStubsList = new ArrayList<AttachmentStub>();
 			
-			try
-			{
-				if (content instanceof Multipart && attachmentsMap != null) {
-					body = attachmentsMap.get("main").getContent().toString();
-					body = MailConnector.prepareBodyInline(body, attachmentsMap);
-					result.body = body;
-				} else {
-					body = content.toString();
-					result.body = MailConnector.prepareSimpleBody(body);
-				}
-				body = MailConnector.removeHtml(body);
-			}
-			catch (Throwable e)
-			{
+			try {
+				body = conditionalGetBody(mailMessage, attachmentsMap);
+				//body = MailConnector.removeHtml(body);
+				result.body = body;
+			} catch (Throwable e) {
 				result.bodyPreview = "(Erro interno do servidor de Email.)";
 				result.body = "(Erro interno do servidor de Email.)";
 			}
@@ -359,7 +349,6 @@ public class MailServiceImpl
 				}
 				
 				result.attachments = attStubsList.toArray(new AttachmentStub[attStubsList.size()]);
-				
 			}
 			
 			closeFolderAndStore(mailMessage);
@@ -370,6 +359,71 @@ public class MailServiceImpl
 		}
 
 		return result;
+	}
+
+	private String conditionalGetBody(MimeMessage mailMessage,
+			LinkedHashMap<String, BodyPart> attachmentsMap) throws BigBangJewelException {
+		
+		String result = MailConnector.getStoredPreparedBody(mailMessage);
+		
+		if (result==null) {
+			try {
+				Object content = mailMessage.getContent();
+				if (content instanceof Multipart && attachmentsMap != null) {
+					result = attachmentsMap.get("main").getContent().toString();
+					result = MailConnector.prepareBodyInline(result, attachmentsMap);
+				} else {
+					result = MailConnector.prepareSimpleBody(content.toString());
+				}
+			} catch (Exception e) {
+				throw new BigBangJewelException("Problems while getting the stored prepared body " + e.getMessage());
+			}
+			MailConnector.storeLastPreparedBody(mailMessage, result);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Tries to get the stored attachments map, from a message
+	 */
+	private LinkedHashMap<String, BodyPart> conditionalGetAttachmentsMap(
+			MimeMessage mailMessage) throws BigBangJewelException {
+		
+		LinkedHashMap<String, BodyPart> attachmentsMap = MailConnector.getStoredAttachments(mailMessage);
+		
+		if (attachmentsMap == null) {
+			attachmentsMap = MailConnector.getAttachmentsMap(mailMessage);
+			MailConnector.storeLastAttachments(mailMessage, attachmentsMap);
+		}	
+		
+		return attachmentsMap;
+	}
+
+	/**
+	 * Tries to get the stored message, so it does not have to fetch it from gmail.
+	 * If it is not possible, gets the message
+	 */
+	private MimeMessage conditionalGetMessage(String folderId, String id)
+			throws BigBangJewelException {
+		
+		MimeMessage mailMessage = (MimeMessage) MailConnector.getStoredMessage();
+		
+		try {
+			if (mailMessage != null && mailMessage.getFolder() != null && 
+					mailMessage.getFolder().getName() != null && mailMessage.getFolder().getFullName().equals(folderId) &&
+					mailMessage.getHeader("Message-Id")[0]!=null && mailMessage.getHeader("Message-Id")[0].equals(id)) {
+			
+				return mailMessage;
+			}			
+		} catch (MessagingException e) {
+			throw new BigBangJewelException("Error while checking stored message's existence: " + e.getMessage());
+		}		
+		
+		mailMessage = (MimeMessage) MailConnector.getMessage(id, folderId);
+		MailConnector.storeLastMessage(mailMessage);
+		
+		return mailMessage;
 	}
 
 	protected void closeFolderAndStore(MimeMessage lobjItem)
