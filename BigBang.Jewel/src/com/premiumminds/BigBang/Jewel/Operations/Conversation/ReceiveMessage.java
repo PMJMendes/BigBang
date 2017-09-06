@@ -273,7 +273,6 @@ public class ReceiveMessage
 				javax.mail.Message mailMsg = MailConnector.conditionalGetMessage(mobjData.mstrFolderID, mobjData.mstrEmailID);
 				
 				LinkedHashMap<String, BodyPart> mailAttachments = MailConnector.conditionalGetAttachmentsMap((MimeMessage) mailMsg);
-				Object content = mailMsg.getContent();
 				String tmpBody = MailConnector.conditionalGetBody((MimeMessage) mailMsg, mailAttachments);
 				
 				larrAttTrans = MailConnector.processItem(mobjData.mstrEmailID, mobjData.mstrFolderID, mailMsg, mailAttachments);
