@@ -5,11 +5,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.BodyPart;
-import javax.mail.Multipart;
+import javax.mail.internet.MimeMessage;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
@@ -286,24 +287,14 @@ public abstract class CreateConversationBase
 			{
 				if ( mobjData.marrMessages[0].mstrEmailID != null ) {
 					
-					javax.mail.Message mailMsg = MailConnector.getStoredMessage(); 
-					if (mailMsg == null) {
-						mailMsg = MailConnector.getMessage(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID);
-					}
+					javax.mail.Message mailMsg = MailConnector.conditionalGetMessage(mobjData.marrMessages[0].mstrFolderID, mobjData.marrMessages[0].mstrEmailID);
 					
-					Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
+					LinkedHashMap<String, BodyPart> mailAttachments = MailConnector.conditionalGetAttachmentsMap((MimeMessage) mailMsg);
+					
 					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID,
 							mailMsg, mailAttachments);
 					mobjData.marrMessages[0].mstrEmailID = larrAttTrans.get("_");
-					Object content = mailMsg.getContent();
-					String tmpBody;
-					if (content instanceof Multipart && mailAttachments != null) {
-						tmpBody = mailAttachments.get("main").getContent().toString();
-						tmpBody = MailConnector.prepareBodyInline(tmpBody, mailAttachments);
-					} else {
-						tmpBody = content.toString();
-						tmpBody = MailConnector.prepareSimpleBody(tmpBody);
-					}					
+					String tmpBody = MailConnector.conditionalGetBody((MimeMessage) mailMsg, mailAttachments);
 					
 					mobjData.marrMessages[0].mstrBody = tmpBody; // TODO é igual ao que já está... para que é que faço set?
 					mobjData.marrMessages[0].ToObject(lobjMessage);
@@ -320,8 +311,9 @@ public abstract class CreateConversationBase
 					}
 
 					// Calls the method responsble for updating the message to google storage.
-					StorageConnector.uploadMailMessage(mailMsg, mobjData.marrMessages[0].mstrEmailID); //TODO aqui é que é necessário ter a mensagem, "caramba"
+					StorageConnector.threadedUpload(mailMsg, mobjData.marrMessages[0].mstrEmailID);
 					
+					MailConnector.clearStoredValues(true, true, true, (MimeMessage) mailMsg);
 				}
 				else
 				{

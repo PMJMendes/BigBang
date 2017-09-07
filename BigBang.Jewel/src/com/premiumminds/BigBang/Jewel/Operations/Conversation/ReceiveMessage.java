@@ -3,11 +3,12 @@ package com.premiumminds.BigBang.Jewel.Operations.Conversation;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.BodyPart;
-import javax.mail.Multipart;
+import javax.mail.internet.MimeMessage;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
@@ -269,21 +270,10 @@ public class ReceiveMessage
 		{
 			try
 			{
-				javax.mail.Message mailMsg = MailConnector.getStoredMessage(); 
-				if (mailMsg == null) {
-					mailMsg = MailConnector.getMessage(mobjData.mstrEmailID, mobjData.mstrFolderID);
-				}
+				javax.mail.Message mailMsg = MailConnector.conditionalGetMessage(mobjData.mstrFolderID, mobjData.mstrEmailID);
 				
-				Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
-				Object content = mailMsg.getContent();
-				String tmpBody;
-				if (content instanceof Multipart && mailAttachments != null) {
-					tmpBody = mailAttachments.get("main").getContent().toString();
-					tmpBody = MailConnector.prepareBodyInline(tmpBody, mailAttachments);
-				} else {
-					tmpBody = content.toString();
-					tmpBody = MailConnector.prepareSimpleBody(tmpBody);
-				}		
+				LinkedHashMap<String, BodyPart> mailAttachments = MailConnector.conditionalGetAttachmentsMap((MimeMessage) mailMsg);
+				String tmpBody = MailConnector.conditionalGetBody((MimeMessage) mailMsg, mailAttachments);
 				
 				larrAttTrans = MailConnector.processItem(mobjData.mstrEmailID, mobjData.mstrFolderID, mailMsg, mailAttachments);
 				mobjData.mstrEmailID = larrAttTrans.get("_");
@@ -302,7 +292,9 @@ public class ReceiveMessage
 				}
 				
 				// Calls the method responsble for updating the message to google storage.
-				StorageConnector.uploadMailMessage(mailMsg, mobjData.mstrEmailID);
+				StorageConnector.threadedUpload(mailMsg, mobjData.mstrEmailID);
+				
+				MailConnector.clearStoredValues(true, true, true, (MimeMessage) mailMsg);
 			}
 			catch (Throwable e)
 			{

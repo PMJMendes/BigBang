@@ -303,9 +303,7 @@ public class MailServiceImpl
 
 		try
 		{
-			mailMessage = (MimeMessage) MailConnector.getMessage(id, folderId);
-			
-			MailConnector.storeLastMessage(mailMessage);
+			mailMessage = MailConnector.conditionalGetMessage(folderId, id);
 
 			result = new MailItem();
 			result.folderId = mailMessage.getFolder().getFullName();
@@ -319,26 +317,16 @@ public class MailServiceImpl
 			
 			result.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailMessage.getSentDate());
 			
-			attachmentsMap = MailConnector.getAttachmentsMap(mailMessage);
+			attachmentsMap = MailConnector.conditionalGetAttachmentsMap(mailMessage);
 			
 			result.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
-			Object content = mailMessage.getContent();
 			attStubsList = new ArrayList<AttachmentStub>();
 			
-			try
-			{
-				if (content instanceof Multipart && attachmentsMap != null) {
-					body = attachmentsMap.get("main").getContent().toString();
-					body = MailConnector.prepareBodyInline(body, attachmentsMap);
-					result.body = body;
-				} else {
-					body = content.toString();
-					result.body = MailConnector.prepareSimpleBody(body);
-				}
-				body = MailConnector.removeHtml(body);
-			}
-			catch (Throwable e)
-			{
+			try {
+				body = MailConnector.conditionalGetBody(mailMessage, attachmentsMap);
+				//body = MailConnector.removeHtml(body);
+				result.body = body;
+			} catch (Throwable e) {
 				result.bodyPreview = "(Erro interno do servidor de Email.)";
 				result.body = "(Erro interno do servidor de Email.)";
 			}
@@ -359,7 +347,6 @@ public class MailServiceImpl
 				}
 				
 				result.attachments = attStubsList.toArray(new AttachmentStub[attStubsList.size()]);
-				
 			}
 			
 			closeFolderAndStore(mailMessage);
