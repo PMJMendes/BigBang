@@ -957,7 +957,7 @@ public class MailConnector {
 			try {
 				String contentType = attachment.getContentType();
 				String mimeType = contentType!=null ? contentType.split(";")[0] : null;
-				FileXfer attachmentXFer = new FileXfer(attachment.getSize(), mimeType, 
+				FileXfer attachmentXFer = new FileXfer(attachment.getSize(), mimeType,
 						attachment.getFileName(), attachmentStream);
 				return attachmentXFer;
 			} catch (Throwable e) {

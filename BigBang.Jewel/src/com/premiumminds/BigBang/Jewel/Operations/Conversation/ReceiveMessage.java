@@ -292,7 +292,7 @@ public class ReceiveMessage
 				}
 				
 				// Calls the method responsble for updating the message to google storage.
-				StorageConnector.uploadMailMessage(mailMsg, mobjData.mstrEmailID);
+				StorageConnector.threadedUpload(mailMsg, mobjData.mstrEmailID);
 				
 				MailConnector.clearStoredValues(true, true, true, (MimeMessage) mailMsg);
 			}

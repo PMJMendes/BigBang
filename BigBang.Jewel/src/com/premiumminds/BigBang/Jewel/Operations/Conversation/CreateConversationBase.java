@@ -311,7 +311,7 @@ public abstract class CreateConversationBase
 					}
 
 					// Calls the method responsble for updating the message to google storage.
-					StorageConnector.uploadMailMessage(mailMsg, mobjData.marrMessages[0].mstrEmailID); //TODO aqui é que é necessário ter a mensagem, "caramba"
+					StorageConnector.threadedUpload(mailMsg, mobjData.marrMessages[0].mstrEmailID);
 					
 					MailConnector.clearStoredValues(true, true, true, (MimeMessage) mailMsg);
 				}
