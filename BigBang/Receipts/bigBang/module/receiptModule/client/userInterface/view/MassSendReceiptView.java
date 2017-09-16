@@ -1,13 +1,10 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
-import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
-import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter.Action;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -43,6 +40,9 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptSearchDataBroker;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
+import bigBang.module.receiptModule.client.userInterface.form.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter.Action;
 import bigBang.module.receiptModule.shared.ModuleConstants;
 import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
@@ -51,6 +51,7 @@ import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
 public class MassSendReceiptView extends View implements MassSendReceiptViewPresenter.Display{
 
 	protected static enum Filters {
+		BARCODE,
 		TYPES,
 		EMITED_FROM,
 		EMITED_TO,
@@ -95,6 +96,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 			sortOptions.put(ReceiptSortParameter.SortableField.PAYMENT_DATE, "Data de Pagamento");
 
 			filtersPanel = new FiltersPanel(sortOptions);
+			filtersPanel.addTextField(Filters.BARCODE, "Código Barras");
 			filtersPanel.addTypifiedListField(Filters.AGENCY, BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 			filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor de Recibo");
 			filtersPanel.addTypifiedListField(Filters.MEDIATOR, BigBangConstants.EntityIds.MEDIATOR, "Mediador");
@@ -163,6 +165,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 			parameter.lineId = (String) filtersPanel.getFilterValue(Filters.LINE);
 			parameter.subLineId = (String) filtersPanel.getFilterValue(Filters.SUB_LINE);
 			parameter.internalOnly = (Boolean) filtersPanel.getFilterValue(Filters.IS_INTERNAL);
+			parameter.barcode = (String) filtersPanel.getFilterValue(Filters.BARCODE);
 
 			SearchParameter[] parameters = new SearchParameter[] {
 					parameter

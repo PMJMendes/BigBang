@@ -87,6 +87,7 @@ public class Receipt
 		public static final int POLICY            = 23;
 		public static final int SUBPOLICY         = 24;
 		public static final int SUBCASUALTY       = 25;
+		public static final int BARCODE           = 26;
 	}
 
 	private static BigDecimal COLLECTION_COMMISSION = new BigDecimal("1.25");

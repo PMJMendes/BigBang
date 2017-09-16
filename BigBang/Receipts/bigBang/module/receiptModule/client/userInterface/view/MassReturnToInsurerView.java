@@ -50,6 +50,7 @@ import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
 public class MassReturnToInsurerView extends View implements MassReturnToInsurerViewPresenter.Display{
 
 	protected static enum Filters {
+		BARCODE,
 		TYPES,
 		EMITED_FROM,
 		EMITED_TO,
@@ -95,6 +96,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 			sortOptions.put(ReceiptSortParameter.SortableField.PAYMENT_DATE, "Data de Pagamento");
 
 			filtersPanel = new FiltersPanel(sortOptions);
+			filtersPanel.addTextField(Filters.BARCODE, "Código Barras");
 			filtersPanel.addTypifiedListField(Filters.AGENCY, BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 			filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor de Recibo");
 			filtersPanel.addTypifiedListField(Filters.MEDIATOR, BigBangConstants.EntityIds.MEDIATOR, "Mediador");
@@ -164,6 +166,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 			parameter.lineId = (String) filtersPanel.getFilterValue(Filters.LINE);
 			parameter.subLineId = (String) filtersPanel.getFilterValue(Filters.SUB_LINE);
 			parameter.internalOnly = (Boolean) filtersPanel.getFilterValue(Filters.IS_INTERNAL);
+			parameter.barcode = (String) filtersPanel.getFilterValue(Filters.BARCODE);
 
 			SearchParameter[] parameters = new SearchParameter[] {
 					parameter
