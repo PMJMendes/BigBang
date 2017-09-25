@@ -746,9 +746,12 @@ public class MailConnector {
 			
 			LinkedHashMap<String, BodyPart> attachmentsMap = null;
 			
+			result.mstrBody = null;
+			
 			if (content instanceof Multipart) {
 				
 				attachmentsMap = conditionalGetAttachmentsMap((MimeMessage) fetchedMessage);
+				result.mstrBody = conditionalGetBody((MimeMessage) fetchedMessage, attachmentsMap);
 				
 				if (attachmentsMap != null) {
 					// Removes the mail's text from the attachments
@@ -768,7 +771,9 @@ public class MailConnector {
 				}
 			}
 			
-			result.mstrBody = conditionalGetBody((MimeMessage) fetchedMessage, attachmentsMap);
+			if (result.mstrBody == null) {
+				result.mstrBody = conditionalGetBody((MimeMessage) fetchedMessage, attachmentsMap);
+			}
 			
 			fromAddress = (InternetAddress) (fetchedMessage.getFrom() == null ? null : fetchedMessage.getFrom()[0]);
 			from = fromAddress == null ? "" : fromAddress.getAddress();
