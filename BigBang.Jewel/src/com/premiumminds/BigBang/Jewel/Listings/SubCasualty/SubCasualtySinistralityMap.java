@@ -1079,7 +1079,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			/*cells[currColl++] = ReportBuilder.buildCell("Indemnização Paga",
 					TypeDefGUIDs.T_String);
 			styleCenteredCell(cells[currColl-1], false, true);*/
-			cells[currColl++] = new TD(buildDoubleHeaderTitle ("Indemnização Paga", "a Terceiros"));
+			cells[currColl++] = new TD(buildDoubleHeaderTitle ("Pagamento a Entidades", "Terceiras"));
 			styleCenteredCell(cells[currColl-1], false, true);
 		}
 
