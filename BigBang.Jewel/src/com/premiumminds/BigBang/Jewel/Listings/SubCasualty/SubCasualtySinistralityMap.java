@@ -572,6 +572,13 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		
 		boolean showOpenPreviously = false;
 		
+		int subCasualtiesNr = 0;
+		
+		UUID categoryFilter = null;
+		if (reportParams[5] != null) {
+			categoryFilter = UUID.fromString(reportParams[5]);
+		}
+		
 		// Tests if it is supposed to show the values paid to third parties
 		if ((reportParams[4] != null) && reportParams[4].equals("1")) {
 			showOpenPreviously = true;
@@ -616,18 +623,22 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		// Creates an hashmap with the sub-casualties grouped by "Ramo"
 		subCasualtiesMap = new HashMap<String, ArrayList<SubCasualtyData>>();
 		for (int i = 0; i < subCasualties.length; i++) {
-			String subCasualtyKey = getSubCasualtyKey(subCasualties[i]);
-			if (subCasualtiesMap.get(subCasualtyKey) == null) {
-				subCasualtiesMap.put(subCasualtyKey,
-						new ArrayList<SubCasualtyData>());
+			
+			if(categoryFilter == null || (categoryFilter!=null && categoryFilter.equals(subCasualties[i].getAbsolutePolicy().GetSubLine().getLine().getCategory().getKey()))) {
+				String subCasualtyKey = getSubCasualtyKey(subCasualties[i]);
+				if (subCasualtiesMap.get(subCasualtyKey) == null) {
+					subCasualtiesMap.put(subCasualtyKey,
+							new ArrayList<SubCasualtyData>());
+				}
+				SubCasualtyData toInsert = new SubCasualtyData();
+				toInsert.setValues(subCasualties[i], closedSubCasualties);
+				subCasualtiesMap.get(subCasualtyKey).add(toInsert);
+				subCasualtiesNr++;
 			}
-			SubCasualtyData toInsert = new SubCasualtyData();
-			toInsert.setValues(subCasualties[i], closedSubCasualties);
-			subCasualtiesMap.get(subCasualtyKey).add(toInsert);
 		}
 
 		return createReport(subCasualtiesMap, reportParams,
-				subCasualties.length);
+				subCasualtiesNr);
 	}
 
 	/**
