@@ -34,7 +34,8 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 		CASE_STUDY,
 		MANAGER,
 		INCLUDE_CLOSED,
-		INSURED_OBJECT
+		INSURED_OBJECT, 
+		FRAUD
 	} 
 
 	protected int casualtyDataVersionNumber;
@@ -64,6 +65,7 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 		filtersPanel.addTextField(Filters.INSURED_OBJECT, "Unidade de Risco");
 		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
 		filtersPanel.addCheckBoxField(Filters.INCLUDE_CLOSED, "Incluir Encerrados");
+		filtersPanel.addCheckBoxField(Filters.FRAUD, "Apenas Fraudes");
 
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 
@@ -120,6 +122,7 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 		p.includeClosed = (Boolean) filtersPanel.getFilterValue(Filters.INCLUDE_CLOSED);
 		p.closedOnly = false;
 		p.insuredObject = (String) filtersPanel.getFilterValue(Filters.INSURED_OBJECT);
+		p.fraud = (Boolean) filtersPanel.getFilterValue(Filters.FRAUD);
 		parameters[0] = p;
 
 		SortParameter[] sorts = new SortParameter[]{

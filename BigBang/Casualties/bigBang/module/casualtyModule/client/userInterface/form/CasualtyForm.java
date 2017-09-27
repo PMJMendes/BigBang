@@ -28,6 +28,7 @@ public class CasualtyForm extends FormView<Casualty> {
 	protected UnlimitedTextAreaFormField notes;
 	protected NumericTextBoxFormField percResponsability;
 	protected Image statusIcon;
+	protected CheckBoxFormField fraud;
 
 	public CasualtyForm(){
 		number = new TextBoxFormField("Número de Processo");
@@ -53,6 +54,7 @@ public class CasualtyForm extends FormView<Casualty> {
 		status.setFieldWidth("100%");
 		statusIcon = new Image();
 		status.add(statusIcon);
+		fraud = new CheckBoxFormField("Fraude");
 		
 		percResponsability = new NumericTextBoxFormField("Responsabilidade", false);
 		percResponsability.setUnitsLabel("%");
@@ -66,6 +68,8 @@ public class CasualtyForm extends FormView<Casualty> {
 		addLineBreak();
 		addFormField(caseStudy,true);
 		addFormField(percResponsability, true);
+		addLineBreak();
+		addFormField(fraud,true);
 
 		addSection("Descrição");
 		addFormField(description);
@@ -100,6 +104,7 @@ public class CasualtyForm extends FormView<Casualty> {
 			result.internalNotes = notes.getValue();
 			result.managerId = manager.getValue();
 			result.percentFault = percResponsability.getValue();
+			result.fraud = fraud.getValue();
 		}
 
 		return result;
@@ -125,6 +130,7 @@ public class CasualtyForm extends FormView<Casualty> {
 			description.setValue(info.description);
 			caseStudy.setValue(info.caseStudy);
 			manager.setValue(info.managerId);
+			fraud.setValue(info.fraud);
 			if(info.id != null){
 				status.setValue(info.isOpen ? "Aberto" : "Fechado");
 				Resources resources = GWT.create(Resources.class);

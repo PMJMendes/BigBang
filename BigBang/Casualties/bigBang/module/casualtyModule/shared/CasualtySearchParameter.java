@@ -13,6 +13,7 @@ public class CasualtySearchParameter
 	public String managerId;
 	public String ownerId;
 	public String insuredObject;
+	public Boolean fraud;
 
 	public boolean includeClosed;
 	public boolean closedOnly;
