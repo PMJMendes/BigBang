@@ -572,6 +572,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		
 		boolean showOpenPreviously = false;
 		
+		int subCasualtiesNr = 0;
+		
 		UUID categoryFilter = null;
 		if (reportParams[5] != null) {
 			categoryFilter = UUID.fromString(reportParams[5]);
@@ -631,11 +633,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				SubCasualtyData toInsert = new SubCasualtyData();
 				toInsert.setValues(subCasualties[i], closedSubCasualties);
 				subCasualtiesMap.get(subCasualtyKey).add(toInsert);
+				subCasualtiesNr++;
 			}
 		}
 
 		return createReport(subCasualtiesMap, reportParams,
-				subCasualties.length);
+				subCasualtiesNr);
 	}
 
 	/**
