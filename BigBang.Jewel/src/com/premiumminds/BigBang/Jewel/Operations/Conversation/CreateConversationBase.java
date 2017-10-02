@@ -24,10 +24,15 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
+import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
+import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Conversation;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
@@ -132,8 +137,6 @@ public abstract class CreateConversationBase
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mobjData.marrMessages[0].mobjDocOps != null )
-			mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
 		if ( mobjData.marrMessages[0].mobjContactOps != null )
 			mobjData.marrMessages[0].mobjContactOps.RunSubOp(pdb, lidContainer);
 
@@ -238,7 +241,7 @@ public abstract class CreateConversationBase
 		{
 			throw new JewelPetriException(e.getMessage() + " 233 ", e);
 		}
-
+		
 		larrUsers = new HashSet<UUID>();
 		larrUsers.add(Engine.getCurrentUser());
 		if ( mobjData.marrMessages[0].marrAddresses != null )
@@ -287,9 +290,9 @@ public abstract class CreateConversationBase
 			{
 				if ( mobjData.marrMessages[0].mstrEmailID != null ) {
 					
-					javax.mail.Message mailMsg = MailConnector.conditionalGetMessage(mobjData.marrMessages[0].mstrFolderID, mobjData.marrMessages[0].mstrEmailID);
+					javax.mail.Message mailMsg = MailConnector.conditionalGetMessage(mobjData.marrMessages[0].mstrFolderID, mobjData.marrMessages[0].mstrEmailID, null);
 					
-					LinkedHashMap<String, BodyPart> mailAttachments = MailConnector.conditionalGetAttachmentsMap((MimeMessage) mailMsg);
+					LinkedHashMap<String, BodyPart> mailAttachments = MailConnector.conditionalGetAttachmentsMap((MimeMessage) mailMsg, null);
 					
 					larrAttTrans = MailConnector.processItem(mobjData.marrMessages[0].mstrEmailID, mobjData.marrMessages[0].mstrFolderID,
 							mailMsg, mailAttachments);
@@ -313,7 +316,7 @@ public abstract class CreateConversationBase
 					// Calls the method responsble for updating the message to google storage.
 					StorageConnector.threadedUpload(mailMsg, mobjData.marrMessages[0].mstrEmailID);
 					
-					MailConnector.clearStoredValues(true, true, true, (MimeMessage) mailMsg);
+					//MailConnector.clearStoredValues(true, true, true, (MimeMessage) mailMsg);
 				}
 				else
 				{
@@ -325,6 +328,61 @@ public abstract class CreateConversationBase
 				throw new JewelPetriException(e.getMessage(), e);
 			}
 		}
+		
+		if ( mobjData.marrMessages[0].mobjDocOps != null ) {
+			try {
+				runThreadedCreateDocs(pdb, lidContainer, Engine.getCurrentNameSpace(), MailConnector.getUserEmail());
+			} catch (BigBangJewelException e) {
+				// TODO Auto-generated catch block
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void runThreadedCreateDocs(final SQLServer pdb, final UUID lidContainer, final UUID nmSpace, final String existingUserEmail) {
+		Runnable r = new Runnable() {
+			public void run() {
+				MessageData messageData = mobjData.marrMessages[0];
+				for (int i=0; i<messageData.marrAttachments.length; i++) {
+					MessageAttachmentData messageAttachmentData = mobjData.marrMessages[0].marrAttachments[i];
+					if ( messageAttachmentData.mstrAttId != null )
+					{
+						try
+						{
+							mobjData.marrMessages[0].mobjDocOps.marrCreate2[i].mobjFile = MailConnector.getAttachment(messageData.mstrEmailID,
+									messageData.mstrFolderID, messageAttachmentData.mstrAttId, existingUserEmail).GetVarData();
+							//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
+							Document lobjAux = Document.GetInstance(nmSpace, (UUID)null);
+							DocDataLight pobjData = messageData.mobjDocOps.marrCreate2[i];
+							pobjData.midOwnerId = lidContainer;
+							pobjData.mdtRefDate = new Timestamp(new java.util.Date().getTime());
+							pobjData.ToObject(lobjAux);
+							lobjAux.SetReadonly();
+							try
+							{
+								lobjAux.SaveToDb(pdb);
+							}
+							catch (Throwable e)
+							{
+								throw new BigBangJewelException(e.getMessage(), e);
+							}
+						}
+						catch (Throwable e)
+						{
+							System.out.println(e.getMessage());
+						}
+					}
+				}
+				/*try {
+					//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} */
+	        }
+		};
+		
+		new Thread(r).start();
 	}
 
 	public boolean LocalCanUndo()

@@ -854,7 +854,7 @@ public class SubCasualtyServiceImpl
 		
 		javax.mail.Message storedMessage = null;
 		try {
-			storedMessage = MailConnector.getStoredMessage();
+			storedMessage = MailConnector.getStoredMessage(null);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage() +  " 580 ", e);
 		}

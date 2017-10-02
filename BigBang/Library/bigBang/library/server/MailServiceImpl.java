@@ -303,7 +303,7 @@ public class MailServiceImpl
 
 		try
 		{
-			mailMessage = MailConnector.conditionalGetMessage(folderId, id);
+			mailMessage = MailConnector.conditionalGetMessage(folderId, id, null);
 
 			result = new MailItem();
 			result.folderId = mailMessage.getFolder().getFullName();
@@ -317,7 +317,7 @@ public class MailServiceImpl
 			
 			result.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailMessage.getSentDate());
 			
-			attachmentsMap = MailConnector.conditionalGetAttachmentsMap(mailMessage);
+			attachmentsMap = MailConnector.conditionalGetAttachmentsMap(mailMessage, null);
 			
 			result.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
 			attStubsList = new ArrayList<AttachmentStub>();
@@ -395,7 +395,7 @@ public class MailServiceImpl
 
 		try
 		{
-			lobjFile = MailConnector.getAttachment(emailId, folderId, attachmentId);
+			lobjFile = MailConnector.getAttachment(emailId, folderId, attachmentId, null);
 		}
 		catch (Throwable e)
 		{

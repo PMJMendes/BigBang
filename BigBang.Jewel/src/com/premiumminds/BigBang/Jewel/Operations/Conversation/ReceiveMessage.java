@@ -270,9 +270,9 @@ public class ReceiveMessage
 		{
 			try
 			{
-				javax.mail.Message mailMsg = MailConnector.conditionalGetMessage(mobjData.mstrFolderID, mobjData.mstrEmailID);
+				javax.mail.Message mailMsg = MailConnector.conditionalGetMessage(mobjData.mstrFolderID, mobjData.mstrEmailID, null);
 				
-				LinkedHashMap<String, BodyPart> mailAttachments = MailConnector.conditionalGetAttachmentsMap((MimeMessage) mailMsg);
+				LinkedHashMap<String, BodyPart> mailAttachments = MailConnector.conditionalGetAttachmentsMap((MimeMessage) mailMsg, null);
 				String tmpBody = MailConnector.conditionalGetBody((MimeMessage) mailMsg, mailAttachments);
 				
 				larrAttTrans = MailConnector.processItem(mobjData.mstrEmailID, mobjData.mstrFolderID, mailMsg, mailAttachments);
