@@ -366,6 +366,15 @@ public abstract class CreateConversationBase
 							{
 								throw new BigBangJewelException(e.getMessage(), e);
 							}
+							
+						/*	TODO Cannot get this to work, because the session is lost, and used "in a lot of places" to get editable cache... etc e tal
+						 * MessageAttachment lobjAttachment = MessageAttachment.GetInstance2(nmSpace, messageAttachmentData.mid);
+							MessageAttachmentData data = new MessageAttachmentData();
+							data.FromObject(lobjAttachment);
+							data.midDocument = lobjAux.getKey();
+							lobjAttachment.ForceReadable();
+							data.ToObject(lobjAttachment);
+							lobjAttachment.SaveToDb(pdb);*/
 						}
 						catch (Throwable e)
 						{

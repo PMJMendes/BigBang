@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.SysObjects.Cache;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
@@ -32,6 +33,22 @@ public class MessageAttachment
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
+    
+   /* public static MessageAttachment GetInstance2(UUID pidNameSpace, UUID pidKey)
+    		throws BigBangJewelException
+    	{
+    		try
+    		{
+    			UUID entity = Engine.FindEntity(pidNameSpace, Constants.ObjID_MessageAttachment);
+    			Cache cache = Engine.GetCache(true);
+				MessageAttachment result = (MessageAttachment)cache.getAt(entity, pidKey);
+				return result;
+    		}
+    	    catch (Throwable e)
+    	    {
+    	    	throw new BigBangJewelException(e.getMessage(), e);
+    		}
+    	} */
 
 	public static MessageAttachment GetInstance(UUID pidNameSpace, ResultSet prsObject)
 		throws BigBangJewelException
