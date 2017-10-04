@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.SysObjects.Cache;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 

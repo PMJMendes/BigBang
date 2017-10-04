@@ -1192,7 +1192,7 @@ public class MailConnector {
 		
 		LinkedHashMap<String, BodyPart> attachmentsMap = getStoredAttachments(mailMessage, existingUserEmail);
 		
-		if (attachmentsMap == null) {
+		if (attachmentsMap == null || attachmentsMap.size()==0) {
 			attachmentsMap = getAttachmentsMap(mailMessage);
 			storeLastAttachments(mailMessage, attachmentsMap);
 		}	
@@ -1259,6 +1259,19 @@ public class MailConnector {
 			if (getStoredPreparedBody(mailMessage) != null) {
 				lastPreparedBodyUser.remove(fullKey);
 			}
+		}
+	}
+	
+	/**
+	 * Clears the stored message, attachments'map or prepared bodies, on demand.
+	 */
+	public static void clearAttsMap(String userMail, String msgId) {
+
+		String userKey = userMail;
+		String fullKey = userKey + "_|_" + msgId;
+
+		if (lastAttachmentsMapUser.get(fullKey) != null) {
+			lastAttachmentsMapUser.remove(fullKey);
 		}
 	}
 }

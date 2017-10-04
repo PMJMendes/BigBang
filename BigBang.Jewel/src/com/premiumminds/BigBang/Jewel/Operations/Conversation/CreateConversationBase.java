@@ -344,12 +344,12 @@ public abstract class CreateConversationBase
 			public void run() {
 				MessageData messageData = mobjData.marrMessages[0];
 				for (int i=0; i<messageData.marrAttachments.length; i++) {
-					MessageAttachmentData messageAttachmentData = mobjData.marrMessages[0].marrAttachments[i];
+					MessageAttachmentData messageAttachmentData = messageData.marrAttachments[i];
 					if ( messageAttachmentData.mstrAttId != null )
 					{
 						try
 						{
-							mobjData.marrMessages[0].mobjDocOps.marrCreate2[i].mobjFile = MailConnector.getAttachment(messageData.mstrEmailID,
+							messageData.mobjDocOps.marrCreate2[i].mobjFile = MailConnector.getAttachment(messageData.mstrEmailID,
 									messageData.mstrFolderID, messageAttachmentData.mstrAttId, existingUserEmail).GetVarData();
 							//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
 							Document lobjAux = Document.GetInstance(nmSpace, (UUID)null);
@@ -382,6 +382,7 @@ public abstract class CreateConversationBase
 						}
 					}
 				}
+				MailConnector.clearAttsMap(existingUserEmail, messageData.mstrEmailID);
 				/*try {
 					//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
 				} catch (Throwable e) {

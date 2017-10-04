@@ -18,10 +18,14 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
+import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Conversation;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
@@ -166,8 +170,6 @@ public class ReceiveMessage
 			throw new JewelPetriException(e.getMessage() + "165 ", e);
 		}
 
-		if ( mobjData.mobjDocOps != null )
-			mobjData.mobjDocOps.RunSubOp(pdb, lidContainer);
 		if ( mobjData.mobjContactOps != null )
 			mobjData.mobjContactOps.RunSubOp(pdb, lidContainer);
 
@@ -294,13 +296,78 @@ public class ReceiveMessage
 				// Calls the method responsble for updating the message to google storage.
 				StorageConnector.threadedUpload(mailMsg, mobjData.mstrEmailID);
 				
-				MailConnector.clearStoredValues(true, true, true, (MimeMessage) mailMsg);
+				// MailConnector.clearStoredValues(true, true, true, (MimeMessage) mailMsg);
 			}
 			catch (Throwable e)
 			{
 				throw new JewelPetriException(e.getMessage() + " 309 ", e);
 			}
 		}
+		
+		if ( mobjData.mobjDocOps != null ) {
+			try {
+				runThreadedCreateDocs(pdb, lidContainer, Engine.getCurrentNameSpace(), MailConnector.getUserEmail());
+			} catch (BigBangJewelException e) {
+				// TODO Auto-generated catch block
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
+	}
+	
+	private void runThreadedCreateDocs(final SQLServer pdb, final UUID lidContainer, final UUID nmSpace, final String existingUserEmail) {
+		Runnable r = new Runnable() {
+			public void run() {
+				MessageData messageData = mobjData;
+				for (int i=0; i<messageData.marrAttachments.length; i++) {
+					MessageAttachmentData messageAttachmentData = messageData.marrAttachments[i];
+					if ( messageAttachmentData.mstrAttId != null )
+					{
+						try
+						{
+							messageData.mobjDocOps.marrCreate2[i].mobjFile = MailConnector.getAttachment(messageData.mstrEmailID,
+									messageData.mstrFolderID, messageAttachmentData.mstrAttId, existingUserEmail).GetVarData();
+							//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
+							Document lobjAux = Document.GetInstance(nmSpace, (UUID)null);
+							DocDataLight pobjData = messageData.mobjDocOps.marrCreate2[i];
+							pobjData.midOwnerId = lidContainer;
+							pobjData.mdtRefDate = new Timestamp(new java.util.Date().getTime());
+							pobjData.ToObject(lobjAux);
+							lobjAux.SetReadonly();
+							try
+							{
+								lobjAux.SaveToDb(pdb);
+							}
+							catch (Throwable e)
+							{
+								throw new BigBangJewelException(e.getMessage(), e);
+							}
+							
+						/*	TODO Cannot get this to work, because the session is lost, and used "in a lot of places" to get editable cache... etc e tal
+						 * MessageAttachment lobjAttachment = MessageAttachment.GetInstance2(nmSpace, messageAttachmentData.mid);
+							MessageAttachmentData data = new MessageAttachmentData();
+							data.FromObject(lobjAttachment);
+							data.midDocument = lobjAux.getKey();
+							lobjAttachment.ForceReadable();
+							data.ToObject(lobjAttachment);
+							lobjAttachment.SaveToDb(pdb);*/
+						}
+						catch (Throwable e)
+						{
+							System.out.println(e.getMessage());
+						}
+					}
+				}
+				MailConnector.clearAttsMap(existingUserEmail, messageData.mstrEmailID);
+				/*try {
+					//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} */
+	        }
+		};
+		
+		new Thread(r).start();
 	}
 
 	public String UndoDesc(String pstrLineBreak)
