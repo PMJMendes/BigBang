@@ -440,7 +440,7 @@ public class MailConnector {
 	 */
 	public static List<BodyPart> getAttachments(Message message) throws Exception {
 
-		Map<String, BodyPart> attachmentsMap = conditionalGetAttachmentsMap((MimeMessage) message);
+		Map<String, BodyPart> attachmentsMap = conditionalGetAttachmentsMap((MimeMessage) message, null);
 
 		if (attachmentsMap != null && attachmentsMap.size() > 0) {
 			List<BodyPart> result = new ArrayList<BodyPart>();
@@ -585,7 +585,7 @@ public class MailConnector {
 		Map<String, String> processed = null;
 
 		if (fetchedItem == null) {
-			fetchedItem = conditionalGetMessage(folderId, pstrUniqueID);
+			fetchedItem = conditionalGetMessage(folderId, pstrUniqueID, null);
 		}
 
 		processed = new HashMap<String, String>();
@@ -594,7 +594,7 @@ public class MailConnector {
 
 		try {
 			if (mailAttachments == null) {
-				mailAttachments = conditionalGetAttachmentsMap((MimeMessage) fetchedItem);
+				mailAttachments = conditionalGetAttachmentsMap((MimeMessage) fetchedItem, null);
 			}
 		} catch (Exception e) {
 			throw new BigBangJewelException(e.getMessage() + " 588 ", e);
@@ -707,7 +707,7 @@ public class MailConnector {
 	public static MessageData getAsData(String pstrUniqueID, String folderId) throws BigBangJewelException {
 
 		// Gets the message with a given ID
-		Message fetchedMessage = conditionalGetMessage(folderId, pstrUniqueID);
+		Message fetchedMessage = conditionalGetMessage(folderId, pstrUniqueID, null);
 
 		if (fetchedMessage != null) {
 			
@@ -750,7 +750,7 @@ public class MailConnector {
 			
 			if (content instanceof Multipart) {
 				
-				attachmentsMap = conditionalGetAttachmentsMap((MimeMessage) fetchedMessage);
+				attachmentsMap = conditionalGetAttachmentsMap((MimeMessage) fetchedMessage, null);
 				result.mstrBody = conditionalGetBody((MimeMessage) fetchedMessage, attachmentsMap);
 				
 				if (attachmentsMap != null) {
@@ -942,12 +942,12 @@ public class MailConnector {
 	 *	This method returns an attachment, giving a message ID and an attachment ID
 	 *	It calls the methods to retrieve a message, and that message's attachments. 
 	 */
-	public static FileXfer getAttachment(String msgId, String folderId, String attachmentId) throws BigBangJewelException {
+	public static FileXfer getAttachment(String msgId, String folderId, String attachmentId, String existingUserEmail) throws BigBangJewelException {
 
 		// Gets a message from a given folder, with a given ID
-		Message message = conditionalGetMessage(folderId, msgId);
+		Message message = conditionalGetMessage(folderId, msgId, existingUserEmail);
 
-		LinkedHashMap<String, BodyPart> messageAttachments = conditionalGetAttachmentsMap((MimeMessage) message);
+		LinkedHashMap<String, BodyPart> messageAttachments = conditionalGetAttachmentsMap((MimeMessage) message, existingUserEmail);
 		BodyPart attachment; 
 
 		InputStream attachmentStream;
@@ -1071,7 +1071,7 @@ public class MailConnector {
 	/**
 	 * This method returns the stored users' message
 	 */
-	public static Message getStoredMessage() throws BigBangJewelException {
+	public static Message getStoredMessage(String existingUserMail) throws BigBangJewelException {
 		
 		Message result = null; 
 				
@@ -1080,7 +1080,7 @@ public class MailConnector {
 		}
 		
 		try {
-			String userMail = getUserEmail();
+			String userMail = existingUserMail == null ? getUserEmail() : existingUserMail;
 			result = lastMessageUser.get(userMail);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage() + " 1063 ", e);
@@ -1109,13 +1109,15 @@ public class MailConnector {
 	
 	/**
 	 * This method returns the stored users' attachments
+	 * @param existingUserEmail TODO
 	 */
-	public static LinkedHashMap<String, BodyPart> getStoredAttachments(MimeMessage mailMessage) throws BigBangJewelException {
+	public static LinkedHashMap<String, BodyPart> getStoredAttachments(MimeMessage mailMessage, String existingUserEmail) throws BigBangJewelException {
 		
 		LinkedHashMap<String, BodyPart> result = null; 
 		
 		try {
-			String key = getUserEmail() + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			String userEmail = (existingUserEmail == null || existingUserEmail.length()==0) ? getUserEmail() : existingUserEmail;
+			String key = userEmail + "_|_" + mailMessage.getHeader("Message-Id")[0];
 			result = lastAttachmentsMapUser==null? null : lastAttachmentsMapUser.get(key);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage() + " 1116 ", e);
@@ -1183,13 +1185,14 @@ public class MailConnector {
 
 	/**
 	 * Tries to get the stored attachments map, from a message
+	 * @param existingUserEmail TODO
 	 */
 	public static LinkedHashMap<String, BodyPart> conditionalGetAttachmentsMap(
-			MimeMessage mailMessage) throws BigBangJewelException {
+			MimeMessage mailMessage, String existingUserEmail) throws BigBangJewelException {
 		
-		LinkedHashMap<String, BodyPart> attachmentsMap = getStoredAttachments(mailMessage);
+		LinkedHashMap<String, BodyPart> attachmentsMap = getStoredAttachments(mailMessage, existingUserEmail);
 		
-		if (attachmentsMap == null) {
+		if (attachmentsMap == null || attachmentsMap.size()==0) {
 			attachmentsMap = getAttachmentsMap(mailMessage);
 			storeLastAttachments(mailMessage, attachmentsMap);
 		}	
@@ -1201,10 +1204,10 @@ public class MailConnector {
 	 * Tries to get the stored message, so it does not have to fetch it from gmail.
 	 * If it is not possible, gets the message
 	 */
-	public static MimeMessage conditionalGetMessage(String folderId, String id)
+	public static MimeMessage conditionalGetMessage(String folderId, String id, String existingUserEmail)
 			throws BigBangJewelException {
 		
-		MimeMessage mailMessage = (MimeMessage) getStoredMessage();
+		MimeMessage mailMessage = (MimeMessage) getStoredMessage(existingUserEmail);
 		
 		try {
 			if (mailMessage != null && mailMessage.getFolder() != null && 
@@ -1241,13 +1244,13 @@ public class MailConnector {
 		}
 
 		if (clearMessage) {
-			if (getStoredMessage() != null) {
+			if (getStoredMessage(null) != null) {
 				lastMessageUser.remove(userKey);
 			}
 		}
 
 		if (clearAttsMap) {
-			if (getStoredAttachments(mailMessage) != null) {
+			if (getStoredAttachments(mailMessage, null) != null) {
 				lastAttachmentsMapUser.remove(fullKey);
 			}
 		}
@@ -1256,6 +1259,19 @@ public class MailConnector {
 			if (getStoredPreparedBody(mailMessage) != null) {
 				lastPreparedBodyUser.remove(fullKey);
 			}
+		}
+	}
+	
+	/**
+	 * Clears the stored message, attachments'map or prepared bodies, on demand.
+	 */
+	public static void clearAttsMap(String userMail, String msgId) {
+
+		String userKey = userMail;
+		String fullKey = userKey + "_|_" + msgId;
+
+		if (lastAttachmentsMapUser.get(fullKey) != null) {
+			lastAttachmentsMapUser.remove(fullKey);
 		}
 	}
 }

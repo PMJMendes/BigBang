@@ -32,6 +32,22 @@ public class MessageAttachment
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
+    
+   /* public static MessageAttachment GetInstance2(UUID pidNameSpace, UUID pidKey)
+    		throws BigBangJewelException
+    	{
+    		try
+    		{
+    			UUID entity = Engine.FindEntity(pidNameSpace, Constants.ObjID_MessageAttachment);
+    			Cache cache = Engine.GetCache(true);
+				MessageAttachment result = (MessageAttachment)cache.getAt(entity, pidKey);
+				return result;
+    		}
+    	    catch (Throwable e)
+    	    {
+    	    	throw new BigBangJewelException(e.getMessage(), e);
+    		}
+    	} */
 
 	public static MessageAttachment GetInstance(UUID pidNameSpace, ResultSet prsObject)
 		throws BigBangJewelException

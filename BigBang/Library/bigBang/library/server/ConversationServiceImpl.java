@@ -747,7 +747,7 @@ public class ConversationServiceImpl
 		
 		javax.mail.Message storedMessage = null;
 		try {
-			storedMessage = MailConnector.getStoredMessage();
+			storedMessage = MailConnector.getStoredMessage(null);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage() + " 748 ", e);
 		}
@@ -1124,7 +1124,7 @@ public class ConversationServiceImpl
 
 		try
 		{
-			javax.mail.Message storedMessage = MailConnector.getStoredMessage();
+			javax.mail.Message storedMessage = MailConnector.getStoredMessage(null);
 			lopRM.mobjData = MessageBridge.clientToServer(message, lobjConv.getParentContainerType(), lobjConv.getParentContainer(),
 					Constants.MsgDir_Incoming, storedMessage);
 

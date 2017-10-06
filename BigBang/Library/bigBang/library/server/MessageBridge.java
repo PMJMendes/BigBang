@@ -508,7 +508,7 @@ public class MessageBridge
 							lobjResult.marrCreate2[j].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
 							FileServiceImpl.GetFileXferStorage().remove(lidFile);
 						}
-						else if ( parrAttachments[i].attachmentId != null )
+						/*else if ( parrAttachments[i].attachmentId != null )
 						{
 							try
 							{
@@ -519,7 +519,7 @@ public class MessageBridge
 							{
 								throw new BigBangException(e.getMessage(), e);
 							}
-						}
+						}*/
 
 						lobjResult.marrCreate2[j].marrInfo = null;
 
