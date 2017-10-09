@@ -1,5 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Operations.Conversation;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -14,6 +16,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
@@ -322,10 +325,12 @@ public class ReceiveMessage
 					MessageAttachmentData messageAttachmentData = messageData.marrAttachments[i];
 					if ( messageAttachmentData.mstrAttId != null )
 					{
+						FileXfer attachment = null;
 						try
 						{
-							messageData.mobjDocOps.marrCreate2[i].mobjFile = MailConnector.getAttachment(messageData.mstrEmailID,
-									messageData.mstrFolderID, messageAttachmentData.mstrAttId, existingUserEmail).GetVarData();
+							attachment = MailConnector.getAttachment(messageData.mstrEmailID,
+									messageData.mstrFolderID, messageAttachmentData.mstrAttId, existingUserEmail);
+							messageData.mobjDocOps.marrCreate2[i].mobjFile = attachment.GetVarData();
 							//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
 							Document lobjAux = Document.GetInstance(nmSpace, (UUID)null);
 							DocDataLight pobjData = messageData.mobjDocOps.marrCreate2[i];
@@ -353,7 +358,23 @@ public class ReceiveMessage
 						}
 						catch (Throwable e)
 						{
-							System.out.println(e.getMessage());
+							if (attachment != null) {
+								String saveUrl = "C:\\unSavedDocs\\";
+								String fileName = messageAttachmentData.mstrAttId;
+								String filePath = saveUrl + fileName;
+								File file = new File(filePath);
+								if (!file.exists() && !file.isDirectory()) {
+									// Creates an output stream used to "write" to storage
+									FileOutputStream outputStream;
+									try {
+										outputStream = new FileOutputStream(file);
+										outputStream.write(attachment.getData());
+										outputStream.close();
+									} catch (Exception e1) {
+										// Puff.
+									}
+								}
+							}
 						}
 					}
 				}
