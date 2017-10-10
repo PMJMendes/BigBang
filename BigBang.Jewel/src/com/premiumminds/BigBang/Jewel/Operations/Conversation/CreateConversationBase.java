@@ -353,24 +353,27 @@ public abstract class CreateConversationBase
 						FileXfer attachment = null;
 						try
 						{
-							attachment = MailConnector.getAttachment(messageData.mstrEmailID,
-									messageData.mstrFolderID, messageAttachmentData.mstrAttId, existingUserEmail);
-							messageData.mobjDocOps.marrCreate2[i].mobjFile = attachment.GetVarData();
-							//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
-							Document lobjAux = Document.GetInstance(nmSpace, (UUID)null);
-							DocDataLight pobjData = messageData.mobjDocOps.marrCreate2[i];
-							pobjData.midOwnerId = lidContainer;
-							pobjData.mdtRefDate = new Timestamp(new java.util.Date().getTime());
-							pobjData.ToObject(lobjAux);
-							lobjAux.SetReadonly();
-							try
-							{
-								lobjAux.SaveToDb(pdb);
-							}
-							catch (Throwable e)
-							{
-								throw new BigBangJewelException(e.getMessage(), e);
-							}
+							for (int u=0; u<messageData.mobjDocOps.marrCreate2.length; u++) {
+								DocDataLight pobjData = messageData.mobjDocOps.marrCreate2[u];
+								if (pobjData.mstrText!=null && pobjData.mstrText.equals(messageAttachmentData.mstrAttId)) {
+									attachment = MailConnector.getAttachment(messageData.mstrEmailID,
+											messageData.mstrFolderID, messageAttachmentData.mstrAttId, existingUserEmail);
+									messageData.mobjDocOps.marrCreate2[u].mobjFile = attachment.GetVarData();
+									Document lobjAux = Document.GetInstance(nmSpace, (UUID)null);
+									pobjData.midOwnerId = lidContainer;
+									pobjData.mdtRefDate = new Timestamp(new java.util.Date().getTime());
+									pobjData.ToObject(lobjAux);
+									lobjAux.SetReadonly();
+									try
+									{
+										lobjAux.SaveToDb(pdb);
+									}
+									catch (Throwable e)
+									{
+										throw new BigBangJewelException(e.getMessage(), e);
+									}
+								}
+							}			
 							
 						/*	TODO Cannot get this to work, because the session is lost, and used "in a lot of places" to get editable cache... etc e tal
 						 * MessageAttachment lobjAttachment = MessageAttachment.GetInstance2(nmSpace, messageAttachmentData.mid);
@@ -404,6 +407,7 @@ public abstract class CreateConversationBase
 					}
 				}
 				MailConnector.clearAttsMap(existingUserEmail, messageData.mstrEmailID);
+				MailConnector.clearStoredMessage(existingUserEmail, messageData.mstrEmailID);
 				/*try {
 					//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
 				} catch (Throwable e) {

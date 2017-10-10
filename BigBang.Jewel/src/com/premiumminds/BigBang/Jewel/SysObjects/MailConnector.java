@@ -1061,8 +1061,8 @@ public class MailConnector {
 		}
 		
 		try {
-			String userMail = getUserEmail();
-			lastMessageUser.put(userMail, msg);
+			String key = getUserEmail() + "_|_" + msg.getHeader("Message-Id")[0];
+			lastMessageUser.put(key, msg);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}		
@@ -1070,8 +1070,9 @@ public class MailConnector {
 	
 	/**
 	 * This method returns the stored users' message
+	 * @param messageId TODO
 	 */
-	public static Message getStoredMessage(String existingUserMail) throws BigBangJewelException {
+	public static Message getStoredMessage(String existingUserMail, String messageId) throws BigBangJewelException {
 		
 		Message result = null; 
 				
@@ -1081,7 +1082,8 @@ public class MailConnector {
 		
 		try {
 			String userMail = existingUserMail == null ? getUserEmail() : existingUserMail;
-			result = lastMessageUser.get(userMail);
+			String key = userMail + "_|_" + messageId;
+			result = lastMessageUser.get(key);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage() + " 1063 ", e);
 		}
@@ -1207,7 +1209,7 @@ public class MailConnector {
 	public static MimeMessage conditionalGetMessage(String folderId, String id, String existingUserEmail)
 			throws BigBangJewelException {
 		
-		MimeMessage mailMessage = (MimeMessage) getStoredMessage(existingUserEmail);
+		MimeMessage mailMessage = (MimeMessage) getStoredMessage(existingUserEmail, id);
 		
 		try {
 			if (mailMessage != null && mailMessage.getFolder() != null && 
@@ -1235,17 +1237,19 @@ public class MailConnector {
 
 		String userKey = getUserEmail();
 		String fullKey = userKey;
+		String messageId = "";
 
 		try {
-			fullKey = fullKey + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			messageId = mailMessage.getHeader("Message-Id")[0];
+			fullKey = fullKey + "_|_" + messageId;
 		} catch (MessagingException e) {
 			throw new BigBangJewelException(
 					"Error while cleaning stored values: " + e.getMessage());
 		}
 
 		if (clearMessage) {
-			if (getStoredMessage(null) != null) {
-				lastMessageUser.remove(userKey);
+			if (getStoredMessage(null, messageId) != null) {
+				lastMessageUser.remove(fullKey);
 			}
 		}
 
@@ -1272,6 +1276,16 @@ public class MailConnector {
 
 		if (lastAttachmentsMapUser.get(fullKey) != null) {
 			lastAttachmentsMapUser.remove(fullKey);
+		}
+	}
+	
+	public static void clearStoredMessage(String userMail, String msgId) {
+
+		String userKey = userMail;
+		String fullKey = userKey + "_|_" + msgId;
+
+		if (lastMessageUser.get(fullKey) != null) {
+			lastMessageUser.remove(fullKey);
 		}
 	}
 }
