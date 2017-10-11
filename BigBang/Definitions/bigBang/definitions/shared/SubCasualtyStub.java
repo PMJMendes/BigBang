@@ -16,4 +16,5 @@ public class SubCasualtyStub
 	public String insurerProcessNumber; //Pode ser null, enquanto não se souber o número
 	public String totalDamages; //Em moeda
 	public boolean isOpen;
+	public boolean totalLoss;
 }

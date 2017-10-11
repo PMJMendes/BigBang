@@ -35,6 +35,7 @@ public class SubCasualtyData
 	public String mstrGenericObject;
 	public UUID midCasualty;
 	public UUID midServiceCenter;
+	public Boolean mbTotalLoss;
 
 	public OutgoingMessageData mobjNotification;
 	public Timestamp mdtLimitDate;
@@ -70,6 +71,7 @@ public class SubCasualtyData
 		mstrGenericObject  = (String)    pobjSource.getAt(SubCasualty.I.GENERICOBJECT);
 		midCasualty        = (UUID)      pobjSource.getAt(SubCasualty.I.CASUALTY);
 		midServiceCenter   = (UUID)      pobjSource.getAt(SubCasualty.I.SERVICECENTER);
+		mbTotalLoss 	   = (Boolean)   pobjSource.getAt(SubCasualty.I.TOTALLOSS);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -92,6 +94,7 @@ public class SubCasualtyData
 			pobjDest.setAt(SubCasualty.I.GENERICOBJECT,   mstrGenericObject);
 			pobjDest.setAt(SubCasualty.I.CASUALTY,        midCasualty);
 			pobjDest.setAt(SubCasualty.I.SERVICECENTER,   midServiceCenter);
+			pobjDest.setAt(SubCasualty.I.TOTALLOSS,       mbTotalLoss);
 		}
 		catch (Throwable e)
 		{
@@ -204,6 +207,9 @@ public class SubCasualtyData
 
 		if ( mstrNotes != null )
 			pstrBuilder.append("Notas internas:").append(pstrLineBreak).append(mstrNotes).append(pstrLineBreak);
+		
+		if ( (mbTotalLoss != null) && (boolean)mbTotalLoss )
+			pstrBuilder.append("Perda Total!").append(pstrLineBreak);
 		
 		if (framing!=null) {
 			pstrBuilder.append(pstrLineBreak).append("Informação de Enquadramento:").append(pstrLineBreak).append(pstrLineBreak);

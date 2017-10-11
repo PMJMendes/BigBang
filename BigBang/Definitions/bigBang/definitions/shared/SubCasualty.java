@@ -143,4 +143,6 @@ public class SubCasualty extends SubCasualtyStub {
 														// insurer requests
 
 	public SubCasualtyFraming framing; // Framing info
+	
+	public boolean totalLoss;
 }
