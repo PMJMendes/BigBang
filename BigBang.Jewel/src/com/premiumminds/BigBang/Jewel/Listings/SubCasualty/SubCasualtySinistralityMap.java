@@ -76,6 +76,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	
 	private boolean showThirdParties = false;
 	
+	private boolean totalLossOnly = false;
+	
 	private String schemaName = "credite_egs";
 
 	/*
@@ -582,6 +584,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		// Tests if it is supposed to show the values paid to third parties
 		if ((reportParams[4] != null) && reportParams[4].equals("1")) {
 			showOpenPreviously = true;
+		}
+		
+		// Tests if should display only casualties with total loss subcasualties
+		if ((reportParams[6] != null) && reportParams[6].equals("1")) {
+			totalLossOnly = true;
 		}
 
 		HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap;
@@ -1551,6 +1558,10 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		}
 
 		subCasualtyQuery.append(")");
+		
+		if (totalLossOnly) {
+			subCasualtyQuery.append(" AND [Is Total Loss] = 1");
+		}
 
 		return subCasualtyQuery;
 	}

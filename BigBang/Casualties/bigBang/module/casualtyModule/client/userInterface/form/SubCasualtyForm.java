@@ -64,6 +64,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected TextBoxFormField insuredObjectName;
 	protected Image statusIcon;
 	protected FormField<String> carRepair;
+	
+	protected CheckBoxFormField totalLoss;
 
 	protected FormViewSection notesSection, internalNotesSection;
 
@@ -136,6 +138,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		carRepair = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.OTHER_ENTITY, null);
 		carRepair.setLabelText("Oficina / Outra Entidade");
 		
+		totalLoss = new CheckBoxFormField("Perda Total");
+		
 		addSection("Informação Geral");
 		addFormField(casualty, false);
 
@@ -181,6 +185,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		addFormField(insuredObjectName, true);
 		addFormField(belongsToPolicy, true);
 		addFormField(carRepair, true);
+		
+		addLineBreak();
+		addFormField(totalLoss,true);
 		
 		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -303,6 +310,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			result.insuredObjectId = insuredObject.getValue();
 			result.insuredObjectName = insuredObjectName.getValue();
 			result.serviceCenterId = carRepair.getValue();
+			result.totalLoss = totalLoss.getValue();
 		}
 
 		return result;
@@ -325,6 +333,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			}
 
 			number.setValue(info.number);
+			totalLoss.setValue(info.totalLoss);
 			
 			if(info.insuredObjectName != null){
 				belongsToPolicy.setValue("false", true);
