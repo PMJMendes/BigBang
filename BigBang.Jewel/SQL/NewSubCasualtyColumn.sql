@@ -17,3 +17,9 @@ INSERT INTO [madds].[tblObjectMembers] ([PK],[_TSCreate],[_TSUpdate],[FKType],[F
 ALTER TABLE [bbangola].[tblBBSubCasualties] ADD [BTotalLoss] [bit] NULL;
 INSERT INTO [madds].[tblDDLLogs] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKNSpace],[DDLText]) VALUES('c16beb8f-58db-4169-81e9-56736aa93a61','2017-10-11T10:48:49.163','2017-10-11T10:48:49.163','f57bcb6b-ec2d-4828-bbc9-3ef660ecb900','980B1995-5522-4EAB-8E35-A46E00C39917' ,N'ALTER TABLE [bbangola].[tblBBSubCasualties] ADD [BTotalLoss] bit');
 INSERT INTO [madds].[tblObjectMembers] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKObject],[NOrder],[MemberName],[MemberComments],[FKTypeDef],[Size],[FKRefersTo],[Nullable],[Unique],[TableColumn],[Precision]) VALUES('acd854c5-baac-49eb-958f-a80900b2376f','2017-10-11T10:48:52.013','2017-10-11T10:48:52.013','94ab0a6f-25a1-11da-91c2-000b6abc6ae9','d5fd2d1b-59fb-4171-961a-a02e0121c81b',20,N'Is Total Loss',N'Whether this sub-casualty represents a total loss.','94ab0a7a-25a1-11da-91c2-000b6abc6ae9',null,null,1,0,N'BTotalLoss',null);
+
+
+
+
+-- NEW REPORT PARAM
+INSERT INTO [bigbang].[tblReportParams] ([PK],[_TSCreate],[_TSUpdate],[FKType],[Label],[NOrder],[FKOwner],[FKParamType],[Units],[FKReferenceTo],[DefaultValue]) VALUES('7ef39425-5ad6-4194-aad8-a80900cf924c','2017-10-11T12:35:44.693','2017-10-11T12:35:44.693','4d801865-dc6b-4a8f-8301-a032012782bf',N'Só Perdas Totais?',7,'40106ada-a414-4efc-9236-a6ea00c64ffb','361a1b4d-56a7-496c-a2ca-9f960154d6ca',null,null,null);
