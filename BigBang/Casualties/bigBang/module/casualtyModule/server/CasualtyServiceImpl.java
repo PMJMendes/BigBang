@@ -370,6 +370,8 @@ public class CasualtyServiceImpl
 		lopCSC.mobjData.midCasualty = lobjCasualty.getKey();
 		lopCSC.mobjData.midServiceCenter = ( subCasualty.serviceCenterId == null ? null :
 				UUID.fromString(subCasualty.serviceCenterId) );
+		
+		lopCSC.mobjData.mbTotalLoss = subCasualty.totalLoss;
 
 		if ( subCasualty.items != null )
 		{
