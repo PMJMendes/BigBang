@@ -91,6 +91,7 @@ public abstract class CreateConversationBase
 		boolean b;
 		AgendaItem lobjAgendaItem;
 		Map<String, String> larrAttTrans;
+		UUID msgID = null;
 
 		if ( (mobjData.marrMessages == null) || (mobjData.marrMessages.length != 1))
 			throw new JewelPetriException("Erro: Tem que indicar a mensagem inicial.");
@@ -153,6 +154,7 @@ public abstract class CreateConversationBase
 			mobjData.marrMessages[0].ToObject(lobjMessage);
 			lobjMessage.SaveToDb(pdb);
 			mobjData.marrMessages[0].mid = lobjMessage.getKey();
+			msgID = lobjMessage.getKey();
 
 			if ( mobjData.marrMessages[0].marrAddresses != null )
 			{
@@ -218,25 +220,29 @@ public abstract class CreateConversationBase
 
 			if ( mobjData.marrMessages[0].marrAttachments != null ) // ou cria um doc op falso,ou aqui tem q apanhar o correspondente tb pode "re-orde
 			{
-				for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ )
-				{
-					if ( (mobjData.marrMessages[0].marrAttachments[i].midDocument == null) &&
-							(mobjData.marrMessages[0].mobjDocOps != null) &&
-							(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null) &&
-							(mobjData.marrMessages[0].mobjDocOps.marrCreate2.length > 0))
+				for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ ) {
+					
+					boolean saveAtt = true;
+					if ((mobjData.marrMessages[0].marrAttachments[i].mstrAttId != null) &&
+						(mobjData.marrMessages[0].mobjDocOps != null) && 
+						(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null)) {
 						
 						for (int u=0; u<mobjData.marrMessages[0].mobjDocOps.marrCreate2.length; u++) {
-							if (mobjData.marrMessages[0].marrAttachments[i].mstrAttId.equals(mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText)) {
-								mobjData.marrMessages[0].marrAttachments[i].midDocument = mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mid;
+							if ((mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText != null) &&
+								(mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText.equals(mobjData.marrMessages[0].marrAttachments[i].mstrAttId))	) {
+								saveAtt = false;
 								break;
 							}
 						}
-
-					mobjData.marrMessages[0].marrAttachments[i].midOwner = lobjMessage.getKey();
-					lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrMessages[0].marrAttachments[i].ToObject(lobjAttachment);
-					lobjAttachment.SaveToDb(pdb);
-					mobjData.marrMessages[0].marrAttachments[i].mid = lobjAttachment.getKey();
+						
+						if (saveAtt) {
+							mobjData.marrMessages[0].marrAttachments[i].midOwner = lobjMessage.getKey();
+							lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrMessages[0].marrAttachments[i].ToObject(lobjAttachment);
+							lobjAttachment.SaveToDb(pdb);
+							mobjData.marrMessages[0].marrAttachments[i].mid = lobjAttachment.getKey();
+						}
+					}
 				}
 			}
 		}
@@ -306,16 +312,6 @@ public abstract class CreateConversationBase
 					mobjData.marrMessages[0].ToObject(lobjMessage);
 					lobjMessage.SaveToDb(pdb);
 
-					if ( mobjData.marrMessages[0].marrAttachments != null )
-					{
-						for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ )
-						{
-							lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrMessages[0].marrAttachments[i].mid);
-							mobjData.marrMessages[0].marrAttachments[i].ToObject(lobjAttachment);
-							lobjAttachment.SaveToDb(pdb);
-						}
-					}
-
 					// Calls the method responsble for updating the message to google storage.
 					StorageConnector.threadedUpload(mailMsg, mobjData.marrMessages[0].mstrEmailID);
 					
@@ -334,7 +330,7 @@ public abstract class CreateConversationBase
 		
 		if ( mobjData.marrMessages[0].mobjDocOps != null ) {
 			try {
-				runThreadedCreateDocs(pdb, lidContainer, Engine.getCurrentNameSpace(), MailConnector.getUserEmail());
+				runThreadedCreateDocs(pdb, lidContainer, Engine.getCurrentNameSpace(), MailConnector.getUserEmail(), msgID);
 			} catch (BigBangJewelException e) {
 				// TODO Auto-generated catch block
 				throw new JewelPetriException(e.getMessage(), e);
@@ -342,7 +338,7 @@ public abstract class CreateConversationBase
 		}
 	}
 
-	private void runThreadedCreateDocs(final SQLServer pdb, final UUID lidContainer, final UUID nmSpace, final String existingUserEmail) {
+	private void runThreadedCreateDocs(final SQLServer pdb, final UUID lidContainer, final UUID nmSpace, final String existingUserEmail, final UUID messageID) {
 		Runnable r = new Runnable() {
 			public void run() {
 				MessageData messageData = mobjData.marrMessages[0];
@@ -372,17 +368,23 @@ public abstract class CreateConversationBase
 									{
 										throw new BigBangJewelException(e.getMessage(), e);
 									}
+									
+									// Now saves the corresponding attachment, already with the corresponding fkdoc
+									MessageAttachment attachmentDb =  MessageAttachment.GetInstance(nmSpace, (UUID)null);
+									mobjData.marrMessages[0].marrAttachments[i].midDocument = lobjAux.getKey();
+									mobjData.marrMessages[0].marrAttachments[i].midOwner = messageID;
+									mobjData.marrMessages[0].marrAttachments[i].ToObject(attachmentDb);	
+									attachmentDb.SetReadonly();
+									try
+									{
+										attachmentDb.SaveToDb(pdb);
+									}
+									catch (Throwable e)
+									{
+										throw new BigBangJewelException(e.getMessage(), e);
+									}
 								}
-							}			
-							
-						/*	TODO Cannot get this to work, because the session is lost, and used "in a lot of places" to get editable cache... etc e tal
-						 * MessageAttachment lobjAttachment = MessageAttachment.GetInstance2(nmSpace, messageAttachmentData.mid);
-							MessageAttachmentData data = new MessageAttachmentData();
-							data.FromObject(lobjAttachment);
-							data.midDocument = lobjAux.getKey();
-							lobjAttachment.ForceReadable();
-							data.ToObject(lobjAttachment);
-							lobjAttachment.SaveToDb(pdb);*/
+							}
 						}
 						catch (Throwable e)
 						{

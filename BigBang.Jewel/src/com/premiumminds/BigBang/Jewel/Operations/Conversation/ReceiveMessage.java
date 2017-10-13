@@ -99,6 +99,7 @@ public class ReceiveMessage
 		int i, j, k;
 		boolean b;
 		Map<String, String> larrAttTrans;
+		UUID msgID = null;
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 
@@ -185,6 +186,7 @@ public class ReceiveMessage
 			mobjData.ToObject(lobjMessage);
 			lobjMessage.SaveToDb(pdb);
 			mobjData.mid = lobjMessage.getKey();
+			msgID = lobjMessage.getKey();
 
 			if ( mobjData.marrAddresses != null )
 			{
@@ -246,23 +248,32 @@ public class ReceiveMessage
 					mobjData.marrAddresses[i].mid = lobjAddr.getKey();
 				}
 			}
-
-			if ( mobjData.marrAttachments != null )
+			
+			if ( mobjData.marrAttachments != null ) // ou cria um doc op falso,ou aqui tem q apanhar o correspondente tb pode "re-orde
 			{
-				for ( i = 0; i < mobjData.marrAttachments.length; i++ )
-				{
-					if ( (mobjData.marrAttachments[i].midDocument == null) &&
-							(mobjData.mobjDocOps != null) &&
-							(mobjData.mobjDocOps.marrCreate2 != null) &&
-							(mobjData.mobjDocOps.marrCreate2.length > i) &&
-							(mobjData.mobjDocOps.marrCreate2[i] != null) )
-						mobjData.marrAttachments[i].midDocument = mobjData.mobjDocOps.marrCreate2[i].mid;
-
-					mobjData.marrAttachments[i].midOwner = lobjMessage.getKey();
-					lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrAttachments[i].ToObject(lobjAttachment);
-					lobjAttachment.SaveToDb(pdb);
-					mobjData.marrAttachments[i].mid = lobjAttachment.getKey();
+				for ( i = 0; i < mobjData.marrAttachments.length; i++ ) {
+					
+					boolean saveAtt = true;
+					if ((mobjData.marrAttachments[i].mstrAttId != null) &&
+						(mobjData.mobjDocOps != null) && 
+						(mobjData.mobjDocOps.marrCreate2 != null)) {
+						
+						for (int u=0; u<mobjData.mobjDocOps.marrCreate2.length; u++) {
+							if ((mobjData.mobjDocOps.marrCreate2[u].mstrText != null) &&
+								(mobjData.mobjDocOps.marrCreate2[u].mstrText.equals(mobjData.marrAttachments[i].mstrAttId))	) {
+								saveAtt = false;
+								break;
+							}
+						}
+						
+						if (saveAtt) {
+							mobjData.marrAttachments[i].midOwner = lobjMessage.getKey();
+							lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrAttachments[i].ToObject(lobjAttachment);
+							lobjAttachment.SaveToDb(pdb);
+							mobjData.marrAttachments[i].mid = lobjAttachment.getKey();
+						}
+					}
 				}
 			}
 		}
@@ -285,16 +296,6 @@ public class ReceiveMessage
 				mobjData.mstrBody = tmpBody;
 				mobjData.ToObject(lobjMessage);
 				lobjMessage.SaveToDb(pdb);
-
-				if ( mobjData.marrAttachments != null )
-				{
-					for ( i = 0; i < mobjData.marrAttachments.length; i++ )
-					{
-						lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrAttachments[i].mid);
-						mobjData.marrAttachments[i].ToObject(lobjAttachment);
-						lobjAttachment.SaveToDb(pdb);
-					}
-				}
 				
 				// Calls the method responsble for updating the message to google storage.
 				StorageConnector.threadedUpload(mailMsg, mobjData.mstrEmailID);
@@ -309,7 +310,7 @@ public class ReceiveMessage
 		
 		if ( mobjData.mobjDocOps != null ) {
 			try {
-				runThreadedCreateDocs(pdb, lidContainer, Engine.getCurrentNameSpace(), MailConnector.getUserEmail());
+				runThreadedCreateDocs(pdb, lidContainer, Engine.getCurrentNameSpace(), MailConnector.getUserEmail(), msgID);
 			} catch (BigBangJewelException e) {
 				// TODO Auto-generated catch block
 				throw new JewelPetriException(e.getMessage(), e);
@@ -317,7 +318,7 @@ public class ReceiveMessage
 		}
 	}
 	
-	private void runThreadedCreateDocs(final SQLServer pdb, final UUID lidContainer, final UUID nmSpace, final String existingUserEmail) {
+	private void runThreadedCreateDocs(final SQLServer pdb, final UUID lidContainer, final UUID nmSpace, final String existingUserEmail, final UUID messageID) {
 		Runnable r = new Runnable() {
 			public void run() {
 				MessageData messageData = mobjData;
@@ -347,17 +348,23 @@ public class ReceiveMessage
 									{
 										throw new BigBangJewelException(e.getMessage(), e);
 									}
+									
+									// Now saves the corresponding attachment, already with the corresponding fkdoc
+									MessageAttachment attachmentDb =  MessageAttachment.GetInstance(nmSpace, (UUID)null);
+									mobjData.marrAttachments[i].midDocument = lobjAux.getKey();
+									mobjData.marrAttachments[i].midOwner = messageID;
+									mobjData.marrAttachments[i].ToObject(attachmentDb);	
+									attachmentDb.SetReadonly();
+									try
+									{
+										attachmentDb.SaveToDb(pdb);
+									}
+									catch (Throwable e)
+									{
+										throw new BigBangJewelException(e.getMessage(), e);
+									}
 								}
-							}			
-							
-						/*	TODO Cannot get this to work, because the session is lost, and used "in a lot of places" to get editable cache... etc e tal
-						 * MessageAttachment lobjAttachment = MessageAttachment.GetInstance2(nmSpace, messageAttachmentData.mid);
-							MessageAttachmentData data = new MessageAttachmentData();
-							data.FromObject(lobjAttachment);
-							data.midDocument = lobjAux.getKey();
-							lobjAttachment.ForceReadable();
-							data.ToObject(lobjAttachment);
-							lobjAttachment.SaveToDb(pdb);*/
+							}
 						}
 						catch (Throwable e)
 						{
