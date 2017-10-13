@@ -223,15 +223,17 @@ public abstract class CreateConversationBase
 				for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ ) {
 					
 					boolean saveAtt = true;
-					if ((mobjData.marrMessages[0].marrAttachments[i].mstrAttId != null) &&
-						(mobjData.marrMessages[0].mobjDocOps != null) && 
-						(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null)) {
+					
+					if (mobjData.marrMessages[0].marrAttachments[i].mstrAttId != null) {
 						
-						for (int u=0; u<mobjData.marrMessages[0].mobjDocOps.marrCreate2.length; u++) {
-							if ((mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText != null) &&
-								(mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText.equals(mobjData.marrMessages[0].marrAttachments[i].mstrAttId))	) {
-								saveAtt = false;
-								break;
+						if ((mobjData.marrMessages[0].mobjDocOps != null) && 
+								(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null)) {
+							for (int u=0; u<mobjData.marrMessages[0].mobjDocOps.marrCreate2.length; u++) {
+								if ((mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText != null) &&
+									(mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText.equals(mobjData.marrMessages[0].marrAttachments[i].mstrAttId))	) {
+									saveAtt = false;
+									break;
+								}
 							}
 						}
 						

@@ -254,15 +254,17 @@ public class ReceiveMessage
 				for ( i = 0; i < mobjData.marrAttachments.length; i++ ) {
 					
 					boolean saveAtt = true;
-					if ((mobjData.marrAttachments[i].mstrAttId != null) &&
-						(mobjData.mobjDocOps != null) && 
-						(mobjData.mobjDocOps.marrCreate2 != null)) {
+					
+					if (mobjData.marrAttachments[i].mstrAttId != null) {
 						
-						for (int u=0; u<mobjData.mobjDocOps.marrCreate2.length; u++) {
-							if ((mobjData.mobjDocOps.marrCreate2[u].mstrText != null) &&
-								(mobjData.mobjDocOps.marrCreate2[u].mstrText.equals(mobjData.marrAttachments[i].mstrAttId))	) {
-								saveAtt = false;
-								break;
+						if ((mobjData.mobjDocOps != null) && 
+								(mobjData.mobjDocOps.marrCreate2 != null)) {
+							for (int u=0; u<mobjData.mobjDocOps.marrCreate2.length; u++) {
+								if ((mobjData.mobjDocOps.marrCreate2[u].mstrText != null) &&
+									(mobjData.mobjDocOps.marrCreate2[u].mstrText.equals(mobjData.marrAttachments[i].mstrAttId))	) {
+									saveAtt = false;
+									break;
+								}
 							}
 						}
 						
