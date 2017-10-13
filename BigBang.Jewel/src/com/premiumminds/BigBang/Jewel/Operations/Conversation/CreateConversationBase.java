@@ -220,18 +220,28 @@ public abstract class CreateConversationBase
 
 			if ( mobjData.marrMessages[0].marrAttachments != null ) // ou cria um doc op falso,ou aqui tem q apanhar o correspondente tb pode "re-orde
 			{
-				for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ )
-				{
-					if ( !((mobjData.marrMessages[0].marrAttachments[i].midDocument == null) &&
-							(mobjData.marrMessages[0].mobjDocOps != null) &&
-							(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null) &&
-							(mobjData.marrMessages[0].mobjDocOps.marrCreate2.length > 0)) ) {
-
-						mobjData.marrMessages[0].marrAttachments[i].midOwner = lobjMessage.getKey();
-						lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-						mobjData.marrMessages[0].marrAttachments[i].ToObject(lobjAttachment);
-						lobjAttachment.SaveToDb(pdb);
-						mobjData.marrMessages[0].marrAttachments[i].mid = lobjAttachment.getKey();
+				for ( i = 0; i < mobjData.marrMessages[0].marrAttachments.length; i++ ) {
+					
+					boolean saveAtt = true;
+					if ((mobjData.marrMessages[0].marrAttachments[i].mstrAttId != null) &&
+						(mobjData.marrMessages[0].mobjDocOps != null) && 
+						(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null)) {
+						
+						for (int u=0; u<mobjData.marrMessages[0].mobjDocOps.marrCreate2.length; u++) {
+							if ((mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText != null) &&
+								(mobjData.marrMessages[0].mobjDocOps.marrCreate2[u].mstrText.equals(mobjData.marrMessages[0].marrAttachments[i].mstrAttId))	) {
+								saveAtt = false;
+								break;
+							}
+						}
+						
+						if (saveAtt) {
+							mobjData.marrMessages[0].marrAttachments[i].midOwner = lobjMessage.getKey();
+							lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrMessages[0].marrAttachments[i].ToObject(lobjAttachment);
+							lobjAttachment.SaveToDb(pdb);
+							mobjData.marrMessages[0].marrAttachments[i].mid = lobjAttachment.getKey();
+						}
 					}
 				}
 			}

@@ -248,22 +248,31 @@ public class ReceiveMessage
 					mobjData.marrAddresses[i].mid = lobjAddr.getKey();
 				}
 			}
-
-			if ( mobjData.marrAttachments != null )
+			
+			if ( mobjData.marrAttachments != null ) // ou cria um doc op falso,ou aqui tem q apanhar o correspondente tb pode "re-orde
 			{
-				for ( i = 0; i < mobjData.marrAttachments.length; i++ )
-				{
-					if ( !((mobjData.marrAttachments[i].midDocument == null) &&
-							(mobjData.mobjDocOps != null) &&
-							(mobjData.mobjDocOps.marrCreate2 != null) &&
-							(mobjData.mobjDocOps.marrCreate2.length > i) &&
-							(mobjData.mobjDocOps.marrCreate2[i] != null)) ) {
-
-						mobjData.marrAttachments[i].midOwner = lobjMessage.getKey();
-						lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-						mobjData.marrAttachments[i].ToObject(lobjAttachment);
-						lobjAttachment.SaveToDb(pdb);
-						mobjData.marrAttachments[i].mid = lobjAttachment.getKey();
+				for ( i = 0; i < mobjData.marrAttachments.length; i++ ) {
+					
+					boolean saveAtt = true;
+					if ((mobjData.marrAttachments[i].mstrAttId != null) &&
+						(mobjData.mobjDocOps != null) && 
+						(mobjData.mobjDocOps.marrCreate2 != null)) {
+						
+						for (int u=0; u<mobjData.mobjDocOps.marrCreate2.length; u++) {
+							if ((mobjData.mobjDocOps.marrCreate2[u].mstrText != null) &&
+								(mobjData.mobjDocOps.marrCreate2[u].mstrText.equals(mobjData.marrAttachments[i].mstrAttId))	) {
+								saveAtt = false;
+								break;
+							}
+						}
+						
+						if (saveAtt) {
+							mobjData.marrAttachments[i].midOwner = lobjMessage.getKey();
+							lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrAttachments[i].ToObject(lobjAttachment);
+							lobjAttachment.SaveToDb(pdb);
+							mobjData.marrAttachments[i].mid = lobjAttachment.getKey();
+						}
 					}
 				}
 			}
