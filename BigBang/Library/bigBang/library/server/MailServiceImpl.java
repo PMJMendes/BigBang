@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -179,6 +180,22 @@ public class MailServiceImpl
 			if (msg.isMimeType("multipart/mixed")) {
 				Multipart mp = (Multipart)msg.getContent();
 				return mp.getCount();
+			}
+		} catch (MessagingException m) {
+			try {
+				if (msg instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m.getMessage())) {
+					MimeMessage msgFix = new MimeMessage((MimeMessage) msg);
+					if (msgFix.isMimeType("multipart/mixed")) {
+						Multipart mp = (Multipart)msgFix.getContent();
+						return mp.getCount();
+					}
+	            } else {
+	                throw m;
+	            }
+			} catch (MessagingException m2) {
+				return 0;
+			} catch (Throwable t) {
+				throw new BigBangException(t.getMessage(), t);
 			}
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);

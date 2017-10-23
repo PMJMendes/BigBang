@@ -459,11 +459,20 @@ public class MailConnector {
 	 *	the body parts of the Message parameter, for parts can be encapsulated, with attachments
 	 */
 	public static LinkedHashMap<String, BodyPart> getAttachmentsMap(Message message) throws BigBangJewelException {
-		Object content;
+		Object content = null;
 		try {
-			content = message.getContent(); 
 			
-			if (content instanceof String)
+			try {
+				content = message.getContent(); 
+			} catch (MessagingException m) {
+				if (message instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m.getMessage())) {
+					content = new MimeMessage((MimeMessage) message).getContent();
+	            } else {
+	                throw m;
+	            }
+			}
+			
+			if (content != null && content instanceof String)
 				return null;        
 
 			if (content instanceof Multipart) {
@@ -1169,7 +1178,17 @@ public class MailConnector {
 		
 		if (result==null) {
 			try {
-				Object content = mailMessage.getContent();
+				Object content = null;
+				try {
+					content = mailMessage.getContent();
+				} catch (MessagingException m) {
+					if (mailMessage instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m.getMessage())) {
+						MimeMessage msgFix = new MimeMessage((MimeMessage) mailMessage);
+						content = msgFix.getContent();
+		            } else {
+		                throw m;
+		            }
+				}
 				if (content instanceof Multipart && attachmentsMap != null) {
 					result = attachmentsMap.get("main").getContent().toString();
 					result = prepareBodyInline(result, attachmentsMap);
