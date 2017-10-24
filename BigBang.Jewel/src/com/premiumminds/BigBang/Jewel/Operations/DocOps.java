@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations;
 
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -7,6 +8,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.FileXfer;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.SubOperation;
 import Jewel.Petri.SysObjects.UndoableOperation;
@@ -20,6 +22,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.DocInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
+import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.DocuShareConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.FileShareScanConnector;
 
@@ -1171,8 +1174,11 @@ public class DocOps
 		Document lobjAux;
 		Entity lrefDocuments;
 		Entity lrefDocInfo;
+		Entity lrefMsgAttachments;
 		int i;
 		DocInfo[] larrCIAux;
+		java.lang.Object[] larrParams;
+		int[] larrMembers;
 
 		try
 		{
@@ -1180,6 +1186,8 @@ public class DocOps
 					Constants.ObjID_Document));
 			lrefDocInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_DocInfo));
+			lrefMsgAttachments  = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_MessageAttachment));
 
 			lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 
@@ -1191,6 +1199,19 @@ public class DocOps
 				pobjData.marrInfo[i].FromObject(larrCIAux[i]);
 				lrefDocInfo.Delete(pdb, larrCIAux[i].getKey());
 			}
+			
+			// Deletes the reference for the message attachment
+			larrParams = new java.lang.Object[1];
+			larrParams[0] = pobjData.mid;
+			larrMembers = new int[1];
+			larrMembers[0] = MessageAttachment.I.DOCUMENT;
+			ResultSet larrAtts = lrefMsgAttachments.SelectByMembers(pdb, larrMembers, larrParams, new int[0]);
+			while (larrAtts.next())
+	        {
+				MessageAttachment lobjAgendaProc = (MessageAttachment) Engine.GetWorkInstance(lrefMsgAttachments.getKey(), larrAtts);
+				lobjAgendaProc.setAt(MessageAttachment.I.DOCUMENT, null);
+				lobjAgendaProc.SaveToDb(pdb);
+	        }
 
 			pobjData.FromObject(lobjAux);
 
