@@ -734,6 +734,8 @@ public class MailConnector {
 		
 		MessageData result = new MessageData();
 		
+		Message copy = fetchedMessage;
+		
 		InternetAddress fromAddress = null;
 		String from;
 		Address[] to, cc, bcc, replyTo;
@@ -742,7 +744,7 @@ public class MailConnector {
 
 		// Builds the MessageData with the existing Message's fields
 		try {
-			result.mstrSubject = fetchedMessage.getSubject();
+			result.mstrSubject = copy.getSubject();
 			result.midOwner = null;
 			result.mlngNumber = -1;
 			result.mbIsEmail = true;
@@ -751,16 +753,25 @@ public class MailConnector {
 				result.mstrEmailID = emailId;
 			}
 			
-			Object content = fetchedMessage.getContent();
+			Object content = null;
+			try {
+				content = copy.getContent();
+			} catch (MessagingException m) {
+				if (copy instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m.getMessage())) {
+					MimeMessage msgFix = new MimeMessage((MimeMessage) copy);
+					content = msgFix.getContent();
+					copy = msgFix;
+				}
+			}
 			
 			LinkedHashMap<String, BodyPart> attachmentsMap = null;
 			
 			result.mstrBody = null;
 			
-			if (content instanceof Multipart) {
+			if (content != null && content instanceof Multipart) {
 				
-				attachmentsMap = conditionalGetAttachmentsMap((MimeMessage) fetchedMessage, null);
-				result.mstrBody = conditionalGetBody((MimeMessage) fetchedMessage, attachmentsMap);
+				attachmentsMap = conditionalGetAttachmentsMap((MimeMessage) copy, null);
+				result.mstrBody = conditionalGetBody((MimeMessage) copy, attachmentsMap);
 				
 				if (attachmentsMap != null) {
 					// Removes the mail's text from the attachments
@@ -781,16 +792,16 @@ public class MailConnector {
 			}
 			
 			if (result.mstrBody == null) {
-				result.mstrBody = conditionalGetBody((MimeMessage) fetchedMessage, attachmentsMap);
+				result.mstrBody = conditionalGetBody((MimeMessage) copy, attachmentsMap);
 			}
 			
-			fromAddress = (InternetAddress) (fetchedMessage.getFrom() == null ? null : fetchedMessage.getFrom()[0]);
+			fromAddress = (InternetAddress) (copy.getFrom() == null ? null : copy.getFrom()[0]);
 			from = fromAddress == null ? "" : fromAddress.getAddress();
 			
-			to = fetchedMessage.getRecipients(RecipientType.TO);
-			cc = fetchedMessage.getRecipients(RecipientType.CC);
-			bcc = fetchedMessage.getRecipients(RecipientType.BCC);
-			replyTo = fetchedMessage.getReplyTo();
+			to = copy.getRecipients(RecipientType.TO);
+			cc = copy.getRecipients(RecipientType.CC);
+			bcc = copy.getRecipients(RecipientType.BCC);
+			replyTo = copy.getReplyTo();
 			
 			String userEmail = getUserEmail();
 			if (userEmail != null) {
@@ -800,10 +811,10 @@ public class MailConnector {
 				result.midDirection = Constants.MsgDir_Outgoing;
 			}
 			
-			if (result.midDirection.equals(Constants.MsgDir_Outgoing) && fetchedMessage.getSentDate() != null) {
-				result.mdtDate = new Timestamp(fetchedMessage.getSentDate().getTime());
-			} else if (result.midDirection.equals(Constants.MsgDir_Incoming) && fetchedMessage.getReceivedDate() != null) {
-				result.mdtDate = new Timestamp(fetchedMessage.getReceivedDate().getTime());
+			if (result.midDirection.equals(Constants.MsgDir_Outgoing) && copy.getSentDate() != null) {
+				result.mdtDate = new Timestamp(copy.getSentDate().getTime());
+			} else if (result.midDirection.equals(Constants.MsgDir_Incoming) && copy.getReceivedDate() != null) {
+				result.mdtDate = new Timestamp(copy.getReceivedDate().getTime());
 			} else {
 				result.mdtDate = null;
 			}
