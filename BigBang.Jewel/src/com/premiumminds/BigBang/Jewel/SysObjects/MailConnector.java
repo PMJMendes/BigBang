@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
@@ -25,14 +26,15 @@ import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -573,6 +575,50 @@ public class MailConnector {
 				return new LinkedHashMap<String, BodyPart>();
 			}
 		}
+		
+		// To catch the "emails attached as emails"
+		if (part.getContentType().contains("MESSAGE/RFC822") || part.getContentType().contains("message/rfc822")) {
+			
+			// Gets the bytearray corresponding to the inputstream from the part
+			byte[] byteArray = IOUtils.toByteArray( part.getInputStream() );
+			
+			// If it is base-64 encoded, must decode it
+			if (((MimeBodyPart)part).getEncoding()!=null && (((MimeBodyPart)part).getEncoding().equals("BASE64") ||
+					((MimeBodyPart)part).getEncoding().equals("base64"))) {
+				ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
+				InputStream b64is = MimeUtility.decode(bais, "base64");
+				byte[] tmp = new byte[byteArray.length];
+				int n = b64is.read(tmp);
+				byte[] res = new byte[n];
+				System.arraycopy(tmp, 0, res, 0, n);
+				byteArray = res;
+			}
+			
+			// Gets the name to use
+			int msgNr = 0;
+			String name = "msg" + msgNr + ".eml";
+			while (true) {
+				if (!result.containsKey(name)) {
+					break;
+				}
+				msgNr++;
+				name = "msg" + msgNr + ".eml";
+			}
+			
+			// Creates a decoded bodypart
+			ByteArrayDataSource bds = new ByteArrayDataSource(byteArray, "MESSAGE/RFC822"); 
+			
+			InternetHeaders heads = new InternetHeaders();
+	        heads.addHeader("Content-Type", "message/rfc822; name =" + bds.getName());
+	        heads.addHeader("Content-Disposition", "attachment");
+			MimeBodyPart decodedPart = new MimeBodyPart(heads, byteArray);
+			
+			decodedPart.setDataHandler(new DataHandler(bds)); 
+			decodedPart.setFileName(bds.getName()); 
+			
+			result.put(name, decodedPart);
+		}
+		
 
 		// If the part is a Multipart, the method recursively calls itself
 		if (content instanceof Multipart) {
@@ -981,9 +1027,14 @@ public class MailConnector {
 		if (attachmentStream != null) {
 			try {
 				String contentType = attachment.getContentType();
+				// Special case for eml attachments (since I cannot do it any other way, apparently)
+				if (attachmentId!=null && (attachmentId.length() > 3) &&  attachmentId.substring(attachmentId.length() - 4).equals(".eml") ) {
+					contentType = "message/rfc822; name=\"" + attachmentId + "\"";
+				}
 				String mimeType = contentType!=null ? contentType.split(";")[0] : null;
+				String fileName = (attachment.getFileName()==null || attachment.getFileName().length()==0) ? attachmentId : attachment.getFileName();
 				FileXfer attachmentXFer = new FileXfer(attachment.getSize(), mimeType,
-						attachment.getFileName(), attachmentStream);
+						fileName, attachmentStream);
 				return attachmentXFer;
 			} catch (Throwable e) {
 				throw new BigBangJewelException(e.getMessage(), e);
@@ -1090,7 +1141,6 @@ public class MailConnector {
 	
 	/**
 	 * This method returns the stored users' message
-	 * @param messageId TODO
 	 */
 	public static Message getStoredMessage(String existingUserMail, String messageId) throws BigBangJewelException {
 		
@@ -1131,7 +1181,6 @@ public class MailConnector {
 	
 	/**
 	 * This method returns the stored users' attachments
-	 * @param existingUserEmail TODO
 	 */
 	public static LinkedHashMap<String, BodyPart> getStoredAttachments(MimeMessage mailMessage, String existingUserEmail) throws BigBangJewelException {
 		
@@ -1217,13 +1266,11 @@ public class MailConnector {
 
 	/**
 	 * Tries to get the stored attachments map, from a message
-	 * @param existingUserEmail TODO
 	 */
 	public static LinkedHashMap<String, BodyPart> conditionalGetAttachmentsMap(
 			MimeMessage mailMessage, String existingUserEmail) throws BigBangJewelException {
 		
 		LinkedHashMap<String, BodyPart> attachmentsMap = getStoredAttachments(mailMessage, existingUserEmail);
-		
 		if (attachmentsMap == null || attachmentsMap.size()==0) {
 			attachmentsMap = getAttachmentsMap(mailMessage);
 			storeLastAttachments(mailMessage, attachmentsMap);
@@ -1304,7 +1351,7 @@ public class MailConnector {
 		String userKey = userMail;
 		String fullKey = userKey + "_|_" + msgId;
 
-		if (lastAttachmentsMapUser.get(fullKey) != null) {
+		if (lastAttachmentsMapUser != null && lastAttachmentsMapUser.get(fullKey) != null) {
 			lastAttachmentsMapUser.remove(fullKey);
 		}
 	}
@@ -1314,7 +1361,7 @@ public class MailConnector {
 		String userKey = userMail;
 		String fullKey = userKey + "_|_" + msgId;
 
-		if (lastMessageUser.get(fullKey) != null) {
+		if (lastMessageUser!=null && lastMessageUser.get(fullKey) != null) {
 			lastMessageUser.remove(fullKey);
 		}
 	}

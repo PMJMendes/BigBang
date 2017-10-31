@@ -299,6 +299,10 @@ public class StorageConnector {
 								.getValue().getInputStream());
 						String contentType = entry.getValue().getContentType()
 								.split(";")[0];
+						// Special case for eml attachments (since I cannot do it any other way, apparently)
+						if (attachmentId!=null && (attachmentId.length() > 3) &&  attachmentId.substring(attachmentId.length() - 4).equals(".eml") ) {
+							contentType = "message/rfc822; name=\"" + attachmentId + "\"";
+						}
 						result = new FileXfer(binaryData.length, contentType,
 								entry.getKey(), new ByteArrayInputStream(
 										binaryData));
