@@ -25,7 +25,12 @@ import bigBang.library.interfaces.ReportService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
+import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingMap;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
+import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingMap;
 import com.premiumminds.BigBang.Jewel.Objects.ReportDef;
 import com.premiumminds.BigBang.Jewel.SysObjects.ExcelConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
@@ -704,7 +709,7 @@ public class ReportServiceImpl
 		return lobjResult;
 	}
 
-	private static TransactionSet toClient(TransactionSetBase pobjSet)
+	private static TransactionSet toClient(TransactionSetBase pobjSet) throws BigBangJewelException
 	{
 		TransactionSet lobjResult;
 
@@ -712,6 +717,24 @@ public class ReportServiceImpl
 		lobjResult.id = pobjSet.getKey().toString();
 		lobjResult.date = ((Timestamp)pobjSet.getAt(TransactionSetBase.I.DATE)).toString().substring(0, 10);
 		lobjResult.user = ((UUID)pobjSet.getAt(TransactionSetBase.I.USER)).toString();
+		TransactionMapBase[] currentMaps = null;
+		String companyName = "";
+		
+		currentMaps = pobjSet.getCurrentMaps();
+		if (currentMaps != null && currentMaps[0] != null && currentMaps[0].getAt(TransactionMapBase.I.OWNER) != null) {
+			if (currentMaps[0] instanceof InsurerAccountingMap) {
+				companyName = ((InsurerAccountingMap) currentMaps[0]).getCompany().getLabel();
+			} 
+			if (currentMaps[0] instanceof MediatorAccountingMap) {
+				Mediator mediator = Mediator.GetInstance(Engine.getCurrentNameSpace(), ((UUID)currentMaps[0].getAt(TransactionMapBase.I.OWNER))); 
+				if (mediator != null) {
+					companyName = mediator.getLabel();
+				}
+			} 
+		}
+		
+		lobjResult.company = companyName;
+		
 		try
 		{
 			lobjResult.isComplete = pobjSet.isComplete();
