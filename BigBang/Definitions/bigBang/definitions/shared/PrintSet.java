@@ -11,4 +11,6 @@ public class PrintSet
 	public String date;
 	public String userName;
 	public String printDate;
+	public String extraInfo1;
+	public String extraInfo2;
 }

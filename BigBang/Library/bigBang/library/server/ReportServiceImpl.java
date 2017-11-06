@@ -705,6 +705,9 @@ public class ReportServiceImpl
 		lobjResult.userName = pobjSet.getUser().getDisplayName();
 		lobjResult.printDate = ( pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON) == null ?
 				null : ((Timestamp)pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON)).toString().substring(0, 10) );
+		
+		lobjResult.extraInfo1 = "Extra 1";
+		lobjResult.extraInfo2 = "More Extra";
 
 		return lobjResult;
 	}

@@ -30,6 +30,8 @@ public class PrintSet
 		public static int DATE      = 1;
 		public static int USER      = 2;
 		public static int PRINTEDON = 3;
+		public static int OWNERTYPE = 4;
+		public static int OWNER		= 5;
 	}
 
     public static PrintSet GetInstance(UUID pidNameSpace, UUID pidKey)
