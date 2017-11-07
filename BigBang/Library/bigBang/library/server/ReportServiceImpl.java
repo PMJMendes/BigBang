@@ -9,6 +9,9 @@ import java.util.Comparator;
 import java.util.UUID;
 
 import org.apache.ecs.GenericElement;
+import org.apache.ecs.html.TD;
+import org.apache.ecs.html.TR;
+import org.apache.ecs.html.Table;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
@@ -77,7 +80,53 @@ public class ReportServiceImpl
 			lobjSet = com.premiumminds.BigBang.Jewel.Objects.PrintSet.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(printSetId));
 
-			lobjBuffer = lobjSet.buildReportTable();
+			Table printSetGenericInfo = lobjSet.buildReportTable();
+			lobjBuffer = printSetGenericInfo; 
+			
+			// Gets the extra info
+			UUID setOwnerType = (UUID) lobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.OWNERTYPE);
+			if (setOwnerType!=null && setOwnerType.equals(Constants.ObjID_InsurerAccountingSet)) {
+				// If it is associated to a InsurerAccountingSet, it gets the corresponding company
+				UUID setOwner = (UUID) lobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.OWNER);
+				if (setOwner!=null) {
+					InsurerAccountingSet set;
+					try {
+						set = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), setOwner);
+						
+						Table extraInfo = new Table();
+						TR printInfoRow = new TR();
+						TD printInfoCell = new TD();
+						printInfoCell.addElement(printSetGenericInfo);
+						printInfoRow.addElement(printInfoCell);
+						extraInfo.addElement(printInfoRow);
+						
+						TR setHeaderRow = new TR();
+						TD setHeaderCell = new TD();
+						setHeaderCell.addElement(set.buildHeaderSection());
+						setHeaderRow.addElement(setHeaderCell);
+						extraInfo.addElement(setHeaderRow);
+						
+						int nrMaps = set.getCurrentMaps().length;
+						Table infoTable = new Table();
+						for (int i=0; i<nrMaps; i++) {
+							TD mapCell = new TD();
+							TR mapRow = new TR();
+							mapCell.addElement(set.buildDataSection(i+1));
+							mapRow.addElement(mapCell);
+							infoTable.addElement(mapRow);
+						}
+						TR setInfoRow = new TR();
+						TD setInfoCell = new TD();
+						setInfoCell.addElement(infoTable);
+						setInfoRow.addElement(setInfoCell);
+						extraInfo.addElement(setInfoRow);
+						
+						return new GenericElement[] { extraInfo };
+						
+					} catch (BigBangJewelException e) {
+					}
+				}
+			}
 		}
 		catch (Throwable e)
 		{
