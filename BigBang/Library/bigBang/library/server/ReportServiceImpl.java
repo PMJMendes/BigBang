@@ -27,8 +27,8 @@ import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingMap;
+import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingSet;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingMap;
 import com.premiumminds.BigBang.Jewel.Objects.ReportDef;
@@ -705,9 +705,32 @@ public class ReportServiceImpl
 		lobjResult.userName = pobjSet.getUser().getDisplayName();
 		lobjResult.printDate = ( pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON) == null ?
 				null : ((Timestamp)pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON)).toString().substring(0, 10) );
-		
-		lobjResult.extraInfo1 = "Extra 1";
-		lobjResult.extraInfo2 = "More Extra";
+				
+		// Gets the extra info
+		UUID setOwnerType = (UUID) pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.OWNERTYPE);
+		if (setOwnerType!=null && setOwnerType.equals(Constants.ObjID_InsurerAccountingSet)) {
+			// If it is associated to a insurerAccountingMap, it gets the corresponding company
+			UUID setOwner = (UUID) pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.OWNER);
+			if (setOwner!=null) {
+				InsurerAccountingSet set;
+				InsurerAccountingMap map;
+				String companyName = null;
+				try {
+					set = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), setOwner);
+					TransactionMapBase[] currentMaps = set.getCurrentMaps();
+					if (currentMaps != null && currentMaps[0] != null && currentMaps[0].getAt(TransactionMapBase.I.OWNER) != null) {
+						if (currentMaps[0] instanceof InsurerAccountingMap) {
+							companyName = ((InsurerAccountingMap) currentMaps[0]).getCompany().getLabel();
+						} 
+					}
+				} catch (BigBangJewelException e) {
+				}
+
+				if (companyName!=null && companyName.length()>0) {
+					lobjResult.extraInfo1 = companyName;
+				}
+			}
+		}
 
 		return lobjResult;
 	}

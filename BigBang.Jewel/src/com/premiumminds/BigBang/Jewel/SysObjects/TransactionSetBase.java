@@ -19,6 +19,7 @@ import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 
 public abstract class TransactionSetBase
@@ -165,14 +166,14 @@ public abstract class TransactionSetBase
 
 		getMaps();
 
-		pidSet = createPrintSet(pdb);
+		pidSet = createPrintSet(pdb, getKey());
 
 		for ( i = 0; i < marrMaps.length; i++ )
 			if ( !marrMaps[i].isSettled() )
 				marrMaps[i].Settle(pdb, pidSet);
 	}
 
-	public UUID createPrintSet(SQLServer pdb)
+	public UUID createPrintSet(SQLServer pdb, UUID owner)
 		throws BigBangJewelException
 	{
 		PrintSet lobjSet;
@@ -187,6 +188,8 @@ public abstract class TransactionSetBase
 			lobjSet.setAt(1, new Timestamp(new java.util.Date().getTime()));
 			lobjSet.setAt(2, Engine.getCurrentUser());
 			lobjSet.setAt(3, (Timestamp)null);
+			lobjSet.setAt(4, Constants.ObjID_InsurerAccountingSet);
+			lobjSet.setAt(5, owner);
 			lobjSet.SaveToDb(pdb);
 		}
 		catch (Throwable e)
