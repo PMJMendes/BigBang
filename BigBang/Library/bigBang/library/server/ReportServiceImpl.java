@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.UUID;
 
 import org.apache.ecs.GenericElement;
+import org.apache.ecs.html.Strong;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
@@ -94,15 +95,26 @@ public class ReportServiceImpl
 						set = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), setOwner);
 						
 						Table extraInfo = new Table();
+						
 						TR printInfoRow = new TR();
 						TD printInfoCell = new TD();
 						printInfoCell.addElement(printSetGenericInfo);
 						printInfoRow.addElement(printInfoCell);
 						extraInfo.addElement(printInfoRow);
 						
+						TR titleRow = new TR();
+						TD titleCell = new TD();
+						Strong sectionTitle = new Strong("Informação de prestação de contas");
+						sectionTitle.setStyle("font-size: 12px;");
+						titleCell.addElement(sectionTitle);
+						titleCell.setStyle("padding-top:30px;");
+						titleRow.addElement(titleCell);
+						extraInfo.addElement(titleRow);
+						
 						TR setHeaderRow = new TR();
 						TD setHeaderCell = new TD();
 						setHeaderCell.addElement(set.buildHeaderSection());
+						setHeaderCell.setStyle("padding-top:10px;");
 						setHeaderRow.addElement(setHeaderCell);
 						extraInfo.addElement(setHeaderRow);
 						
@@ -112,6 +124,7 @@ public class ReportServiceImpl
 							TD mapCell = new TD();
 							TR mapRow = new TR();
 							mapCell.addElement(set.buildDataSection(i+1));
+							mapCell.setStyle("padding-top:10px;");
 							mapRow.addElement(mapCell);
 							infoTable.addElement(mapRow);
 						}
