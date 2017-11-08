@@ -364,9 +364,18 @@ public class ReportServiceImpl
 
 		try
 		{
-			lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.TEMPLATE},
-					new java.lang.Object[] {(UUID)lobjReport.getAt(ReportDef.I.TEMPLATE)},
-					new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON});
+			UUID templateId = (UUID)lobjReport.getAt(ReportDef.I.TEMPLATE);
+			if (templateId.equals(Constants.TID_InsurerAccounting)) {
+				String sqlQuery = lrefObjects.SQLForSelectByMembers(new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.TEMPLATE},
+						new java.lang.Object[] {templateId},null);
+				sqlQuery = sqlQuery + " AND [t1].SetDate > DATEADD(year,-1,GETDATE())";
+				sqlQuery = sqlQuery + " ORDER  BY [t1].[printdate] ASC, [t1].[_tscreate] ";
+				lrsObjects = ldb.OpenRecordset(sqlQuery);
+			} else {
+				lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.TEMPLATE},
+						new java.lang.Object[] {templateId},
+						new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON});
+			}
 		}
 		catch (Throwable e)
 		{
@@ -775,7 +784,6 @@ public class ReportServiceImpl
 			UUID setOwner = (UUID) pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.OWNER);
 			if (setOwner!=null) {
 				InsurerAccountingSet set;
-				InsurerAccountingMap map;
 				String companyName = null;
 				try {
 					set = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), setOwner);
