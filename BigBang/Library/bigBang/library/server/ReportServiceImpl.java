@@ -456,7 +456,10 @@ public class ReportServiceImpl
 
 		try
 		{
-			lrsObjects = lrefTransactions.SelectAll(ldb);
+			String query = lrefTransactions.SQLForSelectAll() + 
+					" WHERE [t1].SetDate > DATEADD(year,-1,GETDATE())";
+			lrsObjects = ldb.OpenRecordset(query);
+		//	lrsObjects = lrefTransactions.SelectAll(ldb);
 		}
 		catch (Throwable e)
 		{
