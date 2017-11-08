@@ -23,23 +23,28 @@ public class TransactionSetReportPanel extends List<TransactionSet> {
 		protected Label userName;
 		protected Image isComplete;
 		protected boolean initialized;
+		protected Label company;
 		
 		public Entry(TransactionSet value) {
 			super(value);
-			setHeight("40px");
+			setHeight("55px");
 		}
 		
 		public <I extends Object> void setInfo(I info) {
 			if(!initialized){
 				userName = getFormatedLabel();
 				userName.getElement().getStyle().setFontSize(14, Unit.PX);
+				company = getFormatedLabel();
+				//company.getElement().getStyle().setFontSize(14, Unit.PX);
 				date = getFormatedLabel();
 				isComplete = new Image(resources.completeIcon());
 				VerticalPanel container = new VerticalPanel();
 				container.setSize("100%", "100%");
 				container.add(userName);
+				container.add(company);
 				container.add(date);
 				container.setCellVerticalAlignment(userName, HasVerticalAlignment.ALIGN_TOP);
+				container.setCellVerticalAlignment(userName, HasVerticalAlignment.ALIGN_MIDDLE);
 				container.setCellVerticalAlignment(date, HasVerticalAlignment.ALIGN_BOTTOM);
 				setWidget(container);
 				
@@ -55,6 +60,7 @@ public class TransactionSetReportPanel extends List<TransactionSet> {
 			TransactionSet set = (TransactionSet) info;
 			isComplete.setVisible(set.isComplete);
 			userName.setText(set.userName);
+			company.setText(set.company);
 			date.setText(set.date);
 			setSelected(this.isSelected(), false);
 		};
