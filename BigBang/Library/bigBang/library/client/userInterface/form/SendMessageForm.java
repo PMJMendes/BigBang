@@ -2,6 +2,7 @@ package bigBang.library.client.userInterface.form;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +23,16 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.DocumentsBrokerClient;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
@@ -37,14 +43,18 @@ import bigBang.library.client.userInterface.autocomplete.AutoCompleteTextListFor
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.interfaces.ContactsService;
 import bigBang.library.interfaces.ContactsServiceAsync;
+import bigBang.library.interfaces.DocumentService;
+import bigBang.library.interfaces.DocumentServiceAsync;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -89,6 +99,12 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	protected VerticalPanel leftPanel;
 	protected VerticalPanel rightPanel;
 	protected HorizontalPanel fullMailPanel;
+	private Button addDocumentButton;
+	protected HorizontalPanel buttonsWrapper;
+	private VerticalPanel addedAttachmentsWrapper;
+	protected ListHeader addedAttsHeaderTitle;
+	protected bigBang.library.client.userInterface.List<Document> addedAttachments;
+	private Button removeDocumentButton;
 	
 	public SendMessageForm(){
 		
@@ -130,13 +146,20 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		emailBody = new RichTextAreaFormField();
 		attachmentsWrapper = new VerticalPanel();
 		existingAttachments = new bigBang.library.client.userInterface.List<Document>();
-		existingAttsHeaderTitle = new ListHeader("Anexos Associados a Entidades");
+		existingAttsHeaderTitle = new ListHeader("Documentos Associados a Entidades");
 		existingAttsEntityPicker = new ListHeader();
 		documentsFrom = new ListBoxFormField("Documentos de:");
 		documentsFrom.setFieldWidth("400px");
+		addedAttachmentsWrapper = new VerticalPanel();
+		addedAttsHeaderTitle = new ListHeader("Anexos a Enviar");
+		addedAttsHeaderTitle.setWidth("430px");
+		addedAttachments = new bigBang.library.client.userInterface.List<Document>();
 		leftPanel = new VerticalPanel();
 		rightPanel = new VerticalPanel();
 		fullMailPanel = new HorizontalPanel();
+		addDocumentButton = new Button("Adicionar Anexo");
+		buttonsWrapper = new HorizontalPanel();
+		removeDocumentButton = new Button("Remover Anexo");
 		
 		// Defines Handlers
 		existingContactsEntity.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -183,6 +206,39 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			public void onClick(ClickEvent event) {
 				if (existingContact.getValue() != null && existingContact.getValue().length()!=0) {
 					addAddress(BCC_ADDRESS_ID, existingContact.getValue());
+				}
+			}
+		});
+		
+		addDocumentButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Collection<ValueSelectable<Document>> selectedAtt = existingAttachments.getSelected();
+				if (selectedAtt.size()>0) {
+					ValueSelectable<Document> docVal = (ValueSelectable) selectedAtt.toArray()[0];
+					Document doc = (Document) docVal.getValue();
+					DocumentsList.Entry entry = new DocumentsList.Entry(doc);
+					addedAttachments.add(entry);
+					
+					removeDocument(null, doc);
+				}
+			}
+		});
+		
+		removeDocumentButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Collection<ValueSelectable<Document>> selectedAtt = addedAttachments.getSelected();
+				if (selectedAtt.size()>0) {
+					ValueSelectable<Document> docVal = (ValueSelectable) selectedAtt.toArray()[0];
+					Document doc = (Document) docVal.getValue();
+					
+					for (int i=0; i<addedAttachments.size(); i++) {
+						if(addedAttachments.get(i).getValue().id.equals(doc.id)) {
+							addedAttachments.remove(i);
+							break;
+						}
+					}
 				}
 			}
 		});
@@ -283,9 +339,17 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		existingAttachments.setHeaderWidget(existingAttsEntityPicker);
 		attachmentsWrapper.add(existingAttsHeaderTitle);
 		attachmentsWrapper.add(existingAttachments);
-		attachmentsWrapper.setCellHeight(existingAttachments, "510px");
-		existingAttachments.setHeight("355px");
+		attachmentsWrapper.setCellHeight(existingAttachments, "350px");
 		rightPanel.add(attachmentsWrapper);
+		buttonsWrapper.add(addDocumentButton);
+		rightPanel.add(buttonsWrapper);
+		
+		addedAttachmentsWrapper.add(addedAttsHeaderTitle);
+		addedAttachmentsWrapper.add(addedAttachments);
+		addedAttachmentsWrapper.setCellHeight(addedAttachments, "195px");
+		addedAttachmentsWrapper.getElement().getStyle().setPaddingTop(20, Unit.PX);
+		rightPanel.add(addedAttachmentsWrapper);
+		rightPanel.add(removeDocumentButton);
 
 		rightPanel.getElement().getStyle().setPaddingLeft(40, Unit.PX);
 
@@ -430,13 +494,13 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	 * This method gets the documents from a given owner, which may be attached to the email
 	 */
 	protected void getDocsFromOwner(String value) {
+
 		if(value == null || value.isEmpty() || BigBangConstants.TypifiedListValues.MEDIATOR_IDS.DIRECT.equalsIgnoreCase(value)){
 			addDocumentButton.setEnabled(false);
 			clearDocuments();
 			return;
 		}
 		addDocumentButton.setEnabled(true);
-		documentOwnerId = value;
 		clearDocuments();
 		DocumentServiceAsync documentsService = DocumentService.Util.getInstance();
 
@@ -444,10 +508,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 			@Override
 			public void onSuccess(Document[] result) {
-				for(Document doc : result){						
-					addDocument(doc);
-				}
-
+				addDocuments(Arrays.asList(result));
 			}
 
 			@Override
@@ -457,6 +518,12 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		});
 	}
 	
+	private void clearDocuments() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 	public HasValue<String> getContactType() {
 		return existingContactsEntity;
 	}
@@ -480,11 +547,14 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 	
 	public void addDocuments(Collection<Document> documents) {
-		// TODO Dummy
+		for (Document doc : documents) {
+			addDocument(doc);
+		}
 	}
 
 	public void addDocument(Document doc){
-		// TODO Dummy
+		DocumentsList.Entry entry = new DocumentsList.Entry(doc);
+		existingAttachments.add(entry);
 	}
 
 	public void lockCreateNewButton(boolean lock) {
@@ -528,8 +598,12 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 	@Override
 	public void removeDocument(String ownerId, Document document) {
-		// TODO Auto-generated method stub
-		
+		for (int i=0; i<existingAttachments.size(); i++) {
+			if(existingAttachments.get(i).getValue().id.equals(document.id)) {
+				existingAttachments.remove(i);
+				break;
+			}
+		}
 	}
 
 
