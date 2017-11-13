@@ -16,19 +16,21 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
 import bigBang.definitions.shared.Conversation;
 import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.Message;
+import bigBang.definitions.shared.Message.Attachment;
 import bigBang.definitions.shared.Message.Kind;
+import bigBang.definitions.shared.Message.MsgAddress;
 import bigBang.definitions.shared.User;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.DocumentsBrokerClient;
 import bigBang.library.client.event.NewNotificationEvent;
-import bigBang.library.client.history.NavigationHistoryItem;
-import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
@@ -54,9 +56,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 
 public class SendMessageForm extends FormView<Conversation> implements DocumentsBrokerClient {
 	
@@ -105,6 +107,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	protected ListHeader addedAttsHeaderTitle;
 	protected bigBang.library.client.userInterface.List<Document> addedAttachments;
 	private Button removeDocumentButton;
+	
+	Conversation value;
 	
 	public SendMessageForm(){
 		
@@ -400,8 +404,11 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 			@Override
 			public void onResponseFailure(Throwable caught) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os e-mails"), TYPE.ERROR_NOTIFICATION));
-				super.onResponseFailure(caught);
+						EventBus.getInstance().fireEvent(
+								new NewNotificationEvent(new Notification("",
+										"Não foi possível obter os e-mails"),
+										TYPE.ERROR_NOTIFICATION));
+						super.onResponseFailure(caught);
 			}
 
 		});
@@ -623,14 +630,191 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 	@Override
 	public Conversation getInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		//CONVERSATION
+		if(value == null){
+			value = new Conversation();
+		}
+
+		Conversation conversation = value;
+		conversation.requestTypeId = requestType.getValue();
+		conversation.subject = subject.getValue();
+		
+		conversation.replylimit = (replyLimit==null || replyLimit.getValue()==null) ? null : replyLimit.getValue().intValue();
+		
+		//MESSAGE
+		Message msg = new Message();
+		msg.conversationId = conversation.id;
+		msg.kind = Kind.EMAIL.toString().equalsIgnoreCase(emailOrNote.getValue()) ? Kind.EMAIL : Kind.NOTE;
+		msg.subject = subject.getValue();
+		
+		if(Kind.EMAIL.equals(msg.kind)){
+			List<Message.MsgAddress> addresses = new ArrayList<Message.MsgAddress>();
+			List<String> outgoingAttachment = new ArrayList<String>();
+			msg.text = emailBody.getValue();
+			addresses = getAddresses();
+			outgoingAttachment = getAttachments();
+
+			msg.addresses = new Message.MsgAddress[addresses.size()];
+
+			for(int i = 0; i<msg.addresses.length; i++){
+				msg.addresses[i] = addresses.get(i);
+			}
+
+			msg.attachments = new Message.Attachment[outgoingAttachment.size()];
+
+			for(int i = 0; i<msg.attachments.length; i++){
+				msg.attachments[i] = new Message.Attachment();
+				msg.attachments[i].docId = outgoingAttachment.get(i);
+			}
+			
+		}else{
+			msg.text = note.getValue();
+		}
+		
+		conversation.messages = new Message[1];
+		conversation.messages[0] = msg;
+		
+		return conversation;
+	}
+	
+	private List<String> getAttachments() {
+
+		List<String> attachs = new ArrayList<String>();
+
+		for(ListEntry<Document> doc : addedAttachments){
+			attachs.add(doc.getValue().id);
+		}
+		return attachs;
+	}
+	
+	private List<MsgAddress> getAddresses() {
+
+		List<MsgAddress> addresses = new ArrayList<MsgAddress>();
+		
+		// Gets the To
+		String addressesStr = toAddresses.getValue();
+		String [] splitAddrs;
+		if (addressesStr!=null && addressesStr.length()>0) {
+			splitAddrs = addressesStr.split(";");
+			for (int i=0; i<splitAddrs.length; i++) {
+				String addr = splitAddrs[i].trim();
+				MsgAddress to = new MsgAddress();
+				to.usage = MsgAddress.Usage.TO;
+				to.address = addr;
+				addresses.add(to);
+			}
+		}
+		
+		// Gets the CC
+		addressesStr = ccAddresses.getValue();
+		if (addressesStr!=null && addressesStr.length()>0) {
+			splitAddrs = addressesStr.split(";");
+			for (int i=0; i<splitAddrs.length; i++) {
+				String addr = splitAddrs[i].trim();
+				MsgAddress cc = new MsgAddress();
+				cc.usage = MsgAddress.Usage.CC;
+				cc.address = addr;
+				addresses.add(cc);
+			}
+		}
+		
+		// Gets the BCC
+		addressesStr = bccAddresses.getValue();
+		if (addressesStr!=null && addressesStr.length()>0) {
+			splitAddrs = addressesStr.split(";");
+			for (int i=0; i<splitAddrs.length; i++) {
+				String addr = splitAddrs[i].trim();
+				MsgAddress bcc = new MsgAddress();
+				bcc.usage = MsgAddress.Usage.BCC;
+				bcc.address = addr;
+				addresses.add(bcc);
+			}
+		}
+		
+		// Gets the user's email address (the address is set later)
+		MsgAddress me = new MsgAddress();
+		me.userId = Session.getUserId();
+		me.usage = MsgAddress.Usage.REPLYTO;
+		
+		addresses.add(me);
+
+		for(String userId : forwardReply.getValue()){
+			userId = userId.trim();
+			MsgAddress newAddress = new MsgAddress();
+			newAddress.display = userId;
+			newAddress.usage = MsgAddress.Usage.REPLYTO;
+			addresses.add(newAddress);
+		}
+
+		return addresses;
 	}
 
 
 	@Override
 	public void setInfo(Conversation info) {
-		// TODO Auto-generated method stub
-		
+		if (info!=null) {
+			value = info;
+			
+			requestType.setValue(info.requestTypeLabel);
+			subject.setValue(info.subject);
+			// Utilizadores a envolver no processo?
+			replyLimit.setValue(info.replylimit != null ? info.replylimit.doubleValue() : null);
+			if (info.replylimit != null) {
+				expectsResponse.setValue("YES");
+			}
+			if (info.messages != null && info.messages.length>0) {
+				Message msg = info.messages[0];
+				if (msg.emailId!=null) { 
+					emailOrNote.setValue(Kind.EMAIL.toString());
+				}
+				
+				if (msg.addresses!=null && msg.addresses.length>0) {
+					String to = "";
+					String cc = "";
+					String bcc = "";
+					for (int i=0; i<msg.addresses.length; i++) {
+						MsgAddress addr = msg.addresses[i];
+						if (addr.usage == MsgAddress.Usage.TO) {
+							if (!to.equals("")) {
+								to = to + "; ";
+								to = to + addr.address;
+							}
+						}
+						if (addr.usage == MsgAddress.Usage.CC) {
+							if (!cc.equals("")) {
+								cc = cc + "; ";
+								cc = cc + addr.address;
+							}
+						}
+						if (addr.usage == MsgAddress.Usage.BCC) {
+							if (!bcc.equals("")) {
+								bcc = bcc + "; ";
+								bcc = bcc + addr.address;
+							}
+						}	
+					}
+					toAddresses.setValue(to);
+					ccAddresses.setValue(cc);
+					bccAddresses.setValue(bcc);
+				}
+				emailSubject.setValue(msg.subject);
+				emailBody.setValue(msg.text);
+				if (msg.attachments!=null && msg.attachments.length>0) {
+					for (int i=0; i<msg.addresses.length; i++) {
+						Attachment att = msg.attachments[i];
+						Document doc = new Document();
+						doc.creationDate = att.date;
+						doc.docTypeId = att.docTypeId;
+						doc.emailId = att.emailId;
+						doc.fileName = att.name;
+						doc.fileStorageId = att.storageId;
+						doc.ownerId = att.ownerId;
+						DocumentsList.Entry entry = new DocumentsList.Entry(doc);
+						addedAttachments.add(entry);
+					}
+				}
+			}
+		}
 	}
 }

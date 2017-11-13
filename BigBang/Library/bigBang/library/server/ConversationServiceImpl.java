@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -62,7 +61,6 @@ import com.premiumminds.BigBang.Jewel.Operations.Conversation.SendMessage;
 import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
-import com.premiumminds.BigBang.Jewel.SysObjects.Utils;
 
 public class ConversationServiceImpl
 	extends SearchServiceBase
