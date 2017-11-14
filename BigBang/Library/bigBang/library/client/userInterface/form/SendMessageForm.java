@@ -58,7 +58,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 
 public class SendMessageForm extends FormView<Conversation> implements DocumentsBrokerClient {
 	
@@ -68,45 +67,45 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	private static int BCC_ADDRESS_ID = 3;
 	
 	protected ExpandableListBoxFormField requestType;
-	private TextBoxFormField subject;
+	protected TextBoxFormField subject;
 	protected AutoCompleteTextListFormField forwardReply;
 	protected RadioButtonFormField expectsResponse;
 	protected NumericTextBoxFormField replyLimit;
 	protected HorizontalPanel toPanel;
 	protected TextBoxFormField toAddresses;
-	private Button addToButton;
+	protected Button addToButton;
 	protected HorizontalPanel ccPanel;
 	protected TextBoxFormField ccAddresses;
 	private Button addCcButton;
 	protected HorizontalPanel bccPanel;
 	protected TextBoxFormField bccAddresses;
-	private Button addBccButton;
-	private VerticalPanel contactsWrapper;
+	protected Button addBccButton;
+	protected VerticalPanel contactsWrapper;
 	protected HorizontalPanel contactsEntityPanel;
 	protected ListBoxFormField existingContactsEntity;
 	protected ListBoxFormField existingContact;
-	private FormField<String> otherEntityContacts;
-	public RadioButtonFormField emailOrNote;
+	protected FormField<String> otherEntityContacts;
+	protected RadioButtonFormField emailOrNote;
 	protected RichTextAreaFormField note;
-	private VerticalPanel noteWrapper;
-	private VerticalPanel emailWrapper;
-	private TextBoxFormField emailSubject;
-	private RichTextAreaFormField emailBody;
-	private VerticalPanel attachmentsWrapper;
+	protected VerticalPanel noteWrapper;
+	protected VerticalPanel emailWrapper;
+	protected TextBoxFormField emailSubject;
+	protected RichTextAreaFormField emailBody;
+	protected VerticalPanel attachmentsWrapper;
 	protected bigBang.library.client.userInterface.List<Document> existingAttachments;
 	protected ListHeader existingAttsHeaderTitle;
 	protected ListHeader existingAttsEntityPicker;
-	private ListBoxFormField documentsFrom;
+	protected ListBoxFormField documentsFrom;
 	protected Map<String, String> ownerTypes;
 	protected VerticalPanel leftPanel;
 	protected VerticalPanel rightPanel;
 	protected HorizontalPanel fullMailPanel;
-	private Button addDocumentButton;
+	protected Button addDocumentButton;
 	protected HorizontalPanel buttonsWrapper;
-	private VerticalPanel addedAttachmentsWrapper;
+	protected VerticalPanel addedAttachmentsWrapper;
 	protected ListHeader addedAttsHeaderTitle;
 	protected bigBang.library.client.userInterface.List<Document> addedAttachments;
-	private Button removeDocumentButton;
+	protected Button removeDocumentButton;
 	
 	Conversation value;
 	
@@ -114,7 +113,6 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		
 		// Declares Fields
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Mensagem");
-		requestType.allowEdition(false);
 		subject = new TextBoxFormField("Tópico");
 		forwardReply = new AutoCompleteTextListFormField("Utilizadores a envolver no processo");
 		expectsResponse = new RadioButtonFormField("Espera resposta");
@@ -143,6 +141,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		emailOrNote = new RadioButtonFormField("E-mail ou Nota");
 		emailOrNote.addOption(Kind.EMAIL.toString(), "E-mail");
 		emailOrNote.addOption(Kind.NOTE.toString(), "Nota");
+		emailOrNote.setValue(Kind.EMAIL.toString());
 		noteWrapper = new VerticalPanel();
 		note = new RichTextAreaFormField("Notas");
 		emailWrapper = new VerticalPanel();
@@ -296,13 +295,16 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 		addSection("Detalhes da Mensagem");
 		toPanel.add(toAddresses);
+		registerFormField(toAddresses);
 		toPanel.add(addToButton);
 		contactsWrapper.add(toPanel);
 		ccPanel.add(ccAddresses);
+		registerFormField(ccAddresses);
 		ccPanel.add(addCcButton);
 		contactsWrapper.add(ccPanel);
 		bccPanel.add(bccAddresses);
 		bccPanel.add(addBccButton);
+		registerFormField(bccAddresses);
 		contactsWrapper.add(bccPanel);
 		contactsEntityPanel.add(existingContactsEntity);
 		contactsEntityPanel.add(otherEntityContacts);
@@ -756,7 +758,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		if (info!=null) {
 			value = info;
 			
-			requestType.setValue(info.requestTypeLabel);
+			requestType.setValue(info.requestTypeId);
 			subject.setValue(info.subject);
 			// Utilizadores a envolver no processo?
 			replyLimit.setValue(info.replylimit != null ? info.replylimit.doubleValue() : null);
