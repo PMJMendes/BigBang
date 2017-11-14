@@ -648,7 +648,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		Message msg = new Message();
 		msg.conversationId = conversation.id;
 		msg.kind = Kind.EMAIL.toString().equalsIgnoreCase(emailOrNote.getValue()) ? Kind.EMAIL : Kind.NOTE;
-		msg.subject = subject.getValue();
+		msg.subject = emailSubject.getValue();
 		
 		if(Kind.EMAIL.equals(msg.kind)){
 			List<Message.MsgAddress> addresses = new ArrayList<Message.MsgAddress>();
@@ -668,6 +668,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			for(int i = 0; i<msg.attachments.length; i++){
 				msg.attachments[i] = new Message.Attachment();
 				msg.attachments[i].docId = outgoingAttachment.get(i);
+				msg.attachments[i].promote = true;
+				msg.attachments[i].attachmentId = outgoingAttachment.get(i);
 			}
 			
 		}else{
