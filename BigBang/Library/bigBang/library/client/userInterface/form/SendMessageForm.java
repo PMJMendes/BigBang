@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ecs.xhtml.sub;
+
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.UserBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -58,6 +60,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sun.mail.imap.protocol.BODYSTRUCTURE;
 
 public class SendMessageForm extends FormView<Conversation> implements DocumentsBrokerClient {
 	
@@ -757,11 +760,15 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 	@Override
 	public void setInfo(Conversation info) {
-		if (info!=null) {
+		if (info!=null && info.id!=null) {
 			value = info;
 			
 			requestType.setValue(info.requestTypeId);
+			requestType.setEditable(false);
 			subject.setValue(info.subject);
+			if (info.subject!=null && info.subject.length()>0) {
+				subject.setEditable(false);
+			}
 			// Utilizadores a envolver no processo?
 			replyLimit.setValue(info.replylimit != null ? info.replylimit.doubleValue() : null);
 			if (info.replylimit != null) {
@@ -772,30 +779,31 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				if (msg.emailId!=null) { 
 					emailOrNote.setValue(Kind.EMAIL.toString());
 				}
-				
+
 				if (msg.addresses!=null && msg.addresses.length>0) {
 					String to = "";
 					String cc = "";
 					String bcc = "";
 					for (int i=0; i<msg.addresses.length; i++) {
 						MsgAddress addr = msg.addresses[i];
+						
 						if (addr.usage == MsgAddress.Usage.TO) {
 							if (!to.equals("")) {
 								to = to + "; ";
-								to = to + addr.address;
 							}
+							to = to + addr.address;
 						}
 						if (addr.usage == MsgAddress.Usage.CC) {
 							if (!cc.equals("")) {
 								cc = cc + "; ";
-								cc = cc + addr.address;
 							}
+							cc = cc + addr.address;
 						}
 						if (addr.usage == MsgAddress.Usage.BCC) {
 							if (!bcc.equals("")) {
 								bcc = bcc + "; ";
-								bcc = bcc + addr.address;
 							}
+							bcc = bcc + addr.address;
 						}	
 					}
 					toAddresses.setValue(to);

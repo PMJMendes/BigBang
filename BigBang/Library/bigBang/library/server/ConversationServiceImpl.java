@@ -845,10 +845,10 @@ public class ConversationServiceImpl
 			throw new SessionExpiredException();
 			
 		lobjResult = sGetMessage(UUID.fromString(messageId), false);
-		lobjResult.id = null;
-		lobjResult.order = null;
+		//lobjResult.id = null;
+		//lobjResult.order = null;
 		lobjResult.direction = ConversationStub.Direction.OUTGOING;
-		lobjResult.date = null;
+		//lobjResult.date = null;
 		if (typeString != null) {
 			lobjResult.subject = (lobjResult.subject == null ? 
 									typeString : 
@@ -857,8 +857,8 @@ public class ConversationServiceImpl
 											typeString + lobjResult.subject));
 		}
 		lobjResult.text = typeString==null ? lobjResult.text : getSignature() + "<br><bigbang:original:bb><br>-------- Mensagem Original --------<br>" + lobjResult.text;
-		lobjResult.emailId = null;
-		lobjResult.folderId = null;
+		//lobjResult.emailId = null;
+		//lobjResult.folderId = null;
 
 		return lobjResult;
 	}

@@ -67,7 +67,7 @@ public abstract class ConversationOperationsToolbar extends BigBangOperationsToo
 		});
 		sendSubMenu.addItem(forwardMessage);
 
-		sendSubMenu.addSeparator();
+		//sendSubMenu.addSeparator();
 
 		repeatMessage = new MenuItem("Repetir", new Command(){
 			
@@ -76,7 +76,7 @@ public abstract class ConversationOperationsToolbar extends BigBangOperationsToo
 				onRepeatMessage();
 			}
 		});
-		sendSubMenu.addItem(repeatMessage);
+		//sendSubMenu.addItem(repeatMessage);
 		
 		receiveMessage = new MenuItem("Receber", new Command(){
 			public void execute() {
