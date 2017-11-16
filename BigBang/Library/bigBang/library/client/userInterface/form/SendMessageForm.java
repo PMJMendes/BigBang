@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ecs.xhtml.sub;
-
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.UserBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -60,7 +58,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sun.mail.imap.protocol.BODYSTRUCTURE;
 
 public class SendMessageForm extends FormView<Conversation> implements DocumentsBrokerClient {
 	
@@ -551,7 +548,10 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 	
 	public void setTypeAndOwnerId(String ownerTypeId2, String ownerId2) {
-		// TODO Dummy
+		if(value != null){
+			value.parentDataObjectId = ownerId2;
+			value.parentDataTypeId = ownerTypeId2;
+		}
 	}
 	
 	public HasValue<String> getTo(){
@@ -644,6 +644,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		Conversation conversation = value;
 		conversation.requestTypeId = requestType.getValue();
 		conversation.subject = subject.getValue();
+		conversation.parentDataObjectId = value.parentDataObjectId;
 		
 		conversation.replylimit = (replyLimit==null || replyLimit.getValue()==null) ? null : replyLimit.getValue().intValue();
 		
@@ -760,11 +761,13 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 	@Override
 	public void setInfo(Conversation info) {
-		if (info!=null && info.id!=null) {
+		
+		if (info!=null) {
 			value = info;
-			
 			requestType.setValue(info.requestTypeId);
-			requestType.setEditable(false);
+			if (info.requestTypeId!=null) {
+				requestType.setEditable(false);
+			}
 			subject.setValue(info.subject);
 			if (info.subject!=null && info.subject.length()>0) {
 				subject.setEditable(false);
