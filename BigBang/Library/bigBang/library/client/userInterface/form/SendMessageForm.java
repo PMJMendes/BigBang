@@ -656,10 +656,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		
 		if(Kind.EMAIL.equals(msg.kind)){
 			List<Message.MsgAddress> addresses = new ArrayList<Message.MsgAddress>();
-			List<String> outgoingAttachment = new ArrayList<String>();
 			msg.text = emailBody.getValue();
 			addresses = getAddresses();
-			outgoingAttachment = getAttachments();
 
 			msg.addresses = new Message.MsgAddress[addresses.size()];
 
@@ -667,13 +665,13 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				msg.addresses[i] = addresses.get(i);
 			}
 
-			msg.attachments = new Message.Attachment[outgoingAttachment.size()];
+			msg.attachments = new Message.Attachment[addedAttachments.size()];
 
 			for(int i = 0; i<msg.attachments.length; i++){
 				msg.attachments[i] = new Message.Attachment();
-				msg.attachments[i].docId = outgoingAttachment.get(i);
+				msg.attachments[i].docId = addedAttachments.get(i).getValue().id;
 				msg.attachments[i].promote = true;
-				msg.attachments[i].attachmentId = outgoingAttachment.get(i);
+				msg.attachments[i].attachmentId = addedAttachments.get(i).getValue().emailAttId;
 			}
 			
 		}else{
@@ -684,16 +682,6 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		conversation.messages[0] = msg;
 		
 		return conversation;
-	}
-	
-	private List<String> getAttachments() {
-
-		List<String> attachs = new ArrayList<String>();
-
-		for(ListEntry<Document> doc : addedAttachments){
-			attachs.add(doc.getValue().id);
-		}
-		return attachs;
 	}
 	
 	private List<MsgAddress> getAddresses() {
@@ -816,15 +804,23 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				emailSubject.setValue(msg.subject);
 				emailBody.setValue(msg.text);
 				if (msg.attachments!=null && msg.attachments.length>0) {
-					for (int i=0; i<msg.addresses.length; i++) {
+					for (int i=0; i<msg.attachments.length; i++) {
 						Attachment att = msg.attachments[i];
 						Document doc = new Document();
-						doc.creationDate = att.date;
-						doc.docTypeId = att.docTypeId;
-						doc.emailId = att.emailId;
-						doc.fileName = att.name;
+						
+					//	subject.setLabelText("name " + att.name + " id " + att.id + " attId " + att.attachmentId + " emailId " + att.emailId + " doctypeid " + att.docTypeId + " storID " + att.storageId + " date " + att.date + " docId " + att.docId + " ownerId " + att.ownerId);
+						
+						doc.name = att.name;
+						doc.docTypeLabel = "";
+						doc.creationDate = "Anexo de email original";
+						doc.ownerId = info.parentDataObjectId; // se se quiser aqui a conversação usa-se o att.ownerId
+						doc.hasFile = true;
 						doc.fileStorageId = att.storageId;
-						doc.ownerId = att.ownerId;
+						doc.emailId = att.emailId;
+						doc.emailAttId = att.id;
+						doc.id = att.docId;
+						doc.docTypeId = att.docTypeId;
+						
 						DocumentsList.Entry entry = new DocumentsList.Entry(doc);
 						addedAttachments.add(entry);
 					}
