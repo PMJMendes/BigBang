@@ -34,7 +34,6 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
-import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
@@ -422,7 +421,11 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	 */
 	public void clearEmails() {
 		existingContact.clearValues();
+		//existingContactsEntity.setValue("-");
 		otherEntityContacts.setValue(null);
+		toAddresses.setValue("");
+		ccAddresses.setValue("");
+		bccAddresses.setValue("");
 	}
 	
 	/**
@@ -528,8 +531,8 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 	
 	private void clearDocuments() {
-		// TODO Auto-generated method stub
-		
+		existingAttachments.clear(false);
+		addedAttachments.clear(false);
 	}
 
 
@@ -749,6 +752,9 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 
 	@Override
 	public void setInfo(Conversation info) {
+		
+		clearDocuments();
+		clearEmails();
 		
 		if (info!=null) {
 			value = info;
