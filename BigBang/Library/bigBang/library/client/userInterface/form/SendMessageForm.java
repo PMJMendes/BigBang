@@ -562,7 +562,11 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 	
 	public void addDocuments(Collection<Document> documents) {
+		int i=0;
 		for (Document doc : documents) {
+			if (i==0)
+				subject.setLabelText("name " + doc.name + " filename " + doc.fileName + " text " + doc.text + " id " + doc.id + " attId " + doc.emailAttId + " emailId " + doc.emailId + " doctypeid " + doc.docTypeId + " storID " + doc.fileStorageId);
+			i++;
 			addDocument(doc);
 		}
 	}
@@ -675,8 +679,10 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 				msg.attachments[i].docId = addedAttachments.get(i).getValue().id;
 				msg.attachments[i].promote = true;
 				msg.attachments[i].attachmentId = addedAttachments.get(i).getValue().emailAttId;
-			}
-			
+				msg.attachments[i].name = addedAttachments.get(i).getValue().emailAttId;
+				msg.attachments[i].storageId = addedAttachments.get(i).getValue().fileStorageId;
+				msg.attachments[i].ownerId = addedAttachments.get(i).getValue().ownerId;
+			} 
 		}else{
 			msg.text = note.getValue();
 		}
@@ -814,16 +820,17 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 						Attachment att = msg.attachments[i];
 						Document doc = new Document();
 						
-					//	subject.setLabelText("name " + att.name + " id " + att.id + " attId " + att.attachmentId + " emailId " + att.emailId + " doctypeid " + att.docTypeId + " storID " + att.storageId + " date " + att.date + " docId " + att.docId + " ownerId " + att.ownerId);
+						if (i==0)
+							subject.setLabelText("name " + att.name + " id " + att.id + " attId " + att.attachmentId + " emailId " + att.emailId + " doctypeid " + att.docTypeId + " storID " + att.storageId + " date " + att.date + " docId " + att.docId + " ownerId " + att.ownerId);
 						
-						doc.name = att.name;
+						doc.name = att.name!=null ? att.name : att.attachmentId;
 						doc.docTypeLabel = "";
 						doc.creationDate = "Anexo de email original";
 						doc.ownerId = info.parentDataObjectId; // se se quiser aqui a conversação usa-se o att.ownerId
 						doc.hasFile = true;
 						doc.fileStorageId = att.storageId;
 						doc.emailId = att.emailId;
-						doc.emailAttId = att.id;
+						doc.emailAttId = att.attachmentId;
 						doc.id = att.docId;
 						doc.docTypeId = att.docTypeId;
 						

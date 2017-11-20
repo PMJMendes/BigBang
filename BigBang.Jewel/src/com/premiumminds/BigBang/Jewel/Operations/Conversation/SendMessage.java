@@ -81,6 +81,8 @@ public class SendMessage
 		MessageAddress lobjAddr;
 		MessageAttachment lobjAttachment;
 		int i;
+		
+		String sentMessageId = "";
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 
@@ -157,6 +159,20 @@ public class SendMessage
 			mobjData.mobjDocOps.RunSubOp(pdb, lidContainer);
 		if ( mobjData.mobjContactOps != null )
 			mobjData.mobjContactOps.RunSubOp(pdb, lidContainer);
+		
+		if ( mobjData.mbIsEmail )
+		{ //aqui tem que se pôr o coiso a salvar para o storage. Portanto ao chegar aqui é necessário que se tenha o storage
+			try
+			{
+				sentMessageId = MailConnector.sendFromData(mobjData);
+				mobjData.mstrEmailID = sentMessageId;
+				mobjData.mstrFolderID = Constants.GoogleAppsConstants.GMAIL_SENT_FOLDER;
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
 
 		try
 		{
@@ -195,18 +211,6 @@ public class SendMessage
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		if ( mobjData.mbIsEmail )
-		{
-			try
-			{
-				MailConnector.sendFromData(mobjData);
-			}
-			catch (Throwable e)
-			{
-				throw new JewelPetriException(e.getMessage(), e);
-			}
 		}
 	}
 }

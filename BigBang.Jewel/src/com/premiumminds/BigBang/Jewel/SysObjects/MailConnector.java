@@ -110,7 +110,7 @@ public class MailConnector {
 	/**
 	 *	This method sends an email, receiving all the "usual" content on an email message.
 	 */
-	private static void sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
+	private static String sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
 			String[] from, String subject, String body, FileXfer[] attachments, boolean addFrom) throws BigBangJewelException {
 
 		InternetAddress[] addresses;
@@ -118,6 +118,8 @@ public class MailConnector {
 		LinkedHashMap<String, FileXfer> base64ImagesExtracted;
 
 		FileXfer[] inlineImgs = null;
+		
+		String sentMessageID = "";
 		
 		try {
 			
@@ -277,7 +279,11 @@ public class MailConnector {
 			
 			sendingConnection.sendMessage(mailMsg, mailMsg.getAllRecipients());
 			
+			sentMessageID = mailMsg.getMessageID();
+			
 			sendingConnection.close();
+			
+			return sentMessageID;
 			
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
@@ -871,7 +877,7 @@ public class MailConnector {
 	 *	This methods gets a MessageData object, and manipulates it, extracting
 	 *	the needed information to call the sendData's method 
 	 */
-	public static void sendFromData(MessageData message) throws BigBangJewelException {
+	public static String sendFromData(MessageData message) throws BigBangJewelException {
 
 		int countTo = 0;
 		int countCC = 0;
@@ -887,9 +893,11 @@ public class MailConnector {
 
 		Document document;
 		FileXfer[] attachments;
+		
+		String sentMessageId = "";
 
 		if (message.marrAddresses == null) {
-			return;
+			return "";
 		}
 
 		// Counts numbers of addresses of different types
@@ -948,9 +956,11 @@ public class MailConnector {
 				document = Document.GetInstance(Engine.getCurrentNameSpace(), message.marrAttachments[i].midDocument);
 				attachments[i] = document.getFile();
 			}
-		}
+		} //aqui tem que se por isto a ir buscar de outra forma que nao do documento (ou seja, tem que chegar aqui o storage ID para ir sacar ao storage)
 
-		sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false);
+		sentMessageId = sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false);
+		
+		return sentMessageId;
 	}
 
 	/**

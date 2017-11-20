@@ -320,7 +320,20 @@ public abstract class CreateConversationBase
 				}
 				else
 				{
-					MailConnector.sendFromData(mobjData.marrMessages[0]);
+					String sentMessageId = MailConnector.sendFromData(mobjData.marrMessages[0]);
+					
+					try
+					{
+						mobjData.marrMessages[0].mstrEmailID = sentMessageId;
+						mobjData.marrMessages[0].mstrFolderID = Constants.GoogleAppsConstants.GMAIL_SENT_FOLDER;
+						mobjData.marrMessages[0].ToObject(lobjMessage);
+						lobjMessage.SaveToDb(pdb);
+					}
+					catch (Throwable e)
+					{
+						throw new JewelPetriException(e.getMessage(), e);
+					}
+					
 				}
 			}
 			catch (Throwable e)
