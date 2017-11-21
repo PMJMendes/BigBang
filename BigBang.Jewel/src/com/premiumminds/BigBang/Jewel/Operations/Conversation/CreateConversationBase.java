@@ -334,6 +334,11 @@ public abstract class CreateConversationBase
 						throw new JewelPetriException(e.getMessage(), e);
 					}
 					
+					javax.mail.Message mailMsg = MailConnector.getMessage(sentMessageId, mobjData.marrMessages[0].mstrFolderID);
+					
+					// Calls the method responsble for updating the message to google storage.
+					StorageConnector.uploadMailMessage(mailMsg, mobjData.marrMessages[0].mstrEmailID);
+					
 				}
 			}
 			catch (Throwable e)

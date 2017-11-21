@@ -562,11 +562,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	}
 	
 	public void addDocuments(Collection<Document> documents) {
-		int i=0;
 		for (Document doc : documents) {
-			if (i==0)
-				subject.setLabelText("name " + doc.name + " filename " + doc.fileName + " text " + doc.text + " id " + doc.id + " attId " + doc.emailAttId + " emailId " + doc.emailId + " doctypeid " + doc.docTypeId + " storID " + doc.fileStorageId);
-			i++;
 			addDocument(doc);
 		}
 	}
@@ -819,9 +815,6 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 					for (int i=0; i<msg.attachments.length; i++) {
 						Attachment att = msg.attachments[i];
 						Document doc = new Document();
-						
-						if (i==0)
-							subject.setLabelText("name " + att.name + " id " + att.id + " attId " + att.attachmentId + " emailId " + att.emailId + " doctypeid " + att.docTypeId + " storID " + att.storageId + " date " + att.date + " docId " + att.docId + " ownerId " + att.ownerId);
 						
 						doc.name = att.name!=null ? att.name : att.attachmentId;
 						doc.docTypeLabel = "";

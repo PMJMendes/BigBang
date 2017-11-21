@@ -21,6 +21,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
 public class SendMessage
 	extends Operation
@@ -211,6 +212,18 @@ public class SendMessage
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
+		}
+		
+
+		try {
+			javax.mail.Message mailMsg = MailConnector.getMessage(sentMessageId, mobjData.mstrFolderID);
+			
+			// Calls the method responsble for updating the message to google storage.
+			StorageConnector.uploadMailMessage(mailMsg, mobjData.mstrEmailID);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException("Error while uploading to Storage: " + e.getMessage(), e);
 		}
 	}
 }
