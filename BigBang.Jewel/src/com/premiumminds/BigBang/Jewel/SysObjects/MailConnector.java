@@ -1,11 +1,8 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.ByteArrayInputStream;
-<<<<<<< HEAD
 import java.io.File;
 import java.io.FileOutputStream;
-=======
->>>>>>> master
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -19,10 +16,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-<<<<<<< HEAD
 import java.util.LinkedHashSet;
-=======
->>>>>>> master
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +24,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.activation.DataHandler;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.FetchProfile;
@@ -53,6 +48,7 @@ import javax.mail.internet.MimeUtility;
 import javax.mail.search.FlagTerm;
 import javax.mail.search.MessageIDTerm;
 import javax.mail.search.SearchTerm;
+import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;

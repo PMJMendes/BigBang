@@ -161,8 +161,7 @@ public class SendMessage
 		if ( mobjData.mobjContactOps != null )
 			mobjData.mobjContactOps.RunSubOp(pdb, lidContainer);
 		
-		if ( mobjData.mbIsEmail )
-		{ //aqui tem que se pôr o coiso a salvar para o storage. Portanto ao chegar aqui é necessário que se tenha o storage
+		if ( mobjData.mbIsEmail ) {
 			try
 			{
 				sentMessageId = MailConnector.sendFromData(mobjData);
@@ -216,10 +215,9 @@ public class SendMessage
 		
 
 		try {
+			// Gets the sent message, and uploads to the storage
 			javax.mail.Message mailMsg = MailConnector.getMessage(sentMessageId, mobjData.mstrFolderID);
-			
-			// Calls the method responsble for updating the message to google storage.
-			StorageConnector.uploadMailMessage(mailMsg, mobjData.mstrEmailID);
+			StorageConnector.threadedUpload(mailMsg, mobjData.mstrEmailID);
 		}
 		catch (Throwable e)
 		{
