@@ -3,12 +3,14 @@ package bigBang.library.server;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -179,6 +181,22 @@ public class MailServiceImpl
 				Multipart mp = (Multipart)msg.getContent();
 				return mp.getCount();
 			}
+		} catch (MessagingException m) {
+			try {
+				if (msg instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m.getMessage())) {
+					MimeMessage msgFix = new MimeMessage((MimeMessage) msg);
+					if (msgFix.isMimeType("multipart/mixed")) {
+						Multipart mp = (Multipart)msgFix.getContent();
+						return mp.getCount();
+					}
+	            } else {
+	                throw m;
+	            }
+			} catch (MessagingException m2) {
+				return 0;
+			} catch (Throwable t) {
+				throw new BigBangException(t.getMessage(), t);
+			}
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
@@ -295,16 +313,14 @@ public class MailServiceImpl
 		ArrayList<AttachmentStub> attStubsList;
 		AttachmentStub attachmentStub;
 		String body;
-		Map<String, BodyPart> attachmentsMap = null;
+		LinkedHashMap<String, BodyPart> attachmentsMap = null;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			mailMessage = (MimeMessage) MailConnector.getMessage(id, folderId);
-			
-			MailConnector.storeLastMessage(mailMessage);
+			mailMessage = MailConnector.conditionalGetMessage(folderId, id, null);
 
 			result = new MailItem();
 			result.folderId = mailMessage.getFolder().getFullName();
@@ -318,26 +334,16 @@ public class MailServiceImpl
 			
 			result.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(mailMessage.getSentDate());
 			
-			attachmentsMap = MailConnector.getAttachmentsMap(mailMessage);
+			attachmentsMap = MailConnector.conditionalGetAttachmentsMap(mailMessage, null);
 			
 			result.attachmentCount = attachmentsMap==null ? 0 : attachmentsMap.size();
-			Object content = mailMessage.getContent();
 			attStubsList = new ArrayList<AttachmentStub>();
 			
-			try
-			{
-				if (content instanceof Multipart && attachmentsMap != null) {
-					body = attachmentsMap.get("main").getContent().toString();
-					body = MailConnector.prepareBodyInline(body, attachmentsMap);
-					result.body = body;
-				} else {
-					body = content.toString();
-					result.body = MailConnector.prepareSimpleBody(body);
-				}
-				body = MailConnector.removeHtml(body);
-			}
-			catch (Throwable e)
-			{
+			try {
+				body = MailConnector.conditionalGetBody(mailMessage, attachmentsMap);
+				//body = MailConnector.removeHtml(body);
+				result.body = body;
+			} catch (Throwable e) {
 				result.bodyPreview = "(Erro interno do servidor de Email.)";
 				result.body = "(Erro interno do servidor de Email.)";
 			}
@@ -358,7 +364,6 @@ public class MailServiceImpl
 				}
 				
 				result.attachments = attStubsList.toArray(new AttachmentStub[attStubsList.size()]);
-				
 			}
 			
 			closeFolderAndStore(mailMessage);
@@ -407,7 +412,7 @@ public class MailServiceImpl
 
 		try
 		{
-			lobjFile = MailConnector.getAttachment(emailId, folderId, attachmentId);
+			lobjFile = MailConnector.getAttachment(emailId, folderId, attachmentId, null);
 		}
 		catch (Throwable e)
 		{

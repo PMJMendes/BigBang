@@ -13,4 +13,6 @@ public class TransactionSet
 	public boolean isComplete;
 
 	public String userName;
+	
+	public String company;
 }

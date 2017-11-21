@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -10,6 +11,8 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
+import bigBang.definitions.shared.SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity;
+import bigBang.definitions.shared.SubCasualty.SubCasualtyInsurerRequest;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.FormField;
@@ -23,8 +26,8 @@ import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
-import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.UnlimitedTextAreaFormField;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.view.FormView;
@@ -32,6 +35,8 @@ import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
 import bigBang.module.casualtyModule.client.resources.Resources;
+import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyFramingEntitySection;
+import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyInsurerRequestSection;
 import bigBang.module.casualtyModule.client.userInterface.NewSubCasualtyItemSection;
 
 import com.google.gwt.core.client.GWT;
@@ -52,18 +57,28 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected TextBoxFormField insurerProcessNumber;
 	protected CheckBoxFormField hasJudicial;
 	protected TextBoxFormField status;
-	protected TextAreaFormField notes, internalNotes;
+	protected UnlimitedTextAreaFormField notes, internalNotes;
 	protected NavigationFormField casualty;
 	protected ExpandableListBoxFormField insuredObject;
 	protected RadioButtonFormField belongsToPolicy;
 	protected TextBoxFormField insuredObjectName;
 	protected Image statusIcon;
 	protected FormField<String> carRepair;
+	
+	protected CheckBoxFormField totalLoss;
 
 	protected FormViewSection notesSection, internalNotesSection;
 
 	protected Collection<SubCasualtyItemSection> subCasualtyItemSections;
 	protected NewSubCasualtyItemSection newItemSection;
+	
+	protected Collection<SubCasualtyInsurerRequestSection> subCasualtyInsurerRequestSections;
+	protected NewSubCasualtyInsurerRequestSection newInsurerRequestSection;
+	
+	protected Collection<SubCasualtyFramingEntitySection> aditionalEntitiesSection;
+	protected NewSubCasualtyFramingEntitySection newEntitySection;
+	
+	protected SubCasualtyFramingSection framingSection;
 
 	public SubCasualtyForm(){
 		casualty = new NavigationFormField("Sinistro");
@@ -102,8 +117,14 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		statusIcon = new Image();
 		status.add(statusIcon);
 
-		notes = new TextAreaFormField();
-		internalNotes = new TextAreaFormField();
+		notes = new UnlimitedTextAreaFormField();
+		notes.setMaxCharacters(4000, null);
+		notes.setFieldWidth("600px");
+		notes.setFieldHeight("250px");
+		internalNotes = new UnlimitedTextAreaFormField();
+		internalNotes.setMaxCharacters(4000, null);
+		internalNotes.setFieldWidth("600px");
+		internalNotes.setFieldHeight("250px");
 		hasJudicial = new CheckBoxFormField("Tem processo Judicial");
 
 		insuredObject = new ExpandableListBoxFormField("Unidade de Risco");
@@ -116,6 +137,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		belongsToPolicy.addOption("false", "Outra");
 		carRepair = MutableSelectionFormFieldFactory.getFormField(BigBangConstants.EntityIds.OTHER_ENTITY, null);
 		carRepair.setLabelText("Oficina / Outra Entidade");
+		
+		totalLoss = new CheckBoxFormField("Perda Total");
 		
 		addSection("Informação Geral");
 		addFormField(casualty, false);
@@ -163,6 +186,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		addFormField(belongsToPolicy, true);
 		addFormField(carRepair, true);
 		
+		addLineBreak();
+		addFormField(totalLoss,true);
+		
 		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
@@ -180,6 +206,22 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				insuredObject.setValue(null);
 			}
 		});
+		
+		this.framingSection = new SubCasualtyFramingSection("Enquadramento");
+		addSection(framingSection);
+
+		this.aditionalEntitiesSection = new ArrayList<SubCasualtyFramingEntitySection>();
+
+		this.newEntitySection = new NewSubCasualtyFramingEntitySection();
+		this.newEntitySection.newButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				addSubCasualtyFramingEntitySection(new SubCasualtyFramingEntity());
+			}
+		});
+		
+		addSection(newEntitySection);
 
 		this.subCasualtyItemSections = new ArrayList<SubCasualtyItemSection>();
 
@@ -191,26 +233,46 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				addSubCasualtyItemSection(new SubCasualtyItem());
 			}
 		});
+		
+		this.subCasualtyInsurerRequestSections = new ArrayList<SubCasualtyInsurerRequestSection>();
+
+		this.newInsurerRequestSection = new NewSubCasualtyInsurerRequestSection();
+		this.newInsurerRequestSection.newButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				addSubCasualtyInsurerRequestSection(new SubCasualtyInsurerRequest());
+			}
+		});
 
 		notesSection = new FormViewSection("Notas");
 		notesSection.addFormField(notes);
-		notes.setFieldHeight("100px");
 
 		internalNotesSection = new FormViewSection("Notas Internas");
 		internalNotesSection.addFormField(internalNotes);
-		internalNotes.setFieldHeight("400px");
 
 		ValueChangeHandler<String> changeHandler = new ValueChangeHandler<String>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
+
 				if(event.getSource() == referenceType) {
 					policyReference.setValue(null, true);
 					subPolicyReference.setValue(null, true);
 				}
-				else if((belongsToPolicy.getValue() != null) && belongsToPolicy.getValue().equalsIgnoreCase("true"))
-					setReference(referenceType.getValue(), referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue());
-				updateItemSections();
+				else if((belongsToPolicy.getValue() != null) && belongsToPolicy.getValue().equalsIgnoreCase("true")) {
+					boolean isPolicy = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY);
+					String reference = isPolicy ? policyReference.getValue() : subPolicyReference.getValue();
+					setReference(referenceType.getValue(), reference);
+				}
+
+				if (referenceType.getValue() != null && (policyReference.getValue()!=null || subPolicyReference.getValue()!=null)) {
+					boolean isPolicy = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY);
+					String reference = isPolicy ? policyReference.getValue() : subPolicyReference.getValue();
+					framingSection.setIsWorkAccidents(false, isPolicy, reference);
+				}
+					
+				updateItemSections();	
 			}
 		};
 		referenceType.addValueChangeHandler(changeHandler);
@@ -240,9 +302,15 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			result.text = notes.getValue();
 			result.internalNotes = internalNotes.getValue();
 			result.items = getSubCasualtyItems();
+			result.insurerRequests = getSubCasualtyInsurerRequests();
+			result.framing = framingSection.getFraming();
+			if (aditionalEntitiesSection.size() > 0 && result.framing!=null) {
+				result.framing.framingEntities = getSubCasualtyFramingEntities();
+			}	
 			result.insuredObjectId = insuredObject.getValue();
 			result.insuredObjectName = insuredObjectName.getValue();
 			result.serviceCenterId = carRepair.getValue();
+			result.totalLoss = totalLoss.getValue();
 		}
 
 		return result;
@@ -265,6 +333,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			}
 
 			number.setValue(info.number);
+			totalLoss.setValue(info.totalLoss);
 			
 			if(info.insuredObjectName != null){
 				belongsToPolicy.setValue("false", true);
@@ -357,8 +426,23 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			carRepair.setValue(info.serviceCenterId);
 			
 			setSubCasualtyItems(info.items);
+			
+			addSection(newItemSection);
+			
+			framingSection.setFraming(info.framing);
+						
+			setSubCasualtyInsurerRequests(info.insurerRequests);
+			
+			if (info.framing!=null) {
+				setSubCasualtyFramingEntities(info.framing.framingEntities);
+			}
+			
+			addSection(newInsurerRequestSection);
+		} else {
+			addSection(newItemSection);
+			addSection(newInsurerRequestSection);
 		}
-		addLastFields();
+		addNotesSections();
 	}
 
 	protected void setSubCasualtyItems(SubCasualtyItem[] items) {
@@ -393,6 +477,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			final SubCasualtyItemSection section = new SubCasualtyItemSection(item, referenceType.getValue(), referenceId);
 			section.setReadOnly(this.isReadOnly());
 			this.subCasualtyItemSections.add(section);
+			
 			addSection(section);
 
 			section.getRemoveButton().addClickHandler(new ClickHandler() {
@@ -405,7 +490,10 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			if(item.id == null){
 				section.expand();
 			}
-			addLastFields();
+			addSection(newItemSection);
+			addRequests();
+			addSection(newInsurerRequestSection);
+			addNotesSections();
 		}
 	}
 
@@ -423,12 +511,18 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		String referenceId = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue();
 		section.setItem(item, referenceType.getValue(), referenceId);
 	}
-
-	protected void addLastFields() {
-		addSection(newItemSection);
+	
+	protected void addNotesSections() {
 		addSection(notesSection);
 		addSection(internalNotesSection);
-	}
+	}	
+	
+	protected void addRequests() {
+		SubCasualtyInsurerRequest[] subCasualtyInsurerRequests = getSubCasualtyInsurerRequests();
+		if (subCasualtyInsurerRequests != null) {
+			setSubCasualtyInsurerRequests(subCasualtyInsurerRequests);
+		}
+	}	
 
 	public void setPanelParameters(HasParameters parameters){
 		policyReference.setParameters(parameters);
@@ -489,6 +583,127 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	public void openNewDetail() {
 		addSubCasualtyItemSection(new SubCasualtyItem());
 	}
+	
+	public void openNewInsurerRequest() {
+	//	addSubCasualtyInsurerRequestSection(new SubCasualtyInsurerRequest()); TODO: Voltar a pôr isto "coiso" quando passar a ser obrigatório
+	}
+	
+	protected void setSubCasualtyInsurerRequests(SubCasualtyInsurerRequest[] requests) {
+		for(FormViewSection section : this.subCasualtyInsurerRequestSections) {
+			removeSection(section);
+		}
+		this.subCasualtyInsurerRequestSections.clear();
+
+		if(requests != null) {
+			for(SubCasualtyInsurerRequest request : requests) {
+				addSubCasualtyInsurerRequestSection(request);
+			}
+		}
+	}
+	
+	protected SubCasualtyInsurerRequest[] getSubCasualtyInsurerRequests(){
+		SubCasualtyInsurerRequest[] result = new SubCasualtyInsurerRequest[subCasualtyInsurerRequestSections.size()];
+
+		int i = 0;
+		for(SubCasualtyInsurerRequestSection section : subCasualtyInsurerRequestSections) {
+			result[i] = section.getRequest();
+			i++;
+		}
+
+		return result;
+	}
 
 
+	protected void addSubCasualtyInsurerRequestSection(SubCasualtyInsurerRequest request){
+		if(!request.deleted) {
+			
+			final SubCasualtyInsurerRequestSection section = new SubCasualtyInsurerRequestSection(request);
+			section.setReadOnly(this.isReadOnly());
+			this.subCasualtyInsurerRequestSections.add(section);
+			addSection(section);
+
+			section.getRemoveButton().addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					removeInsurerRequestAndSection(section);
+				}
+			});
+			if(request.id == null){
+				section.requestDate.setValue(new Date(), false);
+				section.acceptanceDate.setValue(new Date(), false);
+				section.expand();
+			}
+			addSection(newInsurerRequestSection);
+			addNotesSections();
+		}
+	}
+	
+	protected void removeInsurerRequestAndSection(SubCasualtyInsurerRequestSection section){
+		section.setVisible(false);
+		SubCasualtyInsurerRequest request = section.getRequest();
+		request.deleted = true;
+		section.setRequest(request);
+	}
+	
+	protected void setSubCasualtyFramingEntities(SubCasualtyFramingEntity[] framingEntities) {
+		for(SubCasualtyFramingEntitySection section : this.aditionalEntitiesSection) {
+			removeSection(section);
+		}
+		this.aditionalEntitiesSection.clear();
+
+		if(framingEntities != null) {
+			for(SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity entity : framingEntities) {
+				addSubCasualtyFramingEntitySection(entity);
+			}
+		}
+	}
+	
+	protected SubCasualtyFramingEntity[] getSubCasualtyFramingEntities(){
+		SubCasualtyFramingEntity[] result = new SubCasualtyFramingEntity[aditionalEntitiesSection.size()];
+
+		int i = 0;
+		for(SubCasualtyFramingEntitySection section : aditionalEntitiesSection) {
+			result[i] = section.getFramingEntity();
+			i++;
+		}
+
+		return result;
+	}
+	
+	protected void addSubCasualtyFramingEntitySection(SubCasualtyFramingEntity entity){
+		if(!entity.deleted) {
+
+			final SubCasualtyFramingEntitySection section = new SubCasualtyFramingEntitySection(entity);
+			section.setReadOnly(this.isReadOnly());
+			this.aditionalEntitiesSection.add(section);
+			addSection(section);
+			
+			section.getRemoveButton().addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					removeAditionalEntityAndSection(section);
+				}
+			});
+			if(entity.id == null){
+				section.expand();
+			}
+			
+			addSection(newEntitySection);
+			setSubCasualtyItems(getSubCasualtyItems());
+			addSection(newItemSection);
+			addRequests();
+			addSection(newInsurerRequestSection);
+			addNotesSections();
+		} 
+	}	
+	
+	protected void removeAditionalEntityAndSection(SubCasualtyFramingEntitySection section){
+		section.setVisible(false);
+		SubCasualtyFramingEntity entity = section.getFramingEntity();
+		entity.deleted = true;
+		section.setFramingEntity(entity);
+	}	
+	
 }

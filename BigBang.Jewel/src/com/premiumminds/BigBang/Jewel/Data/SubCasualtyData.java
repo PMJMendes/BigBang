@@ -35,6 +35,7 @@ public class SubCasualtyData
 	public String mstrGenericObject;
 	public UUID midCasualty;
 	public UUID midServiceCenter;
+	public Boolean mbTotalLoss;
 
 	public OutgoingMessageData mobjNotification;
 	public Timestamp mdtLimitDate;
@@ -43,6 +44,11 @@ public class SubCasualtyData
 	public UUID midProcess;
 
 	public SubCasualtyItemData[] marrItems;
+	public SubCasualtyInsurerRequestData[] requests;
+	
+	public SubCasualtyFramingData framing;
+	
+	public SubCasualtyFramingData framingHeadings;
 
 	public SubCasualtyData mobjPrevValues;
 
@@ -65,6 +71,7 @@ public class SubCasualtyData
 		mstrGenericObject  = (String)    pobjSource.getAt(SubCasualty.I.GENERICOBJECT);
 		midCasualty        = (UUID)      pobjSource.getAt(SubCasualty.I.CASUALTY);
 		midServiceCenter   = (UUID)      pobjSource.getAt(SubCasualty.I.SERVICECENTER);
+		mbTotalLoss 	   = (Boolean)   pobjSource.getAt(SubCasualty.I.TOTALLOSS);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -87,6 +94,7 @@ public class SubCasualtyData
 			pobjDest.setAt(SubCasualty.I.GENERICOBJECT,   mstrGenericObject);
 			pobjDest.setAt(SubCasualty.I.CASUALTY,        midCasualty);
 			pobjDest.setAt(SubCasualty.I.SERVICECENTER,   midServiceCenter);
+			pobjDest.setAt(SubCasualty.I.TOTALLOSS,       mbTotalLoss);
 		}
 		catch (Throwable e)
 		{
@@ -199,6 +207,14 @@ public class SubCasualtyData
 
 		if ( mstrNotes != null )
 			pstrBuilder.append("Notas internas:").append(pstrLineBreak).append(mstrNotes).append(pstrLineBreak);
+		
+		if ( (mbTotalLoss != null) && (boolean)mbTotalLoss )
+			pstrBuilder.append("Perda Total!").append(pstrLineBreak);
+		
+		if (framing!=null) {
+			pstrBuilder.append(pstrLineBreak).append("Informação de Enquadramento:").append(pstrLineBreak).append(pstrLineBreak);
+			framing.Describe(pstrBuilder, pstrLineBreak);
+		}
 
 		if ( (marrItems != null) && (marrItems.length > 0) )
 		{
@@ -206,6 +222,14 @@ public class SubCasualtyData
 			for ( i = 0; i < marrItems.length; i++ )
 			{
 				marrItems[i].Describe(pstrBuilder, pstrLineBreak);
+				pstrBuilder.append(pstrLineBreak);
+			}
+		}
+		
+		if (requests != null && requests.length > 0) {
+			pstrBuilder.append(pstrLineBreak).append("Pedidos de Seguradora:").append(pstrLineBreak).append(pstrLineBreak);
+			for ( i = 0; i < requests.length; i++ ) {
+				requests[i].Describe(pstrBuilder, pstrLineBreak);
 				pstrBuilder.append(pstrLineBreak);
 			}
 		}

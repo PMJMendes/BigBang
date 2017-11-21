@@ -26,6 +26,7 @@ import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyOtherClosi
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingAnything;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReport;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyPendingReview;
+import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtyProductivityMap;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtySinistralityMap;
 import com.premiumminds.BigBang.Jewel.Listings.SubCasualty.SubCasualtySpecialShamir;
 
@@ -42,6 +43,7 @@ public class Casualty
 		public static int CASESTUDY    = 5;
 		public static int CLIENT       = 6;
 		public static int PERCENTFAULT = 7;
+		public static int FRAUD 	   = 8;
 	}
 
     public static Casualty GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -146,6 +148,12 @@ public class Casualty
 		throws BigBangJewelException
 	{
 		return new SubCasualtySinistralityMap().doReport(parrParams);
+	}
+	
+	public static GenericElement[] printReportProductivityMap(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new SubCasualtyProductivityMap().doReport(parrParams);
 	}
 
 	public void Initialize()

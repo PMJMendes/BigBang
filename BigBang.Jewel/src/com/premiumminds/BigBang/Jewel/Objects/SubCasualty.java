@@ -38,6 +38,7 @@ public class SubCasualty
 		public static int GENERICOBJECT   = 16;
 		public static int CASUALTY        = 17;
 		public static int SERVICECENTER   = 18;
+		public static int TOTALLOSS		  = 19;
 	}
 
     public static SubCasualty GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -321,6 +322,84 @@ public class SubCasualty
 
 		return larrAux.toArray(new SubCasualtyItem[larrAux.size()]);
     }
+    
+    public SubCasualtyInsurerRequest[] GetCurrentInsurerRequests() throws BigBangJewelException {
+    	ArrayList<SubCasualtyInsurerRequest> iReqs;
+    	IEntity reqEntity;
+        MasterDB ldb;
+        ResultSet resultSet;
+
+        iReqs = new ArrayList<SubCasualtyInsurerRequest>();
+
+    	try {
+    		reqEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualtyInsurerRequest)); 
+    		ldb = new MasterDB();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		resultSet = reqEntity.SelectByMembers(ldb, new int[] {SubCasualtyInsurerRequest.I.SUBCASUALTY},
+    				new java.lang.Object[] {getKey()}, new int[0]);
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		while (resultSet.next()) {
+    			iReqs.add(SubCasualtyInsurerRequest.GetInstance(getNameSpace(), resultSet));
+    		}
+    	} catch (BigBangJewelException e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw e;
+    	} catch (Throwable e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+
+    	try {
+    		resultSet.close();
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		ldb.Disconnect();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+
+    	return iReqs.toArray(new SubCasualtyInsurerRequest[iReqs.size()]);
+    }
 
     public Casualty GetCasualty()
     	throws BigBangJewelException
@@ -399,5 +478,88 @@ public class SubCasualty
     		return OtherEntity.GetInstance(getNameSpace(), (UUID)getAt(I.SERVICECENTER));
     	
     	return null;
+    }
+    
+    public SubCasualtyFraming GetFraming() throws BigBangJewelException  {
+    	
+    	ArrayList<SubCasualtyFraming> iReqs;
+    	IEntity framEntity;
+        MasterDB ldb;
+        ResultSet resultSet;
+        
+        iReqs = new ArrayList<SubCasualtyFraming>();
+        
+        try {
+        	framEntity = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualtyFraming)); 
+    		ldb = new MasterDB();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+        
+        try {
+    		resultSet = framEntity.SelectByMembers(ldb, new int[] {SubCasualtyFraming.I.SUBCASUALTY},
+    				new java.lang.Object[] {getKey()}, new int[0]);
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+        
+        try {
+    		while (resultSet.next()) {
+    			iReqs.add(SubCasualtyFraming.GetInstance(getNameSpace(), resultSet));
+    		}
+    	} catch (BigBangJewelException e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw e;
+    	} catch (Throwable e) {
+    		try { 
+    			resultSet.close(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+        
+        try {
+    		resultSet.close();
+    	} catch (Throwable e) {
+    		try { 
+    			ldb.Disconnect(); 
+    		} catch (Throwable e1) {
+    			
+    		}
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	try {
+    		ldb.Disconnect();
+    	} catch (Throwable e) {
+    		throw new BigBangJewelException(e.getMessage(), e);
+    	}
+    	
+    	if (iReqs!=null && iReqs.size()>0) {
+    		return iReqs.get(0);
+    	} else {
+    		return null;
+    	}
     }
 }

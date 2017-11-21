@@ -267,7 +267,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 						view.clear();
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem arquivada com sucesso"), TYPE.TRAY_NOTIFICATION));
 						removeSelectedItem();
-						getConversations();
+					//	getConversations();
 					}
 
 					@Override
@@ -289,7 +289,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 						view.clear();
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mensagem arquivada com sucesso"), TYPE.TRAY_NOTIFICATION));
 						removeSelectedItem();
-						getConversations();
+					//	getConversations();
 					}
 
 					@Override
@@ -325,7 +325,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 		view.getMessageForm().setReadOnly(true);
 		view.enableGetAll(false);
 		view.enableRefresh(false);
-		getConversations();
+//		getConversations();
 		getEmails();
 
 	}
@@ -385,7 +385,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 		});		
 	}
 
-	private void getConversations() {
+	/*private void getConversations() {
 
 		broker.getConversations(BigBangConstants.EntityIds.CONVERSATION, null, new ResponseHandler<List<TipifiedListItem>>() {
 
@@ -399,6 +399,6 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter as trocas de mensagens."), TYPE.ALERT_NOTIFICATION));
 			}
 		});
-	}
+	}*/
 
 }

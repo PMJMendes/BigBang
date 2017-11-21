@@ -27,4 +27,6 @@ public class ReceiptSearchParameter
 	public String subLineId;
 
 	public boolean internalOnly;
+
+	public String barcode;
 }

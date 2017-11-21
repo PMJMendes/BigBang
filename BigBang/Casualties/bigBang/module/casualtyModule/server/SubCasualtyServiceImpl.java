@@ -39,11 +39,19 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingEntitiesData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingHeadingsData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFraming;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingEntity;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyFramingHeadings;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyInsurerRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -79,6 +87,10 @@ public class SubCasualtyServiceImpl
 		Mediator lobjMed;
 		Company lobjComp;
 		SubCasualtyItem[] larrItems;
+		SubCasualtyInsurerRequest[] requests;
+		SubCasualtyFraming framing;
+		SubCasualtyFramingEntity[] framingEntities;
+		SubCasualtyFramingHeadings framingHeadings;
 		SubCasualty lobjResult;
 		BigDecimal ldblTotal;
 		BigDecimal ldblLocal;
@@ -100,6 +112,15 @@ public class SubCasualtyServiceImpl
 			lobjClient = lobjPolicy.GetClient();
 			lobjMed = lobjClient.getMediator();
 			larrItems = lobjSubCasualty.GetCurrentItems();
+			requests = lobjSubCasualty.GetCurrentInsurerRequests();
+			framing = lobjSubCasualty.GetFraming();
+			if (framing != null) {
+				framingEntities = framing.GetCurrentFramingEntities();
+				framingHeadings = framing.GetFramingHeadings();
+			} else {
+				framingEntities = null;
+				framingHeadings = null;
+			}
 		}
 		catch (Throwable e)
 		{
@@ -143,6 +164,10 @@ public class SubCasualtyServiceImpl
 
 		ldblTotal = null;
 		lobjResult.items = new SubCasualty.SubCasualtyItem[larrItems.length];
+		lobjResult.totalLoss = lobjSubCasualty
+				.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.TOTALLOSS) == null ? false
+				: (Boolean) lobjSubCasualty
+						.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.TOTALLOSS);
 		for ( i = 0; i < lobjResult.items.length; i++ )
 		{
 			ldblLocal = (BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.DAMAGES);
@@ -176,6 +201,97 @@ public class SubCasualtyServiceImpl
 
 			ldblTotal = ( ldblTotal == null ? ldblLocal : (ldblLocal == null ? ldblTotal : ldblTotal.add(ldblLocal)) );
 		}
+		
+		// Insurer Requests set
+		lobjResult.insurerRequests = new SubCasualty.SubCasualtyInsurerRequest[requests.length];
+		
+		for ( i = 0; i < lobjResult.insurerRequests.length; i++ ) {
+			
+			lobjResult.insurerRequests[i] = new SubCasualty.SubCasualtyInsurerRequest();
+			
+			lobjResult.insurerRequests[i].id = requests[i].getKey().toString();
+			lobjResult.insurerRequests[i].insurerRequestTypeId = (requests[i].getAt(SubCasualtyInsurerRequest.I.TYPE) == null ? null :
+				((UUID)requests[i].getAt(SubCasualtyInsurerRequest.I.TYPE)).toString());
+			
+			lobjResult.insurerRequests[i].clarificationTypeId = (requests[i].getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONTYPE) == null ? null :
+				((UUID)requests[i].getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONTYPE)).toString());
+			
+			lobjResult.insurerRequests[i].conforms = (Boolean)requests[i].getAt(SubCasualtyInsurerRequest.I.CONFORMITY);
+			
+			lobjResult.insurerRequests[i].requestDate = (requests[i].getAt(SubCasualtyInsurerRequest.I.REQUESTDATE) == null ? null :
+				((Timestamp)requests[i].getAt(SubCasualtyInsurerRequest.I.REQUESTDATE)).toString().substring(0, 10));
+			lobjResult.insurerRequests[i].acceptanceDate = (requests[i].getAt(SubCasualtyInsurerRequest.I.ACCEPTANCEDATE) == null ? null :
+				((Timestamp)requests[i].getAt(SubCasualtyInsurerRequest.I.ACCEPTANCEDATE)).toString().substring(0, 10));
+			lobjResult.insurerRequests[i].clarificationDate = (requests[i].getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONDATE) == null ? null :
+				((Timestamp)requests[i].getAt(SubCasualtyInsurerRequest.I.CLARIFICATIONDATE)).toString().substring(0, 10));
+			lobjResult.insurerRequests[i].resendDate = (requests[i].getAt(SubCasualtyInsurerRequest.I.RESENDDATE) == null ? null :
+				((Timestamp)requests[i].getAt(SubCasualtyInsurerRequest.I.RESENDDATE)).toString().substring(0, 10));
+		}
+		
+		// Framing set
+		lobjResult.framing = new SubCasualty.SubCasualtyFraming();
+		if (framing != null) {
+			lobjResult.framing.id = framing.getKey().toString();
+			lobjResult.framing.analysisDate = (framing.getAt(SubCasualtyFraming.I.ANALYSISDATE) == null ? null :
+				((Timestamp)framing.getAt(SubCasualtyFraming.I.ANALYSISDATE)).toString().substring(0, 10));
+			lobjResult.framing.framingDifficulty = (Boolean)framing.getAt(SubCasualtyFraming.I.FRAMINGDIFFICULTY);
+			lobjResult.framing.validPolicy = (Boolean)framing.getAt(SubCasualtyFraming.I.VALIDPOLICY);
+			lobjResult.framing.validityNotes = (String)framing.getAt(SubCasualtyFraming.I.VALIDITYNOTES);
+			lobjResult.framing.generalExclusions = (Boolean)framing.getAt(SubCasualtyFraming.I.GENERALEXCLUSIONS);
+			lobjResult.framing.generalExclusionNotes = (String)framing.getAt(SubCasualtyFraming.I.GENERALEXCLUSIONSNOTES);
+			lobjResult.framing.relevantCoverages = (Boolean)framing.getAt(SubCasualtyFraming.I.RELEVANTCOVERAGE);
+			lobjResult.framing.coverageRelevancyNotes = (String)framing.getAt(SubCasualtyFraming.I.COVERAGERELEVANCYNOTES);
+			lobjResult.framing.coverageValue = (framing.getAt(SubCasualtyFraming.I.COVERAGEVALUE)==null ? null : ((BigDecimal)framing.getAt(SubCasualtyFraming.I.COVERAGEVALUE)).doubleValue());
+			lobjResult.framing.coverageExclusions = (Boolean)framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONS);
+			lobjResult.framing.coverageExclusionsNotes = (String)framing.getAt(SubCasualtyFraming.I.COVERAGEEXCLUSIONSNOTES);
+			lobjResult.framing.franchise = (framing.getAt(SubCasualtyFraming.I.FRANCHISE)==null ? null : ((BigDecimal)framing.getAt(SubCasualtyFraming.I.FRANCHISE)).doubleValue());
+			lobjResult.framing.deductibleTypeId = (framing.getAt(SubCasualtyFraming.I.DEDUCTIBLETYPE) == null ? null :
+				((UUID)framing.getAt(SubCasualtyFraming.I.DEDUCTIBLETYPE)).toString());
+			lobjResult.framing.franchiseNotes = (String)framing.getAt(SubCasualtyFraming.I.FRANCHISENOTES);
+			lobjResult.framing.insurerEvaluationId = (framing.getAt(SubCasualtyFraming.I.INSUREREVALUATION) == null ? null :
+				((UUID)framing.getAt(SubCasualtyFraming.I.INSUREREVALUATION)).toString());
+			lobjResult.framing.insurerEvaluationNotes = (String)framing.getAt(SubCasualtyFraming.I.INSUREREVALUATIONNOTES);
+			lobjResult.framing.expertEvaluationId = (framing.getAt(SubCasualtyFraming.I.EXPERTEVALUATION) == null ? null :
+				((UUID)framing.getAt(SubCasualtyFraming.I.EXPERTEVALUATION)).toString());
+			lobjResult.framing.expertEvaluationNotes = (String)framing.getAt(SubCasualtyFraming.I.EXPERTEVALUATIONNOTES);
+			lobjResult.framing.coverageNotes = (framing.getAt(SubCasualtyFraming.I.COVERAGENOTES) == null ? null :
+				(String)framing.getAt(SubCasualtyFraming.I.COVERAGENOTES));
+			lobjResult.framing.declinedCasualty = (framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY) == null ? false :
+				(Boolean)framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTY));
+			lobjResult.framing.declinedCasualtyNotes = (framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTYNOTES) == null ? null :
+				(String)framing.getAt(SubCasualtyFraming.I.DECLINEDCASUALTYNOTES));
+			lobjResult.framing.declinedWarning = (framing.getAt(SubCasualtyFraming.I.DECLINEDWARNING) == null ? false :
+				(Boolean)framing.getAt(SubCasualtyFraming.I.DECLINEDWARNING));
+			lobjResult.framing.declinedWarningNotes = (framing.getAt(SubCasualtyFraming.I.DECLINEDWARNINGNOTES) == null ? null :
+				(String)framing.getAt(SubCasualtyFraming.I.DECLINEDWARNINGNOTES));
+			
+			if (framingEntities != null) {
+				lobjResult.framing.framingEntities = new SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity[framingEntities.length];
+				for ( i = 0; i < lobjResult.framing.framingEntities.length; i++ ) {
+					
+					lobjResult.framing.framingEntities[i] = new SubCasualty.SubCasualtyFraming.SubCasualtyFramingEntity();
+					
+					lobjResult.framing.framingEntities[i].id = framingEntities[i].getKey().toString();
+					lobjResult.framing.framingEntities[i].entityTypeId = (framingEntities[i].getAt(SubCasualtyFramingEntity.I.ENTITYTYPE) == null ? null :
+						((UUID)framingEntities[i].getAt(SubCasualtyFramingEntity.I.ENTITYTYPE)).toString());
+					
+					lobjResult.framing.framingEntities[i].evaluationId = (framingEntities[i].getAt(SubCasualtyFramingEntity.I.EVALUATION) == null ? null :
+						((UUID)framingEntities[i].getAt(SubCasualtyFramingEntity.I.EVALUATION)).toString());
+					
+					lobjResult.framing.framingEntities[i].evaluationNotes = (String)framingEntities[i].getAt(SubCasualtyFramingEntity.I.EVALUATIONNOTES);
+				}
+			}
+			
+			if (framingHeadings != null) {
+				lobjResult.framing.headings = new SubCasualty.SubCasualtyFraming.SubCasualtyFramingHeadings();
+				lobjResult.framing.headings.id = framingHeadings.getKey().toString();
+				lobjResult.framing.headings.baseSalary = (framingHeadings.getAt(SubCasualtyFramingHeadings.I.BASESALARY) == null ? null : ((BigDecimal)framingHeadings.getAt(SubCasualtyFramingHeadings.I.BASESALARY)).doubleValue()); 
+				lobjResult.framing.headings.feedAllowance = (framingHeadings.getAt(SubCasualtyFramingHeadings.I.FEEDALLOWANCE) == null ? null : ((BigDecimal)framingHeadings.getAt(SubCasualtyFramingHeadings.I.FEEDALLOWANCE)).doubleValue());
+				lobjResult.framing.headings.otherFees12 = (framingHeadings.getAt(SubCasualtyFramingHeadings.I.OTHERFEES12) == null ? null : ((BigDecimal)framingHeadings.getAt(SubCasualtyFramingHeadings.I.OTHERFEES12)).doubleValue());
+				lobjResult.framing.headings.otherFees14 = (framingHeadings.getAt(SubCasualtyFramingHeadings.I.OTHERFEES14) == null ? null : ((BigDecimal)framingHeadings.getAt(SubCasualtyFramingHeadings.I.OTHERFEES14)).doubleValue());
+			}
+		}
+		
 		lobjResult.totalDamages = (ldblTotal == null ? null : ldblTotal.toPlainString());
 
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
@@ -234,6 +350,8 @@ public class SubCasualtyServiceImpl
 		lopMD.mobjData.midCasualty = (UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.CASUALTY);
 		lopMD.mobjData.midServiceCenter = ( subCasualty.serviceCenterId == null ? null :
 				UUID.fromString(subCasualty.serviceCenterId) );
+		
+		lopMD.mobjData.mbTotalLoss = subCasualty.totalLoss;
 
 		if ( subCasualty.items != null )
 		{
@@ -273,7 +391,143 @@ public class SubCasualtyServiceImpl
 		}
 		else
 			lopMD.mobjData.marrItems = null;
-
+		
+		// Insurer Requests set
+		if ( subCasualty.insurerRequests != null ) {
+			lopMD.mobjData.requests = new SubCasualtyInsurerRequestData[subCasualty.insurerRequests.length];
+			
+			for ( i = 0; i < lopMD.mobjData.requests.length; i++ ) {
+				
+				lopMD.mobjData.requests[i] = new SubCasualtyInsurerRequestData();
+				
+				lopMD.mobjData.requests[i].id = (subCasualty.insurerRequests[i].id == null ? null : UUID.fromString(subCasualty.insurerRequests[i].id) ); 
+				lopMD.mobjData.requests[i].typeId = ( subCasualty.insurerRequests[i].insurerRequestTypeId == null ? null :
+					UUID.fromString(subCasualty.insurerRequests[i].insurerRequestTypeId) );
+						
+				lopMD.mobjData.requests[i].conforms = subCasualty.insurerRequests[i].conforms;
+				
+				lopMD.mobjData.requests[i].requestDate = ( subCasualty.insurerRequests[i].requestDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].requestDate + " 00:00:00.0"));
+				lopMD.mobjData.requests[i].acceptanceDate = ( subCasualty.insurerRequests[i].acceptanceDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].acceptanceDate + " 00:00:00.0"));
+				lopMD.mobjData.requests[i].resendDate = ( subCasualty.insurerRequests[i].resendDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].resendDate + " 00:00:00.0"));
+				lopMD.mobjData.requests[i].clarificationDate = ( subCasualty.insurerRequests[i].clarificationDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].clarificationDate + " 00:00:00.0"));
+				
+				lopMD.mobjData.requests[i].clarificationTypeId = ( subCasualty.insurerRequests[i].clarificationTypeId == null ? null :
+					UUID.fromString(subCasualty.insurerRequests[i].clarificationTypeId) ); 
+				
+				lopMD.mobjData.requests[i].subCasualtyId = lopMD.mobjData.mid;
+				
+				lopMD.mobjData.requests[i].isNew = ( !subCasualty.insurerRequests[i].deleted && (subCasualty.insurerRequests[i].id == null) );
+				lopMD.mobjData.requests[i].isDeleted = subCasualty.insurerRequests[i].deleted;	
+			}
+		}
+		
+		// Framing set
+		lopMD.mobjData.framing = new SubCasualtyFramingData();
+		if (subCasualty.framing != null) {
+			lopMD.mobjData.framing.id = (subCasualty.framing.id == null ? null : UUID.fromString(subCasualty.framing.id));
+			lopMD.mobjData.framing.analysisDate = (subCasualty.framing.analysisDate == null ? null : Timestamp.valueOf(subCasualty.framing.analysisDate + " 00:00:00.0"));
+			lopMD.mobjData.framing.wasDifficult = subCasualty.framing.framingDifficulty;
+			lopMD.mobjData.framing.policyValid = subCasualty.framing.validPolicy;
+			lopMD.mobjData.framing.validityNotes = subCasualty.framing.validityNotes;
+			lopMD.mobjData.framing.areGeneralExclusions = subCasualty.framing.generalExclusions;
+			lopMD.mobjData.framing.generalExclusionsNotes = subCasualty.framing.generalExclusionNotes;
+			lopMD.mobjData.framing.isCoverageRelevant = subCasualty.framing.relevantCoverages;
+			lopMD.mobjData.framing.coverageRelevancyNotes = subCasualty.framing.coverageRelevancyNotes;
+			lopMD.mobjData.framing.coverageValue = (subCasualty.framing.coverageValue == null ? null : new BigDecimal(subCasualty.framing.coverageValue+""));
+			lopMD.mobjData.framing.areCoverageExclusions = subCasualty.framing.coverageExclusions;
+			lopMD.mobjData.framing.coverageExclusionsNotes = subCasualty.framing.coverageExclusionsNotes;
+			lopMD.mobjData.framing.franchise = (subCasualty.framing.franchise == null ? null : new BigDecimal(subCasualty.framing.franchise+""));
+			lopMD.mobjData.framing.franchiseType = (subCasualty.framing.deductibleTypeId == null ? null :
+				UUID.fromString(subCasualty.framing.deductibleTypeId));
+			lopMD.mobjData.framing.franchiseNotes = subCasualty.framing.franchiseNotes;
+			lopMD.mobjData.framing.insurerEvaluation = (subCasualty.framing.insurerEvaluationId == null ? null :
+				UUID.fromString(subCasualty.framing.insurerEvaluationId));
+			lopMD.mobjData.framing.insurerEvaluationNotes = subCasualty.framing.insurerEvaluationNotes;
+			lopMD.mobjData.framing.expertEvaluation = (subCasualty.framing.expertEvaluationId == null ? null :
+				UUID.fromString(subCasualty.framing.expertEvaluationId));
+			lopMD.mobjData.framing.expertEvaluationNotes = subCasualty.framing.expertEvaluationNotes;
+			lopMD.mobjData.framing.coverageNotes = subCasualty.framing.coverageNotes;
+			
+			lopMD.mobjData.framing.wasCasualtyDeclined = subCasualty.framing.declinedCasualty;
+			lopMD.mobjData.framing.declinedCasualtyNotes = subCasualty.framing.declinedCasualtyNotes;
+			lopMD.mobjData.framing.wasDeclineWarned = subCasualty.framing.declinedWarning;
+			lopMD.mobjData.framing.declinedWarningNotes = subCasualty.framing.declinedWarningNotes;
+			
+			lopMD.mobjData.framing.isNew = ( !subCasualty.framing.deleted && (subCasualty.framing.id == null) );
+			lopMD.mobjData.framing.isDeleted = subCasualty.framing.deleted;	
+			
+			// FramingEntities set
+			if (subCasualty.framing.framingEntities!=null) {
+				lopMD.mobjData.framing.framingEntities = new SubCasualtyFramingEntitiesData[subCasualty.framing.framingEntities.length];
+				
+				for ( i = 0; i < lopMD.mobjData.framing.framingEntities.length; i++ ) {
+					
+					lopMD.mobjData.framing.framingEntities[i] = new SubCasualtyFramingEntitiesData();
+					
+					lopMD.mobjData.framing.framingEntities[i].id = (subCasualty.framing.framingEntities[i].id == null ? null : UUID.fromString(subCasualty.framing.framingEntities[i].id) ); 
+					lopMD.mobjData.framing.framingEntities[i].entityType = ( subCasualty.framing.framingEntities[i].entityTypeId == null ? null :
+						UUID.fromString(subCasualty.framing.framingEntities[i].entityTypeId) );
+					lopMD.mobjData.framing.framingEntities[i].evaluation = ( subCasualty.framing.framingEntities[i].evaluationId == null ? null :
+						UUID.fromString(subCasualty.framing.framingEntities[i].evaluationId) );
+					lopMD.mobjData.framing.framingEntities[i].notes = subCasualty.framing.framingEntities[i].evaluationNotes;
+					
+					lopMD.mobjData.framing.framingEntities[i].framingId = lopMD.mobjData.framing.id;
+					
+					lopMD.mobjData.framing.framingEntities[i].isNew = ( !subCasualty.framing.framingEntities[i].deleted && (subCasualty.framing.framingEntities[i].id == null) );
+					lopMD.mobjData.framing.framingEntities[i].isDeleted = subCasualty.framing.framingEntities[i].deleted;	
+				}
+			}
+			
+			if (subCasualty.framing.headings != null) {
+				lopMD.mobjData.framing.framingHeadings = new SubCasualtyFramingHeadingsData();
+				lopMD.mobjData.framing.framingHeadings.id = (subCasualty.framing.headings.id == null ? null : UUID.fromString(subCasualty.framing.headings.id) );
+				lopMD.mobjData.framing.framingHeadings.baseSalary = (subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary+""));
+				lopMD.mobjData.framing.framingHeadings.feedAllowance = (subCasualty.framing.headings.feedAllowance == null ? null : new BigDecimal(subCasualty.framing.headings.feedAllowance+""));
+				lopMD.mobjData.framing.framingHeadings.otherFees12 = (subCasualty.framing.headings.otherFees12 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees12+""));
+				lopMD.mobjData.framing.framingHeadings.otherFees14 = (subCasualty.framing.headings.otherFees14 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees14+""));
+				
+				lopMD.mobjData.framing.framingHeadings.framingId = lopMD.mobjData.framing.id;
+				
+				// Note this only works when the framing headings was "nullified" 
+				// To understand this, file-search for "AUUUUUGA"
+				if (lopMD.mobjData.framing.framingHeadings.baseSalary!=null || lopMD.mobjData.framing.framingHeadings.feedAllowance!=null ||
+						lopMD.mobjData.framing.framingHeadings.otherFees12!=null || lopMD.mobjData.framing.framingHeadings.otherFees14!=null) {
+					
+					// It calculates the coverage value as the sum of the 4 headings' fields
+					BigDecimal sum = new BigDecimal(0);
+					
+					if (lopMD.mobjData.framing.framingHeadings.baseSalary!=null) {
+						sum = sum.add(lopMD.mobjData.framing.framingHeadings.baseSalary);
+					}
+					if (lopMD.mobjData.framing.framingHeadings.feedAllowance!=null) {
+						sum = sum.add(lopMD.mobjData.framing.framingHeadings.feedAllowance);
+					}
+					if (lopMD.mobjData.framing.framingHeadings.otherFees12!=null) {
+						sum = sum.add(lopMD.mobjData.framing.framingHeadings.otherFees12);
+					}
+					if (lopMD.mobjData.framing.framingHeadings.otherFees14!=null) {
+						sum = sum.add(lopMD.mobjData.framing.framingHeadings.otherFees14);
+					}
+					
+					lopMD.mobjData.framing.coverageValue = sum;
+				}
+				
+				lopMD.mobjData.framing.framingHeadings.isNew = ( !subCasualty.framing.headings.deleted && (subCasualty.framing.headings.id == null) );
+				lopMD.mobjData.framing.framingHeadings.isDeleted = subCasualty.framing.headings.deleted;
+				
+				try {
+					// If the subcasualty policy changed from one that is work-accidents to other category, the headings should be deleted 
+					lopMD.mobjData.framing.framingHeadings.isDeleted = checkCategoryLineChange(lopMD.mobjData.midPolicy, lopMD.mobjData.midSubPolicy);
+				} catch (BigBangJewelException e) {
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+		}
+			
 		lopMD.mobjContactOps = null;
 		lopMD.mobjDocOps = null;
 
@@ -287,6 +541,37 @@ public class SubCasualtyServiceImpl
 		}
 
 		return sGetSubCasualty(lopMD.mobjData.mid);
+	}
+
+	// This method is called for sub-casualties with headings (meaning they belonged to work-accidents' policies)
+	// Gets the policy's category line for the policy defined from the form.
+	// If it is not work-accidents, returns true, otherwise returns false.
+	private boolean checkCategoryLineChange(UUID policyId, UUID subPolicyId) throws BigBangJewelException {
+		
+		com.premiumminds.BigBang.Jewel.Objects.Policy policy;
+		com.premiumminds.BigBang.Jewel.Objects.SubPolicy subPolicy;
+		UUID category = null;
+		
+		if (policyId != null) {
+			policy = com.premiumminds.BigBang.Jewel.Objects.Policy.GetInstance(Engine.getCurrentNameSpace(),
+					policyId);
+			category = policy.GetSubLine().getLine().getCategory().getKey();
+		}
+		
+		if (subPolicyId != null) {
+			subPolicy = com.premiumminds.BigBang.Jewel.Objects.SubPolicy.GetInstance(Engine.getCurrentNameSpace(),
+					subPolicyId);
+			category = subPolicy.GetOwner().GetSubLine().getLine().getCategory().getKey();
+		}
+	
+		if (category==null) {
+			throw new BigBangJewelException("Could not get the category.");
+		}
+		
+		if (!category.equals(Constants.PolicyCategories.WORK_ACCIDENTS)) {
+			return true;
+		}
+		return false;
 	}
 
 	public SubCasualty sendNotification(String subCasualtyId)
@@ -575,7 +860,7 @@ public class SubCasualtyServiceImpl
 		
 		javax.mail.Message storedMessage = null;
 		try {
-			storedMessage = MailConnector.getStoredMessage();
+			storedMessage = MailConnector.getStoredMessage(null, conversation.messages[0].emailId);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage() +  " 580 ", e);
 		}

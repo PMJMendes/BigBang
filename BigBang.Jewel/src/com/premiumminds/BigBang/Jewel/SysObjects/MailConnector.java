@@ -1,8 +1,11 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.ByteArrayInputStream;
+<<<<<<< HEAD
 import java.io.File;
 import java.io.FileOutputStream;
+=======
+>>>>>>> master
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -16,7 +19,10 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+<<<<<<< HEAD
 import java.util.LinkedHashSet;
+=======
+>>>>>>> master
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,12 +38,14 @@ import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
@@ -82,6 +90,10 @@ public class MailConnector {
 	
 	private static HashMap<String, Message> lastMessageUser;
 	
+	private static HashMap<String, LinkedHashMap<String, BodyPart>> lastAttachmentsMapUser;
+	
+	private static HashMap<String, String> lastPreparedBodyUser;
+	
 	/**
 	 *	This method initializes the store, if needed.
 	 *	Avoids "too much connections" error
@@ -93,7 +105,7 @@ public class MailConnector {
 				storesByUser = new HashMap<String, Store>();
 			}
 			
-			String userMail = MailConnector.getUserEmail();
+			String userMail = getUserEmail();
 			
 			Store store = storesByUser.get(userMail);
 			
@@ -538,7 +550,7 @@ public class MailConnector {
 			OAuthHandler.initialize();
 			initializeStore();
 
-			String userMail = MailConnector.getUserEmail();
+			String userMail = getUserEmail();
 			
 			if (folderId != null && folderId.length() > 0) {
 				folder = storesByUser.get(userMail).getFolder(folderId);
@@ -596,7 +608,7 @@ public class MailConnector {
 
 		try {
 			
-			String userMail = MailConnector.getUserEmail();
+			String userMail = getUserEmail();
 			
 			// Gets the folder with the argument's ID, and opens it
 			if (folderId != null && folderId.length() > 0) {
@@ -697,7 +709,7 @@ public class MailConnector {
 	 */
 	public static List<BodyPart> getAttachments(Message message) throws Exception {
 
-		Map<String, BodyPart> attachmentsMap = getAttachmentsMap(message);
+		Map<String, BodyPart> attachmentsMap = conditionalGetAttachmentsMap((MimeMessage) message, null);
 
 		if (attachmentsMap != null && attachmentsMap.size() > 0) {
 			List<BodyPart> result = new ArrayList<BodyPart>();
@@ -715,20 +727,29 @@ public class MailConnector {
 	 *	This method gets all attachments on a message. It calls a recursive method for all 
 	 *	the body parts of the Message parameter, for parts can be encapsulated, with attachments
 	 */
-	public static Map<String, BodyPart> getAttachmentsMap(Message message) throws BigBangJewelException {
-		Object content;
+	public static LinkedHashMap<String, BodyPart> getAttachmentsMap(Message message) throws BigBangJewelException {
+		Object content = null;
 		try {
-			content = message.getContent(); 
 			
-			if (content instanceof String)
+			try {
+				content = message.getContent(); 
+			} catch (MessagingException m) {
+				if (message instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m.getMessage())) {
+					content = new MimeMessage((MimeMessage) message).getContent();
+	            } else {
+	                throw m;
+	            }
+			}
+			
+			if (content != null && content instanceof String)
 				return null;        
 
 			if (content instanceof Multipart) {
 				Multipart multipart = (Multipart) content;
-				Map<String, BodyPart> result = new HashMap<String, BodyPart>();
+				LinkedHashMap<String, BodyPart> result = new LinkedHashMap<String, BodyPart>();
 
 				for (int i = 0; i < multipart.getCount(); i++) {
-					Map<String, BodyPart> attachmentsMap = getAttachmentsMap(multipart.getBodyPart(i));
+					LinkedHashMap<String, BodyPart> attachmentsMap = getAttachmentsMap(multipart.getBodyPart(i));
 					
 					for (String key : attachmentsMap.keySet()) {
 						BodyPart test = result.get(key);
@@ -762,15 +783,20 @@ public class MailConnector {
 	/**
 	 *	This is a recursive method to get all attachments in a body part. 
 	 */
-	private static Map<String, BodyPart> getAttachmentsMap(BodyPart part) throws Exception {
+	private static LinkedHashMap<String, BodyPart> getAttachmentsMap(BodyPart part) throws Exception {
 		
-		Map<String, BodyPart> result = new HashMap<String, BodyPart>();
+		LinkedHashMap<String, BodyPart> result = new LinkedHashMap<String, BodyPart>();
 		Object content = null;
 		try {
 			content = part.getContent();
 		} catch (DecodingException e) {
 			return result;
-		} 
+		} catch (IOException io) {
+			if (part.getContentType().contains("TEXT/PLAIN") || part.getContentType().contains("TEXT/HTML")
+					|| part.getContentType().contains("text/plain") || part.getContentType().contains("text/html")) { 
+				result.put("main", part);
+			}
+		}
 		
 		// If it is an attachment, gets its id from the header and inserts it in the result's map
 		if (content instanceof InputStream || content instanceof String) {
@@ -820,9 +846,53 @@ public class MailConnector {
 					|| part.getContentType().contains("text/plain") || part.getContentType().contains("text/html")) { 
 				result.put("main", part);
 			} else {
-				return new HashMap<String, BodyPart>();
+				return new LinkedHashMap<String, BodyPart>();
 			}
 		}
+		
+		// To catch the "emails attached as emails"
+		if (part.getContentType().contains("MESSAGE/RFC822") || part.getContentType().contains("message/rfc822")) {
+			
+			// Gets the bytearray corresponding to the inputstream from the part
+			byte[] byteArray = IOUtils.toByteArray( part.getInputStream() );
+			
+			// If it is base-64 encoded, must decode it
+			if (((MimeBodyPart)part).getEncoding()!=null && (((MimeBodyPart)part).getEncoding().equals("BASE64") ||
+					((MimeBodyPart)part).getEncoding().equals("base64"))) {
+				ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
+				InputStream b64is = MimeUtility.decode(bais, "base64");
+				byte[] tmp = new byte[byteArray.length];
+				int n = b64is.read(tmp);
+				byte[] res = new byte[n];
+				System.arraycopy(tmp, 0, res, 0, n);
+				byteArray = res;
+			}
+			
+			// Gets the name to use
+			int msgNr = 0;
+			String name = "msg" + msgNr + ".eml";
+			while (true) {
+				if (!result.containsKey(name)) {
+					break;
+				}
+				msgNr++;
+				name = "msg" + msgNr + ".eml";
+			}
+			
+			// Creates a decoded bodypart
+			ByteArrayDataSource bds = new ByteArrayDataSource(byteArray, "MESSAGE/RFC822"); 
+			
+			InternetHeaders heads = new InternetHeaders();
+	        heads.addHeader("Content-Type", "message/rfc822; name =" + bds.getName());
+	        heads.addHeader("Content-Disposition", "attachment");
+			MimeBodyPart decodedPart = new MimeBodyPart(heads, byteArray);
+			
+			decodedPart.setDataHandler(new DataHandler(bds)); 
+			decodedPart.setFileName(bds.getName()); 
+			
+			result.put(name, decodedPart);
+		}
+		
 
 		// If the part is a Multipart, the method recursively calls itself
 		if (content instanceof Multipart) {
@@ -844,7 +914,7 @@ public class MailConnector {
 		Map<String, String> processed = null;
 
 		if (fetchedItem == null) {
-			fetchedItem = getMessage(pstrUniqueID, folderId);
+			fetchedItem = conditionalGetMessage(folderId, pstrUniqueID, null);
 		}
 
 		processed = new HashMap<String, String>();
@@ -853,7 +923,7 @@ public class MailConnector {
 
 		try {
 			if (mailAttachments == null) {
-				mailAttachments = getAttachmentsMap(fetchedItem);
+				mailAttachments = conditionalGetAttachmentsMap((MimeMessage) fetchedItem, null);
 			}
 		} catch (Exception e) {
 			throw new BigBangJewelException(e.getMessage() + " 588 ", e);
@@ -970,7 +1040,7 @@ public class MailConnector {
 	public static MessageData getAsData(String pstrUniqueID, String folderId) throws BigBangJewelException {
 
 		// Gets the message with a given ID
-		Message fetchedMessage = getMessage(pstrUniqueID, folderId);
+		Message fetchedMessage = conditionalGetMessage(folderId, pstrUniqueID, null);
 
 		if (fetchedMessage != null) {
 			
@@ -988,6 +1058,8 @@ public class MailConnector {
 		
 		MessageData result = new MessageData();
 		
+		Message copy = fetchedMessage;
+		
 		InternetAddress fromAddress = null;
 		String from;
 		Address[] to, cc, bcc, replyTo;
@@ -996,7 +1068,7 @@ public class MailConnector {
 
 		// Builds the MessageData with the existing Message's fields
 		try {
-			result.mstrSubject = fetchedMessage.getSubject();
+			result.mstrSubject = copy.getSubject();
 			result.midOwner = null;
 			result.mlngNumber = -1;
 			result.mbIsEmail = true;
@@ -1005,14 +1077,25 @@ public class MailConnector {
 				result.mstrEmailID = emailId;
 			}
 			
-			Object content = fetchedMessage.getContent();
+			Object content = null;
+			try {
+				content = copy.getContent();
+			} catch (MessagingException m) {
+				if (copy instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m.getMessage())) {
+					MimeMessage msgFix = new MimeMessage((MimeMessage) copy);
+					content = msgFix.getContent();
+					copy = msgFix;
+				}
+			}
 			
-			if (content instanceof Multipart) {
+			LinkedHashMap<String, BodyPart> attachmentsMap = null;
+			
+			result.mstrBody = null;
+			
+			if (content != null && content instanceof Multipart) {
 				
-				Map<String, BodyPart> attachmentsMap = getAttachmentsMap(fetchedMessage);
-				
-				result.mstrBody = attachmentsMap.get("main").getContent().toString();
-				result.mstrBody = prepareBodyInline(result.mstrBody, attachmentsMap);
+				attachmentsMap = conditionalGetAttachmentsMap((MimeMessage) copy, null);
+				result.mstrBody = conditionalGetBody((MimeMessage) copy, attachmentsMap);
 				
 				if (attachmentsMap != null) {
 					// Removes the mail's text from the attachments
@@ -1030,18 +1113,19 @@ public class MailConnector {
 					}
 					result.marrAttachments = atts;
 				}
-			} else {
-				result.mstrBody = content.toString();
-				result.mstrBody = prepareSimpleBody(result.mstrBody);
 			}
 			
-			fromAddress = (InternetAddress) (fetchedMessage.getFrom() == null ? null : fetchedMessage.getFrom()[0]);
+			if (result.mstrBody == null) {
+				result.mstrBody = conditionalGetBody((MimeMessage) copy, attachmentsMap);
+			}
+			
+			fromAddress = (InternetAddress) (copy.getFrom() == null ? null : copy.getFrom()[0]);
 			from = fromAddress == null ? "" : fromAddress.getAddress();
 			
-			to = fetchedMessage.getRecipients(RecipientType.TO);
-			cc = fetchedMessage.getRecipients(RecipientType.CC);
-			bcc = fetchedMessage.getRecipients(RecipientType.BCC);
-			replyTo = fetchedMessage.getReplyTo();
+			to = copy.getRecipients(RecipientType.TO);
+			cc = copy.getRecipients(RecipientType.CC);
+			bcc = copy.getRecipients(RecipientType.BCC);
+			replyTo = copy.getReplyTo();
 			
 			String userEmail = getUserEmail();
 			if (userEmail != null) {
@@ -1051,10 +1135,10 @@ public class MailConnector {
 				result.midDirection = Constants.MsgDir_Outgoing;
 			}
 			
-			if (result.midDirection.equals(Constants.MsgDir_Outgoing) && fetchedMessage.getSentDate() != null) {
-				result.mdtDate = new Timestamp(fetchedMessage.getSentDate().getTime());
-			} else if (result.midDirection.equals(Constants.MsgDir_Incoming) && fetchedMessage.getReceivedDate() != null) {
-				result.mdtDate = new Timestamp(fetchedMessage.getReceivedDate().getTime());
+			if (result.midDirection.equals(Constants.MsgDir_Outgoing) && copy.getSentDate() != null) {
+				result.mdtDate = new Timestamp(copy.getSentDate().getTime());
+			} else if (result.midDirection.equals(Constants.MsgDir_Incoming) && copy.getReceivedDate() != null) {
+				result.mdtDate = new Timestamp(copy.getReceivedDate().getTime());
 			} else {
 				result.mdtDate = null;
 			}
@@ -1202,12 +1286,12 @@ public class MailConnector {
 	 *	This method returns an attachment, giving a message ID and an attachment ID
 	 *	It calls the methods to retrieve a message, and that message's attachments. 
 	 */
-	public static FileXfer getAttachment(String msgId, String folderId, String attachmentId) throws BigBangJewelException {
+	public static FileXfer getAttachment(String msgId, String folderId, String attachmentId, String existingUserEmail) throws BigBangJewelException {
 
 		// Gets a message from a given folder, with a given ID
-		Message message = getMessage(msgId, folderId);
+		Message message = conditionalGetMessage(folderId, msgId, existingUserEmail);
 
-		Map<String, BodyPart> messageAttachments = getAttachmentsMap(message);
+		LinkedHashMap<String, BodyPart> messageAttachments = conditionalGetAttachmentsMap((MimeMessage) message, existingUserEmail);
 		BodyPart attachment; 
 
 		InputStream attachmentStream;
@@ -1221,9 +1305,14 @@ public class MailConnector {
 		if (attachmentStream != null) {
 			try {
 				String contentType = attachment.getContentType();
+				// Special case for eml attachments (since I cannot do it any other way, apparently)
+				if (attachmentId!=null && (attachmentId.length() > 3) &&  attachmentId.substring(attachmentId.length() - 4).equals(".eml") ) {
+					contentType = "message/rfc822; name=\"" + attachmentId + "\"";
+				}
 				String mimeType = contentType!=null ? contentType.split(";")[0] : null;
-				FileXfer attachmentXFer = new FileXfer(attachment.getSize(), mimeType, 
-						attachment.getFileName(), attachmentStream);
+				String fileName = (attachment.getFileName()==null || attachment.getFileName().length()==0) ? attachmentId : attachment.getFileName();
+				FileXfer attachmentXFer = new FileXfer(attachment.getSize(), mimeType,
+						fileName, attachmentStream);
 				return attachmentXFer;
 			} catch (Throwable e) {
 				throw new BigBangJewelException(e.getMessage(), e);
@@ -1300,7 +1389,7 @@ public class MailConnector {
 			OAuthHandler.initialize();
 			initializeStore();
 			
-			String userMail = MailConnector.getUserEmail();
+			String userMail = getUserEmail();
 			result = storesByUser.get(userMail).getDefaultFolder().list("*");
 
 		} catch (Throwable e) {
@@ -1321,8 +1410,8 @@ public class MailConnector {
 		}
 		
 		try {
-			String userMail = MailConnector.getUserEmail();
-			lastMessageUser.put(userMail, msg);
+			String key = getUserEmail() + "_|_" + msg.getHeader("Message-Id")[0];
+			lastMessageUser.put(key, msg);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}		
@@ -1331,7 +1420,7 @@ public class MailConnector {
 	/**
 	 * This method returns the stored users' message
 	 */
-	public static Message getStoredMessage() throws BigBangJewelException {
+	public static Message getStoredMessage(String existingUserMail, String messageId) throws BigBangJewelException {
 		
 		Message result = null; 
 				
@@ -1340,12 +1429,218 @@ public class MailConnector {
 		}
 		
 		try {
-			String userMail = MailConnector.getUserEmail();
-			result = lastMessageUser.get(userMail);
+			String userMail = existingUserMail == null ? getUserEmail() : existingUserMail;
+			String key = userMail + "_|_" + messageId;
+			result = lastMessageUser.get(key);
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage() + " 1063 ", e);
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * This method "stores" in memory the users' current attachments
+	 * @param mailMessage 
+	 */
+	public static void storeLastAttachments(MimeMessage mailMessage, LinkedHashMap<String, BodyPart> atts) throws BigBangJewelException {
+		
+		if (lastAttachmentsMapUser == null) {
+			lastAttachmentsMapUser = new HashMap<String, LinkedHashMap<String, BodyPart>>();
+		}
+		
+		try {
+			String key = getUserEmail() + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			lastAttachmentsMapUser.put(key, atts);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}		
+	}
+	
+	/**
+	 * This method returns the stored users' attachments
+	 */
+	public static LinkedHashMap<String, BodyPart> getStoredAttachments(MimeMessage mailMessage, String existingUserEmail) throws BigBangJewelException {
+		
+		LinkedHashMap<String, BodyPart> result = null; 
+		
+		try {
+			String userEmail = (existingUserEmail == null || existingUserEmail.length()==0) ? getUserEmail() : existingUserEmail;
+			String key = userEmail + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			result = lastAttachmentsMapUser==null? null : lastAttachmentsMapUser.get(key);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage() + " 1116 ", e);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * This method "stores" in memory the users' current ready to display message
+	 */
+	public static void storeLastPreparedBody(MimeMessage mailMessage, String body) throws BigBangJewelException {
+		
+		if (lastPreparedBodyUser == null) {
+			lastPreparedBodyUser = new HashMap<String, String>();
+		}
+		
+		try {
+			String key = getUserEmail() + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			lastPreparedBodyUser.put(key, body);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage(), e);
+		}		
+	}
+	
+	/**
+	 * This method returns the stored users' attachments
+	 */
+	public static String getStoredPreparedBody(MimeMessage mailMessage) throws BigBangJewelException {
+		
+		String result = null; 
+		
+		try {
+			String key = getUserEmail() + "_|_" + mailMessage.getHeader("Message-Id")[0];
+			result = lastPreparedBodyUser==null ? null : lastPreparedBodyUser.get(key);
+		} catch (Throwable e) {
+			throw new BigBangJewelException(e.getMessage() + " 1116 ", e);
+		}
+		
+		return result;
+	}
+	
+	public static String conditionalGetBody(MimeMessage mailMessage,
+			LinkedHashMap<String, BodyPart> attachmentsMap) throws BigBangJewelException {
+		
+		String result = getStoredPreparedBody(mailMessage);
+		
+		if (result==null) {
+			try {
+				Object content = null;
+				try {
+					content = mailMessage.getContent();
+				} catch (MessagingException m) {
+					if (mailMessage instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m.getMessage())) {
+						MimeMessage msgFix = new MimeMessage((MimeMessage) mailMessage);
+						content = msgFix.getContent();
+		            } else {
+		                throw m;
+		            }
+				}
+				if (content instanceof Multipart && attachmentsMap != null) {
+					result = attachmentsMap.get("main").getContent().toString();
+					result = prepareBodyInline(result, attachmentsMap);
+				} else {
+					result = prepareSimpleBody(content.toString());
+				}
+			} catch (Exception e) {
+				throw new BigBangJewelException("Problems while getting the stored prepared body " + e.getMessage());
+			}
+			storeLastPreparedBody(mailMessage, result);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Tries to get the stored attachments map, from a message
+	 */
+	public static LinkedHashMap<String, BodyPart> conditionalGetAttachmentsMap(
+			MimeMessage mailMessage, String existingUserEmail) throws BigBangJewelException {
+		
+		LinkedHashMap<String, BodyPart> attachmentsMap = getStoredAttachments(mailMessage, existingUserEmail);
+		if (attachmentsMap == null || attachmentsMap.size()==0) {
+			attachmentsMap = getAttachmentsMap(mailMessage);
+			storeLastAttachments(mailMessage, attachmentsMap);
+		}	
+		
+		return attachmentsMap;
+	}
+
+	/**
+	 * Tries to get the stored message, so it does not have to fetch it from gmail.
+	 * If it is not possible, gets the message
+	 */
+	public static MimeMessage conditionalGetMessage(String folderId, String id, String existingUserEmail)
+			throws BigBangJewelException {
+		
+		MimeMessage mailMessage = (MimeMessage) getStoredMessage(existingUserEmail, id);
+		
+		try {
+			if (mailMessage != null && mailMessage.getFolder() != null && 
+					mailMessage.getFolder().getName() != null && mailMessage.getFolder().getFullName().equals(folderId) &&
+					mailMessage.getHeader("Message-Id")[0]!=null && mailMessage.getHeader("Message-Id")[0].equals(id)) {
+			
+				return mailMessage;
+			}			
+		} catch (MessagingException e) {
+			throw new BigBangJewelException("Error while checking stored message's existence: " + e.getMessage());
+		}		
+		
+		mailMessage = (MimeMessage) getMessage(id, folderId);
+		storeLastMessage(mailMessage);
+		
+		return mailMessage;
+	}
+	
+	/**
+	 * Clears the stored message, attachments'map or prepared bodies, on demand.
+	 */
+	public static void clearStoredValues(boolean clearMessage,
+			boolean clearAttsMap, boolean clearPreparedBody,
+			MimeMessage mailMessage) throws BigBangJewelException {
+
+		String userKey = getUserEmail();
+		String fullKey = userKey;
+		String messageId = "";
+
+		try {
+			messageId = mailMessage.getHeader("Message-Id")[0];
+			fullKey = fullKey + "_|_" + messageId;
+		} catch (MessagingException e) {
+			throw new BigBangJewelException(
+					"Error while cleaning stored values: " + e.getMessage());
+		}
+
+		if (clearMessage) {
+			if (getStoredMessage(null, messageId) != null) {
+				lastMessageUser.remove(fullKey);
+			}
+		}
+
+		if (clearAttsMap) {
+			if (getStoredAttachments(mailMessage, null) != null) {
+				lastAttachmentsMapUser.remove(fullKey);
+			}
+		}
+
+		if (clearPreparedBody) {
+			if (getStoredPreparedBody(mailMessage) != null) {
+				lastPreparedBodyUser.remove(fullKey);
+			}
+		}
+	}
+	
+	/**
+	 * Clears the stored message, attachments'map or prepared bodies, on demand.
+	 */
+	public static void clearAttsMap(String userMail, String msgId) {
+
+		String userKey = userMail;
+		String fullKey = userKey + "_|_" + msgId;
+
+		if (lastAttachmentsMapUser != null && lastAttachmentsMapUser.get(fullKey) != null) {
+			lastAttachmentsMapUser.remove(fullKey);
+		}
+	}
+	
+	public static void clearStoredMessage(String userMail, String msgId) {
+
+		String userKey = userMail;
+		String fullKey = userKey + "_|_" + msgId;
+
+		if (lastMessageUser!=null && lastMessageUser.get(fullKey) != null) {
+			lastMessageUser.remove(fullKey);
+		}
 	}
 }

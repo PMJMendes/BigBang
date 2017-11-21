@@ -40,4 +40,5 @@ public class ReceiptStub
 	public String statusId;
 	public String statusText;
 	public ReceiptStatus statusIcon;
+	public String barcode;
 }

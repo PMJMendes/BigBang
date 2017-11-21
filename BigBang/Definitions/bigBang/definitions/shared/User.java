@@ -20,6 +20,7 @@ public class User
 	public String mediatorId;
 	public String title;
 	public String phone;
+	public boolean changeInsurer;
 
 	public User() {};
 
@@ -37,5 +38,6 @@ public class User
 		this.mediatorId = original.mediatorId;
 		this.title = original.title;
 		this.phone = original.phone;
+		this.changeInsurer = original.changeInsurer;
 	}
 }

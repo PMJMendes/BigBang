@@ -87,6 +87,7 @@ public class Receipt
 		public static final int POLICY            = 23;
 		public static final int SUBPOLICY         = 24;
 		public static final int SUBCASUALTY       = 25;
+		public static final int BARCODE           = 26;
 	}
 
 	private static BigDecimal COLLECTION_COMMISSION = new BigDecimal("1.25");
@@ -1096,8 +1097,12 @@ public class Receipt
 					prevPremiums[0] = (BigDecimal)policy.getAt(Policy.I.PREMIUM);
 					prevPremiums[1] = (BigDecimal)policy.getAt(Policy.I.TOTALPREMIUM);
 					try {
-						policy.setAt(Policy.I.PREMIUM, newPremium);
-						policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
+						if (newPremium != null) {
+							policy.setAt(Policy.I.PREMIUM, newPremium);
+						}
+						if (newTotalPr != null) {
+							policy.setAt(Policy.I.TOTALPREMIUM, newTotalPr);
+						}
 						policy.SaveToDb(pdb);
 						
 						return prevPremiums;						

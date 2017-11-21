@@ -39,6 +39,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HasValue;
@@ -300,8 +301,11 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 			@Override
 			public void onResponse(String response) {
 				currentPrintFileId = response;
-				Frame frame = ConversationViewPresenter.this.view.getPrintFrame();
-				frame.setUrl(GWT.getModuleBaseURL() + "bbfile?fileref=" + response);
+				/*Frame frame = ConversationViewPresenter.this.view.getPrintFrame();
+				frame.setUrl(GWT.getModuleBaseURL() + "bbfile?fileref=" + response);*/
+				// New way to print with styling
+				// https://stackoverflow.com/questions/44586986/why-is-google-chrome-not-printing-table-and-cell-borders-and-cell-background-co
+				Window.open(GWT.getModuleBaseURL() + "bbfile?fileref=" + response , null, null);
 			}
 
 			@Override
@@ -590,7 +594,7 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		}
 		else{
 			if(conversationId == null){
-				onGetConversationFailed();
+				onGetConversationFailed("Could not get the conversation");
 			}
 			else{
 				getConversation();
@@ -625,7 +629,11 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onGetConversationFailed();
+				String errorStr = "";
+				for (ResponseError err : errors) {
+					errorStr = errorStr + err.description + " ";
+				}
+				onGetConversationFailed(errorStr);
 			}
 		});
 	}
@@ -642,8 +650,8 @@ public abstract class ConversationViewPresenter<T extends ProcessBase> implement
 		view.allowReopen(PermissionChecker.hasPermission(conversation, BigBangConstants.OperationIds.ConversationProcess.REOPEN));
 	}
 
-	private void onGetConversationFailed() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a troca de mensagens."), TYPE.ALERT_NOTIFICATION));
+	private void onGetConversationFailed(String err) {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a troca de mensagens. " + err), TYPE.ALERT_NOTIFICATION));
 
 	}
 

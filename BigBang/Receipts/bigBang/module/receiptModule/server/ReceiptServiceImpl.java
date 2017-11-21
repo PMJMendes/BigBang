@@ -222,6 +222,7 @@ public class ReceiptServiceImpl
 		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
 		lobjResult.inheritMediatorName = lobjMed.getLabel();
 		lobjResult.notes = (String)lobjReceipt.getAt(13);
+		lobjResult.barcode = (String)lobjReceipt.getAt(26);
 
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
 
@@ -257,6 +258,7 @@ public class ReceiptServiceImpl
 		lobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
 		lobjData.mstrNotes = receipt.notes;
 		lobjData.mstrDescription = receipt.description;
+		lobjData.mstrBarCode = receipt.barcode;
 
 		lobjData.midManager = ( receipt.managerId == null ? null : UUID.fromString(receipt.managerId) );
 		lobjData.midProcess = ( receipt.processId == null ? null : UUID.fromString(receipt.processId) );
@@ -402,6 +404,7 @@ public class ReceiptServiceImpl
             	lobjStub.statusId = lobjStatus.getKey().toString();
             	lobjStub.statusText= lobjStatus.getLabel();
         		lobjStub.statusIcon = translateStatus((Integer)lobjStatus.getAt(1));
+        		lobjStub.barcode = (String)lobjReceipt.getAt(26);
     			lobjStub.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 
             	larrResult.add(lobjStub);
@@ -1543,7 +1546,7 @@ public class ReceiptServiceImpl
 		
 		javax.mail.Message storedMessage = null;
 		try {
-			storedMessage = MailConnector.getStoredMessage();
+			storedMessage = MailConnector.getStoredMessage(null, conversation.messages[0].emailId);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage() + " 1548 ", e);
 		}
@@ -2616,6 +2619,11 @@ public class ReceiptServiceImpl
 			pstrBuffer.append(" OR ");
 			pstrBuffer.append("([:Sub Policy:Policy:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(")");
+		}
+
+		if ( lParam.barcode != null )
+		{
+			pstrBuffer.append(" AND [:Bar Code] = '").append(lParam.barcode).append("'");
 		}
 
 		if ( lParam.companyId != null )

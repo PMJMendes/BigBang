@@ -277,7 +277,7 @@ implements SubCasualtyDataBroker{
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not mark the closing")
+						new String("Ocorreram os seguintes erros: " + caught.getMessage())
 				});
 				super.onResponseFailure(caught);
 			}

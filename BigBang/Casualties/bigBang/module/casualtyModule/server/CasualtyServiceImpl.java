@@ -38,6 +38,10 @@ import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingEntitiesData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyFramingHeadingsData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyInsurerRequestData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
@@ -103,6 +107,7 @@ public class CasualtyServiceImpl
 		lobjResult.isOpen = lobjProcess.IsRunning();
 		lobjResult.description = (String)lobjCasualty.getAt(3);
 		lobjResult.internalNotes = (String)lobjCasualty.getAt(4);
+		lobjResult.fraud = lobjCasualty.getAt(8) == null ? false : (Boolean)lobjCasualty.getAt(8);
 		lobjResult.percentFault = (lobjCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.Casualty.I.PERCENTFAULT)
 				== null ? null : ((BigDecimal)lobjCasualty.getAt(
 				com.premiumminds.BigBang.Jewel.Objects.Casualty.I.PERCENTFAULT)).doubleValue());
@@ -152,6 +157,7 @@ public class CasualtyServiceImpl
 		lopMD.mobjData.mdblPercentFault = (casualty.percentFault == null ? null :
 				new BigDecimal(casualty.percentFault + ""));
 		lopMD.mobjData.mbCaseStudy = casualty.caseStudy;
+		lopMD.mobjData.mbFraud = casualty.fraud;
 		lopMD.mobjData.midProcess = lobjCasualty.GetProcessID();
 		lopMD.mobjData.midManager = null;
 		lopMD.mobjData.mobjPrevValues = null;
@@ -305,7 +311,7 @@ public class CasualtyServiceImpl
 		
 		javax.mail.Message storedMessage = null;
 		try {
-			storedMessage = MailConnector.getStoredMessage();
+			storedMessage = MailConnector.getStoredMessage(null, conversation.messages[0].emailId);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage() + " 310 ", e);
 		}
@@ -364,6 +370,8 @@ public class CasualtyServiceImpl
 		lopCSC.mobjData.midCasualty = lobjCasualty.getKey();
 		lopCSC.mobjData.midServiceCenter = ( subCasualty.serviceCenterId == null ? null :
 				UUID.fromString(subCasualty.serviceCenterId) );
+		
+		lopCSC.mobjData.mbTotalLoss = subCasualty.totalLoss;
 
 		if ( subCasualty.items != null )
 		{
@@ -401,6 +409,114 @@ public class CasualtyServiceImpl
 		}
 		else
 			lopCSC.mobjData.marrItems = null;
+		
+		if ( subCasualty.insurerRequests != null ) {
+			lopCSC.mobjData.requests = new SubCasualtyInsurerRequestData[subCasualty.insurerRequests.length];
+			for ( i = 0; i < lopCSC.mobjData.requests.length; i++ ) {
+				lopCSC.mobjData.requests[i] = new SubCasualtyInsurerRequestData();
+				lopCSC.mobjData.requests[i].typeId = (subCasualty.insurerRequests[i].insurerRequestTypeId == null ? null :
+					UUID.fromString(subCasualty.insurerRequests[i].insurerRequestTypeId));
+				lopCSC.mobjData.requests[i].clarificationTypeId = (subCasualty.insurerRequests[i].clarificationTypeId == null ? null :
+					UUID.fromString(subCasualty.insurerRequests[i].clarificationTypeId));
+				lopCSC.mobjData.requests[i].requestDate = (subCasualty.insurerRequests[i].requestDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].requestDate + " 00:00:00.0"));
+				lopCSC.mobjData.requests[i].acceptanceDate = (subCasualty.insurerRequests[i].acceptanceDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].acceptanceDate + " 00:00:00.0"));
+				lopCSC.mobjData.requests[i].conforms = subCasualty.insurerRequests[i].conforms;
+				lopCSC.mobjData.requests[i].resendDate = (subCasualty.insurerRequests[i].resendDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].resendDate + " 00:00:00.0"));
+				lopCSC.mobjData.requests[i].clarificationDate = (subCasualty.insurerRequests[i].clarificationDate == null ? null :
+					Timestamp.valueOf(subCasualty.insurerRequests[i].clarificationDate + " 00:00:00.0"));
+				
+				lopCSC.mobjData.requests[i].isNew = !subCasualty.insurerRequests[i].deleted;
+				lopCSC.mobjData.requests[i].isDeleted = subCasualty.insurerRequests[i].deleted;
+			}
+		} else {
+			lopCSC.mobjData.requests = null;
+		}
+		
+		// Framing
+		if (subCasualty.framing != null) {
+			lopCSC.mobjData.framing = new SubCasualtyFramingData();
+			lopCSC.mobjData.framing.analysisDate = (subCasualty.framing.analysisDate == null ? null :
+				Timestamp.valueOf(subCasualty.framing.analysisDate + " 00:00:00.0"));
+			lopCSC.mobjData.framing.wasDifficult = subCasualty.framing.framingDifficulty;
+			lopCSC.mobjData.framing.policyValid = subCasualty.framing.validPolicy;
+			lopCSC.mobjData.framing.validityNotes = subCasualty.framing.validityNotes;
+			lopCSC.mobjData.framing.areGeneralExclusions = subCasualty.framing.generalExclusions;
+			lopCSC.mobjData.framing.generalExclusionsNotes = subCasualty.framing.generalExclusionNotes;
+			lopCSC.mobjData.framing.isCoverageRelevant = subCasualty.framing.relevantCoverages;
+			lopCSC.mobjData.framing.coverageRelevancyNotes = subCasualty.framing.coverageRelevancyNotes;
+			lopCSC.mobjData.framing.coverageValue = (subCasualty.framing.coverageValue == null ? null : new BigDecimal(subCasualty.framing.coverageValue + ""));
+			lopCSC.mobjData.framing.areCoverageExclusions = subCasualty.framing.coverageExclusions;
+			lopCSC.mobjData.framing.coverageExclusionsNotes = subCasualty.framing.coverageExclusionsNotes;
+			lopCSC.mobjData.framing.franchise = (subCasualty.framing.franchise == null ? null : new BigDecimal(subCasualty.framing.franchise + ""));
+			lopCSC.mobjData.framing.franchiseType = (subCasualty.framing.deductibleTypeId == null ? null :
+				UUID.fromString(subCasualty.framing.deductibleTypeId));
+			lopCSC.mobjData.framing.insurerEvaluation = (subCasualty.framing.insurerEvaluationId == null ? null :
+				UUID.fromString(subCasualty.framing.insurerEvaluationId));
+			lopCSC.mobjData.framing.insurerEvaluationNotes = subCasualty.framing.insurerEvaluationNotes;
+			lopCSC.mobjData.framing.expertEvaluation = (subCasualty.framing.expertEvaluationId == null ? null :
+				UUID.fromString(subCasualty.framing.expertEvaluationId));
+			lopCSC.mobjData.framing.expertEvaluationNotes = subCasualty.framing.expertEvaluationNotes;
+			lopCSC.mobjData.framing.coverageNotes = subCasualty.framing.coverageNotes;
+			lopCSC.mobjData.framing.wasCasualtyDeclined = subCasualty.framing.declinedCasualty;
+			lopCSC.mobjData.framing.declinedCasualtyNotes = subCasualty.framing.declinedCasualtyNotes;
+			lopCSC.mobjData.framing.wasDeclineWarned = subCasualty.framing.declinedWarning;
+			lopCSC.mobjData.framing.declinedWarningNotes = subCasualty.framing.declinedWarningNotes;
+			
+			if (subCasualty.framing.headings != null) {
+				
+				lopCSC.mobjData.framing.framingHeadings = new SubCasualtyFramingHeadingsData();
+				lopCSC.mobjData.framing.framingHeadings.baseSalary = subCasualty.framing.headings.baseSalary == null ? null : new BigDecimal(subCasualty.framing.headings.baseSalary+"");
+				lopCSC.mobjData.framing.framingHeadings.feedAllowance = subCasualty.framing.headings.feedAllowance == null ? null : new BigDecimal(subCasualty.framing.headings.feedAllowance+"");
+				lopCSC.mobjData.framing.framingHeadings.otherFees12 = subCasualty.framing.headings.otherFees12 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees12+"");
+				lopCSC.mobjData.framing.framingHeadings.otherFees14 = subCasualty.framing.headings.otherFees14 == null ? null : new BigDecimal(subCasualty.framing.headings.otherFees14+"");
+				
+				// Sums the headings' values to define the coverage value.
+				BigDecimal sum = new BigDecimal(0);
+				if (lopCSC.mobjData.framing.framingHeadings.baseSalary!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.baseSalary);
+				}
+				if (lopCSC.mobjData.framing.framingHeadings.feedAllowance!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.feedAllowance);
+				}
+				if (lopCSC.mobjData.framing.framingHeadings.otherFees12!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.otherFees12);
+				}
+				if (lopCSC.mobjData.framing.framingHeadings.otherFees14!=null) {
+					sum = sum.add(lopCSC.mobjData.framing.framingHeadings.otherFees14);
+				}
+				lopCSC.mobjData.framing.coverageValue = sum;
+
+				lopCSC.mobjData.framing.framingHeadings.isNew = !subCasualty.framing.headings.deleted;
+				lopCSC.mobjData.framing.framingHeadings.isDeleted = subCasualty.framing.headings.deleted;
+			} else {
+				lopCSC.mobjData.framing.framingHeadings = null;
+			}
+			
+			lopCSC.mobjData.framing.isNew = !subCasualty.framing.deleted;
+			lopCSC.mobjData.framing.isDeleted = subCasualty.framing.deleted;
+			
+			if (subCasualty.framing.framingEntities != null) {
+				lopCSC.mobjData.framing.framingEntities = new SubCasualtyFramingEntitiesData[subCasualty.framing.framingEntities.length];
+				for (i=0; i<lopCSC.mobjData.framing.framingEntities.length; i++) {
+					lopCSC.mobjData.framing.framingEntities[i] = new SubCasualtyFramingEntitiesData();
+					lopCSC.mobjData.framing.framingEntities[i].entityType = (subCasualty.framing.framingEntities[i].entityTypeId == null ? null :
+						UUID.fromString(subCasualty.framing.framingEntities[i].entityTypeId));
+					lopCSC.mobjData.framing.framingEntities[i].evaluation = (subCasualty.framing.framingEntities[i].evaluationId == null ? null :
+						UUID.fromString(subCasualty.framing.framingEntities[i].evaluationId));
+					lopCSC.mobjData.framing.framingEntities[i].notes = subCasualty.framing.framingEntities[i].evaluationNotes;
+					
+					lopCSC.mobjData.framing.framingEntities[i].isNew = !subCasualty.framing.framingEntities[i].deleted;
+					lopCSC.mobjData.framing.framingEntities[i].isDeleted = subCasualty.framing.framingEntities[i].deleted;
+				}
+			} else {
+				subCasualty.framing.framingEntities =null;
+			}
+		} else {
+			lopCSC.mobjData.framing = null;
+		}
 
 		lopCSC.mobjContactOps = null;
 		lopCSC.mobjDocOps = null;
@@ -584,11 +700,11 @@ public class CasualtyServiceImpl
 		}
 		catch (Throwable e)
 		{
-			return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
+			return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Is Fraud]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
 					"NULL", "NULL", "NULL", "NULL", "NULL"};
 		}
 
-		return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
+		return new String[] {"[:Number]", "[:Process]", "[:Date]", "[:Case Study]", "[:Is Fraud]", "[:Client]", "[:Client:Name]", "[:Client:Number]", "[:Process:Running]",
 				"(SELECT [:Policy:SubLine:Description] FROM (" + lstrMulti + ") [SC1] WHERE [:Number] = " +
 						"(SELECT MIN([:Number]) FROM (" + lstrSingle + ") [SC0] WHERE [:Casualty]=[Aux].[PK]))",
 				"(SELECT [:Sub Policy:Policy:SubLine:Description] FROM (" + lstrMulti + ") [SC1] WHERE [:Number] = " +
@@ -670,6 +786,11 @@ public class CasualtyServiceImpl
 		if ( (lParam.caseStudy != null) && lParam.caseStudy )
 		{
 			pstrBuffer.append(" AND [:Case Study] = 1");
+		}
+		
+		if ( (lParam.fraud != null) && lParam.fraud )
+		{
+			pstrBuffer.append(" AND [:Is Fraud] = 1");
 		}
 
 		if ( lParam.managerId != null )
@@ -809,27 +930,27 @@ public class CasualtyServiceImpl
 //		catch (Throwable e)
 //		{
 //		}
-
-		lstrCat = (String)parrValues[8];
+		lstrCat = (String)parrValues[9];
 		if (lstrCat == null)
-			lstrCat = (String)parrValues[9];
+			lstrCat = (String)parrValues[10];
 
-		lstrObj = (String)parrValues[10];
-		if (lstrObj == null)
-			lstrObj = (String)parrValues[11];
+		lstrObj = (String)parrValues[11];
 		if (lstrObj == null)
 			lstrObj = (String)parrValues[12];
+		if (lstrObj == null)
+			lstrObj = (String)parrValues[13];
 
 		lobjResult = new CasualtyStub();
 
 		lobjResult.id = pid.toString();
 		lobjResult.processNumber = (String)parrValues[0];
-		lobjResult.clientId = ((UUID)parrValues[4]).toString();
-		lobjResult.clientNumber = ((Integer)parrValues[6]).toString();
-		lobjResult.clientName = (String)parrValues[5];
+		lobjResult.clientId = ((UUID)parrValues[5]).toString();
+		lobjResult.clientNumber = ((Integer)parrValues[7]).toString();
+		lobjResult.clientName = (String)parrValues[6];
 		lobjResult.casualtyDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		lobjResult.caseStudy = (Boolean)parrValues[3];
-		lobjResult.isOpen = (Boolean)parrValues[7];
+		lobjResult.isOpen = (Boolean)parrValues[8];
+		lobjResult.fraud = parrValues[4]==null ? false : (Boolean)parrValues[4];
 		lobjResult.policyCategory = lstrCat;
 		lobjResult.insuredObject = lstrObj;
 		lobjResult.processId = (parrValues[1] == null ? null : ((UUID)parrValues[1]).toString());

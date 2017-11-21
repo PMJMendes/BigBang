@@ -2403,6 +2403,54 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								+ policy.getLabel(), e);
 			}
 		}
+		
+		// Case in which the value comes from the object's capital
+		if (policyCat.equals(Constants.PolicyCategories.TRANSPORTED_GOODS) &&
+				policySubLine.equals(Constants.PolicySubLines.TRANSPORTED_GOODS_CASUAL)) {
+			try {
+				String val = getValueWithTags(policyValues, insuredObject,
+						currentExercise, null,
+						Constants.PolicyValuesTags.VALUE, false,
+						false);
+				if (val == null) {
+					val = WHITESPACE;
+				}
+				result.add(val);
+				return result;
+			} catch (Throwable e) {
+				throw new BigBangJewelException(
+						e.getMessage()
+								+ " Error while getting the insured value for transported goods for policy "
+								+ policy.getLabel(), e);
+			}
+		}
+		
+		// Case in which the value comes from the object's capital, but may also be 'DIVERS'
+		// if more than one insuredObject exists for that policy
+		if (policyCat.equals(Constants.PolicyCategories.TRANSPORTED_GOODS) &&
+				policySubLine.equals(Constants.PolicySubLines.TRANSPORTED_GOODS_OWN_ACCOUNT)) {
+			if (hasMultipleObjects(policy)) {
+				result.add(MULTIPLE_M);
+				return result;
+			} else {
+				try {
+					String val = getValueWithTags(policyValues, insuredObject,
+							currentExercise, null,
+							Constants.PolicyValuesTags.VALUE, false,
+							false);
+					if (val == null) {
+						val = WHITESPACE;
+					}
+					result.add(val);
+					return result;
+				} catch (Throwable e) {
+					throw new BigBangJewelException(
+							e.getMessage()
+									+ " Error while getting the insured value for transported goods for policy "
+									+ policy.getLabel(), e);
+				}	
+			}
+		}
 
 		// Case in which the value comes from the maximum transportation limit
 		if (policyCat.equals(Constants.PolicyCategories.TRANSPORTED_GOODS)) {
@@ -2414,6 +2462,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 				if (val == null) {
 					val = WHITESPACE;
 				}
+				if (val.equals("-1,00")) {
+					val = MULTIPLE_M;
+				}
 				result.add(val);
 				return result;
 			} catch (Throwable e) {
@@ -2422,6 +2473,14 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								+ " Error while getting the insured value from transportation limit for policy "
 								+ policy.getLabel(), e);
 			}
+		}
+		
+		// Case in which the value should read '-'
+		if (policyCat.equals(Constants.PolicyCategories.LIFE) &&
+				policyLine.equals(Constants.PolicyLines.LIFE_FINANCE)) {
+			String val = NO_VALUE;
+			result.add(val);
+			return result;
 		}
 
 		/*
@@ -2471,8 +2530,9 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 		UUID policyLine = policy.GetSubLine().getLine().getKey();
 
 		// Case in which the tax comes from the sales'tax
-		if (policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
-				|| policyCat.equals(Constants.PolicyCategories.LIFE)) {
+		if ((policyCat.equals(Constants.PolicyCategories.WORK_ACCIDENTS)
+				|| policyCat.equals(Constants.PolicyCategories.LIFE)) && 
+				!policyLine.equals(Constants.PolicyLines.LIFE_FINANCE)) {
 			try {
 				String tax = getValueWithTags(policyValues, insuredObject,
 						currentExercise, null,
@@ -2490,6 +2550,13 @@ public class PolicyPortfolioClient extends PolicyListingsBase {
 								+ " Error while getting the tax from sales'tax for policy "
 								+ policy.getLabel(), e);
 			}
+		}
+		
+		// Case in which the tax should read '-'
+		if (policyCat.equals(Constants.PolicyCategories.LIFE)
+				&& policyLine
+						.equals(Constants.PolicyLines.LIFE_FINANCE)) {
+			return new ArrayList<String>(Arrays.asList(NO_VALUE));
 		}
 
 		// Case in which the tax comes from the Sales' Premium

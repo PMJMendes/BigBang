@@ -19,14 +19,15 @@ public class UserDecoration
 {
 	public static class I
 	{
-		public static int OWNER       = 0;
-		public static int EMAIL       = 1;
-		public static int COSTCENTER  = 2;
-		public static int MIGRATIONID = 3;
-		public static int PRINTERNAME = 4;
-		public static int SURROGATE   = 5;
-		public static int TITLE       = 6;
-		public static int PHONE       = 7;
+		public static int OWNER       		= 0;
+		public static int EMAIL       		= 1;
+		public static int COSTCENTER  		= 2;
+		public static int MIGRATIONID 		= 3;
+		public static int PRINTERNAME 		= 4;
+		public static int SURROGATE   		= 5;
+		public static int TITLE       		= 6;
+		public static int PHONE       		= 7;
+		public static int BCHANGEINSURER	= 8;
 	}
 
     public static UserDecoration GetInstance(UUID pidNameSpace, UUID pidKey)

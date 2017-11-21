@@ -1,26 +1,34 @@
 package com.premiumminds.BigBang.Jewel.Operations.Conversation;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.BodyPart;
-import javax.mail.Multipart;
+import javax.mail.internet.MimeMessage;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocDataLight;
+import com.premiumminds.BigBang.Jewel.Data.MessageAttachmentData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Conversation;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
@@ -91,6 +99,7 @@ public class ReceiveMessage
 		int i, j, k;
 		boolean b;
 		Map<String, String> larrAttTrans;
+		UUID msgID = null;
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 
@@ -165,8 +174,6 @@ public class ReceiveMessage
 			throw new JewelPetriException(e.getMessage() + "165 ", e);
 		}
 
-		if ( mobjData.mobjDocOps != null )
-			mobjData.mobjDocOps.RunSubOp(pdb, lidContainer);
 		if ( mobjData.mobjContactOps != null )
 			mobjData.mobjContactOps.RunSubOp(pdb, lidContainer);
 
@@ -179,6 +186,7 @@ public class ReceiveMessage
 			mobjData.ToObject(lobjMessage);
 			lobjMessage.SaveToDb(pdb);
 			mobjData.mid = lobjMessage.getKey();
+			msgID = lobjMessage.getKey();
 
 			if ( mobjData.marrAddresses != null )
 			{
@@ -240,23 +248,34 @@ public class ReceiveMessage
 					mobjData.marrAddresses[i].mid = lobjAddr.getKey();
 				}
 			}
-
-			if ( mobjData.marrAttachments != null )
+			
+			if ( mobjData.marrAttachments != null ) // ou cria um doc op falso,ou aqui tem q apanhar o correspondente tb pode "re-orde
 			{
-				for ( i = 0; i < mobjData.marrAttachments.length; i++ )
-				{
-					if ( (mobjData.marrAttachments[i].midDocument == null) &&
-							(mobjData.mobjDocOps != null) &&
-							(mobjData.mobjDocOps.marrCreate2 != null) &&
-							(mobjData.mobjDocOps.marrCreate2.length > i) &&
-							(mobjData.mobjDocOps.marrCreate2[i] != null) )
-						mobjData.marrAttachments[i].midDocument = mobjData.mobjDocOps.marrCreate2[i].mid;
-
-					mobjData.marrAttachments[i].midOwner = lobjMessage.getKey();
-					lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrAttachments[i].ToObject(lobjAttachment);
-					lobjAttachment.SaveToDb(pdb);
-					mobjData.marrAttachments[i].mid = lobjAttachment.getKey();
+				for ( i = 0; i < mobjData.marrAttachments.length; i++ ) {
+					
+					boolean saveAtt = true;
+					
+					if (mobjData.marrAttachments[i].mstrAttId != null) {
+						
+						if ((mobjData.mobjDocOps != null) && 
+								(mobjData.mobjDocOps.marrCreate2 != null)) {
+							for (int u=0; u<mobjData.mobjDocOps.marrCreate2.length; u++) {
+								if ((mobjData.mobjDocOps.marrCreate2[u].mstrText != null) &&
+									(mobjData.mobjDocOps.marrCreate2[u].mstrText.equals(mobjData.marrAttachments[i].mstrAttId))	) {
+									saveAtt = false;
+									break;
+								}
+							}
+						}
+						
+						if (saveAtt) {
+							mobjData.marrAttachments[i].midOwner = lobjMessage.getKey();
+							lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrAttachments[i].ToObject(lobjAttachment);
+							lobjAttachment.SaveToDb(pdb);
+							mobjData.marrAttachments[i].mid = lobjAttachment.getKey();
+						}
+					}
 				}
 			}
 		}
@@ -269,46 +288,120 @@ public class ReceiveMessage
 		{
 			try
 			{
-				javax.mail.Message mailMsg = MailConnector.getStoredMessage(); 
-				if (mailMsg == null) {
-					mailMsg = MailConnector.getMessage(mobjData.mstrEmailID, mobjData.mstrFolderID);
-				}
+				javax.mail.Message mailMsg = MailConnector.conditionalGetMessage(mobjData.mstrFolderID, mobjData.mstrEmailID, null);
 				
-				Map<String, BodyPart> mailAttachments = MailConnector.getAttachmentsMap(mailMsg);
-				Object content = mailMsg.getContent();
-				String tmpBody;
-				if (content instanceof Multipart && mailAttachments != null) {
-					tmpBody = mailAttachments.get("main").getContent().toString();
-					tmpBody = MailConnector.prepareBodyInline(tmpBody, mailAttachments);
-				} else {
-					tmpBody = content.toString();
-					tmpBody = MailConnector.prepareSimpleBody(tmpBody);
-				}		
+				LinkedHashMap<String, BodyPart> mailAttachments = MailConnector.conditionalGetAttachmentsMap((MimeMessage) mailMsg, null);
+				String tmpBody = MailConnector.conditionalGetBody((MimeMessage) mailMsg, mailAttachments);
 				
 				larrAttTrans = MailConnector.processItem(mobjData.mstrEmailID, mobjData.mstrFolderID, mailMsg, mailAttachments);
 				mobjData.mstrEmailID = larrAttTrans.get("_");
 				mobjData.mstrBody = tmpBody;
 				mobjData.ToObject(lobjMessage);
 				lobjMessage.SaveToDb(pdb);
-
-				if ( mobjData.marrAttachments != null )
-				{
-					for ( i = 0; i < mobjData.marrAttachments.length; i++ )
-					{
-						lobjAttachment = MessageAttachment.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrAttachments[i].mid);
-						mobjData.marrAttachments[i].ToObject(lobjAttachment);
-						lobjAttachment.SaveToDb(pdb);
-					}
-				}
 				
 				// Calls the method responsble for updating the message to google storage.
-				StorageConnector.uploadMailMessage(mailMsg, mobjData.mstrEmailID);
+				StorageConnector.threadedUpload(mailMsg, mobjData.mstrEmailID);
+				
+				// MailConnector.clearStoredValues(true, true, true, (MimeMessage) mailMsg);
 			}
 			catch (Throwable e)
 			{
 				throw new JewelPetriException(e.getMessage() + " 309 ", e);
 			}
 		}
+		
+		if ( mobjData.mobjDocOps != null ) {
+			try {
+				runThreadedCreateDocs(pdb, lidContainer, Engine.getCurrentNameSpace(), MailConnector.getUserEmail(), msgID);
+			} catch (BigBangJewelException e) {
+				// TODO Auto-generated catch block
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
+	}
+	
+	private void runThreadedCreateDocs(final SQLServer pdb, final UUID lidContainer, final UUID nmSpace, final String existingUserEmail, final UUID messageID) {
+		Runnable r = new Runnable() {
+			public void run() {
+				MessageData messageData = mobjData;
+				for (int i=0; i<messageData.marrAttachments.length; i++) {
+					MessageAttachmentData messageAttachmentData = messageData.marrAttachments[i];
+					if ( messageAttachmentData.mstrAttId != null )
+					{
+						FileXfer attachment = null;
+						try
+						{
+							for (int u=0; u<messageData.mobjDocOps.marrCreate2.length; u++) {
+								DocDataLight pobjData = messageData.mobjDocOps.marrCreate2[u];
+								if (pobjData.mstrText!=null && pobjData.mstrText.equals(messageAttachmentData.mstrAttId)) {
+									attachment = MailConnector.getAttachment(messageData.mstrEmailID,
+											messageData.mstrFolderID, messageAttachmentData.mstrAttId, existingUserEmail);
+									messageData.mobjDocOps.marrCreate2[u].mobjFile = attachment.GetVarData();
+									Document lobjAux = Document.GetInstance(nmSpace, (UUID)null);
+									pobjData.midOwnerId = lidContainer;
+									pobjData.mdtRefDate = new Timestamp(new java.util.Date().getTime());
+									pobjData.ToObject(lobjAux);
+									lobjAux.SetReadonly();
+									try
+									{
+										lobjAux.SaveToDb(pdb);
+									}
+									catch (Throwable e)
+									{
+										throw new BigBangJewelException(e.getMessage(), e);
+									}
+									
+									// Now saves the corresponding attachment, already with the corresponding fkdoc
+									MessageAttachment attachmentDb =  MessageAttachment.GetInstance(nmSpace, (UUID)null);
+									mobjData.marrAttachments[i].midDocument = lobjAux.getKey();
+									mobjData.marrAttachments[i].midOwner = messageID;
+									mobjData.marrAttachments[i].ToObject(attachmentDb);	
+									attachmentDb.SetReadonly();
+									try
+									{
+										attachmentDb.SaveToDb(pdb);
+									}
+									catch (Throwable e)
+									{
+										throw new BigBangJewelException(e.getMessage(), e);
+									}
+								}
+							}
+						}
+						catch (Throwable e)
+						{
+							if (attachment != null) {
+								String saveUrl = "C:\\unSavedDocs\\";
+								String fileName = messageAttachmentData.mstrAttId;
+								String filePath = saveUrl + fileName;
+								File file = new File(filePath);
+								if (!file.exists() && !file.isDirectory()) {
+									// Creates an output stream used to "write" to storage
+									FileOutputStream outputStream;
+									try {
+										outputStream = new FileOutputStream(file);
+										outputStream.write(attachment.getData());
+										outputStream.close();
+									} catch (Exception e1) {
+										// Puff.
+									}
+								}
+							}
+						}
+					}
+				}
+				MailConnector.clearAttsMap(existingUserEmail, messageData.mstrEmailID);
+				MailConnector.clearStoredMessage(existingUserEmail, messageData.mstrEmailID);
+				/*try {
+					//mobjData.marrMessages[0].mobjDocOps.RunSubOp(pdb, lidContainer);
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} */
+	        }
+		};
+		
+		new Thread(r).start();
 	}
 
 	public String UndoDesc(String pstrLineBreak)

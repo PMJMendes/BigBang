@@ -25,6 +25,45 @@ import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnect.StorageMethods;
 
 public class StorageConnector {
+	
+	/**
+	 * This method calls the method responsible for uploading a mail message to google
+	 * storage, but in a threadedWay, so the main execution of the program
+	 * doesn't have to be suspended while waiting for the upload to end.
+	 */
+	public static void threadedUpload (final Message tempItem, final String mailId) {
+		
+		Runnable r = new Runnable() {
+			 public void run() {
+				try {
+					uploadMailMessage(tempItem, mailId);
+				} catch (BigBangJewelException e) {
+
+					//If an error occurred, saves the file in a special folder so it may be uploaded manually later.
+					String storageURL = "C:\\unUploadedStorage\\";
+					String itemId = mailId.replaceAll("/", "_").replaceAll("<", "")
+							.replaceAll(">", "");
+					String fileName = itemId + Constants.GoogleAppsConstants.TMP_FILE_EXTENSION;
+					String filePath = storageURL + fileName;
+					File file = new File(filePath);
+					if (!file.exists() && !file.isDirectory()) {
+						// Creates an output stream used to "write" to storage
+						FileOutputStream outputStream;
+						try {
+							outputStream = new FileOutputStream(file);
+							tempItem.writeTo(outputStream);
+							outputStream.flush();
+							outputStream.close();
+						} catch (Exception e1) {
+							// Puff.
+						}
+					}
+				}
+	        }
+		};
+		
+		 new Thread(r).start();
+	}
 
 	/**
 	 * This method uploads a javax.Message to the google storage
@@ -260,6 +299,10 @@ public class StorageConnector {
 								.getValue().getInputStream());
 						String contentType = entry.getValue().getContentType()
 								.split(";")[0];
+						// Special case for eml attachments (since I cannot do it any other way, apparently)
+						if (attachmentId!=null && (attachmentId.length() > 3) &&  attachmentId.substring(attachmentId.length() - 4).equals(".eml") ) {
+							contentType = "message/rfc822; name=\"" + attachmentId + "\"";
+						}
 						result = new FileXfer(binaryData.length, contentType,
 								entry.getKey(), new ByteArrayInputStream(
 										binaryData));

@@ -61,6 +61,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptOwnerWra
 	protected TextAreaFormField notes;
 	protected ListBoxFormField bonusMalusOption;
 	protected NumericTextBoxFormField bonusMalusValue;
+	protected TextBoxFormField barcode;
 
 	protected FormField<?> lastFocusedField;
 
@@ -277,6 +278,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptOwnerWra
 		manager.setEditable(false);
 		description = new TextAreaFormField();
 		notes = new TextAreaFormField();
+		barcode = new TextBoxFormField("Código Barras");
 
 		bonusMalusOption = new ListBoxFormField("Bonus/Malus");
 		bonusMalusOption.setFieldWidth("100%");
@@ -292,6 +294,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptOwnerWra
 
 		addFormField(manager, true);
 		addFormField(mediator, true);
+		addFormField(barcode, true);
 
 		addSection("Valores");
 		addFormField(totalPremium, true);
@@ -453,6 +456,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptOwnerWra
 		notes.setValue(info.receipt.notes);
 		bonusMalusOption.setValue(info.receipt.isMalus == null ? null : info.receipt.isMalus ? "Malus" : "Bonus", true);
 		bonusMalusValue.setValue(info.receipt.bonusMalus);
+		barcode.setValue(info.receipt.barcode);
 	}
 
 	@Override
@@ -483,6 +487,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptOwnerWra
 		newWrapper.receipt.notes = notes.getValue();
 		newWrapper.receipt.isMalus = bonusMalusOption.getValue() == null ? null : bonusMalusOption.getValue().equalsIgnoreCase("Malus");
 		newWrapper.receipt.bonusMalus = bonusMalusValue.getValue();
+		newWrapper.receipt.barcode = barcode.getValue();
 
 		return newWrapper;
 	}

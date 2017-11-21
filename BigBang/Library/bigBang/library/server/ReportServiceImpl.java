@@ -9,6 +9,10 @@ import java.util.Comparator;
 import java.util.UUID;
 
 import org.apache.ecs.GenericElement;
+import org.apache.ecs.html.Strong;
+import org.apache.ecs.html.TD;
+import org.apache.ecs.html.TR;
+import org.apache.ecs.html.Table;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
@@ -25,7 +29,12 @@ import bigBang.library.interfaces.ReportService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingMap;
+import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingSet;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
+import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingMap;
 import com.premiumminds.BigBang.Jewel.Objects.ReportDef;
 import com.premiumminds.BigBang.Jewel.SysObjects.ExcelConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.HTMLConnector;
@@ -72,7 +81,65 @@ public class ReportServiceImpl
 			lobjSet = com.premiumminds.BigBang.Jewel.Objects.PrintSet.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(printSetId));
 
-			lobjBuffer = lobjSet.buildReportTable();
+			Table printSetGenericInfo = lobjSet.buildReportTable();
+			lobjBuffer = printSetGenericInfo; 
+			
+			// Gets the extra info
+			UUID setOwnerType = (UUID) lobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.OWNERTYPE);
+			if (setOwnerType!=null && setOwnerType.equals(Constants.ObjID_InsurerAccountingSet)) {
+				// If it is associated to a InsurerAccountingSet, it gets the corresponding company
+				UUID setOwner = (UUID) lobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.OWNER);
+				if (setOwner!=null) {
+					InsurerAccountingSet set;
+					try {
+						set = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), setOwner);
+						
+						Table extraInfo = new Table();
+						
+						TR printInfoRow = new TR();
+						TD printInfoCell = new TD();
+						printInfoCell.addElement(printSetGenericInfo);
+						printInfoRow.addElement(printInfoCell);
+						extraInfo.addElement(printInfoRow);
+						
+						TR titleRow = new TR();
+						TD titleCell = new TD();
+						Strong sectionTitle = new Strong("Informação de prestação de contas");
+						sectionTitle.setStyle("font-size: 12px;");
+						titleCell.addElement(sectionTitle);
+						titleCell.setStyle("padding-top:30px;");
+						titleRow.addElement(titleCell);
+						extraInfo.addElement(titleRow);
+						
+						TR setHeaderRow = new TR();
+						TD setHeaderCell = new TD();
+						setHeaderCell.addElement(set.buildHeaderSection());
+						setHeaderCell.setStyle("padding-top:10px;");
+						setHeaderRow.addElement(setHeaderCell);
+						extraInfo.addElement(setHeaderRow);
+						
+						int nrMaps = set.getCurrentMaps().length;
+						Table infoTable = new Table();
+						for (int i=0; i<nrMaps; i++) {
+							TD mapCell = new TD();
+							TR mapRow = new TR();
+							mapCell.addElement(set.buildDataSection(i+1));
+							mapCell.setStyle("padding-top:10px;");
+							mapRow.addElement(mapCell);
+							infoTable.addElement(mapRow);
+						}
+						TR setInfoRow = new TR();
+						TD setInfoCell = new TD();
+						setInfoCell.addElement(infoTable);
+						setInfoRow.addElement(setInfoCell);
+						extraInfo.addElement(setInfoRow);
+						
+						return new GenericElement[] { extraInfo };
+						
+					} catch (BigBangJewelException e) {
+					}
+				}
+			}
 		}
 		catch (Throwable e)
 		{
@@ -297,9 +364,18 @@ public class ReportServiceImpl
 
 		try
 		{
-			lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.TEMPLATE},
-					new java.lang.Object[] {(UUID)lobjReport.getAt(ReportDef.I.TEMPLATE)},
-					new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON});
+			UUID templateId = (UUID)lobjReport.getAt(ReportDef.I.TEMPLATE);
+			if (templateId.equals(Constants.TID_InsurerAccounting)) {
+				String sqlQuery = lrefObjects.SQLForSelectByMembers(new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.TEMPLATE},
+						new java.lang.Object[] {templateId},null);
+				sqlQuery = sqlQuery + " AND [t1].SetDate > DATEADD(year,-1,GETDATE())";
+				sqlQuery = sqlQuery + " ORDER  BY [t1].[printdate] ASC, [t1].[_tscreate] ";
+				lrsObjects = ldb.OpenRecordset(sqlQuery);
+			} else {
+				lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.TEMPLATE},
+						new java.lang.Object[] {templateId},
+						new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON});
+			}
 		}
 		catch (Throwable e)
 		{
@@ -380,7 +456,10 @@ public class ReportServiceImpl
 
 		try
 		{
-			lrsObjects = lrefTransactions.SelectAll(ldb);
+			String query = lrefTransactions.SQLForSelectAll() + 
+					" WHERE [t1].SetDate > DATEADD(year,-1,GETDATE())";
+			lrsObjects = ldb.OpenRecordset(query);
+		//	lrsObjects = lrefTransactions.SelectAll(ldb);
 		}
 		catch (Throwable e)
 		{
@@ -700,11 +779,36 @@ public class ReportServiceImpl
 		lobjResult.userName = pobjSet.getUser().getDisplayName();
 		lobjResult.printDate = ( pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON) == null ?
 				null : ((Timestamp)pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON)).toString().substring(0, 10) );
+				
+		// Gets the extra info
+		UUID setOwnerType = (UUID) pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.OWNERTYPE);
+		if (setOwnerType!=null && setOwnerType.equals(Constants.ObjID_InsurerAccountingSet)) {
+			// If it is associated to a insurerAccountingMap, it gets the corresponding company
+			UUID setOwner = (UUID) pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.OWNER);
+			if (setOwner!=null) {
+				InsurerAccountingSet set;
+				String companyName = null;
+				try {
+					set = InsurerAccountingSet.GetInstance(Engine.getCurrentNameSpace(), setOwner);
+					TransactionMapBase[] currentMaps = set.getCurrentMaps();
+					if (currentMaps != null && currentMaps[0] != null && currentMaps[0].getAt(TransactionMapBase.I.OWNER) != null) {
+						if (currentMaps[0] instanceof InsurerAccountingMap) {
+							companyName = ((InsurerAccountingMap) currentMaps[0]).getCompany().getLabel();
+						} 
+					}
+				} catch (BigBangJewelException e) {
+				}
+
+				if (companyName!=null && companyName.length()>0) {
+					lobjResult.extraInfo1 = companyName;
+				}
+			}
+		}
 
 		return lobjResult;
 	}
 
-	private static TransactionSet toClient(TransactionSetBase pobjSet)
+	private static TransactionSet toClient(TransactionSetBase pobjSet) throws BigBangJewelException
 	{
 		TransactionSet lobjResult;
 
@@ -712,6 +816,24 @@ public class ReportServiceImpl
 		lobjResult.id = pobjSet.getKey().toString();
 		lobjResult.date = ((Timestamp)pobjSet.getAt(TransactionSetBase.I.DATE)).toString().substring(0, 10);
 		lobjResult.user = ((UUID)pobjSet.getAt(TransactionSetBase.I.USER)).toString();
+		TransactionMapBase[] currentMaps = null;
+		String companyName = "";
+		
+		currentMaps = pobjSet.getCurrentMaps();
+		if (currentMaps != null && currentMaps[0] != null && currentMaps[0].getAt(TransactionMapBase.I.OWNER) != null) {
+			if (currentMaps[0] instanceof InsurerAccountingMap) {
+				companyName = ((InsurerAccountingMap) currentMaps[0]).getCompany().getLabel();
+			} 
+			if (currentMaps[0] instanceof MediatorAccountingMap) {
+				Mediator mediator = Mediator.GetInstance(Engine.getCurrentNameSpace(), ((UUID)currentMaps[0].getAt(TransactionMapBase.I.OWNER))); 
+				if (mediator != null) {
+					companyName = mediator.getLabel();
+				}
+			} 
+		}
+		
+		lobjResult.company = companyName;
+		
 		try
 		{
 			lobjResult.isComplete = pobjSet.isComplete();

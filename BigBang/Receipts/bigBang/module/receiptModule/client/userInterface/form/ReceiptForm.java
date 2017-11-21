@@ -47,6 +47,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 	protected TextAreaFormField notes;
 	protected ListBoxFormField bonusMalusOption;
 	protected NumericTextBoxFormField bonusMalusValue;
+	protected TextBoxFormField barcode;
 
 	protected int dataVersion = 0;
 
@@ -100,6 +101,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		manager.setEditable(false);
 		description = new TextAreaFormField();
 		notes = new TextAreaFormField();
+		barcode = new TextBoxFormField("Código Barras");
 
 		addSection("Informação Geral");
 		addFormField(client, false);
@@ -113,15 +115,17 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		addFormField(subCasualty, false);
 		subCasualty.setEditable(false);
 		subCasualty.setVisible(false);
+
 		addFormFieldGroup(new FormField<?>[]{
 				number,
 				mediator
 		}, true);
-
 		addFormFieldGroup(new FormField<?>[]{
 				type,
 				manager
 		}, true);
+		addFormField(barcode, true);
+
 		addSection("Valores");
 		addFormField(totalPremium, true);
 		addFormField(salesPremium, true);
@@ -205,6 +209,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		result.managerId = manager.getValue();
 		result.notes = notes.getValue();
 		result.description = description.getValue();
+		result.barcode = barcode.getValue();
 
 		return result;
 	}
@@ -306,6 +311,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 		notes.setValue(info.notes);
 		description.setValue(info.description);
+		barcode.setValue(info.barcode);
 	}
 
 	@Override

@@ -41,6 +41,7 @@ public class ReceiptData
 	public UUID midPolicy;
 	public UUID midSubPolicy;
 	public UUID midSubCasualty;
+	public String mstrBarCode;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -75,6 +76,7 @@ public class ReceiptData
 		midPolicy =               (UUID)pobjSource.getAt(Receipt.I.POLICY);
 		midSubPolicy =            (UUID)pobjSource.getAt(Receipt.I.SUBPOLICY);
 		midSubCasualty =          (UUID)pobjSource.getAt(Receipt.I.SUBCASUALTY);
+		mstrBarCode =           (String)pobjSource.getAt(Receipt.I.BARCODE);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -106,6 +108,7 @@ public class ReceiptData
 			pobjDest.setAt(Receipt.I.POLICY,            midPolicy);
 			pobjDest.setAt(Receipt.I.SUBPOLICY,         midSubPolicy);
 			pobjDest.setAt(Receipt.I.SUBCASUALTY,       midSubCasualty);
+			pobjDest.setAt(Receipt.I.BARCODE,           mstrBarCode);
 		}
 		catch (Throwable e)
 		{
@@ -132,6 +135,13 @@ public class ReceiptData
 			pstrBuilder.append("(Erro a obter o tipo de recibo.)");
 		}
 		pstrBuilder.append(pstrLineBreak);
+
+		if ( mstrBarCode != null )
+		{
+			pstrBuilder.append("Código Barras: ");
+			pstrBuilder.append(mstrBarCode);
+			pstrBuilder.append(pstrLineBreak);
+		}
 
 		if ( midStatus != null )
 		{

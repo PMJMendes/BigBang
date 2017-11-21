@@ -23,6 +23,7 @@ public class CasualtyData
 	public Boolean mbCaseStudy;
 	public UUID midClient;
 	public BigDecimal mdblPercentFault;
+	public Boolean mbFraud;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -41,6 +42,7 @@ public class CasualtyData
 		mbCaseStudy =      (Boolean)    pobjSource.getAt(Casualty.I.CASESTUDY);
 		midClient =        (UUID)       pobjSource.getAt(Casualty.I.CLIENT);
 		mdblPercentFault = (BigDecimal) pobjSource.getAt(Casualty.I.PERCENTFAULT);
+		mbFraud =      (Boolean)    pobjSource.getAt(Casualty.I.FRAUD);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -56,6 +58,7 @@ public class CasualtyData
 			pobjDest.setAt(Casualty.I.CASESTUDY,    mbCaseStudy);
 			pobjDest.setAt(Casualty.I.CLIENT,       midClient);
 			pobjDest.setAt(Casualty.I.PERCENTFAULT, mdblPercentFault);
+			pobjDest.setAt(Casualty.I.FRAUD,    mbFraud);
 		}
 		catch (Throwable e)
 		{
@@ -92,5 +95,8 @@ public class CasualtyData
 
 		if ( (mbCaseStudy != null) && (boolean)mbCaseStudy )
 			pstrBuilder.append("Case Study!").append(pstrLineBreak);
+		
+		if ( (mbFraud != null) && (boolean)mbFraud )
+			pstrBuilder.append("Fraude!").append(pstrLineBreak);
 	}
 }

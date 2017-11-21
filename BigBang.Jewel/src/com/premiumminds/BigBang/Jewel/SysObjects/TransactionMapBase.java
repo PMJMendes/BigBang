@@ -162,7 +162,7 @@ public abstract class TransactionMapBase
 			{
 				if ( mrefSet == null )
 					Initialize();
-				pidPrintSet = mrefSet.createPrintSet(pdb);
+				pidPrintSet = mrefSet.createPrintSet(pdb, mrefSet.getKey());
 			}
 
 			if ( pidPrintSet != null )

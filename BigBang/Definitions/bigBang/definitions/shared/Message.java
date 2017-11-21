@@ -28,6 +28,7 @@ public class Message
 		public String storageId;
 		public String date;
 		public boolean promote; //Indicates whether the attachment should be promoted to a document
+		public boolean displayAtPortal; // Indicates if a promoted attachment should be marked as displayable at portal upon document creation
 
 		// For outgoing or display
 		public String docId;

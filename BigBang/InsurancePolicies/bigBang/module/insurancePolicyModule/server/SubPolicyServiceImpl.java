@@ -571,7 +571,7 @@ public class SubPolicyServiceImpl
 		
 		javax.mail.Message storedMessage = null;
 		try {
-			storedMessage = MailConnector.getStoredMessage();
+			storedMessage = MailConnector.getStoredMessage(null, conversation.messages[0].emailId);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage() + " 576 ", e);
 		}
