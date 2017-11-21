@@ -800,6 +800,8 @@ public class SubCasualtyServiceImpl
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				lobjSubCasualty.getKey(), Constants.MsgDir_Outgoing, null);
 
+		lopCC.isSend = true;
+
 		try
 		{
 			lopCC.Execute();

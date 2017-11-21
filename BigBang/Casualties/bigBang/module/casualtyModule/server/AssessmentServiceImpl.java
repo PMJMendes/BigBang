@@ -196,6 +196,8 @@ public class AssessmentServiceImpl
 		lopCC.mobjData.midStartDir = Constants.MsgDir_Outgoing;
 		lopCC.mobjData.midPendingDir = ( conversation.replylimit == null ? null : Constants.MsgDir_Incoming );
 		lopCC.mobjData.mdtDueDate = ldtLimit;
+		
+		lopCC.isSend = true;
 
 		lopCC.mobjData.marrMessages = new MessageData[1];
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,

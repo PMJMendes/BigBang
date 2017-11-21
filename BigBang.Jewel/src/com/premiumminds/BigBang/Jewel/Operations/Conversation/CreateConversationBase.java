@@ -48,6 +48,8 @@ public abstract class CreateConversationBase
 	private static final long serialVersionUID = 1L;
 
 	public ConversationData mobjData;
+	
+	public boolean isSend = false;
 
 	public CreateConversationBase(UUID pidProcess)
 	{
@@ -224,7 +226,7 @@ public abstract class CreateConversationBase
 					
 					boolean saveAtt = true;
 					
-					if (mobjData.marrMessages[0].marrAttachments[i].mstrAttId != null) {
+					if (mobjData.marrMessages[0].marrAttachments[i].mstrAttId != null || isSend) {
 						
 						if ((mobjData.marrMessages[0].mobjDocOps != null) && 
 								(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null)) {

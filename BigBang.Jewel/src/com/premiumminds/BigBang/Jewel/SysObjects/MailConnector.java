@@ -111,10 +111,12 @@ public class MailConnector {
 	/**
 	 *	This method sends an email, receiving all the "usual" content on an email message.
 	 */
-	private static void sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
+	private static String sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
 			String[] from, String subject, String body, FileXfer[] attachments, boolean addFrom) throws BigBangJewelException {
 
 		InternetAddress[] addresses;
+		
+		String sentMessageId = "";
 
 		try {
 			
@@ -192,7 +194,11 @@ public class MailConnector {
 			
 			sendingConnection.sendMessage(mailMsg, mailMsg.getAllRecipients());
 			
+			sentMessageId = mailMsg.getMessageID();
+			
 			sendingConnection.close();
+			
+			return sentMessageId;
 			
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
@@ -673,7 +679,7 @@ public class MailConnector {
 	 *	This methods gets a MessageData object, and manipulates it, extracting
 	 *	the needed information to call the sendData's method 
 	 */
-	public static void sendFromData(MessageData message) throws BigBangJewelException {
+	public static String sendFromData(MessageData message) throws BigBangJewelException {
 
 		int countTo = 0;
 		int countCC = 0;
@@ -689,9 +695,11 @@ public class MailConnector {
 
 		Document document;
 		FileXfer[] attachments;
+		
+		String sentMessageId = "";
 
 		if (message.marrAddresses == null) {
-			return;
+			return "";
 		}
 
 		// Counts numbers of addresses of different types
@@ -752,7 +760,9 @@ public class MailConnector {
 			}
 		}
 
-		sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false);
+		sentMessageId = sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false);
+		
+		return sentMessageId;
 	}
 
 	/**

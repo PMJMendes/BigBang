@@ -345,6 +345,8 @@ public class MedicalFileServiceImpl
 				(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY),
 				Constants.MsgDir_Outgoing, null);
 
+		lopCC.isSend = true;
+
 		try
 		{
 			lopCC.Execute();

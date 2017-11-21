@@ -213,6 +213,8 @@ public class TotalLossServiceImpl
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_SubCasualty,
 				(UUID)lobjFile.getAt(TotalLoss.I.SUBCASUALTY), Constants.MsgDir_Outgoing, null);
 
+		lopCC.isSend = true;
+
 		try
 		{
 			lopCC.Execute();
