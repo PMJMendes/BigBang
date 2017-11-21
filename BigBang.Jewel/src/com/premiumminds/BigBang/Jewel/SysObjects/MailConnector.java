@@ -1,25 +1,19 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,7 +45,6 @@ import javax.mail.search.SearchTerm;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.util.IOUtils;
 
 import Jewel.Engine.Engine;
@@ -118,17 +111,11 @@ public class MailConnector {
 	/**
 	 *	This method sends an email, receiving all the "usual" content on an email message.
 	 */
-	private static String sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
+	private static void sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
 			String[] from, String subject, String body, FileXfer[] attachments, boolean addFrom) throws BigBangJewelException {
 
 		InternetAddress[] addresses;
-		
-		LinkedHashMap<String, FileXfer> base64ImagesExtracted;
 
-		FileXfer[] inlineImgs = null;
-		
-		String sentMessageID = "";
-		
 		try {
 			
 			OAuthHandler.initialize();
@@ -174,108 +161,26 @@ public class MailConnector {
 			// Sets SENT DATE
 			mailMsg.setSentDate(new Date());
 
-			// Needed check and adaptation to handle inline images 
-			if (hasInlineImages(body)) {
-				// Gets the inline images as attachments
-				base64ImagesExtracted = extractb64Images(body); 
-				if (base64ImagesExtracted!=null && base64ImagesExtracted.size()>0) {
-					Collection<FileXfer> imgValues = base64ImagesExtracted.values();
-					inlineImgs = imgValues.toArray(new FileXfer[imgValues.size()]); 
-				}
-			}
-			
 			// Sets the message's TEXT
-			if (((attachments == null) || (attachments.length == 0)) && 
-					((inlineImgs == null) || (inlineImgs.length == 0))) {
+			if ((attachments == null) || (attachments.length == 0)) {
 				mailMsg.setText(body, "UTF-8");
 				mailMsg.addHeader("Content-Type", "text/html");
 			} else {
-				
-				// If it has inline images, must set a multipart mail
+				// If it has attachments, must set a multipart mail
+				MimeMultipart multipartMsg = new MimeMultipart();
 				MimeBodyPart bodyPart = new MimeBodyPart();
-				MimeMultipart multipartMsg = new MimeMultipart("related");
+				bodyPart.setContent(body, "text/html; charset=utf-8");
+				multipartMsg.addBodyPart(bodyPart);
 
-				if (inlineImgs!=null) {
-					
-					Set<String> fileNamesSet = new LinkedHashSet<String>();
-					Set<MimeBodyPart> inlinePartsSet = new LinkedHashSet<MimeBodyPart>();
-					 
-					for (int i=0; i<inlineImgs.length; i++) {
-						if (inlineImgs[i] == null) {
-							continue;
-						}
-						bodyPart = new MimeBodyPart();
-						
-						String fileName = inlineImgs[i].getFileName();
-						int extensionSize = inlineImgs[i].getContentType().length() + 1;
-						
-						File tempFile = File
-								.createTempFile(fileName.substring(0,
-										fileName.length() - extensionSize), fileName
-										.substring(fileName.length() - extensionSize), null);
-						FileOutputStream outputStream = new FileOutputStream(tempFile);
-						outputStream.write(inlineImgs[i].getData());
-						
-						fileName = tempFile.getName();
-						
-						bodyPart.attachFile(tempFile);	
-						bodyPart.setFileName(fileName);
-						bodyPart.setContentID("<" + fileName + ">");
-						bodyPart.setDisposition(MimeBodyPart.INLINE);
-						
-						inlinePartsSet.add(bodyPart);
-						fileNamesSet.add(fileName);
-	
-						outputStream.close();
+				for (int i=0; i<attachments.length; i++) {
+					if (attachments[i] == null) {
+						continue;
 					}
-					
-					// Changes the body to have the new type of images
-					body = editOutterBody(fileNamesSet, body);
-					
-					// Adds the mail text (must be prior to the attachments)
 					bodyPart = new MimeBodyPart();
-					bodyPart.setContent(body, "text/html; charset=utf-8");
+					bodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(attachments[i].getData(),
+							attachments[i].getContentType())));
+					bodyPart.setFileName(attachments[i].getFileName());
 					multipartMsg.addBodyPart(bodyPart);
-					
-					// Adds the attachments
-					for (MimeBodyPart p : inlinePartsSet) {
-						multipartMsg.addBodyPart(p);
-					}
-					
-				}
-				
-				// Now the attachments
-				if(attachments!=null) {
-					
-					for (int i=0; i<attachments.length; i++) {
-						
-						if (attachments[i] == null) {
-							continue;
-						}
-						
-						bodyPart = new MimeBodyPart();
-						
-						String fileName = attachments[i].getFileName();
-						
-						// Gets the file name and extension
-						String contentType = attachments[i].getContentType();
-		        		String fileExtension = contentType.substring(contentType.lastIndexOf("/") + 1).toLowerCase();
-		        		
-		        		int extensionSize = fileExtension.length() + 1;
-						
-						File tempFile = File
-								.createTempFile(fileName.substring(0,
-										fileName.length() - extensionSize), fileName
-										.substring(fileName.length() - extensionSize), null);
-
-						FileOutputStream outputStream = new FileOutputStream(tempFile);
-						outputStream.write(attachments[i].getData());
-						
-						bodyPart.attachFile(tempFile);
-						multipartMsg.addBodyPart(bodyPart);
-						
-						outputStream.close();
-					}
 				}
 
 				mailMsg.setContent(multipartMsg);
@@ -287,179 +192,11 @@ public class MailConnector {
 			
 			sendingConnection.sendMessage(mailMsg, mailMsg.getAllRecipients());
 			
-			sentMessageID = mailMsg.getMessageID();
-			
 			sendingConnection.close();
-			
-			return sentMessageID;
 			
 		} catch (Throwable e) {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-	}
-
-	/**
-	 *	This method changes the src in the img tag for the base-64 inline images
-	 */
-	private static String editOutterBody(Set<String> keySet, String body) {
-		
-		// Uses a Regular Expression to find "IMG" tags in html
-		final String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
-		final Pattern imgPatt = Pattern.compile(imgRegex);
-		final Matcher imgMtc = imgPatt.matcher(body);
-		String result = "";
-		
-		String[] keySetArray = keySet.toArray(new String[keySet.size()]);
-		
-		int i = 0; 
-		
-		// Iterates the found images to get the image alt and source
-        while (imgMtc.find()) {
-        	
-        	String imgHtml = imgMtc.group();
-    		String srcStr = "";
-    		
-    		final String srcRegex = "src\\s*=\\s*([\"'])?([^\"']*)";
-    		final Pattern srcPatt = Pattern.compile(srcRegex);
-    		final Matcher srcMtc = srcPatt.matcher(imgHtml);
-    		            
-    		while (srcMtc.find()) {
-    		    srcStr = srcMtc.group();
-    		}
-    		            
-    		// Only tries to get the image, if the base-64 string exists...
-    		if (srcStr.length()>0 && srcStr.indexOf(",")>0 && Base64.isBase64(srcStr.substring(srcStr.indexOf(",")+1))) {
-    			String tmp = keySetArray[i++];
-    			String replaceStr = "src=\"cid:" + tmp;
-				body = body.replaceFirst("src\\s*=\\s*([\"'])?([^\"']*)", replaceStr);
-    			int cutIndex = body.indexOf(replaceStr) + replaceStr.length();
-				result = result + body.substring(0, cutIndex);
-				body = body.substring(cutIndex, body.length());
-    		}
-        }
-        
-        if (result.length() > 0) {
-        	return result + body;
-        }
-        return body;
-	}
-
-	/**
-	 *	This method gets the base-64 strings representing images, and creates an HashMap
-	 *	with their names and decoded content.
-	 */
-	private static LinkedHashMap<String, FileXfer> extractb64Images(String body) {
-
-		LinkedHashMap<String, FileXfer> pics = new LinkedHashMap<String, FileXfer>();
-		
-		// Uses a Regular Expression to find "IMG" tags in html
-		final String imgRegex = "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>";
-		final Pattern imgPatt = Pattern.compile(imgRegex);
-		final Matcher imgMtc = imgPatt.matcher(body);
-		
-		int imageNr = 0;
-		
-		// Iterates the found images to get the image alt and source
-        while (imgMtc.find()) {
-        	
-        	String imgHtml = imgMtc.group();
-        	String altStr = "";
-    		String srcStr = "";
-    		String imgType = "";
-        	
-        	// Uses a Regular Expression to find "alt" tags in html
-    		final String altRegex = "alt\\s*=\\s*([\"'])?([^\"']*)";
-    		final Pattern altPatt = Pattern.compile(altRegex);
-    		final Matcher altMtc = altPatt.matcher(imgHtml);
-    		
-    		while (altMtc.find()) {
-    			altStr = altMtc.group();
-    		}
-    		
-    		if (altStr.equals("") || altStr.indexOf("@")<0) {
-    			altStr = "image" + imageNr;
-    			imageNr++;
-    		} else {
-    			altStr = altStr.substring(9, altStr.indexOf("@"));
-    			
-    			// Gets the file name and extension
-        		imgType = FilenameUtils.getExtension(altStr);
-        		
-        		if (!imgType.equals("")) {
-        			altStr = altStr.substring(0, altStr.length()-(imgType.length()+1));
-        		}
-    		}
-    		
-    		
-    		// Uses a Regular Expression to find "IMG" tags in html
-    		final String srcRegex = "src\\s*=\\s*([\"'])?([^\"']*)";
-    		final Pattern srcPatt = Pattern.compile(srcRegex);
-            final Matcher srcMtc = srcPatt.matcher(imgHtml);
-            
-            while (srcMtc.find()) {
-            	srcStr = srcMtc.group();
-    		}
-            
-            // Only tries to get the image, if the base-64 string exists...
-            if (srcStr.length()>0 && srcStr.indexOf(",")>0 && Base64.isBase64(srcStr.substring(srcStr.indexOf(",")+1))) {
-            	srcStr = srcStr.substring(srcStr.indexOf(",")+1);
-            	byte[] srcByteArray = Base64.decodeBase64(srcStr);
-				InputStream stream = new ByteArrayInputStream(srcByteArray);
-            	
-            	if (imgType.equals("")) {
-            		try {
-						imgType = URLConnection.guessContentTypeFromStream(stream);
-					} catch (IOException e) {
-						imgType = "jpg";
-					}
-            	}
-            	
-            	if (imgType.contains("image/")) {
-            		imgType = imgType.substring(6).toLowerCase();
-            	}
-            	
-            	try {
-            		
-            		String fullName =  altStr + "." + imgType;
-            				
-					FileXfer attachmentXFer = new FileXfer(srcByteArray.length, imgType, 
-            				fullName, stream);
-            		
-					pics.put(fullName, attachmentXFer);
-	                
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}            	
-            }
-        }
-		
-		return pics;
-	}
-
-	/**
-	 *	This method checks if the mail body needs to be changed in order to display 
-	 *	body images upon sending
-	 */
-	private static boolean hasInlineImages(String body) {
-		
-		// Uses a Regular Expression to find "IMG" tags in html
-		final String regex = "src\\s*=\\s*([\"'])?([^\"']*)";
-		final Pattern p = Pattern.compile(regex);
-		final Matcher m = p.matcher(body);
-		
-		// Iterates the found images
-        while (m.find()) {
-        	String encodedImg = m.group();
-        	
-        	encodedImg = encodedImg.substring(encodedImg.indexOf(",")+1);
-        			
-        	if(Base64.isBase64(encodedImg)) {
-        		return true;
-        	}
-        }
-		
-		return false;
 	}
 
 	/**
@@ -804,14 +541,7 @@ public class MailConnector {
 					// If the part is a MimeBodyPart, tries to get the file name in a more direct way
 					MimeBodyPart mimePart = (MimeBodyPart) part;
 					
-					/*
 					attId = MimeUtility.decodeText(mimePart.getFileName());
-					
-					if(attId != null) {
-						result.put(attId, part);
-					}
-					*/
-					attId = MimeUtility.decodeText(mimePart.getContentID());
 					
 					if(attId != null) {
 						result.put(attId, part);
@@ -943,7 +673,7 @@ public class MailConnector {
 	 *	This methods gets a MessageData object, and manipulates it, extracting
 	 *	the needed information to call the sendData's method 
 	 */
-	public static String sendFromData(MessageData message) throws BigBangJewelException {
+	public static void sendFromData(MessageData message) throws BigBangJewelException {
 
 		int countTo = 0;
 		int countCC = 0;
@@ -959,11 +689,9 @@ public class MailConnector {
 
 		Document document;
 		FileXfer[] attachments;
-		
-		String sentMessageId = "";
 
 		if (message.marrAddresses == null) {
-			return "";
+			return;
 		}
 
 		// Counts numbers of addresses of different types
@@ -1022,11 +750,9 @@ public class MailConnector {
 				document = Document.GetInstance(Engine.getCurrentNameSpace(), message.marrAttachments[i].midDocument);
 				attachments[i] = document.getFile();
 			}
-		} //aqui tem que se por isto a ir buscar de outra forma que nao do documento (ou seja, tem que chegar aqui o storage ID para ir sacar ao storage)
+		}
 
-		sentMessageId = sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false);
-		
-		return sentMessageId;
+		sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false);
 	}
 
 	/**
