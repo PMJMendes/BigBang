@@ -273,10 +273,12 @@ public class MailConnector {
 						File tempFile = null;
 						
 						try {
-							tempFile = File
+							/*tempFile = File
 									.createTempFile(fileName.substring(0,
 											justNameLength), fileName
-											.substring(fileName.length() - extensionSize), null);
+											.substring(fileName.length() - extensionSize), null); */
+							String tempDir = System.getProperty("java.io.tmpdir");
+							tempFile = new File(tempDir, fileName);
 						} catch (Exception e) {
 							continue;
 						}
