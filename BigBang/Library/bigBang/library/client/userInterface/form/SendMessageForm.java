@@ -65,6 +65,9 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 	private static int CC_ADDRESS_ID = 2;
 	private static int BCC_ADDRESS_ID = 3;
 	
+	// A mensagem original
+	private Message originalMessage;
+	
 	protected ExpandableListBoxFormField requestType;
 	protected TextBoxFormField subject;
 	protected AutoCompleteTextListFormField forwardReply;
@@ -684,6 +687,7 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 		}
 		
 		conversation.messages = new Message[1];
+		msg.parentMailId = originalMessage.emailId;
 		conversation.messages[0] = msg;
 		
 		return conversation;
@@ -775,6 +779,9 @@ public class SendMessageForm extends FormView<Conversation> implements Documents
 			}
 			if (info.messages != null && info.messages.length>0) {
 				Message msg = info.messages[0];
+				
+				originalMessage = msg;
+				
 				if (msg.emailId!=null) { 
 					emailOrNote.setValue(Kind.EMAIL.toString());
 				}

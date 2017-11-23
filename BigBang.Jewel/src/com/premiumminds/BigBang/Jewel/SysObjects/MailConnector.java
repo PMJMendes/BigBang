@@ -270,10 +270,16 @@ public class MailConnector {
 							justNameLength = fileName.length() - extensionSize;
 						}
 						
-						File tempFile = File
-								.createTempFile(fileName.substring(0,
-										justNameLength), fileName
-										.substring(fileName.length() - extensionSize), null);
+						File tempFile = null;
+						
+						try {
+							tempFile = File
+									.createTempFile(fileName.substring(0,
+											justNameLength), fileName
+											.substring(fileName.length() - extensionSize), null);
+						} catch (Exception e) {
+							continue;
+						}
 
 						FileOutputStream outputStream = new FileOutputStream(tempFile);
 						outputStream.write(attachments[i].getData());
@@ -1028,9 +1034,18 @@ public class MailConnector {
 			attachments = new FileXfer[message.marrAttachments.length];
 			for (int i=0; i<attachments.length; i++) {
 				document = Document.GetInstance(Engine.getCurrentNameSpace(), message.marrAttachments[i].midDocument);
-				attachments[i] = document.getFile();
+				FileXfer docFile = document == null ? null : document.getFile();
+				if (document != null && docFile!=null) {
+					attachments[i] = docFile;
+				} else {
+					try {
+						attachments[i] = StorageConnector.getAttachmentAsFileXfer(message.parentMailId, message.marrAttachments[i].mstrAttId);
+					} catch (Exception e) {
+						attachments[i] = null;
+					}
+				}
 			}
-		} //aqui tem que se por isto a ir buscar de outra forma que nao do documento (ou seja, tem que chegar aqui o storage ID para ir sacar ao storage)
+		}
 
 		sentMessageId = sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false);
 		

@@ -182,6 +182,8 @@ public class MessageBridge
 
 		lobjResult = new MessageData();
 
+		lobjResult.parentMailId = pobjMessage.parentMailId;
+		
 		lobjResult.mid = ( pobjMessage.id == null ? null : UUID.fromString(pobjMessage.id) );
 
 		lobjResult.midOwner = ( pobjMessage.conversationId == null ? null : UUID.fromString(pobjMessage.conversationId) );
