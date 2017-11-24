@@ -475,6 +475,8 @@ public class ExpenseServiceImpl
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Expense,
 				lobjExpense.getKey(), Constants.MsgDir_Outgoing, null);
 
+		lopCC.isSend = true;
+
 		try
 		{
 			lopCC.Execute();

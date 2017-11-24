@@ -35,6 +35,7 @@ public class Message
 
 		// For display
 		public String ownerId;
+		
 	}
 
 	public static class MsgAddress
@@ -73,6 +74,9 @@ public class Message
 	public String text; //Só pode vir a null se tiver emailId.
 	public String emailId; //Se fôr incoming e kind=EMAIL, obrigatório. Se não, tem que vir a null.
 	public String folderId;
+	
+	// used when forwarding a message, as it is needed to get an existing attachment
+	public String parentMailId;
 	
 	public Attachment[] attachments;
 

@@ -48,6 +48,8 @@ public abstract class CreateConversationBase
 	private static final long serialVersionUID = 1L;
 
 	public ConversationData mobjData;
+	
+	public boolean isSend = false;
 
 	public CreateConversationBase(UUID pidProcess)
 	{
@@ -224,7 +226,7 @@ public abstract class CreateConversationBase
 					
 					boolean saveAtt = true;
 					
-					if (mobjData.marrMessages[0].marrAttachments[i].mstrAttId != null) {
+					if (mobjData.marrMessages[0].marrAttachments[i].mstrAttId != null || isSend) {
 						
 						if ((mobjData.marrMessages[0].mobjDocOps != null) && 
 								(mobjData.marrMessages[0].mobjDocOps.marrCreate2 != null)) {
@@ -321,7 +323,25 @@ public abstract class CreateConversationBase
 				}
 				else
 				{
-					MailConnector.sendFromData(mobjData.marrMessages[0]);
+					String sentMessageId = MailConnector.sendFromData(mobjData.marrMessages[0]);
+					
+					if (isSend) {
+						try
+						{
+							mobjData.marrMessages[0].mstrEmailID = sentMessageId;
+							mobjData.marrMessages[0].mstrFolderID = Constants.GoogleAppsConstants.GMAIL_SENT_FOLDER;
+							mobjData.marrMessages[0].ToObject(lobjMessage);
+							lobjMessage.SaveToDb(pdb);
+						}
+						catch (Throwable e)
+						{
+							throw new JewelPetriException(e.getMessage(), e);
+						}
+						
+						// Gets the sent message, and uploads to the storage
+						javax.mail.Message mailMsg = MailConnector.getMessage(sentMessageId, mobjData.marrMessages[0].mstrFolderID);
+						StorageConnector.threadedUpload(mailMsg, mobjData.marrMessages[0].mstrEmailID);
+					}
 				}
 			}
 			catch (Throwable e)

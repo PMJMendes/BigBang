@@ -35,6 +35,8 @@ public class MessageData
 
 	public DocOps mobjDocOps;
 	public ContactOps mobjContactOps;
+	
+	public String parentMailId;
 
 	public void FromObject(ObjectBase pobjSource)
 	{

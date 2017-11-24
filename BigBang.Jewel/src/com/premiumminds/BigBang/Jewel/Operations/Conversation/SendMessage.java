@@ -21,6 +21,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Message;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAddress;
 import com.premiumminds.BigBang.Jewel.Objects.MessageAttachment;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
 public class SendMessage
 	extends Operation
@@ -81,6 +82,8 @@ public class SendMessage
 		MessageAddress lobjAddr;
 		MessageAttachment lobjAttachment;
 		int i;
+		
+		String sentMessageId = "";
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 
@@ -157,6 +160,19 @@ public class SendMessage
 			mobjData.mobjDocOps.RunSubOp(pdb, lidContainer);
 		if ( mobjData.mobjContactOps != null )
 			mobjData.mobjContactOps.RunSubOp(pdb, lidContainer);
+		
+		if ( mobjData.mbIsEmail ) {
+			try
+			{
+				sentMessageId = MailConnector.sendFromData(mobjData);
+				mobjData.mstrEmailID = sentMessageId;
+				mobjData.mstrFolderID = Constants.GoogleAppsConstants.GMAIL_SENT_FOLDER;
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
 
 		try
 		{
@@ -196,17 +212,16 @@ public class SendMessage
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+		
 
-		if ( mobjData.mbIsEmail )
+		try {
+			// Gets the sent message, and uploads to the storage
+			javax.mail.Message mailMsg = MailConnector.getMessage(sentMessageId, mobjData.mstrFolderID);
+			StorageConnector.threadedUpload(mailMsg, mobjData.mstrEmailID);
+		}
+		catch (Throwable e)
 		{
-			try
-			{
-				MailConnector.sendFromData(mobjData);
-			}
-			catch (Throwable e)
-			{
-				throw new JewelPetriException(e.getMessage(), e);
-			}
+			throw new JewelPetriException("Error while uploading to Storage: " + e.getMessage(), e);
 		}
 	}
 }

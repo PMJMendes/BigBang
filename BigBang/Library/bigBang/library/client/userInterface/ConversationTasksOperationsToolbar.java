@@ -63,7 +63,7 @@ public abstract class ConversationTasksOperationsToolbar extends BigBangOperatio
 		});
 		sendSubMenu.addItem(forwardMenuItem);
 
-		sendSubMenu.addSeparator();
+		//sendSubMenu.addSeparator();
 		
 		repeatMenuItem = new MenuItem("Repetir", new Command() {
 			
@@ -73,7 +73,7 @@ public abstract class ConversationTasksOperationsToolbar extends BigBangOperatio
 			}
 			
 		});
-		sendSubMenu.addItem(repeatMenuItem);
+		//sendSubMenu.addItem(repeatMenuItem);
 		
 		receiveMenuItem = new MenuItem("Receber", new Command() {
 			

@@ -182,6 +182,8 @@ public class MessageBridge
 
 		lobjResult = new MessageData();
 
+		lobjResult.parentMailId = pobjMessage.parentMailId;
+		
 		lobjResult.mid = ( pobjMessage.id == null ? null : UUID.fromString(pobjMessage.id) );
 
 		lobjResult.midOwner = ( pobjMessage.conversationId == null ? null : UUID.fromString(pobjMessage.conversationId) );
@@ -234,7 +236,9 @@ public class MessageBridge
 							tmpData.midUser     = tmpAddr.userId== null ? null : UUID.fromString(tmpAddr.userId);
 							tmpData.midInfo     = tmpAddr.contactInfoId==null ? null : UUID.fromString(tmpAddr.contactInfoId);
 							try {
-								tmpData.mstrDisplay = MimeUtility.decodeText(tmpAddr.display);
+								if (tmpAddr.display != null) {
+									tmpData.mstrDisplay = MimeUtility.decodeText(tmpAddr.display);
+								}
 							} catch (Throwable e) {
 								throw new BigBangException(e.getMessage() + " 239 ", e);
 							}
@@ -473,8 +477,9 @@ public class MessageBridge
 			j = 0;
 			for ( i = 0; i < parrAttachments.length; i++ )
 			{
-				if ( parrAttachments[i].promote )
+				if ( parrAttachments[i].promote && pobjMsg.midDirection.equals(Constants.MsgDir_Incoming)) {
 					j++;
+				}
 			}
 
 			if ( j == 0 )
@@ -490,7 +495,7 @@ public class MessageBridge
 				j = 0;
 				for ( i = 0; i < parrAttachments.length; i++ )
 				{
-					if ( parrAttachments[i].promote )
+					if (parrAttachments[i].promote && pobjMsg.midDirection.equals(Constants.MsgDir_Incoming))
 					{
 						lobjResult.marrCreate2[j] = new DocDataLight();
 						lobjResult.marrCreate2[j].mstrName = parrAttachments[i].name;

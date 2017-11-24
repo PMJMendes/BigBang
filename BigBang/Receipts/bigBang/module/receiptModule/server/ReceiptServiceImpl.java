@@ -1486,6 +1486,8 @@ public class ReceiptServiceImpl
 		lopCC.mobjData.marrMessages[0] = MessageBridge.clientToServer(conversation.messages[0], Constants.ObjID_Receipt,
 				lobjReceipt.getKey(), Constants.MsgDir_Outgoing, null);
 
+		lopCC.isSend = true;
+
 		try
 		{
 			lopCC.Execute();
