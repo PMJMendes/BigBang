@@ -325,22 +325,23 @@ public abstract class CreateConversationBase
 				{
 					String sentMessageId = MailConnector.sendFromData(mobjData.marrMessages[0]);
 					
-					try
-					{
-						mobjData.marrMessages[0].mstrEmailID = sentMessageId;
-						mobjData.marrMessages[0].mstrFolderID = Constants.GoogleAppsConstants.GMAIL_SENT_FOLDER;
-						mobjData.marrMessages[0].ToObject(lobjMessage);
-						lobjMessage.SaveToDb(pdb);
+					if (isSend) {
+						try
+						{
+							mobjData.marrMessages[0].mstrEmailID = sentMessageId;
+							mobjData.marrMessages[0].mstrFolderID = Constants.GoogleAppsConstants.GMAIL_SENT_FOLDER;
+							mobjData.marrMessages[0].ToObject(lobjMessage);
+							lobjMessage.SaveToDb(pdb);
+						}
+						catch (Throwable e)
+						{
+							throw new JewelPetriException(e.getMessage(), e);
+						}
+						
+						// Gets the sent message, and uploads to the storage
+						javax.mail.Message mailMsg = MailConnector.getMessage(sentMessageId, mobjData.marrMessages[0].mstrFolderID);
+						StorageConnector.threadedUpload(mailMsg, mobjData.marrMessages[0].mstrEmailID);
 					}
-					catch (Throwable e)
-					{
-						throw new JewelPetriException(e.getMessage(), e);
-					}
-					
-					// Gets the sent message, and uploads to the storage
-					javax.mail.Message mailMsg = MailConnector.getMessage(sentMessageId, mobjData.marrMessages[0].mstrFolderID);
-					StorageConnector.threadedUpload(mailMsg, mobjData.marrMessages[0].mstrEmailID);
-					
 				}
 			}
 			catch (Throwable e)
