@@ -75,7 +75,8 @@ public class MedicalFileServiceImpl
 		lobjResult.startDate = (pobjDetail.getAt(MedicalDetail.I.STARTDATE) == null ? null :
 				((Timestamp)pobjDetail.getAt(MedicalDetail.I.STARTDATE)).toString().substring(0, 10) );
 		lobjResult.place = (String)pobjDetail.getAt(MedicalDetail.I.PLACE);
-		lobjResult.percentDisability = (Integer)pobjDetail.getAt(MedicalDetail.I.PERCENT);
+		lobjResult.percentDisability = (pobjDetail.getAt(MedicalDetail.I.PERCENT) == null ? null :
+			((BigDecimal)pobjDetail.getAt(MedicalDetail.I.PERCENT)).doubleValue());
 		lobjResult.endDate = (pobjDetail.getAt(MedicalDetail.I.ENDDATE) == null ? null :
 				((Timestamp)pobjDetail.getAt(MedicalDetail.I.ENDDATE)).toString().substring(0, 10) );
 		lobjResult.benefits = (pobjDetail.getAt(MedicalDetail.I.BENEFITS) == null ? null :
@@ -183,7 +184,8 @@ public class MedicalFileServiceImpl
 				lobjResult.mdtStartDate = ( pobjSource.startDate == null ? null :
 						Timestamp.valueOf(pobjSource.startDate + " 00:00:00.0") );
 				lobjResult.mstrPlace = pobjSource.place;
-				lobjResult.mlngPercent = pobjSource.percentDisability;
+				lobjResult.mlngPercent = ( pobjSource.percentDisability == null ? null :
+					new BigDecimal(pobjSource.percentDisability + "") );
 				lobjResult.mdtEndDate = ( pobjSource.endDate == null ? null :
 						Timestamp.valueOf(pobjSource.endDate + " 00:00:00.0") );
 				lobjResult.mdblBenefits = ( pobjSource.benefits == null ? null :

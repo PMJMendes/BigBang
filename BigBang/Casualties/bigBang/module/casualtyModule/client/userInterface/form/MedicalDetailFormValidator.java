@@ -27,7 +27,7 @@ FormValidator<MedicalDetailForm> {
 	}
 
 	private boolean validatePercentage() {
-		return validateNumber(form.disabilityPercent, true);
+		return validateNumber(form.disabilityPercent, 0.0, 100.0, true);
 	}
 
 

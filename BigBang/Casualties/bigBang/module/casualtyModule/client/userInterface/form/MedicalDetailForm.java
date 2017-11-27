@@ -74,7 +74,7 @@ public class MedicalDetailForm extends FormView<MedicalDetail>{
 		toReturn.disabilityTypeId = disabilityType.getValue();
 		toReturn.endDate = endDate.getStringValue();
 		toReturn.startDate = startDate.getStringValue();
-		toReturn.percentDisability = disabilityPercent.getValue() != null ? disabilityPercent.getValue().intValue() : null;
+		toReturn.percentDisability = disabilityPercent.getValue() != null ? disabilityPercent.getValue().doubleValue() : null;
 		toReturn.place = disabilityLocation.getValue();
 		
 		

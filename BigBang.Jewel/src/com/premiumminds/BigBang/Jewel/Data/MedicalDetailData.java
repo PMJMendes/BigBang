@@ -23,7 +23,7 @@ public class MedicalDetailData
 	public UUID midDisabilityType;
 	public Timestamp mdtStartDate;
 	public String mstrPlace;
-	public Integer mlngPercent;
+	public BigDecimal mlngPercent;
 	public Timestamp mdtEndDate;
 	public BigDecimal mdblBenefits;
 
@@ -40,7 +40,7 @@ public class MedicalDetailData
 		midDisabilityType =       (UUID)pobjSource.getAt(MedicalDetail.I.DISABILITYTYPE);
 		mdtStartDate      =  (Timestamp)pobjSource.getAt(MedicalDetail.I.STARTDATE);
 		mstrPlace         =     (String)pobjSource.getAt(MedicalDetail.I.PLACE);
-		mlngPercent       =    (Integer)pobjSource.getAt(MedicalDetail.I.PERCENT);
+		mlngPercent       =    (BigDecimal)pobjSource.getAt(MedicalDetail.I.PERCENT);
 		mdtEndDate        =  (Timestamp)pobjSource.getAt(MedicalDetail.I.ENDDATE);
 		mdblBenefits      = (BigDecimal)pobjSource.getAt(MedicalDetail.I.BENEFITS);
 	}

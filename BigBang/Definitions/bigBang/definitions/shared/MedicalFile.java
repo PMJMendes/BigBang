@@ -17,7 +17,7 @@ public class MedicalFile
 		public String disabilityTypeLabel;
 		public String startDate;
 		public String place;
-		public Integer percentDisability;
+		public Double percentDisability;
 		public String endDate;
 		public Double benefits;
 
