@@ -78,6 +78,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	
 	private boolean totalLossOnly = false;
 	
+	private boolean relapseOnly = false;
+	
 	private String schemaName = "credite_egs";
 
 	/*
@@ -589,6 +591,11 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		// Tests if should display only casualties with total loss subcasualties
 		if ((reportParams[6] != null) && reportParams[6].equals("1")) {
 			totalLossOnly = true;
+		}
+		
+		// Tests if should display only casualties whose subcasualties had relapses
+		if ((reportParams[7] != null) && reportParams[7].equals("1")) {
+			relapseOnly = true;
 		}
 
 		HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap;
@@ -1561,6 +1568,10 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		
 		if (totalLossOnly) {
 			subCasualtyQuery.append(" AND [Is Total Loss] = 1");
+		}
+		
+		if (relapseOnly) {
+			subCasualtyQuery.append(" AND [Is  Relapse] = 1");
 		}
 
 		return subCasualtyQuery;

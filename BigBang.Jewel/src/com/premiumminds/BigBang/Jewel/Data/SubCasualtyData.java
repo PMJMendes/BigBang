@@ -36,6 +36,7 @@ public class SubCasualtyData
 	public UUID midCasualty;
 	public UUID midServiceCenter;
 	public Boolean mbTotalLoss;
+	public Boolean mbRelapse;
 
 	public OutgoingMessageData mobjNotification;
 	public Timestamp mdtLimitDate;
@@ -72,6 +73,7 @@ public class SubCasualtyData
 		midCasualty        = (UUID)      pobjSource.getAt(SubCasualty.I.CASUALTY);
 		midServiceCenter   = (UUID)      pobjSource.getAt(SubCasualty.I.SERVICECENTER);
 		mbTotalLoss 	   = (Boolean)   pobjSource.getAt(SubCasualty.I.TOTALLOSS);
+		mbRelapse	 	   = (Boolean)   pobjSource.getAt(SubCasualty.I.RELAPSE);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -95,6 +97,7 @@ public class SubCasualtyData
 			pobjDest.setAt(SubCasualty.I.CASUALTY,        midCasualty);
 			pobjDest.setAt(SubCasualty.I.SERVICECENTER,   midServiceCenter);
 			pobjDest.setAt(SubCasualty.I.TOTALLOSS,       mbTotalLoss);
+			pobjDest.setAt(SubCasualty.I.RELAPSE,         mbRelapse);
 		}
 		catch (Throwable e)
 		{
@@ -210,6 +213,9 @@ public class SubCasualtyData
 		
 		if ( (mbTotalLoss != null) && (boolean)mbTotalLoss )
 			pstrBuilder.append("Perda Total!").append(pstrLineBreak);
+		
+		if ( (mbRelapse != null) && (boolean)mbRelapse )
+			pstrBuilder.append("Recaída!").append(pstrLineBreak);
 		
 		if (framing!=null) {
 			pstrBuilder.append(pstrLineBreak).append("Informação de Enquadramento:").append(pstrLineBreak).append(pstrLineBreak);
