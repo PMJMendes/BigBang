@@ -145,4 +145,6 @@ public class SubCasualty extends SubCasualtyStub {
 	public SubCasualtyFraming framing; // Framing info
 	
 	public boolean totalLoss;
+	
+	public boolean relapse;
 }

@@ -168,6 +168,10 @@ public class SubCasualtyServiceImpl
 				.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.TOTALLOSS) == null ? false
 				: (Boolean) lobjSubCasualty
 						.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.TOTALLOSS);
+		lobjResult.relapse = lobjSubCasualty
+				.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.RELAPSE) == null ? false
+				: (Boolean) lobjSubCasualty
+						.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.RELAPSE);		
 		for ( i = 0; i < lobjResult.items.length; i++ )
 		{
 			ldblLocal = (BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.DAMAGES);
@@ -352,6 +356,7 @@ public class SubCasualtyServiceImpl
 				UUID.fromString(subCasualty.serviceCenterId) );
 		
 		lopMD.mobjData.mbTotalLoss = subCasualty.totalLoss;
+		lopMD.mobjData.mbRelapse = subCasualty.relapse;
 
 		if ( subCasualty.items != null )
 		{

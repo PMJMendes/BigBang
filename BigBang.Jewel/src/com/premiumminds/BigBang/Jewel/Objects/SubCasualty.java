@@ -39,6 +39,7 @@ public class SubCasualty
 		public static int CASUALTY        = 17;
 		public static int SERVICECENTER   = 18;
 		public static int TOTALLOSS		  = 19;
+		public static int RELAPSE		  = 20;
 	}
 
     public static SubCasualty GetInstance(UUID pidNameSpace, UUID pidKey)

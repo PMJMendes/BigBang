@@ -66,6 +66,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected FormField<String> carRepair;
 	
 	protected CheckBoxFormField totalLoss;
+	protected CheckBoxFormField relapse;
 
 	protected FormViewSection notesSection, internalNotesSection;
 
@@ -140,6 +141,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		
 		totalLoss = new CheckBoxFormField("Perda Total");
 		
+		relapse = new CheckBoxFormField("Recaídas");
+		
 		addSection("Informação Geral");
 		addFormField(casualty, false);
 
@@ -188,6 +191,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		
 		addLineBreak();
 		addFormField(totalLoss,true);
+		
+		addLineBreak();
+		addFormField(relapse,true);
 		
 		belongsToPolicy.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -311,6 +317,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			result.insuredObjectName = insuredObjectName.getValue();
 			result.serviceCenterId = carRepair.getValue();
 			result.totalLoss = totalLoss.getValue();
+			result.relapse = relapse.getValue();
 		}
 
 		return result;
@@ -334,6 +341,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 			number.setValue(info.number);
 			totalLoss.setValue(info.totalLoss);
+			relapse.setValue(info.relapse);
 			
 			if(info.insuredObjectName != null){
 				belongsToPolicy.setValue("false", true);
