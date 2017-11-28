@@ -208,4 +208,75 @@ public class MedicalFile
 
 		return larrAux.toArray(new MedicalAppointment[larrAux.size()]);
     }
+    
+    public MedicalRelapse[] GetCurrentRelps()
+        	throws BigBangJewelException
+        {
+    		ArrayList<MedicalRelapse> larrAux;
+    		IEntity lrefDetails;
+            MasterDB ldb;
+            ResultSet lrsDetails;
+
+    		larrAux = new ArrayList<MedicalRelapse>();
+
+    		try
+    		{
+    			lrefDetails = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MedicalRelapse)); 
+    			ldb = new MasterDB();
+    		}
+    		catch (Throwable e)
+    		{
+    			throw new BigBangJewelException(e.getMessage(), e);
+    		}
+
+    		try
+    		{
+    			lrsDetails = lrefDetails.SelectByMembers(ldb, new int[] {MedicalRelapse.I.FILE},
+    					new java.lang.Object[] {getKey()}, new int[] {MedicalRelapse.I.DATE});
+    		}
+    		catch (Throwable e)
+    		{
+    			try { ldb.Disconnect(); } catch (Throwable e1) {}
+    			throw new BigBangJewelException(e.getMessage(), e);
+    		}
+
+    		try
+    		{
+    			while ( lrsDetails.next() )
+    				larrAux.add(MedicalRelapse.GetInstance(getNameSpace(), lrsDetails));
+    		}
+    		catch (BigBangJewelException e)
+    		{
+    			try { lrsDetails.close(); } catch (Throwable e1) {}
+    			try { ldb.Disconnect(); } catch (Throwable e1) {}
+    			throw e;
+    		}
+    		catch (Throwable e)
+    		{
+    			try { lrsDetails.close(); } catch (Throwable e1) {}
+    			try { ldb.Disconnect(); } catch (Throwable e1) {}
+    			throw new BigBangJewelException(e.getMessage(), e);
+    		}
+
+    		try
+    		{
+    			lrsDetails.close();
+    		}
+    		catch (Throwable e)
+    		{
+    			try { ldb.Disconnect(); } catch (Throwable e1) {}
+    			throw new BigBangJewelException(e.getMessage(), e);
+    		}
+
+    		try
+    		{
+    			ldb.Disconnect();
+    		}
+    		catch (Throwable e)
+    		{
+    			throw new BigBangJewelException(e.getMessage(), e);
+    		}
+
+    		return larrAux.toArray(new MedicalRelapse[larrAux.size()]);
+        }
 }

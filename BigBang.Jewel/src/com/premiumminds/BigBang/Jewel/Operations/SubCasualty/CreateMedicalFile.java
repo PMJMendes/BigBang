@@ -23,6 +23,7 @@ import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalAppointment;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalRelapse;
 
 public class CreateMedicalFile
 	extends Operation
@@ -70,6 +71,7 @@ public class CreateMedicalFile
 		MedicalFile lobjAux;
 		MedicalDetail lobjDetail;
 		MedicalAppointment lobjAppt;
+		MedicalRelapse lobjRelp;
 		IScript lobjScript;
 		IProcess lobjProc;
 		AgendaItem lobjItem;
@@ -115,6 +117,21 @@ public class CreateMedicalFile
 					lobjAppt = MedicalAppointment.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrAppts[i].ToObject(lobjAppt);
 					lobjAppt.SaveToDb(pdb);
+				}
+			}
+			
+			if ( mobjData.marrRelps != null )
+			{
+				for ( i = 0; i < mobjData.marrRelps.length; i++ )
+				{
+					if ( mobjData.marrRelps[i] == null )
+						continue;
+
+					mobjData.marrRelps[i].midFile = mobjData.mid;
+
+					lobjRelp = MedicalRelapse.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrRelps[i].ToObject(lobjRelp);
+					lobjRelp.SaveToDb(pdb);
 				}
 			}
 

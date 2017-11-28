@@ -35,6 +35,18 @@ public class MedicalFile
 
 		public boolean deleted;
 	}
+	
+	public static class Relapse
+	implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+	
+		public String id; //Campo auxiliar para ajudar os serviços, manter inalterado
+		public String label;
+		public String date;
+	
+		public boolean deleted;
+	}
 
 	public String notes;
 
@@ -43,4 +55,6 @@ public class MedicalFile
 
 	public MedicalDetail[] details;
 	public Appointment[] appointments;
+	
+	public Relapse[] relapses;
 }

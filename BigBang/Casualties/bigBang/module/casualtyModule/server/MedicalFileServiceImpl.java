@@ -36,10 +36,12 @@ import com.premiumminds.BigBang.Jewel.Data.ConversationData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalAppointmentData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalDetailData;
 import com.premiumminds.BigBang.Jewel.Data.MedicalFileData;
+import com.premiumminds.BigBang.Jewel.Data.MedicalRelapseData;
 import com.premiumminds.BigBang.Jewel.Data.MessageData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalAppointment;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
+import com.premiumminds.BigBang.Jewel.Objects.MedicalRelapse;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.MedicalFile.CreateConversation;
@@ -96,6 +98,18 @@ public class MedicalFileServiceImpl
 
 		return lobjResult;
 	}
+	
+	public static MedicalFile.Relapse sGetRelapse(MedicalRelapse pobjRelps)
+	{
+		MedicalFile.Relapse lobjResult;
+
+		lobjResult = new MedicalFile.Relapse();
+		lobjResult.id = pobjRelps.getKey().toString();
+		lobjResult.label = (String)pobjRelps.getAt(MedicalRelapse.I.LABEL);
+		lobjResult.date = ((Timestamp)pobjRelps.getAt(MedicalRelapse.I.DATE)).toString().substring(0, 10);
+
+		return lobjResult;
+	}
 
 	public static MedicalFile sGetMedicalFile(UUID pidFile)
 		throws BigBangException
@@ -103,6 +117,7 @@ public class MedicalFileServiceImpl
 		com.premiumminds.BigBang.Jewel.Objects.MedicalFile lobjFile;
 		MedicalDetail[] larrDetails;
 		MedicalAppointment[] larrAppts;
+		MedicalRelapse[] larrRelps;
 		SubCasualty lobjSubC;
 		Client lobjCli;
 		String lstrObj;
@@ -115,6 +130,7 @@ public class MedicalFileServiceImpl
 			lobjFile = com.premiumminds.BigBang.Jewel.Objects.MedicalFile.GetInstance(Engine.getCurrentNameSpace(), pidFile);
 			larrDetails = lobjFile.GetCurrentDetails();
 			larrAppts = lobjFile.GetCurrentAppts();
+			larrRelps = lobjFile.GetCurrentRelps();
 			lobjSubC = SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
 					(UUID)lobjFile.getAt(com.premiumminds.BigBang.Jewel.Objects.MedicalFile.I.SUBCASUALTY));
 			lobjCli = lobjSubC.GetCasualty().GetClient();
@@ -155,6 +171,15 @@ public class MedicalFileServiceImpl
 			lobjResult.appointments = new MedicalFile.Appointment[larrAppts.length];
 			for ( i = 0; i < larrAppts.length; i++ )
 				lobjResult.appointments[i] = sGetAppointment(larrAppts[i]);
+		}
+		
+		if ( larrRelps == null )
+			lobjResult.relapses = null;
+		else
+		{
+			lobjResult.relapses = new MedicalFile.Relapse[larrRelps.length];
+			for ( i = 0; i < larrRelps.length; i++ )
+				lobjResult.relapses[i] = sGetRelapse(larrRelps[i]);
 		}
 
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
@@ -220,6 +245,31 @@ public class MedicalFileServiceImpl
 
 		return lobjResult;
 	}
+	
+	public static MedicalRelapseData sParseRelapses(MedicalFile.Relapse pobjSource, UUID pidFile)
+	{
+		MedicalRelapseData lobjResult;
+
+		if ( (pobjSource.id == null) && pobjSource.deleted )
+			lobjResult = null;
+		else
+		{
+			lobjResult = new MedicalRelapseData();
+			lobjResult.mid = ( pobjSource.id == null ? null : UUID.fromString(pobjSource.id) );
+			if ( pobjSource.deleted )
+				lobjResult.mbDeleted = true;
+			else
+			{
+				lobjResult.mbDeleted = false;
+				lobjResult.mbNew = (pobjSource.id == null);
+				lobjResult.midFile = pidFile;
+				lobjResult.mstrLabel = pobjSource.label;
+				lobjResult.mdtDate = Timestamp.valueOf(pobjSource.date + " 00:00:00.0");
+			}
+		}
+
+		return lobjResult;
+	}
 
 	public static MedicalFileData sParseClient(MedicalFile pobjSource)
 	{
@@ -251,6 +301,15 @@ public class MedicalFileServiceImpl
 			lobjResult.marrAppts = new MedicalAppointmentData[pobjSource.appointments.length];
 			for ( i = 0; i < pobjSource.appointments.length ; i++ )
 				lobjResult.marrAppts[i] = sParseAppointment(pobjSource.appointments[i], lobjResult.mid);
+		}
+		
+		if ( pobjSource.relapses == null )
+			lobjResult.marrRelps = null;
+		else
+		{
+			lobjResult.marrRelps = new MedicalRelapseData[pobjSource.relapses.length];
+			for ( i = 0; i < pobjSource.relapses.length ; i++ )
+				lobjResult.marrRelps[i] = sParseRelapses(pobjSource.relapses[i], lobjResult.mid);
 		}
 
 		return lobjResult;
