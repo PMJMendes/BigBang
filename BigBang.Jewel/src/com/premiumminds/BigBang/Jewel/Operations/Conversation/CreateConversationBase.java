@@ -323,9 +323,8 @@ public abstract class CreateConversationBase
 				}
 				else
 				{
-					String sentMessageId = MailConnector.sendFromData(mobjData.marrMessages[0]);
-					
 					if (isSend) {
+						String sentMessageId = MailConnector.sendFromData(mobjData.marrMessages[0], false);
 						try
 						{
 							mobjData.marrMessages[0].mstrEmailID = sentMessageId;
@@ -341,6 +340,8 @@ public abstract class CreateConversationBase
 						// Gets the sent message, and uploads to the storage
 						javax.mail.Message mailMsg = MailConnector.getMessage(sentMessageId, mobjData.marrMessages[0].mstrFolderID);
 						StorageConnector.threadedUpload(mailMsg, mobjData.marrMessages[0].mstrEmailID);
+					} else {
+						MailConnector.sendFromData(mobjData.marrMessages[0], true);
 					}
 				}
 			}

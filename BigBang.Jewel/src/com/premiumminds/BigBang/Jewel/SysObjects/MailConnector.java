@@ -117,9 +117,10 @@ public class MailConnector {
 	
 	/**
 	 *	This method sends an email, receiving all the "usual" content on an email message.
+	 * @param oldAttaches TODO
 	 */
 	private static String sendMail(String[] replyTo, String[] to, String[] cc, String[] bcc, 
-			String[] from, String subject, String body, FileXfer[] attachments, boolean addFrom) throws BigBangJewelException {
+			String[] from, String subject, String body, FileXfer[] attachments, boolean addFrom, boolean oldAttaches) throws BigBangJewelException {
 
 		InternetAddress[] addresses;
 		
@@ -128,6 +129,10 @@ public class MailConnector {
 		FileXfer[] inlineImgs = null;
 		
 		String sentMessageID = "";
+		
+		boolean wasBodyAdded = false;
+		
+		List<File> fileList = null;
 		
 		try {
 			
@@ -190,117 +195,162 @@ public class MailConnector {
 				mailMsg.setText(body, "UTF-8");
 				mailMsg.addHeader("Content-Type", "text/html");
 			} else {
-				
-				// If it has inline images or attachments, must set a multipart mail
-				MimeBodyPart bodyPart = new MimeBodyPart();
-				MimeMultipart multipartMsg = new MimeMultipart("related");
-
-				if (inlineImgs!=null) {
-					
-					Set<String> fileNamesSet = new LinkedHashSet<String>();
-					Set<MimeBodyPart> inlinePartsSet = new LinkedHashSet<MimeBodyPart>();
-					 
-					for (int i=0; i<inlineImgs.length; i++) {
-						if (inlineImgs[i] == null) {
-							continue;
-						}
-						bodyPart = new MimeBodyPart();
-						
-						String fileName = inlineImgs[i].getFileName();
-						int extensionSize = inlineImgs[i].getContentType().length() + 1;
-						
-						File tempFile = File
-								.createTempFile(fileName.substring(0,
-										fileName.length() - extensionSize), fileName
-										.substring(fileName.length() - extensionSize), null);
-						FileOutputStream outputStream = new FileOutputStream(tempFile);
-						outputStream.write(inlineImgs[i].getData());
-						
-						fileName = tempFile.getName();
-						
-						bodyPart.attachFile(tempFile);	
-						bodyPart.setFileName(fileName);
-						bodyPart.setContentID("<" + fileName + ">");
-						bodyPart.setDisposition(MimeBodyPart.INLINE);
-						
-						inlinePartsSet.add(bodyPart);
-						fileNamesSet.add(fileName);
-	
-						outputStream.close();
-					}
-					
-					// Changes the body to have the new type of images
-					body = editOutterBody(fileNamesSet, body);
-					
-					// Adds the mail text (must be prior to the attachments)
-					bodyPart = new MimeBodyPart();
+				if (oldAttaches) {
+					// Simply put: bad stuff was happening here, so I made sure the old "way of doing things" is used, for there is not enough time for elegant solutions
+					MimeMultipart multipartMsg = new MimeMultipart();
+					MimeBodyPart bodyPart = new MimeBodyPart();
 					bodyPart.setContent(body, "text/html; charset=utf-8");
 					multipartMsg.addBodyPart(bodyPart);
-					
-					// Adds the attachments
-					for (MimeBodyPart p : inlinePartsSet) {
-						multipartMsg.addBodyPart(p);
-					}
-					
-				}
-				
-				// Now the attachments
-				if(attachments!=null) {
-					
+
 					for (int i=0; i<attachments.length; i++) {
-						
 						if (attachments[i] == null) {
 							continue;
 						}
-						
 						bodyPart = new MimeBodyPart();
-						
-						String fileName = attachments[i].getFileName();
-						
-						// Gets the file name and extension
-						String contentType = attachments[i].getContentType();
-		        		String fileExtension = contentType.substring(contentType.lastIndexOf("/") + 1).toLowerCase();
-		        		
-		        		int extensionSize = fileExtension.length() + 1;
-						
-						int justNameLength = fileName.length() - extensionSize;
-						if (justNameLength < 0) {
-							fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-							extensionSize = fileExtension.length() + 1;
-							justNameLength = fileName.length() - extensionSize;
-						}
-						
-						File tempFile = null;
-						
-						try {
-							/*tempFile = File
-									.createTempFile(fileName.substring(0,
-											justNameLength), fileName
-											.substring(fileName.length() - extensionSize), null); */
-							String tempDir = System.getProperty("java.io.tmpdir");
-							tempFile = new File(tempDir, fileName);
-						} catch (Exception e) {
-							continue;
-						}
+						bodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(attachments[i].getData(),
+								attachments[i].getContentType())));
+						bodyPart.setFileName(attachments[i].getFileName());
+						multipartMsg.addBodyPart(bodyPart);
+					}
 
-						FileOutputStream outputStream = new FileOutputStream(tempFile);
-						outputStream.write(attachments[i].getData());
+					mailMsg.setContent(multipartMsg);
+					mailMsg.addHeader("Content-Type", multipartMsg.getContentType());
+				} else {
+					// If it has inline images or attachments, must set a multipart mail
+					MimeBodyPart bodyPart = new MimeBodyPart();
+					MimeMultipart multipartMsg = new MimeMultipart("related");
+
+					if (inlineImgs!=null) {
 						
-						bodyPart.attachFile(tempFile);
+						Set<String> fileNamesSet = new LinkedHashSet<String>();
+						Set<MimeBodyPart> inlinePartsSet = new LinkedHashSet<MimeBodyPart>();
+						 
+						for (int i=0; i<inlineImgs.length; i++) {
+							if (inlineImgs[i] == null) {
+								continue;
+							}
+							bodyPart = new MimeBodyPart();
+							
+							String fileName = inlineImgs[i].getFileName();
+							int extensionSize = inlineImgs[i].getContentType().length() + 1;
+							
+							File tempFile = File
+									.createTempFile(fileName.substring(0,
+											fileName.length() - extensionSize), fileName
+											.substring(fileName.length() - extensionSize), null);
+							FileOutputStream outputStream = new FileOutputStream(tempFile);
+							outputStream.write(inlineImgs[i].getData());
+							
+							fileName = tempFile.getName();
+							
+							bodyPart.attachFile(tempFile);	
+							bodyPart.setFileName(fileName);
+							bodyPart.setContentID("<" + fileName + ">");
+							bodyPart.setDisposition(MimeBodyPart.INLINE);
+							
+							inlinePartsSet.add(bodyPart);
+							fileNamesSet.add(fileName);
+		
+							outputStream.close();
+						}
+						
+						// Changes the body to have the new type of images
+						body = editOutterBody(fileNamesSet, body);
+						
+						// Adds the mail text (must be prior to the attachments)
+						bodyPart = new MimeBodyPart();
+						bodyPart.setContent(body, "text/html; charset=utf-8");
 						multipartMsg.addBodyPart(bodyPart);
 						
-						outputStream.close();
+						wasBodyAdded = true;
+						
+						// Adds the attachments
+						for (MimeBodyPart p : inlinePartsSet) {
+							multipartMsg.addBodyPart(p);
+						}
+						
 					}
-				}
+					
+					// Now the attachments
+					if(attachments!=null) {
+						
+						for (int i=0; i<attachments.length; i++) {
+							
+							if (attachments[i] == null) {
+								continue;
+							}
+							
+							bodyPart = new MimeBodyPart();
+							
+							String fileName = attachments[i].getFileName();
+							
+							// Gets the file name and extension
+							String contentType = attachments[i].getContentType();
+			        		String fileExtension = contentType.substring(contentType.lastIndexOf("/") + 1).toLowerCase();
+			        		
+			        		int extensionSize = fileExtension.length() + 1;
+							
+							int justNameLength = fileName.length() - extensionSize;
+							if (justNameLength < 0) {
+								fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+								extensionSize = fileExtension.length() + 1;
+								justNameLength = fileName.length() - extensionSize;
+							}
+							
+							File tempFile = null;
+							try {
+								/*tempFile = File
+										.createTempFile(fileName.substring(0,
+												justNameLength), fileName
+												.substring(fileName.length() - extensionSize), null); */
+								String tempDir = System.getProperty("java.io.tmpdir");
+								tempFile = new File(tempDir, fileName);
+							} catch (Exception e) {
+								continue;
+							}
 
-				mailMsg.setContent(multipartMsg);
-				mailMsg.addHeader("Content-Type", multipartMsg.getContentType());
+							FileOutputStream outputStream = new FileOutputStream(tempFile);
+							outputStream.write(attachments[i].getData());
+							
+							bodyPart.attachFile(tempFile);
+							multipartMsg.addBodyPart(bodyPart);
+							
+							outputStream.close();
+							
+							// Deletes the temp file created for the attachment
+							if (tempFile != null) {
+								if (fileList==null) {
+									fileList = new ArrayList<File>();
+								}
+								fileList.add(tempFile);
+							}
+						}
+					}
+					
+					if (!wasBodyAdded) {
+						// Adds the mail text (must be prior to the attachments)
+						bodyPart = new MimeBodyPart();
+						bodyPart.setContent(body, "text/html; charset=utf-8");
+						multipartMsg.addBodyPart(bodyPart);
+					}
+
+					mailMsg.setContent(multipartMsg);
+					mailMsg.addHeader("Content-Type", multipartMsg.getContentType());
+				}
 			}
 
 			mailMsg.addHeader("MIME-Version", "1.0");
 			mailMsg.saveChanges();
 			
 			sendingConnection.sendMessage(mailMsg, mailMsg.getAllRecipients());
+			
+			if (fileList!=null && fileList.size()>0) {
+				for (File f : fileList) {
+					if (f!=null) {
+						f.delete();
+					}
+				}
+			}
 			
 			sentMessageID = mailMsg.getMessageID();
 			
@@ -309,7 +359,7 @@ public class MailConnector {
 			return sentMessageID;
 			
 		} catch (Throwable e) {
-			throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage() + " No sendMEssage do mail connector. ", e);
 		}
 	}
 	
@@ -544,7 +594,7 @@ public class MailConnector {
 			
 			// Calls the method to send the message
 			sendMail(replyTo, to, message.marrCCs, message.marrBCCs,
-					null, message.mstrSubject, message.mstrBody, attachments, false);
+					null, message.mstrSubject, message.mstrBody, attachments, false, true);
 		}
 	}	
 	
@@ -959,7 +1009,7 @@ public class MailConnector {
 	 *	This methods gets a MessageData object, and manipulates it, extracting
 	 *	the needed information to call the sendData's method 
 	 */
-	public static String sendFromData(MessageData message) throws BigBangJewelException {
+	public static String sendFromData(MessageData message, boolean oldAttaches) throws BigBangJewelException {
 
 		int countTo = 0;
 		int countCC = 0;
@@ -1049,7 +1099,7 @@ public class MailConnector {
 			}
 		}
 
-		sentMessageId = sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false);
+		sentMessageId = sendMail(replyTo, to, cc, bcc, from, message.mstrSubject, message.mstrBody, attachments, false, oldAttaches);
 		
 		return sentMessageId;
 	}

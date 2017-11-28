@@ -164,7 +164,7 @@ public class SendMessage
 		if ( mobjData.mbIsEmail ) {
 			try
 			{
-				sentMessageId = MailConnector.sendFromData(mobjData);
+				sentMessageId = MailConnector.sendFromData(mobjData, false);
 				mobjData.mstrEmailID = sentMessageId;
 				mobjData.mstrFolderID = Constants.GoogleAppsConstants.GMAIL_SENT_FOLDER;
 			}
