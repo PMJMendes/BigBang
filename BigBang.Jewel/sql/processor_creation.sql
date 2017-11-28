@@ -1,3 +1,20 @@
+/*
+ * 
+ * NOTA
+ * 
+ * Apesar do integrador da Libery estar aqui, não foi passado a produção.
+ * 
+ * Para passar, tem que se correr este SQL.
+ * 
+ * No entanto, nunca foi testado e a ideia foi abandonada ou "adiada até um dia"
+ * 
+ * Eventualmente pode-se apagar este ficheiro e o com.premiumminds.BigBang.Jewel.FileIO.Liberty.java podem ser eliminados
+ * 
+ */
+
+
+
+
 -- Creates the translators and file processors
 /*-- -Insert(s): [bigbang].[tblBBFileProcessers] */
 INSERT INTO [bigbang].[tblBBFileProcessers] ([PK],[_TSCreate],[_TSUpdate],[FKType],[FKFormat],[ProcesserClass]) VALUES('220cbce9-7bd8-42c4-b932-a5e201009acd','2016-04-08T15:34:16.163','2016-04-08T15:34:16.163','648cb5a9-3abb-4995-b5fa-a0a600edf739','14adae21-c09f-443b-bc2d-a5e200c7e2e0',N'com.premiumminds.BigBang.Jewel.FileIO.Liberty');

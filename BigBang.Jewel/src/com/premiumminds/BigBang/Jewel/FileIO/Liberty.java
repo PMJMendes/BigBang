@@ -31,6 +31,18 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerForceShortCircuit;
 import com.premiumminds.BigBang.Jewel.SysObjects.FileIOBase;
 
+/*
+ * 
+ * NOTA
+ * 
+ * Apesar do integrador da Libery estar aqui, não foi passado a produção.
+ * 
+ * Nunca foi testado e a ideia foi abandonada ou "adiada até um dia"
+ * 
+ * Eventualmente pode-se apagar este ficheiro e o processor_creation.sql
+ * 
+ */
+
 /**
  * Class responsible for importing Generali's receipts
  */
