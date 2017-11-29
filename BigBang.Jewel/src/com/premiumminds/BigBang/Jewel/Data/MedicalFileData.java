@@ -26,6 +26,8 @@ public class MedicalFileData
 	public MedicalDetailData[] marrDetails;
 
 	public MedicalAppointmentData[] marrAppts;
+	
+	public MedicalRelapseData[] marrRelps;
 
 	public MedicalFileData mobjPrevValues;
 
@@ -97,6 +99,16 @@ public class MedicalFileData
 			for ( i = 0; i < marrAppts.length; i++ )
 			{
 				marrAppts[i].Describe(pstrBuilder, pstrLineBreak);
+				pstrBuilder.append(pstrLineBreak);
+			}
+		}
+		
+		if ( (marrRelps != null) && (marrRelps.length > 0) )
+		{
+			pstrBuilder.append(pstrLineBreak).append("Recaídas:").append(pstrLineBreak).append(pstrLineBreak);
+			for ( i = 0; i < marrRelps.length; i++ )
+			{
+				marrRelps[i].Describe(pstrBuilder, pstrLineBreak);
 				pstrBuilder.append(pstrLineBreak);
 			}
 		}

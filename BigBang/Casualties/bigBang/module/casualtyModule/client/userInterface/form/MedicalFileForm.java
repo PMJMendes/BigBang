@@ -6,6 +6,7 @@ import java.util.Collection;
 import bigBang.definitions.shared.MedicalFile;
 import bigBang.definitions.shared.MedicalFile.Appointment;
 import bigBang.definitions.shared.MedicalFile.MedicalDetail;
+import bigBang.definitions.shared.MedicalFile.Relapse;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
@@ -17,6 +18,7 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.casualtyModule.client.userInterface.AppointmentForm;
 import bigBang.module.casualtyModule.client.userInterface.PaymentGridPanel;
+import bigBang.module.casualtyModule.client.userInterface.RelapseForm;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -29,10 +31,13 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 	DatePickerFormField nextAppointment;
 	Button newMedicalDetailButton;
 	Button newAppointmentButton;
+	Button newRelapseButton;
 	CollapsibleFormViewSection medicalDetails;
 	CollapsibleFormViewSection appointments;
+	CollapsibleFormViewSection relapses;
 	Collection<MedicalDetailForm> medicalDetailForms;
 	Collection<AppointmentForm> appointmentForms;
+	Collection<RelapseForm> relapseForms;
 	Button showAllPayments = new Button("Resumo de Pagamentos");
 	TextBoxFormField notes;
 	private PopupPanel popup;
@@ -82,6 +87,7 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 
 		medicalDetails = new CollapsibleFormViewSection("Detalhes");
 		appointments = new CollapsibleFormViewSection("Consultas");
+		relapses = new CollapsibleFormViewSection("Recaídas");
 
 		newMedicalDetailButton = new Button("Adicionar Detalhe");
 		newMedicalDetailButton.addClickHandler(new ClickHandler() {
@@ -100,9 +106,19 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 				addAppointment(new MedicalFile.Appointment());
 			}
 		});
+		
+		newRelapseButton = new Button("Adicionar Recaída");
+		newRelapseButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				addRelapse(new MedicalFile.Relapse());
+			}
+		});
 
 		medicalDetailForms = new ArrayList<MedicalDetailForm>();
 		appointmentForms = new ArrayList<AppointmentForm>();
+		relapseForms = new ArrayList<RelapseForm>();
 
 		addLastFields();
 
@@ -112,6 +128,8 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 		medicalDetails.setSize("100%", "100%");
 		addSection(appointments);
 		appointments.setSize("100%", "100%");
+		addSection(relapses);
+		relapses.setSize("100%", "100%");
 
 		setValidator(new MedicalFormValidator(this));
 	}
@@ -137,6 +155,28 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 			addLastFields();
 		}
 	}
+	
+	protected void addRelapse(Relapse relapse) {
+		if(!relapse.deleted){
+
+			final RelapseForm rel = new RelapseForm();
+			rel.setReadOnly(this.isReadOnly());
+			this.relapseForms.add(rel);
+			rel.setSize("100%","100%");
+			relapses.addWidget(rel.getNonScrollableContent());
+			rel.setValue(relapse);
+
+			rel.getRemoveButton().addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					removeItemAndsection(rel);
+				}
+			});
+
+			addLastFields();
+		}
+	}
 
 	protected void removeItemAndsection(AppointmentForm section) {
 		section.getNonScrollableContent().setVisible(false);
@@ -145,6 +185,14 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 		detail.deleted = true;
 		section.setValue(detail);		
 
+	}
+	
+	protected void removeItemAndsection(RelapseForm section) {
+		section.getNonScrollableContent().setVisible(false);
+		section.removeFromParent();
+		Relapse detail = section.getInfo();
+		detail.deleted = true;
+		section.setValue(detail);		
 	}
 
 	protected void addMedicalDetail(MedicalFile.MedicalDetail medicalDetail) {
@@ -180,6 +228,7 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 	private void addLastFields() {
 		medicalDetails.addWidget(newMedicalDetailButton);
 		appointments.addWidget(newAppointmentButton);
+		relapses.addWidget(newRelapseButton);
 	}
 
 	@Override
@@ -191,6 +240,7 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 			result.nextDate = nextAppointment.getStringValue();
 			result.details = getMedicalDetails();
 			result.appointments = getAppointments();
+			result.relapses = getRelapses();
 			result.notes = notes.getValue();
 		}
 
@@ -209,6 +259,19 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 
 		return appointments;
 	}
+	
+	private Relapse[] getRelapses() {
+		Relapse[] relapses = new Relapse[relapseForms.size()];
+
+		int i = 0;
+
+		for(RelapseForm rel : relapseForms){
+			relapses[i] = rel.getInfo();
+			i++;
+		}
+
+		return relapses;
+	}
 
 	@Override
 	public void setInfo(MedicalFile info) {
@@ -218,6 +281,7 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 			notes.setValue(info.notes);
 			setMedicalDetails(info.details);
 			setAppointments(info.appointments);
+			setRelapses(info.relapses);
 		}
 
 	}
@@ -233,6 +297,21 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 		if(appointments!= null){
 			for(Appointment app : appointments){
 				addAppointment(app);
+			}
+		}
+	}
+	
+	private void setRelapses(Relapse[] relapses) {
+		for(RelapseForm form : relapseForms){
+			form.removeFromParent();
+			form.getNonScrollableContent().setVisible(false);
+		}
+
+		relapseForms.clear();
+
+		if(relapses!= null){
+			for(Relapse rel : relapses){
+				addRelapse(rel);
 			}
 		}
 	}
@@ -274,8 +353,12 @@ public class MedicalFileForm extends FormView<MedicalFile>{
 			for(AppointmentForm sec : appointmentForms){
 				sec.setReadOnly(readOnly);
 			}
+			for(RelapseForm rel : relapseForms){
+				rel.setReadOnly(readOnly);
+			}
 			newMedicalDetailButton.setVisible(!readOnly);
 			newAppointmentButton.setVisible(!readOnly);
+			newRelapseButton.setVisible(!readOnly);
 		}
 		super.setReadOnly(readOnly);
 	}

@@ -8,15 +8,27 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PaymentGridPanel extends View{
 
 	protected Grid grid;
+	protected double totalBenefits;  
+	protected ScrollPanel scrollWrapper;
 
 	public PaymentGridPanel() {
+		
+		ScrollPanel sc = new ScrollPanel();
+		this.scrollWrapper = sc;
+		sc.getElement().getStyle().setProperty("overflowX", "hidden");
+		
 		VerticalPanel wrapper = new VerticalPanel();
-		initWidget(wrapper);
+		
+		
+		sc.setSize("100%", "100%");
+		sc.add(wrapper);
+		sc.setStyleName("formPanel");	
 
 		wrapper.setSize("100%", "100%");
 		grid = new Grid();
@@ -26,7 +38,7 @@ public class PaymentGridPanel extends View{
 		wrapper.add(grid);
 		grid.setSize("100%", "100%");
 
-
+		initWidget(sc);
 	}
 
 	@Override
@@ -36,13 +48,17 @@ public class PaymentGridPanel extends View{
 
 	public void setValue(MedicalFile.MedicalDetail[] details){
 
-		grid.resize(details.length+1, 5);
+		grid.resize(details.length+2, 5);
+		
+		totalBenefits = 0;
 
 		setTitles();
+		
+		int i;
 
 		NumberFormat nf = NumberFormat.getFormat("#,##0.00");
 		
-		for(int i = 1; i<=details.length; i++){
+		for(i = 1; i<=details.length; i++){
 			grid.setWidget(i, 0, new Label(details[i-1].startDate));
 			((Label)grid.getWidget(i, 0)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 			grid.setWidget(i, 1, new Label(details[i-1].endDate));
@@ -57,9 +73,25 @@ public class PaymentGridPanel extends View{
 			if((i % 2) != 0){
 				grid.getRowFormatter().getElement(i).getStyle().setBackgroundColor("#CCC");
 			}
+			
+			if (details[i-1].benefits!=null) {
+				totalBenefits += details[i-1].benefits;
+			}
 		}
 
+		// now for the sum
+		grid.setWidget(i, 0, new Label("TOTAL"));
+		((Label)grid.getWidget(i, 0)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		grid.setWidget(i, 1, new Label(""));
+		((Label)grid.getWidget(i, 1)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		grid.setWidget(i, 2, new Label(""));
+		((Label)grid.getWidget(i, 2)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		grid.setWidget(i, 3, new Label(""));
+		((Label)grid.getWidget(i, 3)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		grid.setWidget(i, 4, new Label(nf.format(totalBenefits)));
+		((Label)grid.getWidget(i, 4)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
+		grid.getRowFormatter().getElement(i).getStyle().setBackgroundColor("#9FF");
 
 	}
 

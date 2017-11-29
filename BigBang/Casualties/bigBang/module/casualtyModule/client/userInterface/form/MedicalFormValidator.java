@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.userInterface.form;
 
 import bigBang.library.client.FormValidator;
 import bigBang.module.casualtyModule.client.userInterface.AppointmentForm;
+import bigBang.module.casualtyModule.client.userInterface.RelapseForm;
 
 public class MedicalFormValidator extends FormValidator<MedicalFileForm> {
 
@@ -17,6 +18,7 @@ public class MedicalFormValidator extends FormValidator<MedicalFileForm> {
 		valid &= validateString(form.notes, 0, 250, true);
 		valid &= validateDetails();
 		valid &= validateAppointments();
+		valid &= validateRelapses();
 		
 		return new Result(valid, this.validationMessages);
 	}
@@ -39,6 +41,19 @@ public class MedicalFormValidator extends FormValidator<MedicalFileForm> {
 		for(AppointmentForm assForm : form.appointmentForms){
 			if(assForm.getNonScrollableContent().isVisible()){
 				valid &= assForm.validate();
+			}
+		}
+		
+		return valid;
+		
+	}
+	
+	private boolean validateRelapses(){
+		
+		boolean valid = true;
+		for(RelapseForm relForm : form.relapseForms){
+			if(relForm.getNonScrollableContent().isVisible()){
+				valid &= relForm.validate();
 			}
 		}
 		
