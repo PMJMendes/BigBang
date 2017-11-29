@@ -8,16 +8,27 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PaymentGridPanel extends View{
 
 	protected Grid grid;
 	protected double totalBenefits;  
+	protected ScrollPanel scrollWrapper;
 
 	public PaymentGridPanel() {
+		
+		ScrollPanel sc = new ScrollPanel();
+		this.scrollWrapper = sc;
+		sc.getElement().getStyle().setProperty("overflowX", "hidden");
+		
 		VerticalPanel wrapper = new VerticalPanel();
-		initWidget(wrapper);
+		
+		
+		sc.setSize("100%", "100%");
+		sc.add(wrapper);
+		sc.setStyleName("formPanel");	
 
 		wrapper.setSize("100%", "100%");
 		grid = new Grid();
@@ -27,7 +38,7 @@ public class PaymentGridPanel extends View{
 		wrapper.add(grid);
 		grid.setSize("100%", "100%");
 
-
+		initWidget(sc);
 	}
 
 	@Override
