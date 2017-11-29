@@ -305,19 +305,29 @@ public class MailConnector {
 												.substring(fileName.length() - extensionSize), null); */
 								String tempDir = System.getProperty("java.io.tmpdir");
 								tempFile = new File(tempDir, fileName);
+								
+								if (!isFilenameValid(tempFile)) {
+									fileName = sanitizeFilename(fileName);
+									tempFile = new File(tempDir, fileName);
+								}
+								
 							} catch (Exception e) {
 								continue;
 							}
+							
+							try {
+								FileOutputStream outputStream = new FileOutputStream(tempFile);
+								outputStream.write(attachments[i].getData());
+								
+								bodyPart.attachFile(tempFile);
+								multipartMsg.addBodyPart(bodyPart);
+								
+								outputStream.close();
+							} catch (Exception e) {
+								throw new BigBangJewelException(e.getMessage() + " Error while writing the file to send as attachment. ", e);
+							}
 
-							FileOutputStream outputStream = new FileOutputStream(tempFile);
-							outputStream.write(attachments[i].getData());
-							
-							bodyPart.attachFile(tempFile);
-							multipartMsg.addBodyPart(bodyPart);
-							
-							outputStream.close();
-							
-							// Deletes the temp file created for the attachment
+							// Adds the temp file created for the attachment
 							if (tempFile != null) {
 								if (fileList==null) {
 									fileList = new ArrayList<File>();
@@ -344,12 +354,17 @@ public class MailConnector {
 			
 			sendingConnection.sendMessage(mailMsg, mailMsg.getAllRecipients());
 			
-			if (fileList!=null && fileList.size()>0) {
-				for (File f : fileList) {
-					if (f!=null) {
-						f.delete();
+			try {
+				if (fileList!=null && fileList.size()>0) {
+					for (File f : fileList) {
+						if (f!=null) {
+							f.delete();
+						}
 					}
+					fileList.clear();
 				}
+			} catch (Exception e) {
+				throw new BigBangJewelException(e.getMessage() + " Error while deleting the file send as attachment. ", e);
 			}
 			
 			sentMessageID = mailMsg.getMessageID();
@@ -362,6 +377,20 @@ public class MailConnector {
 			throw new BigBangJewelException(e.getMessage() + " No sendMEssage do mail connector. ", e);
 		}
 	}
+	
+	private static boolean isFilenameValid(File f) {
+	    try {
+	       f.getCanonicalPath();
+	       return true;
+	    }
+	    catch (IOException e) {
+	       return false;
+	    }
+	  }
+	
+	 public static String sanitizeFilename(String name) {
+		 return name.replaceAll("[:\\\\/*?|<>]", "_");
+	 }
 	
 	/**
 	 *	This method changes the src in the img tag for the base-64 inline images
