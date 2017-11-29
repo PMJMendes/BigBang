@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class PaymentGridPanel extends View{
 
 	protected Grid grid;
+	protected double totalBenefits;  
 
 	public PaymentGridPanel() {
 		VerticalPanel wrapper = new VerticalPanel();
@@ -36,13 +37,17 @@ public class PaymentGridPanel extends View{
 
 	public void setValue(MedicalFile.MedicalDetail[] details){
 
-		grid.resize(details.length+1, 5);
+		grid.resize(details.length+2, 5);
+		
+		totalBenefits = 0;
 
 		setTitles();
+		
+		int i;
 
 		NumberFormat nf = NumberFormat.getFormat("#,##0.00");
 		
-		for(int i = 1; i<=details.length; i++){
+		for(i = 1; i<=details.length; i++){
 			grid.setWidget(i, 0, new Label(details[i-1].startDate));
 			((Label)grid.getWidget(i, 0)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 			grid.setWidget(i, 1, new Label(details[i-1].endDate));
@@ -57,9 +62,25 @@ public class PaymentGridPanel extends View{
 			if((i % 2) != 0){
 				grid.getRowFormatter().getElement(i).getStyle().setBackgroundColor("#CCC");
 			}
+			
+			if (details[i-1].benefits!=null) {
+				totalBenefits += details[i-1].benefits;
+			}
 		}
 
+		// now for the sum
+		grid.setWidget(i, 0, new Label("TOTAL"));
+		((Label)grid.getWidget(i, 0)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		grid.setWidget(i, 1, new Label(""));
+		((Label)grid.getWidget(i, 1)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		grid.setWidget(i, 2, new Label(""));
+		((Label)grid.getWidget(i, 2)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		grid.setWidget(i, 3, new Label(""));
+		((Label)grid.getWidget(i, 3)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		grid.setWidget(i, 4, new Label(nf.format(totalBenefits)));
+		((Label)grid.getWidget(i, 4)).setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
+		grid.getRowFormatter().getElement(i).getStyle().setBackgroundColor("#9FF");
 
 	}
 
