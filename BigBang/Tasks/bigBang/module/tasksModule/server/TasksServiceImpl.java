@@ -457,6 +457,7 @@ public class TasksServiceImpl
 		IProcess lrefProc;
 		String lstrLabel;
 		String lstrClient;
+		String casualtyProcessNumber = "";
 
 		lstrLabel = null;
 		lstrClient = null;
@@ -473,8 +474,13 @@ public class TasksServiceImpl
 						(UUID)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 						Constants.ObjID_AgendaProcess), larrProcIDs[0]).getAt(1));
 				lstrLabel = lrefProc.GetData().getLabel();
-				while ( (lrefProc != null) && !Constants.ProcID_Client.equals(lrefProc.GetScriptID()) )
+				while ( (lrefProc != null) && !Constants.ProcID_Client.equals(lrefProc.GetScriptID()) ) {
+					if (Constants.ProcID_Casualty.equals(lrefProc.GetScriptID())) {
+						// If it is a casualty, the process number should be displayed
+						casualtyProcessNumber = ( lrefProc == null ? null : lrefProc.GetData().getLabel() );
+					}
 					lrefProc = lrefProc.GetParent();
+				}
 				lstrClient = ( lrefProc == null ? null : lrefProc.GetData().getLabel() );
 				break;
 			default:
@@ -496,6 +502,7 @@ public class TasksServiceImpl
 		lobjResult.description = (String)parrValues[0];
 		lobjResult.reference = lstrLabel;
 		lobjResult.clientName = lstrClient;
+		lobjResult.casualtyProcess = casualtyProcessNumber;
 		lobjResult.timeStamp = ((Timestamp)parrValues[1]).toString().substring(0, 10);
 		lobjResult.dueDate = ((Timestamp)parrValues[2]).toString().substring(0, 10);
 		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Invalid) == 0)
