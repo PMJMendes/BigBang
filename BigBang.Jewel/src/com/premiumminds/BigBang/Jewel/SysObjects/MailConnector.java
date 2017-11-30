@@ -631,7 +631,7 @@ public class MailConnector {
 	 *	This method gets all the mails in a given folder, or from the inbox folder if no folder is specified.
 	 *	The mails may be filtered, returning only those which are unread.
 	 */
-	public static Message[] getMailsFast(String folderId, boolean filterUnseen) throws BigBangJewelException {
+	public static Message[] getMailsFast(String folderId, boolean addMoreMails, int nrOfMails, boolean filterUnseen) throws BigBangJewelException {
 
 		Message[] fetchedMails = null;
 		Folder folder = null;
@@ -659,7 +659,7 @@ public class MailConnector {
 			} else {
 				int nrItems = folder.getMessageCount();
 				if (nrItems > Constants.GoogleAppsConstants.MAX_FETCHED_MAILS) {
-					fetchedMails = folder.getMessages(nrItems-Constants.GoogleAppsConstants.MAX_FETCHED_MAILS, nrItems);
+					fetchedMails = folder.getMessages(nrItems-Constants.GoogleAppsConstants.MAX_FETCHED_MAILS-nrOfMails, nrItems-nrOfMails);
 					
 					FetchProfile fp = new FetchProfile();
 				    fp.add(FetchProfile.Item.ENVELOPE);

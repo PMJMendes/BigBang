@@ -128,11 +128,16 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 						} else {
 							view.clear();
 							
-							view.clearList();
+							if (!stub.isMoreMailsButton) {
+								view.clearList();
+							}
 							view.enableGetAll(false);
 							view.enableRefresh(false);
 							
-							service.getFolder(stub, new BigBangAsyncCallback<MailItemStub[]>() {
+							int nrOfMails = view.getEmailList().getAll().size() - 2;
+							if (nrOfMails<0) nrOfMails=0;
+							
+							service.getFolder(stub, nrOfMails, new BigBangAsyncCallback<MailItemStub[]>() {
 
 								@Override
 								public void onResponseSuccess(MailItemStub[] result) {

@@ -58,7 +58,7 @@ public class MailServiceImpl
 
 		int size = parrSource==null ? 0 : parrSource.length;
 		
-		larrResults = new MailItemStub[size+1];
+		larrResults = new MailItemStub[size+2];
 		
 		// sets the parent "back" folder
 		larrResults[0] = new MailItemStub();
@@ -81,7 +81,7 @@ public class MailServiceImpl
 		
 		String folderId = parrSource[0].getFolder().getFullName();	
 		
-		for ( i = 1; i < larrResults.length; i++ )
+		for ( i = 1; i < larrResults.length-1; i++ )
 		{
 			larrResults[i] = new MailItemStub();
 
@@ -123,6 +123,9 @@ public class MailServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 		}
+		larrResults[i] = new MailItemStub();
+		larrResults[i].subject = "Mais Emails";
+		larrResults[i].isMoreMailsButton = true;
 
 		return larrResults;
 	}
@@ -273,7 +276,7 @@ public class MailServiceImpl
 	/**
 	 * Gets all items and folders in root
 	 */
-	public MailItemStub[] getFolder(MailItemStub current)
+	public MailItemStub[] getFolder(MailItemStub current, int nrOfMails)
 			throws SessionExpiredException, BigBangException
 		{
 			Message[] items;
@@ -284,7 +287,7 @@ public class MailServiceImpl
 				throw new SessionExpiredException();
 
 			try {
-				items = MailConnector.getMailsFast(folderId, false);
+				items = MailConnector.getMailsFast(folderId, current.isMoreMailsButton, nrOfMails, false);
 			}
 			catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
@@ -293,6 +296,9 @@ public class MailServiceImpl
 			MailItemStub[] mailItems = null;
 			
 			mailItems = messagesToClient(items);
+			
+			MailItemStub more = new MailItemStub();
+			more.isMoreMailsButton = true;
 			
 			if (items != null && items.length > 0) {
 				closeFolderAndStore((MimeMessage) items[0]);
