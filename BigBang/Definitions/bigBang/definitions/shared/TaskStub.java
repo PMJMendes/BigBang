@@ -20,5 +20,6 @@ public class TaskStub
 	public String clientName;
 	public String timeStamp;
 	public String dueDate;
+	public String casualtyProcess;
 	public Status status;
 }

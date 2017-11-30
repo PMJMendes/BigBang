@@ -43,16 +43,27 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 		protected Label dueDate;
 		protected String defaultBGColor;
 		private Label client;
+		private Label casualtyProcess;
 
 		public Entry(TaskStub value) {
 			super(value);
 			setRightWidget(statusIndicator);
 			defaultBGColor = this.getElement().getStyle().getBackgroundColor();
-			setHeight("65px");
+			if (value.casualtyProcess!=null && value.casualtyProcess.length()>0) {
+				setHeight("75px");
+			} else {
+				setHeight("65px");
+			}
 		}
 
 		public <I extends Object> void setInfo(I info) {
 			VerticalPanel wrapper; 
+			
+			Resources r = GWT.create(Resources.class);
+			TaskStub t = (TaskStub) info;
+
+			boolean displayCasProcess = t.casualtyProcess!=null && t.casualtyProcess.length()>0;
+			
 			if(title == null){
 				statusIndicator = new Image();
 				wrapper = new VerticalPanel();
@@ -61,23 +72,28 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 				reference = getFormatedLabel();
 				reference.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 				client = getFormatedLabel();
+				casualtyProcess = getFormatedLabel();
 				dueDate = getFormatedLabel();
 				dueDate.getElement().getStyle().setFontSize(12, Unit.PX);
 				
 				wrapper.add(title);
 				wrapper.add(reference);
 				wrapper.add(client);
+				if (displayCasProcess) {
+					wrapper.add(casualtyProcess);
+				}
 				wrapper.add(dueDate);
 				
 				setWidget(wrapper);
 			}
-			Resources r = GWT.create(Resources.class);
-			TaskStub t = (TaskStub) info;
 		
 			title.setText(t.description);
 			reference.setText("Ref: " + t.reference);
 			client.setText(t.clientName);
 			dueDate.setText("Data Limite: " + t.dueDate);
+			if (displayCasProcess) {
+				casualtyProcess.setText("Sinistro: " + t.casualtyProcess);
+			}
 			
 			statusIndicator.setVisible(true);
 			this.getElement().getStyle().setBackgroundColor(this.defaultBGColor);
