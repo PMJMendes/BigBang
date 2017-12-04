@@ -130,6 +130,8 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 							
 							if (!stub.isMoreMailsButton) {
 								view.clearList();
+							} else {
+								view.getEmailList().
 							}
 							view.enableGetAll(false);
 							view.enableRefresh(false);
@@ -138,7 +140,7 @@ public class EmailReceiverViewPresenter implements ViewPresenter{
 							if (nrOfMails<0) nrOfMails=0;
 							
 							service.getFolder(stub, nrOfMails, new BigBangAsyncCallback<MailItemStub[]>() {
-
+	
 								@Override
 								public void onResponseSuccess(MailItemStub[] result) {
 									for(int i=0; i<result.length; i++){

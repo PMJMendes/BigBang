@@ -110,7 +110,7 @@ HasValue<Message> {
 							if (nrOfMails<0) nrOfMails=0;
 							
 							service.getFolder(stub, nrOfMails, new BigBangAsyncCallback<MailItemStub[]>() {
-
+	
 								@Override
 								public void onResponseSuccess(MailItemStub[] result) {
 									for(int i=0; i<result.length; i++){
