@@ -659,15 +659,21 @@ public class MailConnector {
 			} else {
 				int nrItems = folder.getMessageCount();
 				if (nrItems > Constants.GoogleAppsConstants.MAX_FETCHED_MAILS) {
-					fetchedMails = folder.getMessages(nrItems-Constants.GoogleAppsConstants.MAX_FETCHED_MAILS-nrOfMails, nrItems-nrOfMails);
-					
-					FetchProfile fp = new FetchProfile();
-				    fp.add(FetchProfile.Item.ENVELOPE);
-				    fp.add(FetchProfileItem.FLAGS);
-				    fp.add(FetchProfileItem.CONTENT_INFO);
-
-				    fp.add("X-mailer");
-				    folder.fetch(fetchedMails, fp);
+					int startIndex = nrItems-Constants.GoogleAppsConstants.MAX_FETCHED_MAILS-nrOfMails;
+					if (startIndex < 0) {
+						startIndex = 1;
+					}
+					if (nrItems-nrOfMails>0) {
+						fetchedMails = folder.getMessages(startIndex, nrItems-nrOfMails);
+						
+						FetchProfile fp = new FetchProfile();
+					    fp.add(FetchProfile.Item.ENVELOPE);
+					    fp.add(FetchProfileItem.FLAGS);
+					    fp.add(FetchProfileItem.CONTENT_INFO);
+	
+					    fp.add("X-mailer");
+					    folder.fetch(fetchedMails, fp);
+					}
 				} else {
 					fetchedMails = folder.getMessages();
 				}

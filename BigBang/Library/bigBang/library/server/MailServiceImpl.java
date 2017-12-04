@@ -123,6 +123,7 @@ public class MailServiceImpl extends EngineImplementor implements MailService {
 		larrResults[i].subject = "Mais Emails";
 		larrResults[i].isMoreMailsButton = true;
 		larrResults[i].isFolder = true;
+		larrResults[i].folderId = folderId;
 
 		return larrResults;
 	}

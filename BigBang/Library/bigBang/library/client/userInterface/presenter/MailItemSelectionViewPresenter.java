@@ -100,14 +100,17 @@ HasValue<Message> {
 							getBack();
 						} else {
 							view.clear();
+							
+							int nrOfMails = view.getEmailList().getAll().size() - 1;
+							if (nrOfMails<0) nrOfMails=0;
+							
 							if (!stub.isMoreMailsButton) {
 								view.clearList();
+								nrOfMails = 0;
 							}
+							
 							view.enableGetAll(false);
 							view.enableRefresh(false);
-							
-							int nrOfMails = view.getEmailList().getAll().size() - 2;
-							if (nrOfMails<0) nrOfMails=0;
 							
 							service.getFolder(stub, nrOfMails, new BigBangAsyncCallback<MailItemStub[]>() {
 	
