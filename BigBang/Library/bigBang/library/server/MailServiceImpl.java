@@ -30,15 +30,11 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 import com.premiumminds.BigBang.Jewel.SysObjects.StorageConnector;
 
-
-public class MailServiceImpl
-	extends EngineImplementor
-	implements MailService
-{
+public class MailServiceImpl extends EngineImplementor implements MailService {
 	private static final long serialVersionUID = 1L;
-	
+
 	private static HashMap<String, MailItemStub[]> storedFoldersByUser;
-	
+
 	/**
 	 * Prepares the data from a mails' list to be displayed
 	 */
@@ -49,17 +45,17 @@ public class MailServiceImpl
 		MailItemStub[] larrResults;
 		int i;
 		String lstrFrom;
-		
+
 		try {
 			lstrEmail = MailConnector.getUserEmail();
 		} catch (Throwable e) {
 			lstrEmail = null;
 		}
 
-		int size = parrSource==null ? 0 : parrSource.length;
-		
-		larrResults = new MailItemStub[size+1];
-		
+		int size = parrSource == null ? 0 : parrSource.length;
+
+		larrResults = new MailItemStub[size + 2];
+
 		// sets the parent "back" folder
 		larrResults[0] = new MailItemStub();
 		larrResults[0].isParentFolder = true;
@@ -72,57 +68,62 @@ public class MailServiceImpl
 		larrResults[0].attachmentCount = -1;
 		larrResults[0].bodyPreview = null;
 		larrResults[0].folderId = null;
-		larrResults[0].isParentFolder = true; 
+		larrResults[0].isParentFolder = true;
 		larrResults[0].parentFolderId = "bck";
-				
-		if (parrSource==null || parrSource.length==0) {
+
+		if (parrSource == null || parrSource.length == 0) {
 			return larrResults;
 		}
-		
-		String folderId = parrSource[0].getFolder().getFullName();	
-		
-		for ( i = 1; i < larrResults.length; i++ )
-		{
+
+		String folderId = parrSource[0].getFolder().getFullName();
+
+		for (i = 1; i < larrResults.length - 1; i++) {
 			larrResults[i] = new MailItemStub();
 
 			try {
 
-				Message message = parrSource[i-1];
-				
+				Message message = parrSource[i - 1];
+
 				larrResults[i].id = "" + message.getHeader("Message-Id")[0];
-				
+
 				larrResults[i].isFolder = false;
-				
+
 				larrResults[i].subject = message.getSubject();
-				
+
 				larrResults[i].folderId = folderId;
-				
-				InternetAddress address = (InternetAddress) (message.getFrom() == null ? null : message.getFrom()[0]);
+
+				InternetAddress address = (InternetAddress) (message.getFrom() == null ? null
+						: message.getFrom()[0]);
 				lstrFrom = address == null ? "" : address.getAddress();
 				larrResults[i].from = lstrFrom;
-				
-				try
-				{
-					larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(message.getReceivedDate());
-				}
-				catch (Throwable e)
-				{
+
+				try {
+					larrResults[i].timestamp = (new SimpleDateFormat(
+							"yyyy-MM-dd HH:mm:ss")).format(message
+							.getReceivedDate());
+				} catch (Throwable e) {
 					larrResults[i].timestamp = null;
 				}
 
 				if ((lstrFrom.length() > 0) && (lstrEmail != null))
-					larrResults[i].isFromMe = lstrEmail.equalsIgnoreCase(lstrFrom);
+					larrResults[i].isFromMe = lstrEmail
+							.equalsIgnoreCase(lstrFrom);
 				else
 					larrResults[i].isFromMe = false;
 
 				larrResults[i].attachmentCount = attachmentsNumber(message);
-				
+
 				larrResults[i].bodyPreview = "_";
-				
+
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
 		}
+		larrResults[i] = new MailItemStub();
+		larrResults[i].subject = "Mais Emails";
+		larrResults[i].isMoreMailsButton = true;
+		larrResults[i].isFolder = true;
+		larrResults[i].folderId = folderId;
 
 		return larrResults;
 	}
@@ -137,16 +138,15 @@ public class MailServiceImpl
 
 		result = new MailItemStub[parrSource.length];
 
-		for (int i = 0; i < result.length; i++ )
-		{
+		for (int i = 0; i < result.length; i++) {
 			result[i] = new MailItemStub();
 
 			try {
-				
+
 				String tempFolderName = parrSource[i].getFullName();
 				String cleanName = tempFolderName;
-				
-				result[i].id = tempFolderName; 
+
+				result[i].id = tempFolderName;
 				result[i].isFolder = true;
 				result[i].isFromMe = false;
 				result[i].subject = cleanName;
@@ -154,9 +154,9 @@ public class MailServiceImpl
 				result[i].timestamp = null;
 				result[i].bodyPreview = null;
 				result[i].folderId = tempFolderName;
-				result[i].isParentFolder = false; 
+				result[i].isParentFolder = false;
 				result[i].parentFolderId = null;
-				
+
 			} catch (Throwable e) {
 				throw new BigBangException(e.getMessage(), e);
 			}
@@ -167,10 +167,10 @@ public class MailServiceImpl
 		} catch (SessionExpiredException e) {
 			// Unable to store... no problem
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Counts the number of attachments in a message
 	 */
@@ -178,20 +178,22 @@ public class MailServiceImpl
 
 		try {
 			if (msg.isMimeType("multipart/mixed")) {
-				Multipart mp = (Multipart)msg.getContent();
+				Multipart mp = (Multipart) msg.getContent();
 				return mp.getCount();
 			}
 		} catch (MessagingException m) {
 			try {
-				if (msg instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m.getMessage())) {
+				if (msg instanceof MimeMessage
+						&& "Unable to load BODYSTRUCTURE".equalsIgnoreCase(m
+								.getMessage())) {
 					MimeMessage msgFix = new MimeMessage((MimeMessage) msg);
 					if (msgFix.isMimeType("multipart/mixed")) {
-						Multipart mp = (Multipart)msgFix.getContent();
+						Multipart mp = (Multipart) msgFix.getContent();
 						return mp.getCount();
 					}
-	            } else {
-	                throw m;
-	            }
+				} else {
+					throw m;
+				}
 			} catch (MessagingException m2) {
 				return 0;
 			} catch (Throwable t) {
@@ -202,30 +204,31 @@ public class MailServiceImpl
 		}
 		return 0;
 	}
-	
-	
+
 	/**
-	 * Gets the initial/most used folders, as defined in the constants
-	 * No call to the mail service is needed, so it can make the process faster.
+	 * Gets the initial/most used folders, as defined in the constants No call
+	 * to the mail service is needed, so it can make the process faster.
 	 */
-	public MailItemStub[] getItems()
-		throws SessionExpiredException, BigBangException
-	{
-		if ( Engine.getCurrentUser() == null )
+	public MailItemStub[] getItems() throws SessionExpiredException,
+			BigBangException {
+		if (Engine.getCurrentUser() == null)
 			throw new SessionExpiredException();
-		
+
 		MailItemStub[] result = new MailItemStub[Constants.GoogleAppsConstants.INITIAL_FOLDERS.length];
-		
+
 		// Iterates the folders defined as the ones to display in the initial
 		// page, and creates MailItemStubs for them
-		for (int i=0; i<Constants.GoogleAppsConstants.INITIAL_FOLDERS.length; i++) {
+		for (int i = 0; i < Constants.GoogleAppsConstants.INITIAL_FOLDERS.length; i++) {
 			String tempFolderName = Constants.GoogleAppsConstants.INITIAL_FOLDERS[i];
 			String cleanName = tempFolderName;
-			if (tempFolderName.contains(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME)) {
-				cleanName = cleanName.substring(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME.length() + 1);
+			if (tempFolderName
+					.contains(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME)) {
+				cleanName = cleanName
+						.substring(Constants.GoogleAppsConstants.GMAIL_FOLDER_NAME
+								.length() + 1);
 			}
 			result[i] = new MailItemStub();
-			result[i].id = tempFolderName; 
+			result[i].id = tempFolderName;
 			result[i].isFolder = true;
 			result[i].isFromMe = false;
 			result[i].subject = cleanName;
@@ -234,72 +237,75 @@ public class MailServiceImpl
 			result[i].attachmentCount = -1;
 			result[i].bodyPreview = null;
 			result[i].folderId = tempFolderName;
-			result[i].isParentFolder = false; 
+			result[i].isParentFolder = false;
 			result[i].parentFolderId = null;
 		}
-		
+
 		try {
 			storeFolders(result);
 		} catch (SessionExpiredException e) {
 			// Unable to store... no problem
 		}
-		
+
 		return result;
 	}
-	
-	public MailItemStub[] getItemsAll() throws BigBangException, SessionExpiredException {
-		
-		if ( Engine.getCurrentUser() == null )
+
+	public MailItemStub[] getItemsAll() throws BigBangException,
+			SessionExpiredException {
+
+		if (Engine.getCurrentUser() == null)
 			throw new SessionExpiredException();
-		
-		Folder [] folders = null;
-		
+
+		Folder[] folders = null;
+
 		try {
 			folders = MailConnector.getAllFolders();
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
-		
+
 		MailItemStub[] folderItems = null;
-		
+
 		if (folders != null && folders.length > 0) {
 			folderItems = foldersToClient(folders);
 			closeFolderAndStore(folders[0]);
 		}
-		
+
 		return folderItems;
 	}
 
 	/**
 	 * Gets all items and folders in root
 	 */
-	public MailItemStub[] getFolder(MailItemStub current)
-			throws SessionExpiredException, BigBangException
-		{
-			Message[] items;
-			
-			String folderId = current.folderId;
+	public MailItemStub[] getFolder(MailItemStub current, int nrOfMails)
+			throws SessionExpiredException, BigBangException {
+		Message[] items;
 
-			if ( Engine.getCurrentUser() == null )
-				throw new SessionExpiredException();
+		String folderId = current.folderId;
 
-			try {
-				items = MailConnector.getMailsFast(folderId, false);
-			}
-			catch (Throwable e) {
-				throw new BigBangException(e.getMessage(), e);
-			}
+		if (Engine.getCurrentUser() == null)
+			throw new SessionExpiredException();
 
-			MailItemStub[] mailItems = null;
-			
-			mailItems = messagesToClient(items);
-			
-			if (items != null && items.length > 0) {
-				closeFolderAndStore((MimeMessage) items[0]);
-			}
-			
-			return mailItems;
+		try {
+			items = MailConnector.getMailsFast(folderId,
+					current.isMoreMailsButton, nrOfMails, false);
+		} catch (Throwable e) {
+			throw new BigBangException(e.getMessage(), e);
 		}
+
+		MailItemStub[] mailItems = null;
+
+		mailItems = messagesToClient(items);
+
+		MailItemStub more = new MailItemStub();
+		more.isMoreMailsButton = true;
+
+		if (items != null && items.length > 0) {
+			closeFolderAndStore((MimeMessage) items[0]);
+		}
+
+		return mailItems;
+	}
 
 	/**
 	 * Gets a given item in a given folder
@@ -378,44 +384,37 @@ public class MailServiceImpl
 
 	protected void closeFolderAndStore(MimeMessage lobjItem)
 			throws BigBangException {
-	/*	try {
-			Store storeRef = lobjItem.getFolder().getStore();
-			lobjItem.getFolder().close(false);
-			storeRef.close();
-		} catch (Throwable e){
-			throw new BigBangException(e.getMessage(), e);
-		}	 */
+		/*
+		 * try { Store storeRef = lobjItem.getFolder().getStore();
+		 * lobjItem.getFolder().close(false); storeRef.close(); } catch
+		 * (Throwable e){ throw new BigBangException(e.getMessage(), e); }
+		 */
 	}
-	
-	protected void closeFolderAndStore(Folder lobjItem)
-			throws BigBangException {
-	/*	try {
-			Store storeRef = lobjItem.getStore();
-			storeRef.close();
-		} catch (Throwable e){
-			throw new BigBangException(e.getMessage(), e);
-		}	*/
+
+	protected void closeFolderAndStore(Folder lobjItem) throws BigBangException {
+		/*
+		 * try { Store storeRef = lobjItem.getStore(); storeRef.close(); } catch
+		 * (Throwable e){ throw new BigBangException(e.getMessage(), e); }
+		 */
 	}
 
 	/**
 	 * Gets an attachment from the email as a doc
 	 */
-	public Document getAttAsDoc(String emailId, String folderId, String attachmentId)
-		throws SessionExpiredException, BigBangException
-	{
+	public Document getAttAsDoc(String emailId, String folderId,
+			String attachmentId) throws SessionExpiredException,
+			BigBangException {
 		Document lobjResult;
 		FileXfer lobjFile;
 		UUID lidKey;
 
-		if ( Engine.getCurrentUser() == null )
+		if (Engine.getCurrentUser() == null)
 			throw new SessionExpiredException();
 
-		try
-		{
-			lobjFile = MailConnector.getAttachment(emailId, folderId, attachmentId, null);
-		}
-		catch (Throwable e)
-		{
+		try {
+			lobjFile = MailConnector.getAttachment(emailId, folderId,
+					attachmentId, null);
+		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
 
@@ -430,40 +429,40 @@ public class MailServiceImpl
 		lobjResult.creationDate = null;
 		lobjResult.text = null;
 		lobjResult.hasFile = true;
-    	lidKey = UUID.randomUUID();
-    	FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
-    	lobjResult.mimeType = lobjFile.getContentType();
-    	lobjResult.fileName = lobjFile.getFileName();
-    	lobjResult.fileStorageId = lidKey.toString();
+		lidKey = UUID.randomUUID();
+		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
+		lobjResult.mimeType = lobjFile.getContentType();
+		lobjResult.fileName = lobjFile.getFileName();
+		lobjResult.fileStorageId = lidKey.toString();
 
 		lobjResult.parameters = new DocInfo[0];
 
 		return lobjResult;
 	}
-	
+
 	/**
 	 * Gets an attachment from the email in the storage as a doc
 	 */
-	public Document getAttAsDocFromStorage(String storageId, String attachmentId) throws BigBangException, SessionExpiredException {
-		
+	public Document getAttAsDocFromStorage(String storageId, String attachmentId)
+			throws BigBangException, SessionExpiredException {
+
 		Document lobjResult;
 		FileXfer lobjFile;
 		UUID lidKey;
 
-		if ( Engine.getCurrentUser() == null )
+		if (Engine.getCurrentUser() == null)
 			throw new SessionExpiredException();
 
-		try
-		{
-			lobjFile = StorageConnector.getAttachmentAsFileXfer(storageId, attachmentId);
-		}
-		catch (Throwable e)
-		{
+		try {
+			lobjFile = StorageConnector.getAttachmentAsFileXfer(storageId,
+					attachmentId);
+		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
-		
+
 		if (lobjFile == null) {
-			throw new BigBangException("Não foi possível obter o attachment da storage");
+			throw new BigBangException(
+					"Não foi possível obter o attachment da storage");
 		}
 
 		lobjResult = new Document();
@@ -477,63 +476,64 @@ public class MailServiceImpl
 		lobjResult.creationDate = null;
 		lobjResult.text = null;
 		lobjResult.hasFile = true;
-    	lidKey = UUID.randomUUID();
-    	FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
-    	lobjResult.mimeType = lobjFile.getContentType();
-    	lobjResult.fileName = lobjFile.getFileName();
-    	lobjResult.fileStorageId = lidKey.toString();
+		lidKey = UUID.randomUUID();
+		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
+		lobjResult.mimeType = lobjFile.getContentType();
+		lobjResult.fileName = lobjFile.getFileName();
+		lobjResult.fileStorageId = lidKey.toString();
 
 		lobjResult.parameters = new DocInfo[0];
 
 		return lobjResult;
 	}
-	
+
 	/**
 	 * This method "stores" in memory the users' folders list
 	 */
-	private static void storeFolders(MailItemStub[] folders) throws 
-		SessionExpiredException, BigBangException {
-		
-		if ( Engine.getCurrentUser() == null )
+	private static void storeFolders(MailItemStub[] folders)
+			throws SessionExpiredException, BigBangException {
+
+		if (Engine.getCurrentUser() == null)
 			throw new SessionExpiredException();
-		
+
 		if (storedFoldersByUser == null) {
 			storedFoldersByUser = new HashMap<String, MailItemStub[]>();
 		}
-		
+
 		try {
 			String userMail = MailConnector.getUserEmail();
 			storedFoldersByUser.put(userMail, folders);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
-		}		
+		}
 	}
-	
+
 	/**
 	 * This method returns the stored users' folders list
 	 */
-	public MailItemStub[] getStoredFolders() throws BigBangException, SessionExpiredException {
-		
-		if ( Engine.getCurrentUser() == null )
+	public MailItemStub[] getStoredFolders() throws BigBangException,
+			SessionExpiredException {
+
+		if (Engine.getCurrentUser() == null)
 			throw new SessionExpiredException();
-		
-		MailItemStub[] result = null; 
-				
+
+		MailItemStub[] result = null;
+
 		if (storedFoldersByUser == null) {
 			storedFoldersByUser = new HashMap<String, MailItemStub[]>();
 		}
-		
+
 		try {
 			String userMail = MailConnector.getUserEmail();
 			result = storedFoldersByUser.get(userMail);
 		} catch (Throwable e) {
 			throw new BigBangException(e.getMessage(), e);
 		}
-				
+
 		if (result == null) {
 			return getItemsAll();
 		}
-		
+
 		return result;
 	}
 }
