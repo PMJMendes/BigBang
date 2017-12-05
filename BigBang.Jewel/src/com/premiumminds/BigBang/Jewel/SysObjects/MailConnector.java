@@ -673,6 +673,8 @@ public class MailConnector {
 	
 					    fp.add("X-mailer");
 					    folder.fetch(fetchedMails, fp);
+					} else {
+						fetchedMails = new Message[0];
 					}
 				} else {
 					fetchedMails = folder.getMessages();
