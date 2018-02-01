@@ -37,6 +37,7 @@ import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistoryInsurerAcco
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistoryMediatorAccounting;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistoryPayment;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistoryPaymentAcct;
+import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistoryPaymentForCasualties;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistorySendPaymentNotice;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistorySendReceipt;
 import com.premiumminds.BigBang.Jewel.Listings.Receipt.ReceiptHistoryValidation;
@@ -198,11 +199,17 @@ public class Receipt
 		return new ReceiptPendingSendReceipt().doReport(parrParams);
 	}
 
-	
+
 	public static GenericElement[] printReportHistoryPayment(String[] parrParams)
 		throws BigBangJewelException
 	{
 		return new ReceiptHistoryPayment().doReport(parrParams);
+	}
+
+	public static GenericElement[] printReportHistoryPaymentForCasualties(String[] parrParams)
+		throws BigBangJewelException
+	{
+		return new ReceiptHistoryPaymentForCasualties().doReport(parrParams);
 	}
 	
 	public static GenericElement[] printReportHistoryImage(String[] parrParams)
