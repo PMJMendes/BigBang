@@ -3,10 +3,13 @@ package com.premiumminds.BigBang.Jewel.Listings.SubCasualty;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -1293,6 +1296,16 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		Collections.sort(subCasualtiesList, new Comparator<SubCasualty>() {
+			@Override
+			public int compare(SubCasualty o1, SubCasualty o2) {
+				try {
+					return ((Timestamp)o1.GetCasualty().getAt(Casualty.I.DATE)).compareTo((Timestamp)o2.GetCasualty().getAt(Casualty.I.DATE));
+				} catch (BigBangJewelException e) {
+					return 0;
+				}
+			}
+		});
 		return subCasualtiesList.toArray(new SubCasualty[subCasualtiesList
 				.size()]);
 	}
