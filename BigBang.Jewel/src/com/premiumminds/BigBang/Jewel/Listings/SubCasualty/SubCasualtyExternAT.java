@@ -680,7 +680,7 @@ public class SubCasualtyExternAT
 		larrCells[ 7] = ReportBuilder.buildCell(lobjType == null ? null : lobjType.getLabel(), TypeDefGUIDs.T_String);
 		ReportBuilder.styleCell(larrCells[ 7], true, true);
 
-		larrCells[ 8] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.PERCENT), TypeDefGUIDs.T_Integer);
+		larrCells[ 8] = ReportBuilder.buildCell(pobjMedDet.getAt(MedicalDetail.I.PERCENT), TypeDefGUIDs.T_Decimal);
 		ReportBuilder.styleCell(larrCells[ 8], true, true);
 
 		larrCells[ 9] = ReportBuilder.buildCell(ldtFrom, TypeDefGUIDs.T_Date);
