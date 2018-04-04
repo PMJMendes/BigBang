@@ -2620,6 +2620,8 @@ public class ReceiptServiceImpl
 			pstrBuffer.append("([:Sub Policy:Policy:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
 			pstrBuffer.append("([:Sub Policy:Policy:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Bar Code] = '").append(lstrAux).append("')");
 			pstrBuffer.append(")");
 		}
 

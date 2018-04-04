@@ -30,6 +30,7 @@ import com.premiumminds.BigBang.Jewel.Listings.SubCasualtyListingsBase;
 import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MedicalFile;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
@@ -63,6 +64,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	private BigDecimal thirdSettlementTotal = BigDecimal.ZERO;
 
 	// Width Constants
+	private static final int CLIENT_WIDTH = 160;
 	private static final int DATE_WIDTH = 72;
 	private static final int OBJECT_WIDTH = 160;
 	private static final int EGS_PROCESS_WIDTH = 90;
@@ -224,7 +226,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	 * Inner class which holds the information to display at the map
 	 */
 	private class SubCasualtyData {
-
+		private String client;
 		private String date;
 		private String insuredObject;
 		private String egsProcess;
@@ -238,6 +240,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		private Category category;
 
 		SubCasualtyData() {
+			setClient(NO_VALUE);
 			setDate(NO_VALUE);
 			setInsuredObject(NO_VALUE);
 			setEgsProcess(NO_VALUE);
@@ -248,6 +251,14 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			setThirdSettlement(NO_VALUE);
 			setSubCasualtyNotes(NO_VALUE);
 			setClosed(false);
+		}
+		
+		private String getClient() {
+			return client;
+		}
+
+		private void setClient(String client) {
+			this.client = client;
 		}
 
 		private String getDate() {
@@ -343,6 +354,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		 */
 		private void setValues(SubCasualty subCasualty)
 				throws BigBangJewelException {
+			setClient(subCasualty.GetClient().getLabel());
 			// Sets the casualty's date, if possible
 			if (subCasualty.GetCasualty().getAt(Casualty.I.DATE) != null) {
 				setDate(subCasualty.GetCasualty().getAt(Casualty.I.DATE)
@@ -573,8 +585,8 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		int subCasualtiesNr = 0;
 		
 		UUID categoryFilter = null;
-		if (reportParams[5] != null) {
-			categoryFilter = UUID.fromString(reportParams[5]);
+		if (reportParams[6] != null) {
+			categoryFilter = UUID.fromString(reportParams[6]);
 		}
 		
 		HashMap<String, ArrayList<SubCasualtyData>> subCasualtiesMap;
@@ -586,12 +598,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		// created
 		// If not, calls the method responsible for outputting that information
 		// to the user
-		if ((reportParams[0] == null) || "".equals(reportParams[0])) {
+		if (((reportParams[0] == null) || "".equals(reportParams[0])) && ((reportParams[1] == null) || "".equals(reportParams[1]))) {
 			return doNotValid();
 		}
 		
 		// Tests if it is supposed to show the values paid to third parties
-		if ((reportParams[3] != null) && reportParams[3].equals("1")) {
+		if ((reportParams[4] != null) && reportParams[4].equals("1")) {
 			showThirdParties = true;
 		}
 
@@ -797,7 +809,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			ReportBuilder.styleCell(cells[1], topRow, false);
 		}
 
-		int colspan= showThirdParties ? 8 : 7;
+		int colspan= showThirdParties ? 9 : 8;
 		
 		cells[1].setColSpan(colspan);
 
@@ -812,13 +824,17 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	 */
 	private TD[] buildRow(SubCasualtyData subCasualtyData) {
 
-		int colNr = showThirdParties ? 10 : 9;
+		int colNr = showThirdParties ? 11 : 10;
 		TD[] dataCells = new TD[colNr];
 		int curCol = 0;
 
+		dataCells[curCol] = safeBuildCell(subCasualtyData.getClient(),
+				TypeDefGUIDs.T_String, false, false);
+		ReportBuilder.styleCell(dataCells[curCol++], true, false);
+
 		dataCells[curCol] = safeBuildCell(subCasualtyData.getDate(),
 				TypeDefGUIDs.T_String, false, false);
-		styleCenteredCell(dataCells[curCol++], true, false);
+		styleCenteredCell(dataCells[curCol++], true, true);
 
 		String objectName = subCasualtyData.getInsuredObject();
 		if (objectName.length() <= OBJECT_BREAK_POINT) {
@@ -1008,7 +1024,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		TD rowContent;
 		TR row;
 		
-		int colNr = showThirdParties ? 10 : 9;
+		int colNr = showThirdParties ? 11 : 10;
 
 		// Builds the TD with the content
 		rowContent = ReportBuilder.buildCell("Ramo: " + subline,
@@ -1028,15 +1044,19 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	 */
 	private TD[] buildHeaderRow() {
 
-		int colNr = showThirdParties ? 10 : 9;
+		int colNr = showThirdParties ? 11 : 10;
 		
 		TD[] cells = new TD[colNr];
 		
 		int currColl = 0;
 
-		cells[currColl++] = ReportBuilder.buildCell("Data Sinistro",
+		cells[currColl++] = ReportBuilder.buildCell("Cliente",
 				TypeDefGUIDs.T_String);
 		styleCenteredCell(cells[currColl-1], false, false);
+
+		cells[currColl++] = ReportBuilder.buildCell("Data Sinistro",
+				TypeDefGUIDs.T_String);
+		styleCenteredCell(cells[currColl-1], false, true);
 
 		cells[currColl++] = ReportBuilder.buildCell("Unidade de Risco",
 				TypeDefGUIDs.T_String);
@@ -1116,6 +1136,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 	private void setCellWidths(TD[] cells) {
 		
 		int currColl = 0;
+		cells[currColl++].setWidth(CLIENT_WIDTH);
 		cells[currColl++].setWidth(DATE_WIDTH);
 		cells[currColl++].setWidth(OBJECT_WIDTH);
 		cells[currColl++].setWidth(EGS_PROCESS_WIDTH);
@@ -1154,15 +1175,15 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		// Builds the cell with the report title and client name
 		TD title = new TD();
-		String titleString = "Mapa de Sinistros de " + clientTitle;
+		String titleString = "Mapa de Sinistros - " + clientTitle;
 
-		if (reportParams[1] != null && reportParams[2] != null) {
-			titleString = titleString + ", ocorridos entre " + reportParams[1]
-					+ " e " + reportParams[2];
-		} else if (reportParams[1] != null && reportParams[2] == null) {
-			titleString = titleString + ", posteriores a " + reportParams[1];
-		} else if (reportParams[1] == null && reportParams[2] != null) {
-			titleString = titleString + ", anteriores a " + reportParams[2];
+		if (reportParams[2] != null && reportParams[3] != null) {
+			titleString = titleString + ", ocorridos entre " + reportParams[2]
+					+ " e " + reportParams[3];
+		} else if (reportParams[2] != null && reportParams[3] == null) {
+			titleString = titleString + ", posteriores a " + reportParams[2];
+		} else if (reportParams[2] == null && reportParams[3] != null) {
+			titleString = titleString + ", anteriores a " + reportParams[3];
 		}
 
 		Strong titleStrong = new Strong(titleString);
@@ -1231,6 +1252,10 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			Client client = Client.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(reportParams[0]));
 			displayName = (String) client.getAt(Client.I.NAME);
+		} else if (reportParams[1] != null) {
+			ClientGroup group = ClientGroup.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(reportParams[1]));
+			displayName = (String) group.getAt(ClientGroup.I.NAME);
 		} else {
 			displayName = null;
 		}
@@ -1325,6 +1350,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		IEntity lrefProcs;
 		IEntity lrefPols;
 		IEntity lrefSubPs;
+		IEntity lrefClients;
 
 		lstrSQL = new StringBuilder();
 
@@ -1335,13 +1361,14 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			lrefPols = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
 			lrefSubPs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
 			lrefProcs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNProcess));
+			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		if ((parrParams[4] != null) && parrParams[4].equals("1") && (parrParams[1] != null))
+		if ((parrParams[5] != null) && parrParams[5].equals("1") && (parrParams[2] != null))
 		{
 			try
 			{
@@ -1349,24 +1376,52 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 						lrefSubCs.SQLForSelectAll() + ") [AuxSubC] WHERE [Process] IN (SELECT [PK] FROM (" + 
 						lrefProcs.SQLForSelectByMembers(new int[] {Jewel.Petri.Constants.IsRunning_In_Process}, new java.lang.Object[] {true}, null) + 
 						") [AuxProcs]) AND [Casualty] IN (SELECT [PK] FROM (" +
-						lrefCas.SQLForSelectByMembers(new int[] {Casualty.I.CLIENT}, new java.lang.Object[] {parrParams[0]}, null) +
-						") [AuxCas] WHERE [Date] < '" + parrParams[1] + "')");
+						lrefCas.SQLForSelectAll() +
+						") [AuxCas] WHERE (1=0");
 			}
 			catch (Throwable e)
 			{
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
-			if (parrParams[5] != null)
+			if ((parrParams[0] != null) && !"".equals(parrParams[0]))
+			{
+				try
+				{
+					lstrSQL.append(" OR [Client] = '" + parrParams[0] + "'");
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
+
+			if ((parrParams[1] != null) && !"".equals(parrParams[1]))
+			{
+				try
+				{
+					lstrSQL.append(" OR [Client] IN (SELECT [PK] FROM (" +
+							lrefClients.SQLForSelectByMembers(new int[] {Client.I.GROUP}, new java.lang.Object[] {parrParams[1]}, null) +
+							") [AuxCli])");
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
+
+			lstrSQL.append(") AND [Date] < '" + parrParams[2] + "')");
+
+			if (parrParams[6] != null)
 			{
 				try
 				{
 					lstrSQL.append(" AND ([Policy] IN (SELECT [PK] FROM (" +
-							lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + parrParams[5] + "'"}, null) +
+							lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + parrParams[6] + "'"}, null) +
 							") [AuxP1]) OR [Sub Policy] IN (SELECT [PK] FROM (" +
 							lrefSubPs.SQLForSelectAll() +
 							") [AuxSubP] WHERE [Policy] IN (SELECT [PK] FROM (" +
-							lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + parrParams[5] + "'"}, null) +
+							lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + parrParams[6] + "'"}, null) +
 							") [AuxP2])))");
 				}
 				catch (Throwable e)
@@ -1375,12 +1430,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 				}
 			}
 
-			if ((parrParams[6] != null) && parrParams[6].equals("1"))
+			if ((parrParams[7] != null) && parrParams[7].equals("1"))
 			{
 				lstrSQL.append(" AND [Is Total Loss] = 1");
 			}
 
-			if ((parrParams[7] != null) && parrParams[7].equals("1"))
+			if ((parrParams[8] != null) && parrParams[8].equals("1"))
 			{
 				lstrSQL.append(" AND [Is  Relapse] = 1");
 			}
@@ -1392,36 +1447,64 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 		{
 			lstrSQL.append("SELECT * FROM (" +
 					lrefSubCs.SQLForSelectAll() + ") [AuxSubC] WHERE [Casualty] IN (SELECT [PK] FROM (" +
-					lrefCas.SQLForSelectByMembers(new int[] {Casualty.I.CLIENT}, new java.lang.Object[] {parrParams[0]}, null) +
-					") [AuxCas] WHERE 1=1");
+					lrefCas.SQLForSelectAll() +
+					") [AuxCas] WHERE (1=0");
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		if (parrParams[1] != null)
+		if ((parrParams[0] != null) && !"".equals(parrParams[0]))
 		{
-			lstrSQL.append(" AND [Date] >= '").append(parrParams[1]).append("'");
+			try
+			{
+				lstrSQL.append(" OR [Client] = '" + parrParams[0] + "'");
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
 		}
+
+		if ((parrParams[1] != null) && !"".equals(parrParams[1]))
+		{
+			try
+			{
+				lstrSQL.append(" OR [Client] IN (SELECT [PK] FROM (" +
+						lrefClients.SQLForSelectByMembers(new int[] {Client.I.GROUP}, new java.lang.Object[] {parrParams[1]}, null) +
+						") [AuxCli])");
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+
+		lstrSQL.append(")");
 
 		if (parrParams[2] != null)
 		{
-			lstrSQL.append(" AND [Date] < DATEADD(d, 1, '").append(parrParams[2]).append("')");
+			lstrSQL.append(" AND [Date] >= '").append(parrParams[2]).append("'");
+		}
+
+		if (parrParams[3] != null)
+		{
+			lstrSQL.append(" AND [Date] < DATEADD(d, 1, '").append(parrParams[3]).append("')");
 		}
 
 		lstrSQL.append(")");
 		
-		if (parrParams[5] != null)
+		if (parrParams[6] != null)
 		{
 			try
 			{
 				lstrSQL.append(" AND ([Policy] IN (SELECT [PK] FROM (" +
-						lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + parrParams[5] + "'"}, null) +
+						lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + parrParams[6] + "'"}, null) +
 						") [AuxP1]) OR [Sub Policy] IN (SELECT [PK] FROM (" +
 						lrefSubPs.SQLForSelectAll() +
 						") [AuxSubP] WHERE [Policy] IN (SELECT [PK] FROM (" +
-						lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + parrParams[5] + "'"}, null) +
+						lrefPols.SQLForSelectForReports(new String[] {"[:SubLine:Line:Category]"}, new String[] {" = '" + parrParams[6] + "'"}, null) +
 						") [AuxP2])))");
 			}
 			catch (Throwable e)
@@ -1430,12 +1513,12 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 			}
 		}
 
-		if ((parrParams[6] != null) && parrParams[6].equals("1"))
+		if ((parrParams[7] != null) && parrParams[7].equals("1"))
 		{
 			lstrSQL.append(" AND [Is Total Loss] = 1");
 		}
 
-		if ((parrParams[7] != null) && parrParams[7].equals("1"))
+		if ((parrParams[8] != null) && parrParams[8].equals("1"))
 		{
 			lstrSQL.append(" AND [Is  Relapse] = 1");
 		}
@@ -1502,7 +1585,7 @@ public class SubCasualtySinistralityMap extends SubCasualtyListingsBase {
 
 		larrRows = new TR[1];
 		larrRows[0] = ReportBuilder
-				.constructDualHeaderRowCell("Tem que indicar o cliente.");
+				.constructDualHeaderRowCell("Tem que indicar o cliente ou o grupo.");
 
 		ltbl = ReportBuilder.buildTable(larrRows);
 		ReportBuilder.styleTable(ltbl, false);
