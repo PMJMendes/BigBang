@@ -8,6 +8,8 @@ import java.util.Enumeration;
 import org.apache.ecs.GenericElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.Div;
+import org.apache.ecs.html.IMG;
+import org.apache.ecs.html.Strong;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
@@ -156,6 +158,15 @@ public class ExcelConnector
 
 		while ( lobjAux instanceof Div )
 			lobjAux = ((Div)lobjAux).getElement((String)((Div)lobjAux).keys().nextElement());
+
+		while ( lobjAux instanceof Strong )
+			lobjAux = ((Strong)lobjAux).getElement((String)((Strong)lobjAux).keys().nextElement());
+
+		if ( lobjAux instanceof IMG )
+		{
+			pobjCell.setCellValue("&nbsp;");
+			return;
+		}
 
 		if ( lobjAux instanceof Table )
 		{

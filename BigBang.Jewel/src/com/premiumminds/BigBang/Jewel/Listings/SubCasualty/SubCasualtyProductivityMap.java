@@ -1389,6 +1389,10 @@ public class SubCasualtyProductivityMap extends SubCasualtyListingsBase {
 		TD[] notes = new TD[1];
 
 		String reportNotes = reportParams[4];
+		if (reportNotes == null || reportNotes.isEmpty())
+		{
+			reportNotes = "&nbsp;";
+		}
 
 		// Creates a line with the word "Observações"
 		notes[0] = ReportBuilder.buildCell("Observações",
