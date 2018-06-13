@@ -25,6 +25,9 @@ public class Client
 	public String notes;
 	public String docushare;
 	public boolean isInternational;
+	public boolean hasGPRD1;
+	public boolean hasGPRD2;
+	public boolean hasGPRD3;
 	public Contact[] contacts;
 	public Document[] documents;
 

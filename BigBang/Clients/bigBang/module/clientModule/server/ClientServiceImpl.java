@@ -151,6 +151,9 @@ public class ClientServiceImpl
 		lobjResult.notes = (String)lobjClient.getAt(20);
 		lobjResult.docushare = (String)lobjClient.getAt(23);
 		lobjResult.isInternational = ((lobjClient.getAt(24) != null) && (Boolean)lobjClient.getAt(24));
+		lobjResult.hasGPRD1 = ((lobjClient.getAt(26) != null) && (Boolean)lobjClient.getAt(26));
+		lobjResult.hasGPRD2 = ((lobjClient.getAt(27) != null) && (Boolean)lobjClient.getAt(27));
+		lobjResult.hasGPRD3 = ((lobjClient.getAt(28) != null) && (Boolean)lobjClient.getAt(28));
 
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
@@ -213,6 +216,9 @@ public class ClientServiceImpl
 			lopCC.mobjData.midSize = ( client.sizeId == null ? null : UUID.fromString(client.sizeId) );
 			lopCC.mobjData.midSales = ( client.revenueId == null ? null : UUID.fromString(client.revenueId) );
 			lopCC.mobjData.mstrNotes = client.notes;
+			lopCC.mobjData.mbGPRD1 = client.hasGPRD1;
+			lopCC.mobjData.mbGPRD2 = client.hasGPRD2;
+			lopCC.mobjData.mbGPRD3 = client.hasGPRD3;
 
 			if ( (client.contacts != null) && (client.contacts.length > 0) )
 			{
@@ -294,6 +300,9 @@ public class ClientServiceImpl
 			lopMD.mobjData.midSales = ( client.revenueId == null ? null : UUID.fromString(client.revenueId) );
 			lopMD.mobjData.mstrNotes = client.notes;
 			lopMD.mobjData.mbIsInternational = client.isInternational;
+			lopMD.mobjData.mbGPRD1 = client.hasGPRD1;
+			lopMD.mobjData.mbGPRD2 = client.hasGPRD2;
+			lopMD.mobjData.mbGPRD3 = client.hasGPRD3;
 
 			lopMD.mobjContactOps = null;
 			lopMD.mobjDocOps = null;

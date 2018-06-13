@@ -50,6 +50,10 @@ public class Client
 		public static int MIGRATIONID   = 22;
 		public static int DOCUSHARE     = 23;
 		public static int INTERNATIONAL = 24;
+		public static int ADDRESS3      = 25;
+		public static int GPRD1         = 26;
+		public static int GPRD2         = 27;
+		public static int GPRD3         = 28;
 	}
 
     public static Client GetInstance(UUID pidNameSpace, UUID pidKey)

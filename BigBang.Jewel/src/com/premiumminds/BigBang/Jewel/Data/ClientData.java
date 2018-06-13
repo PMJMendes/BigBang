@@ -3,6 +3,8 @@ package com.premiumminds.BigBang.Jewel.Data;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.ObjectBase;
@@ -21,6 +23,7 @@ public class ClientData
 	public int mlngNumber;
 	public String mstrAddress1;
 	public String mstrAddress2;
+	public String mstrAddress3;
 	public UUID midZipCode;
 	public String mstrFiscal;
 	public UUID midType;
@@ -41,6 +44,9 @@ public class ClientData
 	public Integer mlngMigrationID;
 	public String mstrDocushare;
 	public Boolean mbIsInternational;
+	public Boolean mbGPRD1;
+	public Boolean mbGPRD2;
+	public Boolean mbGPRD3;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -76,6 +82,10 @@ public class ClientData
 		mlngMigrationID = (Integer)pobjSource.getAt(22);
 		mstrDocushare = (String)pobjSource.getAt(23);
 		mbIsInternational = (Boolean)pobjSource.getAt(24);
+		mstrAddress3 = (String)pobjSource.getAt(25);
+		mbGPRD1 = (Boolean)pobjSource.getAt(26);
+		mbGPRD2 = (Boolean)pobjSource.getAt(27);
+		mbGPRD3 = (Boolean)pobjSource.getAt(28);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -108,6 +118,10 @@ public class ClientData
 			pobjDest.setAt(22, mlngMigrationID);
 			pobjDest.setAt(23, mstrDocushare);
 			pobjDest.setAt(24, mbIsInternational);
+			pobjDest.setAt(25,  mstrAddress3);;
+			pobjDest.setAt(26, mbGPRD1);
+			pobjDest.setAt(27, mbGPRD2);
+			pobjDest.setAt(28, mbGPRD3);
 		}
 		catch (Throwable e)
 		{
@@ -134,6 +148,10 @@ public class ClientData
 		pstrBuilder.append("- ");
 		if ( mstrAddress2 != null )
 			pstrBuilder.append(mstrAddress2);
+		pstrBuilder.append(pstrLineBreak);
+		pstrBuilder.append("- ");
+		if ( mstrAddress3 != null )
+			pstrBuilder.append(mstrAddress3);
 		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("- ");
@@ -368,6 +386,35 @@ public class ClientData
 				}
 			}
 			pstrBuilder.append(pstrLineBreak);
+		}
+
+		pstrBuilder.append("Consentimentos RGPD: ");
+		boolean lb1 = ObjectUtils.firstNonNull(mbGPRD1, false);
+		boolean lb2 = ObjectUtils.firstNonNull(mbGPRD1, false);
+		boolean lb3 = ObjectUtils.firstNonNull(mbGPRD1, false);
+		if (!lb1 && !lb2 && !lb3)
+		{
+			pstrBuilder.append("Nenhum");
+		}
+		if (lb1)
+		{
+			pstrBuilder.append("Item 1");
+			if (lb2 || lb3)
+			{
+				pstrBuilder.append(", ");
+			}
+		}
+		if (lb2)
+		{
+			pstrBuilder.append("Item 2");
+			if (lb3)
+			{
+				pstrBuilder.append(", ");
+			}
+		}
+		if (lb3)
+		{
+			pstrBuilder.append("Item 3");
 		}
 
 		pstrBuilder.append("Observações: ");

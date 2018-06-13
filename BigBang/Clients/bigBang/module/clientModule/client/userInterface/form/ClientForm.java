@@ -13,6 +13,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.dataAccess.TypifiedListClient;
 import bigBang.library.client.userInterface.AddressFormField;
+import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
@@ -49,6 +50,9 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 	protected TextAreaFormField notes;
 	protected ExpandableListBoxFormField otherClientType;
 	protected RadioButtonFormField clientType;
+	protected CheckBoxFormField gprd1;
+	protected CheckBoxFormField gprd2;
+	protected CheckBoxFormField gprd3;
 
 	protected FormViewSection individualSection, companySection, otherSection;
 
@@ -90,6 +94,9 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 		revenue = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.SALES_VOLUMES, "Facturação");
 		otherClientType = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ClientSubtypes, "Tipo");
 		notes = new TextAreaFormField();
+		gprd1 = new CheckBoxFormField("Consentimento RGPD Item 1");
+		gprd2 = new CheckBoxFormField("Consentimento RGPD Item 2");
+		gprd3 = new CheckBoxFormField("Consentimento RGPD Item 3");
 		clientType = new RadioButtonFormField();
 		clientType.setMandatory(true);
 
@@ -174,6 +181,9 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 		addFormField(address);
 
 		addSection("Observações");
+		addFormField(gprd1, true);
+		addFormField(gprd2, true);
+		addFormField(gprd3, true);
 		notes.setFieldWidth("550px");
 		notes.setFieldHeight("150px");
 		addFormField(notes);
@@ -290,6 +300,9 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 			result.maritalStatusId = maritalStatus.getValue();
 			result.professionId = profession.getValue();
 			result.notes = notes.getValue();
+			result.hasGPRD1 = gprd1.getValue();
+			result.hasGPRD2 = gprd2.getValue();
+			result.hasGPRD3 = gprd3.getValue();
 			result.typeId = clientType.getValue();
 			result.subtypeId = otherClientType.getValue();
 		}
@@ -328,6 +341,9 @@ public class ClientForm extends FormView<Client> implements ClientProcessDataBro
 		maritalStatus.setValue(info.maritalStatusId);
 		profession.setValue(info.professionId);
 		notes.setValue(info.notes);
+		gprd1.setValue(info.hasGPRD1);
+		gprd2.setValue(info.hasGPRD2);
+		gprd3.setValue(info.hasGPRD3);
 		clientType.setValue(info.typeId, true);
 		otherClientType.setValue(info.subtypeId);
 	}
