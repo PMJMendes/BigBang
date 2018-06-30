@@ -390,8 +390,8 @@ public class ClientData
 
 		pstrBuilder.append("Consentimentos RGPD: ");
 		boolean lb1 = ObjectUtils.firstNonNull(mbGPRD1, false);
-		boolean lb2 = ObjectUtils.firstNonNull(mbGPRD1, false);
-		boolean lb3 = ObjectUtils.firstNonNull(mbGPRD1, false);
+		boolean lb2 = ObjectUtils.firstNonNull(mbGPRD2, false);
+		boolean lb3 = ObjectUtils.firstNonNull(mbGPRD3, false);
 		if (!lb1 && !lb2 && !lb3)
 		{
 			pstrBuilder.append("Nenhum");
@@ -416,6 +416,7 @@ public class ClientData
 		{
 			pstrBuilder.append("Item 3");
 		}
+		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("Observações: ");
 		if ( mstrNotes != null )
