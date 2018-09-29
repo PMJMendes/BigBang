@@ -105,7 +105,7 @@ public abstract class SearchServiceBase
 
 	        try
 	        {
-	        	lstrSQLB = new StringBuilder("SELECT [PK]");
+	        	lstrSQLB = new StringBuilder("SELECT TOP 10000 [PK]");
 	        	for ( i = 0; i < marrColumns.length; i++ )
 	        		lstrSQLB.append(", ").append(marrColumns[i]);
 	        	lstrSQLB.append(" FROM (").append(lrefDataObj.SQLForSelectMulti()).append(") [Aux] WHERE ").append(pstrCriteria)
