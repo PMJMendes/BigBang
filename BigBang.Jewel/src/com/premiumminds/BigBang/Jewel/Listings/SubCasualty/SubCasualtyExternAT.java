@@ -673,7 +673,7 @@ public class SubCasualtyExternAT
 		ldtFrom = (Timestamp)pobjMedDet.getAt(MedicalDetail.I.STARTDATE);
 		ldtTo = (Timestamp)pobjMedDet.getAt(MedicalDetail.I.ENDDATE);
 		llngDays = (((ldtFrom == null) || (ldtTo == null)) ? null
-				: (int)TimeUnit.DAYS.convert(ldtTo.getTime() - ldtFrom.getTime() + 43200000L, TimeUnit.MILLISECONDS));
+				: (int)TimeUnit.DAYS.convert(ldtTo.getTime() - ldtFrom.getTime() + 43200000L, TimeUnit.MILLISECONDS) + 1);
 
 		larrCells = parrFirst == null ? new TD[18] : parrFirst;
 
